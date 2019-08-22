@@ -6,6 +6,6 @@ Because the way BigQuery works it is possible to use UDFs that are stored on a d
 
 That way using a library like Uber H3, it is as simple as:
 
-`SELECT jslibs.h3.h3Index(latitude,longitude,7) FROM myproject.mydataset.mytable`
+`SELECT jslibs.h3.ST_H3(pointGeog,7) FROM myproject.mydataset.mytable`
 
 No need to install anything, just start using them, and if you want to see what functions are available you can always pin the project and you will see all libraries that had been **bigquerified**
