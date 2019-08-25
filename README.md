@@ -9,3 +9,25 @@ That way using a library like Uber H3, it is as simple as:
 `SELECT jslibs.h3.ST_H3(pointGeog,7) FROM myproject.mydataset.mytable`
 
 No need to install anything, just start using them, and if you want to see what functions are available you can always pin the project and you will see all libraries that had been **bigquerified**
+
+
+## Function names ##
+
+The fucntions try to match as possible the syntax of the original JS library, like for example `h3.h3Index`, but also additional wrapper functions like `ST_H3` are also created that feel more natural compared to the built-in functions in BigQuery.
+
+You can get the documentation of a particular library inside its folder.
+
+## libaries versions ##
+
+We try to maintain the libaries on different versions and a latest folder. You can choose to use a funtion in a particular version or the latest. For example:
+
+`SELECT jslibs.h3.ST_H3(pointGeog,7)`
+
+or
+
+`SELECT jslibs.h3_3_5_0.ST_H3(pointGeog,7)`
+
+
+
+
+
