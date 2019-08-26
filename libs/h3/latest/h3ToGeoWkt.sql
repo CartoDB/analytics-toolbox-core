@@ -1,5 +1,4 @@
---Get the center of the hexagon with an output of an array with LatitudeLongitude
-CREATE OR REPLACE FUNCTION jslibs.h3.h3ToWkt(h3Index STRING)
+CREATE OR REPLACE FUNCTION jslibs.h3.h3ToGeoWkt(h3Index STRING)
   RETURNS STRING
   LANGUAGE js AS
 """
