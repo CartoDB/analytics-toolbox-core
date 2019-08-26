@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION jslibs.h3.uncompact(compactedSet ARRAY, resolution NUMERIC)
+CREATE OR REPLACE FUNCTION jslibs.h3.uncompact(compactedSet ARRAY<STRING>, resolution NUMERIC)
  RETURNS ARRAY<STRING>
  LANGUAGE js AS
 """
