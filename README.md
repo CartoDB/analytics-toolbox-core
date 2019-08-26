@@ -31,7 +31,7 @@ or
 
 First library included is H3 so here are a few screenshots of their use.
 
-```
+``` sql
 WITH data as (
 	SELECT jslibs.h3.compact(
   	jslibs.h3.ST_H3_POLYFILLFROMGEOG(tract_geom,11)) as geo 
