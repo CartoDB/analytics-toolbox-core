@@ -27,6 +27,17 @@ or
 
 `SELECT jslibs.h3_3_5_0.ST_H3(pointGeog,7)`
 
+## Screenshots
+
+First library included is H3 so here are a few screenshots of their use.
+
+![alt text](screenshots/compat_census_tract.png)
+
+![alt text](screenshots/kring_point.png)
+
+![alt text](screenshots/polyfill_census_tract.png)
+
+![alt text](screenshots/boundary.png)
 
 
 
