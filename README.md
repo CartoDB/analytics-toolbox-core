@@ -27,10 +27,20 @@ or
 
 `SELECT jslibs.h3_3_5_0.ST_H3(pointGeog,7)`
 
-## Screenshots
+## Screenshots and examples
 
 First library included is H3 so here are a few screenshots of their use.
 
+```
+WITH data as (
+	SELECT jslibs.h3.compact(
+  	jslibs.h3.ST_H3_POLYFILLFROMGEOG(tract_geom,11)) as geo 
+  	FROM `bigquery-public-data.geo_census_tracts`.census_tracts_new_york 
+  	WHERE geo_id='36081000100')
+
+SELECT jslibs.h3.ST_H3_BOUNDARY(h3) as h3geo 
+FROM data,UNNEST(geo) as h3
+```
 ![alt text](screenshots/compat_census_tract.png)
 
 ![alt text](screenshots/kring_point.png)
