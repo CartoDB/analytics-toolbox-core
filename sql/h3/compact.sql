@@ -5,5 +5,5 @@ CREATE OR REPLACE FUNCTION jslibs.h3.compact(h3Set ARRAY<STRING>)
 return h3.compact(h3Set);
 """
 OPTIONS (
-  library=["gs://bigquery-jslibs/h3/latest/h3-js.umd.js"]
+  library=["gs://bigquery-jslibs/h3-js.umd.js"]
 );

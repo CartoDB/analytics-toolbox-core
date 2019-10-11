@@ -5,5 +5,5 @@ CREATE OR REPLACE FUNCTION jslibs.quadkey.children(quadkey STRING)
 return children(quadkey);  
 """
 OPTIONS (
-  library=["gs://bigquery-jslibs/quadkey/latest/index.js"]
+  library=["gs://bigquery-jslibs/quadkey.js"]
 );

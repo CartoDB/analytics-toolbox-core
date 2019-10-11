@@ -9,4 +9,6 @@ var geojson = {
 
 return JSON.stringify(geojson);
 """
-OPTIONS (library=["gs://bigquery-jslibs/h3/latest/h3-js.umd.js"]);
+OPTIONS (
+  library=["gs://bigquery-jslibs/h3-js.umd.js"]
+);

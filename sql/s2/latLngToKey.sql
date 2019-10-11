@@ -6,5 +6,5 @@ var S2 = require('s2-geometry').S2;
 return S2.latLngToKey(latitude, longitude, resolution);
 """
 OPTIONS (
-  library=["gs://bigquery-jslibs/s2/latest/s2geometry.js"]
+  library=["gs://bigquery-jslibs/s2geometry.js"]
 );

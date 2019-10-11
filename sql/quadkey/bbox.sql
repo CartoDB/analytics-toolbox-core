@@ -6,5 +6,5 @@ var b= bbox(quadkey);
 return [b.min.lng,b.min.lat,b.max.lng,b.max.lat];
 """
 OPTIONS (
-  library=["gs://bigquery-jslibs/quadkey/latest/index.js"]
+  library=["gs://bigquery-jslibs/quadkey.js"]
 );
