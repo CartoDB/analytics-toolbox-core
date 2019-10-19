@@ -6,7 +6,9 @@ Because the way BigQuery works it is possible to use UDFs that are stored on a d
 
 That way using a library like Uber H3, it is as simple as:
 
-`SELECT jslibs.h3.ST_H3(ST_GEOGPOINT(-74.0060,40.7128),11)`
+``` sql
+SELECT jslibs.h3.ST_H3(ST_GEOGPOINT(-74.0060,40.7128),11)
+```
 
 No need to install anything, just start using them, and if you want to see what functions are available you can always pin the project and you will see all libraries that had been **bigquerified**
 
@@ -21,7 +23,9 @@ You can get the documentation of a particular library inside its folder.
 
 We try to maintain the libaries on different versions and a latest folder. You can choose to use a funtion in a particular version or the latest. For example:
 
-`SELECT jslibs.h3.ST_H3(pointGeog,7)`
+``` sql
+SELECT jslibs.h3.ST_H3(pointGeog,7)
+```
 
 ## Screenshots and examples
 
