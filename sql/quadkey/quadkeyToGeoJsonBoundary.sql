@@ -12,7 +12,7 @@ var geojson = {
     	[b.max.lng,b.min.lat],
     	[b.min.lng,b.min.lat]
     ]]
-};
+};;
 
 return JSON.stringify(geojson);
 
