@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION jslibs.quadkey.locationToQuadkey(latitude FLOAT64, lo
   RETURNS STRING
   LANGUAGE js AS
 """
-return locationToQuadkey({ lat: latitude, lng: longitude }, level);  
+return locationToQuadkey({ lat: latitude, lng: longitude }, resolution);
 """
 OPTIONS (
   library=["gs://bigquery-jslibs/quadkey.js"]
