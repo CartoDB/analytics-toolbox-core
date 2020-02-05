@@ -1,10 +1,10 @@
-CREATE OR REPLACE FUNCTION jslibs.sphericalmercator.xyz(bbox ARRAY<FLOAT64>, zoom NUMERIC)
+CREATE OR REPLACE FUNCTION jslibs.sphericalmercator.xyz(bbox ARRAY<FLOAT64>, zoom NUMERIC, tileSize NUMERIC)
 	RETURNS STRUCT<minX NUMERIC,minY NUMERIC,maxX NUMERIC,maxY NUMERIC>
   	LANGUAGE js AS
 """
 
 	var merc = new SphericalMercator({
-	    size: 256
+	    size: tileSize
 	});
 
 	return merc.xyz(bbox,zoom);
