@@ -12,6 +12,16 @@ SELECT jslibs.h3.ST_H3(ST_GEOGPOINT(-74.0060,40.7128),11)
 
 No need to install anything, just start using them, and if you want to see what functions are available you can always pin the project and you will see all libraries that had been **bigquerified**
 
+## Function locations
+
+BigQuery allows you to run functions or more specifically datasets from within the same [regional location](https://cloud.google.com/bigquery/docs/locations). So if you are running a query for a dataset in the EU region you are going to have to use the eu functions. We have created for each function the following signatures:
+
+```
+jslibs.h3.ST_H3
+jslibs.us_h3.ST_H3
+jslibs.eu_h3.ST_H3
+```
+They are identical. The one not qualified, the first one is on US and is just there for convinience. If you need to access these functions from within a different location than US or EU, you should install yourself the functions on your location. 
 
 ## Function names ##
 
