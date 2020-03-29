@@ -1,12 +1,11 @@
 #!/bin/bash
 
 #Deploy JS libraries
-#gsutil cp libs/*  gs://bigquery-jslibs/
+gsutil cp libs/*  gs://bigquery-jslibs/
 
 #regions where to deploy. default_us is there to denote the default wich is US and not qualified
 regions=( eu us default_us )
 
-<<COMMENT1
 #create datsets if it does not exist Datasets in all regions
 ls sql | sort -z|while read libname; do
   #we iterate over the regions
@@ -43,8 +42,6 @@ ls sql | sort -z|while read libname; do
     rm permissions.json
   done
 done
-
-COMMENT1
 
 
 #We go over all the SQLs and replace for example jslibs.s2. with jslibs.eu_s2.
