@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION jslibs.h3.polyfillFromGeoJson(geojson STRING, resolut
  RETURNS ARRAY<STRING>
  LANGUAGE js AS
 """
-var pol =JSON.parse(geojson)
+var pol =JSON.parse(geojson);
 return h3.polyfill(pol.coordinates[0],resolution,true);
 """
 OPTIONS (
