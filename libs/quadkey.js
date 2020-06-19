@@ -200,12 +200,12 @@ tileToQuadkey = function( tile, detail ) {
 	for( var i = detail; i > 0; i-- ) {
 		var digit = '0'
 		  , value = digit.charCodeAt(0)
-		  , mask = 1 << ( i - 1 );
+		  , mask = BigInt(1) << (BigInt(i - 1));
 
-		if((tile.x & mask) != 0) {
+		if((BigInt(tile.x) & mask) != 0) {
 			value++;
 		}
-		if((tile.y & mask) != 0) {
+		if((BigInt(tile.y) & mask) != 0) {
 			value++;
 			value++;
 		}
