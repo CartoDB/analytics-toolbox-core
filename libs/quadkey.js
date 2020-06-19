@@ -126,28 +126,6 @@ sibling = function( quadkey, direction ) {
 }
 
 /**
- * convert a location to a pixel value for a specific map detail level
- * @param  {geocoord} coord  coordinates to convert to pixel location
- * @param  {number}   detail detail level of map to use in the conversion
- * @return {xycoord}         pixel value for the input location at the input detail level
- */
-locationToPixel = function( coord, detail ) {
-	var lat = clip(coord.lat, MinLatitude, MaxLatitude)
-	  , lng = clip(coord.lng, MinLongitude, MaxLongitude)
-	  , x = (lng + 180.0) / 360.0
-	  , sinLat = Math.sin(lat * Math.PI / 180.0)
-	  , y = 0.5 - Math.log((1.0 + sinLat) / (1.0 - sinLat)) / (4.0 * Math.PI)
-	  , size = parseFloat(mapSize(detail))
-	  , pixelX = parseInt(clip(x * size + 0.5, 0, size - 1.0), 10)
-	  , pixelY = parseInt(clip(y * size + 0.5, 0, size - 1.0), 10);
-
-	return {
-		x: pixelX,
-		y: pixelY
-	};
-};
-
-/**
  * convert a pixel coordinate to a location at a specific map detail
  * @param  {xycoord}  pixel  the pixel coordinate to convert
  * @param  {number}   detail detail level of map to use
@@ -162,18 +140,6 @@ pixelToLocation = function( pixel, detail ) {
 	return {
 		lat: lat,
 		lng: lng
-	};
-};
-
-/**
- * convert pixel coordinates to tile coordinates
- * @param  {xycoord} pixel pixel coordinates
- * @return {xycoord}       tile coordinates
- */
-pixelToTile = function( pixel ) {
-	return {
-		x: (pixel.x / 256),
-		y: (pixel.y / 256)
 	};
 };
 
@@ -263,15 +229,43 @@ tileToLocation = function( tile, detail ) {
 };
 
 /**
+ * get tile coordinates for location at specific detail level
+ * @param  {geocoord} location location coordinates to convert to tile
+ * @param  {number}   detail   map detail level of tile to return
+ * @return {xycoord}           tile coordinates
+ */
+locationToTile = function ( location, detail ) {
+	const world_limit_half = EarthRadius * Math.PI;
+	const world_range = world_limit_half * 2;
+	const radians_over_degrees = Math.PI / 180.0;
+
+	const x_transform = (x => world_limit_half + (x * world_range) / 360);
+	const y_transform = (y => {
+			y *= radians_over_degrees;
+			y = Math.log(Math.tan(y) + (1.0 / Math.cos(y)));
+			return world_limit_half - (y * EarthRadius);
+		});
+
+	const longitude = clip(location.lng, MinLongitude, MaxLongitude);
+	const latitude = clip(location.lat, MinLatitude, MaxLatitude);
+
+	const zoom_divisor = world_range / Math.pow(2, detail);
+	const max_tile = Math.pow(2, detail) - 1;
+
+	const x = Math.min(max_tile, Math.floor((x_transform(longitude)) / zoom_divisor));
+	const y = Math.min(max_tile, Math.floor((y_transform(latitude)) / zoom_divisor));
+
+    return {x, y};
+};
+
+/**
  * get quadkey for location at specific detail level
  * @param  {geocoord} location location coordinates to convert to quadkey
  * @param  {number}   detail   map detail level of quadkey to return
  * @return {string}            quadkey the input location resides in for the input detail level
  */
 locationToQuadkey = function( location, detail ) {
-	var pixel = locationToPixel(location, detail)
-	  , tile = pixelToTile(pixel);
-	return tileToQuadkey(tile, detail);
+	return tileToQuadkey(locationToTile(location, detail), detail);
 };
 
 /**
