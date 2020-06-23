@@ -123,22 +123,39 @@ sibling = function( quadkey, direction ) {
  * @return {string}         quadkey for input tile coordinates at input detail level
  */
 tileToQuadkey = function( tile, detail ) {
-	var out = "";
-	for( var i = detail; i > 0; i-- ) {
-		var digit = '0'
-		  , value = digit.charCodeAt(0)
-		  , mask = BigInt(1) << (BigInt(i - 1));
+	const max_int_bits = 31;
+	let out = "";
+	let x, y, mask, shift_value;
 
-		if((BigInt(tile.x) & mask) != 0) {
-			value++;
-		}
-		if((BigInt(tile.y) & mask) != 0) {
-			value++;
-			value++;
-		}
+	if (detail >= max_int_bits)
+	{
+		/* Since BigInt operations are 10x slower, only use them when strictly necessary */
+		x = BigInt(tile.x);
+		y = BigInt(tile.y);
+		mask = BigInt(1) << (BigInt(detail - 1));
+		shift_value = BigInt(1);
 
+		for (let i = detail; i > max_int_bits; i--, mask = mask >> shift_value) {
+			let value = '0'.charCodeAt(0);
+			value += 1 * ((x & mask) != 0);
+			value += 2 * ((y & mask) != 0);
+			out += String.fromCharCode(value);
+		}
+	}
+
+	const second_loop_start = Math.min(max_int_bits, detail);
+	x = tile.x & 0xFFFFFFFF;
+	y = tile.y & 0xFFFFFFFF;
+	mask = 1 << (second_loop_start - 1);
+	shift_value = 1;
+
+	for (let i = second_loop_start; i > 0; i--, mask = mask >> 1) {
+		let value = '0'.charCodeAt(0);
+		value += 1 * ((x & mask) != 0);
+		value += 2 * ((y & mask) != 0);
 		out += String.fromCharCode(value);
 	}
+
 	return out;
 };
 
@@ -148,33 +165,59 @@ tileToQuadkey = function( tile, detail ) {
  * @param  {string}  quadkey quadkey to be converted
  * @return {xycoord}         tile coordinates
  */
-quadkeyToTile = function( quadkey ) {
-	var tileX = BigInt(0)
-	  , tileY = BigInt(0)
-	  , detail = quadkey.length;
-	for( var i = detail; i > 0; i--) {
-		var mask = BigInt(BigInt(1) << (BigInt(i - 1)))
-		  , index = detail - i;
-		switch(quadkey[index]) {
-			case '0':
+quadkeyToTile = function (quadkey) {
+	const max_int_bits = 31;
+	const detail = quadkey.length;
+	let tileX = 0;
+	let tileY = 0;
+
+	if (detail >= max_int_bits) {
+		let mask = Math.pow(2, detail - 1);
+		for (let i = detail; i > 0; i--, mask = Math.floor(mask / 2)) {
+			const index = detail - i;
+			switch (quadkey[index]) {
+				case '0':
+					continue;
+				case '1':
+					tileX += mask;
 				break;
-			case '1':
-				tileX |= mask;
+				case '2':
+					tileY += mask;
+					break;
+				case '3':
+					tileX += mask;
+					tileY += mask;
+					break;
+				default:
+					break;
+			}
+		}
+	} else {
+		let mask = 1 << (detail - 1);
+		for(let i = detail; i > 0; i--, mask >>= 1) {
+			const index = detail - i;
+			switch (quadkey[index]) {
+				case '0':
+					continue;
+				case '1':
+					tileX += mask;
 				break;
-			case '2':
-				tileY |= mask;
-				break;
-			case '3':
-				tileX |= mask;
-				tileY |= mask;
-				break;
-			default:
-				throw new Error("Invalid quadkey");
+				case '2':
+					tileY += mask;
+					break;
+				case '3':
+					tileX += mask;
+					tileY += mask;
+					break;
+				default:
+					break;
+			}
 		}
 	}
+
 	return {
-		x: Number(tileX),
-		y: Number(tileY)
+		x: tileX,
+		y: tileY
 	};
 };
 
