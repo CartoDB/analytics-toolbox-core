@@ -2,8 +2,24 @@ CREATE OR REPLACE FUNCTION jslibs.h3.polyfillFromGeoJson(geojson STRING, resolut
  RETURNS ARRAY<STRING>
  LANGUAGE js AS
 """
-var pol =JSON.parse(geojson);
-return h3.polyfill(pol.coordinates[0],resolution,true);
+
+  const featureGeometry = JSON.parse(geojson)
+
+  if (!['Polygon', 'MultiPolygon'].includes(featureGeometry.type)) {
+    throw new Error(`Unsupported geometry type ${featureGeometry.type}`);
+  }
+
+  const polygonCoordinates =
+    featureGeometry.type === 'MultiPolygon'
+      ? featureGeometry.coordinates
+      : [featureGeometry.coordinates];
+
+  const hexes = polygonCoordinates.reduce(
+    (acc, coordinates) => acc.concat(h3.polyfill(coordinates, resolution, true)),
+    []
+  );
+
+  return hexes;
 """
 OPTIONS (
   library=["gs://bigquery-jslibs/h3-js.umd.js"]
