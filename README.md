@@ -37,6 +37,16 @@ We try to maintain the libaries on different versions and a latest folder. You c
 SELECT jslibs.h3.ST_H3(pointGeog,7)
 ```
 
+## How about visualizing very large datasets or creating vector tiles ##
+
+We have been working on a solution to create TileSets directly from BigQuery called [CARTO BigQuery Tiler](https://carto.com/bigquery/beta/). It makes use of many functions on this repo and several more. Here are a few screenshots of these type of visualizations:
+
+![alt text](screenshots/protected-areas.d0a592e5.jpg)
+
+![alt text](screenshots/external-tools-s.80d694f9.jpg)
+
+![alt text](screenshots/taxi-trips.500de518.jpg)
+
 ## Screenshots and examples
 
 First library included is H3 so here are a few screenshots of their use.
