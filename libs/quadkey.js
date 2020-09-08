@@ -53,15 +53,6 @@ function clip( n, minValue, maxValue ) {
 }
 
 /**
- * get the size of the map in pixels for a specified detail level
- * @param  {number} detail map detail level
- * @return {number}        size of the map in pixels for the given detail level
- */
-function mapSize( detail ) {
-	return 256 << parseInt(detail, 10);
-}
-
-/**
  * translates a character in a particular direction
  * @param  {character} keyChar   the character to translate
  * @param  {Direction} direction the direction to translate to
@@ -126,92 +117,45 @@ sibling = function( quadkey, direction ) {
 }
 
 /**
- * convert a location to a pixel value for a specific map detail level
- * @param  {geocoord} coord  coordinates to convert to pixel location
- * @param  {number}   detail detail level of map to use in the conversion
- * @return {xycoord}         pixel value for the input location at the input detail level
- */
-locationToPixel = function( coord, detail ) {
-	var lat = clip(coord.lat, MinLatitude, MaxLatitude)
-	  , lng = clip(coord.lng, MinLongitude, MaxLongitude)
-	  , x = (lng + 180.0) / 360.0
-	  , sinLat = Math.sin(lat * Math.PI / 180.0)
-	  , y = 0.5 - Math.log((1.0 + sinLat) / (1.0 - sinLat)) / (4.0 * Math.PI)
-	  , size = parseFloat(mapSize(detail))
-	  , pixelX = parseInt(clip(x * size + 0.5, 0, size - 1.0), 10)
-	  , pixelY = parseInt(clip(y * size + 0.5, 0, size - 1.0), 10);
-
-	return {
-		x: pixelX,
-		y: pixelY
-	};
-};
-
-/**
- * convert a pixel coordinate to a location at a specific map detail
- * @param  {xycoord}  pixel  the pixel coordinate to convert
- * @param  {number}   detail detail level of map to use
- * @return {geocoord}        location value for the input pixel coordinate at the input detail level
- */
-pixelToLocation = function( pixel, detail ) {
-	var size = parseFloat(mapSize(detail))
-	  , x = (clip(parseFloat(pixel.x), 0, size - 1.0) / size) - 0.5
-	  , y = 0.5 - (clip(parseFloat(pixel.y), 0, size - 1.0) / size)
-	  , lat = 90.0 - 360.0 * Math.atan(Math.exp(-1.0 * y * 2.0 * Math.PI)) / Math.PI
-	  , lng = 360.0 * x;
-	return {
-		lat: lat,
-		lng: lng
-	};
-};
-
-/**
- * convert pixel coordinates to tile coordinates
- * @param  {xycoord} pixel pixel coordinates
- * @return {xycoord}       tile coordinates
- */
-pixelToTile = function( pixel ) {
-	return {
-		x: (pixel.x / 256),
-		y: (pixel.y / 256)
-	};
-};
-
-/**
- * convert tile coordinates to pixel coordinates
- * @param  {xycoord} tile tile coordinates
- * @return {xycoord}      pixel coordinates
- */
-tileToPixel = function( tile ) {
-	return {
-		x: (tile.x * 256),
-		y: (tile.y * 256)
-	};
-};
-
-/**
  * convert tile coordinates to quadkey at specific detail level
  * @param  {xycoord} tile   tile coordinates
  * @param  {number}  detail map detail level to use for conversion
  * @return {string}         quadkey for input tile coordinates at input detail level
  */
 tileToQuadkey = function( tile, detail ) {
-	var out = "";
-	for( var i = detail; i > 0; i-- ) {
-		var digit = '0'
-		  , value = digit.charCodeAt(0)
-		  , mask = 1 << ( i - 1 );
+	const max_int_bits = 31;
+	let out = "";
+	let x, y, mask, shift_value;
 
-		if((tile.x & mask) != 0) {
-			value++;
-		}
-		if((tile.y & mask) != 0) {
-			value++;
-			value++;
-		}
+	if (detail >= max_int_bits)
+	{
+		/* Since BigInt operations are 10x slower, only use them when strictly necessary */
+		x = BigInt(tile.x);
+		y = BigInt(tile.y);
+		mask = BigInt(1) << (BigInt(detail - 1));
+		shift_value = BigInt(1);
 
+		for (let i = detail; i > max_int_bits; i--, mask = mask >> shift_value) {
+			let value = '0'.charCodeAt(0);
+			value += 1 * ((x & mask) != 0);
+			value += 2 * ((y & mask) != 0);
+			out += String.fromCharCode(value);
+		}
+	}
+
+	const second_loop_start = Math.min(max_int_bits, detail);
+	x = tile.x & 0xFFFFFFFF;
+	y = tile.y & 0xFFFFFFFF;
+	mask = 1 << (second_loop_start - 1);
+	shift_value = 1;
+
+	for (let i = second_loop_start; i > 0; i--, mask = mask >> 1) {
+		let value = '0'.charCodeAt(0);
+		value += 1 * ((x & mask) != 0);
+		value += 2 * ((y & mask) != 0);
 		out += String.fromCharCode(value);
 	}
+
 	return out;
 };
 
@@ -221,30 +165,56 @@ tileToQuadkey = function( tile, detail ) {
  * @param  {string}  quadkey quadkey to be converted
  * @return {xycoord}         tile coordinates
  */
-quadkeyToTile = function( quadkey ) {
-	var tileX = 0
-	  , tileY = 0
-	  , detail = quadkey.length;
-	for( var i = detail; i > 0; i--) {
-		var mask = 1 << (i - 1)
-		  , index = detail - i;
-		switch(quadkey[index]) {
-			case '0':
+quadkeyToTile = function (quadkey) {
+	const max_int_bits = 31;
+	const detail = quadkey.length;
+	let tileX = 0;
+	let tileY = 0;
+
+	if (detail >= max_int_bits) {
+		let mask = Math.pow(2, detail - 1);
+		for (let i = detail; i > 0; i--, mask = Math.floor(mask / 2)) {
+			const index = detail - i;
+			switch (quadkey[index]) {
+				case '0':
+					continue;
+				case '1':
+					tileX += mask;
 				break;
-			case '1':
-				tileX |= mask;
+				case '2':
+					tileY += mask;
+					break;
+				case '3':
+					tileX += mask;
+					tileY += mask;
+					break;
+				default:
+					break;
+			}
+		}
+	} else {
+		let mask = 1 << (detail - 1);
+		for(let i = detail; i > 0; i--, mask >>= 1) {
+			const index = detail - i;
+			switch (quadkey[index]) {
+				case '0':
+					continue;
+				case '1':
+					tileX += mask;
 				break;
-			case '2':
-				tileY |= mask;
-				break;
-			case '3':
-				tileX |= mask;
-				tileY |= mask;
-				break;
-			default:
-				throw new Error("Invalid quadkey");
+				case '2':
+					tileY += mask;
+					break;
+				case '3':
+					tileX += mask;
+					tileY += mask;
+					break;
+				default:
+					break;
+			}
 		}
 	}
+
 	return {
 		x: tileX,
 		y: tileY
@@ -252,14 +222,33 @@ quadkeyToTile = function( quadkey ) {
 };
 
 /**
- * convert tile coordinates to location at specific detail level, this will be the lat,lng of the tile corner
- * @param  {xycoord}  tile   tile coordinates
- * @param  {number}   detail map detail level used in the conversion
- * @return {geocoord}        location of tile at input detail level
+ * get tile coordinates for location at specific detail level
+ * @param  {geocoord} location location coordinates to convert to tile
+ * @param  {number}   detail   map detail level of tile to return
+ * @return {xycoord}           tile coordinates
  */
-tileToLocation = function( tile, detail ) {
-	var pixel = tileToPixel(tile);
-	return pixelToLocation(pixel, detail);
+locationToTile = function ( location, detail ) {
+	const world_limit_half = EarthRadius * Math.PI;
+	const world_range = world_limit_half * 2;
+	const radians_over_degrees = Math.PI / 180.0;
+
+	const x_transform = (x => world_limit_half + (x * world_range) / 360);
+	const y_transform = (y => {
+			y *= radians_over_degrees;
+			y = Math.log(Math.tan(y) + (1.0 / Math.cos(y)));
+			return world_limit_half - (y * EarthRadius);
+		});
+
+	const longitude = clip(location.lng, MinLongitude, MaxLongitude);
+	const latitude = clip(location.lat, MinLatitude, MaxLatitude);
+
+	const zoom_divisor = world_range / Math.pow(2, detail);
+	const max_tile = Math.pow(2, detail) - 1;
+
+	const x = Math.min(max_tile, Math.floor((x_transform(longitude)) / zoom_divisor));
+	const y = Math.min(max_tile, Math.floor((y_transform(latitude)) / zoom_divisor));
+
+    return {x, y};
 };
 
 /**
@@ -269,9 +258,21 @@ tileToLocation = function( tile, detail ) {
  * @return {string}            quadkey the input location resides in for the input detail level
  */
 locationToQuadkey = function( location, detail ) {
-	var pixel = locationToPixel(location, detail)
-	  , tile = pixelToTile(pixel);
-	return tileToQuadkey(tile, detail);
+	return tileToQuadkey(locationToTile(location, detail), detail);
+};
+
+/**
+ * Transforms coordinates from 3857 to 4326
+ * @param  {number} x Point longitude in 3857
+ * @param  {number} y Point latitude in 3857
+ * @return {geocoord}       location coordinates in 4326
+ */
+coords3857ToLongLat = function (x, y) {
+	const world_limit_half = EarthRadius * Math.PI;
+
+	const lng = (x * 180.0) / world_limit_half;
+	const lat = -90 + 360.0 * Math.atan(Math.exp(Math.PI * (y / world_limit_half))) / Math.PI;
+	return { lng, lat };
 };
 
 /**
@@ -279,18 +280,22 @@ locationToQuadkey = function( location, detail ) {
  * @param  {string} quadkey quadkey to get bounding box of
  * @return {bbox}           bounding box for the input quadkey 
  */
-bbox = function( quadkey ) {
-	var tile = quadkeyToTile(quadkey)
-	  , nextTile = { x: tile.x + 1, y: tile.y + 1 }
-	  , detail = quadkey.length
-	  , first = tileToLocation(tile, detail)
-	  , second = tileToLocation(nextTile, detail)
-	  , minCoord = { lat: Math.min(first.lat, second.lat), lng: Math.min(first.lng, second.lng) }
-	  , maxCoord = { lat: Math.max(first.lat, second.lat), lng: Math.max(first.lng, second.lng) };
+bbox = function (quadkey) {
+	const world_limit_half = EarthRadius * Math.PI;
+	const world_range = world_limit_half * 2;
+
+	const z = quadkey.length;
+	const tile = quadkeyToTile(quadkey);
+	const tile_size = world_range / Math.pow(2, z);
+
+	const x_left = -world_limit_half + tile.x * tile_size;
+	const y_bottom = world_limit_half - (tile.y + 1) * tile_size;
+	const minCoord = coords3857ToLongLat(x_left, y_bottom);
+	const maxCoord = coords3857ToLongLat(x_left + tile_size, y_bottom + tile_size);
 
 	return {
-		min: minCoord,
-		max: maxCoord
+		min : minCoord,
+		max : maxCoord
 	};
 };
 

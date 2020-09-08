@@ -2,8 +2,7 @@ CREATE OR REPLACE FUNCTION jslibs.s2.latLngToKey(latitude FLOAT64, longitude FLO
   RETURNS STRING
   LANGUAGE js AS
 """
-var S2 = require('s2-geometry').S2;
-return S2.latLngToKey(latitude, longitude, resolution);
+return S2.latLngToKey(latitude, longitude, level);
 """
 OPTIONS (
   library=["gs://bigquery-jslibs/s2geometry.js"]
