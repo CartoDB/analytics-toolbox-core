@@ -270,7 +270,9 @@ locationToQuadkey = function( location, detail ) {
 coords3857ToLongLat = function (x, y) {
 	const world_limit_half = EarthRadius * Math.PI;
 
-	const lng = (x * 180.0) / world_limit_half;
+	/* TODO: When we have a CI, we should test this. A quadkey that used to go slightly over the
+	 * antimeridian was 311131313 */
+	const lng = Math.min(((x * 180.0) / world_limit_half), MaxLongitude);
 	const lat = -90 + 360.0 * Math.atan(Math.exp(Math.PI * (y / world_limit_half))) / Math.PI;
 	return { lng, lat };
 };
