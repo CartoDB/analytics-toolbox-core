@@ -1,5 +1,7 @@
 #!/bin/bash
 
+projectid="jslibs"
+
 #Deploy JS libraries
 gsutil cp libs/*  gs://bigquery-jslibs/
 
@@ -22,12 +24,12 @@ ls sql | sort -z|while read libname; do
     fi
 
     #create the dataset
-    bq --location="$region" mk -d \
+    bq --project_id="$projectid" --location="$region" mk -d \
     --description "Dataset in ${region} for functions of library: ${libname}" \
     "$datasetname"
 
     #To add allAuthenticatedUsers to the dataset we grab the just created permission
-    bq show --format=prettyjson \
+    bq --project_id="$projectid" show --format=prettyjson \
     jslibs:"$datasetname" > permissions.json
   
     #add the permision to temp file
@@ -35,7 +37,7 @@ ls sql | sort -z|while read libname; do
     {"role": "READER","specialGroup": "allAuthenticatedUsers"},' permissions.json > updated_permission.json
 
     #we update with the new permissions file
-    bq update --source updated_permission.json jslibs:"$datasetname"    
+    bq --project_id="$projectid" update --source updated_permission.json jslibs:"$datasetname"    
 
     #cleanup
     rm updated_permission.json
@@ -72,7 +74,7 @@ find "$(pwd)" -name "*.sql" | sort  -z |while read fname; do
     echo "CREATING OR UPDATING ${replace}"
 
     sed "s/${search}/${replace}/g" $fname > tmp.file
-    bq --project_id jslibs query --use_legacy_sql=false --flagfile=tmp.file
+    bq  --project_id="$projectid" query --use_legacy_sql=false --flagfile=tmp.file
     rm tmp.file
 
   done
