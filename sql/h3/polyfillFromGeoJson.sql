@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.h3.polyfillFromGeoJson(geojson STRING, resolution NUMERIC)
  RETURNS ARRAY<STRING>
+ DETERMINISTIC
  LANGUAGE js AS
 """
 

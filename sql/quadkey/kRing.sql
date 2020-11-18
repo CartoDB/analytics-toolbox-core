@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.quadkey.kRing(quadkey STRING, ringSize NUMERIC)
  RETURNS ARRAY<STRING>
+ DETERMINISTIC
  LANGUAGE js AS
 """
 var left      = sibling(quadkey,'left');

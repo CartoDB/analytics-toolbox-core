@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.h3.h3GetFaces(h3Index STRING)
  RETURNS ARRAY<NUMERIC>
+ DETERMINISTIC
  LANGUAGE js AS
 """
 return h3.h3GetFaces(h3Index);

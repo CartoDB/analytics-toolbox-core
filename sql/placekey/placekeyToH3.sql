@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.placekey.placekeyToH3(placekey STRING)
     RETURNS STRING
+    DETERMINISTIC
     LANGUAGE js AS
 """
     return placekeyToH3(placekey);

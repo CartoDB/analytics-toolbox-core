@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.placekey.geoToPlacekey(latitude FLOAT64, longitude FLOAT64)
     RETURNS STRING
+    DETERMINISTIC
     LANGUAGE js AS
 """
     return geoToPlacekey(latitude, longitude);

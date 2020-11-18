@@ -1,4 +1,7 @@
-CREATE OR REPLACE FUNCTION jslibs.s2.keyToCornerLatLngs(key STRING) RETURNS STRING LANGUAGE js
+CREATE OR REPLACE FUNCTION jslibs.s2.keyToCornerLatLngs(key STRING) 
+RETURNS STRING 
+DETERMINISTIC
+LANGUAGE js
 OPTIONS (library=["gs://bigquery-jslibs/s2geometry.js"]) AS """
 var cornerLatLng = S2.S2Cell.FromHilbertQuadKey(key).getCornerLatLngs();
 var geojson = {

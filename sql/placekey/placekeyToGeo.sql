@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.placekey.placekeyToGeo(placekey STRING)
     RETURNS STRING
+    DETERMINISTIC
     LANGUAGE js AS
 """
     return placekeyToGeo(placekey);

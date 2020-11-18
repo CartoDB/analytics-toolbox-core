@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.h3.edgeLength(res NUMERIC,unit STRING)
  RETURNS NUMERIC
+ DETERMINISTIC
  LANGUAGE js AS
 """
 return h3.edgeLength(res,unit);
