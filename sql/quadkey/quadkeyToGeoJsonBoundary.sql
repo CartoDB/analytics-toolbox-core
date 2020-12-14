@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.quadkey.quadkeyToGeoJsonBoundary(quadkey STRING)
   RETURNS STRING
+  DETERMINISTIC
   LANGUAGE js AS
 """
 var b= bbox(quadkey);  

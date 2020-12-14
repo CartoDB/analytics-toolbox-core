@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.quadkey.polyfillFromGeoJson(geojson STRING, level NUMERIC)
  RETURNS ARRAY<STRING>
+ DETERMINISTIC
  LANGUAGE js AS
 """
 var pol = JSON.parse(geojson);

@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.h3.h3ToCenterChild(h3Index STRING, resolution NUMERIC)
  RETURNS STRING
+ DETERMINISTIC
  LANGUAGE js AS
 """
 return h3.h3ToCenterChild(h3Index,resolution);

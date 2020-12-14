@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.h3.h3IsValid(h3Index STRING)
  RETURNS BOOLEAN
+ DETERMINISTIC
  LANGUAGE js AS
 """
 return h3.h3IsValid(h3Index);

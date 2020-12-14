@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION jslibs.quadkey.bbox(quadkey STRING)
   RETURNS ARRAY<STRING>
+  DETERMINISTIC
   LANGUAGE js AS
 """
 var b= bbox(quadkey);  
