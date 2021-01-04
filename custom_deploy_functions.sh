@@ -9,21 +9,21 @@ GCP_JSLIBS_BUCKET="gs://${GCP_JSLIBS_ID}/"
 region="eu"
 
 #make the deployment bucket if not exists
-gsutil -q stat $GCP_JSLIBS_BUCKET -p $GCP_PROJECT_ID && \
-  gsutil mb -c standard -l eu $GCP_JSLIBS_BUCKET -p $GCP_PROJECT_ID  
+gsutil -q stat $GCP_JSLIBS_BUCKET && \
+  gsutil mb -c standard -l eu -p $GCP_PROJECT_ID $GCP_JSLIBS_BUCKET
 
 #deploy the target JS libraries
-gsutil cp libs/* $GCP_JSLIBS_BUCKET -p $GCP_PROJECT_ID
+gsutil cp libs/* $GCP_JSLIBS_BUCKET
 
 #create datasets to host each of the wrapper libraries in sql/
 ls sql | sort -z|while read libname; do
   datasetname="$libname"
 
-  #create the dataset if not exists
-  bq show "$datasetname" ||  bq --project_id="$GCP_PROJECT_ID" --location="$reg" mk -d \
-      --description "Dataset in ${reg} for functions of library: ${libname}" \
-      "$datasetname"
-done
+ #create the dataset if not exists
+  bq show "$datasetname" \
+    || bq --project_id="$GCP_PROJECT_ID" --location="$region" mk -d \
+      --description "Dataset in ${region} for functions of library: ${libname}" "$datasetname"
+done 
 
 #deploy the wrapper functions
 find "$(pwd)" -name "*.sql" | sort  -z |while read fname; do
