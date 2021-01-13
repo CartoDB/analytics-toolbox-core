@@ -1,12 +1,13 @@
 #!/bin/bash
 
-projectid="jslibs"
+projectid="internal-tp0uk-server-1"
+gsbucket="topo-bigquery-jslibs"
 
 #Deploy JS libraries
-gsutil cp libs/*  gs://bigquery-jslibs/
+gsutil cp libs/*  gs://$gsbucket/
 
-#regions where to deploy. default_us is there to denote the default wich is US and not qualified
-regions=( eu us default_us )
+#regions where to deploy. default_europe-west2 is there to denote the default wich is europe-west2 and not qualified
+regions=( default_eu_west2 )
 
 #create datsets if it does not exist Datasets in all regions
 ls sql | sort -z|while read libname; do
@@ -14,9 +15,9 @@ ls sql | sort -z|while read libname; do
   for reg in "${regions[@]}"
   do
     #we create the daset with no region for backwards compatibility
-    if [[ "$reg" == "default_us" ]];
+    if [[ "$reg" == "default_eu_west2" ]];
     then
-      region="us"
+      region="europe-west2"
       datasetname="$libname"
     else
       region="$reg"
@@ -30,14 +31,14 @@ ls sql | sort -z|while read libname; do
 
     #To add allAuthenticatedUsers to the dataset we grab the just created permission
     bq --project_id="$projectid" show --format=prettyjson \
-    jslibs:"$datasetname" > permissions.json
+    $projectid:"$datasetname" > permissions.json
   
     #add the permision to temp file
     sed  '/"access": \[/a \ 
     {"role": "READER","specialGroup": "allAuthenticatedUsers"},' permissions.json > updated_permission.json
 
     #we update with the new permissions file
-    bq --project_id="$projectid" update --source updated_permission.json jslibs:"$datasetname"    
+    bq --project_id="$projectid" update --source updated_permission.json $projectid:"$datasetname"
 
     #cleanup
     rm updated_permission.json
@@ -60,21 +61,27 @@ find "$(pwd)" -name "*.sql" | sort  -z |while read fname; do
   #we iterate over the regions to update or create all functions in the different regions
   for reg in "${regions[@]}"
   do
-    if [[ "$reg" == "default_us" ]];
+    if [[ "$reg" == "default_eu_west2" ]];
     then
       datasetname="${libname}"
     else
       datasetname="${reg}_${libname}"
     fi
     
-    #string to match
+    #strings to match
     search="jslibs.${libname}.${function_name}"
-    replace="jslibs.${datasetname}.${function_name}"
+    replace="\`${projectid}\`.${datasetname}.${function_name}"
+
+    search1="bigquery-jslibs"
+    replace1="${gsbucket}"
+
+    search2="jslibs\."
+    replace2="\`${projectid}\`."
 
     echo "CREATING OR UPDATING ${replace}"
 
-    sed "s/${search}/${replace}/g" $fname > tmp.file
-    bq  --project_id="$projectid" query --use_legacy_sql=false --flagfile=tmp.file
+    sed "s/\`//g; s/${search}/${replace}/g; s/${search1}/${replace1}/g; s/${search2}/${replace2}/g" $fname > tmp.file
+    bq  --project_id="${projectid}" query --use_legacy_sql=false --flagfile=tmp.file
     rm tmp.file
 
   done
