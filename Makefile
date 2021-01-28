@@ -1,9 +1,8 @@
 MODULES =
-BQ_PROJECTID ?= bqcarto
 
-.PHONY: all build check check-integration check-linter clean deploy deploy-bq linter
+.PHONY: all build check check-integration check-linter clean deploy linter
 
-all build check check-integration check-linter clean deploy deploy-bq linter:
+all build check check-integration check-linter clean deploy linter:
 	for module in $(MODULES); do \
 		$(MAKE) -C $${module} $@ || exit 1; \
 	done;
