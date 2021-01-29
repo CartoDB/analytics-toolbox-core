@@ -10,8 +10,8 @@ node_modules: package.json
 
 BQ_PROJECTID ?= cartodb-gcp-backend-data-team
 check_environment:
-ifndef BQ_DATASET
-	$(error BQ_DATASET is undefined)
+ifndef SKEL_BQ_DATASET
+	$(error SKEL_BQ_DATASET is undefined)
 endif
 
 .PHONY: clean
@@ -19,11 +19,11 @@ clean:
 	rm -rf node_modules
 
 .PHONY: check_integration
-check_integration: node_modules check_environment
+check-integration: node_modules check_environment
 	${TESTER} -p -j $(shell find . -maxdepth 1 -name "*_integration.js" | wc -l) -t 240000 $(shell find . -maxdepth 1 -name "*_integration.js")
 	${MAKE} check_integration_standalone
 
 # These tests need to be executed one by one because they modify the environment
 .PHONY: check_integration_standalone
-check_integration_standalone: node_modules check_environment
+check-integration-standalone: node_modules check_environment
 	${TESTER} -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")

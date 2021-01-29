@@ -8,6 +8,12 @@ GSUTIL ?= gsutil
 SKEL_BQ_BUCKET ?= $(BQ_BUCKET)
 SKEL_BQ_LIBRARY ?= $(SKEL_BQ_BUCKET)$(SKEL_BQ_DATASET)/skel_library.js
 
+.PHONY: ../skel_library.js
+../skel_library.js:
+	$(MAKE) -C .. all
+
+.PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
+
 check_environment:
 ifndef BQ_PROJECTID
 	$(error BQ_PROJECTID is undefined)
@@ -19,17 +25,10 @@ ifndef SKEL_BQ_BUCKET
 	$(error BQ_BUCKET is undefined)
 endif
 
-../$(SKEL_LIBRARY):
-	$(MAKE) -C .. all
-
 all check:
 
 clean:
 	$(MAKE) -C test/ $@
-
-
-../skel_library.js:
-	$(MAKE) -C .. all
 
 ##################### STORAGE FILES #####################
 storage_upload: ../skel_library.js check_environment
@@ -61,7 +60,7 @@ deploy: check_environment
 	$(MAKE) storage_upload dataset_create dataset_deploy
 
 ##################### INTEGRATION TESTS #####################
-check_integration: check_environment
+check-integration: check_environment
 	$(MAKE) deploy
 	$(MAKE) -C test/ $@ || ($(MAKE) integration_cleanup && exit 1)
 	$(MAKE) integration_cleanup

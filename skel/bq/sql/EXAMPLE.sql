@@ -10,5 +10,5 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@SKEL_BQ_DATASET@@.EXAMPLE_ADD`(va
     LANGUAGE js
     OPTIONS (library=["@@SKEL_BQ_LIBRARY@@"])
 AS """
-    return parseInt(skelExampleAdd(value));
+    return skelExampleAdd(parseInt(value));
 """;

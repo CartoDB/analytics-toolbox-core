@@ -6,13 +6,10 @@ ENABLED_BQ ?= 1
 SUBFOLDERS = $(DBS) \
 	"library/"
 
-.PHONY: all build check check-integration check-linter clean deploy linter
+TARGET = skel_library.js
+.PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
 
-TARGET = library/library.js
-
-all build:
-
-.PHONY: $(TARGET)
+.PHONY: 
 library/library.js:
 	$(MAKE) -C library/ all
 
