@@ -17,7 +17,7 @@ library/library.js:
 	$(MAKE) -C library/ all
 
 check check-linter clean linter: $(TARGET)
-	for s in $(DBS); do \
+	for s in $(SUBFOLDERS); do \
 		$(MAKE) -C $${s} $@ || exit 1; \
 	done;
 

@@ -22,7 +22,7 @@ endif
 ../$(SKEL_LIBRARY):
 	$(MAKE) -C .. all
 
-all:
+all check:
 
 clean:
 	$(MAKE) -C test/ $@
