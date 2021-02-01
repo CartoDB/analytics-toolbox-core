@@ -2,4 +2,4 @@
 
 ## Trunk
 
-* Imported library from
+* Created this module as an example.
