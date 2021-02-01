@@ -1,3 +1,7 @@
+## UPDATE ##
+
+CARTO is currently working on an entire restructure of this project to include documentation, tests and CI. On the process we will restructure components and do very significant changes. Our goal is to be ready by end of February. These functions will continue working now and after the changes to avoid breaking ETLs or disturb users using them. You can still send PR if you want to, but we recommend waiting for this refactor before doing investing any significant amlunt of work. Thanks!
+
 # BigQuery JS Libs: A repository of pre-packaged libraries to be used as functions inside BigQuery
 
 BigQuery allows you to create UDF functions using JS. In order to do so you have to upload the JS library into a Google Cloud Storage bucket and then create wrapper UDF functions to call them. We find the need of using external libraries very often so we have created this repo of prepared libraries to be used within BigQuery.
