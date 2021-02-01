@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@SKEL_BQ_DATASET@@.EXAMPLE_ADD`(value INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_SKEL@@.EXAMPLE_ADD`(value INT64)
     RETURNS INT64
     DETERMINISTIC
     LANGUAGE js

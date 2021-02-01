@@ -5,8 +5,7 @@ BQ ?= bq
 GSUTIL ?= gsutil
 
 # Deployment variables
-SKEL_BQ_BUCKET ?= $(BQ_BUCKET)
-SKEL_BQ_LIBRARY ?= $(SKEL_BQ_BUCKET)$(SKEL_BQ_DATASET)/skel_library.js
+SKEL_BQ_LIBRARY ?= $(BQ_BUCKET)$(BQ_DATASET_SKEL)/skel_library.js
 
 .PHONY: ../skel_library.js
 ../skel_library.js:
@@ -18,10 +17,10 @@ check_environment:
 ifndef BQ_PROJECTID
 	$(error BQ_PROJECTID is undefined)
 endif
-ifndef SKEL_BQ_DATASET
-	$(error SKEL_BQ_DATASET is undefined)
+ifndef BQ_DATASET_SKEL
+	$(error BQ_DATASET_SKEL is undefined)
 endif
-ifndef SKEL_BQ_BUCKET
+ifndef BQ_BUCKET
 	$(error BQ_BUCKET is undefined)
 endif
 
@@ -32,22 +31,22 @@ clean:
 
 ##################### STORAGE FILES #####################
 storage_upload: ../skel_library.js check_environment
-	$(GSUTIL) cp -r ../skel_library.js $(SKEL_BQ_BUCKET)$(SKEL_BQ_DATASET)/
+	$(GSUTIL) cp -r ../skel_library.js $(BQ_BUCKET)$(BQ_DATASET_SKEL)/
 
 storage_remove: check_environment
-	$(GSUTIL) rm -rf $(SKEL_BQ_BUCKET)$(SKEL_BQ_DATASET)/
+	$(GSUTIL) rm -rf $(BQ_BUCKET)$(BQ_DATASET_SKEL)/
 
 ##################### BIGQUERY DATASET #####################
 
 dataset_create: check_environment
-	$(BQ) --project_id $(BQ_PROJECTID) show $(SKEL_BQ_DATASET) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "SKEL Dataset" $(BQ_PROJECTID):$(SKEL_BQ_DATASET)
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_SKEL) 2>/dev/null 1>/dev/null || \
+		${BQ} mk -d --description "SKEL Dataset" $(BQ_PROJECTID):$(BQ_DATASET_SKEL)
 
 dataset_remove: check_environment
-	${BQ} rm -r -f -d $(BQ_PROJECTID):$(SKEL_BQ_DATASET)
+	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_SKEL)
 
 REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
-		-e 's!@@SKEL_BQ_DATASET@@!$(SKEL_BQ_DATASET)!g' \
+		-e 's!@@BQ_DATASET_SKEL@@!$(BQ_DATASET_SKEL)!g' \
 		-e 's!@@SKEL_BQ_LIBRARY@@!$(SKEL_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment

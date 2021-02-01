@@ -2,7 +2,7 @@ const assert = require('assert').strict;
 const {BigQuery} = require('@google-cloud/bigquery');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
-const SKEL_BQ_DATASET = process.env.SKEL_BQ_DATASET;
+const BQ_DATASET_SKEL = process.env.BQ_DATASET_SKEL;
 
 describe('SKEL integration tests', () => {
 
@@ -11,14 +11,14 @@ describe('SKEL integration tests', () => {
         if (!BQ_PROJECTID) {
             throw "Missing BQ_PROJECTID env variable";
         }
-        if (!SKEL_BQ_DATASET) {
-            throw "Missing SKEL_BQ_DATASET env variable";
+        if (!BQ_DATASET_SKEL) {
+            throw "Missing BQ_DATASET_SKEL env variable";
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
     it ('Returns the proper version', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${SKEL_BQ_DATASET}\`.VERSION() as versioncol;`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_SKEL}\`.VERSION() as versioncol;`;
 
         const options = {
             query: query
@@ -35,7 +35,7 @@ describe('SKEL integration tests', () => {
 
 
     it ('Adds correctly', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${SKEL_BQ_DATASET}\`.EXAMPLE_ADD(5) as addition;`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_SKEL}\`.EXAMPLE_ADD(5) as addition;`;
 
         const options = {
             query: query

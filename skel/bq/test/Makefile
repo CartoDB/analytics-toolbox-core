@@ -10,8 +10,8 @@ node_modules: package.json
 
 BQ_PROJECTID ?= cartodb-gcp-backend-data-team
 check_environment:
-ifndef SKEL_BQ_DATASET
-	$(error SKEL_BQ_DATASET is undefined)
+ifndef BQ_DATASET_SKEL
+	$(error BQ_DATASET_SKEL is undefined)
 endif
 
 .PHONY: clean

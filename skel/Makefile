@@ -1,20 +1,24 @@
-DBS = \
-	"bq/"
+DBS = "bq/"
+LIBRARY = "library/"
+ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
 
 ENABLED_BQ ?= 1
 
-SUBFOLDERS = $(DBS) \
-	"library/"
+
 
 TARGET = skel_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
 
-.PHONY: 
-library/library.js:
+all build $(TARGET):
 	$(MAKE) -C library/ all
 
-check check-linter clean linter: $(TARGET)
-	for s in $(SUBFOLDERS); do \
+check check-linter linter:
+	for s in $(LIBRARY); do \
+		$(MAKE) -C $${s} $@ || exit 1; \
+	done;
+
+clean: $(TARGET)
+	for s in $(ALL_SUBFOLDERS); do \
 		$(MAKE) -C $${s} $@ || exit 1; \
 	done;
 

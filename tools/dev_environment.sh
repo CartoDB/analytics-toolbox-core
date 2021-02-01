@@ -9,4 +9,7 @@ fi
 export POST_INTEGRATION_CLEANUP=0
 export BQ_PROJECTID="cartodb-gcp-backend-data-team"
 export BQ_BUCKET="gs://bqcartodev/"
-export SKEL_BQ_DATASET="${BQ_DATASET_PREFIX}_skel"
+export BQ_DATASET_SKEL="${BQ_DATASET_PREFIX}_skel"
+
+
+export ENABLED_BQ=1

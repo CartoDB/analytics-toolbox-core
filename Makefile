@@ -1,4 +1,5 @@
-MODULES =
+MODULES = \
+	skel
 
 .PHONY: all build check check-integration check-linter clean deploy linter
 
