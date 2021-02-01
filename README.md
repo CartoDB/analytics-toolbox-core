@@ -1,4 +1,4 @@
-## UPDATE ##
+## 🔥 UPDATE ##
 
 CARTO is currently working on an entire restructure of this project to include documentation, tests and CI. On the process we will restructure components and do very significant changes. Our goal is to be ready by end of February. These functions will continue working now and after the changes to avoid breaking ETLs or disturb users using them. You can still send PR if you want to, but we recommend waiting for this refactor before doing investing any significant amlunt of work. Thanks!
 
