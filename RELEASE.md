@@ -1,6 +1,6 @@
 # RELEASE PROCESS
 
-The release process is pretty simple as we only need to close the releases of any module that has received user oriented changes (features or bug fixes) since the previous release.
+As part of the release process we need to close the ongoing changes of any module that has received user oriented changes (features or bug fixes) since the previous release.
 
 For each module:
 

@@ -4,8 +4,6 @@ ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
 
 ENABLED_BQ ?= 1
 
-
-
 TARGET = skel_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
 

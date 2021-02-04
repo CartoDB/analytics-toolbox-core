@@ -8,9 +8,13 @@ The CARTO Spatial Extension is a series of modules that expand the funcionality 
 
 Quadkey is a geospatial index based on WebMercator tiles.
 
+### Skel
+
+This is a basic module meant to be used as the foundation to create new modules. It doesn't contain any useful functionality.
+
 ## Advanced Modules
 
-In addition to the open source modules found here, CARTO also offers customers advanced modules access, visualize and analyze large amounts of geospatial data.
+In addition to the open source modules found here, CARTO also offers customers access to advanced modules to visualize and analyze data.
 
 ### Tiler
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-# You can edit this file and rename it into dev_environment.sh
-# When modifying the source file (to commit to the repo) make sure you respect the environment and
-# only set variables that aren't already set
+# This file populates the necessary environment variables to run integration tests for the proejct
+# You can edit this file and rename it into dev_environment.sh to avoid pushing local changes to the repo
 
+original_name="dev_environment.sh.sample"
 original_full="$(git rev-parse --show-toplevel)/tools/dev_environment.sh.sample"
 script_name=`basename ${BASH_SOURCE[0]}`
 script_full=`realpath ${BASH_SOURCE[0]}`
-if [ "$script_name" != "dev_environment.sh.sample" ] && [ "$original_full" -nt "$script_full" ]; then
+if [ "$script_name" != "$original_name" ] && [ "$original_full" -nt "$script_full" ]; then
     echo "=======================================================================================";
-    echo "WARNING: THERE HAVE BEEN CHANGES TO dev_environment.sh.sample SINCE THIS WAS COPIED!!!!";
+    echo "WARNING: THERE HAVE BEEN CHANGES TO ${original_name} SINCE THIS WAS COPIED!!!!";
     echo "=======================================================================================";
 fi
 
