@@ -1,0 +1,61 @@
+name: Carto Spatial Extension
+
+env:
+  GCLOUD_VERSION: 'latest'
+  NODE_VERSION: '15'
+  MAKEFLAGS: '-j2'
+
+  BQ_PROJECTID: bqcartoci
+  BQ_DATASET_PREFIX: ${{ github.sha }}
+  POST_INTEGRATION_CLEANUP: 1
+
+jobs:
+  test-extension:
+    timeout-minutes: 15
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      - name: Setup environment variables
+        run: source tools/dev_environment.sh.sample
+
+      - name: Build
+        run: make
+
+      - name: Run unit tests
+        run: make check
+
+      - name: Install gcloud
+        uses: google-github-actions/setup-gcloud@master
+        with:
+            version: ${{env.GCLOUD_VERSION}}
+            project_id: ${{env.BQ_PROJECTID}}
+            service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
+            export_default_credentials: true
+
+      - name: Run integration tests
+        run: make check-integration
+
+  linter:
+    timeout-minutes: 15
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Check linter
+        run: make check-linter -j2
