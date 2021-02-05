@@ -15,7 +15,7 @@ check check-linter linter:
 		$(MAKE) -C $${s} $@ || exit 1; \
 	done;
 
-clean: $(TARGET)
+clean:
 	for s in $(ALL_SUBFOLDERS); do \
 		$(MAKE) -C $${s} $@ || exit 1; \
 	done;
