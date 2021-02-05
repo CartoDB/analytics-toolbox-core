@@ -5,7 +5,7 @@ BQ ?= bq
 GSUTIL ?= gsutil
 
 # Deployment variables
-SKEL_BQ_LIBRARY ?= $(BQ_BUCKET)$(BQ_DATASET_SKEL)/skel_library.js
+SKEL_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/skel_library.js
 
 .PHONY: ../skel_library.js
 ../skel_library.js:
@@ -20,8 +20,8 @@ endif
 ifndef BQ_DATASET_SKEL
 	$(error BQ_DATASET_SKEL is undefined)
 endif
-ifndef BQ_BUCKET
-	$(error BQ_BUCKET is undefined)
+ifndef BQ_BUCKET_PUBLIC
+	$(error BQ_BUCKET_PUBLIC is undefined)
 endif
 
 all check:
@@ -31,10 +31,10 @@ clean:
 
 ##################### STORAGE FILES #####################
 storage_upload: ../skel_library.js check_environment
-	$(GSUTIL) cp -r ../skel_library.js $(BQ_BUCKET)$(BQ_DATASET_SKEL)/
+	$(GSUTIL) cp -r ../skel_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/
 
 storage_remove: check_environment
-	$(GSUTIL) rm -rf $(BQ_BUCKET)$(BQ_DATASET_SKEL)/
+	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/
 
 ##################### BIGQUERY DATASET #####################
 

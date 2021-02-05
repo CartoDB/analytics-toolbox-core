@@ -24,7 +24,7 @@ export POST_INTEGRATION_CLEANUP=${POST_INTEGRATION_CLEANUP:-0}
 
 # BigQuery
 export BQ_PROJECTID=${BQ_PROJECTID:-"cartodb-gcp-backend-data-team"}
-export BQ_BUCKET=${BQ_BUCKET:-"gs://bqcartodev/"}
+export BQ_BUCKET_PUBLIC=${BQ_BUCKET_PUBLIC:-"gs://bqcartodev/"}
 export BQ_DATASET_SKEL=${BQ_DATASET_SKEL:-"${BQ_DATASET_PREFIX}_skel"}
 
 # Enabled drivers
