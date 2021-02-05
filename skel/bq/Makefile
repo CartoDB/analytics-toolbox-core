@@ -1,8 +1,10 @@
 # Programs
 SED ?= sed
 GREP ?= grep
-BQ ?= bq
+BQ ?= bq --location=$(BQ_REGION)
 GSUTIL ?= gsutil
+
+POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
 SKEL_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/skel_library.js
@@ -14,6 +16,9 @@ SKEL_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/skel_library.js
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
 
 check_environment:
+ifndef BQ_REGION
+	$(error BQ_REGION is undefined)
+endif
 ifndef BQ_PROJECTID
 	$(error BQ_PROJECTID is undefined)
 endif
