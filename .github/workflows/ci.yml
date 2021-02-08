@@ -5,7 +5,7 @@ name: Carto Spatial Extension
 #                                                                               #
 # - `pull_request` event is **intentionally** excluded because we need to check #
 #   the code from external contributors before running it. Once verified        #
-#   carto member should label the pull request with `run_ci` label              #
+#   CARTO member should label the pull request with `run_ci` label              #
 #   this will trigger one execution of ci using the external code.              #
 #   to run it again we need to remove then add the `run_ci` label               #
 # - for internal contributors we use `push` event and CI runs automatically     #
