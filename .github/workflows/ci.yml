@@ -8,7 +8,7 @@ name: Carto Spatial Extension
 #   carto member should label the pull request with `run_ci` label              #
 #   this will trigger one execution of ci using the external code.              #
 #   to run it again we need to remove then add the `run_ci` label               #
-# - for internal contributers we use `push` event and CI runs automatically     #
+# - for internal contributors we use `push` event and CI runs automatically     #
 #                                                                               #
 # If you edit this file, please ask for code review from infrastructure team    #
 #################################################################################
