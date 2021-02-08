@@ -28,8 +28,10 @@ jobs:
         with:
           node-version: ${{env.NODE_VERSION}}
 
-      - name: Setup environment variables
-        run: source tools/dev_environment.sh.sample
+      - name: Get environment
+        run: |
+          source tools/dev_environment.sh.sample
+          env >> $GITHUB_ENV
 
       - name: Build
         run: make
