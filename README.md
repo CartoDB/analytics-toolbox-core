@@ -1,3 +1,7 @@
+## 🔥 UPDATE ##
+
+CARTO is currently working on an entire restructure of this project to include documentation, tests and CI. On the process we will restructure components and do very significant changes. Our goal is to be ready by the end of February. We will be using different BigQuery projects so ETLs or calls to `jslibs.` will keep working. You can still send PRs if you want to, but we recommend waiting for this refactor to be done before investing any significant amount of work. Thanks!
+
 # CARTO Spatial Extension
 
 The CARTO Spatial Extension is a series of modules that expand the funcionality of geospatial data warehouses, like BigQuery.
@@ -25,5 +29,3 @@ The [CARTO BigQuery Tiler](https://carto.com/bigquery/beta/) is a solution to vi
 ![alt text](screenshots/external-tools-s.80d694f9.jpg)
 
 ![alt text](screenshots/taxi-trips.500de518.jpg)
-
-
