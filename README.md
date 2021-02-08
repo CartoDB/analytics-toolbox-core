@@ -1,16 +1,20 @@
 ## 🔥 UPDATE ##
 
-CARTO is currently working on an entire restructure of this project to include documentation, tests and CI. On the process we will restructure components and do very significant changes. Our goal is to be ready by the end of February. We will be using different BigQuery projects so ETLs or calls to `jslibs.` will keep working. You can still send PRs if you want to, but we recommend waiting for this refactor to be done before investing any significant amount of work. Thanks!
+CARTO is currently working on an entire refactor of the project. We plan to do significant changes to the modules, adding documentation, tests and continuous integration. We will be using different BigQuery projects so ETLs or calls to `jslibs.` will keep working. 
+
+Our goal is to be ready by the end of February. You can still send PRs in the meantime if you want to, but we recommend waiting for this refactor to be done before investing any significant amount of work. Thanks!
 
 # CARTO Spatial Extension
 
-The CARTO Spatial Extension is a series of modules that expand the funcionality of geospatial data warehouses, like BigQuery.
+The CARTO Spatial Extension adds new geospatial capabilities to cloud data warehouses. This project is an evolution of [BigQuery JSLibs](https://carto.com/blog/spatial-functions-bigquery-uber/) with the objective to make it easy add extra modules and support new databases.
 
 ## Modules
 
+The project is divided into modules, which are a set of components under a common geospatial topic, like `quadkey` or `s2` indexes.
+
 ### Quadkey
 
-Quadkey is a geospatial index based on WebMercator tiles.
+[Quadkey](https://wiki.openstreetmap.org/wiki/QuadTiles) is a geospatial index based on WebMercator tiles.
 
 ### Skel
 
