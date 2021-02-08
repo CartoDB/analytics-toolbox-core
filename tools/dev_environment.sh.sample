@@ -8,14 +8,14 @@ original_full="$(git rev-parse --show-toplevel)/tools/dev_environment.sh.sample"
 script_name=`basename ${BASH_SOURCE[0]}`
 script_full=`realpath ${BASH_SOURCE[0]}`
 if [ "$script_name" != "$original_name" ] && [ "$original_full" -nt "$script_full" ]; then
-    echo "=======================================================================================";
-    echo "WARNING: THERE HAVE BEEN CHANGES TO ${original_name} SINCE THIS WAS COPIED!!!!";
-    echo "=======================================================================================";
+    echo -e "\e[1;96m\t\t=======================================================================================\e[0m";
+    echo -e "\e[1;96m\t\tWARNING: THERE HAVE BEEN CHANGES TO ${original_name} SINCE THIS WAS COPIED!!!!\e[0m";
+    echo -e "\e[1;96m\t\t=======================================================================================\e[0m";
 fi
 
 if [ -z "$BQ_DATASET_PREFIX" ]
 then
-      echo "\$BQ_DATASET_PREFIX must be declared"
+      echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared\e[0m"
       return 1
 fi
 
@@ -30,3 +30,7 @@ export BQ_DATASET_SKEL=${BQ_DATASET_SKEL:-"${BQ_DATASET_PREFIX}_skel"}
 
 # Enabled drivers
 export ENABLED_BQ=${ENABLED_BQ:-1}
+if [ "$ENABLED_BQ" -eq 1 ] && [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]
+then
+        echo -e "\e[1;96m\tNOTICE: BigQuery is enabled but not \$GOOGLE_APPLICATION_CREDENTIALS\e[0m"
+fi
