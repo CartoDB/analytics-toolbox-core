@@ -1,4 +1,4 @@
-name: Carto Spatial Extension
+name: CARTO Spatial Extension
 
 #################################################################################
 # IMPORTANT: READ BEFORE EDITIING THIS FILE                                     #
@@ -44,7 +44,7 @@ jobs:
            if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
              echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
            else
-             echo "Fork pull request need to be verified by carto member then labeled with run_ci"
+             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
              exit 1
            fi
         if: github.event_name == 'pull_request_target'
@@ -99,7 +99,7 @@ jobs:
            if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
              echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
            else
-             echo "Fork pull request need to be verified by carto member then labeled with run_ci"
+             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
              exit 1
            fi
         if: github.event_name == 'pull_request_target'
