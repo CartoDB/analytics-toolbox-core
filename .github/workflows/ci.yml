@@ -1,5 +1,24 @@
-name: Carto Spatial Extension
-on: [push, pull_request]
+name: CARTO Spatial Extension
+
+#################################################################################
+# IMPORTANT: READ BEFORE EDITIING THIS FILE                                     #
+#                                                                               #
+# - `pull_request` event is **intentionally** excluded because we need to check #
+#   the code from external contributors before running it. Once verified        #
+#   CARTO member should label the pull request with `run_ci` label              #
+#   this will trigger one execution of ci using the external code.              #
+#   to run it again we need to remove then add the `run_ci` label               #
+# - for internal contributors we use `push` event and CI runs automatically     #
+#                                                                               #
+# If you edit this file, please ask for code review from infrastructure team    #
+#################################################################################
+on:
+  push:
+    branches:
+      - '*'
+  pull_request_target:
+    types: [labeled]
+
 
 env:
   GCLOUD_VERSION: 'latest'
@@ -20,8 +39,26 @@ jobs:
         shell: bash
     steps:
 
+      - name: Check if fork pull request can run CI
+        run: |
+           if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
+             echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
+           else
+             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
+             exit 1
+           fi
+        if: github.event_name == 'pull_request_target'
+
       - name: Checkout repo
         uses: actions/checkout@v2
+        if: github.event_name != 'pull_request_target'
+
+      - name: Checkout forked repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+        if: github.event_name == 'pull_request_target'
 
       - name: Install node
         uses: actions/setup-node@v1
@@ -32,7 +69,6 @@ jobs:
         run: |
           source tools/dev_environment.sh.sample
           env >> $GITHUB_ENV
-
       - name: Build
         run: make
 
@@ -58,8 +94,26 @@ jobs:
         shell: bash
     steps:
 
+      - name: Check if fork pull request can run CI
+        run: |
+           if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
+             echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
+           else
+             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
+             exit 1
+           fi
+        if: github.event_name == 'pull_request_target'
+
       - name: Checkout repo
         uses: actions/checkout@v2
+        if: github.event_name != 'pull_request_target'
+
+      - name: Checkout forked repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+        if: github.event_name == 'pull_request_target'
 
       - name: Check linter
         run: make check-linter
