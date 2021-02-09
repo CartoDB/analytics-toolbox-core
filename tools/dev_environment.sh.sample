@@ -13,10 +13,13 @@ if [ "$script_name" != "$original_name" ] && [ "$original_full" -nt "$script_ful
     echo -e "\e[1;96m\t\t=======================================================================================\e[0m";
 fi
 
+# Choose a prefix for your BQ environment. You can either pass the env variable or add it below (between the ")
+export BQ_DATASET_PREFIX=${BQ_DATASET_PREFIX:-""}
+
 if [ -z "$BQ_DATASET_PREFIX" ]
 then
-      echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared\e[0m"
-      return 1
+    echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
+    return 1
 fi
 
 # Cleanup the storage bucket and the datasets after CI is run
