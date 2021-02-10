@@ -1,6 +1,5 @@
 # Programs
 SED ?= sed
-GREP ?= grep
 BQ ?= bq --location=$(BQ_REGION)
 GSUTIL ?= gsutil
 

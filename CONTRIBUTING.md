@@ -6,7 +6,7 @@ The CARTO Spatial Extension is an open-source project and we are more then happy
 
 If you are planning a large contribution to the project, such a new module, consider opening a ticket to let us know beforehand and ensure it aligns with our roadmap and the project philosophy.
 
-If you are changing an external library, please contribute your changes upstream and then bring the update to the Spatil Extension. That will both benefit the original project and make it easier for us to keep things simple.
+If you are changing an external library, please contribute your changes upstream and then bring the update to the Spatial Extension. That will both benefit the original project and make it easier for us to keep things simple.
 
 ### Contributor License Agreement
 
