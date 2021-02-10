@@ -30,6 +30,7 @@ export BQ_REGION=${BQ_REGION:-us}
 export BQ_PROJECTID=${BQ_PROJECTID:-"cartodb-gcp-backend-data-team"}
 export BQ_BUCKET_PUBLIC=${BQ_BUCKET_PUBLIC:-"gs://bqcartodev/"}
 export BQ_DATASET_SKEL=${BQ_DATASET_SKEL:-"${BQ_DATASET_PREFIX}_skel"}
+export BQ_DATASET_H3=${BQ_DATASET_SKEL:-"${BQ_DATASET_PREFIX}_h3"}
 
 # Enabled drivers
 export ENABLED_BQ=${ENABLED_BQ:-1}
