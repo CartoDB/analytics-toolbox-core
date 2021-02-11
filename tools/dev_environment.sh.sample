@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# This file populates the necessary environment variables to run integration tests for the proejct
+# You can edit this file and rename it into dev_environment.sh to avoid pushing local changes to the repo
+
+original_name="dev_environment.sh.sample"
+original_full="$(git rev-parse --show-toplevel)/tools/dev_environment.sh.sample"
+script_name=`basename ${BASH_SOURCE[0]}`
+script_full=`realpath ${BASH_SOURCE[0]}`
+if [ "$script_name" != "$original_name" ] && [ "$original_full" -nt "$script_full" ]; then
+    echo -e "\e[1;96m\t\t=======================================================================================\e[0m";
+    echo -e "\e[1;96m\t\tWARNING: THERE HAVE BEEN CHANGES TO ${original_name} SINCE THIS WAS COPIED!!!!\e[0m";
+    echo -e "\e[1;96m\t\t=======================================================================================\e[0m";
+fi
+
+# Choose a prefix for your BQ environment. You can either pass the env variable or add it below (between the ")
+export BQ_DATASET_PREFIX=${BQ_DATASET_PREFIX:-""}
+
+if [ -z "$BQ_DATASET_PREFIX" ]
+then
+    echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
+    return 1
+fi
+
+# Cleanup the storage bucket and the datasets after CI is run
+export POST_INTEGRATION_CLEANUP=${POST_INTEGRATION_CLEANUP:-0}
+
+# BigQuery
+export BQ_REGION=${BQ_REGION:-us}
+export BQ_PROJECTID=${BQ_PROJECTID:-"cartodb-gcp-backend-data-team"}
+export BQ_BUCKET_PUBLIC=${BQ_BUCKET_PUBLIC:-"gs://bqcartodev/"}
+export BQ_DATASET_SKEL=${BQ_DATASET_SKEL:-"${BQ_DATASET_PREFIX}_skel"}
+
+# Enabled drivers
+export ENABLED_BQ=${ENABLED_BQ:-1}
+if [ "$ENABLED_BQ" -eq 1 ] && [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]
+then
+        echo -e "\e[1;96m\tNOTICE: BigQuery is enabled but not \$GOOGLE_APPLICATION_CREDENTIALS\e[0m"
+fi

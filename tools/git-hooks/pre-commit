@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+cd "$(git rev-parse --show-toplevel)"
+
+STAGED_FILES=($(git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(c|cpp|h|hpp|js)$"))
+
+if [[ "$STAGED_FILES" = "" ]]; then
+    exit 0
+fi
+
+make check-linter
+if [[ "$?" != 0 ]]; then
+    printf "\n\033[0;31mCOMMIT FAILED\033[0m, due to some of your files having format issues\n"
+    exit 1
+fi
