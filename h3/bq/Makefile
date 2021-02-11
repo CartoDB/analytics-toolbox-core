@@ -62,7 +62,8 @@ dataset_deploy: check_environment
 
 ##################### DEPLOY #####################
 deploy: check_environment
-	$(MAKE) storage_upload dataset_create dataset_deploy
+	$(MAKE) storage_upload dataset_create
+	$(MAKE) dataset_deploy
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment
