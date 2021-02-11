@@ -299,7 +299,6 @@ bbox = function(quadint) {
  */
 inside = function(location, quadint) {
     const tile = ZXYFromQuadint(quadint);
-    const z = parseInt(tile.z);
     return quadint === locationToQuadint(location, parseInt(tile.z));
 };
 

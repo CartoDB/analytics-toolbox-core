@@ -77,9 +77,9 @@ describe('QUADKEY unit tests', () => {
         let z, lat, lng;
         for(z = 1; z < 30; ++z)
         {
-            for(lat = -90; lat <= 90; lat = lat + 45)
+            for(lat = -90; lat <= 90; lat = lat + 15)
             {
-                for(lng = -180; lng <= 180; lng = lng + 45)
+                for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     let location = {'lng': lng, 'lat': lat};
                     let quadint = locationToQuadint(location, z);
@@ -93,9 +93,9 @@ describe('QUADKEY unit tests', () => {
         let z, lat, lng;
         for(z = 2; z < 30; ++z)
         {
-            for(lat = -90; lat <= 90; lat = lat + 45)
+            for(lat = -90; lat <= 90; lat = lat + 15)
             {
-                for(lng = -180; lng <= 180; lng = lng + 45)
+                for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     let location = {'lng': lng, 'lat': lat};
                     let quadint = locationToQuadint(location, z);
@@ -109,9 +109,9 @@ describe('QUADKEY unit tests', () => {
         let z, lat, lng, cont;
         for(z = 1; z < 30; ++z)
         {
-            for(lat = -90; lat <= 90; lat = lat + 45)
+            for(lat = -90; lat <= 90; lat = lat + 15)
             {
-                for(lng = -180; lng <= 180; lng = lng + 45)
+                for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     let location = {'lng': lng, 'lat': lat};
                     let quadint = locationToQuadint(location, z);
