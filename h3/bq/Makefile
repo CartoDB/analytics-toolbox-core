@@ -2,6 +2,9 @@
 SED ?= sed
 BQ ?= bq --location=$(BQ_REGION)
 GSUTIL ?= gsutil
+SHELL := bash
+PARALLEL ?= parallel -j10
+TR ?= tr
 
 POST_INTEGRATION_CLEANUP ?= 1
 
@@ -54,9 +57,8 @@ REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 		-e 's!@@H3_BQ_LIBRARY@@!$(H3_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
-	for n in $(wildcard sql/*.sql); do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \
-	done
+	echo "$(wildcard sql/*.sql)" | $(TR) " " "\n" | \
+	    $(PARALLEL) $(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false
 
 ##################### DEPLOY #####################
 deploy: check_environment
