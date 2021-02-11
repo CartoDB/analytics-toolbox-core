@@ -1,5 +1,6 @@
 # Changelog
 
-## Trunk
+## Current trunk
 
-* Created this module as an example.
+## Version 1
+* Quadkey: v1.

@@ -33,20 +33,4 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows[0].versioncol, 1);
     });
 
-
-    it ('Adds correctly', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.EXAMPLE_ADD(5) as addition;`;
-
-        const options = {
-            query: query
-        };
-
-        let rows;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
-        assert.equal(rows.length, 1);
-        assert.equal(rows[0].addition, 6);
-    });
 }); /* QUADKEY integration tests */
