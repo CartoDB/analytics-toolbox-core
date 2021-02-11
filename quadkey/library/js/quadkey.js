@@ -298,9 +298,9 @@ bbox = function(quadint) {
  * @return {boolean}           true if location is inside quadint and false otherwise
  */
 inside = function(location, quadint) {
-    const bboxCoords = bbox(quadint);
-    return bboxCoords.min.lat < location.lat && bboxCoords.max.lat > location.lat &&
-    bboxCoords.min.lng < location.lng && bboxCoords.max.lng > location.lng;
+    const tile = ZXYFromQuadint(quadint);
+    const z = parseInt(tile.z);
+    return quadint === locationToQuadint(location, parseInt(tile.z));
 };
 
 /**
