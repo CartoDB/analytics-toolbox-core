@@ -1,5 +1,6 @@
 TARGET = ../h3.js
 AUXLIB = h3-js.umd.js
+H3_JS_VERSION ?= 3.7.0
 
 NPM ?= npm
 CP ?= cp
@@ -7,14 +8,14 @@ CP ?= cp
 
 .PHONY: all
 all: ${TARGET}
-$(TARGET): h3-js.umd.js
+$(TARGET): $(AUXLIB)
 	$(CP) $(AUXLIB) $(TARGET)
 
 $(AUXLIB):
 	bash sync.sh
 
 .PHONY: check
-check: node_modules
+check: node_modules $(AUXLIB)
 	$(NPM) test
 
 node_modules: package.json
