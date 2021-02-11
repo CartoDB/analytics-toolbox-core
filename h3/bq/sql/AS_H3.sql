@@ -11,7 +11,10 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.LONGLAT_ASH3`(lon
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
 AS
 """
-    const index = h3.geoToH3(latitude, longitude, resolution);
+    if (longitude === null || latitude === null || resolution === null) {
+        return null;
+    }
+    const index = h3.geoToH3(Number(latitude), Number(longitude), Number(resolution));
     if (index) {
         return '0x' + index;
     }
