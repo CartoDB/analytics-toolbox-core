@@ -1,42 +1,31 @@
 ## Reference
 
-### SKEL
+### H3
 
-This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
+[H3](https://eng.uber.com/h3/) is Uber’s Hexagonal Hierarchical Spatial Index. Full documentation of the project can be found at [h3geo](https://h3geo.org/docs).
 
-#### skel.EXAMPLE_ADD
+#### h3.ST_ASH3
 
 {{% bannerNote type="code" %}}
-skel.EXAMPLE_ADD (value)
+h3.ST_ASH3(geog, resolution)
 {{%/ bannerNote %}}
 
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
+* `geog`: `GEOGRAPHY` A **POINT** geography
+* `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable)
 
-Here is a tip:
+Returns an H3 cell index where the point is placed in the required `resolution` as an `INT64` number. If will return `NULL` on error (invalid geography type or resolution out of bounds).
 
 {{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
+If you want the HEX representation of the cell, you can call `h3.H3_ASHEX` with the number.
 {{%/ bannerNote %}}
 
+TODO: Mix with ST_H3_POLYFILLFROMGEOG <<<<<<<<<<<<
 
-#### skel.VERSION
+
+#### h3.VERSION
 
 {{% bannerNote type="code" %}}
-skel.VERSION()
+h3.VERSION()
 {{%/ bannerNote %}}
 
-Returns the current version of the skel library. Here is some sample code block:
-
-```js
-function skelExampleAdd(v) {
-    return v + 1;
-}
-```
-
-And a table:
-
-| Column1 | Description |
-| :----- | :------ |
-|`taters`| Few and good. |
-|`potatoes`| Boil 'em, mash 'em, stick 'em in a stew.|
-|`chips`| Lovely big golden chips with a nice piece of fried fish.|
+Returns a `STRING` with the current version of the h3 library.
