@@ -1,5 +1,6 @@
 MODULES = \
-	skel
+	skel \
+	quadkey
 
 .PHONY: all build check check-integration check-linter clean deploy linter
 
