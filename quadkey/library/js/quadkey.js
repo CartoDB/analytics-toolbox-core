@@ -335,17 +335,17 @@ sibling = function(quadint, direction) {
     let x = parseInt(tile.x);
     let y = parseInt(tile.y);
     const tilesPerLevel = 2 << (z - 1);
-    if (direction === Direction.Left && x > 0) {
-        --x;
+    if (direction === Direction.Left) {
+        x = x > 0 ? x - 1 : tilesPerLevel - 1;
     }
-    if (direction === Direction.Right && x < tilesPerLevel - 1) {
-        ++x;
+    if (direction === Direction.Right) {
+        x = x < tilesPerLevel - 1 ? x + 1 : 0;
     }
-    if (direction === Direction.Up && y > 0) {
-        --y;
+    if (direction === Direction.Up) {
+        y = y > 0 ? y - 1 : tilesPerLevel - 1;
     }
-    if (direction === Direction.Down && y < tilesPerLevel - 1) {
-        ++y;
+    if (direction === Direction.Down) {
+        y = y < tilesPerLevel - 1 ? y + 1 : 0;
     }
     return quadintFromZXY(z, x, y);
 };

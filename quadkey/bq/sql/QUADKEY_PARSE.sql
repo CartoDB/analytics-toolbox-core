@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADINT_FROM
     LANGUAGE js
     OPTIONS (library=["@@BQ_LIBRARY_QUADKEY@@"])
 AS """
-    quadintFromQuadkey(quadkey);
+    return quadintFromQuadkey(quadkey);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADKEY_FROM_QUADINT`(quadint INT64)
@@ -19,5 +19,5 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADKEY_FROM
     LANGUAGE js
     OPTIONS (library=["@@BQ_LIBRARY_QUADKEY@@"])
 AS """
-    quadkeyFromQuadint(quadint);
+    return quadkeyFromQuadint(quadint);
 """;

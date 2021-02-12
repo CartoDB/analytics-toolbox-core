@@ -23,16 +23,16 @@ describe('QUADKEY unit tests', () => {
             yDecoded = Number(zxyDecoded.y);
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
            
-            x = tilesPerLevel/2;
-            y = tilesPerLevel/2;
+            x = tilesPerLevel / 2;
+            y = tilesPerLevel / 2;
             zxyDecoded = ZXYFromQuadint(quadintFromZXY(z, x, y));
             zDecoded = Number(zxyDecoded.z);
             xDecoded = Number(zxyDecoded.x);
             yDecoded = Number(zxyDecoded.y);
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
             
-            x = tilesPerLevel-1;
-            y = tilesPerLevel-1;
+            x = tilesPerLevel - 1;
+            y = tilesPerLevel - 1;
             zxyDecoded = ZXYFromQuadint(quadintFromZXY(z, x, y));
             zDecoded = Number(zxyDecoded.z);
             xDecoded = Number(zxyDecoded.x);
@@ -55,16 +55,16 @@ describe('QUADKEY unit tests', () => {
             yDecoded = Number(zxyDecoded.y);
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
            
-            x = tilesPerLevel/2;
-            y = tilesPerLevel/2;
+            x = tilesPerLevel / 2;
+            y = tilesPerLevel / 2;
             zxyDecoded = ZXYFromQuadint(quadintFromQuadkey(quadkeyFromQuadint(quadintFromZXY(z, x, y))));
             zDecoded = Number(zxyDecoded.z);
             xDecoded = Number(zxyDecoded.x);
             yDecoded = Number(zxyDecoded.y);
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
             
-            x = tilesPerLevel-1;
-            y = tilesPerLevel-1;
+            x = tilesPerLevel - 1;
+            y = tilesPerLevel - 1;
             zxyDecoded = ZXYFromQuadint(quadintFromQuadkey(quadkeyFromQuadint(quadintFromZXY(z, x, y))));
             zDecoded = Number(zxyDecoded.z);
             xDecoded = Number(zxyDecoded.x);
@@ -81,8 +81,8 @@ describe('QUADKEY unit tests', () => {
             {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
-                    let location = {'lng': lng, 'lat': lat};
-                    let quadint = locationToQuadint(location, z);
+                    const location = {'lng': lng, 'lat': lat};
+                    const quadint = locationToQuadint(location, z);
                     assert.ok(inside(location, quadint));
                 }
             }
@@ -97,28 +97,46 @@ describe('QUADKEY unit tests', () => {
             {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
-                    let location = {'lng': lng, 'lat': lat};
-                    let quadint = locationToQuadint(location, z);
+                    const location = {'lng': lng, 'lat': lat};
+                    const quadint = locationToQuadint(location, z);
                     assert.ok(inside(location, parent(quadint)));
                 }
             }
         }
     });
 
-    it ('A quadint children should be contained inside the quadint at any level of zoom', async () => {
-        let z, lat, lng, cont;
-        for(z = 1; z < 30; ++z)
+    it ('Parent should work at any level of zoom', async () => {
+        let z, lat, lng;
+        for(z = 2; z < 30; ++z)
         {
             for(lat = -90; lat <= 90; lat = lat + 15)
             {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
-                    let location = {'lng': lng, 'lat': lat};
-                    let quadint = locationToQuadint(location, z);
-                    let childs = children(quadint);
+                    const location = {'lng': lng, 'lat': lat};
+                    const quadint = locationToQuadint(location, z);
+                    const currentParent = locationToQuadint(location, z - 1);
+                    assert.equal(currentParent, parent(quadint));
+                }
+            }
+        }
+    });
+
+    it ('Children should work at any level of zoom', async () => {
+        let z, lat, lng, cont;
+        for(z = 1; z < 29; ++z)
+        {
+            for(lat = -90; lat <= 90; lat = lat + 15)
+            {
+                for(lng = -180; lng <= 180; lng = lng + 15)
+                {
+                    const location = {'lng': lng, 'lat': lat};
+                    const quadint = locationToQuadint(location, z);
+                    const currentChild = locationToQuadint(location, z + 1);
+                    const childs = children(quadint);
                     cont = 0;
                     childs.forEach((element) => {
-                        if(inside(location, element))
+                        if(currentChild === element)
                         {
                             ++cont;
                         }
