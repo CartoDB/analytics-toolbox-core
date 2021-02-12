@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.KRING`
-    (quadint INT64, ringSize NUMERIC)
+    (quadint INT64)
     RETURNS ARRAY<INT64>
     DETERMINISTIC
     LANGUAGE js
