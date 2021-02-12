@@ -6,7 +6,7 @@ GSUTIL ?= gsutil
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-BQ_LIBRARY_QUADKEY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_QUADKEY)/quadkey_library.js
+QUADKEY_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_QUADKEY)/quadkey_library.js
 
 .PHONY: ../quadkey_library.js
 ../quadkey_library.js:
@@ -51,7 +51,7 @@ dataset_remove: check_environment
 
 REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 		-e 's!@@BQ_DATASET_QUADKEY@@!$(BQ_DATASET_QUADKEY)!g' \
-		-e 's!@@BQ_LIBRARY_QUADKEY@@!$(BQ_LIBRARY_QUADKEY)!g'
+		-e 's!@@QUADKEY_BQ_LIBRARY@@!$(QUADKEY_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
 	for n in $(wildcard sql/*.sql); do \

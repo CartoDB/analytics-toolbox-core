@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --
--- Copyright (C) 2020 - 2021 CARTO
+-- Copyright (C) 2021 CARTO
 --
 -----------------------------------------------------------------------
 
@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADINT_FROM
     RETURNS INT64
     DETERMINISTIC
     LANGUAGE js
-    OPTIONS (library=["@@BQ_LIBRARY_QUADKEY@@"])
+    OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
     return quadintFromQuadkey(quadkey);
 """;
@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADKEY_FROM
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
-    OPTIONS (library=["@@BQ_LIBRARY_QUADKEY@@"])
+    OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
     return quadkeyFromQuadint(quadint);
 """;
