@@ -3,4 +3,4 @@
 ## Current trunk
 
 ## Version 1
-* Quadkey: v1.
+* Initial implementation of the module.
