@@ -70,7 +70,7 @@ Transform a quadint index to an equivalent quadkey.
 quadkey.PARENT(quadint INT64)
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Returns the parent quadint of a given quadint. A parent quadint is a quadint of smaller level of detail (zoom - 1) which contains the current quadint.
 
 * `quadint`: `INT64` quadint we want to get the parent from.
 
@@ -80,19 +80,9 @@ Returns the current version of the quadkey library.
 quadkey.CHILDREN(quadint INT64)
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Returns an array with the children quadint of a given quadint. A children quadint is a quadint of bigger level of detail (zoom + 1) which is contained by the current quadint. Each quadint has 4 children.
+
 * `quadint`: `INT64` quadint we want to get the children from.
-
-
-#### KRING
-
-{{% bannerNote type="code" %}}
-quadkey.KRING(quadint INT64)
-{{%/ bannerNote %}}
-
-Returns the current version of the quadkey library.
-
-* `quadint`: `INT64` quadint we want to get the KRING from.
 
 #### SIBLING
 
@@ -100,9 +90,20 @@ Returns the current version of the quadkey library.
 quadkey.SIBLING(quadint INT64, direction STRING)
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Returns the quadint directly next to the given quadint at the same level of zoom. The direction must be sent as argument and currectly horizontal/vertical movements are allowed.
+
 * `quadint`: `INT64` quadint we want to get the sibling from.
 * `direction`: `STRING` <code>'right'|'left'|'up'|'down'</code> direction where we want to move to extract the next sibling. 
+
+#### KRING
+
+{{% bannerNote type="code" %}}
+quadkey.KRING(quadint INT64)
+{{%/ bannerNote %}}
+
+Returns an array with all the quadints directly next to the given quadint at the same level of zoom. We consider diagonal, horizontal and vertical nearby quadints and the current quadint so KRING should always return 9 quadints.
+
+* `quadint`: `INT64` quadint we want to get the KRING from.
 
 #### BBOX
 
@@ -110,7 +111,7 @@ Returns the current version of the quadkey library.
 quadkey.BBOX(quadint INT64)
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Returns the boundary box of a given quadint. This boundary box contains the minimum and maximum longitude and latitude.
 
 * `quadint`: `INT64` quadint we want to get the bbox from.
 
@@ -120,7 +121,10 @@ Returns the current version of the quadkey library.
 quadkey.ST_ASQUADINT(point GEOGRAPHY, resolution NUMERIC) 
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Converts a given point at given level of detail to a quadint.
+
+* `point`: `GEOGRAPHY` point we want to get the quadint from.
+* `resolution`: `NUMERIC` Level of detail or zoom.
 
 #### ST_ASQUADINTPOLYFILL
 
@@ -128,8 +132,10 @@ Returns the current version of the quadkey library.
 quadkey.ST_ASQUADINTPOLYFILL(geo GEOGRAPHY, resolution NUMERIC)
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Returns an array of quadints contained by the given geography at a given level of detail.
 
+* `geo`: `GEOGRAPHY` geography we want to extract the quadints from.
+* `resolution`: `NUMERIC` Level of detail or zoom.
 
 #### ST_GEOGFROMQUADINT_BOUNDARY
 
@@ -137,21 +143,6 @@ Returns the current version of the quadkey library.
 quadkey.ST_GEOGFROMQUADINT_BOUNDARY(quadint INT64) 
 {{%/ bannerNote %}}
 
-Returns the current version of the quadkey library.
+Returns the geography boundary for a given quadint. We extract the boundary the same way as when we calculate the bbox, then enclose it in a GEOJSON and finally transform it to geography.
 
-
-
-
-#### skel.EXAMPLE_ADD
-
-{{% bannerNote type="code" %}}
-skel.EXAMPLE_ADD (value)
-{{%/ bannerNote %}}
-
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
-
-Here is a tip:
-
-{{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
-{{%/ bannerNote %}}
+* `quadint`: `INT64` quadint we want to get the boundary geography from.

@@ -16,47 +16,7 @@ describe('QUADKEY integration tests', () => {
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
-    it ('Children should work at any level of zoom', async () => {
-        let z, lat, lng, cont;
-        for(z = 5; z < 30; z = z + 20)
-        {
-            for(lat = -90; lat <= 90; lat = lat + 120)
-            {
-                for(lng = -180; lng <= 180; lng = lng + 200)
-                {
-                    let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z}) as currentChild;`;
-                    let rows;
-                    await assert.doesNotReject( async () => {
-                        const [job] = await client.createQueryJob({ query: query });
-                        [rows] = await job.getQueryResults();
-                    });
-                    assert.equal(rows.length, 1);
-                    let currentChild = rows[0].currentChild;
-
-                    query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.KRING(
-                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z}),1) as children;`;
-                    rows;
-                    await assert.doesNotReject( async () => {
-                        const [job] = await client.createQueryJob({ query: query });
-                        [rows] = await job.getQueryResults();
-                    });
-                    assert.equal(rows.length, 1);
-                    assert.equal(rows[0].children.length, 9);
-                    let childs = rows[0].children;
-                    cont = 0;
-                    childs.forEach((element) => {
-                        if(currentChild === element)
-                        {
-                            ++cont;
-                        }
-                    });
-                    assert.equal(cont,1);
-                }
-            }
-        }
-    });
-
-
+  
     it ('Returns the proper version', async () => {
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.VERSION() as versioncol;`;
         let rows;
