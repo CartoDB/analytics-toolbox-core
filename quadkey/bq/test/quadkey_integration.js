@@ -36,8 +36,8 @@ describe('QUADKEY integration tests', () => {
 
             x = 0;
             y = 0;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROM_QUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROM_ZXY(${z}, ${x}, ${y})) as zxy;`;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})) as zxy;`;
 
             let rows;
             await assert.doesNotReject( async () => {
@@ -49,8 +49,8 @@ describe('QUADKEY integration tests', () => {
 
             x = tilesPerLevel - 1;
             y = tilesPerLevel - 1;
-            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROM_QUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROM_ZXY(${z}, ${x}, ${y})) as zxy;`;
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})) as zxy;`;
 
             await assert.doesNotReject( async () => {
                 const [job] = await client.createQueryJob({ query: query });
@@ -69,10 +69,10 @@ describe('QUADKEY integration tests', () => {
 
             x = 0;
             y = 0;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROM_QUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROM_QUADKEY(
-                    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROM_QUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROM_ZXY(${z}, ${x}, ${y})))) as zxy;`;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMQUADKEY(
+                    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})))) as zxy;`;
 
             let rows;
             await assert.doesNotReject( async () => {
@@ -84,10 +84,10 @@ describe('QUADKEY integration tests', () => {
 
             x = tilesPerLevel - 1;
             y = tilesPerLevel - 1;
-            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROM_QUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROM_QUADKEY(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROM_QUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROM_ZXY(${z}, ${x}, ${y})))) as zxy;`;
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMQUADKEY(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})))) as zxy;`;
 
             await assert.doesNotReject( async () => {
                 const [job] = await client.createQueryJob({ query: query });

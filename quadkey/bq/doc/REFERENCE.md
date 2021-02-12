@@ -10,10 +10,10 @@ quadkey.VERSION ()
 
 Returns the current version of the quadkey library.
 
-#### QUADINT_FROM_ZXY
+#### QUADINT_FROMZXY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROM_ZXY(z INT64, x INT64, y INT64)
+quadkey.QUADINT_FROMZXY(z INT64, x INT64, y INT64)
 {{%/ bannerNote %}}
 
 Returns the quadint representation for tile x, y and a zoom z.
@@ -22,20 +22,20 @@ Returns the quadint representation for tile x, y and a zoom z.
 * `x`: `INT64` horizontal position of a tile.
 * `y`: `INT64` vertical position of a tile.
 
-#### ZXY_FROM_QUADINT
+#### ZXY_FROMQUADINT
 
 {{% bannerNote type="code" %}}
-quadkey.ZXY_FROM_QUADINT(quadint INT64)
+quadkey.ZXY_FROMQUADINT(quadint INT64)
 {{%/ bannerNote %}}
 
 Returns the level of zoom z and coordinates x, y for a given quadint.
 
 * `quadint`: `INT64` quadint we want to extract tile information from.
 
-#### QUADINT_FROM_LOCATION
+#### QUADINT_FROMLOCATION
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROM_LOCATION(latitude FLOAT64, longitude FLOAT64, resolution NUMERIC)
+quadkey.QUADINT_FROMLOCATION(latitude FLOAT64, longitude FLOAT64, resolution NUMERIC)
 {{%/ bannerNote %}}
 
 Returns the quadint representation for a given level of detail and geographic coordinates.
@@ -44,20 +44,20 @@ Returns the quadint representation for a given level of detail and geographic co
 * `longitude`: `FLOAT64` horizontal coordinate of the map.
 * `resolution`: `NUMERIC` Level of detail or zoom.
 
-#### QUADINT_FROM_QUADKEY
+#### QUADINT_FROMQUADKEY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROM_QUADKEY(quadkey STRING)
+quadkey.QUADINT_FROMQUADKEY(quadkey STRING)
 {{%/ bannerNote %}}
 
 Transform a quadkey index to an equivalent quadint.
 
 * `quadkey`: `STRING` quadkey we want to convert to quadint.
 
-#### QUADKEY_FROM_QUADINT
+#### QUADKEY_FROMQUADINT
 
 {{% bannerNote type="code" %}}
-quadkey.QUADKEY_FROM_QUADINT(quadint INT64)
+quadkey.QUADKEY_FROMQUADINT(quadint INT64)
 {{%/ bannerNote %}}
 
 Transform a quadint index to an equivalent quadkey.
