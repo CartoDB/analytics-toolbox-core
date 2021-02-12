@@ -11,5 +11,5 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADINT_FROM
     LANGUAGE js
     OPTIONS (library=["@@BQ_LIBRARY_QUADKEY@@"])
 AS """
-    return locationToQuadint({ lat: latitude, lng: longitude }, resolution);
+    return quadintFromLocation({ lat: latitude, lng: longitude }, resolution);
 """;

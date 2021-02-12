@@ -225,7 +225,7 @@ ZXYFromQuadint = function(quadint) {
  * @param  {number}   detail   map detail level of quadint to return
  * @return {string}            quadint the input location resides in for the input detail level
  */
-locationToQuadint = function(location, detail) {
+quadintFromLocation = function(location, detail) {
     const tile = locationToTile(location, detail);
     return quadintFromZXY(detail, tile.x, tile.y);
 };
@@ -299,7 +299,7 @@ bbox = function(quadint) {
  */
 inside = function(location, quadint) {
     const tile = ZXYFromQuadint(quadint);
-    return quadint === locationToQuadint(location, parseInt(tile.z));
+    return quadint === quadintFromLocation(location, parseInt(tile.z));
 };
 
 /**

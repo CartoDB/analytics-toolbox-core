@@ -82,7 +82,7 @@ describe('QUADKEY unit tests', () => {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     const location = {'lng': lng, 'lat': lat};
-                    const quadint = locationToQuadint(location, z);
+                    const quadint = quadintFromLocation(location, z);
                     assert.ok(inside(location, quadint));
                 }
             }
@@ -98,7 +98,7 @@ describe('QUADKEY unit tests', () => {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     const location = {'lng': lng, 'lat': lat};
-                    const quadint = locationToQuadint(location, z);
+                    const quadint = quadintFromLocation(location, z);
                     assert.ok(inside(location, parent(quadint)));
                 }
             }
@@ -114,8 +114,8 @@ describe('QUADKEY unit tests', () => {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     const location = {'lng': lng, 'lat': lat};
-                    const quadint = locationToQuadint(location, z);
-                    const currentParent = locationToQuadint(location, z - 1);
+                    const quadint = quadintFromLocation(location, z);
+                    const currentParent = quadintFromLocation(location, z - 1);
                     assert.equal(currentParent, parent(quadint));
                 }
             }
@@ -131,8 +131,8 @@ describe('QUADKEY unit tests', () => {
                 for(lng = -180; lng <= 180; lng = lng + 15)
                 {
                     const location = {'lng': lng, 'lat': lat};
-                    const quadint = locationToQuadint(location, z);
-                    const currentChild = locationToQuadint(location, z + 1);
+                    const quadint = quadintFromLocation(location, z);
+                    const currentChild = quadintFromLocation(location, z + 1);
                     const childs = children(quadint);
                     cont = 0;
                     childs.forEach((element) => {
