@@ -90,7 +90,7 @@ Returns an array with the children quadint of a given quadint. A children quadin
 quadkey.SIBLING(quadint INT64, direction STRING)
 {{%/ bannerNote %}}
 
-Returns the quadint directly next to the given quadint at the same level of zoom. The direction must be sent as argument and currectly horizontal/vertical movements are allowed.
+Returns the quadint directly next to the given quadint at the same level of zoom. The direction must be sent as argument and currently horizontal/vertical movements are allowed.
 
 * `quadint`: `INT64` quadint we want to get the sibling from.
 * `direction`: `STRING` <code>'right'|'left'|'up'|'down'</code> direction where we want to move to extract the next sibling. 
