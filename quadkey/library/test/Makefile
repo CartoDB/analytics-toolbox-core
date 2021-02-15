@@ -1,5 +1,6 @@
 TESTER ?= ./node_modules/mocha/bin/mocha
 
+ESLINT ?= ../node_modules/eslint/bin/eslint.js
 NPM ?= npm
 
 # Nothing by default
@@ -15,3 +16,13 @@ check: node_modules
 .PHONY: clean
 clean:
 	rm -rf node_modules
+
+eslint: node_modules
+	${ESLINT} --fix *.js
+
+check-eslint: node_modules
+	${ESLINT} *.js
+
+linter: eslint
+
+check-linter: check-eslint

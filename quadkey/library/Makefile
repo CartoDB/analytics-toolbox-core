@@ -26,11 +26,11 @@ node_modules: package.json
 
 eslint: node_modules
 	${ESLINT} --fix ${JS_FILES}
-	${ESLINT} --fix test/*.js
+	$(MAKE) -C test/ $@
 
 check-eslint: node_modules
 	${ESLINT} ${JS_FILES}
-	${ESLINT} test/*.js
+	$(MAKE) -C test/ $@
 
 linter: eslint
 
