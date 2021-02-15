@@ -11,5 +11,5 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.PARENT`
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
-    return parent(quadint);  
+    return parent(quadint).toString();  
 """;

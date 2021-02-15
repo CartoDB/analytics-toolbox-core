@@ -11,5 +11,6 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.CHILDREN`
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
-    return children(quadint);  
+    let quadints = children(quadint);
+    return quadints.map(String);
 """;

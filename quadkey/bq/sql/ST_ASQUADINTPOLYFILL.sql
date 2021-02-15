@@ -11,8 +11,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.POLYFILL_FRO
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
-    var pol = JSON.parse(geojson);
-    return geojsonToQuadints(pol, {min_zoom: level,max_zoom: level});
+    let pol = JSON.parse(geojson);
+    let quadints = geojsonToQuadints(pol, {min_zoom: level,max_zoom: level});
+    return quadints.map(String);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.ST_ASQUADINTPOLYFILL`

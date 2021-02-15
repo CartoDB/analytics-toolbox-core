@@ -182,11 +182,11 @@ quadkeyToTile = function(quadkey) {
  * @return {int}    quadint for input tile coordinates at input detail level
  */
 quadintFromZXY = function(z, x, y) {
-    const zI = parseInt(z);
+    const zI = z;
     if (zI <= 13) {
-        let quadint = parseInt(y);
+        let quadint = y;
         quadint <<= zI;
-        quadint |= parseInt(x);
+        quadint |= x;
         quadint <<= 5;
         quadint |= zI;
         return quadint;
@@ -196,7 +196,7 @@ quadintFromZXY = function(z, x, y) {
     quadint |= BigInt(x);
     quadint <<= BigInt(5);
     quadint |= BigInt(z);
-    return quadint.toString();
+    return quadint;
 };
 
 /**
@@ -208,15 +208,14 @@ ZXYFromQuadint = function(quadint) {
     const quadintBig = BigInt(quadint);
     const z = quadintBig & BigInt(0x1F);
     if (z <= 13n) {
-        const quadintNumber = Number(quadint);
         const zNumber = Number(z);
-        const x = (quadintNumber >> 5) & ((1 << zNumber) - 1);
-        const y = quadintNumber >> (zNumber + 5);
-        return { z: zNumber.toString(), x: x.toString(), y: y.toString() };
+        const x = (quadint >> 5) & ((1 << zNumber) - 1);
+        const y = quadint >> (zNumber + 5);
+        return { z: zNumber, x: x, y: y };
     }
     const x = (quadintBig >> (5n)) & ((1n << z) - 1n);
     const y = quadintBig >> (5n + z);
-    return { z: z.toString(), x: x.toString(), y: y.toString() };
+    return { z: Number(z), x: Number(x), y: Number(y) };
 };
 
 /**
@@ -248,7 +247,7 @@ quadintFromQuadkey = function(quadkey) {
  */
 quadkeyFromQuadint = function(quadint) {
     const tile = ZXYFromQuadint(quadint);
-    return tileToQuadkey({ x: parseInt(tile.x), y: parseInt(tile.y) }, parseInt(tile.z));
+    return tileToQuadkey({ x: tile.x, y: tile.y }, tile.z);
 };
 
 /**
@@ -277,11 +276,11 @@ bbox = function(quadint) {
     const worldRange = worldLimitHalf * 2;
 
     const tile = ZXYFromQuadint(quadint);
-    const z = parseInt(tile.z);
+    const z = tile.z;
     const tileSize = worldRange / Math.pow(2, z);
 
-    const xLeft = -worldLimitHalf + parseInt(tile.x) * tileSize;
-    const yBottom = worldLimitHalf - (parseInt(tile.y) + 1) * tileSize;
+    const xLeft = -worldLimitHalf + tile.x * tileSize;
+    const yBottom = worldLimitHalf - (tile.y + 1) * tileSize;
     const minCoord = coords3857ToLongLat(xLeft, yBottom);
     const maxCoord = coords3857ToLongLat(xLeft + tileSize, yBottom + tileSize);
 
@@ -299,7 +298,7 @@ bbox = function(quadint) {
  */
 inside = function(location, quadint) {
     const tile = ZXYFromQuadint(quadint);
-    return quadint === quadintFromLocation(location, parseInt(tile.z));
+    return quadint === quadintFromLocation(location, tile.z);
 };
 
 /**
@@ -331,9 +330,9 @@ sibling = function(quadint, direction) {
         down: Direction.Down
     }[direction];
     const tile = ZXYFromQuadint(quadint);
-    const z = parseInt(tile.z);
-    let x = parseInt(tile.x);
-    let y = parseInt(tile.y);
+    const z = tile.z;
+    let x = tile.x;
+    let y = tile.y;
     const tilesPerLevel = 2 << (z - 1);
     if (direction === Direction.Left) {
         x = x > 0 ? x - 1 : tilesPerLevel - 1;
@@ -357,9 +356,9 @@ sibling = function(quadint, direction) {
  */
 children = function(quadint) {
     const zxy = ZXYFromQuadint(quadint);
-    const z = parseInt(zxy.z) + 1;
-    const x = parseInt(zxy.x) << 1;
-    const y = parseInt(zxy.y) << 1;
+    const z = zxy.z + 1;
+    const x = zxy.x << 1;
+    const y = zxy.y << 1;
     return [quadintFromZXY(z, x, y), quadintFromZXY(z, x + 1, y),
         quadintFromZXY(z, x, y + 1), quadintFromZXY(z, x + 1, y + 1)];
 };
@@ -371,5 +370,5 @@ children = function(quadint) {
  */
 parent = function(quadint) {
     const zxy = ZXYFromQuadint(quadint);
-    return quadintFromZXY(parseInt(zxy.z) - 1, parseInt(zxy.x) >> 1, parseInt(zxy.y) >> 1);
+    return quadintFromZXY(zxy.z - 1, zxy.x >> 1, zxy.y >> 1);
 };

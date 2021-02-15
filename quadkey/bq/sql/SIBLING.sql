@@ -11,5 +11,5 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.SIBLING`
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
-    return sibling(quadint,direction);  
+    return sibling(quadint,direction).toString();  
 """;
