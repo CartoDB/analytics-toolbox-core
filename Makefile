@@ -1,5 +1,6 @@
 MODULES = \
-	skel
+	skel \
+	placekey
 
 .PHONY: all build check check-integration check-linter clean deploy linter
 
