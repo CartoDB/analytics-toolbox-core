@@ -10,6 +10,9 @@ JS_FILES = \
 	js/s2_version.js \
 	js/s2geometry.js
 
+LINT_FILES = \
+	js/s2_version.js
+
 .PHONY: check
 check: ${TARGET}
 	$(MAKE) -C test/ $@
@@ -24,11 +27,11 @@ node_modules: package.json
 	$(NPM) ci
 
 eslint: node_modules
-	${ESLINT} --fix ${JS_FILES}
+	${ESLINT} --fix ${LINT_FILES}
 	$(MAKE) -C test/ $@
 
 check-eslint: node_modules
-	${ESLINT} ${JS_FILES}
+	${ESLINT} ${LINT_FILES}
 	$(MAKE) -C test/ $@
 
 linter: eslint
