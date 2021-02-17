@@ -56,6 +56,7 @@ describe('SPHERICALMERCATOR integration tests', () => {
             [rows] = await job.getQueryResults();
         });
         assert.equal(rows.length, 1);
+        Object.keys(rows[0].xyz).forEach((key) => {rows[0].xyz[key] = +rows[0].xyz[key]['c'].join("")});
         assert.deepEqual(rows[0].xyz, { minX: 0, minY: 0, maxX: 0, maxY: 0 })
 
         bbox = [-180, 0, 0, 85.0511287798066];
@@ -65,6 +66,7 @@ describe('SPHERICALMERCATOR integration tests', () => {
             [rows] = await job.getQueryResults();
         });
         assert.equal(rows.length, 1);
+        Object.keys(rows[0].xyz).forEach((key) => {rows[0].xyz[key] = +rows[0].xyz[key]['c'].join("")});
         assert.deepEqual(rows[0].xyz, { minX: 0, minY: 0, maxX: 0, maxY: 0 });
     });
 }); /* SPHERICALMERCATOR integration tests */
