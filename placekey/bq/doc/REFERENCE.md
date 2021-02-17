@@ -2,41 +2,71 @@
 
 ### PLACEKEY
 
-This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
-
-#### placekey.EXAMPLE_ADD
-
-{{% bannerNote type="code" %}}
-placekey.EXAMPLE_ADD (value)
-{{%/ bannerNote %}}
-
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
-
-Here is a tip:
-
-{{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
-{{%/ bannerNote %}}
-
-
-#### placekey.VERSION
+#### VERSION
 
 {{% bannerNote type="code" %}}
 placekey.VERSION()
 {{%/ bannerNote %}}
 
-Returns the current version of the placekey library. Here is some sample code block:
+Returns the current version of the placekey library.
 
-```js
-function placekeyExampleAdd(v) {
-    return v + 1;
-}
-```
+#### PLACEKEY_FROMGEO
 
-And a table:
+{{% bannerNote type="code" %}}
+placekey.PLACEKEY_FROMGEO(latitude FLOAT64, longitude FLOAT64)
+{{%/ bannerNote %}}
 
-| Column1 | Description |
-| :----- | :------ |
-|`taters`| Few and good. |
-|`potatoes`| Boil 'em, mash 'em, stick 'em in a stew.|
-|`chips`| Lovely big golden chips with a nice piece of fried fish.|
+Returns the placekey representation for given geographic coordinates.
+
+* `latitude`: `FLOAT64` vertical coordinate of the map.
+* `longitude`: `FLOAT64` horizontal coordinate of the map.
+
+#### GEO_FROMPLACEKEY
+
+{{% bannerNote type="code" %}}
+placekey.GEO_FROMPLACEKEY(placekey STRING)
+{{%/ bannerNote %}}
+
+Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the latitud and longitud separated by a comma.
+
+* `placekey`: `STRING` placekey we want to extract the coordinates from.
+
+#### PLACEKEY_FROMH3
+
+{{% bannerNote type="code" %}}
+placekey.PLACEKEY_FROMH3(h3Index STRING)
+{{%/ bannerNote %}}
+
+Transform a h3 index to an equivalent placekey.
+
+* `h3Index`: `STRING` h3 index we want to convert to placekey.
+
+#### H3_FROMPLACEKEY
+
+{{% bannerNote type="code" %}}
+placekey.H3_FROMPLACEKEY(placekey STRING)
+{{%/ bannerNote %}}
+
+Transform a placekey to an equivalent h3 index.
+
+* `placekey`: `STRING` placekey we want to convert to h3.
+
+#### ST_ASPLACEKEY
+
+{{% bannerNote type="code" %}}
+placekey.ST_ASPLACEKEY(point GEOGRAPHY)
+{{%/ bannerNote %}}
+
+Convert a given point to a placekey.
+
+* `point`: `GEOGRAPHY`  point we want to get the placekey from.
+
+#### ST_GEOGFROMPLACEKEY_POINT
+
+{{% bannerNote type="code" %}}
+placekey.ST_GEOGFROMPLACEKEY_POINT(placekey STRING)
+{{%/ bannerNote %}}
+
+Return the geography point equivalent of a placekey.
+
+* `placekey`: `STRING` placekey we want to get the point from.
