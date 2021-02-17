@@ -2,24 +2,9 @@
 
 ### PROJ
 
-This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
+For more information about projections please visit, http://proj4js.org/
 
-#### proj.EXAMPLE_ADD
-
-{{% bannerNote type="code" %}}
-proj.EXAMPLE_ADD (value)
-{{%/ bannerNote %}}
-
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
-
-Here is a tip:
-
-{{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
-{{%/ bannerNote %}}
-
-
-#### proj.VERSION
+#### VERSION
 
 {{% bannerNote type="code" %}}
 proj.VERSION()
@@ -27,16 +12,12 @@ proj.VERSION()
 
 Returns the current version of the proj library. Here is some sample code block:
 
-```js
-function projExampleAdd(v) {
-    return v + 1;
-}
-```
+#### PROJ
 
-And a table:
+{{% bannerNote type="code" %}}
+proj.PROJ(fromProjection STRING, toProjection STRING,coordinates ARRAY<FLOAT64>)
+{{%/ bannerNote %}}
 
-| Column1 | Description |
-| :----- | :------ |
-|`taters`| Few and good. |
-|`potatoes`| Boil 'em, mash 'em, stick 'em in a stew.|
-|`chips`| Lovely big golden chips with a nice piece of fried fish.|
+* `fromProjection`: `STRING` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
+* `toProjection`: `STRING` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
+* `coordinates`: `ARRAY<FLOAT64>` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
