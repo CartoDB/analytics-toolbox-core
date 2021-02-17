@@ -6,7 +6,7 @@ GSUTIL ?= gsutil
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-H3_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_H3)/h3.js
+H3_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_H3)/h3_library.js
 PLACEKEY_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_PLACEKEY)/placekey_library.js
 
 .PHONY: ../placekey_library.js
