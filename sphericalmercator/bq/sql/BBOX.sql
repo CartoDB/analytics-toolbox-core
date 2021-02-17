@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_SPHERICALMERCATOR@@.BBOX`
-(x NUMERIC, y NUMERIC,zoom NUMERIC, tileSize NUMERIC )
+(x NUMERIC, y NUMERIC, zoom NUMERIC, tileSize NUMERIC )
     RETURNS ARRAY<FLOAT64>
     LANGUAGE js
     OPTIONS (library=["@@SPHERICALMERCATOR_BQ_LIBRARY@@"]) 

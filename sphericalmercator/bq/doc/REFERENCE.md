@@ -2,41 +2,27 @@
 
 ### SPHERICALMERCATOR
 
-This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
-
-#### sphericalmercator.EXAMPLE_ADD
+#### BBOX
 
 {{% bannerNote type="code" %}}
-sphericalmercator.EXAMPLE_ADD (value)
+sphericalmercator.(x NUMERIC, y NUMERIC, zoom NUMERIC, tileSize NUMERIC )
 {{%/ bannerNote %}}
 
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
+Returns bbox array of values in form [w, s, e, n].
 
-Here is a tip:
+* `x`: `NUMERIC` x (longitude) number.
+* `y`: `NUMERIC` y (latitude) number.
+* `zoom`: `NUMERIC` zoom level.
+* `tileSize`: `NUMERIC` size of the tiles we want to use.
 
-{{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
-{{%/ bannerNote %}}
-
-
-#### sphericalmercator.VERSION
+#### XYZ
 
 {{% bannerNote type="code" %}}
-sphericalmercator.VERSION()
+sphericalmercator.XYZ(bbox ARRAY<FLOAT64>, zoom NUMERIC, tileSize NUMERIC)
 {{%/ bannerNote %}}
 
-Returns the current version of the sphericalmercator library. Here is some sample code block:
+Convert bbox to xyz bounds. Returns a struct containing minX, maxX, minY, maxY.
 
-```js
-function sphericalmercatorExampleAdd(v) {
-    return v + 1;
-}
-```
-
-And a table:
-
-| Column1 | Description |
-| :----- | :------ |
-|`taters`| Few and good. |
-|`potatoes`| Boil 'em, mash 'em, stick 'em in a stew.|
-|`chips`| Lovely big golden chips with a nice piece of fried fish.|
+* `bbox`: `ARRAY<FLOAT64>` bbox in the form [w, s, e, n].
+* `zoom`: `NUMERIC` zoom level.
+* `tileSize`: `NUMERIC` size of the tiles we want to use.
