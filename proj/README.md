@@ -1,5 +1,7 @@
 # Proj
 
+Based on http://proj4js.org/.
+
 ## Folder structure
 
 bq/      - Files necessary to generate BigQuery UDFs.  
