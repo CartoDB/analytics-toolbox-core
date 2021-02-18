@@ -32,10 +32,10 @@ Returns the level of zoom z and coordinates x, y for a given quadint.
 
 * `quadint`: `INT64` quadint we want to extract tile information from.
 
-#### QUADINT_FROMLOCATION
+#### LONGLAT_ASQUADINT
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROMLOCATION(latitude FLOAT64, longitude FLOAT64, resolution NUMERIC)
+quadkey.LONGLAT_ASQUADINT(latitude FLOAT64, longitude FLOAT64, resolution NUMERIC)
 {{%/ bannerNote %}}
 
 Returns the quadint representation for a given level of detail and geographic coordinates.
