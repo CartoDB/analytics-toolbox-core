@@ -1,5 +1,5 @@
 {
-  "name": "_bq_integration_tests",
+  "name": "s2_bq_integration_tests",
   "version": "1.0.0",
   "description": "",
   "main": "createpointaggregationtileset_integration.js",

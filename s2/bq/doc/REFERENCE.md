@@ -151,10 +151,10 @@ Returns the geography boundary for a given level of detail and geographic coordi
 * `latitude`: `FLOAT64` vertical coordinate on the map.
 * `level`: `NUMERIC` Level of detail or zoom.
 
-#### ST_GEOGFROMS2_BOUNDARY
+#### ST_GEOGFROMKEY_BOUNDARY
 
 {{% bannerNote type="code" %}}
-s2.ST_GEOGFROMS2_BOUNDARY(key STRING)
+s2.ST_GEOGFROMKEY_BOUNDARY(key STRING)
 {{%/ bannerNote %}}
 
 Returns the geography boundary for a given quadkey. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GEOJSON and finally transform it to geography.
