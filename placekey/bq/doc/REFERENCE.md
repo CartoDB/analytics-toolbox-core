@@ -10,27 +10,6 @@ placekey.VERSION()
 
 Returns the current version of the placekey library.
 
-#### LONGLAT_ASPLACEKEY
-
-{{% bannerNote type="code" %}}
-placekey.LONGLAT_ASPLACEKEY(longitude FLOAT64, latitude FLOAT64)
-{{%/ bannerNote %}}
-
-Returns the placekey representation for given geographic coordinates.
-
-* `longitude`: `FLOAT64` horizontal coordinate of the map.
-* `latitude`: `FLOAT64` vertical coordinate of the map.
-
-#### GEO_FROMPLACEKEY
-
-{{% bannerNote type="code" %}}
-placekey.GEO_FROMPLACEKEY(placekey STRING)
-{{%/ bannerNote %}}
-
-Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the latitud and longitud separated by a comma.
-
-* `placekey`: `STRING` placekey we want to extract the coordinates from.
-
 #### PLACEKEY_FROMH3
 
 {{% bannerNote type="code" %}}
@@ -50,6 +29,27 @@ placekey.H3_FROMPLACEKEY(placekey STRING)
 Transform a placekey to an equivalent h3 index.
 
 * `placekey`: `STRING` placekey we want to convert to h3.
+
+#### LATLONG_FROMPLACEKEY
+
+{{% bannerNote type="code" %}}
+placekey.LATLONG_FROMPLACEKEY(placekey STRING)
+{{%/ bannerNote %}}
+
+Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the latitud and longitud separated by a comma.
+
+* `placekey`: `STRING` placekey we want to extract the coordinates from.
+
+#### LONGLAT_ASPLACEKEY
+
+{{% bannerNote type="code" %}}
+placekey.LONGLAT_ASPLACEKEY(longitude FLOAT64, latitude FLOAT64)
+{{%/ bannerNote %}}
+
+Returns the placekey representation for given geographic coordinates.
+
+* `longitude`: `FLOAT64` horizontal coordinate of the map.
+* `latitude`: `FLOAT64` vertical coordinate of the map.
 
 #### ST_ASPLACEKEY
 
