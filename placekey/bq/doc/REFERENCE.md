@@ -10,16 +10,16 @@ placekey.VERSION()
 
 Returns the current version of the placekey library.
 
-#### PLACEKEY_FROMGEO
+#### LONGLAT_ASPLACEKEY
 
 {{% bannerNote type="code" %}}
-placekey.PLACEKEY_FROMGEO(latitude FLOAT64, longitude FLOAT64)
+placekey.LONGLAT_ASPLACEKEY(longitude FLOAT64, latitude FLOAT64)
 {{%/ bannerNote %}}
 
 Returns the placekey representation for given geographic coordinates.
 
-* `latitude`: `FLOAT64` vertical coordinate of the map.
 * `longitude`: `FLOAT64` horizontal coordinate of the map.
+* `latitude`: `FLOAT64` vertical coordinate of the map.
 
 #### GEO_FROMPLACEKEY
 
