@@ -4,12 +4,12 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.LNG_FROMID`
-    (key STRING)
-    RETURNS FLOAT64
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ID_FROMLONGLAT`
+    (longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+    RETURNS INT64
     DETERMINISTIC
-    LANGUAGE js 
+    LANGUAGE js
     OPTIONS (library=["@@S2_BQ_LIBRARY@@"])
 AS """
-    return S2.idToLatLng(key)["lng"];
+    return S2.latLngToId(latitude, longitude, level);
 """;

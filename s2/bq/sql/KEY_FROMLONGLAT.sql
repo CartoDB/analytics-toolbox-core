@@ -4,8 +4,8 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.KEY_FROMLATLNG`
-    (latitude FLOAT64, longitude FLOAT64, level NUMERIC)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.KEY_FROMLONGLAT`
+    (longitude FLOAT64, latitude FLOAT64, level NUMERIC)
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
