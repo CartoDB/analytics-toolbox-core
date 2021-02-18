@@ -10,20 +10,20 @@ s2.VERSION()
 
 Returns the current version of the s2 library.
 
-#### CORNERLONGLATS_FROMKEY
+#### GEOJSONBOUNDARY_FROMKEY
 
 {{% bannerNote type="code" %}}
-s2.CORNERLONGLATS_FROMKEY(key STRING) 
+s2.GEOJSONBOUNDARY_FROMKEY(key STRING) 
 {{%/ bannerNote %}}
 
 Returns a GeoJSON containing the boundary corners of a quadkey.
 
 * `key`: `STRING` quadkey to extract the corners from.
 
-#### CORNERLONGLATS_FROMLONGLAT
+#### GEOJSONBOUNDARY_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.CORNERLONGLATS_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+s2.GEOJSONBOUNDARY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
 {{%/ bannerNote %}}
 
 Returns a GeoJSON containing the boundary corners given a longitud, latitud and zoom level.
