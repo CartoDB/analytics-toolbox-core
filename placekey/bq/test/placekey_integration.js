@@ -19,11 +19,6 @@ describe('PLACEKEY integration tests', () => {
 
     it ('Returns the proper version', async () => {
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_PLACEKEY}\`.VERSION() as versioncol;`;
-
-        const options = {
-            query: query
-        };
-
         let rows;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
@@ -32,4 +27,28 @@ describe('PLACEKEY integration tests', () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].versioncol, 1);
     });
+
+    it ('Placekey / H3 conversions should work', async () => {
+        let latitude = 10;
+        let longitude = -20;
+
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_PLACEKEY}\`.LONGLAT_ASPLACEKEY(${longitude}, ${latitude}) as placekey;`;
+        let rows;
+        await assert.doesNotReject( async () => {
+            const [job] = await client.createQueryJob({ query: query });
+            [rows] = await job.getQueryResults();
+        });
+        assert.equal(rows.length, 1);
+        const placekey = rows[0].placekey;
+        
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_PLACEKEY}\`.PLACEKEY_FROMH3(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_PLACEKEY}\`.H3_FROMPLACEKEY('${placekey}')) as placekey;`;
+        await assert.doesNotReject( async () => {
+            const [job] = await client.createQueryJob({ query: query });
+            [rows] = await job.getQueryResults();
+        });
+        assert.equal(rows.length, 1);
+        assert.equal(placekey, rows[0].placekey);
+    });
+
 }); /* PLACEKEY integration tests */
