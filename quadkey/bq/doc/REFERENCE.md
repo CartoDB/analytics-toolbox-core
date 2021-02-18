@@ -35,13 +35,13 @@ Returns the level of zoom z and coordinates x, y for a given quadint.
 #### LONGLAT_ASQUADINT
 
 {{% bannerNote type="code" %}}
-quadkey.LONGLAT_ASQUADINT(latitude FLOAT64, longitude FLOAT64, resolution NUMERIC)
+quadkey.LONGLAT_ASQUADINT(longitude FLOAT64, latitude FLOAT64, resolution NUMERIC)
 {{%/ bannerNote %}}
 
 Returns the quadint representation for a given level of detail and geographic coordinates.
 
-* `latitude`: `FLOAT64` vertical coordinate of the map.
 * `longitude`: `FLOAT64` horizontal coordinate of the map.
+* `latitude`: `FLOAT64` vertical coordinate of the map.
 * `resolution`: `NUMERIC` Level of detail or zoom.
 
 #### QUADINT_FROMQUADKEY
