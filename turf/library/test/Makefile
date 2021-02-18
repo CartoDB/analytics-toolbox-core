@@ -9,7 +9,7 @@ node_modules: package.json
 
 .PHONY: check
 check: node_modules
-	${NPM} test "*_test.js"
+	${NPM} test *_test.js
 
 .PHONY: clean
 clean:
