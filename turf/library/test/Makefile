@@ -1,5 +1,3 @@
-TESTER ?= ./node_modules/mocha/bin/mocha
-
 ESLINT ?= ../node_modules/eslint/bin/eslint.js
 NPM ?= npm
 
@@ -11,7 +9,7 @@ node_modules: package.json
 
 .PHONY: check
 check: node_modules
-	${TESTER} -p -j 4 -t 10000 $(shell find . -maxdepth 1 -name "*_test.js")
+	${NPM} test "*_test.js"
 
 .PHONY: clean
 clean:
