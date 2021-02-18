@@ -4,8 +4,8 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_PLACEKEY@@.PLACEKEY_FROMGEO`
-    (latitude FLOAT64, longitude FLOAT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_PLACEKEY@@.LONGLAT_ASPLACEKEY`
+    (longitude FLOAT64, latitude FLOAT64)
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
