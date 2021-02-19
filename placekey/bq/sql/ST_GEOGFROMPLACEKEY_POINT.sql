@@ -8,6 +8,6 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_PLACEKEY@@.ST_GEOGFROM
     (placekey STRING)
 AS (   
     ST_GEOGPOINT(
-        CAST(split(jslibs.placekey.placekeyToGeo(placekey),",")[OFFSET (1)] AS FLOAT64),
-        CAST(split(jslibs.placekey.placekeyToGeo(placekey),",")[OFFSET (0)] AS FLOAT64))
+        CAST(split(`@@BQ_PROJECTID@@`.@@BQ_DATASET_PLACEKEY@@.LONGLAT_FROMPLACEKEY(placekey),",")[OFFSET (0)] AS FLOAT64),
+        CAST(split(`@@BQ_PROJECTID@@`.@@BQ_DATASET_PLACEKEY@@.LONGLAT_FROMPLACEKEY(placekey),",")[OFFSET (1)] AS FLOAT64))
 );

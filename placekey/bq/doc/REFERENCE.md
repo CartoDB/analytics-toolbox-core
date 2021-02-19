@@ -30,13 +30,13 @@ Transform a placekey to an equivalent h3 index.
 
 * `placekey`: `STRING` placekey we want to convert to h3.
 
-#### LATLONG_FROMPLACEKEY
+#### LONGLAT_FROMPLACEKEY
 
 {{% bannerNote type="code" %}}
-placekey.LATLONG_FROMPLACEKEY(placekey STRING)
+placekey.LONGLAT_FROMPLACEKEY(placekey STRING)
 {{%/ bannerNote %}}
 
-Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the latitud and longitud separated by a comma.
+Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the longitude and llatitude separated by a comma.
 
 * `placekey`: `STRING` placekey we want to extract the coordinates from.
 
