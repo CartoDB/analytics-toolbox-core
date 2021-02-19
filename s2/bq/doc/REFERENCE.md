@@ -139,10 +139,10 @@ Converts a given point at given level of detail to a s2 cell id.
 * `point`: `GEOGRAPHY` point we want to get the quadint from.
 * `level`: `NUMERIC` Level of detail or zoom.
 
-#### ST_GEOGFROMLATLNG_BOUNDARY
+#### ST_GEOGFROMLONGLAT_BOUNDARY
 
 {{% bannerNote type="code" %}}
-s2.ST_GEOGFROMLATLNG_BOUNDARY(latitude FLOAT64, longitude FLOAT64, level NUMERIC)
+s2.ST_GEOGFROMLONGLAT_BOUNDARY(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
 {{%/ bannerNote %}}
 
 Returns the geography boundary for a given level of detail and geographic coordinates. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it to geography.
