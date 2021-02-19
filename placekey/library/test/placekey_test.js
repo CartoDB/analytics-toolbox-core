@@ -12,7 +12,6 @@ const fs = require('fs');
 const test = require('tape-promise/tape');
 
 /* Emulate how BigQuery would load the file */
-eval(fs.readFileSync('./h3-integer.js') + '');
 eval(fs.readFileSync('../../placekey_library.js') + '');
 const h3 = require('h3-js');
 const h3ToGeoBoundary = h3.h3ToGeoBoundary;

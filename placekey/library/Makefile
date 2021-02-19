@@ -8,6 +8,12 @@ all: ${TARGET}
 
 JS_FILES = \
 	js/placekey_version.js \
+	js/h3-integer.js \
+	js/h3-js.umd.js \
+	js/placekey.js
+
+LINT_FILES = \
+	js/placekey_version.js \
 	js/placekey.js
 
 .PHONY: check
@@ -24,10 +30,10 @@ node_modules: package.json
 	$(NPM) ci
 
 eslint: node_modules
-	${ESLINT} --fix ${JS_FILES}
+	${ESLINT} --fix ${LINT_FILES}
 
 check-eslint: node_modules
-	${ESLINT} ${JS_FILES}
+	${ESLINT} ${LINT_FILES}
 
 linter: eslint
 
