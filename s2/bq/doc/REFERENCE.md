@@ -26,7 +26,7 @@ Returns a GeoJSON containing the boundary corners of a quadkey.
 s2.GEOJSONBOUNDARY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
 {{%/ bannerNote %}}
 
-Returns a GeoJSON containing the boundary corners given a longitud, latitud and zoom level.
+Returns a GeoJSON containing the boundary corners given a longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
@@ -48,7 +48,7 @@ Convert from hilbert quadtree id to s2 cell id.
 s2.ID_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
 {{%/ bannerNote %}}
 
-Generate the s2 cell id for a given longitud, latitud and zoom level.
+Generate the s2 cell id for a given longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
@@ -70,7 +70,7 @@ Convert from s2 cell id to hilbert quadtree id.
 s2.KEY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
 {{%/ bannerNote %}}
 
-Generate the quadkey for a given longitud, latitud and zoom level.
+Generate the quadkey for a given longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
@@ -145,7 +145,7 @@ Converts a given point at given level of detail to a s2 cell id.
 s2.ST_GEOGFROMLATLNG_BOUNDARY(latitude FLOAT64, longitude FLOAT64, level NUMERIC)
 {{%/ bannerNote %}}
 
-Returns the geography boundary for a given level of detail and geographic coordinates. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GEOJSON and finally transform it to geography.
+Returns the geography boundary for a given level of detail and geographic coordinates. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it to geography.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
@@ -157,6 +157,6 @@ Returns the geography boundary for a given level of detail and geographic coordi
 s2.ST_GEOGFROMKEY_BOUNDARY(key STRING)
 {{%/ bannerNote %}}
 
-Returns the geography boundary for a given quadkey. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GEOJSON and finally transform it to geography.
+Returns the geography boundary for a given quadkey. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it to geography.
 
 * `key`: `STRING` quadkey we want to get the boundary geography from.
