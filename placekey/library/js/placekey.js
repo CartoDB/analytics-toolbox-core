@@ -7,21 +7,40 @@ const TUPLE_LENGTH = 3;
 const PADDING_CHAR = 'a';
 const PADDING_REGEX = /a/g;
 const REPLACEMENT_CHARS = 'eu';
-const REPLACEMENT_MAP = {
-    prn: 'pre',
-    f4nny: 'f4nne',
-    tw4t: 'tw4e',
-    ngr: 'ngu',
-    dck: 'dce',
-    vjn: 'vju',
-    fck: 'fce',
-    pns: 'pne',
-    sht: 'she',
-    kkk: 'kke',
-    fgt: 'fgu',
-    dyk: 'dye',
-    bch: 'bce'
+
+// Two copies of the REPLACEMENT_MAP are here to hold the regular expression objects
+// needed. Both should be in the same order as REPLACEMENT_MAP.
+const REPLACEMENT_MAP_BACKWARD = {
+    prn: /pre/g,
+    f4nny: /f4nne/g,
+    tw4t: /gtw4e/g,
+    ngr: /ngu/g, // 'u' avoids introducing 'gey'
+    dck: /dce/g,
+    vjn: /vju/g, // 'u' avoids introducing 'jew'
+    fck: /fce/g,
+    pns: /pne/g,
+    sht: /she/g,
+    kkk: /kke/g,
+    fgt: /fgu/g, // 'u' avoids introducing 'gey'
+    dyk: /dye/g,
+    bch: /bce/g
 };
+const REPLACEMENT_MAP_FORWARD = {
+    pre: /prn/g,
+    f4nne: /f4nny/g,
+    gtw4e: /tw4t/g,
+    ngu: /ngr/g, // 'u' avoids introducing 'gey'
+    dce: /dck/g,
+    vju: /vjn/g, // 'u' avoids introducing 'jew'
+    fce: /fck/g,
+    pne: /pns/g,
+    she: /sht/g,
+    kke: /kkk/g,
+    fgu: /fgt/g, // 'u' avoids introducing 'gey'
+    dye: /dyk/g,
+    bce: /bch/g
+};
+
 const FIRST_TUPLE_REGEX = '['.concat(ALPHABET).concat(REPLACEMENT_CHARS).concat(PADDING_CHAR, ']{3}');
 const TUPLE_REGEX = '['.concat(ALPHABET).concat(REPLACEMENT_CHARS, ']{3}');
 const WHERE_REGEX = new RegExp('^'.concat([FIRST_TUPLE_REGEX, TUPLE_REGEX, TUPLE_REGEX].join('-'), '$'));
@@ -112,19 +131,17 @@ function stripEncoding(string) {
 }
 
 function cleanString(string) {
-    for (const [key, value] of Object.entries(REPLACEMENT_MAP)) {
-        string = string.replace(key, value);
+    for (const [replacement, regexp] of Object.entries(REPLACEMENT_MAP_FORWARD)) {
+        string = string.replace(regexp, replacement);
     }
-
     return string;
 }
 
-function dirtyString(s) {
-    for (const [key, value] of Object.entries(REPLACEMENT_MAP).reverse()) {
-        s = s.replace(value, key);
+function dirtyString(string) {
+    for (const [replacement, regexp] of Object.entries(REPLACEMENT_MAP_BACKWARD).reverse()) {
+        string = string.replace(regexp, replacement);
     }
-
-    return s;
+    return string;
 }
 
 const DECODE_OFFSETS = [[0x1, 0], [0x1c, 0], [0x310, 0], [0x55c0, 0], [0x96100, 0],

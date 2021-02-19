@@ -25,11 +25,9 @@ node_modules: package.json
 
 eslint: node_modules
 	${ESLINT} --fix ${JS_FILES}
-	$(MAKE) -C test/ $@
 
 check-eslint: node_modules
 	${ESLINT} ${JS_FILES}
-	$(MAKE) -C test/ $@
 
 linter: eslint
 
