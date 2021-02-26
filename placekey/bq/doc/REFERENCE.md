@@ -57,7 +57,7 @@ Convert a given point to a placekey.
 placekey.LONGLAT_FROMPLACEKEY(placekey STRING)
 {{%/ bannerNote %}}
 
-Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the longitude and llatitude separated by a comma.
+Return the geographic coordinates corresponding to a given placekey. The return format is a STRING containing the longitude and latitude separated by a comma.
 
 * `placekey`: `STRING` placekey we want to extract the coordinates from.
 
