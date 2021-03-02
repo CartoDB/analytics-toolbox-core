@@ -144,7 +144,7 @@ describe('QUADKEY unit tests', () => {
     });
 
     it('Sibling should work at any level of zoom', async() => {
-        let z, lat, lng, cont;
+        let z, lat, lng;
         for (z = 0; z < 29; ++z) {
             for (lat = -89; lat <= 89; lat = lat + 15) {
                 for (lng = -179; lng <= 179; lng = lng + 15) {
