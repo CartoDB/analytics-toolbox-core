@@ -18,7 +18,7 @@ describe('QUADKEY integration tests', () => {
     });
   
     it ('Returns the proper version', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.VERSION() as versioncol;`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.VERSION() AS versioncol;`;
         let rows;
         await assert.doesNotReject( async () => {
             [rows] = await client.query(query, queryOptions);
@@ -45,7 +45,7 @@ describe('QUADKEY integration tests', () => {
             (
                 SELECT *,
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
-                    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY)) as decodedQuadkey
+                    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY)) AS decodedQuadkey
                 FROM tileContext
             )
             WHERE tileX != decodedQuadkey.x OR tileY != decodedQuadkey.y OR zoom != decodedQuadkey.z`;
@@ -76,7 +76,7 @@ describe('QUADKEY integration tests', () => {
             \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMQUADKEY(
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY)))) as decodedQuadkey
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY)))) AS decodedQuadkey
             FROM tileContext
         )
         WHERE tileX != decodedQuadkey.x OR tileY != decodedQuadkey.y OR zoom != decodedQuadkey.z`;
@@ -87,7 +87,7 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
-    it ('Parent should work at any level of zoom', async () => {
+    it ('PARENT should work at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
             WITH zoomValues AS
@@ -104,9 +104,9 @@ describe('QUADKEY integration tests', () => {
         FROM 
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom - 1) as expectedParent,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom - 1) AS expectedParent,
             \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom)) as parent
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom)) AS parent
             FROM zoomContext
         )
         WHERE parent != expectedParent`;
@@ -117,7 +117,7 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
-    it ('Children should work at any level of zoom', async () => {
+    it ('CHILDREN should work at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
             WITH zoomValues AS
@@ -127,26 +127,26 @@ describe('QUADKEY integration tests', () => {
             SELECT *
             FROM
                 zoomValues,
-                UNNEST(GENERATE_ARRAY(-90,90,15)) lat,
-                UNNEST(GENERATE_ARRAY(-180,180,15)) long
+                UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileX,
+                UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileY
         ),
         expectedQuadintContext AS
         (
-            SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom) as expectedQuadint,
+            SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY) AS expectedQuadint,
             FROM zoomContext
         ),
         childrenContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(expectedQuadint) as children
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(expectedQuadint) AS children
             FROM expectedQuadintContext 
         )
         SELECT *
         FROM 
         (
             SELECT expectedQuadint,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(child) as currentQuadint
-            FROM childrenContext, UNNEST(children) as child
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(child) AS currentQuadint
+            FROM childrenContext, UNNEST(children) AS child
         )
         WHERE currentQuadint != expectedQuadint`;
 
@@ -156,7 +156,7 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
-    it ('Sibling should work at any level of zoom', async () => {
+    it ('SIBLING should work at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
             WITH zoomValues AS
@@ -166,37 +166,37 @@ describe('QUADKEY integration tests', () => {
             SELECT *
             FROM
                 zoomValues,
-                UNNEST(GENERATE_ARRAY(-89,89,15)) lat,
-                UNNEST(GENERATE_ARRAY(-179,179,15)) long
+                UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileX,
+                UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileY
         ),
         expectedQuadintContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom) as expectedQuadint,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY) AS expectedQuadint,
             FROM zoomContext
         ),
         rightSiblingContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(expectedQuadint,'right') as rightSibling
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(expectedQuadint,'right') AS rightSibling
             FROM expectedQuadintContext 
         ),
         upSiblingContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(rightSibling,'up') as upSibling
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(rightSibling,'up') AS upSibling
             FROM rightSiblingContext 
         ),
         leftSiblingContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(upSibling,'left') as leftSibling
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(upSibling,'left') AS leftSibling
             FROM upSiblingContext 
         ),
         downSiblingContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(leftSibling,'down') as downSibling
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(leftSibling,'down') AS downSibling
             FROM leftSiblingContext 
         )
         SELECT *
@@ -209,5 +209,33 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
-    
+    it ('KRING should work', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.KRING(162) as kring1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.KRING(12070922) as kring2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.KRING(791040491538) as kring3,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.KRING(12960460429066265) as kring4`;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0]['kring1'],[130, 2, 258, 194, 66, 322, 34, 290, 162]);
+        assert.deepEqual(rows[0]['kring2'],[12070890, 12038122, 12103658, 12070954, 12038186, 12103722, 12038154, 12103690, 12070922]);
+        assert.deepEqual(rows[0]['kring3'],[791040491506, 791032102898, 791048880114, 791040491570, 791032102962, 791048880178, 791032102930, 791048880146, 791040491538]);
+        assert.deepEqual(rows[0]['kring4'],[12960460429066232, 12960459355324408, 12960461502808056, 12960460429066296, 12960459355324472, 12960461502808120, 12960459355324440, 12960461502808088, 12960460429066264]);
+    });
+
+    it ('BBOX should work', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.BBOX(162) as bbox1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.BBOX(12070922) as bbox2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.BBOX(791040491538) as bbox3,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.BBOX(12960460429066265) as bbox4`;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0]['bbox1'],[-90, 0, 0, 66.51326044311185]);
+        assert.deepEqual(rows[0]['bbox2'],[-45.00000000000001, 44.84029065139799, -44.648437500000014, 45.08903556483102]);
+        assert.deepEqual(rows[0]['bbox3'],[-45.00000000000001, 44.99976701918129, -44.99862670898438, 45.00073807829065]);
+        assert.deepEqual(rows[0]['bbox4'],[-45.00000000000001, 44.9999946126367, -44.99998927116395, 45.00000219906963]);
+    });
 }); /* QUADKEY integration tests */
