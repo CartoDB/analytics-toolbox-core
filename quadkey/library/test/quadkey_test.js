@@ -142,4 +142,21 @@ describe('QUADKEY unit tests', () => {
             }
         }
     });
+
+    it('Sibling should work at any level of zoom', async() => {
+        let z, lat, lng, cont;
+        for (z = 0; z < 29; ++z) {
+            for (lat = -89; lat <= 89; lat = lat + 15) {
+                for (lng = -179; lng <= 179; lng = lng + 15) {
+                    const location = { lng: lng, lat: lat };
+                    const quadint = quadintFromLocation(location, z);
+                    let siblingQuadint = sibling(quadint, 'right');
+                    siblingQuadint = sibling(siblingQuadint, 'up');
+                    siblingQuadint = sibling(siblingQuadint, 'left');
+                    siblingQuadint = sibling(siblingQuadint, 'down');
+                    assert.equal(quadint, siblingQuadint);
+                }
+            }
+        }
+    });
 });
