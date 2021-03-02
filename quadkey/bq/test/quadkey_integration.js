@@ -28,135 +28,186 @@ describe('QUADKEY integration tests', () => {
     });
 
     it ('Should be able to encode/decode quadints at different zooms', async () => {
-        let tilesPerLevel, x, y;
-        for(let z = 1; z < 30; z = z + 7)
-        {
-            tilesPerLevel = 2 << (z - 1);
+        let query = `WITH tileContext AS
+            (
+                WITH zoomValues AS
+                (
+                    SELECT zoom FROM UNNEST (GENERATE_ARRAY(0,29)) AS zoom
+                )
+                SELECT *
+                FROM
+                    zoomValues,
+                    UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileX,
+                    UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileY
+            )
+            SELECT *
+            FROM 
+            (
+                SELECT *,
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
+                    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY)) as decodedQuadkey
+                FROM tileContext
+            )
+            WHERE tileX != decodedQuadkey.x OR tileY != decodedQuadkey.y OR zoom != decodedQuadkey.z`;
 
-            x = 0;
-            y = 0;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})) as zxy;`;
-
-            let rows;
-            await assert.doesNotReject( async () => {
-                [rows] = await client.query(query, queryOptions);
-            });
-            assert.equal(rows.length, 1);
-            assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
-
-            x = tilesPerLevel - 1;
-            y = tilesPerLevel - 1;
-            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})) as zxy;`;
-
-            await assert.doesNotReject( async () => {
-                [rows] = await client.query(query, queryOptions);
-            });
-            assert.equal(rows.length, 1);
-            assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
-        }
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 0);
     });
 
     it ('Should be able to encode/decode between quadint and quadkey at any level of zoom', async () => {
-        let tilesPerLevel, x, y;
-        for(let z = 1; z < 30; z = z + 7)
-        {
-            tilesPerLevel = 2 << (z - 1);
-
-            x = 0;
-            y = 0;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMQUADKEY(
-                    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})))) as zxy;`;
-
-            let rows;
-            await assert.doesNotReject( async () => {
-                [rows] = await client.query(query, queryOptions);
-            });
-            assert.equal(rows.length, 1);
-            assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
-
-            x = tilesPerLevel - 1;
-            y = tilesPerLevel - 1;
-            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
+        let query = `WITH tileContext AS
+        (
+            WITH zoomValues AS
+            (
+                SELECT zoom FROM UNNEST (GENERATE_ARRAY(0,29)) AS zoom
+            )
+            SELECT *
+            FROM
+                zoomValues,
+                UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileX,
+                UNNEST(GENERATE_ARRAY(0,CAST(pow(2, zoom) - 1 AS INT64),COALESCE(NULLIF(CAST(pow(2, zoom)*0.02 AS INT64),0),1))) tileY
+        )
+        SELECT *
+        FROM 
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ZXY_FROMQUADINT(
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMQUADKEY(
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})))) as zxy;`;
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY)))) as decodedQuadkey
+            FROM tileContext
+        )
+        WHERE tileX != decodedQuadkey.x OR tileY != decodedQuadkey.y OR zoom != decodedQuadkey.z`;
 
-            await assert.doesNotReject( async () => {
-                [rows] = await client.query(query, queryOptions);
-            });
-            assert.equal(rows.length, 1);
-            assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
-        }
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 0);
     });
 
     it ('Parent should work at any level of zoom', async () => {
-        let z, lat, lng;
-        for(z = 5; z < 30; z = z + 20)
-        {
-            for(lat = -90; lat <= 90; lat = lat + 120)
-            {
-                for(lng = -180; lng <= 180; lng = lng + 200)
-                {
-                    let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z - 1}) as currentParent;`;
-                    let rows;
-                    await assert.doesNotReject( async () => {
-                        [rows] = await client.query(query, queryOptions);
-                    });
-                    assert.equal(rows.length, 1);
-                    let currentParent = rows[0].currentParent;
+        let query = `WITH zoomContext AS
+        (
+            WITH zoomValues AS
+            (
+                SELECT zoom FROM UNNEST (GENERATE_ARRAY(1,29)) AS zoom
+            )
+            SELECT *
+            FROM
+                zoomValues,
+                UNNEST(GENERATE_ARRAY(-90,90,15)) lat,
+                UNNEST(GENERATE_ARRAY(-180,180,15)) long
+        )
+        SELECT *
+        FROM 
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom - 1) as expectedParent,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom)) as parent
+            FROM zoomContext
+        )
+        WHERE parent != expectedParent`;
 
-                    query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(
-                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z})) as parent;`;
-                    rows;
-                    await assert.doesNotReject( async () => {
-                        [rows] = await client.query(query, queryOptions);
-                    });
-                    assert.equal(rows.length, 1);
-                    assert.equal(rows[0].parent, currentParent);
-                }
-            }
-        }
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 0);
     });
 
     it ('Children should work at any level of zoom', async () => {
-        let z, lat, lng, cont;
-        for(z = 5; z < 30; z = z + 20)
-        {
-            for(lat = -90; lat <= 90; lat = lat + 120)
-            {
-                for(lng = -180; lng <= 180; lng = lng + 200)
-                {
-                    let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z + 1}) as currentChild;`;
-                    let rows;
-                    await assert.doesNotReject( async () => {
-                        [rows] = await client.query(query, queryOptions);
-                    });
-                    assert.equal(rows.length, 1);
-                    let currentChild = rows[0].currentChild;
+        let query = `WITH zoomContext AS
+        (
+            WITH zoomValues AS
+            (
+                SELECT zoom FROM UNNEST (GENERATE_ARRAY(0,28)) AS zoom
+            )
+            SELECT *
+            FROM
+                zoomValues,
+                UNNEST(GENERATE_ARRAY(-90,90,15)) lat,
+                UNNEST(GENERATE_ARRAY(-180,180,15)) long
+        ),
+        expectedQuadintContext AS
+        (
+            SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom) as expectedQuadint,
+            FROM zoomContext
+        ),
+        childrenContext AS
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(expectedQuadint) as children
+            FROM expectedQuadintContext 
+        )
+        SELECT *
+        FROM 
+        (
+            SELECT expectedQuadint,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(child) as currentQuadint
+            FROM childrenContext, UNNEST(children) as child
+        )
+        WHERE currentQuadint != expectedQuadint`;
 
-                    query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(
-                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z})) as children;`;
-                    rows;
-                    await assert.doesNotReject( async () => {
-                        [rows] = await client.query(query, queryOptions);
-                    });
-                    assert.equal(rows.length, 1);
-                    assert.equal(rows[0].children.length, 4);
-                    let childs = rows[0].children;
-                    cont = 0;
-                    childs.forEach((element) => {
-                        if(currentChild === element)
-                        {
-                            ++cont;
-                        }
-                    });
-                    assert.equal(cont,1);
-                }
-            }
-        }
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 0);
     });
+
+    it ('Sibling should work at any level of zoom', async () => {
+        let query = `WITH zoomContext AS
+        (
+            WITH zoomValues AS
+            (
+                SELECT zoom FROM UNNEST (GENERATE_ARRAY(0,29)) AS zoom
+            )
+            SELECT *
+            FROM
+                zoomValues,
+                UNNEST(GENERATE_ARRAY(-89,89,15)) lat,
+                UNNEST(GENERATE_ARRAY(-179,179,15)) long
+        ),
+        expectedQuadintContext AS
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(long, lat), zoom) as expectedQuadint,
+            FROM zoomContext
+        ),
+        rightSiblingContext AS
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(expectedQuadint,'right') as rightSibling
+            FROM expectedQuadintContext 
+        ),
+        upSiblingContext AS
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(rightSibling,'up') as upSibling
+            FROM rightSiblingContext 
+        ),
+        leftSiblingContext AS
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(upSibling,'left') as leftSibling
+            FROM upSiblingContext 
+        ),
+        downSiblingContext AS
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(leftSibling,'down') as downSibling
+            FROM leftSiblingContext 
+        )
+        SELECT *
+        FROM downSiblingContext
+        WHERE downSibling != expectedQuadint`;
+
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 0);
+    });
+
+    
 }); /* QUADKEY integration tests */
