@@ -5,7 +5,7 @@ const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
 describe('*_ASH3', () => {
-
+    const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
         if (!BQ_PROJECTID) {
@@ -41,9 +41,8 @@ FROM inputs
 ORDER BY id ASC`;
 
         let rows;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+        await assert.doesNotReject(async () => {
+            [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 7);
         assert.equal(rows[0].h3_id, "599686042433355775");
@@ -53,6 +52,31 @@ ORDER BY id ASC`;
         assert.equal(rows[4].h3_id, null);
         assert.equal(rows[5].h3_id, null);
         assert.equal(rows[6].h3_id, null);
+    });
+
+    it ('ST_ASH3 returns NULL with non POINT geographies', async () => {
+
+/**
+ * Note, since JS is bad with large numbers, we cast the ints to STRING
+ */
+        const query = `
+WITH inputs AS
+(
+    SELECT 1 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 10 10)') as geom, 5 as resolution UNION ALL
+    SELECT 2 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 5 as resolution UNION ALL
+    SELECT 3 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 0 10, 10 10, 10 0, 0 0)') as geom, 5 as resolution
+)
+SELECT
+    CAST(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution) AS STRING) as h3_id
+FROM inputs
+ORDER BY id ASC`;
+        let rows;
+        await assert.doesNotReject(async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows[0].h3_id, null);
+        assert.equal(rows[1].h3_id, null);
+        assert.equal(rows[2].h3_id, null);
     });
 
     it ('LONGLAT_ASH3 returns the proper INT64', async () => {
@@ -82,10 +106,10 @@ FROM inputs
 ORDER BY id ASC`;
 
         let rows;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+        await assert.doesNotReject(async () => {
+            [rows] = await client.query(query, queryOptions);
         });
+
         assert.equal(rows.length, 8);
         assert.equal(rows[0].h3_id, "599686042433355775");
         assert.equal(rows[1].h3_id, "600235711274156031");
@@ -96,5 +120,8 @@ ORDER BY id ASC`;
         assert.equal(rows[6].h3_id, '599686042433355775');
         assert.equal(rows[7].h3_id, '599686042433355775');
     });
+
+
+    /* Test ST_ASH3_POLYFILL */
 
 }); /* *_ASH3 integration tests */
