@@ -55,10 +55,6 @@ ORDER BY id ASC`;
     });
 
     it ('ST_ASH3 returns NULL with non POINT geographies', async () => {
-
-/**
- * Note, since JS is bad with large numbers, we cast the ints to STRING
- */
         const query = `
 WITH inputs AS
 (
@@ -80,10 +76,6 @@ ORDER BY id ASC`;
     });
 
     it ('LONGLAT_ASH3 returns the proper INT64', async () => {
-
-/**
- * Note, since JS is bad with large numbers, we cast the ints to STRING
- */
         const query = `
 WITH inputs AS
 (
@@ -123,5 +115,25 @@ ORDER BY id ASC`;
 
 
     /* Test ST_ASH3_POLYFILL */
+it ('ST_ASH3_POLYFILL returns the proper INT64s', async () => {
+    /* TODO: Test NULL, other types, multigeometries, geomcollections, check that the output is valid */
+
+        const query = `
+WITH inputs AS
+(
+    SELECT 1 AS id, ST_GEOGFROMTEXT('POLYGON((-122.4089866999972145 37.813318999983238, -122.3805436999997056 37.7866302000007224, -122.3544736999993603 37.7198061999978478, -122.5123436999983966 37.7076131999975672, -122.5247187000021967 37.7835871999971715, -122.4798767000009008 37.8151571999998453, -122.4089866999972145 37.813318999983238))') as geom, 9 as resolution
+)
+SELECT
+    ARRAY_LENGTH(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3_POLYFILL(geom, resolution)) AS id_count
+FROM inputs
+ORDER BY id ASC`;
+
+        let rows;
+        await assert.doesNotReject(async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.equal(rows[0].id_count, 1253);
+    });
 
 }); /* *_ASH3 integration tests */

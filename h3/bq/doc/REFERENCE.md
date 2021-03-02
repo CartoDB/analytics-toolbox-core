@@ -20,10 +20,22 @@ If you want the HEX representation of the cell, you can call [H3_ASHEX](#h3.H3AS
 {{%/ bannerNote %}}
 
 {{% bannerNote type="note" title="tip"%}}
-If you want the cells covering LINES or POLYGONS see [ST_ASH3_POLYFILL](#h3.LONGLAT_ASH3).
+If you want the cells covering POLYGONS see [ST_ASH3_POLYFILL](#h3.LONGLAT_ASH3).
 {{%/ bannerNote %}}
 
 #### h3.LONGLAT_ASH3
+
+{{% bannerNote type="code" %}}
+h3.LONGLAT_ASH3(longitude, latitude, resolution)
+{{%/ bannerNote %}}
+
+* `latitude`: `FLOAT64` The point latitude in **degrees**.
+* `longitude`: `FLOAT64` The point latitude in **degrees**.
+* `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
+
+Returns an H3 cell index where the point is placed in the required `resolution` as an `INT64` number. If will return `NULL` on error (resolution out of bounds).
+
+#### h3.ST_ASH3_POLYFILL
 
 {{% bannerNote type="code" %}}
 h3.LONGLAT_ASH3(longitude, latitude, resolution)
