@@ -16,25 +16,25 @@ describe('QUADKEY unit tests', () => {
             x = 0;
             y = 0;
             let zxyDecoded = ZXYFromQuadint(quadintFromZXY(z, x, y));
-            zDecoded = Number(zxyDecoded.z);
-            xDecoded = Number(zxyDecoded.x);
-            yDecoded = Number(zxyDecoded.y);
+            zDecoded = zxyDecoded.z;
+            xDecoded = zxyDecoded.x;
+            yDecoded = zxyDecoded.y;
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
 
             x = tilesPerLevel / 2;
             y = tilesPerLevel / 2;
             zxyDecoded = ZXYFromQuadint(quadintFromZXY(z, x, y));
-            zDecoded = Number(zxyDecoded.z);
-            xDecoded = Number(zxyDecoded.x);
-            yDecoded = Number(zxyDecoded.y);
+            zDecoded = zxyDecoded.z;
+            xDecoded = zxyDecoded.x;
+            yDecoded = zxyDecoded.y;
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
 
             x = tilesPerLevel - 1;
             y = tilesPerLevel - 1;
             zxyDecoded = ZXYFromQuadint(quadintFromZXY(z, x, y));
-            zDecoded = Number(zxyDecoded.z);
-            xDecoded = Number(zxyDecoded.x);
-            yDecoded = Number(zxyDecoded.y);
+            zDecoded = zxyDecoded.z;
+            xDecoded = zxyDecoded.x;
+            yDecoded = zxyDecoded.y;
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
         }
     });
@@ -47,25 +47,25 @@ describe('QUADKEY unit tests', () => {
             x = 0;
             y = 0;
             let zxyDecoded = ZXYFromQuadint(quadintFromQuadkey(quadkeyFromQuadint(quadintFromZXY(z, x, y))));
-            zDecoded = Number(zxyDecoded.z);
-            xDecoded = Number(zxyDecoded.x);
-            yDecoded = Number(zxyDecoded.y);
+            zDecoded = zxyDecoded.z;
+            xDecoded = zxyDecoded.x;
+            yDecoded = zxyDecoded.y;
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
 
             x = tilesPerLevel / 2;
             y = tilesPerLevel / 2;
             zxyDecoded = ZXYFromQuadint(quadintFromQuadkey(quadkeyFromQuadint(quadintFromZXY(z, x, y))));
-            zDecoded = Number(zxyDecoded.z);
-            xDecoded = Number(zxyDecoded.x);
-            yDecoded = Number(zxyDecoded.y);
+            zDecoded = zxyDecoded.z;
+            xDecoded = zxyDecoded.x;
+            yDecoded = zxyDecoded.y;
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
 
             x = tilesPerLevel - 1;
             y = tilesPerLevel - 1;
             zxyDecoded = ZXYFromQuadint(quadintFromQuadkey(quadkeyFromQuadint(quadintFromZXY(z, x, y))));
-            zDecoded = Number(zxyDecoded.z);
-            xDecoded = Number(zxyDecoded.x);
-            yDecoded = Number(zxyDecoded.y);
+            zDecoded = zxyDecoded.z;
+            xDecoded = zxyDecoded.x;
+            yDecoded = zxyDecoded.y;
             assert.ok(z === zDecoded && x === xDecoded && y === yDecoded);
         }
     });
