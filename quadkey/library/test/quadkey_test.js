@@ -85,7 +85,7 @@ describe('QUADKEY unit tests', () => {
 
     it('A quadint should be contained inside his parent at any level of zoom', async() => {
         let z, lat, lng;
-        for (z = 2; z < 30; ++z) {
+        for (z = 1; z < 30; ++z) {
             for (lat = -90; lat <= 90; lat = lat + 15) {
                 for (lng = -180; lng <= 180; lng = lng + 15) {
                     const location = { lng: lng, lat: lat };
