@@ -35,14 +35,14 @@ Returns the level of zoom z and coordinates x, y for a given quadint.
 #### LONGLAT_ASQUADINT
 
 {{% bannerNote type="code" %}}
-quadkey.LONGLAT_ASQUADINT(longitude FLOAT64, latitude FLOAT64, resolution NUMERIC)
+quadkey.LONGLAT_ASQUADINT(longitude FLOAT64, latitude FLOAT64, resolution INT64)
 {{%/ bannerNote %}}
 
 Returns the quadint representation for a given level of detail and geographic coordinates.
 
 * `longitude`: `FLOAT64` horizontal coordinate of the map.
 * `latitude`: `FLOAT64` vertical coordinate of the map.
-* `resolution`: `NUMERIC` Level of detail or zoom.
+* `resolution`: `INT64` Level of detail or zoom.
 
 #### QUADINT_FROMQUADKEY
 
@@ -118,24 +118,24 @@ Returns the boundary box of a given quadint. This boundary box contains the mini
 #### ST_ASQUADINT
 
 {{% bannerNote type="code" %}}
-quadkey.ST_ASQUADINT(point GEOGRAPHY, resolution NUMERIC) 
+quadkey.ST_ASQUADINT(point GEOGRAPHY, resolution INT64) 
 {{%/ bannerNote %}}
 
 Converts a given point at given level of detail to a quadint.
 
 * `point`: `GEOGRAPHY` point we want to get the quadint from.
-* `resolution`: `NUMERIC` Level of detail or zoom.
+* `resolution`: `INT64` Level of detail or zoom.
 
 #### ST_ASQUADINTPOLYFILL
 
 {{% bannerNote type="code" %}}
-quadkey.ST_ASQUADINTPOLYFILL(geo GEOGRAPHY, resolution NUMERIC)
+quadkey.ST_ASQUADINTPOLYFILL(geo GEOGRAPHY, resolution INT64)
 {{%/ bannerNote %}}
 
 Returns an array of quadints contained by the given geography at a given level of detail.
 
 * `geo`: `GEOGRAPHY` geography we want to extract the quadints from.
-* `resolution`: `NUMERIC` Level of detail or zoom.
+* `resolution`: `INT64` Level of detail or zoom.
 
 #### ST_GEOGFROMQUADINT_BOUNDARY
 

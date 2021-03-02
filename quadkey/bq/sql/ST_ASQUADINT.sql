@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.LONGLAT_ASQUADINT`
-    (longitude FLOAT64, latitude FLOAT64, resolution NUMERIC)
+    (longitude FLOAT64, latitude FLOAT64, resolution INT64)
     RETURNS INT64
     DETERMINISTIC
     LANGUAGE js
@@ -15,7 +15,7 @@ AS """
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.ST_ASQUADINT`
-    (point GEOGRAPHY, resolution NUMERIC) 
+    (point GEOGRAPHY, resolution INT64) 
 AS (
     `@@BQ_PROJECTID@@`.@@BQ_DATASET_QUADKEY@@.LONGLAT_ASQUADINT(ST_X(point), ST_Y(point), resolution)
 );
