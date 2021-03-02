@@ -22,12 +22,13 @@ on:
 
 env:
   GCLOUD_VERSION: 'latest'
-  NODE_VERSION: '15'
+  NODE_VERSION: '14'
   MAKEFLAGS: '-j2'
 
   BQ_PROJECTID: bqcartoci
   BQ_BUCKET_PUBLIC: gs://bqcartoci/
-  BQ_DATASET_PREFIX: ${{ github.sha }}_${{ github.run_id }}
+  # Start the dataset prefix with letters to avoid issues with BigQuery parser (it doesn't like datasets starting with numbers: https://issuetracker.google.com/issues/180688209)
+  BQ_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
   POST_INTEGRATION_CLEANUP: 1
 
 jobs:
