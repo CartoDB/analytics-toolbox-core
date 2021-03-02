@@ -5,7 +5,7 @@ const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_QUADKEY = process.env.BQ_DATASET_QUADKEY;
 
 describe('QUADKEY integration tests', () => {
-
+    const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
         if (!BQ_PROJECTID) {
@@ -21,8 +21,7 @@ describe('QUADKEY integration tests', () => {
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.VERSION() as versioncol;`;
         let rows;
         await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].versioncol, 1);
@@ -41,8 +40,7 @@ describe('QUADKEY integration tests', () => {
 
             let rows;
             await assert.doesNotReject( async () => {
-                const [job] = await client.createQueryJob({ query: query });
-                [rows] = await job.getQueryResults();
+                [rows] = await client.query(query, queryOptions);
             });
             assert.equal(rows.length, 1);
             assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
@@ -53,8 +51,7 @@ describe('QUADKEY integration tests', () => {
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})) as zxy;`;
 
             await assert.doesNotReject( async () => {
-                const [job] = await client.createQueryJob({ query: query });
-                [rows] = await job.getQueryResults();
+                [rows] = await client.query(query, queryOptions);
             });
             assert.equal(rows.length, 1);
             assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
@@ -76,8 +73,7 @@ describe('QUADKEY integration tests', () => {
 
             let rows;
             await assert.doesNotReject( async () => {
-                const [job] = await client.createQueryJob({ query: query });
-                [rows] = await job.getQueryResults();
+                [rows] = await client.query(query, queryOptions);
             });
             assert.equal(rows.length, 1);
             assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
@@ -90,8 +86,7 @@ describe('QUADKEY integration tests', () => {
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(${z}, ${x}, ${y})))) as zxy;`;
 
             await assert.doesNotReject( async () => {
-                const [job] = await client.createQueryJob({ query: query });
-                [rows] = await job.getQueryResults();
+                [rows] = await client.query(query, queryOptions);
             });
             assert.equal(rows.length, 1);
             assert.ok(z === rows[0].zxy.z && x === rows[0].zxy.x && y === rows[0].zxy.y);
@@ -109,8 +104,7 @@ describe('QUADKEY integration tests', () => {
                     let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z - 1}) as currentParent;`;
                     let rows;
                     await assert.doesNotReject( async () => {
-                        const [job] = await client.createQueryJob({ query: query });
-                        [rows] = await job.getQueryResults();
+                        [rows] = await client.query(query, queryOptions);
                     });
                     assert.equal(rows.length, 1);
                     let currentParent = rows[0].currentParent;
@@ -119,8 +113,7 @@ describe('QUADKEY integration tests', () => {
                         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z})) as parent;`;
                     rows;
                     await assert.doesNotReject( async () => {
-                        const [job] = await client.createQueryJob({ query: query });
-                        [rows] = await job.getQueryResults();
+                        [rows] = await client.query(query, queryOptions);
                     });
                     assert.equal(rows.length, 1);
                     assert.equal(rows[0].parent, currentParent);
@@ -140,8 +133,7 @@ describe('QUADKEY integration tests', () => {
                     let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z + 1}) as currentChild;`;
                     let rows;
                     await assert.doesNotReject( async () => {
-                        const [job] = await client.createQueryJob({ query: query });
-                        [rows] = await job.getQueryResults();
+                        [rows] = await client.query(query, queryOptions);
                     });
                     assert.equal(rows.length, 1);
                     let currentChild = rows[0].currentChild;
@@ -150,8 +142,7 @@ describe('QUADKEY integration tests', () => {
                         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_ASQUADINT(ST_GEOGPOINT(${lng}, ${lat}),${z})) as children;`;
                     rows;
                     await assert.doesNotReject( async () => {
-                        const [job] = await client.createQueryJob({ query: query });
-                        [rows] = await job.getQueryResults();
+                        [rows] = await client.query(query, queryOptions);
                     });
                     assert.equal(rows.length, 1);
                     assert.equal(rows[0].children.length, 4);
