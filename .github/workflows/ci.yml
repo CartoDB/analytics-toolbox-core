@@ -22,7 +22,7 @@ on:
 
 env:
   GCLOUD_VERSION: 'latest'
-  NODE_VERSION: '15'
+  NODE_VERSION: '14'
   MAKEFLAGS: '-j2'
 
   BQ_PROJECTID: bqcartoci
