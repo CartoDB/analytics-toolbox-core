@@ -2,7 +2,7 @@ TARGET = ../quadkey_library.js
 
 ESLINT ?= ./node_modules/eslint/bin/eslint.js
 NPM ?= npm
-BROWSERIFY ?= browserify
+BROWSERIFY ?= ./node_modules/browserify/index.js
 
 all: ${TARGET}
 
