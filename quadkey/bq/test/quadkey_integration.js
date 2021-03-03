@@ -106,6 +106,32 @@ describe('QUADKEY integration tests', () => {
         });
     });
 
+    it ('LONGLAT_ASQUADINT should not fail at any level of zoom', async () => {
+        let query = `WITH zoomContext AS
+        (
+            WITH zoomValues AS
+            (
+                SELECT zoom FROM UNNEST (GENERATE_ARRAY(1,29)) AS zoom
+            )
+            SELECT *
+            FROM
+                zoomValues,
+                UNNEST(GENERATE_ARRAY(-89,89,15)) lat,
+                UNNEST(GENERATE_ARRAY(-179,179,15)) long
+        )
+        SELECT *
+        FROM 
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(long, lat, zoom)
+            FROM zoomContext
+        )`;
+
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+    });
+
     it ('PARENT should work at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
