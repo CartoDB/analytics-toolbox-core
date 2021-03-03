@@ -35,10 +35,15 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_ASH3_POLYFIL
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
 AS
 """
-    if (!geojson) {
+    if (!geojson || _resolution == null) {
         return null;
     }
+
     const resolution = Number(_resolution);
+    if (resolution < 0 || resolution > 15) {
+        return null;
+    }
+
     const featureGeometry = JSON.parse(geojson)
     if (!['Polygon', 'MultiPolygon'].includes(featureGeometry.type)) {
         return null;
