@@ -166,44 +166,42 @@ ORDER BY id ASC`;
         assert.equal(rows[13].id_count, null);
     });
 
-    /* Needs ST_H3_BOUNDARY to work */
-    xit ('ST_ASH3_POLYFILL returns the expected values', async () => {
+    it ('ST_ASH3_POLYFILL returns the expected values', async () => {
         /* Any cell should cover only 1 h3 cell at its resolution (itself) */
         const query = `
 WITH points AS
 (
-    SELECT 1 AS id, ST_GEOGPOINT(0, 0) AS geog
+    SELECT ST_GEOGPOINT(0, 0) AS geog UNION ALL
+    SELECT ST_GEOGPOINT(-122.4089866999972145, 37.813318999983238) AS geog UNION ALL
+    SELECT ST_GEOGPOINT(-122.0553238, 37.3615593) AS geog
 ),
-resolution AS
-(
-    SELECT unnest(GENERATE_ARRAY(0, 15, 1)) AS resolution
-)
 cells AS
 (
     SELECT
-        id,
         resolution,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geog, resolution) AS h3_id,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_H3_BOUNDARY(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geog, resolution)) AS boundary
-    FROM points, resolution
+    FROM points, UNNEST(GENERATE_ARRAY(0, 15, 1)) resolution
 ),
 polyfill AS
 (
     SELECT
         *,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3_POLYFILL(boundary, resolution))
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3_POLYFILL(boundary, resolution) p
     FROM cells
 )
 SELECT
     *
 FROM  polyfill
+WHERE
+    ARRAY_LENGTH(p) != 1 OR
+    p[OFFSET(0)] != h3_id
 `;
 
         let rows;
         await assert.doesNotReject(async () => {
             [rows] = await client.query(query, queryOptions);
         });
-        console.log(rows);
         assert.equal(rows.length, 0);
 
     });

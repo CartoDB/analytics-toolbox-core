@@ -13,7 +13,7 @@ h3.ST_ASH3(geog, resolution) -> INT64
 * `geog`: `GEOGRAPHY` A **POINT** geography.
 * `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
-Returns an H3 cell index where the point is placed in the required `resolution` as an `INT64` number. If will return `NULL` on error (invalid geography type or resolution out of bounds).
+Returns an H3 cell index where the point is placed in the required `resolution` as an `INT64` number. It will return `NULL` on error (invalid geography type or resolution out of bounds).
 
 {{% bannerNote type="note" title="tip"%}}
 If you want the HEX representation of the cell, you can call [H3_ASHEX](#h3.H3ASHEX) with the output number.
@@ -33,7 +33,7 @@ h3.LONGLAT_ASH3(longitude, latitude, resolution) -> INT64
 * `longitude`: `FLOAT64` The point latitude in **degrees**.
 * `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
-Returns an H3 cell index where the point is placed in the required `resolution` as an `INT64` number. If will return `NULL` on error (resolution out of bounds).
+Returns an H3 cell index where the point is placed in the required `resolution` as an `INT64` number. It will return `NULL` on error (resolution out of bounds).
 
 #### h3.ST_ASH3_POLYFILL
 
@@ -45,7 +45,17 @@ h3.ST_ASH3_POLYFILL(geography, resolution) -> ARRAY<INT64>
 * `longitude`: `FLOAT64` The point latitude in **degrees**.
 * `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
-Returns all hexagons **with centers** contained in a given polygon. If will return `NULL` on error (invalid geography type or resolution out of bounds).
+Returns all hexagons **with centers** contained in a given polygon. It will return `NULL` on error (invalid geography type or resolution out of bounds).
+
+#### h3.ST_H3_BOUNDARY
+
+{{% bannerNote type="code" %}}
+h3.ST_H3_BOUNDARY(index) -> GEOGRAPHY
+{{%/ bannerNote %}}
+
+* `index`: `INT64` The H3 cell index (see [ST_ASH3(#h3.ST_ASH3)).
+
+Returns a `GEOGRAPHY` representing the H3 cell. It will return `NULL` on error (invalid input).
 
 #### h3.VERSION
 
