@@ -56,6 +56,18 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
+    it ('Should fail to encode quadints at zooms bigger than 29 or smaller than 0', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(100, 100, 30)`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(100, 100, -1)`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+    });
+
     it ('Should be able to encode/decode between quadint and quadkey at any level of zoom', async () => {
         let query = `WITH tileContext AS
         (
@@ -87,6 +99,13 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
+    it ('Should reject converting from quadkey for zooms bigger than 29', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMQUADKEY('122221112203312001332221110001')`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+    });
+
     it ('PARENT should work at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
@@ -115,6 +134,13 @@ describe('QUADKEY integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 0);
+    });
+
+    it ('PARENT should reject quadints at zoom 0', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(0)`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
     });
 
     it ('CHILDREN should work at any level of zoom', async () => {
@@ -154,6 +180,13 @@ describe('QUADKEY integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 0);
+    });
+
+    it ('CHILDREN should reject quadints at zoom 29', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(4611686027017322525)`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
     });
 
     it ('SIBLING should work at any level of zoom', async () => {
@@ -237,5 +270,87 @@ describe('QUADKEY integration tests', () => {
         assert.deepEqual(rows[0]['bbox2'],[-45.00000000000001, 44.84029065139799, -44.648437500000014, 45.08903556483102]);
         assert.deepEqual(rows[0]['bbox3'],[-45.00000000000001, 44.99976701918129, -44.99862670898438, 45.00073807829065]);
         assert.deepEqual(rows[0]['bbox4'],[-45.00000000000001, 44.9999946126367, -44.99998927116395, 45.00000219906963]);
+    });
+
+    it ('ST_GEOGFROMQUADINT_BOUNDARY should work', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_GEOGFROMQUADINT_BOUNDARY(12070922) as geog1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_GEOGFROMQUADINT_BOUNDARY(791040491538) as geog2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_GEOGFROMQUADINT_BOUNDARY(12960460429066265) as geog3`;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.equal(rows[0]['geog1']['value'],'POLYGON((-44.82421875 44.840290651398, -44.6484375 44.840290651398, -44.6484375 45.089035564831, -44.82421875 45.089035564831, -45 45.089035564831, -45 44.840290651398, -44.82421875 44.840290651398))');
+        assert.equal(rows[0]['geog2']['value'],'POLYGON((-44.9986267089844 44.9997670191813, -44.9986267089844 45.0007380782907, -45 45.0007380782907, -45 44.9997670191813, -44.9986267089844 44.9997670191813))');
+        assert.equal(rows[0]['geog3']['value'],'POLYGON((-44.9999892711639 44.9999946126367, -44.9999892711639 45.0000021990696, -45 45.0000021990696, -45 44.9999946126367, -44.9999892711639 44.9999946126367))');
+    });
+
+    it ('ST_ASQUADINTPOLYFILL should work', async () => {
+        let feature = {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -3.6828231811523207,
+                    40.45948689837198
+                  ],
+                  [
+                    -3.69655609130857,
+                    40.42917828232078
+                  ],
+                  [
+                    -3.7346649169921777,
+                    40.42525806690142
+                  ],
+                  [
+                    -3.704452514648415,
+                    40.4090520858275
+                  ],
+                  [
+                    -3.7150955200195077,
+                    40.38212061782238
+                  ],
+                  [
+                    -3.6790466308593652,
+                    40.40251631173469
+                  ],
+                  [
+                    -3.6399078369140625,
+                    40.38212061782238
+                  ],
+                  [
+                    -3.6570739746093652,
+                    40.41245043754496
+                  ],
+                  [
+                    -3.6206817626953023,
+                    40.431791632323645
+                  ],
+                  [
+                    -3.66634368896482,
+                    40.42996229798495
+                  ],
+                  [
+                    -3.6828231811523207,
+                    40.45948689837198
+                  ]
+                ]
+              ]
+          };
+        let featureJSON = JSON.stringify(feature);
+
+        let sqlQuery = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(@geojson, 10) as polyfill10,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(@geojson, 14) as polyfill14`;
+        let rows;
+        const query = {
+            query: sqlQuery,
+            params: {geojson: featureJSON},
+          };
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0]['polyfill10'], [20870794, 24147594]);
+        assert.deepEqual(rows[0]['polyfill14'], [3238783758, 5933353998, 5985782798, 5985779598, 6038208398, 6038205198, 6090637198, 6143065998, 6143062798, 6143069198, 6090640398, 6090643598, 6143072398, 6143075598, 6038214798, 6038217998, 6038221198, 5985792398, 5985789198, 5985785998]);
     });
 }); /* QUADKEY integration tests */

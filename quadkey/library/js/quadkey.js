@@ -182,6 +182,9 @@ quadkeyToTile = function(quadkey) {
  * @return {int}    quadint for input tile coordinates at input detail level
  */
 quadintFromZXY = function(z, x, y) {
+    if (z < 0 || z > 29) {
+        throw new Error('Wrong zoom');
+    }
     const zI = z;
     if (zI <= 13) {
         let quadint = y;
@@ -225,6 +228,9 @@ ZXYFromQuadint = function(quadint) {
  * @return {string}            quadint the input location resides in for the input detail level
  */
 quadintFromLocation = function(location, detail) {
+    if (detail < 0 || detail > 29) {
+        throw new Error('Wrong zoom');
+    }
     const tile = locationToTile(location, detail);
     return quadintFromZXY(detail, tile.x, tile.y);
 };
@@ -236,6 +242,9 @@ quadintFromLocation = function(location, detail) {
  */
 quadintFromQuadkey = function(quadkey) {
     const z = quadkey.length;
+    if (z < 0 || z > 29) {
+        throw new Error('Wrong zoom');
+    }
     const tile = quadkeyToTile(quadkey);
     return quadintFromZXY(z, tile.x, tile.y);
 };
@@ -356,6 +365,9 @@ sibling = function(quadint, direction) {
  */
 children = function(quadint) {
     const zxy = ZXYFromQuadint(quadint);
+    if (zxy.z < 0 || zxy.z > 28) {
+        throw new Error('Wrong zoom');
+    }
     const z = zxy.z + 1;
     const x = zxy.x << 1;
     const y = zxy.y << 1;
@@ -370,5 +382,8 @@ children = function(quadint) {
  */
 parent = function(quadint) {
     const zxy = ZXYFromQuadint(quadint);
+    if (zxy.z < 1 || zxy.z > 29) {
+        throw new Error('Wrong zoom');
+    }
     return quadintFromZXY(zxy.z - 1, zxy.x >> 1, zxy.y >> 1);
 };
