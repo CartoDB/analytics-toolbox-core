@@ -57,6 +57,16 @@ h3.ST_H3_BOUNDARY(index) -> GEOGRAPHY
 
 Returns a `GEOGRAPHY` representing the H3 cell. It will return `NULL` on error (invalid input).
 
+#### h3.H3_ISVALID
+
+{{% bannerNote type="code" %}}
+h3.H3_ISVALID(index) -> BOOLEAN
+{{%/ bannerNote %}}
+
+* `index`: `INT64` The H3 cell index (see [ST_ASH3(#h3.ST_ASH3)).
+
+Returns a `BOOLEAN` representing whether the provided is is a valid H3 index.
+
 #### h3.VERSION
 
 {{% bannerNote type="code" %}}
