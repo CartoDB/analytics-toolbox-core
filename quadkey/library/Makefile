@@ -2,7 +2,7 @@ TARGET = ../quadkey_library.js
 
 ESLINT ?= ./node_modules/eslint/bin/eslint.js
 NPM ?= npm
-BROWSERIFY ?= ./node_modules/browserify/index.js
+BROWSERIFY ?= ./node_modules/.bin/browserify
 
 all: ${TARGET}
 
@@ -38,4 +38,4 @@ check-linter: check-eslint
 $(TARGET): $(JS_FILES)
 	rm -f $(TARGET)
 	touch $(TARGET)
-	browserify $(JS_FILES) -o $(TARGET)
+	${BROWSERIFY} $(JS_FILES) -o $(TARGET)
