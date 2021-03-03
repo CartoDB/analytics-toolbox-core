@@ -86,7 +86,26 @@ h3.H3_ISVALID(index) -> BOOLEAN
 
 * `index`: `INT64` The H3 cell index.
 
-Returns a `BOOLEAN` representing whether the provided is is a valid H3 index.
+#### h3.H3_COMPACT
+
+{{% bannerNote type="code" %}}
+h3.H3_COMPACT(indexArray) -> ARRAY<INT64>
+{{%/ bannerNote %}}
+
+* `indexArray`: `ARRAY<INT64>` An array of H3 cell indices.
+
+Compact a set of hexagons of the same resolution into a set of hexagons across multiple levels that represents the same area.
+
+#### h3.H3_UNCOMPACT
+
+{{% bannerNote type="code" %}}
+h3.H3_UNCOMPACT(indexArray, resolution)) -> ARRAY<INT64>
+{{%/ bannerNote %}}
+
+* `indexArray`: `ARRAY<INT64>` An array of H3 cell indices.
+* `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
+
+Uncompact a compacted set of hexagons to hexagons of the same resolution.
 
 #### h3.VERSION
 
