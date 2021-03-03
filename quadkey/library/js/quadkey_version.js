@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 /* exported quadkeyVersion */
-function quadkeyVersion() {
+quadkeyVersion = function() {
     return 1;
-}
+};
+module.exports.quadkeyVersion = quadkeyVersion;

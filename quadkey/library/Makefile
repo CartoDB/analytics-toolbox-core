@@ -2,14 +2,13 @@ TARGET = ../quadkey_library.js
 
 ESLINT ?= ./node_modules/eslint/bin/eslint.js
 NPM ?= npm
-CAT ?= cat
+BROWSERIFY ?= browserify
 
 all: ${TARGET}
 
 JS_FILES = \
-	js/quadkey.js \
 	js/quadkey_version.js \
-	js/tilecover.js
+	js/quadint.js
 
 .PHONY: check
 check: ${TARGET}
@@ -39,6 +38,4 @@ check-linter: check-eslint
 $(TARGET): $(JS_FILES)
 	rm -f $(TARGET)
 	touch $(TARGET)
-	for n in $(JS_FILES); do \
-		$(CAT) $$n >> $(TARGET) || exit; \
-	done
+	browserify $(JS_FILES) -o $(TARGET)

@@ -11,17 +11,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.GEOJSONBOUND
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
-    var b = bbox(quadint);  
-    var geojson = {
-        "type": "Polygon", 
-        "coordinates": [[
-            [b.min.lng, b.min.lat],
-            [b.min.lng, b.max.lat],
-            [b.max.lng, b.max.lat],
-            [b.max.lng, b.min.lat],
-            [b.min.lng, b.min.lat]
-        ]]
-    };
+    let geojson = quadintToGeoJSON(quadint);
     return JSON.stringify(geojson);
 """;
 

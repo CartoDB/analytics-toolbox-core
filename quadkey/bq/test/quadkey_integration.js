@@ -116,8 +116,8 @@ describe('QUADKEY integration tests', () => {
             SELECT *
             FROM
                 zoomValues,
-                UNNEST(GENERATE_ARRAY(-90,90,15)) lat,
-                UNNEST(GENERATE_ARRAY(-180,180,15)) long
+                UNNEST(GENERATE_ARRAY(-89,89,15)) lat,
+                UNNEST(GENERATE_ARRAY(-179,179,15)) long
         )
         SELECT *
         FROM 
@@ -266,10 +266,10 @@ describe('QUADKEY integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0]['bbox1'],[-90, 0, 0, 66.51326044311185]);
-        assert.deepEqual(rows[0]['bbox2'],[-45.00000000000001, 44.84029065139799, -44.648437500000014, 45.08903556483102]);
-        assert.deepEqual(rows[0]['bbox3'],[-45.00000000000001, 44.99976701918129, -44.99862670898438, 45.00073807829065]);
-        assert.deepEqual(rows[0]['bbox4'],[-45.00000000000001, 44.9999946126367, -44.99998927116395, 45.00000219906963]);
+        assert.deepEqual(rows[0]['bbox1'],[-90, 0, 0, 66.51326044311186]);
+        assert.deepEqual(rows[0]['bbox2'],[-45, 44.840290651397986, -44.6484375, 45.08903556483103]);
+        assert.deepEqual(rows[0]['bbox3'],[-45, 44.99976701918129, -44.998626708984375, 45.00073807829068]);
+        assert.deepEqual(rows[0]['bbox4'],[-45, 44.999994612636684, -44.99998927116394, 45.00000219906962]);
     });
 
     it ('ST_GEOGFROMQUADINT_BOUNDARY should work', async () => {
@@ -280,9 +280,9 @@ describe('QUADKEY integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0]['geog1']['value'],'POLYGON((-44.82421875 44.840290651398, -44.6484375 44.840290651398, -44.6484375 45.089035564831, -44.82421875 45.089035564831, -45 45.089035564831, -45 44.840290651398, -44.82421875 44.840290651398))');
-        assert.equal(rows[0]['geog2']['value'],'POLYGON((-44.9986267089844 44.9997670191813, -44.9986267089844 45.0007380782907, -45 45.0007380782907, -45 44.9997670191813, -44.9986267089844 44.9997670191813))');
-        assert.equal(rows[0]['geog3']['value'],'POLYGON((-44.9999892711639 44.9999946126367, -44.9999892711639 45.0000021990696, -45 45.0000021990696, -45 44.9999946126367, -44.9999892711639 44.9999946126367))');
+        assert.equal(rows[0]['geog1']['value'],'POLYGON((-45 45.089035564831, -45 44.840290651398, -44.82421875 44.840290651398, -44.6484375 44.840290651398, -44.6484375 45.089035564831, -44.82421875 45.089035564831, -45 45.089035564831))');
+        assert.equal(rows[0]['geog2']['value'],'POLYGON((-45 45.0007380782907, -45 44.9997670191813, -44.9986267089844 44.9997670191813, -44.9986267089844 45.0007380782907, -45 45.0007380782907))');
+        assert.equal(rows[0]['geog3']['value'],'POLYGON((-45 45.0000021990696, -45 44.9999946126367, -44.9999892711639 44.9999946126367, -44.9999892711639 45.0000021990696, -45 45.0000021990696))');
     });
 
     it ('ST_ASQUADINTPOLYFILL should work', async () => {
