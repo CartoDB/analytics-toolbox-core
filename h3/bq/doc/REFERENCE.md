@@ -107,6 +107,17 @@ h3.H3_UNCOMPACT(indexArray, resolution)) -> ARRAY<INT64>
 
 Uncompact a compacted set of hexagons to hexagons of the same resolution.
 
+#### h3.H3_TOPARENT
+
+{{% bannerNote type="code" %}}
+h3.H3_TOPARENT(index, resolution) -> INT64
+{{%/ bannerNote %}}
+
+* `index`: `INT64` The H3 cell index.
+* `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
+
+Get the parent of the given hexagon at a particular resolution
+
 #### h3.VERSION
 
 {{% bannerNote type="code" %}}
