@@ -13,8 +13,8 @@ const tilecover = require('@mapbox/tile-cover');
 
 /**
  * convert tile coordinates to quadint at specific zoom level
- * @param  {zxycoord} zxy  zoom and tile coordinates
- * @return {int}    quadint for input tile coordinates at input zoom level
+ * @param  {zxycoord} zxy   zoom and tile coordinates
+ * @return {int}            quadint for input tile coordinates at input zoom level
  */
 quadintFromZXY = function(z, x, y) {
     if (z < 0 || z > 29) {
@@ -40,7 +40,7 @@ module.exports.quadintFromZXY = this.quadintFromZXY;
 
 /**
  * convert quadint to tile coordinates and level of zoom
- * @param  {int}  quadint quadint to be converted
+ * @param  {int} quadint   quadint to be converted
  * @return {zxycoord}      level of zoom and tile coordinates
  */
 ZXYFromQuadint = function(quadint) {
@@ -60,9 +60,9 @@ module.exports.ZXYFromQuadint = this.ZXYFromQuadint;
 
 /**
  * get quadint for location at specific zoom level
- * @param  {geocoord} location location coordinates to convert to quadint
- * @param  {number}   zoom   map zoom level of quadint to return
- * @return {string}            quadint the input location resides in for the input zoom level
+ * @param  {geocoord} location  location coordinates to convert to quadint
+ * @param  {number}   zoom      map zoom level of quadint to return
+ * @return {string}             quadint the input location resides in for the input zoom level
  */
 quadintFromLocation = function(long, lat, zoom) {
     if (zoom < 0 || zoom > 29) {
@@ -75,8 +75,8 @@ module.exports.quadintFromLocation = this.quadintFromLocation;
 
 /**
  * convert quadkey into a quadint
- * @param  {string}  quadkey quadkey to be converted
- * @return {int}   quadint
+ * @param  {string} quadkey     quadkey to be converted
+ * @return {int}                quadint
  */
 quadintFromQuadkey = function(quadkey) {
     const z = quadkey.length;
@@ -87,8 +87,8 @@ module.exports.quadintFromQuadkey = this.quadintFromQuadkey;
 
 /**
  * convert quadint into a quadkey
- * @param  {int}  quadint quadint to be converted
- * @return {string}      quadkey
+ * @param  {int} quadint    quadint to be converted
+ * @return {string}         quadkey
  */
 quadkeyFromQuadint = function(quadint) {
     const tile = ZXYFromQuadint(quadint);
@@ -98,7 +98,7 @@ module.exports.quadkeyFromQuadint = this.quadkeyFromQuadint;
 
 /**
  * get the bounding box for a quadint in location coordinates
- * @param  {int} quadint quadint to get bounding box of
+ * @param  {int} quadint    quadint to get bounding box from
  * @return {bbox}           bounding box for the input quadint
  */
 bbox = function(quadint) {
@@ -108,8 +108,8 @@ bbox = function(quadint) {
 module.exports.bbox = this.bbox;
 
 /**
- * get the bounding box for a quadint in location coordinates
- * @param  {int} quadint quadint to get bounding box of
+ * get the GeoJSON with the bounding box for a quadint in location coordinates
+ * @param  {int} quadint    quadint to get bounding box from
  * @return {GeoJSON}        GeoJSON with the bounding box for the input quadint
  */
 quadintToGeoJSON = function(quadint) {
@@ -148,7 +148,7 @@ module.exports.sibling = this.sibling;
 
 /**
  * get all the children quadints of a quadint
- * @param  {int} quadint quadint to get the children of
+ * @param  {int} quadint    quadint to get the children of
  * @return {array}          array of quadints representing the children of the input quadint
  */
 children = function(quadint) {
@@ -178,6 +178,12 @@ parent = function(quadint) {
 };
 module.exports.parent = this.parent;
 
+/**
+ * get an array of quadints containing a geography for given zooms
+ * @param  {object} poly    geography we want to extract the quadints from
+ * @param  {struct} limits  struct containing the range of zooms
+ * @return {array}          array of quadints containing a geography
+ */
 geojsonToQuadints = function(poly, limits) {
     return tilecover.indexes(poly, limits).map(quadintFromQuadkey);
 };
