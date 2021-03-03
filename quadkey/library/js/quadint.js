@@ -3,6 +3,10 @@
 // -- Copyright (C) 2021 CARTO
 // --
 // -----------------------------------------------------------------------
+/**
+ * This code make use of @mapbox/tilebelt and @mapbox/tile-cover
+ * whose LICENSE is placed inside the same folder.
+ */
 
 const tilebelt = require('@mapbox/tilebelt');
 const tilecover = require('@mapbox/tile-cover');
