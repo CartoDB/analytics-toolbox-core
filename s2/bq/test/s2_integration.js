@@ -104,7 +104,8 @@ describe('S2 integration tests', () => {
         assert.equal(rows.length, 1);
         assert.deepEqual(bounds, resultBoundary);
 
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMLONGLAT(${longitude},${latitude},${level}) as boundary;`;
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMKEY(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.S2_FROMLONGLAT(${longitude},${latitude},${level})) as boundary;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
