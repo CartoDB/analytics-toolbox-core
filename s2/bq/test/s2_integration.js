@@ -86,31 +86,15 @@ describe('S2 integration tests', () => {
             ]]
         };
 
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMLONGLAT(${longitude},${latitude},${level}) as key;`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMKEY(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMLONGLAT(${longitude},${latitude},${level})) as boundary;`;
+        
         let rows;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
         });
-        assert.equal(rows.length, 1);
-        const quadkey = rows[0].key;
-
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMKEY("${quadkey}") as boundary;`;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
         let resultBoundary = JSON.parse(rows[0].boundary);
-        assert.equal(rows.length, 1);
-        assert.deepEqual(bounds, resultBoundary);
-
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMKEY(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASS2(${longitude},${latitude},${level})) as boundary;`;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
-        resultBoundary = JSON.parse(rows[0].boundary);
         assert.equal(rows.length, 1);
         assert.deepEqual(bounds, resultBoundary);
     });
