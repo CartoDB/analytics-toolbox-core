@@ -23,14 +23,14 @@ Returns a GeoJSON containing the boundary corners of a quadkey.
 #### GEOJSONBOUNDARY_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.GEOJSONBOUNDARY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+s2.GEOJSONBOUNDARY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level INT64)
 {{%/ bannerNote %}}
 
 Returns a GeoJSON containing the boundary corners given a longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
-* `level`: `NUMERIC` Level of detail or zoom.
+* `level`: `INT64` Level of detail or zoom.
 
 #### ID_FROMKEY
 
@@ -45,14 +45,14 @@ Convert from hilbert quadtree id to s2 cell id.
 #### ID_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.ID_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+s2.ID_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level INT64)
 {{%/ bannerNote %}}
 
 Generate the s2 cell id for a given longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
-* `level`: `NUMERIC` Level of detail or zoom.
+* `level`: `INT64` Level of detail or zoom.
 
 #### KEY_FROMID
 
@@ -67,14 +67,14 @@ Convert from s2 cell id to hilbert quadtree id.
 #### KEY_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.KEY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+s2.KEY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level INT64)
 {{%/ bannerNote %}}
 
 Generate the quadkey for a given longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
-* `level`: `NUMERIC` Level of detail or zoom.
+* `level`: `INT64` Level of detail or zoom.
 
 #### LONG_FROMID
 
@@ -119,37 +119,37 @@ Extract the latitude component from a quadkey.
 #### S2_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.S2_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, resolution NUMERIC)
+s2.S2_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, resolution INT64)
 {{%/ bannerNote %}}
 
 Returns the s2 representation for a given level of detail and geographic coordinates.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
-* `level`: `NUMERIC` Level of detail or zoom.
+* `level`: `INT64` Level of detail or zoom.
 
 #### ST_ASS2
 
 {{% bannerNote type="code" %}}
-s2.ST_ASS2(point GEOGRAPHY, resolution NUMERIC)
+s2.ST_ASS2(point GEOGRAPHY, resolution INT64)
 {{%/ bannerNote %}}
 
 Converts a given point at given level of detail to a s2 cell id.
 
 * `point`: `GEOGRAPHY` point we want to get the quadint from.
-* `level`: `NUMERIC` Level of detail or zoom.
+* `level`: `INT64` Level of detail or zoom.
 
 #### ST_GEOGFROMLONGLAT_BOUNDARY
 
 {{% bannerNote type="code" %}}
-s2.ST_GEOGFROMLONGLAT_BOUNDARY(longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+s2.ST_GEOGFROMLONGLAT_BOUNDARY(longitude FLOAT64, latitude FLOAT64, level INT64)
 {{%/ bannerNote %}}
 
 Returns the geography boundary for a given level of detail and geographic coordinates. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it to geography.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
-* `level`: `NUMERIC` Level of detail or zoom.
+* `level`: `INT64` Level of detail or zoom.
 
 #### ST_GEOGFROMKEY_BOUNDARY
 

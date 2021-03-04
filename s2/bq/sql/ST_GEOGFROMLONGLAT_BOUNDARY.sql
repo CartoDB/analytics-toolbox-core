@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.GEOJSONBOUNDARY_FROMLONGLAT`
-    (longitude FLOAT64, latitude FLOAT64, level NUMERIC) 
+    (longitude FLOAT64, latitude FLOAT64, level INT64) 
     RETURNS STRING 
     DETERMINISTIC
     LANGUAGE js
@@ -26,7 +26,7 @@ AS """
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ST_GEOGFROMLONGLAT_BOUNDARY`
-    (longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+    (longitude FLOAT64, latitude FLOAT64, level INT64)
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PROJECTID@@`.@@BQ_DATASET_S2@@.GEOJSONBOUNDARY_FROMLONGLAT(longitude, latitude, level))
 );

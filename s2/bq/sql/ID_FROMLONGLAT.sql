@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ID_FROMLONGLAT`
-    (longitude FLOAT64, latitude FLOAT64, level NUMERIC)
+    (longitude FLOAT64, latitude FLOAT64, level INT64)
     RETURNS INT64
     DETERMINISTIC
     LANGUAGE js
