@@ -16,7 +16,7 @@ Returns the current version of the s2 library.
 s2.GEOJSONBOUNDARY_FROMKEY(key STRING) 
 {{%/ bannerNote %}}
 
-Returns a GeoJSON containing the boundary corners of a quadkey.
+Returns a GeoJSON containing the boundary corners of a s2 cell.
 
 * `key`: `STRING` quadkey to extract the corners from.
 
@@ -82,7 +82,7 @@ Generate the quadkey for a given longitude, latitude and zoom level.
 s2.LONG_FROMID(id INT64)
 {{%/ bannerNote %}}
 
-Extract the longitude component from a give s2 cell id.
+Extract the longitude component from the centroid of a given s2 cell id.
 
 * `id`: `INT64` s2 cell id.
 
@@ -102,7 +102,7 @@ Extract the longitude component from a quadkey.
 s2.LAT_FROMID(id INT64)
 {{%/ bannerNote %}}
 
-Extract the latitude component from a give s2 cell id.
+Extract the latitude component from the centroid of a given s2 cell id.
 
 * `id`: `INT64` s2 cell id.
 
