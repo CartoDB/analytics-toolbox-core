@@ -70,33 +70,6 @@ test('placekeyToH3', t => {
     t.end();
 });
 
-test('placekeyToGeo', t => {
-    const matchingPlaces = 3;
-    for (const row of SAMPLES) {
-        const [lat, long] = placekeyToGeo(row.placekey);
-        assertAlmostEqual(
-            t,
-            lat,
-            row.h3_lat,
-            matchingPlaces,
-            `placekey's latitude (${lat}) too far from associated geo's latitude (${row.h3_lat})`
-        );
-        assertAlmostEqual(
-            t,
-            long,
-            row.h3_long,
-            matchingPlaces,
-            `placekey's longitude (${long}) too far from associated geo's longitude (${row.h3_long})`
-        );
-    }
-
-    for (const placekey of ADDITIONAL_PLACEKEYS) {
-        t.doesNotThrow(() => placekeyToH3(placekey));
-    }
-
-    t.end();
-});
-
 test('h3ToPlacekey', t => {
     for (const row of SAMPLES) {
         t.equal(
@@ -105,53 +78,5 @@ test('h3ToPlacekey', t => {
             `converted h3 (${row.h3_r10}) did not match placekey (${row.placekey})`
         );
     }
-    t.end();
-});
-
-test('geoToPlacekey', t => {
-    for (const row of SAMPLES) {
-        const placekey = geoToPlacekey(row.lat, row.long);
-        t.equal(
-            placekey,
-            row.placekey,
-            `converted geo (${row.lat}, ${row.long}) did not match placekey (${row.placekey})`
-        );
-    }
-    t.end();
-});
-
-test('placekeyToHexBoundary', t => {
-    const key = '@5vg-7gq-tvz';
-    const h3Form = placekeyToH3(key);
-    t.deepEqual(
-        placekeyToHexBoundary(key, true),
-        h3ToGeoBoundary(h3Form, true),
-        'placekey boundary equal to h3 boundary (geo_json=True)'
-    );
-    t.deepEqual(
-        placekeyToHexBoundary(key, false),
-        h3ToGeoBoundary(h3Form, false),
-        'placekey boundary equal to h3 boundary (geo_json=False)'
-    );
-    t.end();
-});
-
-test('placekeyDistance', t => {
-    t.equal(
-        placekeyDistance(geoToPlacekey(0.0, 0.0), geoToPlacekey(0.0, 0.0)),
-        0.0,
-        'identical points have distance 0'
-    );
-
-    for (const sample of DISTANCE_SAMPLES) {
-        assertAlmostEqual(
-            t,
-            placekeyDistance(sample.placekey_1, sample.placekey_2),
-            sample.distance,
-            0.1,
-            `distances too far apart ${sample.placekey_1}, ${sample.placekey_2}`
-        );
-    }
-
     t.end();
 });

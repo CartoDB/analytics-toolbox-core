@@ -65,41 +65,12 @@ function placekeyIsValid(placekey) {
 
     return Boolean(where.match(WHERE_REGEX));
 }
-function geoToPlacekey(lat, long) {
-    const hexId = h3.geoToH3(lat, long, RESOLUTION);
-    return h3ToPlacekey(hexId);
-}
-function placekeyToGeo(placekey) {
-    return h3.h3ToGeo(placekeyToH3(placekey));
-}
 function placekeyToH3(placekey) {
     return h3IntegerToString(placekeyToH3Integer(placekey));
 }
 function h3ToPlacekey(h3index) {
     return h3IntegerToPlacekey(stringToH3Integer(h3index));
 }
-function placekeyToHexBoundary(placekey, formatAsGeoJson) {
-    return h3ToGeoBoundary(placekeyToH3(placekey), formatAsGeoJson);
-}
-function placekeyDistance(placekey1, placekey2) {
-    const geo1 = placekeyToGeo(placekey1);
-    const geo2 = placekeyToGeo(placekey2);
-    return geoDistance(geo1, geo2);
-}
-function getPlacekeyPrefixDistanceDict() {
-    return {
-        1: 1.274e7,
-        2: 2.777e6,
-        3: 1.065e6,
-        4: 1.524e5,
-        5: 2.177e4,
-        6: 8227.0,
-        7: 1176.0,
-        8: 444.3,
-        9: 63.47
-    };
-}
-
 function h3IntegerToPlacekey(h3Integer) {
     const shortH3Integer = shortenH3Integer(h3Integer);
     const encodedShortH3 = encodeShortInt(shortH3Integer);
@@ -176,18 +147,6 @@ function encodeShortInt(x) {
     }
 
     return result;
-}
-
-function geoDistance(geo1, geo2) {
-    const EARTH_RADIUS = 6371;
-    const lat1 = degsToRads(geo1[0]);
-    const long1 = degsToRads(geo1[1]);
-    const lat2 = degsToRads(geo2[0]);
-    const long2 = degsToRads(geo2[1]);
-    const havLat = 0.5 * (1 - Math.cos(lat1 - lat2));
-    const havLong = 0.5 * (1 - Math.cos(long1 - long2));
-    const radical = Math.sqrt(havLat + Math.cos(lat1) * Math.cos(lat2) * havLong);
-    return 2 * EARTH_RADIUS * Math.asin(radical);
 }
 // # sourceMappingURL=placekey.js.map
 /* eslint-enable no-unused-vars */

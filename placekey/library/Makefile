@@ -9,12 +9,10 @@ all: ${TARGET}
 JS_FILES = \
 	js/placekey_version.js \
 	js/h3-integer.js \
-	js/h3-js.umd.js \
 	js/placekey.js
 
 LINT_FILES = \
-	js/placekey_version.js \
-	js/placekey.js
+	js/placekey_version.js
 
 .PHONY: check
 check: ${TARGET}

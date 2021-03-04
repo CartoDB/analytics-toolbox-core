@@ -6,5 +6,5 @@
 
 /* exported placekeyVersion */
 function placekeyVersion() {
-    return 1;
+    return '1.0.1';
 }
