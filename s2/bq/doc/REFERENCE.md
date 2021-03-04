@@ -116,10 +116,10 @@ Extract the latitude component from a quadkey.
 
 * `key`: `STRING` quadkey.
 
-#### LONGLAT_ASS2
+#### S2_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.LONGLAT_ASS2(longitude FLOAT64, latitude FLOAT64, resolution NUMERIC)
+s2.S2_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, resolution NUMERIC)
 {{%/ bannerNote %}}
 
 Returns the s2 representation for a given level of detail and geographic coordinates.
