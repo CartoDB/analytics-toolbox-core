@@ -129,6 +129,16 @@ h3.H3_TOCHILDREN(index, resolution) -> ARRAY<INT64>
 
 Get the children/descendents of the given hexagon at a particular resolution.
 
+#### h3.H3_ISPENTAGON
+
+{{% bannerNote type="code" %}}
+h3.H3_ISPENTAGON(index) -> BOOLEAN
+{{%/ bannerNote %}}
+
+* `index`: `INT64` The H3 cell index.
+
+Whether the given H3 index is a pentagon. Returns false on invalid input.
+
 #### h3.VERSION
 
 {{% bannerNote type="code" %}}
