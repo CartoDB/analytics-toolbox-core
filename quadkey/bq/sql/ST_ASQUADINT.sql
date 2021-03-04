@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.LONGLAT_ASQU
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
+    if(longitude == null || latitude == null || resolution == null)
+    {
+        throw new Error('NULL argument passed to UDF');
+    }
+    
     return quadintFromLocation(longitude, latitude, resolution).toString();
 """;
 

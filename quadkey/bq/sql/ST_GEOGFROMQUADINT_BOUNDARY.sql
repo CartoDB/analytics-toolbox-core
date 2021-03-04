@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.GEOJSONBOUND
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
+    if(quadint == null)
+    {
+        throw new Error('NULL argument passed to UDF');
+    }
+
     let geojson = quadintToGeoJSON(quadint);
     return JSON.stringify(geojson);
 """;

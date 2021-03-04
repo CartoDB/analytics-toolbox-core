@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.POLYFILL_FRO
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
+    if(!geojson || resolution == null)
+    {
+        throw new Error('NULL argument passed to UDF');
+    }
+
     let pol = JSON.parse(geojson);
     let quadints = geojsonToQuadints(pol, {min_zoom: resolution, max_zoom: resolution});
     return quadints.map(String);

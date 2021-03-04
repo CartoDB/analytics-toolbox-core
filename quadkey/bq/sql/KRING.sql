@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.KRING`
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
+    if(quadint == null)
+    {
+        throw new Error('NULL argument passed to UDF');
+    }
+
     let left      = sibling(quadint,'left').toString();
     let topleft   = sibling(left,'up').toString();
     let downleft  = sibling(left,'down').toString();
