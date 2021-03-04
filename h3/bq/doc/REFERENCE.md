@@ -116,7 +116,18 @@ h3.H3_TOPARENT(index, resolution) -> INT64
 * `index`: `INT64` The H3 cell index.
 * `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
-Get the parent of the given hexagon at a particular resolution
+Get the parent of the given hexagon at a particular resolution.
+
+#### h3.H3_TOCHILDREN
+
+{{% bannerNote type="code" %}}
+h3.H3_TOCHILDREN(index, resolution) -> ARRAY<INT64>
+{{%/ bannerNote %}}
+
+* `index`: `INT64` The H3 cell index.
+* `resolution`: `INT64` A number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
+
+Get the children/descendents of the given hexagon at a particular resolution.
 
 #### h3.VERSION
 
