@@ -42,18 +42,6 @@ Convert from s2 cell id to hilbert quadtree id.
 
 * `id`: `INT64` s2 cell id to be converted.
 
-#### KEY_FROMLONGLAT
-
-{{% bannerNote type="code" %}}
-s2.KEY_FROMLONGLAT(longitude FLOAT64, latitude FLOAT64, level INT64)
-{{%/ bannerNote %}}
-
-Generate the quadkey for a given longitude, latitude and zoom level.
-
-* `longitude`: `FLOAT64` horizontal coordinate on the map.
-* `latitude`: `FLOAT64` vertical coordinate on the map.
-* `level`: `INT64` Level of detail or zoom.
-
 #### LONG_FROMID
 
 {{% bannerNote type="code" %}}
@@ -64,16 +52,6 @@ Extract the longitude component from the centroid of a given s2 cell id.
 
 * `id`: `INT64` s2 cell id.
 
-#### LONG_FROMKEY
-
-{{% bannerNote type="code" %}}
-s2.LONG_FROMKEY(key STRING)
-{{%/ bannerNote %}}
-
-Extract the longitude component from a quadkey.
-
-* `key`: `STRING` quadkey.
-
 #### LAT_FROMID
 
 {{% bannerNote type="code" %}}
@@ -83,16 +61,6 @@ s2.LAT_FROMID(id INT64)
 Extract the latitude component from the centroid of a given s2 cell id.
 
 * `id`: `INT64` s2 cell id.
-
-#### LAT_FROMKEY
-
-{{% bannerNote type="code" %}}
-s2.LAT_FROMKEY(key STRING)
-{{%/ bannerNote %}}
-
-Extract the latitude component from a quadkey.
-
-* `key`: `STRING` quadkey.
 
 #### LONGLAT_ASS2
 
