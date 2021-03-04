@@ -29,46 +29,39 @@ describe('S2 integration tests', () => {
     });
 
     it ('KEY / ID conversions should work', async () => {
-        let level = 10;
-        let latitude = 10;
-        let longitude = -20;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMLONGLAT(${longitude},${latitude},${level}) as key;`;
+        let query = `
+        WITH zoomContext AS
+        (
+            WITH zoomValues AS
+            (
+                SELECT zoom FROM UNNEST (GENERATE_ARRAY(1,29)) AS zoom
+            )
+            SELECT *
+            FROM
+                zoomValues,
+                UNNEST(GENERATE_ARRAY(-89,89,15)) lat,
+                UNNEST(GENERATE_ARRAY(-179,179,15)) long
+        ),
+        idContext AS (
+            SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(long, lat, zoom) AS expectedID,
+            FROM zoomContext
+        )
+        SELECT *
+        FROM 
+        (
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMHILBERTQUADKEY(
+                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(expectedID)) AS decodedID
+            FROM idContext
+        )
+        WHERE decodedID != expectedID`;
+
         let rows;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
         });
-        assert.equal(rows.length, 1);
-        const quadkey = rows[0].key;
-
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMHILBERTQUADKEY("${quadkey}")) as key;`;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
-        assert.equal(rows.length, 1);
-        assert.equal(quadkey, rows[0].key);
-
-        level = 11;
-        latitude = 15;
-        longitude = -25;
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(${longitude},${latitude},${level}) as id;`;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
-        assert.equal(rows.length, 1);
-        const s2Id = rows[0].id;
-
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMHILBERTQUADKEY(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(${s2Id})) as id;`;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
-        assert.equal(rows.length, 1);
-        assert.equal(s2Id, rows[0].id);
+        assert.equal(rows.length, 0);
     });
 
     it('Boundary functions should work', async() => {
@@ -87,7 +80,7 @@ describe('S2 integration tests', () => {
         };
 
         let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMID(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMLONGLAT(${longitude},${latitude},${level})) as boundary;`;
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(${longitude},${latitude},${level})) as boundary;`;
         
         let rows;
         await assert.doesNotReject( async () => {

@@ -6,7 +6,7 @@
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.LONGLAT_ASID`
     (longitude FLOAT64, latitude FLOAT64, level INT64)
-    RETURNS INT64
+    RETURNS BIGNUMERIC
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@S2_BQ_LIBRARY@@"])
@@ -15,8 +15,8 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-
-    return S2.latLngToId(latitude, longitude, level);
+        
+    return S2.latLngToId(latitude, longitude, level).toString();
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ST_ASID`

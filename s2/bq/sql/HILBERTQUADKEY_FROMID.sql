@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.HILBERTQUADKEY_FROMID`
-    (id INT64)
+    (id BIGNUMERIC)
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js

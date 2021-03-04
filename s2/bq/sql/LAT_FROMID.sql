@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.LAT_FROMID`
-    (id INT64)
+    (id BIGNUMERIC)
     RETURNS FLOAT64
     DETERMINISTIC
     LANGUAGE js
