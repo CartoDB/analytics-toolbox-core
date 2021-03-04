@@ -63,7 +63,9 @@ dataset_deploy: check_environment
 	done
 
 ##################### DEPLOY #####################
+BQ_H3_PATH = ../../h3/bq
 deploy: check_environment
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_H3) 2>/dev/null 1>/dev/null || $(MAKE) -C $(BQ_H3_PATH) $@
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
 
@@ -78,4 +80,5 @@ integration_cleanup: check_environment
 ifeq ($(POST_INTEGRATION_CLEANUP),1)
 	$(MAKE) storage_remove
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
+	$(MAKE) -C $(BQ_H3_PATH) $@
 endif
