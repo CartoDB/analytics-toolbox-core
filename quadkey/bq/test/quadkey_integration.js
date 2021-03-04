@@ -379,4 +379,122 @@ describe('QUADKEY integration tests', () => {
         assert.deepEqual(rows[0]['polyfill10'], [20870794, 24147594]);
         assert.deepEqual(rows[0]['polyfill14'], [3238783758, 5933353998, 5985782798, 5985779598, 6038208398, 6038205198, 6090637198, 6143065998, 6143062798, 6143069198, 6090640398, 6090643598, 6143072398, 6143075598, 6038214798, 6038217998, 6038221198, 5985792398, 5985789198, 5985785998]);
     });
+
+    describe('NULL arguments checks', () => {
+        it ('BBOX should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.BBOX(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('CHILDREN should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('KRING should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.KRING(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('SIBLING should fail if any NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(NULL, 'up');`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.SIBLING(322, NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('QUADKEY_FROMQUADINT should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('LONGLAT_ASQUADINT should fail if any NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(NULL, 10, 10);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(10, NULL, 10);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(10, 10, NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('POLYFILL_FROMGEOJSON should fail if any NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(NULL, 10);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            let feature = {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -3.6828231811523207,
+                            40.45948689837198
+                        ],
+                        [
+                            -3.6828231811523207,
+                            40.45948689837198
+                        ]
+                    ]
+                ]
+            };
+            let featureJSON = JSON.stringify(feature);
+  
+            let sqlQuery = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(@geojson, NULL)`;
+            query = {
+                query: sqlQuery,
+                params: {geojson: featureJSON},
+            };
+            await assert.rejects( async () => {
+                [rows] = await client.query(query, queryOptions);
+            });
+        });
+
+        it ('GEOJSONBOUNDARY_FROMQUADINT should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.GEOJSONBOUNDARY_FROMQUADINT(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+    });
 }); /* QUADKEY integration tests */
