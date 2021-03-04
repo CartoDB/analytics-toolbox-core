@@ -139,6 +139,23 @@ h3.H3_ISPENTAGON(index) -> BOOLEAN
 
 Whether the given H3 index is a pentagon. Returns false on invalid input.
 
+#### h3.H3_DISTANCE
+
+{{% bannerNote type="code" %}}
+h3.H3_ISPENTAGON(origin, destination) -> FLOAT64
+{{%/ bannerNote %}}
+
+* `origin`: `INT64` The origin H3 cell index.
+* `destination`: `INT64` The destination H3 cell index.
+
+Get the **grid distance** between two hex indexes. This function may fail to find the distance between two indexes if they are very far apart or on opposite sides of a pentagon.
+Returns null on failure or invalid input.
+
+{{% bannerNote type="note" title="tip"%}}
+If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions#st_distance) between the cells ([ST_H3_BOUNDARY](#h3.h3.ST_H3_BOUNDARY)) or their centroid.
+{{%/ bannerNote %}}
+
+
 #### h3.VERSION
 
 {{% bannerNote type="code" %}}
