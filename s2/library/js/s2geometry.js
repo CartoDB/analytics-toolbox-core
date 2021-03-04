@@ -1797,7 +1797,7 @@ var S2 =
         bin += '0';
       }
 
-      return Long.fromString(bin, true, 2).toString(10);
+      return Long.fromString(bin, true, 2).toSigned().toString(10);
     };
 
     S2.keyToId = S2.S2Cell.keyToId
