@@ -91,4 +91,66 @@ describe('S2 integration tests', () => {
         assert.equal(rows.length, 1);
         assert.deepEqual(bounds, resultBoundary);
     });
+
+    describe('NULL arguments checks', () => {
+        it ('HILBERTQUADKEY conversions should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMHILBERTQUADKEY(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('Long and lat from ID should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONG_FROMID(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LAT_FROMID(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('LONGLAT_ASID should fail if any NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(NULL, 10, 5);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(13, NULL, 5);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+
+            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(13, 10, NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+
+        it ('GEOJSONBOUNDARY_FROMID should fail with NULL argument', async () => {
+            let rows;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMID(NULL);`;
+            await assert.rejects( async () => {
+                const [job] = await client.createQueryJob({ query: query });
+                [rows] = await job.getQueryResults();
+            });
+        });
+    });
 }); /* S2 integration tests */
