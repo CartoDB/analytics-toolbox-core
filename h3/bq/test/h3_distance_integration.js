@@ -17,7 +17,7 @@ describe('H3_DISTANCE', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('Works as expected', async () => {
+    it ('Works as expected with invalid input', async () => {
         const query = `
 WITH ids AS
 (
@@ -25,10 +25,10 @@ WITH ids AS
     SELECT 1 AS id, NULL as hid1, 0x85283473fffffff AS hid2 UNION ALL
     SELECT 2 AS id, 0xff283473fffffff as hid1, 0x85283473fffffff AS hid2 UNION ALL
     SELECT 3 AS id, 0x85283473fffffff as hid1, NULL AS hid2 UNION ALL
-    SELECT 4 AS id, 0x85283473fffffff as hid1, 0xff283473fffffff AS hid2
+    SELECT 4 AS id, 0x85283473fffffff as hid1, 0xff283473fffffff AS hid2 UNION ALL
 
-    -- Valid parameters
-    -- PENDING TO BE DONE BASED ON KRING
+    -- Self
+    SELECT 5 AS id, 0x8928308280fffff as hid1, 0x8928308280fffff as hid2
 )
 SELECT
     id,
@@ -41,11 +41,40 @@ ORDER BY id ASC
         await assert.doesNotReject(async () => {
             [rows] = await client.query(query, queryOptions);
         });
-        assert.equal(rows.length, 4);
+        assert.equal(rows.length, 5);
         assert.equal(rows[0].distance, null);
         assert.equal(rows[1].distance, null);
         assert.equal(rows[2].distance, null);
         assert.equal(rows[3].distance, null);
+        assert.equal(rows[4].distance, 0);
+    });
+
+    it ('Works as expected with valid input', async () => {
+        const query = `
+WITH distances AS
+(
+    SELECT distance FROM UNNEST(GENERATE_ARRAY(0, 4, 1)) distance
+),
+ids AS
+(
+    SELECT
+        distance,
+        0x8928308280fffff as hid1,
+        hid2
+    FROM
+        distances,
+        UNNEST (\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_HEXRING(0x8928308280fffff, distance)) hid2
+)
+SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_DISTANCE(hid1, hid2) as calculated_distance, *
+FROM ids
+WHERE \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_DISTANCE(hid1, hid2) != distance;
+`;
+
+        let rows;
+        await assert.doesNotReject(async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 0);
     });
 
 }); /* H3_DISTANCE integration tests */

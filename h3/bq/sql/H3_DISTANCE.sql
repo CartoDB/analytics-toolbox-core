@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_DISTANCE`(index_lower1 INT64, index_upper1 INT64, index_lower2 INT64, index_upper2 INT64)
-    RETURNS FLOAT64
+    RETURNS INT64
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
@@ -23,7 +23,7 @@ AS
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.H3_DISTANCE`(index1 INT64, index2 INT64)
-    RETURNS FLOAT64
+    RETURNS INT64
 AS
 (
     `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_DISTANCE`(
