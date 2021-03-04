@@ -4,12 +4,17 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ID_FROMKEY`
-    (key STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ID_FROMHILBERTQUADKEY`
+    (quadkey STRING)
     RETURNS INT64
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@S2_BQ_LIBRARY@@"])
 AS """
-    return S2.keyToId(key);
+    if(!quadkey)
+    {
+        throw new Error('NULL argument passed to UDF');
+    }
+
+    return S2.keyToId(quadkey);
 """;

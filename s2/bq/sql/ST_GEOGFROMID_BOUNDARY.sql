@@ -4,14 +4,19 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.GEOJSONBOUNDARY_FROMKEY`
-    (key STRING) 
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.GEOJSONBOUNDARY_FROMID`
+    (id INT64) 
     RETURNS STRING 
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@S2_BQ_LIBRARY@@"])
 AS """
-    var cornerLongLat = S2.S2Cell.FromHilbertQuadKey(key).getCornerLatLngs();
+    if(id == null)
+    {
+        throw new Error('NULL argument passed to UDF');
+    }
+    
+    var cornerLongLat = S2.S2Cell.FromHilbertQuadKey(S2.idToKey(id)).getCornerLatLngs();
     var geojson = {
         "type": "Polygon",
         "coordinates": [[
@@ -25,8 +30,8 @@ AS """
     return JSON.stringify(geojson);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ST_GEOGFROMKEY_BOUNDARY`
-    (key STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ST_GEOGFROMID_BOUNDARY`
+    (id INT64)
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PROJECTID@@`.@@BQ_DATASET_S2@@.GEOJSONBOUNDARY_FROMKEY(key))
+    ST_GEOGFROMGEOJSON(`@@BQ_PROJECTID@@`.@@BQ_DATASET_S2@@.GEOJSONBOUNDARY_FROMID(id))
 );

@@ -41,8 +41,8 @@ describe('S2 integration tests', () => {
         assert.equal(rows.length, 1);
         const quadkey = rows[0].key;
 
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMID(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMKEY("${quadkey}")) as key;`;
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMHILBERTQUADKEY("${quadkey}")) as key;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
@@ -53,7 +53,7 @@ describe('S2 integration tests', () => {
         level = 11;
         latitude = 15;
         longitude = -25;
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMLONGLAT(${longitude},${latitude},${level}) as id;`;
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(${longitude},${latitude},${level}) as id;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
@@ -61,8 +61,8 @@ describe('S2 integration tests', () => {
         assert.equal(rows.length, 1);
         const s2Id = rows[0].id;
 
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMKEY(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMID(${s2Id})) as id;`;
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ID_FROMHILBERTQUADKEY(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(${s2Id})) as id;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
@@ -86,7 +86,7 @@ describe('S2 integration tests', () => {
             ]]
         };
 
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMKEY(
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMID(
             \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.KEY_FROMLONGLAT(${longitude},${latitude},${level})) as boundary;`;
         
         let rows;
