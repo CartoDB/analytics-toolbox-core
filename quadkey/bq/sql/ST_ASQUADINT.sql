@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.QUADINT_FROMLONGLAT`
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.LONGLAT_ASQUADINT`
     (longitude FLOAT64, latitude FLOAT64, resolution INT64)
     RETURNS INT64
     DETERMINISTIC
@@ -17,5 +17,5 @@ AS """
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.ST_ASQUADINT`
     (point GEOGRAPHY, resolution INT64) 
 AS (
-    `@@BQ_PROJECTID@@`.@@BQ_DATASET_QUADKEY@@.QUADINT_FROMLONGLAT(ST_X(point), ST_Y(point), resolution)
+    `@@BQ_PROJECTID@@`.@@BQ_DATASET_QUADKEY@@.LONGLAT_ASQUADINT(ST_X(point), ST_Y(point), resolution)
 );

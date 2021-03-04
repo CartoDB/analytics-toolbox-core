@@ -57,12 +57,12 @@ describe('QUADKEY integration tests', () => {
     });
 
     it ('Should fail to encode quadints at zooms bigger than 29 or smaller than 0', async () => {
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMLONGLAT(100, 100, 30)`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(100, 100, 30)`;
         await assert.rejects( async () => {
             [rows] = await client.query(query, queryOptions);
         });
 
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMLONGLAT(100, 100, -1)`;
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(100, 100, -1)`;
         await assert.rejects( async () => {
             [rows] = await client.query(query, queryOptions);
         });
@@ -106,7 +106,7 @@ describe('QUADKEY integration tests', () => {
         });
     });
 
-    it ('QUADINT_FROMLONGLAT should not fail at any level of zoom', async () => {
+    it ('LONGLAT_ASQUADINT should not fail at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
             WITH zoomValues AS
@@ -123,7 +123,7 @@ describe('QUADKEY integration tests', () => {
         FROM 
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMLONGLAT(long, lat, zoom)
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(long, lat, zoom)
             FROM zoomContext
         )`;
 
