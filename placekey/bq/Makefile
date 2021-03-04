@@ -6,7 +6,6 @@ GSUTIL ?= gsutil
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-H3_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_H3)/h3.js
 PLACEKEY_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_PLACEKEY)/placekey_library.js
 
 .PHONY: ../placekey_library.js
@@ -24,6 +23,9 @@ ifndef BQ_PROJECTID
 endif
 ifndef BQ_DATASET_PLACEKEY
 	$(error BQ_DATASET_PLACEKEY is undefined)
+endif
+ifndef BQ_DATASET_H3
+	$(error BQ_DATASET_H3 is undefined)
 endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
@@ -52,6 +54,7 @@ dataset_remove: check_environment
 
 REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 		-e 's!@@BQ_DATASET_PLACEKEY@@!$(BQ_DATASET_PLACEKEY)!g' \
+		-e 's!@@BQ_DATASET_H3@@!$(BQ_DATASET_H3)!g' \
 		-e 's!@@PLACEKEY_BQ_LIBRARY@@!$(PLACEKEY_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
