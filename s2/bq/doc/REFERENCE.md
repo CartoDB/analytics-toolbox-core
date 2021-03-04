@@ -10,16 +10,6 @@ s2.VERSION()
 
 Returns the current version of the s2 library.
 
-#### GEOJSONBOUNDARY_FROMKEY
-
-{{% bannerNote type="code" %}}
-s2.GEOJSONBOUNDARY_FROMKEY(key STRING) 
-{{%/ bannerNote %}}
-
-Returns a GeoJSON containing the boundary corners of a s2 cell.
-
-* `key`: `STRING` quadkey to extract the corners from.
-
 #### ID_FROMKEY
 
 {{% bannerNote type="code" %}}
