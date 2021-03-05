@@ -5,7 +5,7 @@ global.eval(fs.readFileSync('../../s2_library.js') + '');
 
 describe('S2 unit tests', () => {
     it('Version', async() => {
-        assert.equal(s2Version(), 1);
+        assert.equal(s2Version(), '1.2.10');
     });
 
     it('Quadkey/S2 id Conversions', async() => {
