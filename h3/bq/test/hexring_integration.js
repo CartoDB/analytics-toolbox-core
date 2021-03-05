@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
-describe('H3_KRING', () => {
+describe('HEXRING', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,7 +17,7 @@ describe('H3_KRING', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('H3_KRING works as expected with invalid data', async () => {
+    it ('Works as expected with invalid data', async () => {
         const query = `
 WITH ids AS
 (
@@ -31,7 +31,7 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_KRING(hid, distance) as parent
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING(hid, distance) as parent
 FROM ids
 ORDER BY id ASC
 `;
@@ -54,8 +54,8 @@ WITH ids AS
     SELECT 0x8928308280fffff as hid
 )
 SELECT
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_KRING(hid, 1) as d1,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_KRING(hid, 2) as d2
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING(hid, 1) as d1,
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING(hid, 2) as d2
 FROM ids
 `;
 
@@ -66,8 +66,7 @@ FROM ids
         assert.equal(rows.length, 1);
         /* Data comes from h3core.spec.js */
         assert.deepEqual(rows[0].d1.sort(),
-            [   0x8928308280fffff,
-                0x8928308280bffff,
+            [   0x8928308280bffff,
                 0x89283082807ffff,
                 0x89283082877ffff,
                 0x89283082803ffff,
@@ -80,20 +79,13 @@ FROM ids
                 0x8928308281bffff,
                 0x89283082863ffff,
                 0x89283082823ffff,
-                0x89283082873ffff,
-                0x89283082877ffff,
                 0x8928308287bffff,
                 0x89283082833ffff,
                 0x8928308282bffff,
-                0x8928308283bffff,
                 0x89283082857ffff,
                 0x892830828abffff,
                 0x89283082847ffff,
-                0x89283082867ffff,
-                0x89283082803ffff,
-                0x89283082807ffff,
-                0x8928308280bffff,
-                0x8928308280fffff
+                0x89283082867ffff
             ].sort());
     });
 
@@ -104,7 +96,7 @@ WITH ids AS
     SELECT 608692970266296319 as hid
 )
 SELECT
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_KRING(hid, 0) AS self_children
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING(hid, 0) AS self_children
 FROM ids
 `;
 
@@ -115,4 +107,4 @@ FROM ids
         assert.equal(rows.length, 1);
         assert.deepEqual(rows[0].self_children, [ 608692970266296319 ]);
     });
-}); /* H3_KRING integration tests */
+}); /* HEXRING integration tests */

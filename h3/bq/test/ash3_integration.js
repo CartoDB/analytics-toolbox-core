@@ -180,7 +180,7 @@ cells AS
     SELECT
         resolution,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geog, resolution) AS h3_id,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_H3_BOUNDARY(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geog, resolution)) AS boundary
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_BOUNDARY(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geog, resolution)) AS boundary
     FROM points, UNNEST(GENERATE_ARRAY(0, 15, 1)) resolution
 ),
 polyfill AS

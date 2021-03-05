@@ -8,3 +8,5 @@ Not all changes in the project will be included here, but it should mention any 
 
 * Initial setup of the CARTO Spatial Extension.
 * Add the skel module.
+* Add the h3 module.
+* Add the placekey module.

@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
-describe('ST_H3_BOUNDARY', () => {
+describe('ST_BOUNDARY', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,7 +17,7 @@ describe('ST_H3_BOUNDARY', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('ST_H3_BOUNDARY returns NULL with invalid parameters', async () => {
+    it ('Returns NULL with invalid parameters', async () => {
         const query = `
 WITH ids AS
 (
@@ -26,7 +26,7 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_H3_BOUNDARY(hid) as bounds
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_BOUNDARY(hid) as bounds
 FROM ids
 ORDER BY id ASC
 `;
@@ -40,7 +40,7 @@ ORDER BY id ASC
         assert.equal(rows[1].bounds, null);
     });
 
-    it ('ST_H3_BOUNDARY returns NULL the expected geography', async () => {
+    it ('Returns NULL the expected geography', async () => {
         const query = `
 WITH ids AS
 (
@@ -49,9 +49,9 @@ WITH ids AS
 )
 SELECT
     *,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_H3_BOUNDARY(hid) as bounds
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_BOUNDARY(hid) as bounds
 FROM ids
-WHERE NOT ST_EQUALS(expected, \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_H3_BOUNDARY(hid))
+WHERE NOT ST_EQUALS(expected, \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_BOUNDARY(hid))
 `;
 
         let rows;
@@ -61,4 +61,4 @@ WHERE NOT ST_EQUALS(expected, \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_H3_BOU
         assert.equal(rows.length, 0);
     });
 
-}); /* ST_H3_BOUNDARY integration tests */
+}); /* ST_BOUNDARY integration tests */

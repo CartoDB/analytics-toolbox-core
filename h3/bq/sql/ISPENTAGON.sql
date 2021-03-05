@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_ISPENTAGON`(index_lower INT64, index_upper INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ISPENTAGON`(index_lower INT64, index_upper INT64)
     RETURNS BOOLEAN
     DETERMINISTIC
     LANGUAGE js
@@ -16,9 +16,9 @@ AS
     return h3.h3IsPentagon([Number(index_lower), Number(index_upper)]);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.H3_ISPENTAGON`(index INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ISPENTAGON`(index INT64)
     RETURNS BOOLEAN
 AS
 (
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_ISPENTAGON`(index & 0x00000000FFFFFFFF, index >> 32)
+    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ISPENTAGON`(index & 0x00000000FFFFFFFF, index >> 32)
 );
