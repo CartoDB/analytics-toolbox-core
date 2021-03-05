@@ -125,6 +125,10 @@ module.exports.quadintToGeoJSON = this.quadintToGeoJSON;
  * @return {int}              sibling key
  */
 sibling = function(quadint, direction) {
+    if (direction !== 'left' && direction !== 'right' && direction !== 'up' && direction !== 'down') {
+        throw new Error('Wrong direction argument passed to sibling');
+    }
+
     const tile = ZXYFromQuadint(quadint);
     const z = tile.z;
     let x = tile.x;
