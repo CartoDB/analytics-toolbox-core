@@ -125,6 +125,7 @@ module.exports.quadintToGeoJSON = this.quadintToGeoJSON;
  * @return {int}              sibling key
  */
 sibling = function(quadint, direction) {
+    direction = direction.toLowerCase();
     if (direction !== 'left' && direction !== 'right' && direction !== 'up' && direction !== 'down') {
         throw new Error('Wrong direction argument passed to sibling');
     }
