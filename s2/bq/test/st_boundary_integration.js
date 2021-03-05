@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_S2 = process.env.BQ_DATASET_S2;
 
-describe('GEOJSONBOUNDARY_FROMID integration tests', () => {
+describe('__GEOJSONBOUNDARY_FROMID integration tests', () => {
 
     let client;
     before(async () => {
@@ -32,7 +32,7 @@ describe('GEOJSONBOUNDARY_FROMID integration tests', () => {
             ]]
         };
 
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMID(
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.__GEOJSONBOUNDARY_FROMID(
             \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(${longitude},${latitude},${level})) as boundary;`;
         
         let rows;
@@ -45,9 +45,9 @@ describe('GEOJSONBOUNDARY_FROMID integration tests', () => {
         assert.deepEqual(bounds, resultBoundary);
     });
 
-    it ('GEOJSONBOUNDARY_FROMID should fail with NULL argument', async () => {
+    it ('__GEOJSONBOUNDARY_FROMID should fail with NULL argument', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.GEOJSONBOUNDARY_FROMID(NULL);`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.__GEOJSONBOUNDARY_FROMID(NULL);`;
         await assert.rejects( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
