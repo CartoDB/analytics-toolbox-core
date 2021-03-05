@@ -7,7 +7,7 @@ Our S2 module, is based on a port of the official s2 geometry library created by
 #### s2.VERSION
 
 {{% bannerNote type="code" %}}
-s2.VERSION() -> INT64
+s2.VERSION() -> STRING
 {{%/ bannerNote %}}
 
 Returns the current version of the s2 library.

@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.VERSION`()
-    RETURNS INT64
+    RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@S2_BQ_LIBRARY@@"])

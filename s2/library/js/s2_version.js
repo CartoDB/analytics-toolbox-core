@@ -6,5 +6,5 @@
 
 /* exported s2Version */
 function s2Version() {
-    return 1;
+    return "1.2.10";
 }
