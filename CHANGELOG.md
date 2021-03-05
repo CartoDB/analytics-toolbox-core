@@ -10,3 +10,4 @@ Not all changes in the project will be included here, but it should mention any 
 * Add the skel module.
 * Add the h3 module.
 * Add the placekey module.
+* Add the quadkey module.
