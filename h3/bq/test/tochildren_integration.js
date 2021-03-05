@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
-describe('H3_TOCHILDREN', () => {
+describe('TOCHILDREN', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,7 +17,7 @@ describe('H3_TOCHILDREN', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('H3_TOCHILDREN works as expected with invalid data', async () => {
+    it ('TOCHILDREN works as expected with invalid data', async () => {
         const query = `
 WITH ids AS
 (
@@ -27,7 +27,7 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOCHILDREN(hid, 1) as parent
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOCHILDREN(hid, 1) as parent
 FROM ids
 ORDER BY id ASC
 `;
@@ -49,8 +49,8 @@ WITH ids AS
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
 )
 SELECT
-    ARRAY_LENGTH(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOCHILDREN(hid, 8)) AS length_children,
-    ARRAY_LENGTH(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOCHILDREN(hid, 9)) AS length_grandchildren
+    ARRAY_LENGTH(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOCHILDREN(hid, 8)) AS length_children,
+    ARRAY_LENGTH(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOCHILDREN(hid, 9)) AS length_grandchildren
 FROM ids
 `;
 
@@ -70,7 +70,7 @@ WITH ids AS
     SELECT 608692970266296319 as hid
 )
 SELECT
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOCHILDREN(hid, 7) AS self_children
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOCHILDREN(hid, 7) AS self_children
 FROM ids
 `;
 
@@ -90,7 +90,7 @@ WITH ids AS
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
 )
 SELECT
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOCHILDREN(hid, 6) AS top_children
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOCHILDREN(hid, 6) AS top_children
 FROM ids
 `;
 
@@ -102,4 +102,4 @@ FROM ids
         assert.deepEqual(rows[0].top_children, [ ]);
     });
 
-}); /* H3_TOCHILDREN integration tests */
+}); /* TOCHILDREN integration tests */

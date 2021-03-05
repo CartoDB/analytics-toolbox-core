@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_ISVALID`(index_lower INT64, index_upper INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ISVALID`(index_lower INT64, index_upper INT64)
     RETURNS BOOLEAN
     DETERMINISTIC
     LANGUAGE js
@@ -16,9 +16,9 @@ AS
     return h3.h3IsValid([Number(index_lower), Number(index_upper)]);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.H3_ISVALID`(index INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ISVALID`(index INT64)
     RETURNS BOOLEAN
 AS
 (
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_ISVALID`(index & 0x00000000FFFFFFFF, index >> 32)
+    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ISVALID`(index & 0x00000000FFFFFFFF, index >> 32)
 );

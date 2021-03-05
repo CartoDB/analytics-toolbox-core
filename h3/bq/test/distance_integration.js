@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
-describe('H3_DISTANCE', () => {
+describe('DISTANCE', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -32,7 +32,7 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_DISTANCE(hid1, hid2) as distance
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.DISTANCE(hid1, hid2) as distance
 FROM ids
 ORDER BY id ASC
 `;
@@ -63,11 +63,11 @@ ids AS
         hid2
     FROM
         distances,
-        UNNEST (\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_HEXRING(0x8928308280fffff, distance)) hid2
+        UNNEST (\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING(0x8928308280fffff, distance)) hid2
 )
-SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_DISTANCE(hid1, hid2) as calculated_distance, *
+SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.DISTANCE(hid1, hid2) as calculated_distance, *
 FROM ids
-WHERE \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_DISTANCE(hid1, hid2) != distance;
+WHERE \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.DISTANCE(hid1, hid2) != distance;
 `;
 
         let rows;
@@ -77,4 +77,4 @@ WHERE \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_DISTANCE(hid1, hid2) != distan
         assert.equal(rows.length, 0);
     });
 
-}); /* H3_DISTANCE integration tests */
+}); /* DISTANCE integration tests */

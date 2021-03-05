@@ -27,8 +27,8 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_COMPACT(v) as c,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_UNCOMPACT(v, 5) as u
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.COMPACT(v) as c,
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.UNCOMPACT(v, 5) as u
 FROM ids
 ORDER BY id ASC
 `;
@@ -52,8 +52,8 @@ WITH poly AS
 )
 SELECT
     ARRAY_LENGTH(v) AS original,
-    ARRAY_LENGTH(\`${BQ_PROJECTID}.${BQ_DATASET_H3}\`.H3_COMPACT(v)) AS compacted,
-    ARRAY_LENGTH(\`${BQ_PROJECTID}.${BQ_DATASET_H3}\`.H3_UNCOMPACT(\`${BQ_PROJECTID}.${BQ_DATASET_H3}\`.H3_COMPACT(v), 9)) AS uncompacted
+    ARRAY_LENGTH(\`${BQ_PROJECTID}.${BQ_DATASET_H3}\`.COMPACT(v)) AS compacted,
+    ARRAY_LENGTH(\`${BQ_PROJECTID}.${BQ_DATASET_H3}\`.UNCOMPACT(\`${BQ_PROJECTID}.${BQ_DATASET_H3}\`.COMPACT(v), 9)) AS uncompacted
 FROM poly
 `;
 

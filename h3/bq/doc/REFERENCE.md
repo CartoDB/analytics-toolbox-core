@@ -68,38 +68,38 @@ h3.ST_ASH3_POLYFILL(geography, resolution) -> ARRAY<INT64>
 
 Returns all hexagons **with centers** contained in a given polygon. It will return `NULL` on error (invalid geography type or resolution out of bounds).
 
-#### h3.ST_H3_BOUNDARY
+#### h3.ST_BOUNDARY
 
 {{% bannerNote type="code" %}}
-h3.ST_H3_BOUNDARY(index) -> GEOGRAPHY
+h3.ST_BOUNDARY(index) -> GEOGRAPHY
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
 
 Returns a `GEOGRAPHY` representing the H3 cell. It will return `NULL` on error (invalid input).
 
-#### h3.H3_ISVALID
+#### h3.ISVALID
 
 {{% bannerNote type="code" %}}
-h3.H3_ISVALID(index) -> BOOLEAN
+h3.ISVALID(index) -> BOOLEAN
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
 
-#### h3.H3_COMPACT
+#### h3.COMPACT
 
 {{% bannerNote type="code" %}}
-h3.H3_COMPACT(indexArray) -> ARRAY<INT64>
+h3.COMPACT(indexArray) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `indexArray`: `ARRAY<INT64>` An array of H3 cell indices.
 
 Compact a set of hexagons of the same resolution into a set of hexagons across multiple levels that represents the same area.
 
-#### h3.H3_UNCOMPACT
+#### h3.UNCOMPACT
 
 {{% bannerNote type="code" %}}
-h3.H3_UNCOMPACT(indexArray, resolution)) -> ARRAY<INT64>
+h3.UNCOMPACT(indexArray, resolution)) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `indexArray`: `ARRAY<INT64>` An array of H3 cell indices.
@@ -107,10 +107,10 @@ h3.H3_UNCOMPACT(indexArray, resolution)) -> ARRAY<INT64>
 
 Uncompact a compacted set of hexagons to hexagons of the same resolution.
 
-#### h3.H3_TOPARENT
+#### h3.TOPARENT
 
 {{% bannerNote type="code" %}}
-h3.H3_TOPARENT(index, resolution) -> INT64
+h3.TOPARENT(index, resolution) -> INT64
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
@@ -118,10 +118,10 @@ h3.H3_TOPARENT(index, resolution) -> INT64
 
 Get the parent of the given hexagon at a particular resolution.
 
-#### h3.H3_TOCHILDREN
+#### h3.TOCHILDREN
 
 {{% bannerNote type="code" %}}
-h3.H3_TOCHILDREN(index, resolution) -> ARRAY<INT64>
+h3.TOCHILDREN(index, resolution) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
@@ -129,20 +129,20 @@ h3.H3_TOCHILDREN(index, resolution) -> ARRAY<INT64>
 
 Get the children/descendents of the given hexagon at a particular resolution.
 
-#### h3.H3_ISPENTAGON
+#### h3.ISPENTAGON
 
 {{% bannerNote type="code" %}}
-h3.H3_ISPENTAGON(index) -> BOOLEAN
+h3.ISPENTAGON(index) -> BOOLEAN
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
 
 Whether the given H3 index is a pentagon. Returns false on invalid input.
 
-#### h3.H3_DISTANCE
+#### h3.DISTANCE
 
 {{% bannerNote type="code" %}}
-h3.H3_DISTANCE(origin, destination) -> INT64
+h3.DISTANCE(origin, destination) -> INT64
 {{%/ bannerNote %}}
 
 * `origin`: `INT64` The origin H3 cell index.
@@ -152,13 +152,13 @@ Get the **grid distance** between two hex indexes. This function may fail to fin
 Returns null on failure or invalid input.
 
 {{% bannerNote type="note" title="tip"%}}
-If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions#st_distance) between the cells ([ST_H3_BOUNDARY](#h3.h3.ST_H3_BOUNDARY)) or their centroid.
+If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions#st_distance) between the cells ([ST_BOUNDARY](#h3.h3.ST_BOUNDARY)) or their centroid.
 {{%/ bannerNote %}}
 
-#### h3.H3_KRING
+#### h3.KRING
 
 {{% bannerNote type="code" %}}
-h3.H3_KRING(index, resolution) -> ARRAY<INT64>
+h3.KRING(index, resolution) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
@@ -166,10 +166,10 @@ h3.H3_KRING(index, resolution) -> ARRAY<INT64>
 
 Get all hexagons in a k-ring around a given center. The order of the hexagons is undefined. Returns NULL on invalid input.
 
-#### h3.H3_HEXRING
+#### h3.HEXRING
 
 {{% bannerNote type="code" %}}
-h3.H3_HEXRING(index, resolution) -> ARRAY<INT64>
+h3.HEXRING(index, resolution) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.

@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_TOCHILDREN`(index_lower INT64, index_upper INT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__TOCHILDREN`(index_lower INT64, index_upper INT64, resolution INT64)
     RETURNS ARRAY<INT64>
     DETERMINISTIC
     LANGUAGE js
@@ -20,9 +20,9 @@ AS
     return h3.h3ToChildren(h3IndexInput, Number(resolution)).map(h => '0x' + h);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.H3_TOCHILDREN`(index INT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.TOCHILDREN`(index INT64, resolution INT64)
     RETURNS ARRAY<INT64>
 AS
 (
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_TOCHILDREN`(index & 0x00000000FFFFFFFF, index >> 32, resolution)
+    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__TOCHILDREN`(index & 0x00000000FFFFFFFF, index >> 32, resolution)
 );

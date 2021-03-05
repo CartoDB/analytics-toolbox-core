@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
-describe('H3_TOPARENT', () => {
+describe('TOPARENT', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,7 +17,7 @@ describe('H3_TOPARENT', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('H3_TOPARENT works as expected with invalid data', async () => {
+    it ('TOPARENT works as expected with invalid data', async () => {
         const query = `
 WITH ids AS
 (
@@ -27,7 +27,7 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOPARENT(hid, 1) as parent
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOPARENT(hid, 1) as parent
 FROM ids
 ORDER BY id ASC
 `;
@@ -59,8 +59,8 @@ SELECT
     *
 FROM ids
 WHERE
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution) != \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOPARENT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution + 1), resolution) OR
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution) != \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_TOPARENT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution + 2), resolution)
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution) != \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOPARENT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution + 1), resolution) OR
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution) != \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOPARENT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(point, resolution + 2), resolution)
 `;
 
         let rows;
@@ -70,4 +70,4 @@ WHERE
         assert.equal(rows.length, 0);
     });
 
-}); /* H3_TOPARENT integration tests */
+}); /* TOPARENT integration tests */

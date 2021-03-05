@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_TOPARENT`(index_lower INT64, index_upper INT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__TOPARENT`(index_lower INT64, index_upper INT64, resolution INT64)
     RETURNS INT64
     DETERMINISTIC
     LANGUAGE js
@@ -19,9 +19,9 @@ AS
     return '0x' + h3.h3ToParent([Number(index_lower), Number(index_upper)], Number(resolution));
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.H3_TOPARENT`(index INT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.TOPARENT`(index INT64, resolution INT64)
     RETURNS INT64
 AS
 (
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__H3_TOPARENT`(index & 0x00000000FFFFFFFF, index >> 32, resolution)
+    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__TOPARENT`(index & 0x00000000FFFFFFFF, index >> 32, resolution)
 );
