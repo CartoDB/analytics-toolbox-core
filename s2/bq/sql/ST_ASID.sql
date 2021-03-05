@@ -16,7 +16,7 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
         
-    return S2.latLngToId(latitude, longitude, level).toString();
+    return S2.latLngToId(latitude, longitude, level);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ST_ASID`

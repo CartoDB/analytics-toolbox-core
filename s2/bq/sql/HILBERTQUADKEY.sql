@@ -16,7 +16,7 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
 
-    return S2.keyToId(quadkey).toString();
+    return S2.keyToId(quadkey);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.HILBERTQUADKEY_FROMID`
