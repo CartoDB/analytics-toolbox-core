@@ -2,6 +2,8 @@
 
 ### S2
 
+Our S2 module, is based on a port of the original s2 geometry created by Google. Check this [website] (http://s2geometry.io/) for more information about S2.
+
 #### s2.VERSION
 
 {{% bannerNote type="code" %}}
