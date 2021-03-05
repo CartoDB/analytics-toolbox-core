@@ -172,16 +172,17 @@ module.exports.children = this.children;
 /**
  * get the parent of a quadint
  * @param  {int} quadint quadint to get the parent of
+ * @param  {int} resolution resolution of the desired parent
  * @return {int}         parent of the input quadint
  */
-parent = function(quadint) {
+toParent = function(quadint, resolution) {
     const zxy = ZXYFromQuadint(quadint);
-    if (zxy.z < 1 || zxy.z > 29) {
-        throw new Error('Wrong zoom');
+    if (resolution < 0 || resolution >= zxy.z) {
+        throw new Error('Wrong resolution');
     }
-    return quadintFromZXY(zxy.z - 1, zxy.x >> 1, zxy.y >> 1);
+    return quadintFromZXY(resolution, zxy.x >> (zxy.z - resolution), zxy.y >> (zxy.z - resolution));
 };
-module.exports.parent = this.parent;
+module.exports.toParent = this.toParent;
 
 /**
  * get an array of quadints containing a geography for given zooms

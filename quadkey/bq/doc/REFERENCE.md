@@ -64,13 +64,14 @@ quadkey.QUADKEY_FROMQUADINT(quadint INT64) -> STRING
 
 Transform a quadint index to an equivalent quadkey.
 
-#### quadkey.PARENT
+#### quadkey.TOPARENT
 
 {{% bannerNote type="code" %}}
-quadkey.PARENT(quadint INT64) -> INT64
+quadkey.TOPARENT(quadint INT64, resolution INT64) -> INT64
 {{%/ bannerNote %}}
 
-* `quadint`: `INT64` quadint we want to get the parent from.
+* `quadint`: `INT64`    quadint we want to get the parent from.
+* `resolution`: `INT64` resolution of the desired parent.
 
 Returns the parent quadint of a given quadint. A parent quadint is a quadint of smaller level of detail (zoom - 1) which contains the current quadint.
 

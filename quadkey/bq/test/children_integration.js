@@ -32,7 +32,8 @@ describe('CHILDREN integration tests', () => {
         ),
         expectedQuadintContext AS
         (
-            SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY) AS expectedQuadint,
+            SELECT *,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(zoom, tileX, tileY) AS expectedQuadint,
             FROM zoomContext
         ),
         childrenContext AS
@@ -45,7 +46,7 @@ describe('CHILDREN integration tests', () => {
         FROM 
         (
             SELECT expectedQuadint,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.PARENT(child) AS currentQuadint
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOPARENT(child, zoom) AS currentQuadint
             FROM childrenContext, UNNEST(children) AS child
         )
         WHERE currentQuadint != expectedQuadint`;
