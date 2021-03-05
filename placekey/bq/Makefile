@@ -58,7 +58,7 @@ REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 		-e 's!@@PLACEKEY_BQ_LIBRARY@@!$(PLACEKEY_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
-	for n in $(wildcard sql/*.sql); do \
+	for n in $(sort $(wildcard sql/*.sql)); do \
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \
 	done
 
