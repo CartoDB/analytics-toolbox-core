@@ -16,7 +16,32 @@ describe('QUADKEY conversions integration tests', () => {
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
-  
+
+    it ('QUADKEY conversion should work', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(2, 1, 1)) as quadkey1,
+                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(6, 40, 55)) as quadkey2,
+                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(12, 1960, 3612)) as quadkey3,
+                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(18, 131621, 65120)) as quadkey4,
+                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(24, 9123432, 159830174)) as quadkey5,
+                        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADKEY_FROMQUADINT(
+                            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.QUADINT_FROMZXY(29, 389462872, 207468912)) as quadkey6`;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.equal(rows[0].quadkey1, "03");
+        assert.equal(rows[0].quadkey2, "321222");
+        assert.equal(rows[0].quadkey3, "233110123200");
+        assert.equal(rows[0].quadkey4, "102222223002300101");
+        assert.equal(rows[0].quadkey5, "300012312213011021123220");
+        assert.equal(rows[0].quadkey6, "12311021323123033301303231000");
+    });
+
     it ('Should be able to encode/decode between quadint and quadkey at any level of zoom', async () => {
         let query = `WITH tileContext AS
         (
