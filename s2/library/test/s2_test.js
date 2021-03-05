@@ -15,11 +15,11 @@ describe('S2 unit tests', () => {
                 for (lng = -179; lng <= 179; lng = lng + 15) {
                     const quadkey = S2.latLngToKey(lat, lng, z);
                     assert.equal(quadkey, S2.idToKey(S2.keyToId(quadkey)));
-                    
+
                     const s2Id = S2.latLngToId(lat, lng, z);
                     assert.equal(s2Id, S2.keyToId(S2.idToKey(s2Id)));
                 }
-            }    
+            }
         }
     });
 
