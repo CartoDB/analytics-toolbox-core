@@ -311,7 +311,7 @@ describe('QUADKEY integration tests', () => {
         assert.equal(rows[0]['geog3']['value'],'POLYGON((-45 45.0000021990696, -45 44.9999946126367, -44.9999892711639 44.9999946126367, -44.9999892711639 45.0000021990696, -45 45.0000021990696))');
     });
 
-    it ('ST_ASQUADINTPOLYFILL should work', async () => {
+    it ('ST_ASQUADINT_POLYFILL should work', async () => {
         let feature = {
               "type": "Polygon",
               "coordinates": [
@@ -365,8 +365,8 @@ describe('QUADKEY integration tests', () => {
           };
         let featureJSON = JSON.stringify(feature);
 
-        let sqlQuery = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(@geojson, 10) as polyfill10,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(@geojson, 14) as polyfill14`;
+        let sqlQuery = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.__POLYFILL_FROMGEOJSON(@geojson, 10) as polyfill10,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.__POLYFILL_FROMGEOJSON(@geojson, 14) as polyfill14`;
         let rows;
         const query = {
             query: sqlQuery,
@@ -453,9 +453,9 @@ describe('QUADKEY integration tests', () => {
             });
         });
 
-        it ('POLYFILL_FROMGEOJSON should fail if any NULL argument', async () => {
+        it ('__POLYFILL_FROMGEOJSON should fail if any NULL argument', async () => {
             let rows;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(NULL, 10);`;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.__POLYFILL_FROMGEOJSON(NULL, 10);`;
             await assert.rejects( async () => {
                 const [job] = await client.createQueryJob({ query: query });
                 [rows] = await job.getQueryResults();
@@ -478,7 +478,7 @@ describe('QUADKEY integration tests', () => {
             };
             let featureJSON = JSON.stringify(feature);
   
-            let sqlQuery = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.POLYFILL_FROMGEOJSON(@geojson, NULL)`;
+            let sqlQuery = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.__POLYFILL_FROMGEOJSON(@geojson, NULL)`;
             query = {
                 query: sqlQuery,
                 params: {geojson: featureJSON},
@@ -488,9 +488,9 @@ describe('QUADKEY integration tests', () => {
             });
         });
 
-        it ('GEOJSONBOUNDARY_FROMQUADINT should fail with NULL argument', async () => {
+        it ('__GEOJSONBOUNDARY_FROMQUADINT should fail with NULL argument', async () => {
             let rows;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.GEOJSONBOUNDARY_FROMQUADINT(NULL);`;
+            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.__GEOJSONBOUNDARY_FROMQUADINT(NULL);`;
             await assert.rejects( async () => {
                 const [job] = await client.createQueryJob({ query: query });
                 [rows] = await job.getQueryResults();

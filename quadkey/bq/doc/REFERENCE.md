@@ -126,10 +126,10 @@ quadkey.ST_ASQUADINT(point GEOGRAPHY, resolution INT64)  -> INT64
 
 Converts a given point at given level of detail to a quadint.
 
-#### quadkey.ST_ASQUADINTPOLYFILL
+#### quadkey.ST_ASQUADINT_POLYFILL
 
 {{% bannerNote type="code" %}}
-quadkey.ST_ASQUADINTPOLYFILL(geo GEOGRAPHY, resolution INT64) -> ARRAY<INT64>
+quadkey.ST_ASQUADINT_POLYFILL(geo GEOGRAPHY, resolution INT64) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `geo`: `GEOGRAPHY` geography we want to extract the quadints from.
