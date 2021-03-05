@@ -1,0 +1,14 @@
+{
+  "name": "h3_tester",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "devDependencies": {
+    "tape": "^5.1.1"
+  },
+  "scripts": {
+    "test" : "tape test/*js"
+  },
+  "author": "",
+  "license": "Apache"
+}

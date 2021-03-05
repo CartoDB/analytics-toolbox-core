@@ -6,10 +6,10 @@ GSUTIL ?= gsutil
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-SKEL_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/skel_library.js
+PLACEKEY_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_PLACEKEY)/placekey_library.js
 
-.PHONY: ../skel_library.js
-../skel_library.js:
+.PHONY: ../placekey_library.js
+../placekey_library.js:
 	$(MAKE) -C .. all
 
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
@@ -21,8 +21,11 @@ endif
 ifndef BQ_PROJECTID
 	$(error BQ_PROJECTID is undefined)
 endif
-ifndef BQ_DATASET_SKEL
-	$(error BQ_DATASET_SKEL is undefined)
+ifndef BQ_DATASET_PLACEKEY
+	$(error BQ_DATASET_PLACEKEY is undefined)
+endif
+ifndef BQ_DATASET_H3
+	$(error BQ_DATASET_H3 is undefined)
 endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
@@ -34,24 +37,25 @@ clean:
 	$(MAKE) -C test/ $@
 
 ##################### STORAGE FILES #####################
-storage_upload: ../skel_library.js check_environment
-	$(GSUTIL) cp -r ../skel_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/
+storage_upload: ../placekey_library.js check_environment
+	$(GSUTIL) cp -r ../placekey_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_PLACEKEY)/
 
 storage_remove: check_environment
-	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/
+	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_PLACEKEY)/
 
 ##################### BIGQUERY DATASET #####################
 
 dataset_create: check_environment
-	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_SKEL) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "SKEL Dataset" $(BQ_PROJECTID):$(BQ_DATASET_SKEL)
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_PLACEKEY) 2>/dev/null 1>/dev/null || \
+		${BQ} mk -d --description "PLACEKEY Dataset" $(BQ_PROJECTID):$(BQ_DATASET_PLACEKEY)
 
 dataset_remove: check_environment
-	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_SKEL)
+	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_PLACEKEY)
 
 REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
-		-e 's!@@BQ_DATASET_SKEL@@!$(BQ_DATASET_SKEL)!g' \
-		-e 's!@@SKEL_BQ_LIBRARY@@!$(SKEL_BQ_LIBRARY)!g'
+		-e 's!@@BQ_DATASET_PLACEKEY@@!$(BQ_DATASET_PLACEKEY)!g' \
+		-e 's!@@BQ_DATASET_H3@@!$(BQ_DATASET_H3)!g' \
+		-e 's!@@PLACEKEY_BQ_LIBRARY@@!$(PLACEKEY_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
 	for n in $(sort $(wildcard sql/*.sql)); do \
@@ -59,7 +63,9 @@ dataset_deploy: check_environment
 	done
 
 ##################### DEPLOY #####################
+BQ_H3_PATH = ../../h3/bq
 deploy: check_environment
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_H3) 2>/dev/null 1>/dev/null || $(MAKE) -C $(BQ_H3_PATH) $@
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
 
@@ -74,4 +80,5 @@ integration_cleanup: check_environment
 ifeq ($(POST_INTEGRATION_CLEANUP),1)
 	$(MAKE) storage_remove
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
+	$(MAKE) -C $(BQ_H3_PATH) $@
 endif
