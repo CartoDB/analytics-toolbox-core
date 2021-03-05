@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_PLACEKEY@@.PLACEKEY_ISVALID`(placekey STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_PLACEKEY@@.ISVALID`(placekey STRING)
     RETURNS BOOLEAN
     DETERMINISTIC
     LANGUAGE js

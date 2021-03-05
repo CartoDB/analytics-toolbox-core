@@ -25,10 +25,10 @@ placekey.PLACEKEY_ASH3(placekey STRING) -> INT64
 
 Transform a placekey identifier to the equivalent H3 index.
 
-#### PLACEKEY_ISVALID
+#### ISVALID
 
 {{% bannerNote type="code" %}}
-placekey.PLACEKEY_ISVALID(placekey STRING) -> BOOLEAN
+placekey.ISVALID(placekey STRING) -> BOOLEAN
 {{%/ bannerNote %}}
 
 * `placekey`: `STRING` Place identifier.

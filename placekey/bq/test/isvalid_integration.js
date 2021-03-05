@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_PLACEKEY = process.env.BQ_DATASET_PLACEKEY;
 
-describe('PLACEKEY_ISVALID', () => {
+describe('ISVALID', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -40,7 +40,7 @@ WITH ids AS
 )
 SELECT
     id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_PLACEKEY}\`.PLACEKEY_ISVALID(pk) as valid
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_PLACEKEY}\`.ISVALID(pk) as valid
 FROM ids
 ORDER BY id ASC
 `;
