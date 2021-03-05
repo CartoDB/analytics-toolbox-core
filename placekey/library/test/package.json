@@ -1,0 +1,16 @@
+{
+  "name": "placekey_unit_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "placekey_test.js",
+  "scripts": {
+    "test": "tape"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tape": "^5.1.1",
+    "tape-promise": "^4.0.0"
+  }
+}
