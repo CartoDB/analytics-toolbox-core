@@ -30,26 +30,6 @@ s2.HILBERTQUADKEY_FROMID(id INT64) -> STRING
 
 Convert from s2 cell id to hilbert quadtree id.
 
-#### s2.LONG_FROMID
-
-{{% bannerNote type="code" %}}
-s2.LONG_FROMID(id INT64) -> FLOAT64
-{{%/ bannerNote %}}
-
-* `id`: `INT64` s2 cell id.
-
-Extract the longitude component from the centroid of a given s2 cell id.
-
-#### s2.LAT_FROMID
-
-{{% bannerNote type="code" %}}
-s2.LAT_FROMID(id INT64) -> FLOAT64
-{{%/ bannerNote %}}
-
-* `id`: `INT64` s2 cell id.
-
-Extract the latitude component from the centroid of a given s2 cell id.
-
 #### s2.LONGLAT_ASID
 
 {{% bannerNote type="code" %}}

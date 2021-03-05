@@ -1,5 +1,4 @@
 const assert = require('assert').strict;
-const chaiAssert = require('chai').assert;
 const {BigQuery} = require('@google-cloud/bigquery');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
@@ -27,33 +26,6 @@ describe('S2 integration tests', () => {
         });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].versioncol, 1);
-    });
-
-    it('Long Lat from id conversions should work', async() => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONG_FROMID(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(-35, 10, 20)) as long1,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LAT_FROMID(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(0, -79, 19)) as lat1,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONG_FROMID(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(125, -14, 18)) as long2,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LAT_FROMID(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(125, -14, 18)) as lat2,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONG_FROMID(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(179, -60, 24)) as long3,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LAT_FROMID(
-                \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(-105, 80, 28)) as lat3;`;
-        let rows;
-        await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
-        });
-        assert.equal(rows.length, 1);
-        chaiAssert.closeTo(-35, rows[0].long1, 0.001);
-        chaiAssert.closeTo(-79, rows[0].lat1, 0.001);
-        chaiAssert.closeTo(125, rows[0].long2, 0.001);
-        chaiAssert.closeTo(-14, rows[0].lat2, 0.001);
-        chaiAssert.closeTo(179, rows[0].long3, 0.001);
-        chaiAssert.closeTo(80, rows[0].lat3, 0.001);
     });
 
     it ('KEY / ID conversions should work', async () => {
@@ -130,21 +102,6 @@ describe('S2 integration tests', () => {
             });
 
             query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.HILBERTQUADKEY_FROMID(NULL);`;
-            await assert.rejects( async () => {
-                const [job] = await client.createQueryJob({ query: query });
-                [rows] = await job.getQueryResults();
-            });
-        });
-
-        it ('Long and lat from ID should fail with NULL argument', async () => {
-            let rows;
-            let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONG_FROMID(NULL);`;
-            await assert.rejects( async () => {
-                const [job] = await client.createQueryJob({ query: query });
-                [rows] = await job.getQueryResults();
-            });
-
-            query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LAT_FROMID(NULL);`;
             await assert.rejects( async () => {
                 const [job] = await client.createQueryJob({ query: query });
                 [rows] = await job.getQueryResults();
