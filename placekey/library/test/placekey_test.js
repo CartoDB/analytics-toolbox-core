@@ -13,10 +13,6 @@ const test = require('tape-promise/tape');
 
 /* Emulate how BigQuery would load the file */
 eval(fs.readFileSync('../../placekey_library.js') + '');
-const h3 = require('h3-js');
-const h3ToGeoBoundary = h3.h3ToGeoBoundary;
-
-const degsToRads = h3.degsToRads;
 const SAMPLES = require('./data/example_geos.json');
 const DISTANCE_SAMPLES = require('./data/example_distances.json');
 
