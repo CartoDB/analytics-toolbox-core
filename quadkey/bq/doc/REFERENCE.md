@@ -149,7 +149,7 @@ quadkey.ST_GEOGFROMQUADINT_BOUNDARY(quadint INT64) -> GEOGRAPHY
 
 Returns the geography boundary for a given quadint. We extract the boundary the same way as when we calculate the bbox, then enclose it in a GEOJSON and finally transform it to geography.
 
-### CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX
+### quadkey.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX
 
 {{% bannerNote type="code" %}}
 quadkey.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX(longitude FLOAT64, latitude FLOAT64, __zoom_min INT64, __zoom_max INT64, __zoom_step INT64, __resolution INT64) -> ARRAY< STRUCT < id INT64, z INT64, x INT64, y INT64 > >
