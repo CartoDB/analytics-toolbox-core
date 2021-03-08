@@ -23,6 +23,24 @@ describe('S2 unit tests', () => {
         }
     });
 
+    it('Quadkey to S2 id static conversions', async() => {
+        assert.equal(S2.keyToId('4/12').toString(), '-8286623314361712640');
+        assert.equal(S2.keyToId('2/02300033').toString(), '5008548143403368448');
+        assert.equal(S2.keyToId('3/03131200023201').toString(), '7416309021449125888');
+        assert.equal(S2.keyToId('5/0001221313222222120').toString(), '-6902629179221606400');
+        assert.equal(S2.keyToId('2/0221200002312111222332101').toString(), '4985491052606295040');
+        assert.equal(S2.keyToId('5/1331022022103232320303230131').toString(), '-5790199077674720336');
+    });
+
+    it('S2 id to quadkey static conversions', async() => {
+        assert.equal(S2.idToKey('-5062045981164437504'), '5/303');
+        assert.equal(S2.idToKey('5159154848129613824'), '2/033030');
+        assert.equal(S2.idToKey('3776858106818985984'), '1/220311003003');
+        assert.equal(S2.idToKey('-6531506317872332800'), '5/022231231230313331');
+        assert.equal(S2.idToKey('7380675754284404736'), '3/030312231223330330032232');
+        assert.equal(S2.idToKey('1996857078240356732'), '0/31312302011313121331323110233');
+    });
+
     it('Boundary check', async() => {
         const level = 18;
         const latitude = -14;

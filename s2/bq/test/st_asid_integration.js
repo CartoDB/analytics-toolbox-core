@@ -16,6 +16,14 @@ describe('LONGLAT_ASID integration tests', () => {
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
+    it ('Issue 29: ST_S2 should not fail.', async () => {
+        let rows;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_ASID(ST_GEOGPOINT(-74.006, 40.7128), 12);`;
+        await assert.doesNotReject( async () => {
+            const [job] = await client.createQueryJob({ query: query });
+            [rows] = await job.getQueryResults();
+        });
+    });
 
     it ('LONGLAT_ASID should fail if any NULL argument', async () => {
         let rows;
