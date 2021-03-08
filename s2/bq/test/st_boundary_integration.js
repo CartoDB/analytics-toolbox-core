@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_S2 = process.env.BQ_DATASET_S2;
 
-describe('__GEOJSONBOUNDARY_FROMID integration tests', () => {
+describe('ST_GEOGFROMID_BOUNDARY integration tests', () => {
 
     let client;
     before(async () => {
@@ -17,22 +17,13 @@ describe('__GEOJSONBOUNDARY_FROMID integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it('Boundary functions should work', async() => {
+    it('ST_GEOGFROMID_BOUNDARY functions should work', async() => {
         const level = 18;
         const latitude = -14;
         const longitude = 125;
-        const bounds = {
-            "type": "Polygon",
-            "coordinates": [[
-                [124.99991607494462, -14.000016145055083],
-                [124.99991607494462, -13.99970528488021],
-                [125.0002604046465, -13.999648690569117],
-                [125.0002604046465, -13.999959549588995],
-                [124.99991607494462, -14.000016145055083]
-            ]]
-        };
+        const bounds = 'POLYGON((125.000260404646 -13.999959549589, 125.000260404646 -13.9996486905691, 124.999916074945 -13.9997052848802, 124.999916074945 -14.0000161450551, 125.000260404646 -13.999959549589))';
 
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.__GEOJSONBOUNDARY_FROMID(
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_GEOGFROMID_BOUNDARY(
             \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(${longitude},${latitude},${level})) as boundary;`;
         
         let rows;
@@ -40,14 +31,13 @@ describe('__GEOJSONBOUNDARY_FROMID integration tests', () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
         });
-        let resultBoundary = JSON.parse(rows[0].boundary);
         assert.equal(rows.length, 1);
-        assert.deepEqual(bounds, resultBoundary);
+        assert.equal(bounds, rows[0].boundary.value);
     });
 
-    it ('__GEOJSONBOUNDARY_FROMID should fail with NULL argument', async () => {
+    it ('ST_GEOGFROMID_BOUNDARY should fail with NULL argument', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.__GEOJSONBOUNDARY_FROMID(NULL);`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_GEOGFROMID_BOUNDARY(NULL);`;
         await assert.rejects( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
