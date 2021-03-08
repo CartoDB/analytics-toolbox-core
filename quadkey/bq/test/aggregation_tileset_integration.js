@@ -17,11 +17,11 @@ describe('BBOX integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
     
-    it ('CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX should work', async () => {
+    it ('LONGLAT_ASQUADINTLIST should work', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX(-45,30,2,10,2,5) as agg1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX(150,-30,16,18,1,5) as agg2,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX(170,-150,20,24,1,4) as agg3
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(-45,30,2,10,2,5) as agg1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(150,-30,16,18,1,5) as agg2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(170,-150,20,24,1,4) as agg3
         ;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
@@ -52,10 +52,10 @@ describe('BBOX integration tests', () => {
         assert.deepEqual(rows[0].agg3, expectedArr);
     });
 
-    it ('CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX should return [] with NULL latitud/longitud', async () => {
+    it ('LONGLAT_ASQUADINTLIST should return [] with NULL latitud/longitud', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX(NULL,10,10,12,1,5) as agg1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CREATE_POINT_AGGREGATION_TILESET_QUADINT_INDEX(10,NULL,10,12,1,5) as agg2;`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(NULL,10,10,12,1,5) as agg1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(10,NULL,10,12,1,5) as agg2;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
