@@ -6,10 +6,10 @@ GSUTIL ?= gsutil
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-SKEL_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/skel_library.js
+QUADKEY_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_QUADKEY)/quadkey_library.js
 
-.PHONY: ../skel_library.js
-../skel_library.js:
+.PHONY: ../quadkey_library.js
+../quadkey_library.js:
 	$(MAKE) -C .. all
 
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
@@ -21,8 +21,8 @@ endif
 ifndef BQ_PROJECTID
 	$(error BQ_PROJECTID is undefined)
 endif
-ifndef BQ_DATASET_SKEL
-	$(error BQ_DATASET_SKEL is undefined)
+ifndef BQ_DATASET_QUADKEY
+	$(error BQ_DATASET_QUADKEY is undefined)
 endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
@@ -34,24 +34,24 @@ clean:
 	$(MAKE) -C test/ $@
 
 ##################### STORAGE FILES #####################
-storage_upload: ../skel_library.js check_environment
-	$(GSUTIL) cp -r ../skel_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/
+storage_upload: ../quadkey_library.js check_environment
+	$(GSUTIL) cp -r ../quadkey_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_QUADKEY)/
 
 storage_remove: check_environment
-	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_SKEL)/
+	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_QUADKEY)/
 
 ##################### BIGQUERY DATASET #####################
 
 dataset_create: check_environment
-	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_SKEL) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "SKEL Dataset" $(BQ_PROJECTID):$(BQ_DATASET_SKEL)
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_QUADKEY) 2>/dev/null 1>/dev/null || \
+		${BQ} mk -d --description "QUADKEY Dataset" $(BQ_PROJECTID):$(BQ_DATASET_QUADKEY)
 
 dataset_remove: check_environment
-	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_SKEL)
+	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_QUADKEY)
 
 REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
-		-e 's!@@BQ_DATASET_SKEL@@!$(BQ_DATASET_SKEL)!g' \
-		-e 's!@@SKEL_BQ_LIBRARY@@!$(SKEL_BQ_LIBRARY)!g'
+		-e 's!@@BQ_DATASET_QUADKEY@@!$(BQ_DATASET_QUADKEY)!g' \
+		-e 's!@@QUADKEY_BQ_LIBRARY@@!$(QUADKEY_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
 	for n in $(sort $(wildcard sql/*.sql)); do \
