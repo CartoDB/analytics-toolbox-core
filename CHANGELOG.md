@@ -11,3 +11,4 @@ Not all changes in the project will be included here, but it should mention any 
 * Add the h3 module.
 * Add the placekey module.
 * Add the quadkey module.
+* Add the s2 module.
