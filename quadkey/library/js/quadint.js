@@ -154,18 +154,32 @@ module.exports.sibling = this.sibling;
 /**
  * get all the children quadints of a quadint
  * @param  {int} quadint    quadint to get the children of
+ * @param  {int} resolution resolution of the desired children
  * @return {array}          array of quadints representing the children of the input quadint
  */
-children = function(quadint) {
+toChildren = function(quadint, resolution) {
     const zxy = ZXYFromQuadint(quadint);
     if (zxy.z < 0 || zxy.z > 28) {
-        throw new Error('Wrong zoom');
+        throw new Error('Wrong quadint zoom');
     }
-    const z = zxy.z + 1;
-    const x = zxy.x << 1;
-    const y = zxy.y << 1;
-    return [quadintFromZXY(z, x, y), quadintFromZXY(z, x + 1, y),
-        quadintFromZXY(z, x, y + 1), quadintFromZXY(z, x + 1, y + 1)];
+
+    if (resolution < 0 || resolution <= zxy.z) {
+        throw new Error('Wrong resolution');
+    }
+    const diffZ = resolution - zxy.z;
+    const mask = (1 << diffZ) - 1;
+    const minTileX = zxy.x << diffZ;
+    const maxTileX = minTileX | mask;
+    const minTileY = zxy.y << diffZ;
+    const maxTileY = minTileY | mask;
+    const children = [];
+    let x, y;
+    for (x = minTileX; x <= maxTileX; x++) {
+        for (y = minTileY; y <= maxTileY; y++) {
+            children.push(quadintFromZXY(resolution, x, y));
+        }
+    }
+    return children;
 };
 module.exports.children = this.children;
 
@@ -177,6 +191,9 @@ module.exports.children = this.children;
  */
 toParent = function(quadint, resolution) {
     const zxy = ZXYFromQuadint(quadint);
+    if (zxy.z < 1 || zxy.z > 29) {
+        throw new Error('Wrong quadint zoom');
+    }
     if (resolution < 0 || resolution >= zxy.z) {
         throw new Error('Wrong resolution');
     }

@@ -4,17 +4,17 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.CHILDREN`
-    (quadint INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.TOCHILDREN`
+    (quadint INT64, resolution INT64)
     RETURNS ARRAY<INT64>
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@QUADKEY_BQ_LIBRARY@@"])
 AS """
-    if(quadint == null)
+    if(quadint == null || resolution == null)
     {
         throw new Error('NULL argument passed to UDF');
     }
-    let quadints = children(quadint);
+    let quadints = toChildren(quadint, resolution);
     return quadints.map(String);
 """;

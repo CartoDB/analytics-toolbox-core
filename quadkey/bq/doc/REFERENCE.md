@@ -73,17 +73,18 @@ quadkey.TOPARENT(quadint INT64, resolution INT64) -> INT64
 * `quadint`: `INT64`    quadint we want to get the parent from.
 * `resolution`: `INT64` resolution of the desired parent.
 
-Returns the parent quadint of a given quadint. A parent quadint is a quadint of smaller level of detail (zoom - 1) which contains the current quadint.
+Returns the parent quadint of a given quadint for a specific resolution. A parent quadint is a quadint of smaller level of detail which contains the current quadint.
 
-#### quadkey.CHILDREN
+#### quadkey.TOCHILDREN
 
 {{% bannerNote type="code" %}}
-quadkey.CHILDREN(quadint INT64) -> ARRAY<INT64>
+quadkey.TOCHILDREN(quadint INT64, resolution INT64) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `quadint`: `INT64` quadint we want to get the children from.
+* `resolution`: `INT64` resolution of the desired children.
 
-Returns an array with the children quadint of a given quadint. A children quadint is a quadint of bigger level of detail (zoom + 1) which is contained by the current quadint. Each quadint has 4 children.
+Returns an array with the children quadint of a given quadint for a specific resolution. A children quadint is a quadint of bigger level of detail which is contained by the current quadint. Each quadint has 4 children.
 
 #### quadkey.SIBLING
 

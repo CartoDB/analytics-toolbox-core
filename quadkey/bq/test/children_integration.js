@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_QUADKEY = process.env.BQ_DATASET_QUADKEY;
 
-describe('CHILDREN integration tests', () => {
+describe('TOCHILDREN integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,7 +17,7 @@ describe('CHILDREN integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('CHILDREN should work at any level of zoom', async () => {
+    it ('TOCHILDREN should work at any level of zoom', async () => {
         let query = `WITH zoomContext AS
         (
             WITH zoomValues AS
@@ -39,7 +39,7 @@ describe('CHILDREN integration tests', () => {
         childrenContext AS
         (
             SELECT *,
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(expectedQuadint) AS children
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOCHILDREN(expectedQuadint, zoom + 1) AS children
             FROM expectedQuadintContext 
         )
         SELECT *
@@ -57,16 +57,22 @@ describe('CHILDREN integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
-    it ('CHILDREN should reject quadints at zoom 29', async () => {
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(4611686027017322525)`;
+    it ('TOCHILDREN should reject quadints at zoom 29', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOCHILDREN(4611686027017322525,30)`;
         await assert.rejects( async () => {
             [rows] = await client.query(query, queryOptions);
         });
     });
 
-    it ('CHILDREN should fail with NULL argument', async () => {
+    it ('TOCHILDREN should fail with NULL arguments', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.CHILDREN(NULL);`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOCHILDREN(NULL, 1);`;
+        await assert.rejects( async () => {
+            const [job] = await client.createQueryJob({ query: query });
+            [rows] = await job.getQueryResults();
+        });
+
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOCHILDREN(322, NULL);`;
         await assert.rejects( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();

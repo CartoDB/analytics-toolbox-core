@@ -113,21 +113,28 @@ describe('QUADKEY unit tests', () => {
         }
     });
 
-    it('Children should work at any level of zoom', async() => {
-        let z, lat, lng, cont;
+    it('ToChildren should work at any level of zoom', async() => {
+        let z, lat, lng;
         for (z = 0; z < 29; ++z) {
             for (lat = -79; lat <= 89; lat = lat + 15) {
                 for (lng = -179; lng <= 179; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
-                    const currentChild = quadintFromLocation(lng, lat, z + 1);
-                    const childs = children(quadint);
-                    cont = 0;
+                    const childs = toChildren(quadint, z + 1);
                     childs.forEach((element) => {
-                        if (currentChild === element) {
-                            ++cont;
-                        }
+                        assert.equal(toParent(element, z), quadint);
                     });
-                    assert.equal(cont, 1);
+                }
+            }
+        }
+
+        for (z = 0; z < 25; ++z) {
+            for (lat = -79; lat <= 89; lat = lat + 15) {
+                for (lng = -179; lng <= 179; lng = lng + 15) {
+                    const quadint = quadintFromLocation(lng, lat, z);
+                    const childs = toChildren(quadint, z + 5);
+                    childs.forEach((element) => {
+                        assert.equal(toParent(element, z), quadint);
+                    });
                 }
             }
         }
