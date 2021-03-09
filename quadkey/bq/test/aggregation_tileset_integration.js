@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_QUADKEY = process.env.BQ_DATASET_QUADKEY;
 
-describe('LONGLAT_ASQUADINTLIST integration tests', () => {
+describe('LONGLAT_ASQUADINTLIST_RESOLUTION integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,11 +17,11 @@ describe('LONGLAT_ASQUADINTLIST integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
     
-    it ('LONGLAT_ASQUADINTLIST should work', async () => {
+    it ('LONGLAT_ASQUADINTLIST_RESOLUTION should work', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(-45,30,2,10,2,5) as agg1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(150,-30,16,18,1,5) as agg2,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(170,-150,20,24,1,4) as agg3
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(-45,30,2,10,2,5) as agg1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(150,-30,16,18,1,5) as agg2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(170,-80,20,24,1,4) as agg3
         ;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
@@ -43,19 +43,19 @@ describe('LONGLAT_ASQUADINTLIST integration tests', () => {
         ];
         assert.deepEqual(rows[0].agg2, expectedArr);
         expectedArr = [
-            { id: 5291052338278872, z: 20, x: 1019448, y: 615959 },
-            { id: 21164209382941590, z: 21, x: 2038897, y: 1231919 },
-            { id: 84656835443935000, z: 22, x: 4077795, y: 2463838 },
-            { id: 338627337600077400, z: 23, x: 8155591, y: 4927676 },
-            { id: 1354509342048984000, z: 24, x: 16311182, y: 9855352 }
+            { id: 7996056564167128, z: 20, x: 1019448, y: 930863 },
+            { id: 31984226286494616, z: 21, x: 2038897, y: 1861726 },
+            { id: 127936905205630750, z: 22, x: 4077795, y: 3723453 },
+            { id: 511747616646860350, z: 23, x: 8155591, y: 7446907 },
+            { id: 2046990466826050600, z: 24, x: 16311182, y: 14893815 }
           ];
         assert.deepEqual(rows[0].agg3, expectedArr);
     });
 
-    it ('LONGLAT_ASQUADINTLIST should return [] with NULL latitud/longitud', async () => {
+    it ('LONGLAT_ASQUADINTLIST_RESOLUTION should return [] with NULL latitud/longitud', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(NULL,10,10,12,1,5) as agg1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST(10,NULL,10,12,1,5) as agg2;`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(NULL,10,10,12,1,5) as agg1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(10,NULL,10,12,1,5) as agg2;`;
         await assert.doesNotReject( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
