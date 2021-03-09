@@ -68,7 +68,7 @@ quadintFromLocation = function(long, lat, zoom) {
     if (zoom < 0 || zoom > 29) {
         throw new Error('Wrong zoom');
     }
-    const tile = tilebelt.pointToTile(long, lat, zoom - 1);
+    const tile = tilebelt.pointToTile(long, lat, zoom);
     return quadintFromZXY(zoom, tile[0], tile[1]);
 };
 module.exports.quadintFromLocation = this.quadintFromLocation;

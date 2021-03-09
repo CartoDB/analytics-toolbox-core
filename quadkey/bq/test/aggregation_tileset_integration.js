@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_QUADKEY = process.env.BQ_DATASET_QUADKEY;
 
-describe('BBOX integration tests', () => {
+describe('LONGLAT_ASQUADINTLIST integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -29,25 +29,25 @@ describe('BBOX integration tests', () => {
         });
         assert.equal(rows.length, 1);
         let expectedArr = [
-            { id: 107271, z: 2, x: 0, y: 0 },
-            { id: 1723401, z: 4, x: 3, y: 3 },
-            { id: 27668491, z: 6, x: 12, y: 13 },
-            { id: 442810381, z: 8, x: 48, y: 52 },
-            { id: 7087521807, z: 10, x: 192, y: 211 }
+            { id: 214535, z: 2, x: 1, y: 1 },
+            { id: 3463177, z: 4, x: 6, y: 6 },
+            { id: 55336971, z: 6, x: 24, y: 26 },
+            { id: 885882893, z: 8, x: 96, y: 105 },
+            { id: 14176092175, z: 10, x: 384, y: 422 }
         ];
         assert.deepEqual(rows[0].agg1, expectedArr);
         expectedArr = [
-            { id: 41336339518805, z: 16, x: 30037, y: 19248 },
-            { id: 165345430776502, z: 17, x: 60074, y: 38497 },
-            { id: 661381600073047, z: 18, x: 120149, y: 76994 }
+            { id: 82672746146485, z: 16, x: 60074, y: 38497 },
+            { id: 330690861552982, z: 17, x: 120149, y: 76994 },
+            { id: 1322763200146103, z: 18, x: 240298, y: 153989 }
         ];
         assert.deepEqual(rows[0].agg2, expectedArr);
         expectedArr = [
-            { id: 2645526169139448, z: 20, x: 509724, y: 307979 },
-            { id: 10582104154599896, z: 21, x: 1019448, y: 615959 },
-            { id: 42328417721967510, z: 22, x: 2038897, y: 1231919 },
-            { id: 169313668800038700, z: 23, x: 4077795, y: 2463838 },
-            { id: 677254671024492000, z: 24, x: 8155591, y: 4927676 }
+            { id: 5291052338278872, z: 20, x: 1019448, y: 615959 },
+            { id: 21164209382941590, z: 21, x: 2038897, y: 1231919 },
+            { id: 84656835443935000, z: 22, x: 4077795, y: 2463838 },
+            { id: 338627337600077400, z: 23, x: 8155591, y: 4927676 },
+            { id: 1354509342048984000, z: 24, x: 16311182, y: 9855352 }
           ];
         assert.deepEqual(rows[0].agg3, expectedArr);
     });
