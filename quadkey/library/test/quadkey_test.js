@@ -85,8 +85,8 @@ describe('QUADKEY unit tests', () => {
     it('ToParent should work at any level of zoom', async() => {
         let z, lat, lng;
         for (z = 1; z < 30; ++z) {
-            for (lat = -89; lat <= 89; lat = lat + 15) {
-                for (lng = -179; lng <= 179; lng = lng + 15) {
+            for (lat = -90; lat <= 90; lat = lat + 15) {
+                for (lng = -180; lng <= 180; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
                     const currentParent = quadintFromLocation(lng, lat, z - 1);
                     assert.equal(currentParent, toParent(quadint, z - 1));
@@ -94,8 +94,8 @@ describe('QUADKEY unit tests', () => {
             }
         }
         for (z = 5; z < 30; ++z) {
-            for (lat = -89; lat <= 89; lat = lat + 15) {
-                for (lng = -179; lng <= 179; lng = lng + 15) {
+            for (lat = -90; lat <= 90; lat = lat + 15) {
+                for (lng = -180; lng <= 180; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
                     const currentParent = quadintFromLocation(lng, lat, z - 5);
                     assert.equal(currentParent, toParent(quadint, z - 5));
@@ -103,8 +103,8 @@ describe('QUADKEY unit tests', () => {
             }
         }
         for (z = 10; z < 30; ++z) {
-            for (lat = -89; lat <= 89; lat = lat + 15) {
-                for (lng = -179; lng <= 179; lng = lng + 15) {
+            for (lat = -90; lat <= 90; lat = lat + 15) {
+                for (lng = -180; lng <= 180; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
                     const currentParent = quadintFromLocation(lng, lat, z - 10);
                     assert.equal(currentParent, toParent(quadint, z - 10));
@@ -116,8 +116,8 @@ describe('QUADKEY unit tests', () => {
     it('ToChildren should work at any level of zoom', async() => {
         let z, lat, lng;
         for (z = 0; z < 29; ++z) {
-            for (lat = -79; lat <= 89; lat = lat + 15) {
-                for (lng = -179; lng <= 179; lng = lng + 15) {
+            for (lat = 90; lat <= 90; lat = lat + 15) {
+                for (lng = -180; lng <= 180; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
                     const childs = toChildren(quadint, z + 1);
                     childs.forEach((element) => {
@@ -128,8 +128,8 @@ describe('QUADKEY unit tests', () => {
         }
 
         for (z = 0; z < 25; ++z) {
-            for (lat = -79; lat <= 89; lat = lat + 15) {
-                for (lng = -179; lng <= 179; lng = lng + 15) {
+            for (lat = 90; lat <= 90; lat = lat + 15) {
+                for (lng = -180; lng <= 180; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
                     const childs = toChildren(quadint, z + 5);
                     childs.forEach((element) => {
@@ -143,8 +143,8 @@ describe('QUADKEY unit tests', () => {
     it('Sibling should work at any level of zoom', async() => {
         let z, lat, lng;
         for (z = 0; z < 29; ++z) {
-            for (lat = -89; lat <= 89; lat = lat + 15) {
-                for (lng = -179; lng <= 179; lng = lng + 15) {
+            for (lat = -90; lat <= 90; lat = lat + 15) {
+                for (lng = -180; lng <= 180; lng = lng + 15) {
                     const quadint = quadintFromLocation(lng, lat, z);
                     let siblingQuadint = sibling(quadint, 'right');
                     siblingQuadint = sibling(siblingQuadint, 'up');

@@ -27,8 +27,8 @@ describe('LONGLAT_ASQUADINT integration tests', () => {
             SELECT *
             FROM
                 zoomValues,
-                UNNEST(GENERATE_ARRAY(-89,89,15)) lat,
-                UNNEST(GENERATE_ARRAY(-179,179,15)) long
+                UNNEST(GENERATE_ARRAY(-90,90,15)) lat,
+                UNNEST(GENERATE_ARRAY(-180,180,15)) long
         )
         SELECT *
         FROM 

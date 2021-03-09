@@ -10,6 +10,7 @@
 
 const tilebelt = require('@mapbox/tilebelt');
 const tilecover = require('@mapbox/tile-cover');
+const clipNumber = (num, a, b) => Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
 
 /**
  * convert tile coordinates to quadint at specific zoom level
@@ -68,7 +69,8 @@ quadintFromLocation = function(long, lat, zoom) {
     if (zoom < 0 || zoom > 29) {
         throw new Error('Wrong zoom');
     }
-    const tile = tilebelt.pointToTile(long, lat, zoom - 1);
+    lat = clipNumber(lat, -85.05, 85.05);
+    const tile = tilebelt.pointToTile(long, lat, zoom);
     return quadintFromZXY(zoom, tile[0], tile[1]);
 };
 module.exports.quadintFromLocation = this.quadintFromLocation;
