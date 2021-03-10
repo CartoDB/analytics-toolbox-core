@@ -41,3 +41,4 @@ if [ "$ENABLED_BQ" -eq 1 ] && [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]
 then
         echo -e "\e[1;96m\tNOTICE: BigQuery is enabled but not \$GOOGLE_APPLICATION_CREDENTIALS\e[0m"
 fi
+export ENABLED_SF=${ENABLED_SF:-1}
