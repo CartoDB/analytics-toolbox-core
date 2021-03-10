@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.KRING`
-    (quadint INT64)
+    (quadint INT64, distance INT64)
     RETURNS ARRAY<INT64>
     DETERMINISTIC
     LANGUAGE js
@@ -15,15 +15,16 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-
-    let left      = sibling(quadint,'left').toString();
-    let topleft   = sibling(left,'up').toString();
-    let downleft  = sibling(left,'down').toString();
-    let right     = sibling(quadint,'right').toString();
-    let topright  = sibling(right,'up').toString();
-    let downright = sibling(right,'down').toString();
-    let up        = sibling(quadint,'up').toString();
-    let down      = sibling(quadint,'down').toString();
-
-    return [left, topleft, downleft, right, topright, downright, up, down, quadint];
+    if(distance == null)
+    {
+        distance = 0;
+    }
+    let neighbors = [sibling(quadint,'up').toString()];
+    let moves = ['left','down','right','up'];
+    var i;
+    for (i = 1; i < (1+2*distance)*(1+2*distance)-1; i++) {
+        neighbors.push(sibling(neighbors[neighbors.length-1],moves[Math.floor(i/2)%4]).toString());
+    }
+    neighbors.push(quadint.toString());
+    return neighbors;
 """;

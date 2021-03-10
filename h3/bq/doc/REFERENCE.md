@@ -158,7 +158,7 @@ If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bi
 #### h3.KRING
 
 {{% bannerNote type="code" %}}
-h3.KRING(index, resolution) -> ARRAY<INT64>
+h3.KRING(index, distance) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `index`: `INT64` The H3 cell index.
