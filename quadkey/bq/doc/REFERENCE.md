@@ -100,10 +100,11 @@ Returns the quadint directly next to the given quadint at the same level of zoom
 #### quadkey.KRING
 
 {{% bannerNote type="code" %}}
-quadkey.KRING(quadint INT64) -> ARRAY<INT64>
+quadkey.KRING(quadint INT64, distance INT64) -> ARRAY<INT64>
 {{%/ bannerNote %}}
 
 * `quadint`: `INT64` quadint we want to get the KRING from.
+* `distance`: `INT64` Distance (in cells) to the source.
 
 Returns an array with all the quadints directly next to the given quadint at the same level of zoom. We consider diagonal, horizontal and vertical nearby quadints and the current quadint so KRING should always return 9 quadints.
 

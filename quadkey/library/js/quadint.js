@@ -204,6 +204,39 @@ toParent = function(quadint, resolution) {
 module.exports.toParent = this.toParent;
 
 /**
+ * get the kring of a quadint
+ * @param  {int} quadint quadint to get the kring of
+ * @param  {int} distance in tiles of the desired kring
+ * @return {int}         kring of the input quadint
+ */
+kring = function(quadint, distance) {
+    if (distance < 1) {
+        throw new Error('Wrong kring distance');
+    }
+
+    let i, j;
+    let cornerQuadint = quadint;
+    // Traverse to top left corner
+    for (i = 0; i < distance; i++) {
+        cornerQuadint = sibling(cornerQuadint, 'left');
+        cornerQuadint = sibling(cornerQuadint, 'up');
+    }
+
+    const neighbors = [];
+    let traversalQuadint;
+    for (j = 0; j < distance * 2 + 1; j++) {
+        traversalQuadint = cornerQuadint;
+        for (i = 0; i < distance * 2 + 1; i++) {
+            neighbors.push(traversalQuadint);
+            traversalQuadint = sibling(traversalQuadint, 'right');
+        }
+        cornerQuadint = sibling(cornerQuadint, 'down');
+    }
+    return neighbors;
+};
+module.exports.kring = this.kring;
+
+/**
  * get an array of quadints containing a geography for given zooms
  * @param  {object} poly    geography we want to extract the quadints from
  * @param  {struct} limits  struct containing the range of zooms
