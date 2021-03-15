@@ -4,14 +4,14 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.KRING
-    (quadint DOUBLE, distance DOUBLE)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._KRING
+    (quadint STRING, distance DOUBLE)
     RETURNS ARRAY
     LANGUAGE JAVASCRIPT
 AS $$
     @@WASM_FILE_CONTENTS@@
     
-    if(QUADINT == null)
+    if(!QUADINT)
     {
         throw new Error('NULL argument passed to UDF');
     }
@@ -20,13 +20,13 @@ AS $$
     {
         DISTANCE = 1;
     }
-
-    return kring(QUADINT, DISTANCE);
+    let neighbors = kring(QUADINT, DISTANCE);
+    return neighbors.map(String);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.KRING
-    (quadint INT, distance INT)
+    (quadint BIGINT, distance INT)
     RETURNS ARRAY
 AS $$
-    @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.KRING(CAST(QUADINT AS DOUBLE), CAST(DISTANCE AS DOUBLE))
+    SELECT ARRAY_AGG(CAST(VALUE AS BIGINT)) from lateral FLATTEN(input => @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._KRING(CAST(QUADINT AS STRING), CAST(DISTANCE AS DOUBLE)))
 $$;

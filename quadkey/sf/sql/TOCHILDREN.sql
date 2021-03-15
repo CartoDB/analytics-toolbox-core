@@ -4,23 +4,24 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.TOCHILDREN
-    (quadint DOUBLE, resolution DOUBLE)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._TOCHILDREN
+    (quadint STRING, resolution DOUBLE)
     RETURNS ARRAY
     LANGUAGE JAVASCRIPT
 AS $$
     @@WASM_FILE_CONTENTS@@
 
-    if(QUADINT == null || RESOLUTION == null)
+    if(!QUADINT || RESOLUTION == null)
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return children(QUADINT, RESOLUTION);
+    let quadints = toChildren(QUADINT, RESOLUTION);
+    return quadints.map(String);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.TOCHILDREN
-    (quadint INT, resolution INT)
+    (quadint BIGINT, resolution INT)
     RETURNS ARRAY
 AS $$
-    @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.TOCHILDREN(CAST(QUADINT AS DOUBLE), CAST(RESOLUTION AS DOUBLE))
+    SELECT ARRAY_AGG(CAST(VALUE AS BIGINT)) from lateral FLATTEN(input => @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._TOCHILDREN(CAST(QUADINT AS STRING), CAST(RESOLUTION AS DOUBLE)))
 $$;

@@ -4,15 +4,15 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.BBOX
-    (quadint DOUBLE)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._BBOX
+    (quadint STRING)
     RETURNS ARRAY
     LANGUAGE JAVASCRIPT
 AS
 $$
     @@WASM_FILE_CONTENTS@@
     
-    if(QUADINT == null)
+    if(!QUADINT)
     {
         throw new Error('NULL argument passed to UDF');
     }
@@ -20,9 +20,9 @@ $$
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.BBOX
-    (quadint INT)
+    (quadint BIGINT)
     RETURNS ARRAY
 AS
 $$
-    @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.BBOX(CAST(QUADINT AS DOUBLE))
+    @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._BBOX(CAST(QUADINT AS STRING))
 $$;

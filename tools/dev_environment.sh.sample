@@ -21,6 +21,14 @@ then
     echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
     return 1
 fi
+# Choose a prefix for your SF environment. You can either pass the env variable or add it below (between the ")
+export SF_SCHEMA_PREFIX=${SF_SCHEMA_PREFIX:-""}
+
+if [ -z "$SF_SCHEMA_PREFIX" ]
+then
+    echo -e "\e[1;31m\t\$SF_SCHEMA_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
+    return 1
+fi
 
 # Cleanup the storage bucket and the datasets after CI is run
 export POST_INTEGRATION_CLEANUP=${POST_INTEGRATION_CLEANUP:-0}
@@ -38,7 +46,7 @@ export BQ_DATASET_S2=${BQ_DATASET_S2:-"${BQ_DATASET_PREFIX}_s2"}
 #Snowflake
 export SF_DATABASEID=${SF_DATABASEID:-"CARTO_BACKEND_DATA_TEAM"}
 export SF_SHARE_QUADKEY=${SF_SHARE_QUADKEY:-"SPATIAL_EXTENSIONS"}
-export SF_SCHEMA_QUADKEY=${SF_SCHEMA_QUADKEY:-"${SF_DATASET_PREFIX}_QUADKEY"}
+export SF_SCHEMA_QUADKEY=${SF_SCHEMA_QUADKEY:-"${SF_SCHEMA_PREFIX}_QUADKEY"}
 
 
 # Enabled drivers
@@ -47,4 +55,13 @@ if [ "$ENABLED_BQ" -eq 1 ] && [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]
 then
         echo -e "\e[1;96m\tNOTICE: BigQuery is enabled but not \$GOOGLE_APPLICATION_CREDENTIALS\e[0m"
 fi
+
 export ENABLED_SF=${ENABLED_SF:-1}
+# Choose the account settings for your SF environment. You can either pass the env variable or add it below (between the ")
+export SF_ACCOUNT=${SF_ACCOUNT:-""}
+export SF_USERNAME=${SF_USERNAME:-""}
+export SF_PASSWORD=${SF_PASSWORD:-""}
+if [ "$ENABLED_SF" -eq 1 ] && ([ -z "$SF_ACCOUNT" ] || [ -z "$SF_USERNAME" ] || [ -z "$SF_PASSWORD" ])
+then
+        echo -e "\e[1;96m\tNOTICE: Snowflake is enabled but not \$SF_ACCOUNT, \$SF_USERNAME, \$SF_PASSWORD\e[0m"
+fi
