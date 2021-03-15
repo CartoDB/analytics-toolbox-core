@@ -4,23 +4,23 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.SIBLING
-    (quadint DOUBLE, direction STRING)
-    RETURNS DOUBLE
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._SIBLING
+    (quadint STRING, direction STRING)
+    RETURNS STRING
     LANGUAGE JAVASCRIPT
 AS $$
     @@WASM_FILE_CONTENTS@@
 
-    if(QUADINT == null || !DIRECTION)
+    if(!QUADINT || !DIRECTION)
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return sibling(QUADINT, DIRECTION);  
+    return sibling(QUADINT, DIRECTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.SIBLING
-    (quadint INT, direction STRING)
-    RETURNS INT
+    (quadint BIGINT, direction STRING)
+    RETURNS BIGINT
 AS $$
-    CAST(@@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.SIBLING(CAST(QUADINT AS DOUBLE),DIRECTION) AS INT)
+    CAST(@@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@._SIBLING(CAST(QUADINT AS STRING),DIRECTION) AS BIGINT)
 $$;
