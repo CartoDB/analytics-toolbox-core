@@ -17,13 +17,13 @@ AS """
     const zoomMin = parseInt(zoom_min);
     const zoomMax = parseInt(zoom_max);
     const zoomStep = parseInt(zoom_step);
-    const _resolution = parseInt(resolution);
+    const intResolution = parseInt(resolution);
 
     const qintIdx = [];
     for (let i = zoomMin; i <= zoomMax; i += zoomStep) {
-        const key = quadintFromLocation(longitude, latitude, i + _resolution);
+        const key = quadintFromLocation(longitude, latitude, i + intResolution);
         const zxy = ZXYFromQuadint(key);
-        qintIdx.push({ id : key.toString(), z : i, x : zxy.x  >>> _resolution, y : zxy.y  >>> _resolution});
+        qintIdx.push({ id : key.toString(), z : i, x : zxy.x  >>> intResolution, y : zxy.y  >>> intResolution});
     }
     return qintIdx;
 """;

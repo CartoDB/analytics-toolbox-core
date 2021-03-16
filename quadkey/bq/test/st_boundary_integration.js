@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_QUADKEY = process.env.BQ_DATASET_QUADKEY;
 
-describe('ST_GEOGFROMQUADINT_BOUNDARY integration tests', () => {
+describe('ST_BOUNDARY integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,10 +17,10 @@ describe('ST_GEOGFROMQUADINT_BOUNDARY integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('ST_GEOGFROMQUADINT_BOUNDARY should work', async () => {
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_GEOGFROMQUADINT_BOUNDARY(12070922) as geog1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_GEOGFROMQUADINT_BOUNDARY(791040491538) as geog2,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_GEOGFROMQUADINT_BOUNDARY(12960460429066265) as geog3`;
+    it ('ST_BOUNDARY should work', async () => {
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_BOUNDARY(12070922) as geog1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_BOUNDARY(791040491538) as geog2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.ST_BOUNDARY(12960460429066265) as geog3`;
         await assert.doesNotReject( async () => {
             [rows] = await client.query(query, queryOptions);
         });

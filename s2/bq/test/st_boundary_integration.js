@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_S2 = process.env.BQ_DATASET_S2;
 
-describe('ST_GEOGFROMID_BOUNDARY integration tests', () => {
+describe('ST_BOUNDARY integration tests', () => {
 
     let client;
     before(async () => {
@@ -17,13 +17,13 @@ describe('ST_GEOGFROMID_BOUNDARY integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it('ST_GEOGFROMID_BOUNDARY functions should work', async() => {
+    it('ST_BOUNDARY functions should work', async() => {
         const level = 18;
         const latitude = -14;
         const longitude = 125;
         const bounds = 'POLYGON((125.000260404646 -13.999959549589, 125.000260404646 -13.9996486905691, 124.999916074945 -13.9997052848802, 124.999916074945 -14.0000161450551, 125.000260404646 -13.999959549589))';
 
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_GEOGFROMID_BOUNDARY(
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_BOUNDARY(
             \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.LONGLAT_ASID(${longitude},${latitude},${level})) as boundary;`;
         
         let rows;
@@ -35,9 +35,9 @@ describe('ST_GEOGFROMID_BOUNDARY integration tests', () => {
         assert.equal(bounds, rows[0].boundary.value);
     });
 
-    it ('ST_GEOGFROMID_BOUNDARY should fail with NULL argument', async () => {
+    it ('ST_BOUNDARY should fail with NULL argument', async () => {
         let rows;
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_GEOGFROMID_BOUNDARY(NULL);`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_BOUNDARY(NULL);`;
         await assert.rejects( async () => {
             const [job] = await client.createQueryJob({ query: query });
             [rows] = await job.getQueryResults();
