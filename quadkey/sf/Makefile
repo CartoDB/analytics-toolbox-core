@@ -1,6 +1,6 @@
 # Programs
 SED ?= sed
-SF ?= snowsql
+SNOWSQL ?= snowsql
 GSUTIL ?= gsutil
 
 ENABLE_SHARE ?= 1
@@ -34,13 +34,13 @@ clean:
 ##################### SFOWFLAKE SCHEMA #####################
 
 database_create: check_environment
-	$(SF) -q "CREATE DATABASE IF NOT EXISTS $(SF_DATABASEID)"
+	$(SNOWSQL) -q "CREATE DATABASE IF NOT EXISTS $(SF_DATABASEID)"
 
 schema_create: check_environment
-	$(SF) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA_QUADKEY)"
+	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA_QUADKEY)"
 
 schema_remove: check_environment
-	$(SF) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA_QUADKEY) CASCADE"
+	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA_QUADKEY) CASCADE"
 
 REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
 		-e 's!@@SF_SCHEMA_QUADKEY@@!$(SF_SCHEMA_QUADKEY)!g' \
@@ -50,13 +50,13 @@ REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
 
 schema_deploy: check_environment
 	for n in $(SQL_DEPLOYABLE); do \
-		$(SED) $(REPLACEMENTS) $$n | $(SF) -q "$(cat /dev/stdin)" || exit; \
+		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(cat /dev/stdin)" || exit; \
 	done
 	$(MAKE) setup-share
 
 setup-share: check_environment
 ifeq ($(ENABLE_SHARE),1)
-	$(SED) $(REPLACEMENTS) $(SHARE_FILE) | $(SF) -q "$(cat /dev/stdin)" 
+	$(SED) $(REPLACEMENTS) $(SHARE_FILE) | $(SNOWSQL) -q "$(cat /dev/stdin)" 
 endif
 
 ##################### DEPLOY #####################
