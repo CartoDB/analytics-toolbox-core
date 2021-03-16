@@ -28,9 +28,9 @@ describe('QUADKEY integration tests', () => {
             throw "Missing SF_SCHEMA_QUADKEY env variable";
         }
         connection = snowflake.createConnection( {
-            account: process.env.SF_ACCOUNT,
-            username: process.env.SF_USERNAME,
-            password: process.env.SF_PASSWORD
+            account: process.env.SNOWSQL_ACCOUNT,
+            username: process.env.SNOWSQL_USER,
+            password: process.env.SNOWSQL_PWD
             }
         );
         connection.connect( 
