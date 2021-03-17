@@ -1,5 +1,6 @@
 USE ROLE ACCOUNTADMIN;
 USE @@SF_DATABASEID@@;
+<<<<<<< HEAD
 CREATE SHARE IF NOT EXISTS @@SF_SHARE_PUBLIC@@;
 grant usage on database @@SF_DATABASEID@@ to share @@SF_SHARE_PUBLIC@@;
 grant usage on schema @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@ to share @@SF_SHARE_PUBLIC@@;
@@ -17,3 +18,22 @@ grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ST_ASQUADINT(GEO
 grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ST_ASQUADINT_POLYFILL(GEOGRAPHY,INT) to share @@SF_SHARE_PUBLIC@@;
 grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ST_BOUNDARY(BIGINT) to share @@SF_SHARE_PUBLIC@@;
 grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.VERSION() to share @@SF_SHARE_PUBLIC@@;
+=======
+CREATE SHARE IF NOT EXISTS @@SF_SHARE_QUADKEY@@;
+grant usage on database @@SF_DATABASEID@@ to share @@SF_SHARE_QUADKEY@@;
+grant usage on schema @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@ to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.BBOX(BIGINT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.TOCHILDREN(BIGINT,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.KRING(BIGINT,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.TOPARENT(BIGINT,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.QUADINT_FROMZXY(INT,INT,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ZXY_FROMQUADINT(BIGINT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.QUADINT_FROMQUADKEY(STRING) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.QUADKEY_FROMQUADINT(BIGINT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.SIBLING(BIGINT,STRING) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.LONGLAT_ASQUADINT(DOUBLE,DOUBLE,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ST_ASQUADINT(GEOGRAPHY,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ST_ASQUADINT_POLYFILL(GEOGRAPHY,INT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.ST_BOUNDARY(BIGINT) to share @@SF_SHARE_QUADKEY@@;
+grant usage on function @@SF_DATABASEID@@.@@SF_SCHEMA_QUADKEY@@.VERSION() to share @@SF_SHARE_QUADKEY@@;
+>>>>>>> 6b78d86b1837c5ad286cadaee24619e27028f37c
