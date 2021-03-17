@@ -15,8 +15,8 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-    
-    return quadintFromLocation(longitude, latitude, resolution).toString();
+    const intResolution = parseInt(resolution);
+    return quadintFromLocation(longitude, latitude, intResolution).toString();
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_QUADKEY@@.ST_ASQUADINT`

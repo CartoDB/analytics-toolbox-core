@@ -15,9 +15,9 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-
+    const intResolution = parseInt(resolution);
     let pol = JSON.parse(geojson);
-    let quadints = geojsonToQuadints(pol, {min_zoom: resolution, max_zoom: resolution});
+    let quadints = geojsonToQuadints(pol, {min_zoom: intResolution, max_zoom: intResolution});
     return quadints.map(String);
 """;
 

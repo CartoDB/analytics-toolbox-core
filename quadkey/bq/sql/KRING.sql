@@ -19,6 +19,7 @@ if(quadint == null)
     {
         distance = 1;
     }
-    let neighbors = kring(quadint, distance);
+    const intDistance = parseInt(distance);
+    let neighbors = kring(quadint, intDistance);
     return neighbors.map(String);
 """;
