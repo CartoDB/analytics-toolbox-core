@@ -18,7 +18,7 @@ function execAsync(connection, sqlText) {
     });
 }
 
-describe('QUADKEY integration tests', () => {
+describe('ST_BOUNDARY integration tests', () => {
     let connection;
     before(async () => {
         if (!SF_DATABASEID) {
@@ -47,14 +47,27 @@ describe('QUADKEY integration tests', () => {
             }
         );
     });
-  
-    it ('Returns the proper version', async () => {
-        const query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.VERSION() versioncol;`;
-        let statement, rows;
+
+    it ('ST_BOUNDARY should work', async () => {
+        let query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.ST_BOUNDARY(12070922) as geog1,
+        ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.ST_BOUNDARY(791040491538) as geog2,
+        ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.ST_BOUNDARY(12960460429066265) as geog3`;
         await assert.doesNotReject( async () => {
             [statement, rows] = await execAsync(connection, query);
         });
-        assert.equal(rows.length, 1);
-        assert.equal(rows[0].VERSIONCOL, 1);
+
+        assert.equal(rows.length, 1);      
+        assert.equal(JSON.stringify(rows[0]['GEOG1']),'{"coordinates":[[[-45,45.08903556483103],[-45,44.840290651397986],[-44.6484375,44.840290651397986],[-44.6484375,45.08903556483103],[-45,45.08903556483103]]],"type":"Polygon"}');
+        assert.equal(JSON.stringify(rows[0]['GEOG2']),'{"coordinates":[[[-45,45.00073807829068],[-45,44.99976701918129],[-44.998626708984375,44.99976701918129],[-44.998626708984375,45.00073807829068],[-45,45.00073807829068]]],"type":"Polygon"}');
+        assert.equal(JSON.stringify(rows[0]['GEOG3']),'{"coordinates":[[[-45,45.00000219906962],[-45,44.999994612636684],[-44.99998927116394,44.999994612636684],[-44.99998927116394,45.00000219906962],[-45,45.00000219906962]]],"type":"Polygon"}');
     });
-}); /* QUADKEY integration tests */
+
+    it ('__GEOJSONBOUNDARY_FROMQUADINT should fail with NULL argument', async () => {
+        let rows;
+        let query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.__GEOJSONBOUNDARY_FROMQUADINT(NULL);`;
+        await assert.rejects( async () => {
+            [statement, rows] = await execAsync(connection, query);
+        });
+    });
+}); /* ST_BOUNDARY integration tests */
+

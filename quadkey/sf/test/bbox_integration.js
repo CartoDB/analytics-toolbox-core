@@ -18,7 +18,7 @@ function execAsync(connection, sqlText) {
     });
 }
 
-describe('QUADKEY integration tests', () => {
+describe('BBOX integration tests', () => {
     let connection;
     before(async () => {
         if (!SF_DATABASEID) {
@@ -47,14 +47,27 @@ describe('QUADKEY integration tests', () => {
             }
         );
     });
-  
-    it ('Returns the proper version', async () => {
-        const query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.VERSION() versioncol;`;
-        let statement, rows;
+
+    it ('BBOX should work', async () => {
+        let query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.BBOX(162) as bbox1,
+        ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.BBOX(12070922) as bbox2,
+        ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.BBOX(791040491538) as bbox3,
+        ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.BBOX(12960460429066265) as bbox4`;
+        let rows;
         await assert.doesNotReject( async () => {
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].VERSIONCOL, 1);
+        assert.deepEqual(rows[0].BBOX1,[-90, 0, 0, 66.51326044311186]);
+        assert.deepEqual(rows[0].BBOX2,[-45, 44.84029065139799, -44.6484375, 45.08903556483103]);
+        assert.deepEqual(rows[0].BBOX3,[-45, 44.99976701918129, -44.99862670898438, 45.00073807829068]);
+        assert.deepEqual(rows[0].BBOX4,[-45, 44.99999461263668, -44.99998927116394, 45.00000219906962]);
     });
-}); /* QUADKEY integration tests */
+
+    it ('BBOX should fail with NULL argument', async () => {
+        let query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_QUADKEY}.BBOX(NULL);`;
+        await assert.rejects( async () => {
+            [statement, rows] = await execAsync(connection, query);
+        });
+    });
+}); /* BBOX integration tests */

@@ -58,10 +58,10 @@ fi
 
 export ENABLED_SF=${ENABLED_SF:-1}
 # Choose the account settings for your SF environment. You can either pass the env variable or add it below (between the ")
-export SF_ACCOUNT=${SF_ACCOUNT:-""}
-export SF_USERNAME=${SF_USERNAME:-""}
-export SF_PASSWORD=${SF_PASSWORD:-""}
-if [ "$ENABLED_SF" -eq 1 ] && ([ -z "$SF_ACCOUNT" ] || [ -z "$SF_USERNAME" ] || [ -z "$SF_PASSWORD" ])
+export SNOWSQL_ACCOUNT=${SNOWSQL_ACCOUNT:-""}
+export SNOWSQL_USER=${SNOWSQL_USER:-""}
+export SNOWSQL_PWD=${SNOWSQL_PWD:-""}
+if [ "$ENABLED_SF" -eq 1 ] && ([ -z "$SNOWSQL_ACCOUNT" ] || [ -z "$SNOWSQL_USER" ] || [ -z "$SNOWSQL_PWD" ])
 then
-        echo -e "\e[1;96m\tNOTICE: Snowflake is enabled but not \$SF_ACCOUNT, \$SF_USERNAME, \$SF_PASSWORD\e[0m"
+        echo -e "\e[1;96m\tNOTICE: Snowflake is enabled but not \$SNOWSQL_ACCOUNT, \$SNOWSQL_USER, \$SNOWSQL_PWD\e[0m"
 fi
