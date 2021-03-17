@@ -82,8 +82,8 @@ describe('ST_ASQUADINT_POLYFILL integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0]['polyfill10'], [20870794, 24147594]);
-        assert.deepEqual(rows[0]['polyfill14'], [3238783758, 5933353998, 5985782798, 5985779598, 6038208398, 6038205198, 6090637198, 6143065998, 6143062798, 6143069198, 6090640398, 6090643598, 6143072398, 6143075598, 6038214798, 6038217998, 6038221198, 5985792398, 5985789198, 5985785998]);
+        assert.deepEqual(rows[0]['polyfill10'].sort(), [12631722, 12664490]);
+        assert.deepEqual(rows[0]['polyfill14'].sort(), [3237735182, 3238259438, 3238259470, 3238259502, 3238259534, 3238259566, 3238783694, 3238783726, 3238783758, 3238783790, 3238783822, 3238783854, 3239308014, 3239308046, 3239308078, 3239832270, 3239832302, 3239832334, 3239832366, 3239832398]);
     });
     
     it ('__POLYFILL_FROMGEOJSON should fail if any NULL argument', async () => {
