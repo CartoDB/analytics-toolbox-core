@@ -44,7 +44,7 @@ schema_remove: check_environment
 
 REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
 		-e 's!@@SF_SCHEMA_QUADKEY@@!$(SF_SCHEMA_QUADKEY)!g' \
-		-e 's!@@SF_SHARE_QUADKEY@@!$(SF_SHARE_QUADKEY)!g' \
+		-e 's!@@SF_SHARE_PUBLIC@@!$(SF_SHARE_PUBLIC)!g' \
 		-e '/@@WASM_FILE_CONTENTS@@/ r $(QUADKEY_SF_LIBRARY)' \
 		-e 's!@@WASM_FILE_CONTENTS@@!!g'
 
