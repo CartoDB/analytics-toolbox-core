@@ -8,7 +8,6 @@ all:
 node_modules: package.json
 	${NPM} ci
 
-SF_DATABASEID ?= CARTO_BACKEND_DATA_TEAM
 check_environment:
 ifndef SF_SCHEMA_QUADKEY
 	$(error SF_SCHEMA_QUADKEY is undefined)

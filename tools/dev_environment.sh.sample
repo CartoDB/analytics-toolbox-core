@@ -21,10 +21,12 @@ then
     echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
     return 1
 fi
+
+export ENABLED_SF=${ENABLED_SF:-1}
 # Choose a prefix for your SF environment. You can either pass the env variable or add it below (between the ")
 export SF_SCHEMA_PREFIX=${SF_SCHEMA_PREFIX:-""}
 
-if [ -z "$SF_SCHEMA_PREFIX" ]
+if [ "$ENABLED_SF" -eq 1 ] && [ -z "$SF_SCHEMA_PREFIX" ]
 then
     echo -e "\e[1;31m\t\$SF_SCHEMA_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
     return 1
@@ -56,7 +58,6 @@ then
         echo -e "\e[1;96m\tNOTICE: BigQuery is enabled but not \$GOOGLE_APPLICATION_CREDENTIALS\e[0m"
 fi
 
-export ENABLED_SF=${ENABLED_SF:-1}
 # Choose the account settings for your SF environment. You can either pass the env variable or add it below (between the ")
 export SNOWSQL_ACCOUNT=${SNOWSQL_ACCOUNT:-""}
 export SNOWSQL_USER=${SNOWSQL_USER:-""}

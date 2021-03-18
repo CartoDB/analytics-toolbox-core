@@ -18,7 +18,7 @@ SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = sql/_SHARE_REMOVE.sql
 SQL_DEPLOYABLE = $(filter-out ${SHARE_CREATE_FILE} ${SHARE_REMOVE_FILE},${SQL_FILES})
 
-.PHONY: check_environment all check clean database_create schema_create schema_remove schema_deploy share_create share_remove deploy check-integration integration_cleanup
+.PHONY: check_environment all check clean schema_create schema_remove schema_deploy share_create share_remove deploy check-integration integration_cleanup
 check_environment:
 ifndef SF_DATABASEID
 	$(error SF_DATABASEID is undefined)
@@ -32,10 +32,7 @@ all check:
 clean:
 	$(MAKE) -C test/ $@
 
-##################### SFOWFLAKE SCHEMA #####################
-
-database_create: check_environment
-	$(SNOWSQL) -q "CREATE DATABASE IF NOT EXISTS $(SF_DATABASEID)"
+##################### SNOWFLAKE SCHEMA #####################
 
 schema_create: check_environment
 	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA_QUADKEY)"
@@ -46,8 +43,8 @@ schema_remove: check_environment
 REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
 		-e 's!@@SF_SCHEMA_QUADKEY@@!$(SF_SCHEMA_QUADKEY)!g' \
 		-e 's!@@SF_SHARE_PUBLIC@@!$(SF_SHARE_PUBLIC)!g' \
-		-e '/@@WASM_FILE_CONTENTS@@/ r $(QUADKEY_SF_LIBRARY)' \
-		-e 's!@@WASM_FILE_CONTENTS@@!!g'
+		-e '/@@LIBRARY_FILE_CONTENT@@/ r $(QUADKEY_SF_LIBRARY)' \
+		-e 's!@@LIBRARY_FILE_CONTENT@@!!g'
 
 schema_deploy: check_environment
 	for n in $(sort $(SQL_DEPLOYABLE)); do \
@@ -66,7 +63,6 @@ endif
 
 ##################### DEPLOY #####################
 deploy: check_environment
-	$(MAKE) database_create
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 	$(MAKE) share_create
