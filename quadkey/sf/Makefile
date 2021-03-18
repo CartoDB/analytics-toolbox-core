@@ -50,7 +50,7 @@ REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
 		-e 's!@@WASM_FILE_CONTENTS@@!!g'
 
 schema_deploy: check_environment
-	for n in $(SQL_DEPLOYABLE); do \
+	for n in $(sort $(SQL_DEPLOYABLE)); do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(cat /dev/stdin)" || exit; \
 	done
 
