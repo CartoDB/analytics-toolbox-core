@@ -1,5 +1,8 @@
 const assert = require('assert').strict;
 const snowflake = require('snowflake-sdk');
+const fs = require('fs');
+/* Emulate how BigQuery would load the file */
+global.eval(fs.readFileSync('../../quadkey_library.js') + '');
 
 const SF_DATABASEID = process.env.SF_DATABASEID;
 const SF_SCHEMA_QUADKEY = process.env.SF_SCHEMA_QUADKEY;
@@ -40,7 +43,6 @@ describe('ST_ASQUADINT_POLYFILL integration tests', () => {
                 } 
                 else 
                 {
-                    console.log('Successfully connected to Snowflake.');
                     // Optional: store the connection ID.
                     connection_ID = conn.getId();
                 }
@@ -109,7 +111,11 @@ describe('ST_ASQUADINT_POLYFILL integration tests', () => {
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
+        let quadints = geojsonToQuadints(feature, {min_zoom: 10, max_zoom: 10});
+        assert.deepEqual(rows[0]['POLYFILL10'].sort(), quadints.map(String).sort());
         assert.deepEqual(rows[0]['POLYFILL10'].sort(), ['12631722', '12664490']);
+        quadints = geojsonToQuadints(feature, {min_zoom: 14, max_zoom: 14});
+        assert.deepEqual(rows[0]['POLYFILL14'].sort(), quadints.map(String).sort());
         assert.deepEqual(rows[0]['POLYFILL14'].sort(), ['3237735182', '3238259438', '3238259470', '3238259502', '3238259534', '3238259566', '3238783694', '3238783726', '3238783758', '3238783790', '3238783822', '3238783854', '3239308014', '3239308046', '3239308078', '3239832270', '3239832302', '3239832334', '3239832366', '3239832398']);
     });
 

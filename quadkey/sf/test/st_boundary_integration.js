@@ -40,7 +40,6 @@ describe('ST_BOUNDARY integration tests', () => {
                 } 
                 else 
                 {
-                    console.log('Successfully connected to Snowflake.');
                     // Optional: store the connection ID.
                     connection_ID = conn.getId();
                 }
