@@ -14,10 +14,11 @@ QUADKEY_SF_LIBRARY ?= ../quadkey_library.js
 	$(MAKE) -C .. all
 
 SQL_FILES =  $(wildcard sql/*.sql)
-SHARE_FILE = sql/_SETUP_SHARE.sql
-SQL_DEPLOYABLE = $(filter-out ${SHARE_FILE},${SQL_FILES})
+SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
+SHARE_REMOVE_FILE = sql/_SHARE_REMOVE.sql
+SQL_DEPLOYABLE = $(filter-out ${SHARE_CREATE_FILE} ${SHARE_REMOVE_FILE},${SQL_FILES})
 
-.PHONY: check_environment all check clean database_create schema_create schema_remove schema_deploy setup-share deploy check-integration integration_cleanup
+.PHONY: check_environment all check clean database_create schema_create schema_remove schema_deploy share_create share_remove deploy check-integration integration_cleanup
 check_environment:
 ifndef SF_DATABASEID
 	$(error SF_DATABASEID is undefined)
@@ -52,11 +53,16 @@ schema_deploy: check_environment
 	for n in $(SQL_DEPLOYABLE); do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(cat /dev/stdin)" || exit; \
 	done
-	$(MAKE) setup-share
+	$(MAKE) share_create
 
-setup-share: check_environment
+share_create: check_environment
 ifeq ($(ENABLE_SHARE),1)
-	$(SED) $(REPLACEMENTS) $(SHARE_FILE) | $(SNOWSQL) -q "$(cat /dev/stdin)" 
+	$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(cat /dev/stdin)" 
+endif
+
+share_remove: check_environment
+ifeq ($(ENABLE_SHARE),1)
+	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(cat /dev/stdin)" 
 endif
 
 ##################### DEPLOY #####################
@@ -73,5 +79,6 @@ check-integration: check_environment
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
 ifeq ($(POST_INTEGRATION_CLEANUP),1)
+	$(MAKE) share_remove
 	$(MAKE) schema_remove || ((sleep 5 && $(MAKE) schema_remove) || exit 1)
 endif
