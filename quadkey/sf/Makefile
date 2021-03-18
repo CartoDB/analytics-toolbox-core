@@ -53,7 +53,6 @@ schema_deploy: check_environment
 	for n in $(SQL_DEPLOYABLE); do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(cat /dev/stdin)" || exit; \
 	done
-	$(MAKE) share_create
 
 share_create: check_environment
 ifeq ($(ENABLE_SHARE),1)
@@ -70,6 +69,7 @@ deploy: check_environment
 	$(MAKE) database_create
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
+	$(MAKE) share_create
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment
