@@ -67,7 +67,8 @@ endif
 
 ##################### DEPLOY #####################
 deploy: check_environment
-	$(MAKE) database_create schema_create
+	$(MAKE) database_create
+	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 
 ##################### INTEGRATION TESTS #####################
