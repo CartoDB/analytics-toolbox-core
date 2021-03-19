@@ -48,17 +48,17 @@ REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
 
 schema_deploy: check_environment
 	for n in $(sort $(SQL_DEPLOYABLE)); do \
-		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(cat /dev/stdin)" || exit; \
+		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit; \
 	done
 
 share_create: check_environment
 ifeq ($(ENABLE_SHARE),1)
-	$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(cat /dev/stdin)" 
+	$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
 
 share_remove: check_environment
 ifeq ($(ENABLE_SHARE),1)
-	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(cat /dev/stdin)" 
+	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
 
 ##################### DEPLOY #####################
