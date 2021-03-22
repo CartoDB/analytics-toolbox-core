@@ -3,7 +3,7 @@ SED ?= sed
 SNOWSQL ?= snowsql
 GSUTIL ?= gsutil
 
-ENABLE_SHARE ?= 1
+SF_SHARE_ENABLED ?= 0
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
@@ -52,12 +52,12 @@ schema_deploy: check_environment
 	done
 
 share_create: check_environment
-ifeq ($(ENABLE_SHARE),1)
+ifeq ($(SF_SHARE_ENABLED),1)
 	$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
 
 share_remove: check_environment
-ifeq ($(ENABLE_SHARE),1)
+ifeq ($(SF_SHARE_ENABLED),1)
 	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
 
