@@ -5,7 +5,7 @@ global.eval(fs.readFileSync('../../quadkey_library.js') + '');
 
 describe('QUADKEY unit tests', () => {
     it('Version', async() => {
-        assert.equal(quadkeyVersion(), 1);
+        assert.equal(quadkeyVersion(), '1');
     });
 
     it('Should be able to encode/decode tiles at any level of zoom', async() => {
