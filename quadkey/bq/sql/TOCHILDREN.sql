@@ -15,7 +15,6 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-    const intResolution = parseInt(resolution);
-    let quadints = toChildren(quadint, intResolution);
+    let quadints = toChildren(quadint, Number(resolution));
     return quadints.map(String);
 """;

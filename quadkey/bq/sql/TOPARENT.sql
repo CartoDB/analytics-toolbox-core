@@ -15,6 +15,5 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-    const intResolution = parseInt(resolution);
-    return toParent(quadint, intResolution).toString();  
+    return toParent(quadint, Number(resolution)).toString();  
 """;
