@@ -2,7 +2,7 @@
   "name": "s2_bq_integration_tests",
   "version": "1.0.0",
   "description": "",
-  "main": "createpointaggregationtileset_integration.js",
+  "main": "s2_integration.js",
   "scripts": {
     "test": "mocha"
   },

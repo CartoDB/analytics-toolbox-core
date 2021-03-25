@@ -1,8 +1,8 @@
 {
-  "name": "tiler_bq_integration_tests",
+  "name": "skel_bq_integration_tests",
   "version": "1.0.0",
   "description": "",
-  "main": "createpointaggregationtileset_integration.js",
+  "main": "skel_integration.js",
   "scripts": {
     "test": "mocha"
   },
