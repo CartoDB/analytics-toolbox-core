@@ -19,6 +19,6 @@ if(quadint == null)
     {
         distance = 1;
     }
-    let neighbors = kring(quadint, distance);
+    let neighbors = kring(quadint, Number(distance));
     return neighbors.map(String);
 """;

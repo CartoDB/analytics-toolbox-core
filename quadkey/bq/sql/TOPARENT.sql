@@ -15,6 +15,5 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-
-    return toParent(quadint, resolution).toString();  
+    return toParent(quadint, Number(resolution)).toString();  
 """;

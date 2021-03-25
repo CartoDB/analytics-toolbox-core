@@ -15,9 +15,8 @@ AS """
     {
         throw new Error('NULL argument passed to UDF');
     }
-
     let pol = JSON.parse(geojson);
-    let quadints = geojsonToQuadints(pol, {min_zoom: resolution, max_zoom: resolution});
+    let quadints = geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
     return quadints.map(String);
 """;
 

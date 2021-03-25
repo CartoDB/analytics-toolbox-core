@@ -11,12 +11,11 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.LONGLAT_ASID`
     LANGUAGE js
     OPTIONS (library=["@@S2_BQ_LIBRARY@@"])
 AS """
-    if(longitude == null || longitude == null || longitude == null)
+    if(latitude == null || longitude == null || level == null)
     {
         throw new Error('NULL argument passed to UDF');
     }
-        
-    return S2.latLngToId(latitude, longitude, level);
+    return S2.latLngToId(Number(latitude), Number(longitude), Number(level));
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_S2@@.ST_ASID`
