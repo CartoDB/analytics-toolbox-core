@@ -4,47 +4,50 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.LONGLAT_ASH3`(longitude FLOAT64, latitude FLOAT64, resolution INT64)
-    RETURNS INT64
-    DETERMINISTIC
-    LANGUAGE js
-    OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
-AS
-"""
-    if (longitude === null || latitude === null || resolution === null) {
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._LONGLAT_ASH3(longitude DOUBLE, latitude DOUBLE, resolution DOUBLE)
+    RETURNS STRING
+    LANGUAGE JAVASCRIPT
+AS $$
+    @@LIBRARY_FILE_CONTENT@@
+
+    if (LONGITUDE === null || LATITUDE === null || RESOLUTION === null) {
         return null;
     }
-    const index = h3.geoToH3(Number(latitude), Number(longitude), Number(resolution));
+    const index = h3.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
     if (index) {
         return '0x' + index;
     }
     return null;
-""";
+$$;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ST_ASH3`(geog GEOGRAPHY, resolution INT64)
-    RETURNS INT64
-AS
-(
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.LONGLAT_ASH3`(SAFE.ST_X(geog), SAFE.ST_Y(geog), resolution)
-);
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.LONGLAT_ASH3(longitude DOUBLE, latitude DOUBLE, resolution INT)
+RETURNS BIGINT
+AS $$
+    CAST(@@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._LONGLAT_ASH3(LONGITUDE, LATITUDE, CAST(RESOLUTION AS DOUBLE)) AS BIGINT)
+$$;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@._ST_ASH3_POLYFILL`(geojson STRING, _resolution INT64)
-    RETURNS ARRAY<INT64>
-    DETERMINISTIC
-    LANGUAGE js
-    OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
-AS
-"""
-    if (!geojson || _resolution == null) {
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_ASH3(geog GEOGRAPHY, resolution INT)
+    RETURNS BIGINT
+AS $$
+    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.LONGLAT_ASH3(SAFE.ST_X(GEOG), SAFE.ST_Y(GEOG), CAST(RESOLUTION AS DOUBLE)
+$$;
+
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ST_ASH3_POLYFILL(geojson STRING, _resolution DOUBLE)
+    RETURNS ARRAY
+    LANGUAGE JAVASCRIPT
+AS $$
+    @@LIBRARY_FILE_CONTENT@@
+
+    if (!GEOJSON || _RESOLUTION == null) {
         return null;
     }
 
-    const resolution = Number(_resolution);
+    const resolution = Number(_RESOLUTION);
     if (resolution < 0 || resolution > 15) {
         return null;
     }
 
-    const featureGeometry = JSON.parse(geojson)
+    const featureGeometry = JSON.parse(GEOJSON)
     if (!['Polygon', 'MultiPolygon'].includes(featureGeometry.type)) {
         return null;
     }
@@ -58,11 +61,10 @@ AS
 
     const ids = hexes.map(h => '0x' + h);
     return ids;
-""";
+$$;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ST_ASH3_POLYFILL`(geog GEOGRAPHY, resolution INT64)
-    RETURNS ARRAY<INT64>
-AS
-(
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@._ST_ASH3_POLYFILL`(ST_ASGEOJSON(geog), resolution)
-);
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_ASH3_POLYFILL(geog GEOGRAPHY, resolution INT)
+    RETURNS ARRAY
+AS $$
+    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ST_ASH3_POLYFILL(CAST(ST_ASGEOJSON(GEOG) AS STRING), CAST(RESOLUTION AS DOUBLE))
+$$;

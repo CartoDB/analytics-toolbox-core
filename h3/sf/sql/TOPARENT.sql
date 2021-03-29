@@ -4,24 +4,25 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@._TOPARENT`(index_lower INT64, index_upper INT64, resolution INT64)
-    RETURNS INT64
-    DETERMINISTIC
-    LANGUAGE js
-    OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
-AS
-"""
-    if (index_lower == null || index_upper == null)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._TOPARENT(index_lower DOUBLE, index_upper DOUBLE, resolution DOUBLE)
+    RETURNS STRING
+    LANGUAGE JAVASCRIPT
+AS $$
+    @@LIBRARY_FILE_CONTENT@@
+
+    if (INDEX_LOWER == null || INDEX_UPPER == null)
         return null;
-    const h3IndexInput = [Number(index_lower), Number(index_upper)];
+    const h3IndexInput = [Number(INDEX_LOWER), Number(INDEX_UPPER)];
     if (!h3.h3IsValid(h3IndexInput))
         return null;
-    return '0x' + h3.h3ToParent([Number(index_lower), Number(index_upper)], Number(resolution));
-""";
+    return '0x' + h3.h3ToParent([Number(INDEX_LOWER), Number(INDEX_UPPER)], Number(RESOLUTION));
+$$;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.TOPARENT`(index INT64, resolution INT64)
-    RETURNS INT64
-AS
-(
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@._TOPARENT`(index & 0x00000000FFFFFFFF, index >> 32, resolution)
-);
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.TOPARENT(index BIGINT, resolution INT)
+    RETURNS BIGINT
+AS $$
+    CAST(@@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._TOPARENT(
+        CAST(BITAND(INDEX, 4294967295) AS DOUBLE), 
+        CAST(BITSHIFTRIGHT(INDEX, 32) AS DOUBLE), 
+        CAST(RESOLUTION AS DOUBLE)) AS BIGINT)
+$$;

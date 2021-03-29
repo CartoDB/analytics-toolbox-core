@@ -126,7 +126,7 @@ FROM ids
 
         let rows;
         await assert.doesNotReject(async () => {
-            [rows] = await client.query(query, queryOptions);
+            [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
         assert.deepEqual(rows[0].top_children, [ ]);

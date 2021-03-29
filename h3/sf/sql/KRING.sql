@@ -4,25 +4,26 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@._KRING`(index_lower INT64, index_upper INT64, distance INT64)
-    RETURNS ARRAY<INT64>
-    DETERMINISTIC
-    LANGUAGE js
-    OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
-AS
-"""
-    if (index_lower == null || index_upper == null || distance == null || distance < 0)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._KRING(index_lower DOUBLE, index_upper DOUBLE, distance DOUBLE)
+    RETURNS ARRAY
+    LANGUAGE JAVASCRIPT
+AS $$
+    @@LIBRARY_FILE_CONTENT@@
+
+    if (INDEX_LOWER == null || INDEX_UPPER == null || DISTANCE == null || DISTANCE < 0)
         return null;
-    const h3IndexInput = [Number(index_lower), Number(index_upper)];
+    const h3IndexInput = [Number(INDEX_LOWER), Number(INDEX_UPPER)];
     if (!h3.h3IsValid(h3IndexInput))
         return null;
 
-    return h3.kRing(h3IndexInput, parseInt(distance)).map(h => '0x' + h);
-""";
+    return h3.kRing(h3IndexInput, parseInt(DISTANCE)).map(h => '0x' + h);
+$$;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.KRING`(index INT64, distance INT64)
-    RETURNS ARRAY<INT64>
-AS
-(
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@._KRING`(index & 0x00000000FFFFFFFF, index >> 32, distance)
-);
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.KRING(index BIGINT, distance INT)
+    RETURNS ARRAY
+AS $$
+    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._KRING(
+        CAST(BITAND(INDEX, 4294967295) AS DOUBLE), 
+        CAST(BITSHIFTRIGHT(INDEX, 32) AS DOUBLE), 
+        CAST(DISTANCE AS DOUBLE))
+$$;
