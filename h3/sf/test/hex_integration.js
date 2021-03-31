@@ -51,9 +51,9 @@ describe('HEX integration tests', () => {
         const query = `
 WITH inputs AS
 (
-    SELECT 1 AS id, ST_GEOGPOINT(-122.0553238, 37.3615593) as geom, 5 as resolution UNION ALL
-    SELECT 2 AS id, ST_GEOGPOINT(-164.991559, 30.943387) as geom, 5 as resolution UNION ALL
-    SELECT 3 AS id, ST_GEOGPOINT(71.52790329909925, 46.04189431883772) as geom, 15 as resolution UNION ALL
+    SELECT 1 AS id, ST_POINT(-122.0553238, 37.3615593) as geom, 5 as resolution UNION ALL
+    SELECT 2 AS id, ST_POINT(-164.991559, 30.943387) as geom, 5 as resolution UNION ALL
+    SELECT 3 AS id, ST_POINT(71.52790329909925, 46.04189431883772) as geom, 15 as resolution UNION ALL
     SELECT 4 AS id, NULL AS geom, 5 as resolution
 )
 SELECT
@@ -65,7 +65,6 @@ WHERE
             ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_ASHEX(
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geom, resolution)))
 `;
-
         let rows;
         await assert.doesNotReject(async () => {
             [statement, rows] = await execAsync(connection, query);
