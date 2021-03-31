@@ -53,7 +53,7 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid
+    SELECT 2 AS id, '0xff283473fffffff' as hid
 )
 SELECT
     id,
@@ -67,8 +67,8 @@ ORDER BY id ASC
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 2);
-        assert.equal(rows[0].parent, null);
-        assert.equal(rows[1].parent, null);
+        assert.equal(rows[0].PARENT, null);
+        assert.equal(rows[1].PARENT, null);
     });
 
     it ('Equivalent to previous resolution level', async () => {
@@ -81,9 +81,9 @@ ORDER BY id ASC
 WITH ids AS
 (
     SELECT
-        ST_GEOGPOINT(-122.409290778685, 37.81331899988944) as point,
-        resolution
-    FROM UNNEST(GENERATE_ARRAY(1, 10, 1)) resolution
+        ST_POINT(-122.409290778685, 37.81331899988944) as point,
+        seq4() + 1 AS resolution
+    FROM TABLE(generator(rowcount => 11))
 )
 SELECT
     *
