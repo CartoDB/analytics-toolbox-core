@@ -1,16 +1,34 @@
 ## 🔥 UPDATE ##
 
-CARTO is currently working on an entire refactor of the project. We plan to do significant changes to the modules, adding documentation, tests and continuous integration. We will be using different BigQuery projects so ETLs or calls to `jslibs.` will keep working. 
+We have finally completed the refactor and we have now ready all UDF functions under the new system. You can explore documentation about it in our [Official docuemntation](https://docs.carto.com/spatial-extension-bq/overview/getting-started/)
 
-Our goal is to be ready by the end of February. You can still send PRs in the meantime if you want to, but we recommend waiting for this refactor to be done before investing any significant amount of work. Thanks!
+With this update now all functions are fully covered with test and we have a solid CI for new releases. You will notice that we have changed the locations of the functions, you should update to ensure you keep using the latest.
+
+For example:
+
+```sql
+SELECT jslibs.h3.ST_H3(ST_GEOGPOINT(10,10),11)
+```
+it is now:
+
+```sql
+SELECT bqcarto.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
+```
 
 # CARTO Spatial Extension
 
-The CARTO Spatial Extension adds new geospatial capabilities to cloud data warehouses. This project is an evolution of [BigQuery JSLibs](https://carto.com/blog/spatial-functions-bigquery-uber/) with the objective to make it easy add extra modules and support new databases.
+The [CARTO Spatial Extension](https://docs.carto.com/spatial-extension-bq/overview/getting-started/) for BigQuery is composed of a set of user-defined functions and procedures organized in a set of modules according to the functionality they offer. There are two types of modules: core modules, that are open source and free to use for anyone with a BigQuery account, and advanced modules, only available to CARTO account customers.
+
+Visit the [SQL Reference](https://docs.carto.com/spatial-extension-bq/sql-reference/quadkey/) to see the full list of available modules. If you already have a CARTO account, please keep reading to learn how you can access the advanced modules.
+
 
 ## Modules
 
 The project is divided into modules, which are a set of components under a common geospatial topic, like `quadkey` or `s2` indexes.
+
+![image](https://user-images.githubusercontent.com/127803/113181089-b3b63080-9251-11eb-90c1-a834fce46496.png)
+
+We recommend that you pin ```bqcarto``` in your BigQuery console.
 
 ### Quadkey
 
