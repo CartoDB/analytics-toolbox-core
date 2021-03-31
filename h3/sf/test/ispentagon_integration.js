@@ -53,13 +53,13 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid UNION ALL
+    SELECT 2 AS id, '0xff283473fffffff' as hid UNION ALL
 
     -- Valid parameters
                     -- Hex
-    SELECT 3 AS id, 0x8928308280fffff as hid UNION ALL
+    SELECT 3 AS id, '0x8928308280fffff' as hid UNION ALL
                     -- Pentagon
-    SELECT 4 AS id, 0x821c07fffffffff as hid
+    SELECT 4 AS id, '0x821c07fffffffff' as hid
 )
 SELECT
     id,
@@ -73,10 +73,10 @@ ORDER BY id ASC
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 4);
-        assert.equal(rows[0].pent, false);
-        assert.equal(rows[1].pent, false);
-        assert.equal(rows[2].pent, false);
-        assert.equal(rows[3].pent, true);
+        assert.equal(rows[0].PENT, false);
+        assert.equal(rows[1].PENT, false);
+        assert.equal(rows[2].PENT, false);
+        assert.equal(rows[3].PENT, true);
     });
 
 }); /* ISPENTAGON integration tests */
