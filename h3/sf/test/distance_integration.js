@@ -52,13 +52,13 @@ describe('DISTANCE integration tests', () => {
 WITH ids AS
 (
     -- Invalid parameters
-    SELECT 1 AS id, NULL as hid1, 0x85283473fffffff AS hid2 UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid1, 0x85283473fffffff AS hid2 UNION ALL
-    SELECT 3 AS id, 0x85283473fffffff as hid1, NULL AS hid2 UNION ALL
-    SELECT 4 AS id, 0x85283473fffffff as hid1, 0xff283473fffffff AS hid2 UNION ALL
+    SELECT 1 AS id, NULL as hid1, '0x85283473fffffff' AS hid2 UNION ALL
+    SELECT 2 AS id, '0xff283473fffffff' as hid1, '0x85283473fffffff' AS hid2 UNION ALL
+    SELECT 3 AS id, '0x85283473fffffff' as hid1, NULL AS hid2 UNION ALL
+    SELECT 4 AS id, '0x85283473fffffff' as hid1, '0xff283473fffffff' AS hid2 UNION ALL
 
     -- Self
-    SELECT 5 AS id, 0x8928308280fffff as hid1, 0x8928308280fffff as hid2
+    SELECT 5 AS id, '0x8928308280fffff' as hid1, '0x8928308280fffff' as hid2
 )
 SELECT
     id,
@@ -72,28 +72,29 @@ ORDER BY id ASC
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 5);
-        assert.equal(rows[0].distance, null);
-        assert.equal(rows[1].distance, null);
-        assert.equal(rows[2].distance, null);
-        assert.equal(rows[3].distance, null);
-        assert.equal(rows[4].distance, 0);
+        assert.equal(rows[0].DISTANCE, null);
+        assert.equal(rows[1].DISTANCE, null);
+        assert.equal(rows[2].DISTANCE, null);
+        assert.equal(rows[3].DISTANCE, null);
+        assert.equal(rows[4].DISTANCE, 0);
     });
 
     it ('Works as expected with valid input', async () => {
         const query = `
 WITH distances AS
 (
-    SELECT distance FROM UNNEST(GENERATE_ARRAY(0, 4, 1)) distance
+    SELECT seq4() AS distance
+    FROM TABLE(generator(rowcount => 5))
 ),
 ids AS
 (
     SELECT
         distance,
-        0x8928308280fffff as hid1,
-        hid2
+        '0x8928308280fffff' as hid1,
+        hid2.value as hid2
     FROM
         distances,
-        UNNEST (${SF_DATABASEID}.${SF_SCHEMA_H3}.HEXRING(0x8928308280fffff, distance)) hid2
+        lateral FLATTEN(input =>${SF_DATABASEID}.${SF_SCHEMA_H3}.HEXRING('0x8928308280fffff', distance)) hid2
 )
 SELECT ${SF_DATABASEID}.${SF_SCHEMA_H3}.DISTANCE(hid1, hid2) as calculated_distance, *
 FROM ids
