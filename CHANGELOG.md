@@ -4,11 +4,14 @@ This document describes changes between tagged releases of the CARTO Spatial Ext
 
 Not all changes in the project will be included here, but it should mention any new features and user-oriented bug fixes. You can see the full set of change between releases by browsing the git commits.
 
-## Current trunk
+## Trunk
+
+
+## v1
 
 * Initial setup of the CARTO Spatial Extension.
-* Add the skel module.
-* Add the h3 module.
-* Add the placekey module.
-* Add the quadkey module.
-* Add the s2 module.
+* Add the skel module (1)
+* Add the h3 module (3.7.0.0)
+* Add the placekey module (1.0.1)
+* Add the quadkey module (1)
+* Add the s2 module (1.2.10)
