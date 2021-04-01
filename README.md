@@ -26,7 +26,7 @@ Visit the [SQL Reference](https://docs.carto.com/spatial-extension-bq/sql-refere
 
 The project is divided into modules, which are a set of components under a common geospatial topic, like `quadkey` or `s2` indexes.
 
-![image](https://user-images.githubusercontent.com/127803/113181089-b3b63080-9251-11eb-90c1-a834fce46496.png)
+![image](https://user-images.githubusercontent.com/127803/113288249-fed25100-92ee-11eb-952b-5c01a5976612.png)
 
 We recommend that you pin ```bqcarto``` in your BigQuery console.
 
