@@ -53,7 +53,7 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid
+    SELECT 2 AS id, '0xff283473fffffff' as hid
 )
 SELECT
     id,
@@ -67,8 +67,8 @@ ORDER BY id ASC
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 2);
-        assert.deepEqual(rows[0].parent, []);
-        assert.deepEqual(rows[1].parent, []);
+        assert.deepEqual(rows[0].PARENT, []);
+        assert.deepEqual(rows[1].PARENT, []);
     });
 
     it ('List children correctly', async () => {
@@ -76,11 +76,11 @@ ORDER BY id ASC
 WITH ids AS
 (
     SELECT
-        ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
+        ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(ST_POINT(-122.409290778685, 37.81331899988944), 7) AS hid
 )
 SELECT
-    ARRAY_LENGTH(${SF_DATABASEID}.${SF_SCHEMA_H3}.TOCHILDREN(hid, 8)) AS length_children,
-    ARRAY_LENGTH(${SF_DATABASEID}.${SF_SCHEMA_H3}.TOCHILDREN(hid, 9)) AS length_grandchildren
+    ARRAY_SIZE(${SF_DATABASEID}.${SF_SCHEMA_H3}.TOCHILDREN(hid, 8)) AS length_children,
+    ARRAY_SIZE(${SF_DATABASEID}.${SF_SCHEMA_H3}.TOCHILDREN(hid, 9)) AS length_grandchildren
 FROM ids
 `;
 
@@ -89,8 +89,8 @@ FROM ids
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].length_children, 7);
-        assert.equal(rows[0].length_grandchildren, 49);
+        assert.equal(rows[0].LENGTH_CHILDREN, 7);
+        assert.equal(rows[0].LENGTH_GRANDCHILDREN, 49);
     });
 
     it ('Same resolution lists self', async () => {
@@ -109,7 +109,7 @@ FROM ids
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0].self_children, [ 608692970266296319 ]);
+        assert.deepEqual(rows[0].SELF_CHILDREN, [ '608692970266296319' ]);
     });
 
     it ('Coarser resolution returns empty array', async () => {
@@ -117,7 +117,7 @@ FROM ids
 WITH ids AS
 (
     SELECT
-        ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
+        ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(ST_POINT(-122.409290778685, 37.81331899988944), 7) AS hid
 )
 SELECT
     ${SF_DATABASEID}.${SF_SCHEMA_H3}.TOCHILDREN(hid, 6) AS top_children
@@ -129,7 +129,7 @@ FROM ids
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0].top_children, [ ]);
+        assert.deepEqual(rows[0].TOP_CHILDREN, [ ]);
     });
 
 }); /* TOCHILDREN integration tests */
