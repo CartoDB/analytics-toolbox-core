@@ -109,7 +109,7 @@ FROM ids
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0].SELF_CHILDREN, [ '608692970266296319' ]);
+        assert.deepEqual(rows[0].SELF_CHILDREN.map(h => BigInt(h).toString(10)), [ '608692970266296319' ]);
     });
 
     it ('Coarser resolution returns empty array', async () => {

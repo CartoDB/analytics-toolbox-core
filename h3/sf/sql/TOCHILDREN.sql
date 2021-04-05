@@ -16,7 +16,7 @@ AS $$
     if (!h3.h3IsValid(h3IndexInput))
         return [];
 
-    return h3.h3ToChildren(h3IndexInput, Number(RESOLUTION)).map(h => BigInt('0x' + h).toString(10));
+    return h3.h3ToChildren(h3IndexInput, Number(RESOLUTION)).map(h => '0x' + h);
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.TOCHILDREN(index BIGINT, resolution INT)
