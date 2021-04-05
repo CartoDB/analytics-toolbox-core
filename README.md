@@ -19,7 +19,7 @@ SELECT bqcarto.h3.ST_ASH3(ST_GEOGPOINT(10,10),11)
 
 The [CARTO Spatial Extension](https://docs.carto.com/spatial-extension-bq/overview/getting-started/) for BigQuery is composed of a set of user-defined functions and procedures organized in a set of modules according to the functionality they offer. There are two types of modules: core modules, that are open source and free to use for anyone with a BigQuery account, and advanced modules, only available to CARTO account customers.
 
-Visit the [SQL Reference](https://docs.carto.com/spatial-extension-bq/sql-reference/quadkey/) to see the full list of available modules. If you already have a CARTO account, please keep reading to learn how you can access the advanced modules.
+Visit the [SQL Reference](https://docs.carto.com/spatial-extension-bq/sql-reference/overview/) to see the full list of available modules. If you already have a CARTO account, please keep reading to learn how you can access the advanced modules.
 
 
 ## Modules
