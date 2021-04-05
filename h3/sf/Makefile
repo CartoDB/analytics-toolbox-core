@@ -7,10 +7,10 @@ SF_SHARE_ENABLED ?= 0
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-H3_SF_LIBRARY ?= ../h3_library.js
+H3_SF_LIBRARY ?= ../h3.js
 
-.PHONY: ../h3_library.js
-../h3_library.js:
+.PHONY: ../h3.js
+../h3.js:
 	$(MAKE) -C .. all
 
 SQL_FILES =  $(wildcard sql/*.sql)
