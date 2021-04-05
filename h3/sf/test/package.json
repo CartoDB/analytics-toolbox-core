@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.3.4",
+    "chai-roughly": "^1.0.0",
     "mocha": "^8.2.1",
     "snowflake-sdk": "^1.6.0"
   }
