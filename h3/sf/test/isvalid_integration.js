@@ -53,11 +53,11 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid UNION ALL
+    SELECT 2 AS id, '0xff283473fffffff' as hid UNION ALL
 
     -- Valid parameters
-    SELECT 3 AS id, 0x85283473fffffff as hid UNION ALL
-    SELECT 4 AS id, ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(ST_GEOGPOINT(-122.0553238, 37.3615593), 5)
+    SELECT 3 AS id, '0x85283473fffffff' as hid UNION ALL
+    SELECT 4 AS id, ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(ST_POINT(-122.0553238, 37.3615593), 5)::STRING as hid
 )
 SELECT
     id,
@@ -71,10 +71,10 @@ ORDER BY id ASC
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 4);
-        assert.equal(rows[0].valid, false);
-        assert.equal(rows[1].valid, false);
-        assert.equal(rows[2].valid, true);
-        assert.equal(rows[3].valid, true);
+        assert.equal(rows[0].VALID, false);
+        assert.equal(rows[1].VALID, false);
+        assert.equal(rows[2].VALID, true);
+        assert.equal(rows[3].VALID, true);
     });
 
 }); /* ISVALID integration tests */
