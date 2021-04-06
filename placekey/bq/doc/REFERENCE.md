@@ -14,7 +14,7 @@ placekey.H3_ASPLACEKEY(h3index)
 
 Returns the placekey equivalent to the given H3 index.
 
-* `h3index`: `INT64` H3 identifier.
+* `h3index`: `STRING` H3 identifier.
 
 **Return type**
 
@@ -23,7 +23,7 @@ Returns the placekey equivalent to the given H3 index.
 **Example**
 
 ```sql
-SELECT bqcarto.placekey.H3_ASPLACEKEY(596645165859340287);
+SELECT bqcarto.placekey.H3_ASPLACEKEY('847b59dffffffff');
 -- @ff7-swh-m49
 ```
 
@@ -41,13 +41,13 @@ Returns the H3 index equivalent to the given placekey.
 
 **Return type**
 
-`INT64`
+`STRING`
 
 **Example**
 
 ```sql
 SELECT bqcarto.placekey.PLACEKEY_ASH3("@ff7-swh-m49");
--- 623666763623563263
+-- 8a7b59dffffffff
 ```
 
 ### ISVALID
