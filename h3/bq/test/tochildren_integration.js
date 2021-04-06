@@ -23,7 +23,7 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid
+    SELECT 2 AS id, 'ff283473fffffff' as hid
 )
 SELECT
     id,
@@ -67,7 +67,7 @@ FROM ids
         const query = `
 WITH ids AS
 (
-    SELECT 608692970266296319 as hid
+    SELECT '87283080dffffff' as hid
 )
 SELECT
     \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.TOCHILDREN(hid, 7) AS self_children
@@ -79,7 +79,7 @@ FROM ids
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0].self_children, [ 608692970266296319 ]);
+        assert.deepEqual(rows[0].self_children, [ '87283080dffffff' ]);
     });
 
     it ('Coarser resolution returns empty array', async () => {

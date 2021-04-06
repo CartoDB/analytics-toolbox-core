@@ -23,7 +23,7 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid
+    SELECT 2 AS id, 'ff283473fffffff' as hid
 )
 SELECT
     id,

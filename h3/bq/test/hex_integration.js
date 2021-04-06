@@ -27,7 +27,7 @@ WITH inputs AS
     SELECT 4 AS id, NULL AS geom, 5 as resolution
 )
 SELECT
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_FROMINT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution)) as h3_id
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_ASINT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution)) as h3_id
 FROM inputs
 ORDER BY id ASC`;
 
@@ -36,9 +36,9 @@ ORDER BY id ASC`;
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 4);
-        assert.equal(rows[0].h3_id, "85283473fffffff");
-        assert.equal(rows[1].h3_id, "8547732ffffffff");
-        assert.equal(rows[2].h3_id, "8f2000000000000");
+        assert.equal(rows[0].h3_id, 599686042433355800);
+        assert.equal(rows[1].h3_id, 600235711274156000);
+        assert.equal(rows[2].h3_id, 644577696667402200);
         assert.equal(rows[3].h3_id, null);
     });
 
@@ -56,8 +56,8 @@ SELECT
 FROM inputs
 WHERE
     \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution) !=
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_ASINT(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_FROMINT(
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_FROMINT(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_ASINT(
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution)))
 `;
 

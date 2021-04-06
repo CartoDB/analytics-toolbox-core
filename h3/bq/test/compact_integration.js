@@ -18,30 +18,28 @@ describe('COMPACT / UNCOMPACT ', () => {
     });
 
     it ('Work as expected with NULLish values', async () => {
-        const query = `
-WITH ids AS
-(
-    -- Invalid parameters
-    SELECT 1 AS id, NULL as v UNION ALL
-    SELECT 2 AS id, [] as v
-)
-SELECT
-    id,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.COMPACT(v) as c,
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.UNCOMPACT(v, 5) as u
-FROM ids
-ORDER BY id ASC
+        let query = `
+SELECT 
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.COMPACT(NULL) as c,
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.UNCOMPACT(NULL, 5) as u
 `;
 
         let rows;
         await assert.doesNotReject(async () => {
             [rows] = await client.query(query, queryOptions);
         });
-        assert.equal(rows.length, 2);
+        assert.equal(rows.length, 1);
         assert.deepEqual(rows[0].c, []);
         assert.deepEqual(rows[0].u, []);
-        assert.deepEqual(rows[1].c, []);
-        assert.deepEqual(rows[1].u, []);
+
+        query = `
+        SELECT
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.COMPACT([]) as c,
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.UNCOMPACT([], 5) as u
+        `;
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].c, []);
+        assert.deepEqual(rows[0].u, []);
     });
 
     it ('Work with polyfill arrays', async () => {

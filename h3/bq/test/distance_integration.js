@@ -22,13 +22,13 @@ describe('DISTANCE', () => {
 WITH ids AS
 (
     -- Invalid parameters
-    SELECT 1 AS id, NULL as hid1, 0x85283473fffffff AS hid2 UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid1, 0x85283473fffffff AS hid2 UNION ALL
-    SELECT 3 AS id, 0x85283473fffffff as hid1, NULL AS hid2 UNION ALL
-    SELECT 4 AS id, 0x85283473fffffff as hid1, 0xff283473fffffff AS hid2 UNION ALL
+    SELECT 1 AS id, NULL as hid1, '85283473fffffff' AS hid2 UNION ALL
+    SELECT 2 AS id, 'ff283473fffffff' as hid1, '85283473fffffff' AS hid2 UNION ALL
+    SELECT 3 AS id, '85283473fffffff' as hid1, NULL AS hid2 UNION ALL
+    SELECT 4 AS id, '85283473fffffff' as hid1, 'ff283473fffffff' AS hid2 UNION ALL
 
     -- Self
-    SELECT 5 AS id, 0x8928308280fffff as hid1, 0x8928308280fffff as hid2
+    SELECT 5 AS id, '8928308280fffff' as hid1, '8928308280fffff' as hid2
 )
 SELECT
     id,
@@ -59,11 +59,11 @@ ids AS
 (
     SELECT
         distance,
-        0x8928308280fffff as hid1,
+        '8928308280fffff' as hid1,
         hid2
     FROM
         distances,
-        UNNEST (\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING(0x8928308280fffff, distance)) hid2
+        UNNEST (\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.HEXRING('8928308280fffff', distance)) hid2
 )
 SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.DISTANCE(hid1, hid2) as calculated_distance, *
 FROM ids
