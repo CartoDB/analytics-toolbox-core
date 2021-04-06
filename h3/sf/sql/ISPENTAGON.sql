@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ISPENTAGON(index STRING)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ISPENTAGON(index STRING)
     RETURNS BOOLEAN
     LANGUAGE JAVASCRIPT
 AS $$
