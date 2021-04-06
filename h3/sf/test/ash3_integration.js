@@ -75,9 +75,9 @@ ORDER BY id ASC`;
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 7);
-        assert.equal(rows[0].H3_ID, "599686042433355775");
-        assert.equal(rows[1].H3_ID, "600235711274156031");
-        assert.equal(rows[2].H3_ID, "644577696667402240");
+        assert.equal(rows[0].H3_ID, "85283473fffffff");
+        assert.equal(rows[1].H3_ID, "8547732ffffffff");
+        assert.equal(rows[2].H3_ID, "8f2000000000000");
         assert.equal(rows[3].H3_ID, null);
         assert.equal(rows[4].H3_ID, null);
         assert.equal(rows[5].H3_ID, null);
@@ -133,14 +133,14 @@ ORDER BY id ASC`;
         });
 
         assert.equal(rows.length, 8);
-        assert.equal(rows[0].H3_ID, "599686042433355775");
-        assert.equal(rows[1].H3_ID, "600235711274156031");
-        assert.equal(rows[2].H3_ID, "644577696667402240");
+        assert.equal(rows[0].H3_ID, "85283473fffffff");
+        assert.equal(rows[1].H3_ID, "8547732ffffffff");
+        assert.equal(rows[2].H3_ID, "8f2000000000000");
         assert.equal(rows[3].H3_ID, null);
         assert.equal(rows[4].H3_ID, null);
         assert.equal(rows[5].H3_ID, null);
-        assert.equal(rows[6].H3_ID, '599686042433355775');
-        assert.equal(rows[7].H3_ID, '599686042433355775');
+        assert.equal(rows[6].H3_ID, '85283473fffffff');
+        assert.equal(rows[7].H3_ID, '85283473fffffff');
     });
 
     it ('ST_ASH3_POLYFILL returns the proper INT64s', async () => {
@@ -213,9 +213,8 @@ ORDER BY id ASC`;
         (
             SELECT
                 resolution,
-                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
-                    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS hex_id,
-                    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution) AS hex_id,
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
             FROM points, resolution
         ),
         polyfill AS
@@ -254,9 +253,8 @@ ORDER BY id ASC`;
         (
             SELECT
                 resolution,
-                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
-                    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS hex_id,
-                    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution) AS hex_id,
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
             FROM points, resolution
         ),
         polyfill AS
@@ -293,9 +291,8 @@ ORDER BY id ASC`;
         (
             SELECT
                 resolution,
-                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
-                    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS hex_id,
-                    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution) AS hex_id,
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
             FROM points, resolution
         ),
         polyfill AS

@@ -61,8 +61,8 @@ SELECT
 FROM inputs
 WHERE
     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geom, resolution) !=
-        ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_ASINT(
-            ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
+        ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(    
+            ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_ASINT(
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geom, resolution)))
 `;
         let rows;

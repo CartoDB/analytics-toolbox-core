@@ -53,11 +53,11 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid, 1 as distance UNION ALL
-    SELECT 2 AS id, '0xff283473fffffff' as hid, 1 as distance UNION ALL
-    SELECT 3 as id, '0x8928308280fffff' as hid, -1 as distance UNION ALL
+    SELECT 2 AS id, 'ff283473fffffff' as hid, 1 as distance UNION ALL
+    SELECT 3 as id, '8928308280fffff' as hid, -1 as distance UNION ALL
 
     -- Distance 0
-    SELECT 4 as id, '0x8928308280fffff' as hid, 0 as distance
+    SELECT 4 as id, '8928308280fffff' as hid, 0 as distance
 )
 SELECT
     id,
@@ -74,14 +74,14 @@ ORDER BY id ASC
         assert.deepEqual(rows[0].PARENT, []);
         assert.deepEqual(rows[1].PARENT, []);
         assert.deepEqual(rows[2].PARENT, []);
-        assert.deepEqual(rows[3].PARENT, ['0x8928308280fffff']);
+        assert.deepEqual(rows[3].PARENT, ['8928308280fffff']);
     });
 
     it ('List the ring correctly', async () => {
         const query = `
 WITH ids AS
 (
-    SELECT '0x8928308280fffff' as hid
+    SELECT '8928308280fffff' as hid
 )
 SELECT
     ${SF_DATABASEID}.${SF_SCHEMA_H3}.KRING(hid, 1) as d1,
@@ -96,34 +96,34 @@ FROM ids
         assert.equal(rows.length, 1);
         /* Data comes from h3core.spec.js */
         assert.deepEqual(rows[0].D1.sort(),
-            [   '0x8928308280fffff',
-                '0x8928308280bffff',
-                '0x89283082807ffff',
-                '0x89283082877ffff',
-                '0x89283082803ffff',
-                '0x89283082873ffff',
-                '0x8928308283bffff'
+            [   '8928308280fffff',
+                '8928308280bffff',
+                '89283082807ffff',
+                '89283082877ffff',
+                '89283082803ffff',
+                '89283082873ffff',
+                '8928308283bffff'
             ].sort());
         assert.deepEqual(rows[0].D2.sort(),
-            [   '0x89283082813ffff',
-                '0x89283082817ffff',
-                '0x8928308281bffff',
-                '0x89283082863ffff',
-                '0x89283082823ffff',
-                '0x89283082873ffff',
-                '0x89283082877ffff',
-                '0x8928308287bffff',
-                '0x89283082833ffff',
-                '0x8928308282bffff',
-                '0x8928308283bffff',
-                '0x89283082857ffff',
-                '0x892830828abffff',
-                '0x89283082847ffff',
-                '0x89283082867ffff',
-                '0x89283082803ffff',
-                '0x89283082807ffff',
-                '0x8928308280bffff',
-                '0x8928308280fffff'
+            [   '89283082813ffff',
+                '89283082817ffff',
+                '8928308281bffff',
+                '89283082863ffff',
+                '89283082823ffff',
+                '89283082873ffff',
+                '89283082877ffff',
+                '8928308287bffff',
+                '89283082833ffff',
+                '8928308282bffff',
+                '8928308283bffff',
+                '89283082857ffff',
+                '892830828abffff',
+                '89283082847ffff',
+                '89283082867ffff',
+                '89283082803ffff',
+                '89283082807ffff',
+                '8928308280bffff',
+                '8928308280fffff'
             ].sort());
     });
 
@@ -131,7 +131,7 @@ FROM ids
         const query = `
 WITH ids AS
 (
-    SELECT 608692970266296319 as hid
+    SELECT '87283080dffffff' as hid
 )
 SELECT
     ${SF_DATABASEID}.${SF_SCHEMA_H3}.KRING(hid, 0) AS self_children
@@ -143,6 +143,6 @@ FROM ids
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0].SELF_CHILDREN.map(h => BigInt(h).toString(10)), [ '608692970266296319' ]);
+        assert.deepEqual(rows[0].SELF_CHILDREN, [ '87283080dffffff' ]);
     });
 }); /* KRING integration tests */
