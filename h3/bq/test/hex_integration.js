@@ -17,7 +17,7 @@ describe('HEX', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('H3_ASHEX returns the proper INT64', async () => {
+    it ('H3_FROMINT returns the proper INT64', async () => {
         const query = `
 WITH inputs AS
 (
@@ -27,7 +27,7 @@ WITH inputs AS
     SELECT 4 AS id, NULL AS geom, 5 as resolution
 )
 SELECT
-    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_ASHEX(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution)) as h3_id
+    \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_FROMINT(\`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution)) as h3_id
 FROM inputs
 ORDER BY id ASC`;
 
@@ -42,7 +42,7 @@ ORDER BY id ASC`;
         assert.equal(rows[3].h3_id, null);
     });
 
-    it ('H3_FROMHEX returns the proper INT64', async () => {
+    it ('H3_ASINT returns the proper INT64', async () => {
         const query = `
 WITH inputs AS
 (
@@ -56,8 +56,8 @@ SELECT
 FROM inputs
 WHERE
     \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution) !=
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_FROMHEX(
-            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_ASHEX(
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_ASINT(
+            \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.H3_FROMINT(
                 \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(geom, resolution)))
 `;
 
