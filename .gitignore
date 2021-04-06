@@ -1,2 +1,4 @@
 node_modules/
 snowsql_rt.*
+transformation/bq/.DS_Store
+.DS_Store
