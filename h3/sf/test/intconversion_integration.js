@@ -18,7 +18,7 @@ function execAsync(connection, sqlText) {
     });
 }
 
-describe('INT conversions integration tests', () => {
+describe('INT conversion integration tests', () => {
     let connection;
     before(async () => {
         if (!SF_DATABASEID) {
@@ -97,4 +97,4 @@ WHERE
         assert.equal(rows.length, 0);
     });
 
-}); /* INT conversions integration tests */
+}); /* INT conversion integration tests */
