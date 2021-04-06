@@ -18,7 +18,7 @@ function execAsync(connection, sqlText) {
     });
 }
 
-describe('HEX integration tests', () => {
+describe('INT conversions integration tests', () => {
     let connection;
     before(async () => {
         if (!SF_DATABASEID) {
@@ -72,4 +72,4 @@ WHERE
         assert.equal(rows.length, 0);
     });
 
-}); /* HEX integration tests */
+}); /* INT conversions integration tests */
