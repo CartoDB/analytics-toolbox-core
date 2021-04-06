@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
-describe('HEX', () => {
+describe('INT conversion', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -17,7 +17,7 @@ describe('HEX', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
-    it ('H3_FROMINT returns the proper INT64', async () => {
+    it ('H3_ASINT returns the proper INT64', async () => {
         const query = `
 WITH inputs AS
 (
@@ -68,4 +68,4 @@ WHERE
         assert.equal(rows.length, 0);
     });
 
-}); /* HEX integration tests */
+}); /* INT conversion integration tests */
