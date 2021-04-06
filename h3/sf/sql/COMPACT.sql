@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._COMPACT(h3Array ARRAY)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.COMPACT(h3Array ARRAY)
     RETURNS ARRAY
     LANGUAGE JAVASCRIPT
 AS $$
@@ -13,18 +13,9 @@ AS $$
     if (H3ARRAY == null) {
         return [];
     }
-    const trimmedH3Array = H3ARRAY.map(h => h.substring(2));
-    return h3.compact(trimmedH3Array).map(h => '0x' + h);
+    
+    return h3.compact(H3ARRAY);
 $$;
-
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.COMPACT(h3Array ARRAY)
-    RETURNS ARRAY
-AS $$
-(
-    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._COMPACT(H3ARRAY)
-)
-$$;
-
 
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._UNCOMPACT(h3Array ARRAY, resolution DOUBLE)
     RETURNS ARRAY
@@ -35,8 +26,8 @@ AS $$
     if (H3ARRAY == null || RESOLUTION == null || RESOLUTION < 0 || RESOLUTION > 15) {
         return [];
     }
-    const trimmedH3Array = H3ARRAY.map(h => h.substring(2));
-    return h3.uncompact(trimmedH3Array, Number(RESOLUTION)).map(h => '0x' + h);
+    
+    return h3.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.UNCOMPACT(h3Array ARRAY, resolution INT)

@@ -213,7 +213,7 @@ ORDER BY id ASC`;
         (
             SELECT
                 resolution,
-                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_ASHEX(
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
                     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS hex_id,
                     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
             FROM points, resolution
@@ -254,7 +254,7 @@ ORDER BY id ASC`;
         (
             SELECT
                 resolution,
-                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_ASHEX(
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
                     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS hex_id,
                     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
             FROM points, resolution
@@ -293,7 +293,7 @@ ORDER BY id ASC`;
         (
             SELECT
                 resolution,
-                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_ASHEX(
+                ${SF_DATABASEID}.${SF_SCHEMA_H3}.H3_FROMINT(
                     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS hex_id,
                     ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
             FROM points, resolution

@@ -14,20 +14,17 @@ AS $$
         return null;
     }
     const index = h3.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
-    if (index) {
-        return '0x' + index;
-    }
-    return null;
+    return index;
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.LONGLAT_ASH3(longitude DOUBLE, latitude DOUBLE, resolution INT)
-RETURNS BIGINT
+RETURNS STRING
 AS $$
-    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.H3_FROMHEX(@@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._LONGLAT_ASH3(LONGITUDE, LATITUDE, CAST(RESOLUTION AS DOUBLE)))
+    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._LONGLAT_ASH3(LONGITUDE, LATITUDE, CAST(RESOLUTION AS DOUBLE))
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_ASH3(geog GEOGRAPHY, resolution INT)
-    RETURNS BIGINT
+    RETURNS STRING
 AS $$
     IFF(ST_NPOINTS(geog) = 1, 
         @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.LONGLAT_ASH3(ST_X(GEOG), ST_Y(GEOG), CAST(RESOLUTION AS DOUBLE)),
@@ -60,9 +57,7 @@ AS $$
         []
     ).filter(h => h != null);
     hexes = [...new Set(hexes)];
-
-    const ids = hexes.map(h => '0x' + h);
-    return ids;
+    return hexes;
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_ASH3_POLYFILL(geog GEOGRAPHY, resolution INT)

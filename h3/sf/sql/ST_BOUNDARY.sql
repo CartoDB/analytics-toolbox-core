@@ -4,18 +4,19 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ST_BOUNDARY(index_lower DOUBLE, index_upper DOUBLE)
+CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ST_BOUNDARY(index STRING)
     RETURNS STRING
     LANGUAGE JAVASCRIPT
 AS $$
     @@LIBRARY_FILE_CONTENT@@
 
-    if (INDEX_LOWER == null || INDEX_UPPER == null)
+    if (!INDEX)
         return null;
-    const h3IndexInput = [Number(INDEX_LOWER), Number(INDEX_UPPER)];
-    if (!h3.h3IsValid(h3IndexInput))
+        
+    if (!h3.h3IsValid(INDEX))
         return null;
-    const coords = h3.h3ToGeoBoundary(h3IndexInput, true);
+        
+    const coords = h3.h3ToGeoBoundary(INDEX, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
         output += coords[i][0] + ` ` + coords[i][1] + `,`;
@@ -24,16 +25,8 @@ AS $$
     return output;
 $$;
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_BOUNDARY(index BIGINT)
-    RETURNS GEOGRAPHY
-AS $$
-    TRY_TO_GEOGRAPHY(@@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ST_BOUNDARY(
-        CAST(BITAND(INDEX, 4294967295) AS DOUBLE), 
-        CAST(BITSHIFTRIGHT(INDEX, 32) AS DOUBLE)))
-$$;
-
 CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_BOUNDARY(index STRING)
     RETURNS GEOGRAPHY
 AS $$
-    @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ST_BOUNDARY(@@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.H3_FROMHEX(INDEX))
+    TRY_TO_GEOGRAPHY(@@SF_DATABASEID@@.@@SF_SCHEMA_H3@@._ST_BOUNDARY(INDEX))
 $$;
