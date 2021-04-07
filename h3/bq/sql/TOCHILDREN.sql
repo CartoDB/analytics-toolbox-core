@@ -13,7 +13,7 @@ AS
 """
     if (!index)
         return null;
-        
+
     if (!h3.h3IsValid(index))
         return null;
 

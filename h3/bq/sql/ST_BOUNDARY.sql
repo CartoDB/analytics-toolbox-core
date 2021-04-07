@@ -13,10 +13,10 @@ AS
 """
     if (!index)
         return null;
-        
+ 
     if (!h3.h3IsValid(index))
         return null;
-        
+
     const coords = h3.h3ToGeoBoundary(index, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
