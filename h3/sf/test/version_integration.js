@@ -54,6 +54,6 @@ describe('H3 integration tests', () => {
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].VERSIONCOL, '3.7.0.0');
+        assert.equal(rows[0].VERSIONCOL, '3.7.0.1');
     });
 }); /* H3 integration tests */

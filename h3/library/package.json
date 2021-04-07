@@ -7,8 +7,11 @@
     "tape": "^5.1.1"
   },
   "scripts": {
-    "test" : "tape test/*js"
+    "test": "tape test/*js"
   },
   "author": "",
-  "license": "Apache"
+  "license": "Apache",
+  "dependencies": {
+    "eslint": "^7.23.0"
+  }
 }

@@ -6,7 +6,10 @@
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.VERSION`()
     RETURNS STRING
+    DETERMINISTIC
+    LANGUAGE js
+    OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
 AS
-(
-    '3.7.0.0'
-);
+"""
+    return h3Version();
+""";
