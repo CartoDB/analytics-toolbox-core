@@ -4,12 +4,11 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.VERSION`()
+CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.VERSION()
     RETURNS STRING
-    DETERMINISTIC
-    LANGUAGE js
-    OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
-AS
-"""
+    LANGUAGE JAVASCRIPT
+AS $$
+    @@LIBRARY_FILE_CONTENT@@
+    
     return h3Version();
-""";
+$$;

@@ -4,11 +4,17 @@
   "description": "",
   "main": "",
   "devDependencies": {
+    "eslint": "^7.23.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
     "tape": "^5.1.1"
   },
   "scripts": {
-    "test" : "tape test/*js"
+    "test": "tape test/*js"
   },
   "author": "",
-  "license": "Apache"
+  "license": "Apache",
+  "dependencies": {}
 }
