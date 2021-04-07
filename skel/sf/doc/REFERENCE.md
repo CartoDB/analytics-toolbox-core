@@ -27,7 +27,7 @@ Talk here about possible restrictions of use that your UDF could have.
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.EXAMPLE_ADD(5);
+SELECT SFCARTO.SKEL.EXAMPLE_ADD(5);
 -- 6
 ```
 

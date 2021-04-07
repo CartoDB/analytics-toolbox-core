@@ -27,7 +27,7 @@ Talk here about possible restrictions of use that your UDF could have.
 **Example**
 
 ```sql
-SELECT bqcarto.quadkey.EXAMPLE_ADD(5);
+SELECT bqcarto.skel.EXAMPLE_ADD(5);
 -- 6
 ```
 
