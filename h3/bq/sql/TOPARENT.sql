@@ -4,24 +4,18 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__TOPARENT`(index_lower INT64, index_upper INT64, resolution INT64)
-    RETURNS INT64
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.TOPARENT`(index STRING, resolution INT64)
+    RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
 AS
 """
-    if (index_lower == null || index_upper == null)
+    if (!index)
         return null;
-    const h3IndexInput = [Number(index_lower), Number(index_upper)];
-    if (!h3.h3IsValid(h3IndexInput))
-        return null;
-    return '0x' + h3.h3ToParent([Number(index_lower), Number(index_upper)], Number(resolution));
-""";
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.TOPARENT`(index INT64, resolution INT64)
-    RETURNS INT64
-AS
-(
-    `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__TOPARENT`(index & 0x00000000FFFFFFFF, index >> 32, resolution)
-);
+    if (!h3.h3IsValid(index))
+        return null;
+
+    return h3.h3ToParent(index, Number(resolution));
+""";

@@ -59,7 +59,7 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid
+    SELECT 2 AS id, 'ff283473fffffff' as hid
 )
 SELECT
     id,
@@ -81,18 +81,18 @@ ORDER BY id ASC
         const query = `
 WITH ids AS
 (
-    SELECT 1 AS id, '@c6z-c2g-dgk' AS pk, 0x8a62e9d08a1ffff AS h3 UNION ALL
-    SELECT 2 AS id, '@63m-vc4-z75' AS pk, 0x8a2a9c580577fff AS h3 UNION ALL
-    SELECT 3 AS id, '@7qg-xf9-j5f' AS pk, 0x8a3c9ea2bd4ffff AS h3 UNION ALL
-    SELECT 4 AS id, '@bhm-9m8-gtv' AS pk, 0x8a5b4c1047b7fff AS h3 UNION ALL
-    SELECT 5 AS id, '@h5z-gcq-kvf' AS pk, 0x8a8e8116a6d7fff AS h3 UNION ALL
-    SELECT 6 AS id, '@7v4-m2p-3t9' AS pk, 0x8a3e0ba6659ffff AS h3 UNION ALL
-    SELECT 7 AS id, '@hvb-5d7-92k' AS pk, 0x8a961652a407fff AS h3 UNION ALL
-    SELECT 8 AS id, '@ab2-k43-xqz' AS pk, 0x8a01262c914ffff AS h3 UNION ALL
-    SELECT 9 AS id, '@adk-f8f-dn5' AS pk, 621534447861465087 AS h3 UNION ALL
-    SELECT 10 AS id, '@jpx-58g-p9z' AS pk, 624300196419731455 AS h3 UNION ALL
-    SELECT 11 AS id, '@4dd-yfx-6rk' AS pk, 621920217372721151 AS h3 UNION ALL
-    SELECT 12 AS id, '@crb-3nn-zzz' AS pk, 623342631588003839 AS h3
+    SELECT 1 AS id, '@c6z-c2g-dgk' AS pk, '8a62e9d08a1ffff' AS h3 UNION ALL
+    SELECT 2 AS id, '@63m-vc4-z75' AS pk, '8a2a9c580577fff' AS h3 UNION ALL
+    SELECT 3 AS id, '@7qg-xf9-j5f' AS pk, '8a3c9ea2bd4ffff' AS h3 UNION ALL
+    SELECT 4 AS id, '@bhm-9m8-gtv' AS pk, '8a5b4c1047b7fff' AS h3 UNION ALL
+    SELECT 5 AS id, '@h5z-gcq-kvf' AS pk, '8a8e8116a6d7fff' AS h3 UNION ALL
+    SELECT 6 AS id, '@7v4-m2p-3t9' AS pk, '8a3e0ba6659ffff' AS h3 UNION ALL
+    SELECT 7 AS id, '@hvb-5d7-92k' AS pk, '8a961652a407fff' AS h3 UNION ALL
+    SELECT 8 AS id, '@ab2-k43-xqz' AS pk, '8a01262c914ffff' AS h3 UNION ALL
+    SELECT 9 AS id, '@adk-f8f-dn5' AS pk, '8a022498c737fff' AS h3 UNION ALL
+    SELECT 10 AS id, '@jpx-58g-p9z' AS pk, '8a9f5b890cdffff' AS h3 UNION ALL
+    SELECT 11 AS id, '@4dd-yfx-6rk' AS pk, '8a1812483227fff' AS h3 UNION ALL
+    SELECT 12 AS id, '@crb-3nn-zzz' AS pk, '8a68ed22128ffff' AS h3
 )
 SELECT
     *

@@ -4,19 +4,20 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_BOUNDARY`(index_lower INT64, index_upper INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_BOUNDARY`(index STRING)
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
 AS
 """
-    if (index_lower == null || index_upper == null)
+    if (!index)
         return null;
-    const h3IndexInput = [Number(index_lower), Number(index_upper)];
-    if (!h3.h3IsValid(h3IndexInput))
+ 
+    if (!h3.h3IsValid(index))
         return null;
-    const coords = h3.h3ToGeoBoundary(h3IndexInput, true);
+
+    const coords = h3.h3ToGeoBoundary(index, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
         output += coords[i][0] + ` ` + coords[i][1] + `,`;
@@ -25,9 +26,9 @@ AS
     return output;
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ST_BOUNDARY`(index INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ST_BOUNDARY`(index STRING)
     RETURNS GEOGRAPHY
 AS
 (
-    ST_GEOGFROMTEXT(`@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_BOUNDARY`(index & 0x00000000FFFFFFFF, index >> 32))
+    SAFE.ST_GEOGFROMTEXT(`@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_BOUNDARY`(index))
 );

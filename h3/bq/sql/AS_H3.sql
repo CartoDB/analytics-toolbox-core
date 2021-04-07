@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.LONGLAT_ASH3`(longitude FLOAT64, latitude FLOAT64, resolution INT64)
-    RETURNS INT64
+    RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
@@ -15,21 +15,18 @@ AS
         return null;
     }
     const index = h3.geoToH3(Number(latitude), Number(longitude), Number(resolution));
-    if (index) {
-        return '0x' + index;
-    }
-    return null;
+    return index;
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ST_ASH3`(geog GEOGRAPHY, resolution INT64)
-    RETURNS INT64
+    RETURNS STRING
 AS
 (
     `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.LONGLAT_ASH3`(SAFE.ST_X(geog), SAFE.ST_Y(geog), resolution)
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_ASH3_POLYFILL`(geojson STRING, _resolution INT64)
-    RETURNS ARRAY<INT64>
+    RETURNS ARRAY<STRING>
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@H3_BQ_LIBRARY@@"])
@@ -56,12 +53,11 @@ AS
     ).filter(h => h != null);
     hexes = [...new Set(hexes)];
 
-    const ids = hexes.map(h => '0x' + h);
-    return ids;
+    return hexes;
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.ST_ASH3_POLYFILL`(geog GEOGRAPHY, resolution INT64)
-    RETURNS ARRAY<INT64>
+    RETURNS ARRAY<STRING>
 AS
 (
     `@@BQ_PROJECTID@@.@@BQ_DATASET_H3@@.__ST_ASH3_POLYFILL`(ST_ASGEOJSON(geog), resolution)

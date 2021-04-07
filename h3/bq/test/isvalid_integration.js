@@ -23,10 +23,10 @@ WITH ids AS
 (
     -- Invalid parameters
     SELECT 1 AS id, NULL as hid UNION ALL
-    SELECT 2 AS id, 0xff283473fffffff as hid UNION ALL
+    SELECT 2 AS id, 'ff283473fffffff' as hid UNION ALL
 
     -- Valid parameters
-    SELECT 3 AS id, 0x85283473fffffff as hid UNION ALL
+    SELECT 3 AS id, '85283473fffffff' as hid UNION ALL
     SELECT 4 AS id, \`${BQ_PROJECTID}\`.\`${BQ_DATASET_H3}\`.ST_ASH3(ST_GEOGPOINT(-122.0553238, 37.3615593), 5)
 )
 SELECT

@@ -45,9 +45,9 @@ ORDER BY id ASC`;
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 7);
-        assert.equal(rows[0].h3_id, "599686042433355775");
-        assert.equal(rows[1].h3_id, "600235711274156031");
-        assert.equal(rows[2].h3_id, "644577696667402240");
+        assert.equal(rows[0].h3_id, "85283473fffffff");
+        assert.equal(rows[1].h3_id, "8547732ffffffff");
+        assert.equal(rows[2].h3_id, "8f2000000000000");
         assert.equal(rows[3].h3_id, null);
         assert.equal(rows[4].h3_id, null);
         assert.equal(rows[5].h3_id, null);
@@ -103,14 +103,14 @@ ORDER BY id ASC`;
         });
 
         assert.equal(rows.length, 8);
-        assert.equal(rows[0].h3_id, "599686042433355775");
-        assert.equal(rows[1].h3_id, "600235711274156031");
-        assert.equal(rows[2].h3_id, "644577696667402240");
+        assert.equal(rows[0].h3_id, "85283473fffffff");
+        assert.equal(rows[1].h3_id, "8547732ffffffff");
+        assert.equal(rows[2].h3_id, "8f2000000000000");
         assert.equal(rows[3].h3_id, null);
         assert.equal(rows[4].h3_id, null);
         assert.equal(rows[5].h3_id, null);
-        assert.equal(rows[6].h3_id, '599686042433355775');
-        assert.equal(rows[7].h3_id, '599686042433355775');
+        assert.equal(rows[6].h3_id, '85283473fffffff');
+        assert.equal(rows[7].h3_id, '85283473fffffff');
     });
 
     it ('ST_ASH3_POLYFILL returns the proper INT64s', async () => {
