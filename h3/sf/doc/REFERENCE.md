@@ -203,7 +203,7 @@ Returns the H3 cell index of the parent of the given hexagon at the given resolu
 
 **Return type**
 
-`BIGINT`
+`STRING`
 
 **Example**
 
