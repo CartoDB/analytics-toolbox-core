@@ -70,7 +70,7 @@ Returns an array with all the H3 cell indexes **with centers** contained in a gi
 
 **Return type**
 
-`ARRAY<INT64>`
+`ARRAY<STRING>`
 
 **Example**
 
@@ -94,7 +94,7 @@ h3.ST_BOUNDARY(index)
 
 Returns a geography representing the H3 cell. It will return `null` on error (invalid input).
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 
 **Return type**
 
@@ -117,7 +117,7 @@ h3.ISVALID(index)
 
 Returns `true` when the given index is valid, `false` otherwise.
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 
 **Return type**
 
@@ -198,7 +198,7 @@ h3.TOPARENT(index, resolution)
 
 Returns the H3 cell index of the parent of the given hexagon at the given resolution.
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 * `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
 **Return type**
@@ -222,7 +222,7 @@ h3.TOCHILDREN(index, resolution)
 
 Returns an array with the indexes of the children/descendents of the given hexagon at the given resolution.
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 * `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
 **Return type**
@@ -252,7 +252,7 @@ h3.ISPENTAGON(index)
 
 Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even on invalid input.
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 
 **Return type**
 
@@ -303,7 +303,7 @@ h3.KRING(index, distance)
 
 Returns an array with the indexes of all hexagons within `distance` of the given input hexagon. The order of the hexagons is undefined. Returns `null` on invalid input.
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 * `distance`: `INT64` distance (in number of cells) to the source.
 
 **Return type**
@@ -331,9 +331,9 @@ h3.HEXRING(index, distance)
 
 **Description**
 
-Get all hexagons in a **hollow hexagonal ring** centered at origin with sides of a given length. Unlike kRing, this function will return `null` if there is a pentagon anywhere in the ring.
+Get all hexagons in a **hollow hexagonal ring** centered at origin with sides of a given length. Unlike KRING, this function will return `null` if there is a pentagon anywhere in the ring.
 
-* `index`: `STRING` H3 cell index.
+* `index`: `STRING` The H3 cell index.
 * `distance`: `INT64` distance (in cells) to the source.
 
 **Return type**
@@ -370,5 +370,5 @@ Returns the current version of the H3 module.
 
 ```sql
 SELECT bqcarto.h3.VERSION();
--- 3.7.0.0
+-- 3.7.0.1
 ```
