@@ -35,7 +35,6 @@ check-linter: check-eslint
 
 $(TARGET): $(JS_FILES)
 	rm -f $(TARGET)
-	touch $(TARGET)
 	for n in $(JS_FILES); do \
 		$(CAT) $$n >> $(TARGET) || exit; \
 	done
