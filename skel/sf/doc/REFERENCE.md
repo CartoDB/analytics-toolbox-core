@@ -14,7 +14,7 @@ skel.EXAMPLE_ADD (value)
 
 Adds 1 to input `value`.
 
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
+* `value`: `INT` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
 
 **Constraints**
 
@@ -22,12 +22,12 @@ Talk here about possible restrictions of use that your UDF could have.
 
 **Return type**
 
-`INT64`
+`INT`
 
 **Example**
 
 ```sql
-SELECT bqcarto.skel.EXAMPLE_ADD(5);
+SELECT SFCARTO.SKEL.EXAMPLE_ADD(5);
 -- 6
 ```
 
