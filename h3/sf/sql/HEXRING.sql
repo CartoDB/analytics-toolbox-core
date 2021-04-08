@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.HEXRING(index STRING, distance DOUBLE)
+CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.HEXRING(index STRING, distance DOUBLE)
     RETURNS ARRAY
     LANGUAGE JAVASCRIPT
 AS $$

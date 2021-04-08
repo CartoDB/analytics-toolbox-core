@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ISVALID(index STRING)
+CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_H3@@.ISVALID(index STRING)
     RETURNS BOOLEAN
     LANGUAGE JAVASCRIPT
 AS $$
