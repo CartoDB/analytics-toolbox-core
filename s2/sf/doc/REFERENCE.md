@@ -1,62 +1,141 @@
-## Reference
+## s2
 
-### S2
+Our S2 module is based on a port of the official s2 geometry library created by Google. For more information about S2 check the [library's website](http://s2geometry.io/) or the [Overview section](/spatial-extension-bq/spatial-indexes/overview/#s2) of this documentation.
 
-This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
-
-### EXAMPLE_ADD
+### ID_FROMHILBERTQUADKEY
 
 {{% bannerNote type="code" %}}
-s2.EXAMPLE_ADD (value)
+S2.ID_FROMHILBERTQUADKEY(hquadkey)
 {{%/ bannerNote %}}
 
 **Description**
 
-Adds 1 to input `value`.
+Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) into a S2 cell ID.
 
-* `value`: `INT` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
-
-**Constraints**
-
-Talk here about possible restrictions of use that your UDF could have.
+* `hquadkey`: `STRING` Hilbert quadkey to be converted.
 
 **Return type**
 
-`INT`
+`BIGINT`
 
 **Example**
 
 ```sql
-SELECT SFCARTO.S2.EXAMPLE_ADD(5);
--- 6
+SELECT SFCARTO.S2.ID_FROMHILBERTQUADKEY('0/30002221');
+-- 1735346007979327488
 ```
 
-Here is a tip:
-
-{{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
-{{%/ bannerNote %}}
-
-#### VERSION
+### HILBERTQUADKEY_FROMID
 
 {{% bannerNote type="code" %}}
-s2.VERSION()
+S2.HILBERTQUADKEY_FROMID(id)
 {{%/ bannerNote %}}
 
 **Description**
 
-Returns the current version of the s2 library. Here is some sample code block:
+Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert curve quadtree ID).
 
-```js
-function s2ExampleAdd(v) {
-    return v + 1;
-}
+* `id`: `BIGINT` S2 cell ID to be converted.
+
+**Return type**
+
+`STRING`
+
+**Example**
+
+```sql
+SELECT SFCARTO.S2.HILBERTQUADKEY_FROMID(1735346007979327488);
+-- 0/30002221
 ```
 
-And a table:
+### LONGLAT_ASID
 
-| Column1 | Description |
-| :----- | :------ |
-|`taters`| Few and good. |
-|`potatoes`| Boil 'em, mash 'em, stick 'em in a stew.|
-|`chips`| Lovely big golden chips with a nice piece of fried fish.|
+{{% bannerNote type="code" %}}
+S2.LONGLAT_ASID(longitude, latitude, resolution)
+{{%/ bannerNote %}}
+
+**Description**
+
+Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
+
+* `longitude`: `DOUBLE` horizontal coordinate on the map.
+* `latitude`: `DOUBLE` vertical coordinate on the map.
+* `resolution`: `INT` level of detail or zoom.
+
+**Return type**
+
+`BIGINT`
+
+**Example**
+
+```sql
+SELECT SFCARTO.S2.LONGLAT_ASID(40.4168, -3.7038, 8);
+-- 1735346007979327488
+```
+
+### ST_ASID
+
+{{% bannerNote type="code" %}}
+S2.ST_ASID(point, resolution)
+{{%/ bannerNote %}}
+
+**Description**
+
+Returns the S2 cell ID of a given point at a given level of detail.
+
+* `point`: `GEOGRAPHY` point to get the ID from.
+* `resolution`: `INT` level of detail or zoom.
+
+**Return type**
+
+`BIGINT`
+
+**Example**
+
+```sql
+SELECT SFCARTO.S2.ST_ASID(ST_POINT(40.4168, -3.7038), 8);
+-- 1735346007979327488
+```
+
+### ST_BOUNDARY
+
+{{% bannerNote type="code" %}}
+S2.ST_BOUNDARY(id)
+{{%/ bannerNote %}}
+
+**Description**
+
+Returns the boundary for a given S2 cell ID. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it into geography.
+
+* `id`: `BIGINT` S2 cell ID to get the boundary geography from.
+
+**Return type**
+
+`GEOGRAPHY`
+
+**Example**
+
+```sql
+SELECT SFCARTO.S2.ST_BOUNDARY(1735346007979327488);
+-- { "coordinates": [ [ [ 40.30886257091771, -3.8626948530725476 ], [ 40.30886257091771, -3.6086596856604585 ] ...
+```
+
+### VERSION
+
+{{% bannerNote type="code" %}}
+S2.VERSION()
+{{%/ bannerNote %}}
+
+**Description**
+
+Returns the current version of the S2 module.
+
+**Return type**
+
+`STRING`
+
+**Example**
+
+```sql
+SELECT SFCARTO.S2.VERSION();
+-- 1.2.10
