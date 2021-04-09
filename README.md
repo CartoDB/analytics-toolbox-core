@@ -1,4 +1,4 @@
-## 🔥 UPDATE ##
+## 🔥 UPDATE/NEWS ##
 
 We have finally completed the refactor and we have now ready all UDF functions under the new system. You can explore documentation about it in our [Official docuemntation](https://docs.carto.com/spatial-extension-bq/overview/getting-started/)
 
@@ -14,6 +14,12 @@ it is now:
 ```sql
 SELECT bqcarto.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
 ```
+
+## 💬 New Discord channel 
+
+If you have questions or want to discuss anything about the CARTO Spatial Extension we have created a Discord channel that you can join here:
+
+https://discord.gg/4U5XVrGyqW
 
 # CARTO Spatial Extension
 
