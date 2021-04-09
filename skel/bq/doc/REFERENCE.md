@@ -1,6 +1,4 @@
-## Reference
-
-### SKEL
+## skel
 
 This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
 
@@ -37,7 +35,7 @@ Here is a tip:
 It's dangerous to go alone! Take this.
 {{%/ bannerNote %}}
 
-#### VERSION
+### VERSION
 
 {{% bannerNote type="code" %}}
 skel.VERSION()
@@ -45,18 +43,15 @@ skel.VERSION()
 
 **Description**
 
-Returns the current version of the skel library. Here is some sample code block:
+Returns the current version of the skel module.
 
-```js
-function skelExampleAdd(v) {
-    return v + 1;
-}
+**Return type**
+
+`STRING`
+
+**Example**
+
+```sql
+SELECT bqcarto.skel.VERSION();
+-- 1.0.0
 ```
-
-And a table:
-
-| Column1 | Description |
-| :----- | :------ |
-|`taters`| Few and good. |
-|`potatoes`| Boil 'em, mash 'em, stick 'em in a stew.|
-|`chips`| Lovely big golden chips with a nice piece of fried fish.|

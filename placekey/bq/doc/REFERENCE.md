@@ -101,4 +101,4 @@ Returns the current version of the placekey module.
 
 ```sql
 SELECT bqcarto.placekey.VERSION();
--- 1.0.1
+-- 1.0.1.1

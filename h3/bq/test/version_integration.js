@@ -26,7 +26,7 @@ describe('VERSION', () => {
             [rows] = await job.getQueryResults();
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].versioncol, "3.7.0.1");
+        assert.equal(rows[0].versioncol, '3.7.0.1');
     });
 
 }); /* VERSION integration tests */

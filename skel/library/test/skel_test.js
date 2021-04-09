@@ -6,7 +6,7 @@ eval(fs.readFileSync('../../skel_library.js')+'');
 describe('SKEL unit tests', () => {
 
     it ('Version', async () => {
-        assert.equal(skelVersion(), 1);
+        assert.equal(skelVersion(), '1.0.0');
     });
     
     it ('Adds stuff', async () => {

@@ -25,6 +25,6 @@ describe('S2 integration tests', () => {
             [rows] = await job.getQueryResults();
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].versioncol, "1.2.10");
+        assert.equal(rows[0].versioncol, '1.2.10.0');
     });
 }); /* S2 integration tests */
