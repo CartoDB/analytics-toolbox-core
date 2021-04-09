@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_SKEL@@.VERSION`()
-    RETURNS INT64
+    RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@SKEL_BQ_LIBRARY@@"])
