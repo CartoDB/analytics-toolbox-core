@@ -138,4 +138,4 @@ Returns the current version of the S2 module.
 
 ```sql
 SELECT bqcarto.s2.VERSION();
--- 1.2.10
+-- 1.2.10.0

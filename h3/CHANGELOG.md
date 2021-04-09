@@ -1,9 +1,18 @@
 # Changelog
+All notable changes to this project will be documented in this file.
 
-## 3.7.0.1
-* [ch145713](https://app.clubhouse.io/cartoteam/story/145713/fix-st-boundary-generates-error): Fix ST_BOUNDARY generating error when not able to parse geometry.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.7.0.1] - 2021-04-09
+
+### Changed
 * Use hexadecimal as default type instead of int for h3 indexes.
 
-## 3.7.0.0
+### Fixed
+* Fix ST_BOUNDARY generating error when not able to parse geometry.
 
+## [3.7.0.0] - 2021-03-31
+
+### Added
 * Initial implementation of the module, based on h3-js v3.7.0.

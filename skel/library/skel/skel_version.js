@@ -6,5 +6,5 @@
 
 /* exported skelVersion */
 function skelVersion() {
-    return 1;
+    return '1.0.0';
 }
