@@ -5,7 +5,7 @@ Our S2 module is based on a port of the official s2 geometry library created by 
 ### ID_FROMHILBERTQUADKEY
 
 {{% bannerNote type="code" %}}
-s2.ID_FROMHILBERTQUADKEY(hquadkey)
+S2.ID_FROMHILBERTQUADKEY(hquadkey)
 {{%/ bannerNote %}}
 
 **Description**
@@ -16,26 +16,26 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 
 **Return type**
 
-`INT64`
+`BIGINT`
 
 **Example**
 
 ```sql
-SELECT bqcarto.s2.ID_FROMHILBERTQUADKEY("0/30002221");
+SELECT SFCARTO.S2.ID_FROMHILBERTQUADKEY('0/30002221');
 -- 1735346007979327488
 ```
 
 ### HILBERTQUADKEY_FROMID
 
 {{% bannerNote type="code" %}}
-s2.HILBERTQUADKEY_FROMID(id)
+S2.HILBERTQUADKEY_FROMID(id)
 {{%/ bannerNote %}}
 
 **Description**
 
 Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert curve quadtree ID).
 
-* `id`: `INT64` S2 cell ID to be converted.
+* `id`: `BIGINT` S2 cell ID to be converted.
 
 **Return type**
 
@@ -44,39 +44,39 @@ Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert cur
 **Example**
 
 ```sql
-SELECT bqcarto.s2.HILBERTQUADKEY_FROMID(1735346007979327488);
+SELECT SFCARTO.S2.HILBERTQUADKEY_FROMID(1735346007979327488);
 -- 0/30002221
 ```
 
 ### LONGLAT_ASID
 
 {{% bannerNote type="code" %}}
-s2.LONGLAT_ASID(longitude, latitude, resolution)
+S2.LONGLAT_ASID(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
 
 Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 
-* `longitude`: `FLOAT64` horizontal coordinate on the map.
-* `latitude`: `FLOAT64` vertical coordinate on the map.
-* `resolution`: `INT64` level of detail or zoom.
+* `longitude`: `DOUBLE` horizontal coordinate on the map.
+* `latitude`: `DOUBLE` vertical coordinate on the map.
+* `resolution`: `INT` level of detail or zoom.
 
 **Return type**
 
-`INT64`
+`BIGINT`
 
 **Example**
 
 ```sql
-SELECT bqcarto.s2.LONGLAT_ASID(40.4168, -3.7038, 8);
+SELECT SFCARTO.S2.LONGLAT_ASID(40.4168, -3.7038, 8);
 -- 1735346007979327488
 ```
 
 ### ST_ASID
 
 {{% bannerNote type="code" %}}
-s2.ST_ASID(point, resolution)
+S2.ST_ASID(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -84,30 +84,30 @@ s2.ST_ASID(point, resolution)
 Returns the S2 cell ID of a given point at a given level of detail.
 
 * `point`: `GEOGRAPHY` point to get the ID from.
-* `resolution`: `INT64` level of detail or zoom.
+* `resolution`: `INT` level of detail or zoom.
 
 **Return type**
 
-`INT64`
+`BIGINT`
 
 **Example**
 
 ```sql
-SELECT bqcarto.s2.ST_ASID(ST_GEOGPOINT(40.4168, -3.7038), 8);
+SELECT SFCARTO.S2.ST_ASID(ST_POINT(40.4168, -3.7038), 8);
 -- 1735346007979327488
 ```
 
 ### ST_BOUNDARY
 
 {{% bannerNote type="code" %}}
-s2.ST_BOUNDARY(id)
+S2.ST_BOUNDARY(id)
 {{%/ bannerNote %}}
 
 **Description**
 
 Returns the boundary for a given S2 cell ID. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it into geography.
 
-* `id`: `INT64` S2 cell ID to get the boundary geography from.
+* `id`: `BIGINT` S2 cell ID to get the boundary geography from.
 
 **Return type**
 
@@ -116,14 +116,14 @@ Returns the boundary for a given S2 cell ID. We extract the boundary by getting 
 **Example**
 
 ```sql
-SELECT bqcarto.s2.ST_BOUNDARY(1735346007979327488);
--- POLYGON((40.6346851320784 -3.8440544113597, 40.6346851320784 ...
+SELECT SFCARTO.S2.ST_BOUNDARY(1735346007979327488);
+-- { "coordinates": [ [ [ 40.30886257091771, -3.8626948530725476 ], [ 40.30886257091771, -3.6086596856604585 ] ...
 ```
 
 ### VERSION
 
 {{% bannerNote type="code" %}}
-s2.VERSION()
+S2.VERSION()
 {{%/ bannerNote %}}
 
 **Description**
@@ -137,5 +137,5 @@ Returns the current version of the S2 module.
 **Example**
 
 ```sql
-SELECT bqcarto.s2.VERSION();
--- 1.2.10.0
+SELECT SFCARTO.S2.VERSION();
+-- 1.2.10
