@@ -1,57 +1,29 @@
 ## squelleton
 
-This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
-
-### EXAMPLE_ADD
+### ST_BUFFER
 
 {{% bannerNote type="code" %}}
-squelleton.EXAMPLE_ADD (value)
+squelleton.ST_BUFFER(geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
 {{%/ bannerNote %}}
 
 **Description**
 
-Adds 1 to input `value`.
+Calculates a Geography buffer for input features for a given radius. Units supported are miles, kilometers, and degrees. https://turfjs.org/docs/#buffer
 
-* `value`: `INT64` This is an example inlined code <code>\`projectID.dataset.tablename\`</code>.
-
-**Constraints**
-
-Talk here about possible restrictions of use that your UDF could have.
-
-**Return type**
-
-`INT64`
-
-**Example**
-
-```sql
-SELECT bqcarto.squelleton.EXAMPLE_ADD(5);
--- 6
-```
-
-Here is a tip:
-
-{{% bannerNote type="note" title="tip"%}}
-It's dangerous to go alone! Take this.
-{{%/ bannerNote %}}
-
-### VERSION
-
-{{% bannerNote type="code" %}}
-squelleton.VERSION()
-{{%/ bannerNote %}}
-
-**Description**
-
-Returns the current version of the squelleton module.
+* `geog`: `GEOGRAPHY` input to be buffered.
+* `radius`: `FLOAT64` distance to draw the buffer (negative values are allowed).
+* `units`: `STRING` any of the options supported by turf units: miles, kilometers, and degrees.
+* `steps`: `INT64` number of steps.
 
 **Return type**
 
-`STRING`
+`GEOGRAPHY`
 
 **Example**
 
-```sql
-SELECT bqcarto.squelleton.VERSION();
--- 1.0.0
+``` sql
+SELECT bqcarto.squelleton.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, 'kilometers', 10);
+-- POLYGON((-73.9881354374691 40.7127993926494 ... 
 ```
+
+
