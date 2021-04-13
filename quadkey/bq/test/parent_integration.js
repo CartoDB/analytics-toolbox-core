@@ -47,8 +47,19 @@ describe('TOPARENT integration tests', () => {
         assert.equal(rows.length, 0);
     });
 
-    it ('TOPARENT should reject quadints at zoom 0', async () => {
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOPARENT(0,0)`;
+    it ('TOPARENT should reject quadints with lower level of zoom than the passed resolution', async () => {
+        let query = `-- Passing zoom 3 quadint
+        SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOPARENT(291,4)`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        query = `-- Passing zoom 10 quadint
+        SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOPARENT(3280010,11)`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        query = `-- Passing zoom 14 quadint
+        SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.TOPARENT(52432014,15)`;
         await assert.rejects( async () => {
             [rows] = await client.query(query, queryOptions);
         });
