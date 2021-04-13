@@ -77,13 +77,13 @@ ORDER BY id ASC
         // that does not fall in the margin of error between the 7 children and
         // the parent's true boundaries at every resolution
      */
-        const query = `
+        let query = `
 WITH ids AS
 (
     SELECT
         ST_POINT(-122.409290778685, 37.81331899988944) as point,
         seq4() + 1 AS resolution
-    FROM TABLE(generator(rowcount => 11))
+    FROM TABLE(generator(rowcount => 5))
 )
 SELECT
     *
@@ -94,6 +94,26 @@ WHERE
 `;
 
         let rows;
+        await assert.doesNotReject(async () => {
+            [statement, rows] = await execAsync(connection, query);
+        });
+        assert.equal(rows.length, 0);
+
+        query = `
+WITH ids AS
+(
+    SELECT
+        ST_POINT(-122.409290778685, 37.81331899988944) as point,
+        seq4() + 6 AS resolution
+    FROM TABLE(generator(rowcount => 5))
+)
+SELECT
+    *
+FROM ids
+WHERE
+    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(point, resolution) != ${SF_DATABASEID}.${SF_SCHEMA_H3}.TOPARENT(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(point, resolution + 1), resolution) OR
+    ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(point, resolution) != ${SF_DATABASEID}.${SF_SCHEMA_H3}.TOPARENT(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(point, resolution + 2), resolution)
+`;
         await assert.doesNotReject(async () => {
             [statement, rows] = await execAsync(connection, query);
         });

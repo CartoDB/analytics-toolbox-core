@@ -46,7 +46,7 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 
 **Return type**
 
-`INT64`
+`STRING`
 
 **Example**
 

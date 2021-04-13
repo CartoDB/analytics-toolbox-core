@@ -202,12 +202,8 @@ ORDER BY id ASC`;
         let query = `
         WITH points AS
         (
-            SELECT ST_POINT(0, 0) AS geog
-        ),
-        resolution AS
-        (
-            SELECT seq4() AS resolution
-            FROM TABLE(generator(rowcount => 16))
+            SELECT ST_POINT(0, 0) AS geog,
+            7 AS resolution
         ),
         cells AS
         (
@@ -215,7 +211,7 @@ ORDER BY id ASC`;
                 resolution,
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution) AS hex_id,
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
-            FROM points, resolution
+            FROM points
         ),
         polyfill AS
         (
@@ -241,13 +237,8 @@ ORDER BY id ASC`;
         query = `
         WITH points AS
         (
-            SELECT ST_POINT(-122.4089866999972145, 37.813318999983238) AS geog
-        
-        ),
-        resolution AS
-        (
-            SELECT seq4() AS resolution
-            FROM TABLE(generator(rowcount => 16))
+            SELECT ST_POINT(-122.4089866999972145, 37.813318999983238) AS geog,
+            7 AS resolution
         ),
         cells AS
         (
@@ -255,7 +246,7 @@ ORDER BY id ASC`;
                 resolution,
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution) AS hex_id,
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
-            FROM points, resolution
+            FROM points
         ),
         polyfill AS
         (
@@ -280,12 +271,8 @@ ORDER BY id ASC`;
         query = `
         WITH points AS
         (
-            SELECT ST_POINT(-122.0553238, 37.3615593) AS geog
-        ),
-        resolution AS
-        (
-            SELECT seq4() AS resolution
-            FROM TABLE(generator(rowcount => 16))
+            SELECT ST_POINT(-122.0553238, 37.3615593) AS geog,
+            7 AS resolution
         ),
         cells AS
         (
@@ -293,7 +280,7 @@ ORDER BY id ASC`;
                 resolution,
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution) AS hex_id,
                 ${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_BOUNDARY(${SF_DATABASEID}.${SF_SCHEMA_H3}.ST_ASH3(geog, resolution)) AS boundary
-            FROM points, resolution
+            FROM points
         ),
         polyfill AS
         (
