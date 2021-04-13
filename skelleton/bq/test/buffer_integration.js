@@ -63,4 +63,23 @@ describe('BUFFER integration tests', () => {
         assert.equal(rows[0].buffer3, null);
         assert.equal(rows[0].buffer4, null);
     });
+
+    it ('BUFFER should fail with wrong arguments', async () => {
+        let feature = {
+            "type": "Point",
+            "coordinates": [-100, 50]  
+        };
+        featureJSON = JSON.stringify(feature);
+    
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_SQUELLETON}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), -1, 'kilometers', 10);`;
+        let rows;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_SQUELLETON}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
+        await assert.rejects( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+    });
 }); /* BUFFER integration tests */
