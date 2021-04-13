@@ -22,11 +22,10 @@ then
     return 1
 fi
 
-export ENABLED_SF=${ENABLED_SF:-1}
 # Choose a prefix for your SF environment. You can either pass the env variable or add it below (between the ")
 export SF_SCHEMA_PREFIX=${SF_SCHEMA_PREFIX:-""}
 
-if [ "$ENABLED_SF" -eq 1 ] && [ -z "$SF_SCHEMA_PREFIX" ]
+if [ -z "$SF_SCHEMA_PREFIX" ]
 then
     echo -e "\e[1;31m\t\$SF_SCHEMA_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
     return 1
@@ -65,6 +64,7 @@ fi
 export SNOWSQL_ACCOUNT=${SNOWSQL_ACCOUNT:-""}
 export SNOWSQL_USER=${SNOWSQL_USER:-""}
 export SNOWSQL_PWD=${SNOWSQL_PWD:-""}
+export ENABLED_SF=${ENABLED_SF:-1}
 if [ "$ENABLED_SF" -eq 1 ] && ([ -z "$SNOWSQL_ACCOUNT" ] || [ -z "$SNOWSQL_USER" ] || [ -z "$SNOWSQL_PWD" ])
 then
         echo -e "\e[1;96m\tNOTICE: Snowflake is enabled but not \$SNOWSQL_ACCOUNT, \$SNOWSQL_USER, \$SNOWSQL_PWD\e[0m"

@@ -54,6 +54,6 @@ describe('S2 integration tests', () => {
             [statement, rows] = await execAsync(connection, query);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].VERSIONCOL, "1.2.10");
+        assert.equal(rows[0].VERSIONCOL, "1.2.10.0");
     });
 }); /* S2 integration tests */
