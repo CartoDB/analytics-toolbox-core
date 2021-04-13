@@ -1,0 +1,16 @@
+{
+  "name": "squelleton_sf_integration_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "squelleton_integration.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^8.2.1",
+    "snowflake-sdk": "^1.6.0"
+  }
+}
