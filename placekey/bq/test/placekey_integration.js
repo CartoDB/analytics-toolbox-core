@@ -24,6 +24,6 @@ describe('PLACEKEY integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].versioncol, '1.0.1');
+        assert.equal(rows[0].versioncol, '1.0.1.1');
     });
 }); /* PLACEKEY integration tests */
