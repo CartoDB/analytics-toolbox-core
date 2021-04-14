@@ -7,7 +7,7 @@ You can learn more about Placekey on [their website](https://www.placekey.io/) o
 ### H3_ASPLACEKEY
 
 {{% bannerNote type="code" %}}
-PLACEKEY.H3_ASPLACEKEY(h3index)
+placekey.H3_ASPLACEKEY(h3index)
 {{%/ bannerNote %}}
 
 **Description**
@@ -23,14 +23,14 @@ Returns the placekey equivalent to the given H3 index.
 **Example**
 
 ```sql
-SELECT SFCARTO.PLACEKEY.H3_ASPLACEKEY('847b59dffffffff');
+SELECT sfcarto.placekey.H3_ASPLACEKEY('847b59dffffffff');
 -- @ff7-swh-m49
 ```
 
 ### PLACEKEY_ASH3
 
 {{% bannerNote type="code" %}}
-PLACEKEY.PLACEKEY_ASH3(placekey)
+placekey.PLACEKEY_ASH3(placekey)
 {{%/ bannerNote %}}
 
 **Description**
@@ -46,14 +46,14 @@ Returns the H3 index equivalent to the given placekey.
 **Example**
 
 ```sql
-SELECT SFCARTO.PLACEKEY.PLACEKEY_ASH3('@ff7-swh-m49');
+SELECT sfcarto.placekey.PLACEKEY_ASH3('@ff7-swh-m49');
 -- 8a7b59dffffffff
 ```
 
 ### ISVALID
 
 {{% bannerNote type="code" %}}
-PLACEKEY.ISVALID(placekey)
+placekey.ISVALID(placekey)
 {{%/ bannerNote %}}
 
 **Description**
@@ -69,24 +69,24 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 **Examples**
 
 ```sql
-SELECT SFCARTO.PLACEKEY.ISVALID('@ff7-swh-m49');
+SELECT sfcarto.placekey.ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT SFCARTO.PLACEKEY.ISVALID('ff7-swh-m49');
+SELECT sfcarto.placekey.ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT SFCARTO.PLACEKEY.ISVALID('x');
+SELECT sfcarto.placekey.ISVALID('x');
 -- false
 ```
 
 ### VERSION
 
 {{% bannerNote type="code" %}}
-PLACEKEY.VERSION()
+placekey.VERSION()
 {{%/ bannerNote %}}
 
 **Description**
@@ -100,5 +100,5 @@ Returns the current version of the placekey module.
 **Example**
 
 ```sql
-SELECT SFCARTO.PLACEKEY.VERSION();
+SELECT sfcarto.placekey.VERSION();
 -- 1.0.1
