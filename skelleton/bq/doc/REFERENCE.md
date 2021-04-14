@@ -25,5 +25,3 @@ Calculates a Geography buffer for input features for a given radius. Units suppo
 SELECT bqcarto.squelleton.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, 'kilometers', 10);
 -- POLYGON((-73.9881354374691 40.7127993926494 ... 
 ```
-
-
