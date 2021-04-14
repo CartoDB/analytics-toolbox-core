@@ -56,14 +56,4 @@ describe('SQUELLETON integration tests', () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].VERSIONCOL, '1.0.0');
     });
-
-    it('Adds correctly', async () => {
-        const query = `SELECT ${SF_DATABASEID}.${SF_SCHEMA_SQUELLETON}.EXAMPLE_ADD(5) as addition;`;
-        let rows;
-        await assert.doesNotReject(async () => {
-            [statement, rows] = await execAsync(connection, query);
-        });
-        assert.equal(rows.length, 1);
-        assert.equal(rows[0].ADDITION, 6);
-    });
 }); /* SQUELLETON integration tests */
