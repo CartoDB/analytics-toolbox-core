@@ -1,5 +1,7 @@
 ## s2
 
+<div class="badge core"></div>
+
 Our S2 module is based on a port of the official s2 geometry library created by Google. For more information about S2 check the [library's website](http://s2geometry.io/) or the [Overview section](/spatial-extension-bq/spatial-indexes/overview/#s2) of this documentation.
 
 ### ID_FROMHILBERTQUADKEY
@@ -51,16 +53,16 @@ SELECT bqcarto.s2.HILBERTQUADKEY_FROMID(1735346007979327488);
 ### LONGLAT_ASID
 
 {{% bannerNote type="code" %}}
-s2.LONGLAT_ASID(longitude, latitude, resolution)
+s2.LONGLAT_ASID(longitude, latitude, level)
 {{%/ bannerNote %}}
 
 **Description**
 
-Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
+Returns the S2 cell ID for a given longitude, latitude and zoom level.
 
 * `longitude`: `FLOAT64` horizontal coordinate on the map.
 * `latitude`: `FLOAT64` vertical coordinate on the map.
-* `resolution`: `INT64` level of detail or zoom.
+* `level`: `INT64` level of detail or zoom.
 
 **Return type**
 
@@ -84,7 +86,7 @@ s2.ST_ASID(point, resolution)
 Returns the S2 cell ID of a given point at a given level of detail.
 
 * `point`: `GEOGRAPHY` point to get the ID from.
-* `resolution`: `INT64` level of detail or zoom.
+* `level`: `INT64` level of detail or zoom.
 
 **Return type**
 
