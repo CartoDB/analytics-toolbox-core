@@ -3,7 +3,6 @@ LIBRARY = "library/"
 ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
 
 ENABLED_BQ ?= 1
-ENABLED_SF ?= 0
 
 TARGET = transformation_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
@@ -24,7 +23,4 @@ clean:
 deploy check-integration:
 ifeq (${ENABLED_BQ}, 1)
 	$(MAKE) -C bq/ $@
-endif
-ifeq (${ENABLED_SF}, 1)
-	$(MAKE) -C sf/ $@
 endif
