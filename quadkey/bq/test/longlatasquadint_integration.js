@@ -60,20 +60,17 @@ describe('LONGLAT_ASQUADINT integration tests', () => {
         let rows;
         let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(NULL, 10, 10);`;
         await assert.rejects( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
 
         query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(10, NULL, 10);`;
         await assert.rejects( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
 
         query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINT(10, 10, NULL);`;
         await assert.rejects( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
     });
 }); /* QUADKEY integration tests */

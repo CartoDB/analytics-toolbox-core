@@ -5,7 +5,7 @@ const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_S2 = process.env.BQ_DATASET_S2;
 
 describe('ST_BOUNDARY integration tests', () => {
-
+    const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
         if (!BQ_PROJECTID) {
@@ -28,8 +28,7 @@ describe('ST_BOUNDARY integration tests', () => {
         
         let rows;
         await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
         assert.equal(bounds, rows[0].boundary.value);
@@ -39,8 +38,7 @@ describe('ST_BOUNDARY integration tests', () => {
         let rows;
         let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_S2}\`.ST_BOUNDARY(NULL);`;
         await assert.rejects( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
     });
 }); /* S2 integration tests */

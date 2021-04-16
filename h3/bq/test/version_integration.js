@@ -5,7 +5,7 @@ const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_H3 = process.env.BQ_DATASET_H3;
 
 describe('VERSION', () => {
-
+    const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
         if (!BQ_PROJECTID) {
@@ -22,8 +22,7 @@ describe('VERSION', () => {
 
         let rows;
         await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].versioncol, '3.7.0.1');

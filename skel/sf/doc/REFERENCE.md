@@ -5,7 +5,7 @@ This folder contains the structure so be used as base when adding new modules to
 ### EXAMPLE_ADD
 
 {{% bannerNote type="code" %}}
-SKEL.EXAMPLE_ADD (value)
+skel.EXAMPLE_ADD (value)
 {{%/ bannerNote %}}
 
 **Description**
@@ -25,7 +25,7 @@ Talk here about possible restrictions of use that your UDF could have.
 **Example**
 
 ```sql
-SELECT SFCARTO.SKEL.EXAMPLE_ADD(5);
+SELECT sfcarto.skel.EXAMPLE_ADD(5);
 -- 6
 ```
 
@@ -38,7 +38,7 @@ It's dangerous to go alone! Take this.
 ### VERSION
 
 {{% bannerNote type="code" %}}
-SKEL.VERSION()
+skel.VERSION()
 {{%/ bannerNote %}}
 
 **Description**
@@ -52,6 +52,6 @@ Returns the current version of the skel module.
 **Example**
 
 ```sql
-SELECT SFCARTO.SKEL.VERSION();
+SELECT sfcarto.skel.VERSION();
 -- 1.0.0
 ```
