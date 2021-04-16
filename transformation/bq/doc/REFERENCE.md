@@ -1,9 +1,11 @@
 ## transformation
 
+<div class="badge core"></div>
+
 ### ST_BUFFER
 
 {{% bannerNote type="code" %}}
-transformation.ST_BUFFER(geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
+transformation.ST_BUFFER(geog, radius, units, steps)
 {{%/ bannerNote %}}
 
 **Description**

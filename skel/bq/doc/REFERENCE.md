@@ -1,5 +1,7 @@
 ## skel
 
+<div class="badge core"></div>
+
 This folder contains the structure so be used as base when adding new modules to the CARTO Spatial Extension.
 
 ### EXAMPLE_ADD

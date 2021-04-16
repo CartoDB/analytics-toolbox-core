@@ -1,5 +1,7 @@
 ## quadkey
 
+<div class="badge core"></div>
+
 You can learn more about quadkeys and quandints in the [Overview section](/spatial-extension-bq/overview/spatial-indexes/#quadkey) of the documentation.
 
 ### QUADINT_FROMZXY
@@ -353,5 +355,5 @@ Returns the current version of the quadkey module.
 
 ```sql
 SELECT sfcarto.quadkey.VERSION();
--- 1
+-- 1.0.0
 ```

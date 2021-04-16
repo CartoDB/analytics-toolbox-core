@@ -3,8 +3,10 @@ This document describes changes between tagged releases of the CARTO Spatial Ext
 
 Not all changes in the project will be included here, but it should mention any new features and user-oriented bug fixes. You can see the full set of change between releases by browsing the git commits.
 
-##[Unreleased]
-* Add the transform module (1.0.0)
+## 2021-04-16
+
+* Add the transformation module (1.0.0)
+* Improve TOPARENT implementation in quadkey module (1.0.1)
 
 ## 2021-04-09
 
