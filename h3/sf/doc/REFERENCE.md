@@ -5,7 +5,7 @@
 ### ST_ASH3
 
 {{% bannerNote type="code" %}}
-H3.ST_ASH3(point, resolution)
+h3.ST_ASH3(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -22,7 +22,7 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.ST_ASH3(ST_POINT(40.4168, -3.7038), 4);
+SELECT sfcarto.h3.ST_ASH3(ST_POINT(40.4168, -3.7038), 4);
 -- 847b59dffffffff
 ```
 
@@ -33,7 +33,7 @@ If you want the cells covered by a POLYGON see [ST_ASH3_POLYFILL](#st_ash3_polyf
 ### LONGLAT_ASH3
 
 {{% bannerNote type="code" %}}
-H3.LONGLAT_ASH3(longitude, latitude, resolution)
+h3.LONGLAT_ASH3(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -51,14 +51,14 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.LONGLAT_ASH3(40.4168, -3.7038, 4);
+SELECT sfcarto.h3.LONGLAT_ASH3(40.4168, -3.7038, 4);
 -- 847b59dffffffff
 ```
 
 ### ST_ASH3_POLYFILL
 
 {{% bannerNote type="code" %}}
-H3.ST_ASH3_POLYFILL(geography, resolution)
+h3.ST_ASH3_POLYFILL(geography, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -75,7 +75,7 @@ Returns an array with all the H3 cell indexes **with centers** contained in a gi
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.ST_ASH3_POLYFILL(
+SELECT sfcarto.h3.ST_ASH3_POLYFILL(
     TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
 -- 842da29ffffffff
 -- 843f725ffffffff
@@ -87,7 +87,7 @@ SELECT SFCARTO.H3.ST_ASH3_POLYFILL(
 ### ST_BOUNDARY
 
 {{% bannerNote type="code" %}}
-H3.ST_BOUNDARY(index)
+h3.ST_BOUNDARY(index)
 {{%/ bannerNote %}}
 
 **Description**
@@ -103,14 +103,14 @@ Returns a geography representing the H3 cell. It will return `null` on error (in
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.ST_BOUNDARY('847b59dffffffff');
+SELECT sfcarto.h3.ST_BOUNDARY('847b59dffffffff');
 -- { "coordinates": [ [ [ 40.46506362234518, -3.9352772457964957 ], [ 40.546540602670504, -3.706115055436962 ], ...
 ```
 
 ### ISVALID
 
 {{% bannerNote type="code" %}}
-H3.ISVALID(index)
+h3.ISVALID(index)
 {{%/ bannerNote %}}
 
 **Description**
@@ -126,19 +126,19 @@ Returns `true` when the given index is valid, `false` otherwise.
 **Examples**
 
 ```sql
-SELECT SFCARTO.H3.ISVALID('847b59dffffffff');
+SELECT sfcarto.h3.ISVALID('847b59dffffffff');
 -- true
 ```
 
 ```sql
-SELECT SFCARTO.H3.ISVALID('1');
+SELECT sfcarto.h3.ISVALID('1');
 -- false
 ```
 
 ### COMPACT
 
 {{% bannerNote type="code" %}}
-H3.COMPACT(indexArray)
+h3.COMPACT(indexArray)
 {{%/ bannerNote %}}
 
 **Description**
@@ -154,14 +154,14 @@ Returns an array with the indexes of a set of hexagons across multiple resolutio
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.COMPACT(ARRAY_CONSTRUCT('857b59c3fffffff', '857b59c7fffffff', '857b59cbfffffff','857b59cffffffff', '857b59d3fffffff', '857b59d7fffffff', '857b59dbfffffff'));
+SELECT sfcarto.h3.COMPACT(ARRAY_CONSTRUCT('857b59c3fffffff', '857b59c7fffffff', '857b59cbfffffff','857b59cffffffff', '857b59d3fffffff', '857b59d7fffffff', '857b59dbfffffff'));
 -- 847b59dffffffff
 ```
 
 ### UNCOMPACT
 
 {{% bannerNote type="code" %}}
-H3.UNCOMPACT(indexArray, resolution)
+h3.UNCOMPACT(indexArray, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -178,7 +178,7 @@ Returns an array with the indexes of a set of hexagons of the same `resolution` 
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.UNCOMPACT(ARRAY_CONSTRUCT('847b59dffffffff'), 5);
+SELECT sfcarto.h3.UNCOMPACT(ARRAY_CONSTRUCT('847b59dffffffff'), 5);
 -- 857b59c3fffffff
 -- 857b59c7fffffff
 -- 857b59cbfffffff
@@ -191,7 +191,7 @@ SELECT SFCARTO.H3.UNCOMPACT(ARRAY_CONSTRUCT('847b59dffffffff'), 5);
 ### TOPARENT
 
 {{% bannerNote type="code" %}}
-H3.TOPARENT(index, resolution)
+h3.TOPARENT(index, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -208,14 +208,14 @@ Returns the H3 cell index of the parent of the given hexagon at the given resolu
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.TOPARENT('847b59dffffffff', 3);
+SELECT sfcarto.h3.TOPARENT('847b59dffffffff', 3);
 -- 837b59fffffffff
 ```
 
 ### TOCHILDREN
 
 {{% bannerNote type="code" %}}
-H3.TOCHILDREN(index, resolution)
+h3.TOCHILDREN(index, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -232,7 +232,7 @@ Returns an array with the indexes of the children/descendents of the given hexag
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.TOCHILDREN('837b59fffffffff', 4);
+SELECT sfcarto.h3.TOCHILDREN('837b59fffffffff', 4);
 -- 847b591ffffffff
 -- 847b593ffffffff
 -- 847b595ffffffff
@@ -245,7 +245,7 @@ SELECT SFCARTO.H3.TOCHILDREN('837b59fffffffff', 4);
 ### ISPENTAGON
 
 {{% bannerNote type="code" %}}
-H3.ISPENTAGON(index)
+h3.ISPENTAGON(index)
 {{%/ bannerNote %}}
 
 **Description**
@@ -261,14 +261,14 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.ISPENTAGON('837B59FFFFFFFFF');
+SELECT sfcarto.h3.ISPENTAGON('837B59FFFFFFFFF');
 -- false
 ```
 
 ### DISTANCE
 
 {{% bannerNote type="code" %}}
-H3.DISTANCE(origin, destination)
+h3.DISTANCE(origin, destination)
 {{%/ bannerNote %}}
 
 **Description**
@@ -285,7 +285,7 @@ Returns the **grid distance** between two hexagon indexes. This function may fai
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.DISTANCE('847b591ffffffff', '847b59bffffffff');
+SELECT sfcarto.h3.DISTANCE('847b591ffffffff', '847b59bffffffff');
 -- 1
 ```
 
@@ -296,7 +296,7 @@ If you want the distance in meters use [ST_DISTANCE](https://docs.snowflake.com/
 ### KRING
 
 {{% bannerNote type="code" %}}
-H3.KRING(index, distance)
+h3.KRING(index, distance)
 {{%/ bannerNote %}}
 
 **Description**
@@ -313,7 +313,7 @@ Returns an array with the indexes of all hexagons within `distance` of the given
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.KRING('837b59fffffffff', 1);
+SELECT sfcarto.h3.KRING('837b59fffffffff', 1);
 -- 837b59fffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff
@@ -326,7 +326,7 @@ SELECT SFCARTO.H3.KRING('837b59fffffffff', 1);
 ### HEXRING
 
 {{% bannerNote type="code" %}}
-H3.HEXRING(index, distance)
+h3.HEXRING(index, distance)
 {{%/ bannerNote %}}
 
 **Description**
@@ -343,7 +343,7 @@ Get all hexagons in a **hollow hexagonal ring** centered at origin with sides of
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.HEXRING('837b59fffffffff', 1);
+SELECT sfcarto.h3.HEXRING('837b59fffffffff', 1);
 -- 837b5dfffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff
@@ -355,7 +355,7 @@ SELECT SFCARTO.H3.HEXRING('837b59fffffffff', 1);
 ### VERSION
 
 {{% bannerNote type="code" %}}
-H3.VERSION()
+h3.VERSION()
 {{%/ bannerNote %}}
 
 **Description**
@@ -369,6 +369,6 @@ Returns the current version of the H3 module.
 **Example**
 
 ```sql
-SELECT SFCARTO.H3.VERSION();
+SELECT sfcarto.h3.VERSION();
 -- 3.7.0.1
 ```

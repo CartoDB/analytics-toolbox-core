@@ -5,7 +5,7 @@ You can learn more about quadkeys and quandints in the [Overview section](/spati
 ### QUADINT_FROMZXY
 
 {{% bannerNote type="code" %}}
-QUADKEY.QUADINT_FROMZXY(z, x, y)
+quadkey.QUADINT_FROMZXY(z, x, y)
 {{%/ bannerNote %}}
 
 **Description**
@@ -27,14 +27,14 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.QUADINT_FROMZXY(4, 9, 8);
+SELECT sfcarto.quadkey.QUADINT_FROMZXY(4, 9, 8);
 -- 4388
 ```
 
 ### ZXY_FROMQUADINT
 
 {{% bannerNote type="code" %}}
-QUADKEY.ZXY_FROMQUADINT(quadint)
+quadkey.ZXY_FROMQUADINT(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -50,7 +50,7 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.ZXY_FROMQUADINT(4388);
+SELECT sfcarto.quadkey.ZXY_FROMQUADINT(4388);
 -- z  x  y
 -- 4  9  8
 ```
@@ -58,7 +58,7 @@ SELECT SFCARTO.QUADKEY.ZXY_FROMQUADINT(4388);
 ### LONGLAT_ASQUADINT
 
 {{% bannerNote type="code" %}}
-QUADKEY.LONGLAT_ASQUADINT(longitude, latitude, resolution)
+quadkey.LONGLAT_ASQUADINT(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -76,14 +76,14 @@ Returns the quadint representation for a given level of detail and geographic co
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.LONGLAT_ASQUADINT(40.4168, -3.7038, 4);
+SELECT sfcarto.quadkey.LONGLAT_ASQUADINT(40.4168, -3.7038, 4);
 -- 4388
 ```
 
 ### QUADINT_FROMQUADKEY
 
 {{% bannerNote type="code" %}}
-QUADKEY.QUADINT_FROMQUADKEY(quadkey)
+quadkey.QUADINT_FROMQUADKEY(quadkey)
 {{%/ bannerNote %}}
 
 **Description**
@@ -99,14 +99,14 @@ Returns the quadint equivalent to the input quadkey.
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.QUADINT_FROMQUADKEY("3001");
+SELECT sfcarto.quadkey.QUADINT_FROMQUADKEY("3001");
 -- 4388
 ```
 
 ### QUADKEY_FROMQUADINT
 
 {{% bannerNote type="code" %}}
-QUADKEY.QUADKEY_FROMQUADINT(quadint)
+quadkey.QUADKEY_FROMQUADINT(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -122,14 +122,14 @@ Returns the quadkey equivalent to the input quadint.
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.QUADKEY_FROMQUADINT(4388);
+SELECT sfcarto.quadkey.QUADKEY_FROMQUADINT(4388);
 -- 3001
 ```
 
 ### TOPARENT
 
 {{% bannerNote type="code" %}}
-QUADKEY.TOPARENT(quadint, resolution)
+quadkey.TOPARENT(quadint, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -146,14 +146,14 @@ Returns the parent quadint of a given quadint for a specific resolution. A paren
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.TOPARENT(4388, 3);
+SELECT sfcarto.quadkey.TOPARENT(4388, 3);
 -- 1155
 ```
 
 ### TOCHILDREN
 
 {{% bannerNote type="code" %}}
-QUADKEY.TOCHILDREN(quadint, resolution)
+quadkey.TOCHILDREN(quadint, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -170,7 +170,7 @@ Returns an array with the children quadints of a given quadint for a specific re
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.TOCHILDREN(1155, 4);
+SELECT sfcarto.quadkey.TOCHILDREN(1155, 4);
 -- 4356
 -- 4868
 -- 4388
@@ -180,7 +180,7 @@ SELECT SFCARTO.QUADKEY.TOCHILDREN(1155, 4);
 ### SIBLING
 
 {{% bannerNote type="code" %}}
-QUADKEY.SIBLING(quadint, direction)
+quadkey.SIBLING(quadint, direction)
 {{%/ bannerNote %}}
 
 **Description**
@@ -197,14 +197,14 @@ Returns the quadint directly next to the given quadint at the same zoom level. T
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.SIBLING(4388, 'up');
+SELECT sfcarto.quadkey.SIBLING(4388, 'up');
 -- 3876
 ```
 
 ### KRING
 
 {{% bannerNote type="code" %}}
-QUADKEY.KRING(quadint, distance)
+quadkey.KRING(quadint, distance)
 {{%/ bannerNote %}}
 
 **Description**
@@ -221,7 +221,7 @@ Returns an array containing all the quadints directly next to the given quadint 
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.KRING(4388, 1);
+SELECT sfcarto.quadkey.KRING(4388, 1);
 -- 3844
 -- 3876
 -- 3908
@@ -236,7 +236,7 @@ SELECT SFCARTO.QUADKEY.KRING(4388, 1);
 ### BBOX
 
 {{% bannerNote type="code" %}}
-QUADKEY.BBOX(quadint)
+quadkey.BBOX(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -252,7 +252,7 @@ Returns an array with the boundary box of a given quadint. This boundary box con
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.BBOX(4388);
+SELECT sfcarto.quadkey.BBOX(4388);
 -- 22.5
 -- -21.943045533438177
 -- 45.0
@@ -262,7 +262,7 @@ SELECT SFCARTO.QUADKEY.BBOX(4388);
 ### ST_ASQUADINT
 
 {{% bannerNote type="code" %}}
-QUADKEY.ST_ASQUADINT(point, resolution)
+quadkey.ST_ASQUADINT(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -279,14 +279,14 @@ Returns the quadint of a given point at a given level of detail.
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.ST_ASQUADINT(ST_POINT(40.4168, -3.7038), 4);
+SELECT sfcarto.quadkey.ST_ASQUADINT(ST_POINT(40.4168, -3.7038), 4);
 -- 4388
 ```
 
 ### ST_ASQUADINT_POLYFILL
 
 {{% bannerNote type="code" %}}
-QUADKEY.ST_ASQUADINT_POLYFILL(geography, resolution)
+quadkey.ST_ASQUADINT_POLYFILL(geography, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -303,7 +303,7 @@ Returns an array of quadints that intersect with the given geography at a given 
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.ST_ASQUADINT_POLYFILL(ST_MAKEPOLYGON(TO_GEOGRAPHY('LINESTRING(-3.71219873428345 40.4133653490709, -3.71440887451172 40.4096566128639, -3.70659828186035 40.4095259047756, -3.71219873428345 40.4133653490709)')), 17);
+SELECT sfcarto.quadkey.ST_ASQUADINT_POLYFILL(ST_MAKEPOLYGON(TO_GEOGRAPHY('LINESTRING(-3.71219873428345 40.4133653490709, -3.71440887451172 40.4096566128639, -3.70659828186035 40.4095259047756, -3.71219873428345 40.4133653490709)')), 17);
 -- 207301334801
 -- 207305529105
 -- 207305529073
@@ -315,7 +315,7 @@ SELECT SFCARTO.QUADKEY.ST_ASQUADINT_POLYFILL(ST_MAKEPOLYGON(TO_GEOGRAPHY('LINEST
 ### ST_BOUNDARY
 
 {{% bannerNote type="code" %}}
-QUADKEY.ST_BOUNDARY(quadint)
+quadkey.ST_BOUNDARY(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -331,14 +331,14 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.ST_BOUNDARY(4388);
+SELECT sfcarto.quadkey.ST_BOUNDARY(4388);
 -- POLYGON((22.5 0, 22.5 -21.9430455334382, 22.67578125 ...
 ```
 
 ### VERSION
 
 {{% bannerNote type="code" %}}
-QUADKEY.VERSION()
+quadkey.VERSION()
 {{%/ bannerNote %}}
 
 **Description**
@@ -352,6 +352,6 @@ Returns the current version of the quadkey module.
 **Example**
 
 ```sql
-SELECT SFCARTO.QUADKEY.VERSION();
+SELECT sfcarto.quadkey.VERSION();
 -- 1
 ```
