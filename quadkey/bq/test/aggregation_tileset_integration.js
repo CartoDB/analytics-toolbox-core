@@ -24,8 +24,7 @@ describe('LONGLAT_ASQUADINTLIST_RESOLUTION integration tests', () => {
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(170,-80,20,24,1,4) as agg3
         ;`;
         await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
         let expectedArr = [
@@ -57,8 +56,7 @@ describe('LONGLAT_ASQUADINTLIST_RESOLUTION integration tests', () => {
         let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(NULL,10,10,12,1,5) as agg1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.LONGLAT_ASQUADINTLIST_RESOLUTION(10,NULL,10,12,1,5) as agg2;`;
         await assert.doesNotReject( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
         assert.deepEqual(rows[0].agg1,[]);

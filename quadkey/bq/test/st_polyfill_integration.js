@@ -97,8 +97,7 @@ describe('ST_ASQUADINT_POLYFILL integration tests', () => {
         let rows;
         let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_QUADKEY}\`.__POLYFILL_FROMGEOJSON(NULL, 10);`;
         await assert.rejects( async () => {
-            const [job] = await client.createQueryJob({ query: query });
-            [rows] = await job.getQueryResults();
+            [rows] = await client.query(query, queryOptions);
         });
 
         let feature = {
