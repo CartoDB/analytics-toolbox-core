@@ -6,6 +6,6 @@
 
 /* exported quadkeyVersion */
 quadkeyVersion = function() {
-    return '1.0.0';
+    return '1.0.1';
 };
 module.exports.quadkeyVersion = quadkeyVersion;

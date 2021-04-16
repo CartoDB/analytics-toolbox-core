@@ -1,6 +1,6 @@
 ## 🔥 UPDATE/NEWS ##
 
-We have finally completed the refactor and we have now ready all UDF functions under the new system. You can explore documentation about it in our [Official docuemntation](https://docs.carto.com/spatial-extension-bq/overview/getting-started/)
+We have finally completed the refactor and we have now ready all UDF functions under the new system. You can explore documentation about it in our [Official documentation](https://docs.carto.com/spatial-extension-bq/overview/getting-started/)
 
 With this update now all functions are fully covered with test and we have a solid CI for new releases. You will notice that we have changed the locations of the functions, you should update to ensure you keep using the latest.
 

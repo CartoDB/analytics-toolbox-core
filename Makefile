@@ -3,7 +3,8 @@ MODULES = \
 	placekey \
 	quadkey \
   	s2 \
-	skel
+	skel \
+	transformation
 
 .PHONY: all build check check-integration check-linter clean deploy linter
 
