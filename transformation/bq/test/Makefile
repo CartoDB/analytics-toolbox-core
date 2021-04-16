@@ -10,8 +10,8 @@ node_modules: package.json
 
 BQ_PROJECTID ?= cartodb-gcp-backend-data-team
 check_environment:
-ifndef BQ_DATASET_TRANSFORM
-	$(error BQ_DATASET_TRANSFORM is undefined)
+ifndef BQ_DATASET_TRANSFORMATION
+	$(error BQ_DATASET_TRANSFORMATION is undefined)
 endif
 
 .PHONY: clean

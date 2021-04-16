@@ -1,4 +1,4 @@
-TARGET = ../transform_library.js
+TARGET = ../transformation_library.js
 
 ESLINT ?= ./node_modules/eslint/bin/eslint.js
 NPM ?= npm
@@ -7,7 +7,7 @@ BROWSERIFY ?= ./node_modules/.bin/browserify
 all: ${TARGET}
 
 JS_FILES = \
-	js/transform_version.js \
+	js/transformation_version.js \
 	js/turf/turf.js
 
 .PHONY: check

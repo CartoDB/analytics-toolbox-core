@@ -1,6 +1,6 @@
 const fs = require('fs');
 /* Emulate how BigQuery would load the file */
-global.eval(fs.readFileSync('../../transform_library.js') + '');
+global.eval(fs.readFileSync('../../transformation_library.js') + '');
 const test = require('tape');
 const path = require('path');
 const load = require('load-json-file');

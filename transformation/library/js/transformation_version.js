@@ -4,8 +4,8 @@
 // --
 // -----------------------------------------------------------------------
 
-/* exported transformVersion */
-transformVersion = function() {
+/* exported transformationVersion */
+transformationVersion = function() {
     return '1.0.0';
 }
-module.exports.transformVersion = transformVersion;
+module.exports.transformationVersion = transformationVersion;

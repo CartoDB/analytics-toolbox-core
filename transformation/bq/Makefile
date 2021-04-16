@@ -6,10 +6,10 @@ GSUTIL ?= gsutil
 POST_INTEGRATION_CLEANUP ?= 1
 
 # Deployment variables
-TRANSFORM_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_TRANSFORM)/transform_library.js
+TRANSFORMATION_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_TRANSFORMATION)/transformation_library.js
 
-.PHONY: ../transform_library.js
-../transform_library.js:
+.PHONY: ../transformation_library.js
+../transformation_library.js:
 	$(MAKE) -C .. all
 
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
@@ -21,8 +21,8 @@ endif
 ifndef BQ_PROJECTID
 	$(error BQ_PROJECTID is undefined)
 endif
-ifndef BQ_DATASET_TRANSFORM
-	$(error BQ_DATASET_TRANSFORM is undefined)
+ifndef BQ_DATASET_TRANSFORMATION
+	$(error BQ_DATASET_TRANSFORMATION is undefined)
 endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
@@ -34,24 +34,24 @@ clean:
 	$(MAKE) -C test/ $@
 
 ##################### STORAGE FILES #####################
-storage_upload: ../transform_library.js check_environment
-	$(GSUTIL) cp -r ../transform_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_TRANSFORM)/
+storage_upload: ../transformation_library.js check_environment
+	$(GSUTIL) cp -r ../transformation_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_TRANSFORMATION)/
 
 storage_remove: check_environment
-	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_TRANSFORM)/
+	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_TRANSFORMATION)/
 
 ##################### BIGQUERY DATASET #####################
 
 dataset_create: check_environment
-	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_TRANSFORM) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "TRANSFORM Dataset" $(BQ_PROJECTID):$(BQ_DATASET_TRANSFORM)
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_TRANSFORMATION) 2>/dev/null 1>/dev/null || \
+		${BQ} mk -d --description "TRANSFORMATION Dataset" $(BQ_PROJECTID):$(BQ_DATASET_TRANSFORMATION)
 
 dataset_remove: check_environment
-	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_TRANSFORM)
+	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_TRANSFORMATION)
 
 REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
-		-e 's!@@BQ_DATASET_TRANSFORM@@!$(BQ_DATASET_TRANSFORM)!g' \
-		-e 's!@@TRANSFORM_BQ_LIBRARY@@!$(TRANSFORM_BQ_LIBRARY)!g'
+		-e 's!@@BQ_DATASET_TRANSFORMATION@@!$(BQ_DATASET_TRANSFORMATION)!g' \
+		-e 's!@@TRANSFORMATION_BQ_LIBRARY@@!$(TRANSFORMATION_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
 	for n in $(sort $(wildcard sql/*.sql)); do \

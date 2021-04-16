@@ -2,7 +2,7 @@ const assert = require('assert').strict;
 const {BigQuery} = require('@google-cloud/bigquery');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
-const BQ_DATASET_TRANSFORM = process.env.BQ_DATASET_TRANSFORM;
+const BQ_DATASET_TRANSFORMATION = process.env.BQ_DATASET_TRANSFORMATION;
 
 describe('BUFFER integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
@@ -11,8 +11,8 @@ describe('BUFFER integration tests', () => {
         if (!BQ_PROJECTID) {
             throw "Missing BQ_PROJECTID env variable";
         }
-        if (!BQ_DATASET_TRANSFORM) {
-            throw "Missing BQ_DATASET_TRANSFORM env variable";
+        if (!BQ_DATASET_TRANSFORMATION) {
+            throw "Missing BQ_DATASET_TRANSFORMATION env variable";
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
@@ -27,7 +27,7 @@ describe('BUFFER integration tests', () => {
         };
         featureJSON = JSON.stringify(feature);
     
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.__BUFFER('${featureJSON}', 1, 'kilometers', 10) as buffer;`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.__BUFFER('${featureJSON}', 1, 'kilometers', 10) as buffer;`;
         let rows;
         await assert.doesNotReject( async () => {
             [rows] = await client.query(query, queryOptions);
@@ -48,10 +48,10 @@ describe('BUFFER integration tests', () => {
         };
         featureJSON = JSON.stringify(feature);
     
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.ST_BUFFER(NULL, 1, 'kilometers', 10) as buffer1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), CAST(NULL AS FLOAT64), 'kilometers', 10) as buffer2,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, NULL, 10) as buffer3,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', NULL) as buffer4;`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(NULL, 1, 'kilometers', 10) as buffer1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), CAST(NULL AS FLOAT64), 'kilometers', 10) as buffer2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, NULL, 10) as buffer3,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', NULL) as buffer4;`;
         
         let rows;
         await assert.doesNotReject( async () => {
@@ -71,13 +71,13 @@ describe('BUFFER integration tests', () => {
         };
         featureJSON = JSON.stringify(feature);
     
-        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), -1, 'kilometers', 10);`;
+        let query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), -1, 'kilometers', 10);`;
         let rows;
         await assert.rejects( async () => {
             [rows] = await client.query(query, queryOptions);
         });
 
-        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORM}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
+        query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
         await assert.rejects( async () => {
             [rows] = await client.query(query, queryOptions);
         });

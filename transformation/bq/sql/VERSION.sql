@@ -4,11 +4,11 @@
 --
 -----------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_TRANSFORM@@.VERSION`()
+CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_TRANSFORMATION@@.VERSION`()
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
-    OPTIONS (library=["@@TRANSFORM_BQ_LIBRARY@@"])
+    OPTIONS (library=["@@TRANSFORMATION_BQ_LIBRARY@@"])
 AS """
-    return transformVersion();
+    return transformationVersion();
 """;

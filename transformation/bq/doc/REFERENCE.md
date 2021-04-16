@@ -1,9 +1,9 @@
-## transform
+## transformation
 
 ### ST_BUFFER
 
 {{% bannerNote type="code" %}}
-transform.ST_BUFFER(geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
+transformation.ST_BUFFER(geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
 {{%/ bannerNote %}}
 
 **Description**
@@ -22,6 +22,6 @@ Calculates a Geography buffer for input features for a given radius. Units suppo
 **Example**
 
 ``` sql
-SELECT bqcarto.transform.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, 'kilometers', 10);
+SELECT bqcarto.transformation.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, 'kilometers', 10);
 -- POLYGON((-73.9881354374691 40.7127993926494 ... 
 ```

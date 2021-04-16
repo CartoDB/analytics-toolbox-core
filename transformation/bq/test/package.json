@@ -1,8 +1,8 @@
 {
-  "name": "transform_bq_integration_tests",
+  "name": "transformation_bq_integration_tests",
   "version": "1.0.0",
   "description": "",
-  "main": "transform_integration.js",
+  "main": "transformation_integration.js",
   "scripts": {
     "test": "mocha"
   },

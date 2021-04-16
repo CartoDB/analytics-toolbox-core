@@ -5,7 +5,7 @@ ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
 ENABLED_BQ ?= 1
 ENABLED_SF ?= 0
 
-TARGET = transform_library.js
+TARGET = transformation_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
 
 all build $(TARGET):
