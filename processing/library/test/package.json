@@ -1,0 +1,15 @@
+{
+  "name": "processing_unit_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "processing_test.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^8.2.1"
+  }
+}
