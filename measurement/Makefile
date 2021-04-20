@@ -2,7 +2,7 @@ DBS = "bq/"
 LIBRARY = "library/"
 ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
 
-ENABLED_BQ ?= 1
+ENABLED_BQ ?= 0
 
 TARGET = measurement_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
