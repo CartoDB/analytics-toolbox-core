@@ -1,0 +1,16 @@
+{
+  "name": "aggregation_bq_integration_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "aggregation_integration.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/bigquery": "^5.3.0",
+    "mocha": "^8.2.1"
+  }
+}
