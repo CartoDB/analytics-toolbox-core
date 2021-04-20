@@ -10,6 +10,7 @@ env:
   BQ_REGION: us
   BQ_PROJECTID: bqcartost
   BQ_BUCKET_PUBLIC: gs://bqcartost-public/
+  BQ_DATASET_SKEL: skel
   BQ_DATASET_H3: h3
   BQ_DATASET_PLACEKEY: placekey
   BQ_DATASET_QUADKEY: quadkey

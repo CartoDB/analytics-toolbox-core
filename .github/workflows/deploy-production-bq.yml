@@ -9,6 +9,7 @@ env:
   ENABLED_BQ: 1
   GCLOUD_VERSION: 'latest'
   BQ_BUCKET_PUBLIC: gs://bqcarto-public/
+  BQ_DATASET_SKEL: skel
   BQ_DATASET_H3: h3
   BQ_DATASET_PLACEKEY: placekey
   BQ_DATASET_QUADKEY: quadkey
