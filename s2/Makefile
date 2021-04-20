@@ -2,7 +2,7 @@ DBS = "bq/"
 LIBRARY = "library/"
 ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
 
-ENABLED_BQ ?= 1
+ENABLED_BQ ?= 0
 ENABLED_SF ?= 0
 
 TARGET = s2_library.js

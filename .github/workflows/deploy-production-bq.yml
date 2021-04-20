@@ -1,0 +1,44 @@
+name: Deploy Production BQ
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  ENABLED_BQ: 1
+  GCLOUD_VERSION: 'latest'
+  BQ_BUCKET_PUBLIC: gs://bqcarto-public/
+  BQ_DATASET_SKEL: skel
+  BQ_DATASET_H3: h3
+  BQ_DATASET_PLACEKEY: placekey
+  BQ_DATASET_QUADKEY: quadkey
+  BQ_DATASET_S2: s2
+  BQ_DATASET_TRANSFORMATION: transformation
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        include:
+          - region: us
+            projectid: bqcarto
+          - region: eu
+            projectid: bqcartoeu
+    env:
+      BQ_REGION: ${{ matrix.region }}
+      BQ_PROJECTID: ${{ matrix.projectid }}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+      - name: Install gcloud
+        uses: google-github-actions/setup-gcloud@master
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ env.BQ_PROJECTID }}
+            service_account_key: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
+            export_default_credentials: true
+      - name: Deploy to production
+        run: make deploy
