@@ -1,0 +1,38 @@
+name: Deploy Production SF
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  ENABLED_SF: 1
+  GCLOUD_VERSION: 'latest'
+  SNOWSQL_VERSION: 1.2.13
+  SNOWSQL: ~/snowflake/snowsql
+  SNOWSQL_DEST: ~/snowflake
+  SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
+  SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
+  SF_DATABASEID: SFCARTO
+  SF_SHARE_ENABLED: 1
+  SF_SHARE_PUBLIC: SFCARTO
+  SF_SCHEMA_SKEL: SKEL
+  SF_SCHEMA_H3: H3
+  SF_SCHEMA_PLACEKEY: PLACEKEY
+  SF_SCHEMA_QUADKEY: QUADKEY
+  SF_SCHEMA_S2: S2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+      - name: Install snowsql
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
+      - name: Deploy to production
+        run: make deploy
