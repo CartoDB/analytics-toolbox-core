@@ -1,0 +1,13 @@
+name: Linter
+
+on: push
+
+jobs:
+  linter:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check linter
+        run: make check-linter

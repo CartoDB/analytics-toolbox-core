@@ -1,6 +1,5 @@
-DBS = "bq/"
 LIBRARY = "library/"
-ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
+ALL_SUBFOLDERS = $(LIBRARY) "bq/" "sf/"
 
 ENABLED_BQ ?= 0
 ENABLED_SF ?= 0

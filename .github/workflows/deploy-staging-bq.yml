@@ -6,7 +6,7 @@ on:
 
 env:
   ENABLED_BQ: 1
-  GCLOUD_VERSION: 'latest'
+  GCLOUD_VERSION: 290.0.1
   BQ_REGION: us
   BQ_PROJECTID: bqcartost
   BQ_BUCKET_PUBLIC: gs://bqcartost-public/
@@ -21,7 +21,7 @@ jobs:
   deploy:
     if: github.event.review.state == 'approved'
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
