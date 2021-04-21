@@ -27,18 +27,24 @@ jobs:
       - name: Check if fork pull request can run CI
         if: github.event_name == 'pull_request_target'
         run: |
-           if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
-             echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
-           else
-             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
-             exit 1
-           fi
+          if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
+            echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
+          else
+            echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
+            exit 1
+          fi
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
       - name: Install node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+        if: env.GIT_DIFF
       - name: Install gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -46,11 +52,15 @@ jobs:
             project_id: ${{ env.BQ_PROJECTID }}
             service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
             export_default_credentials: true
+        if: env.GIT_DIFF
       - name: Get environment
         run: |
           source tools/dev_environment.sh.sample
           env >> $GITHUB_ENV
+        if: env.GIT_DIFF
       - name: Build
         run: make
+        if: env.GIT_DIFF
       - name: Run integration tests
         run: make check-integration
+        if: env.GIT_DIFF
