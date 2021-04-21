@@ -1,3 +1,4 @@
+ALL ?= 0
 MODULES = \
 	h3 \
 	placekey \
@@ -10,5 +11,7 @@ MODULES = \
 
 all build check check-integration check-linter clean deploy linter:
 	for module in $(MODULES); do \
-		$(MAKE) -C $${module} $@ || exit 1; \
+		if [ $(ALL) -eq 1 ] || [ `git diff --name-only | grep -P $${module}'\/.*\.(js|sql)'` ]; then \
+			$(MAKE) -C $${module} $@ || exit 1; \
+		fi \
 	done;

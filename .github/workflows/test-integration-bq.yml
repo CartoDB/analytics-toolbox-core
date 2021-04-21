@@ -39,10 +39,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Get environment
-        run: |
-          source tools/dev_environment.sh.sample
-          env >> $GITHUB_ENV
       - name: Install gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -50,6 +46,10 @@ jobs:
             project_id: ${{ env.BQ_PROJECTID }}
             service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
             export_default_credentials: true
+      - name: Get environment
+        run: |
+          source tools/dev_environment.sh.sample
+          env >> $GITHUB_ENV
       - name: Build
         run: make
       - name: Run integration tests
