@@ -17,7 +17,7 @@ AS """
     let options = {};
     if(angle != null)
     {
-        options.angle = angle;
+        options.angle = Number(angle);
     }
     if(units)
     {
