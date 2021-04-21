@@ -14,8 +14,8 @@ Calculates a Geography buffer for input features for a given radius. Units suppo
 
 * `geog`: `GEOGRAPHY` input to be buffered.
 * `radius`: `FLOAT64` distance to draw the buffer (negative values are allowed).
-* `units`: `STRING` any of the options supported by turf units: miles, kilometers, and degrees.
-* `steps`: `INT64` number of steps.
+* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, and degrees. If `NULL`the default value kilometers is used.
+* `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value 8 is used.
 
 **Return type**
 

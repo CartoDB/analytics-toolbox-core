@@ -5,16 +5,25 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_TRANSFORMATION@@.__BUFFER`
-    (geojson STRING, radius FLOAT64, unit STRING, steps INT64)
+    (geojson STRING, radius FLOAT64, units STRING, steps INT64)
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@TRANSFORMATION_BQ_LIBRARY@@"])
 AS """
-    if (!geojson || radius == null || !unit || steps == null) {
+    if (!geojson || radius == null) {
         return null;
     }
-    var buffer = turf.buffer(JSON.parse(geojson), Number(radius),{'unit': unit, 'steps': Number(steps)});
+    let options = {};
+    if(units)
+    {
+        options.units = units;
+    }
+    if(steps != null)
+    {
+        options.steps = Number(steps);
+    }
+    let buffer = turf.buffer(JSON.parse(geojson), Number(radius), options);
     return JSON.stringify(buffer.geometry);
 """;
 

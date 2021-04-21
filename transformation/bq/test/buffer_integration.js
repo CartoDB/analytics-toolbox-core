@@ -41,7 +41,7 @@ describe('BUFFER integration tests', () => {
         assert.deepEqual(resultFeature, expectedFeature);
     });
 
-    it ('BUFFER should return NULL if any NULL argument', async () => {
+    it ('BUFFER should return NULL if any NULL mandatory argument', async () => {
         let feature = {
             "type": "Point",
             "coordinates": [-100, 50]  
@@ -49,9 +49,7 @@ describe('BUFFER integration tests', () => {
         featureJSON = JSON.stringify(feature);
     
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(NULL, 1, 'kilometers', 10) as buffer1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), CAST(NULL AS FLOAT64), 'kilometers', 10) as buffer2,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, NULL, 10) as buffer3,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', NULL) as buffer4;`;
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGFROMGEOJSON('${featureJSON}'), CAST(NULL AS FLOAT64), 'kilometers', 10) as buffer2`;
         
         let rows;
         await assert.doesNotReject( async () => {
@@ -60,8 +58,6 @@ describe('BUFFER integration tests', () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].buffer1, null);
         assert.equal(rows[0].buffer2, null);
-        assert.equal(rows[0].buffer3, null);
-        assert.equal(rows[0].buffer4, null);
     });
 
     it ('BUFFER should fail with wrong arguments', async () => {
