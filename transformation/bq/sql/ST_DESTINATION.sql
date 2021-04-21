@@ -19,7 +19,7 @@ AS """
     {
         options.units = units;
     }
-    var destination = turf.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
+    let destination = turf.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
     return JSON.stringify(destination.geometry);
 """;
 

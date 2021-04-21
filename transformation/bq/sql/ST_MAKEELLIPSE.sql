@@ -27,7 +27,7 @@ AS """
     {
         options.steps = Number(steps);
     }
-    var ellipse = turf.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
+    let ellipse = turf.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
     return JSON.stringify(ellipse.geometry);
 """;
 
