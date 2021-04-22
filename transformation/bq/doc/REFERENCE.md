@@ -22,7 +22,7 @@ Takes a line and returns a curved version by applying a Bezier spline algorithm.
 **Example**
 
 ``` sql
-SELECT bqcarto.transformation.ST_BEZIERSPLINE(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"),0.9);
+SELECT bqcarto.transformation.ST_BEZIERSPLINE(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), 0.9);
 -- LINESTRING(-76.091308 18.427501, -76.0916216712943 ... 
 ```
 
@@ -99,7 +99,7 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 **Example**
 
 ``` sql
-SELECT bqcarto.transformation.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167),ST_GEOGPOINT(-73.9385,40.6643), 20);
+SELECT bqcarto.transformation.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
 -- LINESTRING(-3.70325 40.4167 ... 
 ```
 
