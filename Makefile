@@ -1,3 +1,4 @@
+GIT_DIFF ?= off
 MODULES = \
 	h3 \
 	placekey \
@@ -10,5 +11,7 @@ MODULES = \
 
 all build check check-integration check-linter clean deploy linter:
 	for module in $(MODULES); do \
-		$(MAKE) -C $${module} $@ || exit 1; \
+		if [ "$(GIT_DIFF)" = "off" ] || [ `echo "$(GIT_DIFF)" | grep -P $${module}'\/.*(\.js|\.sql|Makefile)' | wc -l` ]; then \
+			$(MAKE) -C $${module} $@ || exit 1; \
+		fi \
 	done;

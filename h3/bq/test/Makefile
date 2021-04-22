@@ -26,4 +26,4 @@ check-integration: node_modules check_environment
 # These tests need to be executed one by one because they modify the environment
 .PHONY: check_integration_standalone
 check-integration-standalone: node_modules check_environment
-#	${TESTER} -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")
+	${TESTER} -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")

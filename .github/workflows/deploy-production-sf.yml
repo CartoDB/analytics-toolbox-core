@@ -7,7 +7,7 @@ on:
 
 env:
   ENABLED_SF: 1
-  GCLOUD_VERSION: 'latest'
+  GCLOUD_VERSION: 290.0.1
   SNOWSQL_VERSION: 1.2.13
   SNOWSQL: ~/snowflake/snowsql
   SNOWSQL_DEST: ~/snowflake
@@ -26,7 +26,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout project
         uses: actions/checkout@v2

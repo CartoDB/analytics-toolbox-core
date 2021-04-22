@@ -1,134 +1,150 @@
-name: CARTO Spatial Extension
-
 #################################################################################
-# IMPORTANT: READ BEFORE EDITIING THIS FILE                                     #
+# IMPORTANT: READ BEFORE EDITING THIS FILE                                      #
 #                                                                               #
-# - `pull_request` event is **intentionally** excluded because we need to check #
-#   the code from external contributors before running it. Once verified        #
-#   CARTO member should label the pull request with `run_ci` label              #
-#   this will trigger one execution of ci using the external code.              #
-#   to run it again we need to remove then add the `run_ci` label               #
+# - `pull_request` event is **intentionally** excluded because we need to       #
+#   check the code from external contributors before running it. Once verified, #
+#   a CARTO member should label the pull request with `run_ci` label.           #
+#   This will trigger one execution of CI using the external code.              #
+#   To run it again we need to remove and add the `run_ci` label.               #
 # - for internal contributors we use `push` event and CI runs automatically     #
 #                                                                               #
-# If you edit this file, please ask for code review from infrastructure team    #
 #################################################################################
+
+name: CI
+
 on:
   push:
-    branches:
-      - '*'
+    branches-ignore:
+      - master
   pull_request_target:
     types: [labeled]
 
-
 env:
-  GCLOUD_VERSION: 'latest'
-  NODE_VERSION: '14'
-  MAKEFLAGS: '-j2'
-  SNOWSQL_VERSION: 1.2.13
-  SNOWSQL: ~/snowflake/snowsql
-  SNOWSQL_DEST: ~/snowflake
-  SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
-  SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
-
-  BQ_PROJECTID: bqcartoci
-  BQ_BUCKET_PUBLIC: gs://bqcartoci/
-  # Start the dataset prefix with letters to avoid issues with BigQuery parser (it doesn't like datasets starting with numbers: https://issuetracker.google.com/issues/180688209)
-  BQ_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
-
-  SF_DATABASEID: SFCARTOCI
-  SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
-  POST_INTEGRATION_CLEANUP: 1
+  NODE_VERSION: 14
 
 jobs:
-  test-extension:
-    timeout-minutes: 15
+
+  check:
     runs-on: ubuntu-20.04
-    defaults:
-      run:
-        shell: bash
+    timeout-minutes: 5
     steps:
-
       - name: Check if fork pull request can run CI
+        if: ${{ github.event_name == 'pull_request_target' }}
         run: |
-           if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
-             echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
-           else
-             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
-             exit 1
-           fi
-        if: github.event_name == 'pull_request_target'
+          if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
+            echo "Fork pull request was labeled: ${{ github.event.label.name }} by ${{ github.event.sender.login }}"
+          else
+            echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
+            exit 1
+          fi
 
+  linter:
+    needs: check
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        if: github.event_name != 'pull_request_target'
-
-      - name: Checkout forked repo
-        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-        if: github.event_name == 'pull_request_target'
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Check linter
+        run: make check-linter
 
+  test-unit:
+    needs: linter
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
       - name: Install node
         uses: actions/setup-node@v1
         with:
-          node-version: ${{env.NODE_VERSION}}
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run unit tests
+        run: make check
 
+  test-integration-bq:
+    needs: linter
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    env:
+      ENABLED_BQ: 1
+      GCLOUD_VERSION: 290.0.1
+      BQ_PROJECTID: bqcartoci
+      BQ_BUCKET_PUBLIC: gs://bqcartoci/
+      BQ_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install gcloud
+        uses: google-github-actions/setup-gcloud@master
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ env.BQ_PROJECTID }}
+            service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
+            export_default_credentials: true
       - name: Get environment
         run: |
           source tools/dev_environment.sh.sample
           env >> $GITHUB_ENV
       - name: Build
         run: make
-
-      - name: Run unit tests
-        run: make check
-
-      - name: Install gcloud
-        uses: google-github-actions/setup-gcloud@master
+      - name: Run integration tests
+        run: make check-integration
+  
+  test-integration-sf:
+    needs: linter
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    env:
+      ENABLED_SF: 1
+      SNOWSQL_VERSION: 1.2.13
+      SNOWSQL: ~/snowflake/snowsql
+      SNOWSQL_DEST: ~/snowflake
+      SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+      SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
+      SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
+      SF_DATABASEID: SFCARTOCI
+      SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
         with:
-            version: ${{env.GCLOUD_VERSION}}
-            project_id: ${{env.BQ_PROJECTID}}
-            service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
-            export_default_credentials: true
-
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install snowsql                          
         run: | 
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-
+      - name: Get environment
+        run: |
+          source tools/dev_environment.sh.sample
+          env >> $GITHUB_ENV
+      - name: Build
+        run: make
       - name: Run integration tests
         run: make check-integration
-
-  linter:
-    timeout-minutes: 15
-    runs-on: ubuntu-20.04
-    defaults:
-      run:
-        shell: bash
-    steps:
-
-      - name: Check if fork pull request can run CI
-        run: |
-           if [[ "${{ github.event.action == 'labeled' && github.event.label.name == 'run_ci' }}" == "true" ]]; then
-             echo "Fork pull request was labeled: ${{github.event.label.name}} by ${{ github.event.sender.login }}"
-           else
-             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
-             exit 1
-           fi
-        if: github.event_name == 'pull_request_target'
-
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        if: github.event_name != 'pull_request_target'
-
-      - name: Checkout forked repo
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-        if: github.event_name == 'pull_request_target'
-
-      - name: Check linter
-        run: make check-linter
