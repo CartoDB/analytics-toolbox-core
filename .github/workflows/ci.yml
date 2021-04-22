@@ -10,7 +10,7 @@
 #                                                                               #
 #################################################################################
 
-name: Continuous Integration
+name: CI
 
 on:
   push:
@@ -18,6 +18,9 @@ on:
       - master
   pull_request_target:
     types: [labeled]
+
+env:
+  NODE_VERSION: 14
 
 jobs:
 
@@ -34,13 +37,6 @@ jobs:
             echo "Fork pull request needs to be verified by CARTO member then labeled with run_ci"
             exit 1
           fi
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Check diff
-        uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
 
   linter:
     needs: check
@@ -49,18 +45,26 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
       - name: Check linter
         run: make check-linter
 
   test-unit:
-    needs: check
+    needs: linter
     runs-on: ubuntu-20.04
     timeout-minutes: 5
-    env:
-      NODE_VERSION: 14
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
       - name: Install node
         uses: actions/setup-node@v1
         with:
@@ -69,17 +73,23 @@ jobs:
         run: make check
 
   test-integration-bq:
-    needs: check
+    needs: linter
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
       ENABLED_BQ: 1
-      NODE_VERSION: 14
       GCLOUD_VERSION: 290.0.1
       BQ_PROJECTID: bqcartoci
       BQ_BUCKET_PUBLIC: gs://bqcartoci/
       BQ_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
       - name: Install node
         uses: actions/setup-node@v1
         with:
@@ -101,13 +111,11 @@ jobs:
         run: make check-integration
   
   test-integration-sf:
-    needs: check
+    needs: linter
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
       ENABLED_SF: 1
-      NODE_VERSION: 14
-      GCLOUD_VERSION: 290.0.1
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
@@ -119,6 +127,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
       - name: Install node
         uses: actions/setup-node@v1
         with:
