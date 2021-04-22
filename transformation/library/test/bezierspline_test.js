@@ -1,0 +1,48 @@
+const fs = require('fs');
+/* Emulate how BigQuery would load the file */
+global.eval(fs.readFileSync('../../transformation_library.js') + '');
+const test = require('tape');
+const path = require('path');
+const load = require('load-json-file');
+const write = require('write-json-file');
+const featureCollection = turf.featureCollection;
+const bezierSpline = turf.bezierSpline;
+
+const directories = {
+  in: path.join(__dirname, "bezierspline_test", "in") + path.sep,
+  out: path.join(__dirname, "bezierspline_test", "out") + path.sep,
+};
+
+const fixtures = fs.readdirSync(directories.in).map((filename) => {
+  return {
+    filename,
+    name: path.parse(filename).name,
+    geojson: load.sync(directories.in + filename),
+  };
+});
+
+test("turf-bezier-spline", (t) => {
+  fixtures.forEach((fixture) => {
+    const filename = fixture.filename;
+    const name = fixture.name;
+    const geojson = fixture.geojson;
+    const spline = colorize(bezierSpline(geojson));
+    const results = featureCollection([spline, geojson]);
+
+    if (process.env.REGEN) write.sync(directories.out + filename, results);
+    t.deepEquals(results, load.sync(directories.out + filename), name);
+  });
+  t.end();
+});
+
+function colorize(feature, color, width) {
+  color = color || "#F00";
+  width = width || 6;
+  feature.properties = {
+    stroke: color,
+    fill: color,
+    "stroke-width": width,
+    "fill-opacity": 0.1,
+  };
+  return feature;
+}
