@@ -4,7 +4,7 @@ global.eval(fs.readFileSync('../../processing_library.js') + '');
 const path = require("path");
 const test = require("tape");
 const load = require("load-json-file");
-const featureCollection = turf.featureCollection;
+const { featureCollection } = require("@turf/helpers");
 const along = turf.along;
 
 const line = load.sync(

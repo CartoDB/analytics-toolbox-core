@@ -6,13 +6,13 @@ const test = require("tape");
 const glob = require("glob");
 const load = require("load-json-file");
 const write = require("write-json-file");
-const circle = turf.circle;
-const truncate = turf.truncate;
+const circle = require("@turf/circle");
+const truncate = require("@turf/truncate").default;
 const geojsonhint = require("@mapbox/geojsonhint");
-const bboxPolygon = turf.bboxPolygon;
-const rhumbDestination = turf.rhumbDestination;
+const bboxPolygon = require("@turf/bbox-polygon");
+const rhumbDestination = require("@turf/rhumb-destination");
 // import destination from '@turf/destination';
-const featureCollection = turf.featureCollection;
+const { featureCollection } = require("@turf/helpers");
 const ellipse = turf.ellipse;
 
 test("turf-ellipse", (t) => {

@@ -4,10 +4,8 @@ global.eval(fs.readFileSync('../../measurement_library.js') + '');
 const path = require("path");
 const test = require("tape");
 const write = require("write-json-file");
-const destination = turf.destination;
-const point = turf.point;
-const lineString = turf.lineString;
-const featureCollection = turf.featureCollection;
+const destination = require("@turf/destination").default;
+const { point, lineString, featureCollection } = require("@turf/helpers");
 const bearing = turf.bearing;
 
 const out = path.join(__dirname, "bearing_test", "out") + path.sep;

@@ -6,10 +6,9 @@ const test = require("tape");
 const glob = require("glob");
 const load = require("load-json-file");
 const write = require("write-json-file");
-const getCoords = turf.getCoords;
-const lineString = turf.lineString;
-const featureCollection = turf.featureCollection;
-const truncate = turf.truncate;
+const { getCoords } = require("@turf/invariant");
+const { lineString, featureCollection } = require("@turf/helpers");
+const truncate = require("@turf/truncate").default;
 const destination = turf.destination;
 
 const directories = {

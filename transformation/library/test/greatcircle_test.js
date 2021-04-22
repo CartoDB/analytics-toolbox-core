@@ -5,8 +5,8 @@ const test = require('tape');
 const path = require('path');
 const load = require('load-json-file');
 const write = require('write-json-file');
-const truncate = turf.truncate;
-const featureCollection = turf.featureCollection;
+const truncate = require("@turf/truncate").default;
+const { featureCollection } = require("@turf/helpers");
 const greatCircle = turf.greatCircle;
 
 const directories = {

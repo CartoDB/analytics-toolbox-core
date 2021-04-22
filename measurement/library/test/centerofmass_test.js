@@ -6,11 +6,13 @@ const test = require("tape");
 const glob = require("glob");
 const load = require("load-json-file");
 const write = require("write-json-file");
-const featureEach = turf.featureEach;
-const point = turf.point;
-const lineString = turf.lineString;
-const polygon = turf.polygon;
-const featureCollection = turf.featureCollection;
+const { featureEach } = require("@turf/meta");
+const {
+  point,
+  lineString,
+  polygon,
+  featureCollection,
+} = require("@turf/helpers");
 const centerOfMass = turf.centerOfMass;
 
 const directories = {

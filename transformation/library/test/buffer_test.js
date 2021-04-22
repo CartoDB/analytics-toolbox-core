@@ -5,12 +5,14 @@ const test = require('tape');
 const path = require('path');
 const load = require('load-json-file');
 const write = require('write-json-file');
-const truncate = turf.truncate;
-const featureEach = turf.featureEach;
-const featureCollection = turf.featureCollection;
-const point = turf.point;
-const polygon = turf.polygon;
-const geometryCollection = turf.geometryCollection;
+const truncate = require("@turf/truncate");
+const { featureEach } = require("@turf/meta");
+const {
+  featureCollection,
+  point,
+  polygon,
+  geometryCollection,
+} = require("@turf/helpers");
 const buffer = turf.buffer;
 
 const directories = {

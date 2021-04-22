@@ -5,7 +5,7 @@ const test = require('tape');
 const path = require('path');
 const load = require('load-json-file');
 const write = require('write-json-file');
-const featureCollection = turf.featureCollection;
+const { featureCollection } = require("@turf/helpers");
 const bezierSpline = turf.bezierSpline;
 
 const directories = {

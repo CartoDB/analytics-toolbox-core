@@ -6,12 +6,11 @@ const glob = require("glob");
 const path = require("path");
 const load = require("load-json-file");
 const write = require("write-json-file");
-const truncate = turf.truncate;
-const center = turf.center;
-const centerMean = turf.centerMean;
-const centerOfMass = turf.centerOfMass;
-const round = turf.round;
-const featureCollection = turf.featureCollection;
+const center = require("@turf/center").default;
+const truncate = require("@turf/truncate").default;
+const centerMean = require("@turf/center-mean").default;
+const centerOfMass = require("@turf/center-of-mass").default;
+const { featureCollection, round } = require("@turf/helpers");
 const centerMedian = turf.centerMedian;
 
 test("turf-center-median", (t) => {

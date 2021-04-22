@@ -6,14 +6,16 @@ const path = require("path");
 const glob = require("glob");
 const load = require("load-json-file");
 const write = require("write-json-file");
-const sector = turf.sector;
-const bearing = turf.bearing;
-const truncate = turf.truncate;
-const distance = turf.distance;
-const point = turf.point;
-const round = turf.round;
-const lineString = turf.lineString;
-const featureCollection = turf.featureCollection;
+const sector = require("@turf/sector");
+const bearing = require("@turf/bearing").default;
+const truncate = require("@turf/truncate").default;
+const distance = require("@turf/distance").default;
+const {
+  point,
+  round,
+  lineString,
+  featureCollection,
+} = require("@turf/helpers");
 const angle = turf.angle;
 
 test("turf-angle", (t) => {

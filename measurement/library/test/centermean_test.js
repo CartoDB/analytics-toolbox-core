@@ -6,12 +6,10 @@ const write = require("write-json-file");
 const fs = require('fs');
 /* Emulate how BigQuery would load the file */
 global.eval(fs.readFileSync('../../measurement_library.js') + '');
-const truncate = turf.truncate;
-const featureEach = turf.featureEach;
-const coordEach = turf.coordEach;
-const lineString = turf.lineString;
-const featureCollection = turf.featureCollection;
-const center = turf.center;
+const truncate = require("@turf/truncate").default;
+const { featureEach, coordEach } = require("@turf/meta");
+const { lineString, featureCollection } = require("@turf/helpers");
+const center = require("@turf/center").default;
 const centerMean = turf.centerMean;
 
 test("turf-center-mean", (t) => {
