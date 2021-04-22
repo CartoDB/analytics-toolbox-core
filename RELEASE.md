@@ -8,3 +8,5 @@ For each module:
   * Make sure the internal `VERSION()` or library version function has been updated too. Note that, for external modules, the first 3 digits come from the lib and the fourth one comes from our implementation (A.B.C.D).
 
 Finally, update the root directory `CHANGELOG.md` making sure all noticeable changes have been added there too, add the date, pass all tests and merge.
+
+
