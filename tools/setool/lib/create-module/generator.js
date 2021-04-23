@@ -56,9 +56,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 function createMakefile (name) {
     const lname = name.toLowerCase();
-    const content = `DBS = "bq/"
-LIBRARY = "library/"
-ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
+    const content = `LIBRARY = "library/"
+ALL_SUBFOLDERS = $(LIBRARY) "bq/" "sf/"
 
 ENABLED_BQ ?= 0
 ENABLED_SF ?= 0
@@ -67,24 +66,24 @@ TARGET = ${lname}_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
 
 all build $(TARGET):
-    $(MAKE) -C library/ all
+	$(MAKE) -C library/ all
 
 check check-linter linter:
-    for s in $(LIBRARY); do \\
-        $(MAKE) -C $\${s} $@ || exit 1; \\
-    done;
+	for s in $(LIBRARY); do \\
+		$(MAKE) -C $\${s} $@ || exit 1; \\
+	done;
 
 clean:
-    for s in $(ALL_SUBFOLDERS); do \\
-        $(MAKE) -C $\${s} $@ || exit 1; \\
-    done;
+	for s in $(ALL_SUBFOLDERS); do \\
+		$(MAKE) -C $\${s} $@ || exit 1; \\
+	done;
 
 deploy check-integration:
 ifeq ($(ENABLED_BQ), 1)
-    $(MAKE) -C bq/ $@
+	$(MAKE) -C bq/ $@
 endif
 ifeq ($(ENABLED_SF), 1)
-    $(MAKE) -C sf/ $@
+	$(MAKE) -C sf/ $@
 endif`;
 
     createFile([name, 'Makefile'], content);
@@ -139,7 +138,8 @@ function createLibEslintrc (name) {
         "semi": ["error", "always"],
         "space-before-function-paren": ["error", "never"]
     }
-};`;
+};
+`;
 
     createFile([name, 'library', '.eslintrc.js'], content);
 }
@@ -155,36 +155,36 @@ CAT ?= cat
 all: $(TARGET)
 
 JS_FILES = \\
-    ${lname}/${lname}_version.js \\
+	${lname}/${lname}_version.js \\
 
 .PHONY: check
 check: $(TARGET)
-    $(MAKE) -C test/ $@
+	$(MAKE) -C test/ $@
 
 .PHONY: clean
 clean:
-    rm -rf $(TARGET) node_modules/
-    $(MAKE) -C test/ $@
+	rm -rf $(TARGET) node_modules/
+	$(MAKE) -C test/ $@
 
 .PHONY: clang-format check-clang-format eslint check-eslint
 node_modules: package.json
-    $(NPM) ci
+	$(NPM) i
 
 eslint: node_modules
-    $(ESLINT) --fix $(JS_FILES)
+	$(ESLINT) --fix $(JS_FILES)
 
 check-eslint: node_modules
-    $(ESLINT) $(JS_FILES)
+	$(ESLINT) $(JS_FILES)
 
 linter: eslint
 
 check-linter: check-eslint
 
 $(TARGET): $(JS_FILES)
-    rm -f $(TARGET)
-    for n in $(JS_FILES); do \\
-        $(CAT) $$n >> $(TARGET) || exit; \\
-    done
+	rm -f $(TARGET)
+	for n in $(JS_FILES); do \\
+		$(CAT) $$n >> $(TARGET) || exit; \\
+	done
 `;
 
     createFile([name, 'library', 'Makefile'], content);
@@ -222,7 +222,8 @@ function createLibSrcVersion (name) {
 /* exported ${lname}Version */
 function ${lname}Version() {
     return '1.0.0';
-};`
+};
+`;
 
     createFile([name, 'library', lname, `${lname}_version.js`], content);
 }
@@ -236,15 +237,15 @@ NPM ?= npm
 all:
 
 node_modules: package.json
-    $(NPM) ci
+	$(NPM) i
 
 .PHONY: check
 check: node_modules
-    $(TESTER) -p -j 4 -t 10000 $(shell find . -maxdepth 1 -name "*_test.js")
+	$(TESTER) -p -j 4 -t 10000 $(shell find . -maxdepth 1 -name "*_test.js")
 
 .PHONY: clean
 clean:
-    rm -rf node_modules`;
+	rm -rf node_modules`;
 
     createFile([name, 'library', 'test', 'Makefile'], content);
 }
@@ -304,7 +305,8 @@ describe('${uname} unit tests', () => {
     it ('Version', async () => {
         assert.equal(${lname}Version(), '1.0.0');
     });
-});`;
+});
+`;
 
     createFile([name, 'library', 'test', `${lname}_test.js`], content);
 }
@@ -340,70 +342,70 @@ ${uname}_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_${uname})/${lname}_librar
 
 .PHONY: ../${lname}_library.js
 ../${lname}_library.js:
-    $(MAKE) -C .. all
+	$(MAKE) -C .. all
 `)}
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
 
 check_environment:
 ifndef BQ_REGION
-    $(error BQ_REGION is undefined)
+	$(error BQ_REGION is undefined)
 endif
 ifndef BQ_PROJECTID
-    $(error BQ_PROJECTID is undefined)
+	$(error BQ_PROJECTID is undefined)
 endif
 ifndef BQ_DATASET_${uname}
-    $(error BQ_DATASET_${uname} is undefined)
+	$(error BQ_DATASET_${uname} is undefined)
 endif
 ${islib(`ifndef BQ_BUCKET_${uvisibility}
-    $(error BQ_BUCKET_${uvisibility} is undefined)
+	$(error BQ_BUCKET_${uvisibility} is undefined)
 endif
 `)}
 all check:
 
 clean:
-    $(MAKE) -C test/ $@
+	$(MAKE) -C test/ $@
 ${islib(`
 ##################### STORAGE FILES #####################
 storage_upload: ../${lname}_library.js check_environment
-    $(GSUTIL) cp -r ../${lname}_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_${uname})/
+	$(GSUTIL) cp -r ../${lname}_library.js $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_${uname})/
 
 storage_remove: check_environment
-    $(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_${uname})/
+	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_${uname})/
 `)}
 ##################### BIGQUERY DATASET #####################
 dataset_create: check_environment
-    $(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_${uname}) 2>/dev/null 1>/dev/null || \\
-        $(BQ) mk -d --description "${uname} Dataset" $(BQ_PROJECTID):$(BQ_DATASET_${uname})
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_${uname}) 2>/dev/null 1>/dev/null || \\
+		$(BQ) mk -d --description "${uname} Dataset" $(BQ_PROJECTID):$(BQ_DATASET_${uname})
 
 dataset_remove: check_environment
-    $(BQ) rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_${uname})
+	$(BQ) rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_${uname})
 
 REPLACEMENTS = -e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \\
-               -e 's!@@BQ_DATASET_${uname}@@!$(BQ_DATASET_${uname})!g'${islib(` \\
-               -e 's!@@${uname}_BQ_LIBRARY@@!$(${uname}_BQ_LIBRARY)!g'`)}
+	-e 's!@@BQ_DATASET_${uname}@@!$(BQ_DATASET_${uname})!g'${islib(` \\
+	-e 's!@@${uname}_BQ_LIBRARY@@!$(${uname}_BQ_LIBRARY)!g'`)}
 
 dataset_deploy: check_environment
-    for n in $(sort $(wildcard sql/*.sql)); do \\
-        $(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \\
-    done
+	for n in $(sort $(wildcard sql/*.sql)); do \\
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \\
+	done
 
 ##################### DEPLOY #####################
 deploy: check_environment${islib(`
-    $(MAKE) storage_upload`)}
-    $(MAKE) dataset_create
-    $(MAKE) dataset_deploy
+	$(MAKE) storage_upload`)}
+	$(MAKE) dataset_create
+	$(MAKE) dataset_deploy
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment
-    $(MAKE) deploy
-    $(MAKE) -C test/ $@ || ($(MAKE) integration_cleanup && exit 1)
-    $(MAKE) integration_cleanup
+	$(MAKE) deploy
+	$(MAKE) -C test/ $@ || ($(MAKE) integration_cleanup && exit 1)
+	$(MAKE) integration_cleanup
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
 ifeq ($(POST_INTEGRATION_CLEANUP), 1)${islib(`
-    $(MAKE) storage_remove`)}
-    $(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
+	$(MAKE) storage_remove`)}
+	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
 endif`;
 
     function islib (text) {
@@ -481,27 +483,27 @@ NPM ?= npm
 all:
 
 node_modules: package.json
-    $(NPM) ci
+	$(NPM) i
 
 BQ_PROJECTID ?= cartodb-gcp-backend-data-team
 check_environment:
 ifndef BQ_DATASET_${uname}
-    $(error BQ_DATASET_${uname} is undefined)
+	$(error BQ_DATASET_${uname} is undefined)
 endif
 
 .PHONY: clean
 clean:
-    rm -rf node_modules
+	rm -rf node_modules
 
 .PHONY: check_integration
 check-integration: node_modules check_environment
-    $(TESTER) -p -j $(shell find . -maxdepth 1 -name "*_integration.js" | wc -l) -t 240000 $(shell find . -maxdepth 1 -name "*_integration.js")
-    $(MAKE) check_integration_standalone
+	$(TESTER) -p -j $(shell find . -maxdepth 1 -name "*_integration.js" | wc -l) -t 240000 $(shell find . -maxdepth 1 -name "*_integration.js")
+	$(MAKE) check_integration_standalone
 
 # These tests need to be executed one by one because they modify the environment
 .PHONY: check_integration_standalone
 check-integration-standalone: node_modules check_environment
-    $(TESTER) -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")`;
+	$(TESTER) -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")`;
 
     createFile([name, 'bq', 'test', 'Makefile'], content);
 }
@@ -581,7 +583,8 @@ describe('${uname} integration tests', () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].versioncol, '1.0.0');
     });
-}); /* ${uname} integration tests */`;
+}); /* ${uname} integration tests */
+`;
 
     createFile([name, 'bq', 'test', `${lname}_integration.js`], content);
 }
@@ -619,7 +622,7 @@ ${uname}_SF_LIBRARY ?= ../${lname}_library.js
 
 .PHONY: ../${lname}_library.js
 ../${lname}_library.js:
-    $(MAKE) -C .. all
+	$(MAKE) -C .. all
 `)}
 SQL_FILES =  $(wildcard sql/*.sql)
 SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
@@ -633,59 +636,59 @@ ifndef SF_DATABASEID
 	$(error SF_DATABASEID is undefined)
 endif
 ifndef SF_SCHEMA_${uname}
-    $(error SF_SCHEMA_${uname} is undefined)
+	$(error SF_SCHEMA_${uname} is undefined)
 endif
 
 all check:
 
 clean:
-    $(MAKE) -C test/ $@
+	$(MAKE) -C test/ $@
 
 ##################### SNOWFLAKE SCHEMA #####################
 schema_create: check_environment
-    $(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA_${uname})"
+	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA_${uname})"
 
 schema_remove: check_environment
-    $(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA_${uname}) CASCADE"
+	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA_${uname}) CASCADE"
 
 REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \\
-                -e 's!@@SF_SCHEMA_${uname}@@!$(SF_SCHEMA_${uname})!g' \\
-                -e 's!@@SF_SHARE_PUBLIC@@!$(SF_SHARE_PUBLIC)!g'${islib(`\\
-                -e '/@@LIBRARY_FILE_CONTENT@@/ r $(${uname}_SF_LIBRARY)' \\
-                -e 's!@@LIBRARY_FILE_CONTENT@@!!g'`)}
+	-e 's!@@SF_SCHEMA_${uname}@@!$(SF_SCHEMA_${uname})!g' \\
+    -e 's!@@SF_SHARE_PUBLIC@@!$(SF_SHARE_PUBLIC)!g'${islib(`\\
+    -e '/@@LIBRARY_FILE_CONTENT@@/ r $(${uname}_SF_LIBRARY)' \\
+    -e 's!@@LIBRARY_FILE_CONTENT@@!!g'`)}
 
 schema_deploy: check_environment
-    for n in $(sort $(SQL_DEPLOYABLE)); do \\
-        $(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit; \\
-    done
+	for n in $(sort $(SQL_DEPLOYABLE)); do \\
+		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit; \\
+	done
 
 share_create: check_environment
 ifeq ($(SF_SHARE_ENABLED),1)
-    $(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(xargs)" 
+	$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
 
 share_remove: check_environment
 ifeq ($(SF_SHARE_ENABLED),1)
-    $(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(xargs)" 
+	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
 
 ##################### DEPLOY #####################
 deploy: check_environment
-    $(MAKE) schema_create
-    $(MAKE) schema_deploy
-    $(MAKE) share_create
+	$(MAKE) schema_create
+	$(MAKE) schema_deploy
+	$(MAKE) share_create
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment
-    $(MAKE) deploy
-    $(MAKE) -C test/ $@ || ($(MAKE) integration_cleanup && exit 1)
-    $(MAKE) integration_cleanup
+	$(MAKE) deploy
+	$(MAKE) -C test/ $@ || ($(MAKE) integration_cleanup && exit 1)
+	$(MAKE) integration_cleanup
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
 ifeq ($(POST_INTEGRATION_CLEANUP), 1)
-    $(MAKE) share_remove
-    $(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
+	$(MAKE) share_remove
+	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
 endif`;
 
     function islib (text) {
@@ -781,7 +784,7 @@ NPM ?= npm
 all:
 
 node_modules: package.json
-    $(NPM) ci
+	$(NPM) i
 
 check_environment:
 ifndef SF_SCHEMA_${uname}
@@ -790,17 +793,17 @@ endif
 
 .PHONY: clean
 clean:
-    rm -rf node_modules
+	rm -rf node_modules
 
 .PHONY: check_integration
 check-integration: node_modules check_environment
-    $(TESTER) -p -j $(shell find . -maxdepth 1 -name "*_integration.js" | wc -l) -t 240000 $(shell find . -maxdepth 1 -name "*_integration.js")
-    $(MAKE) check_integration_standalone
+	$(TESTER) -p -j $(shell find . -maxdepth 1 -name "*_integration.js" | wc -l) -t 240000 $(shell find . -maxdepth 1 -name "*_integration.js")
+	$(MAKE) check_integration_standalone
 
 # These tests need to be executed one by one because they modify the environment
 .PHONY: check_integration_standalone
 check-integration-standalone: node_modules check_environment
-    $(TESTER) -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")`;
+	$(TESTER) -t 240000 $(shell find . -maxdepth 1 -name "*_integration_standalone.js")`;
 
     createFile([name, 'sf', 'test', 'Makefile'], content);
 }
@@ -910,7 +913,8 @@ describe('${uname} integration tests', () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].VERSIONCOL, '1.0.0');
     });
-}); /* ${uname} integration tests */`;
+}); /* ${uname} integration tests */
+`;
 
     createFile([name, 'sf', 'test', `${lname}_integration.js`], content);
 }
