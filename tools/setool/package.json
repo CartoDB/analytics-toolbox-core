@@ -1,0 +1,20 @@
+{
+  "name": "setool",
+  "version": "1.0.0-alpha",
+  "description": "A tool to help develop the Spatial Extension",
+  "private": true,
+  "main": "index.js",
+  "bin": {
+    "setool": "./index.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "CARTO",
+    "url": "https://carto.com/"
+  },
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "inquirer": "^8.0.0"
+  }
+}
