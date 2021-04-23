@@ -21,6 +21,7 @@ on:
 
 env:
   NODE_VERSION: 14
+  POST_INTEGRATION_CLEANUP: 1
 
 jobs:
 
