@@ -5,17 +5,21 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_MEASUREMENTS@@.__MINKOWSKIDISTANCE`
-    (geojson STRING)
-    RETURNS STRING
+    (geojson1 STRING, geojson2 STRING, p FLOAT64)
+    RETURNS ARRAY<FLOAT64>
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@MEASUREMENTS_BQ_LIBRARY@@"])
 AS """
-    return null;
+    if (!geojson1 || !geojson2 || p == null) {
+        return null;
+    }
+    let distance = turf.distanceWeight(JSON.parse(geojson1), JSON.parse(geojson2), p);
+    return distance;
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_MEASUREMENTS@@.ST_MINKOWSKIDISTANCE`
-    (geog GEOGRAPHY)
+    (geog1 GEOGRAPHY, geog2 GEOGRAPHY, p FLOAT64)
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PROJECTID@@`.@@BQ_DATASET_MEASUREMENTS@@.__MINKOWSKIDISTANCE(ST_ASGEOJSON(geog)))
+    `@@BQ_PROJECTID@@`.@@BQ_DATASET_MEASUREMENTS@@.__MINKOWSKIDISTANCE(ST_ASGEOJSON(geog1), ST_ASGEOJSON(geog2), p)
 );
