@@ -13,6 +13,7 @@
     "load-json-file": "^6.2.0",
     "mocha": "^8.2.1",
     "path": "^0.12.7",
-    "tape": "^5.2.2"
+    "tape": "^5.2.2",
+    "write-json-file": "^4.3.0"
   }
 }

@@ -5,8 +5,9 @@ const { point } = require("@turf/helpers");
 const test = require("tape");
 const path = require("path");
 const load = require("load-json-file");
+const { default: distance } = require('@turf/distance');
 const distanceWeight = turf.distanceWeight;
-const pNormDistance = turf.pNormDistance;
+const pNormDistance = require('@turf/distance-weight').pNormDistance;
 
 test("pNormDistance function", (t) => {
   t.equal(pNormDistance(point([2, 0]), point([0, 0]), 2), 2, "2-norm is ok");

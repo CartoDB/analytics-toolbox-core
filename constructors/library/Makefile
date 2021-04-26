@@ -16,7 +16,7 @@ check: ${TARGET}
 
 .PHONY: clean
 clean:
-	rm -rf ${TARGET} node_modules/
+	rm -rf ${TARGET} node_modules
 	$(MAKE) -C test/ $@
 
 .PHONY: clang-format check-clang-format eslint check-eslint
