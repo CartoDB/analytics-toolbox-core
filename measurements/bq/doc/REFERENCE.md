@@ -28,10 +28,10 @@ SELECT bqcarto.measurements.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOI
 -- 3.933094586038578
 ```
 
-### ST_BEARING
+### ST_AZIMUTH
 
 {{% bannerNote type="code" %}}
-measurements.ST_BEARING(startPoint, endPoint)
+measurements.ST_AZIMUTH(startPoint, endPoint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -48,7 +48,7 @@ Takes two points and finds the geographic bearing between them, i.e. the angle m
 **Example**
 
 ``` sql
-SELECT bqcarto.measurements.ST_BEARING(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,41.4167));
+SELECT bqcarto.measurements.ST_AZIMUTH(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,41.4167));
 -- -36.75052908494255
 ```
 
