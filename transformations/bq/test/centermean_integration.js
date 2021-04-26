@@ -2,7 +2,7 @@ const assert = require('assert').strict;
 const {BigQuery} = require('@google-cloud/bigquery');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
-const BQ_DATASET_MEASUREMENTS = process.env.BQ_DATASET_MEASUREMENTS;
+const BQ_DATASET_TRANSFORMATIONS = process.env.BQ_DATASET_TRANSFORMATIONS;
 
 describe('ST_CENTERMEAN integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
@@ -11,14 +11,14 @@ describe('ST_CENTERMEAN integration tests', () => {
         if (!BQ_PROJECTID) {
             throw "Missing BQ_PROJECTID env variable";
         }
-        if (!BQ_DATASET_MEASUREMENTS) {
-            throw "Missing BQ_DATASET_MEASUREMENTS env variable";
+        if (!BQ_DATASET_TRANSFORMATIONS) {
+            throw "Missing BQ_DATASET_TRANSFORMATIONS env variable";
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
     it ('ST_CENTERMEAN should return NULL if any NULL mandatory argument', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENTS}\`.ST_CENTERMEAN(NULL) as centermean1`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_CENTERMEAN(NULL) as centermean1`;
         
         let rows;
         await assert.doesNotReject( async () => {

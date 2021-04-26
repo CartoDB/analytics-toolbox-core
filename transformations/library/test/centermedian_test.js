@@ -1,6 +1,6 @@
 const fs = require('fs');
 /* Emulate how BigQuery would load the file */
-global.eval(fs.readFileSync('../../measurements_library.js') + '');
+global.eval(fs.readFileSync('../../transformations_library.js') + '');
 const test = require("tape");
 const glob = require("glob");
 const path = require("path");

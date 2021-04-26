@@ -5,7 +5,7 @@ const load = require("load-json-file");
 const write = require("write-json-file");
 const fs = require('fs');
 /* Emulate how BigQuery would load the file */
-global.eval(fs.readFileSync('../../measurements_library.js') + '');
+global.eval(fs.readFileSync('../../transformations_library.js') + '');
 const truncate = require("@turf/truncate").default;
 const { featureEach, coordEach } = require("@turf/meta");
 const { lineString, featureCollection } = require("@turf/helpers");

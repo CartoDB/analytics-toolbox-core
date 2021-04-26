@@ -52,52 +52,6 @@ SELECT bqcarto.measurements.ST_BEARING(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGP
 -- -36.75052908494255
 ```
 
-### ST_CENTERMEAN
-
-{{% bannerNote type="code" %}}
-measurements.ST_CENTERMEAN(geog)
-{{%/ bannerNote %}}
-
-**Description**
-
-Takes a Feature or FeatureCollection and returns the mean center. https://github.com/Turfjs/turf/tree/master/packages/turf-center-mean
-
-* `geog`: `GEOGRAPHY` feature to be centered.
-
-**Return type**
-
-`GEOGRAPHY`
-
-**Example**
-
-``` sql
-SELECT bqcarto.measurements.ST_CENTERMEAN(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
--- POINT(25.3890912155939 29.7916831655627)
-```
-
-### ST_CENTEROFMASS
-
-{{% bannerNote type="code" %}}
-measurements.ST_CENTEROFMASS(geog)
-{{%/ bannerNote %}}
-
-**Description**
-
-Takes any Feature or a FeatureCollection and returns its center of mass using this formula: Centroid of Polygon. https://turfjs.org/docs/#centerOfMass
-
-* `geog`: `GEOGRAPHY` feature to be centered.
-
-**Return type**
-
-`GEOGRAPHY`
-
-**Example**
-
-``` sql
-SELECT bqcarto.measurements.ST_CENTEROFMASS(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
--- POINT(25.1730977433239 27.2789529273059) 
-```
-
 ### VERSION
 
 {{% bannerNote type="code" %}}
