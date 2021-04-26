@@ -2,30 +2,6 @@
 
 <div class="badge core"></div>
 
-### ST_BEZIERSPLINE
-
-{{% bannerNote type="code" %}}
-transformations.ST_BEZIERSPLINE(geog, sharpness)
-{{%/ bannerNote %}}
-
-**Description**
-
-Takes a line and returns a curved version by applying a Bezier spline algorithm. https://turfjs.org/docs/#bezierSpline
-
-* `geog`: `GEOGRAPHY` input LineString.
-* `sharpness`: `FLOAT64`|`NULL` a measure of how curvy the path should be between splines. If `NULL` the default value 0.85 is used.
-
-**Return type**
-
-`GEOGRAPHY`
-
-**Example**
-
-``` sql
-SELECT bqcarto.transformations.ST_BEZIERSPLINE(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), 0.9);
--- LINESTRING(-76.091308 18.427501, -76.0916216712943 ... 
-```
-
 ### ST_BUFFER
 
 {{% bannerNote type="code" %}}
@@ -103,22 +79,19 @@ SELECT bqcarto.transformations.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST
 -- LINESTRING(-3.70325 40.4167 ... 
 ```
 
-### ST_MAKEELLIPSE
+### ST_LINE_INTERPOLATE_POINT
 
 {{% bannerNote type="code" %}}
-transformations.ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis, angle, units, steps)
+transformations.ST_LINE_INTERPOLATE_POINT(geog, distance, units)
 {{%/ bannerNote %}}
 
 **Description**
 
-Takes a Point and calculates the ellipse polygon given two semi-axes expressed in variable units and steps for precision. https://github.com/Turfjs/turf/tree/master/packages/turf-ellipse
+Takes a LineString and returns a Point at a specified distance along the line. https://turfjs.org/docs/#along
 
-* `center`: `GEOGRAPHY` center point.
-* `xSemiAxis`: `FLOAT64` semi (major) axis of the ellipse along the x-axis.
-* `ySemiAxis`: `FLOAT64` semi (minor) axis of the ellipse along the y-axis.
-* `angle`: `FLOAT64`|`NULL` angle of rotation (along the vertical axis), from North in decimal degrees, negative clockwise. If `NULL` the default value 0 is used.
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, and degrees. If `NULL`the default value kilometers is used.
-* `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value 64 is used.
+* `geog`: `GEOGRAPHY` input line.
+* `distance`: `FLOAT64` distance along the line.
+* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees and radians. If `NULL`the default value kilometers is used.
 
 **Return type**
 
@@ -127,8 +100,8 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 **Example**
 
 ``` sql
-SELECT bqcarto.transformations.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, -30, "miles", 80);
--- POLYGON((-73.8558575786687 40.7004828957859 ... 
+SELECT bqcarto.transformations.ST_LINE_INTERPOLATE_POINT(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), 250, 'miles');
+-- POINT(-74.297592068938 19.4498107103156) 
 ```
 
 ### VERSION

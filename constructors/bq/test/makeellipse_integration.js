@@ -2,7 +2,7 @@ const assert = require('assert').strict;
 const {BigQuery} = require('@google-cloud/bigquery');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
-const BQ_DATASET_TRANSFORMATIONS = process.env.BQ_DATASET_TRANSFORMATIONS;
+const BQ_DATASET_CONSTRUCTORS = process.env.BQ_DATASET_CONSTRUCTORS;
 
 describe('ST_MAKEELLIPSE integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
@@ -11,16 +11,16 @@ describe('ST_MAKEELLIPSE integration tests', () => {
         if (!BQ_PROJECTID) {
             throw "Missing BQ_PROJECTID env variable";
         }
-        if (!BQ_DATASET_TRANSFORMATIONS) {
-            throw "Missing BQ_DATASET_TRANSFORMATIONS env variable";
+        if (!BQ_DATASET_CONSTRUCTORS) {
+            throw "Missing BQ_DATASET_CONSTRUCTORS env variable";
         }
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
     it ('ST_MAKEELLIPSE should return NULL if any NULL mandatory argument', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_MAKEELLIPSE(NULL, 5, 3, -30, "miles", 80) as ellipse1,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), NULL, 3, -30, "miles", 80) as ellipse2,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, NULL, -30, "miles", 80) as ellipse3`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEELLIPSE(NULL, 5, 3, -30, "miles", 80) as ellipse1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), NULL, 3, -30, "miles", 80) as ellipse2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, NULL, -30, "miles", 80) as ellipse3`;
         
         let rows;
         await assert.doesNotReject( async () => {
@@ -33,8 +33,8 @@ describe('ST_MAKEELLIPSE integration tests', () => {
     });
 
     it ('ST_MAKEELLIPSE default values should work', async () => {
-        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, 0, "kilometers", 64) as defaultValue,
-        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, NULL, NULL, NULL) as nullParam1`;
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, 0, "kilometers", 64) as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, NULL, NULL, NULL) as nullParam1`;
         
         let rows;
         await assert.doesNotReject( async () => {
