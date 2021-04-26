@@ -18,12 +18,6 @@ describe('ST_BEARING integration tests', () => {
     });
 
     it ('ST_BEARING should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_BEARING(NULL, ST_GEOGPOINT(-4.70325 ,41.4167)) as bearing1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_BEARING(ST_GEOGPOINT(-3.70325 ,40.4167), NULL) as bearing2`;
         

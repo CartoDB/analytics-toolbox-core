@@ -18,12 +18,6 @@ describe('ST_DESTINATION integration tests', () => {
     });
 
     it ('ST_DESTINATION should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_DESTINATION(NULL, 10, 45, "miles") as destination1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), NULL, 45, "miles") as destination2,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), 10, NULL, "miles") as destination3`;
@@ -36,5 +30,17 @@ describe('ST_DESTINATION integration tests', () => {
         assert.equal(rows[0].destination1, null);
         assert.equal(rows[0].destination2, null);
         assert.equal(rows[0].destination3, null);
+    });
+
+    it ('ST_DESTINATION default values should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), 10, 45, "kilometers") as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), 10, 45, NULL) as nullParam1`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
     });
 }); /* ST_DESTINATION integration tests */

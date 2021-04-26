@@ -18,12 +18,6 @@ describe('ST_CENTERMEAN integration tests', () => {
     });
 
     it ('ST_CENTERMEAN should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_CENTERMEAN(NULL) as centermean1`;
         
         let rows;

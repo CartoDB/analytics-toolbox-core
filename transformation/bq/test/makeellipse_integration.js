@@ -18,12 +18,6 @@ describe('ST_MAKEELLIPSE integration tests', () => {
     });
 
     it ('ST_MAKEELLIPSE should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_MAKEELLIPSE(NULL, 5, 3, -30, "miles", 80) as ellipse1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), NULL, 3, -30, "miles", 80) as ellipse2,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, NULL, -30, "miles", 80) as ellipse3`;
@@ -36,5 +30,17 @@ describe('ST_MAKEELLIPSE integration tests', () => {
         assert.equal(rows[0].ellipse1, null);
         assert.equal(rows[0].ellipse2, null);
         assert.equal(rows[0].ellipse2, null);
+    });
+
+    it ('ST_MAKEELLIPSE default values should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, 0, "kilometers", 64) as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, NULL, NULL, NULL) as nullParam1`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
     });
 }); /* ST_MAKEELLIPSE integration tests */

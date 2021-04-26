@@ -18,12 +18,6 @@ describe('ST_BEZIERSPLINE integration tests', () => {
     });
 
     it ('ST_BEZIERSPLINE should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BEZIERSPLINE(NULL, 0.9) as bezierspline1`;
         
         let rows;
@@ -32,5 +26,17 @@ describe('ST_BEZIERSPLINE integration tests', () => {
         });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].bezierspline1, null);
+    });
+
+    it ('ST_BEZIERSPLINE default values should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BEZIERSPLINE(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), 0.85) as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BEZIERSPLINE(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), NULL) as nullParam1`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
     });
 }); /* ST_BEZIERSPLINE integration tests */

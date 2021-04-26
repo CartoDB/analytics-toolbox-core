@@ -18,12 +18,6 @@ describe('ST_GREATCIRCLE integration tests', () => {
     });
 
     it ('ST_GREATCIRCLE should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_GREATCIRCLE(NULL, ST_GEOGPOINT(-73.9385,40.6643), 20) as greatcircle1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), NULL, 20) as greatcircle2`;
         
@@ -34,5 +28,17 @@ describe('ST_GREATCIRCLE integration tests', () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].greatcircle1, null);
         assert.equal(rows[0].greatcircle2, null);
+    });
+
+    it ('ST_GREATCIRCLE default values should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 100) as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), NULL) as nullParam1`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
     });
 }); /* ST_GREATCIRCLE integration tests */

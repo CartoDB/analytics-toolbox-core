@@ -4,7 +4,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_TRANSFORMATION = process.env.BQ_DATASET_TRANSFORMATION;
 
-describe('BUFFER integration tests', () => {
+describe('ST_BUFFER integration tests', () => {
     const queryOptions = { 'timeoutMs' : 30000 };
     let client;
     before(async () => {
@@ -41,7 +41,7 @@ describe('BUFFER integration tests', () => {
         assert.deepEqual(resultFeature, expectedFeature);
     });
 
-    it ('BUFFER should return NULL if any NULL mandatory argument', async () => {
+    it ('ST_BUFFER should return NULL if any NULL mandatory argument', async () => {
         let feature = {
             "type": "Point",
             "coordinates": [-100, 50]  
@@ -60,7 +60,19 @@ describe('BUFFER integration tests', () => {
         assert.equal(rows[0].buffer2, null);
     });
 
-    it ('BUFFER should fail with wrong arguments', async () => {
+    it ('ST_BUFFER default values should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, "kilometers", 8) as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATION}\`.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, NULL, NULL) as nullParam1`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
+    });
+
+    it ('ST_BUFFER should fail with wrong arguments', async () => {
         let feature = {
             "type": "Point",
             "coordinates": [-100, 50]  
@@ -78,4 +90,4 @@ describe('BUFFER integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
     });
-}); /* BUFFER integration tests */
+}); /* ST_BUFFER integration tests */

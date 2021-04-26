@@ -18,12 +18,6 @@ describe('ST_ANGLE integration tests', () => {
     });
 
     it ('ST_ANGLE should return NULL if any NULL mandatory argument', async () => {
-        let feature = {
-            "type": "Point",
-            "coordinates": [-100, 50]  
-        };
-        featureJSON = JSON.stringify(feature);
-    
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_ANGLE(NULL, ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), NULL, ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle2,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), NULL, false) as angle3`;
@@ -36,5 +30,17 @@ describe('ST_ANGLE integration tests', () => {
         assert.equal(rows[0].angle1, null);
         assert.equal(rows[0].angle2, null);
         assert.equal(rows[0].angle3, null);
+    });
+
+    it ('ST_ANGLE default values should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as defaultValue,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_MEASUREMENT}\`.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), NULL) as nullParam1`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
     });
 }); /* ST_ANGLE integration tests */
