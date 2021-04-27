@@ -5,21 +5,27 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_MEASUREMENTS@@.__MINKOWSKIDISTANCE`
-    (geojson1 STRING, geojson2 STRING, p FLOAT64)
-    RETURNS ARRAY<FLOAT64>
+    (geojson ARRAY<STRING>, p FLOAT64)
+    RETURNS ARRAY<STRING>
     DETERMINISTIC
     LANGUAGE js
     OPTIONS (library=["@@MEASUREMENTS_BQ_LIBRARY@@"])
 AS """
-    if (!geojson1 || !geojson2 || p == null) {
+    if (!geojson) {
         return null;
     }
-    let distance = turf.distanceWeight(JSON.parse(geojson1), JSON.parse(geojson2), p);
+    let options = {};
+    if(p != null)
+    {
+        options.p = Number(p);
+    }
+    const features = turf.featureCollection(geojson.map(x => turf.feature(JSON.parse(x))));
+    let distance = turf.distanceWeight(features, options);
     return distance;
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_MEASUREMENTS@@.ST_MINKOWSKIDISTANCE`
-    (geog1 GEOGRAPHY, geog2 GEOGRAPHY, p FLOAT64)
-AS (
-    `@@BQ_PROJECTID@@`.@@BQ_DATASET_MEASUREMENTS@@.__MINKOWSKIDISTANCE(ST_ASGEOJSON(geog1), ST_ASGEOJSON(geog2), p)
-);
+    (geog ARRAY<GEOGRAPHY>, p FLOAT64)
+AS ((
+    SELECT `@@BQ_PROJECTID@@`.@@BQ_DATASET_MEASUREMENTS@@.__MINKOWSKIDISTANCE(ARRAY_AGG(ST_ASGEOJSON(x)), p) FROM unnest(geog) x
+));
