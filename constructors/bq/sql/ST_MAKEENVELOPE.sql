@@ -9,8 +9,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_CONSTRUCTORS@@.ST_MAKE
 RETURNS GEOGRAPHY
 OPTIONS (description="Creates a rectangular Polygon from the minimum and maximum values for X and Y")
 AS (
-    ST_MAKEPOLYGONORIENTED([ST_GeogFromText(CONCAT('LINESTRING(', LEAST(xmin, xmax), ' ', LEAST(ymin, ymax), ',', 
-                                                LEAST(xmin, xmax), ' ', GREATEST(ymin, ymax), ',', 
-                                                GREATEST(xmin, xmax), ' ', GREATEST(ymin, ymax), ',', 
-                                                GREATEST(xmin, xmax), ' ', LEAST(ymin, ymax),')'))])
+    ST_MAKEPOLYGON(ST_GeogFromText(CONCAT('LINESTRING(', xmin, ' ', ymin, ',', 
+                                                xmin, ' ', ymax, ',', 
+                                                xmax, ' ', ymax, ',', 
+                                                xmax, ' ', ymin,')')))
 );

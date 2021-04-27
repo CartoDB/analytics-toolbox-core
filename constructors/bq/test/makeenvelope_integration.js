@@ -32,7 +32,7 @@ describe('MAKEENVELOPE integration tests', () => {
         });
         assert.equal(rows.length, 1);
         let resultFeature = rows[0].poly.value;
-        let expectedPolygon = 'POLYGON((10 10, 10 11, 11 11, 11 10, 10 10))';
+        let expectedPolygon = 'POLYGON((11 10, 11 11, 10 11, 10 10, 11 10))';
 
         assert.deepEqual(resultFeature, expectedPolygon);
     });
@@ -62,14 +62,14 @@ describe('MAKEENVELOPE integration tests', () => {
 
     it ('MAKEENVELOPE should be robust to data input', async () => {
 
-        let xmin = -10.0;
-        let ymin = -10.0;
-        let xmax = 10.0;
-        let ymax = 10.0;
+        let xmin = -179.0;
+        let ymin = 10.0;
+        let xmax = 179.0;
+        let ymax = 11.0;
     
         const query1 = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEENVELOPE(${xmin},${ymin},${xmax},${ymax}) as poly1;`;
-        const query2 = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEENVELOPE(${xmax},${ymax},${xmin},${ymin}) as poly2;`;
-        let expectedPolygon = 'POLYGON((-10 -10, -10 10, 10 10, 10 -10, -10 -10))';
+        const query2 = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_CONSTRUCTORS}\`.ST_MAKEENVELOPE(${xmax},${ymin},${xmin},${ymax}) as poly2;`;
+        let expectedPolygon = 'POLYGON((-179 10, -179 11, 179 11, 179 10, -179 10))';
         let rows;
         
         await assert.doesNotReject( async () => {
