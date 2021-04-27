@@ -8,6 +8,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_CONSTRUCTORS@@.VERSION
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
+    OPTIONS (library=["@@CONSTRUCTORS_BQ_LIBRARY@@"])
 AS """
-    return '1.0.0';
+    return constructorsVersion();
 """;
