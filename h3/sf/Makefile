@@ -62,7 +62,7 @@ ifeq ($(SF_SHARE_ENABLED),1)
 endif
 
 ##################### DEPLOY #####################
-deploy: check_environment
+deploy: ../h3.js check_environment
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 	$(MAKE) share_create
