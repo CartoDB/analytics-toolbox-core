@@ -459,8 +459,7 @@ function createBQSQLVersion (name, library) {
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PROJECTID@@.@@BQ_DATASET_${uname}@@.VERSION\`()
     RETURNS STRING
-    DETERMINISTIC
-    LANGUAGE js${islib(`
+    DETERMINISTIC${islib(`LANGUAGE js
     OPTIONS (library=["@@${uname}_BQ_LIBRARY@@"])`)}
 AS """
     return ${library ? `${lname}Version()` : `'1.0.0'`};
@@ -674,7 +673,7 @@ ifeq ($(SF_SHARE_ENABLED),1)
 endif
 
 ##################### DEPLOY #####################
-deploy: check_environment
+deploy: ../${lname}_library.js check_environment
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 	$(MAKE) share_create
@@ -742,8 +741,8 @@ function createSFSQLVersion (name, library) {
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_${uname}@@.VERSION()
-    RETURNS STRING
-    LANGUAGE JAVASCRIPT
+    RETURNS STRING${islib(`
+    LANGUAGE JAVASCRIPT`)}
 AS $$${islib(`
     @@LIBRARY_FILE_CONTENT@@`)}
     
