@@ -14,7 +14,7 @@ AS """
     if (!geojson) {
         return null;
     }
-    let medianCenter = turf.centerMedian(JSON.parse(geojson));
+    let medianCenter = turf.centerMedian(turf.feature(JSON.parse(geojson)));
     return JSON.stringify(medianCenter.geometry);
 """;
 
