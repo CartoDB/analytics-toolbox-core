@@ -106,8 +106,6 @@ jobs:
         run: |
           source tools/dev_environment.sh.sample
           env >> $GITHUB_ENV
-      - name: Build
-        run: make
       - name: Run integration tests
         run: make check-integration
   
@@ -145,7 +143,5 @@ jobs:
         run: |
           source tools/dev_environment.sh.sample
           env >> $GITHUB_ENV
-      - name: Build
-        run: make
       - name: Run integration tests
         run: make check-integration

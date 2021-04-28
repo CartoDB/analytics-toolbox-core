@@ -67,7 +67,7 @@ endif
 
 ##################### DEPLOY #####################
 SF_H3_PATH = ../../h3/sf
-deploy: check_environment
+deploy: ../placekey_library.js check_environment
 	$(MAKE) -C $(SF_H3_PATH) $@
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
