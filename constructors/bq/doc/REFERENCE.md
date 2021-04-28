@@ -112,5 +112,5 @@ Returns the current version of the constructors module.
 
 ```sql
 SELECT bqcarto.constructors.VERSION();
--- 1.0.0
+-- 1.0.1
 ```
