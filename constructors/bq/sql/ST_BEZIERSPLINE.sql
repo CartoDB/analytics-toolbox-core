@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_CONSTRUCTORS@@.__BEZIERSPLINE`
-    (geojson STRING, sharpness FLOAT64)
+    (geojson STRING, resolution INT64, sharpness FLOAT64)
     RETURNS STRING
     DETERMINISTIC
     LANGUAGE js
@@ -15,6 +15,10 @@ AS """
         return null;
     }
     let options = {};
+    if(resolution != null)
+    {
+        options.resolution = Number(resolution);
+    }
     if(sharpness != null)
     {
         options.sharpness = Number(sharpness);
@@ -24,7 +28,7 @@ AS """
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PROJECTID@@.@@BQ_DATASET_CONSTRUCTORS@@.ST_BEZIERSPLINE`
-    (geog GEOGRAPHY, sharpness FLOAT64)
+    (geog GEOGRAPHY, resolution INT64, sharpness FLOAT64)
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PROJECTID@@`.@@BQ_DATASET_CONSTRUCTORS@@.__BEZIERSPLINE(ST_ASGEOJSON(geog), sharpness))
+    ST_GEOGFROMGEOJSON(`@@BQ_PROJECTID@@`.@@BQ_DATASET_CONSTRUCTORS@@.__BEZIERSPLINE(ST_ASGEOJSON(geog), resolution, sharpness))
 );
