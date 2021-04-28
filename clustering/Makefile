@@ -2,6 +2,7 @@ LIBRARY = "library/"
 ALL_SUBFOLDERS = $(LIBRARY) "bq/" "sf/"
 
 ENABLED_BQ ?= 0
+ENABLED_SF ?= 0
 
 TARGET = clustering_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)

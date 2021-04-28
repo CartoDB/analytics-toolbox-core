@@ -5,8 +5,9 @@ MODULES = \
 	quadkey \
   	s2 \
 	skel \
-	transformation \
-	constructors
+	transformations \
+	constructors \
+	measurements
 
 .PHONY: all build check check-integration check-linter clean deploy linter
 

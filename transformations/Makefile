@@ -1,8 +1,8 @@
-DBS = "bq/"
 LIBRARY = "library/"
-ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
+ALL_SUBFOLDERS = $(LIBRARY) "bq/" "sf/"
 
 ENABLED_BQ ?= 0
+ENABLED_SF ?= 0
 
 TARGET = transformations_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
@@ -17,7 +17,7 @@ check check-linter linter:
 
 clean:
 	for s in $(ALL_SUBFOLDERS); do \
-		$(MAKE) -C $${s} $@ || exit 1; \
+		if [ -d $${s} ]; then $(MAKE) -C $${s} $@ || exit 1; fi \
 	done;
 
 deploy check-integration:
