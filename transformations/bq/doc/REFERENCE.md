@@ -14,8 +14,8 @@ Calculates a Geography buffer for input features for a given radius. Units suppo
 
 * `geog`: `GEOGRAPHY` input to be buffered.
 * `radius`: `FLOAT64` distance to draw the buffer (negative values are allowed).
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, and degrees. If `NULL`the default value kilometers is used.
-* `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value 8 is used.
+* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
+* `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value `8` is used.
 
 **Return type**
 
@@ -49,6 +49,29 @@ Takes a Feature or FeatureCollection and returns the mean center. https://github
 ``` sql
 SELECT bqcarto.transformations.ST_CENTERMEAN(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
 -- POINT(25.3890912155939 29.7916831655627)
+```
+
+### ST_CENTERMEDIAN
+
+{{% bannerNote type="code" %}}
+transformations.ST_CENTERMEDIAN(geog)
+{{%/ bannerNote %}}
+
+**Description**
+
+Takes a FeatureCollection of points and calculates the median center, algorithimically. The median center is understood as the point that is requires the least total travel from all other points. https://github.com/Turfjs/turf/tree/master/packages/turf-center-median
+
+* `geog`: `GEOGRAPHY` feature to be centered.
+
+**Return type**
+
+`GEOGRAPHY`
+
+**Example**
+
+``` sql
+SELECT bqcarto.transformations.ST_CENTERMEDIAN(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
+-- POINT(25.3783930513609 29.8376035441371)
 ```
 
 ### ST_CENTEROFMASS
@@ -87,7 +110,7 @@ Takes a Point and calculates the location of a destination point given a distanc
 * `origin`: `GEOGRAPHY` starting point.
 * `distance`: `FLOAT64` distance from the origin point.
 * `bearing`: `FLOAT64` ranging from -180 to 180.
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees or radians. If `NULL`the default value kilometers is used.
+* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 
@@ -112,7 +135,7 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 
 * `startPoint`: `GEOGRAPHY` source point feature.
 * `endPoint`: `GEOGRAPHY` destination point feature.
-* `npoints`: `INT64`|`NULL` number of points. If `NULL` the default value 100 is used.
+* `npoints`: `INT64`|`NULL` number of points. If `NULL` the default value `100` is used.
 
 **Return type**
 
@@ -137,7 +160,7 @@ Takes a LineString and returns a Point at a specified distance along the line. h
 
 * `geog`: `GEOGRAPHY` input line.
 * `distance`: `FLOAT64` distance along the line.
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees and radians. If `NULL`the default value kilometers is used.
+* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees and radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 
