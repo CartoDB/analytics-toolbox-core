@@ -27,6 +27,9 @@ endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
 endif
+ifndef BQ_DATASET_QUADKEY
+	$(error BQ_DATASET_QUADKEY is undefined)
+endif
 
 all check:
 
@@ -39,18 +42,18 @@ storage_upload: ../constructors_library.js check_environment
 
 storage_remove: check_environment
 	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_CONSTRUCTORS)/
-
+	
 ##################### BIGQUERY DATASET #####################
-
 dataset_create: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_CONSTRUCTORS) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "CONSTRUCTORS Dataset" $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)
+		$(BQ) mk -d --description "CONSTRUCTORS Dataset" $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)
 
 dataset_remove: check_environment
-	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)
+	$(BQ) rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)
 
-REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
+REPLACEMENTS = -e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 		-e 's!@@BQ_DATASET_CONSTRUCTORS@@!$(BQ_DATASET_CONSTRUCTORS)!g' \
+		-e 's!@@BQ_DATASET_QUADKEY@@!$(BQ_DATASET_QUADKEY)!g' \
 		-e 's!@@CONSTRUCTORS_BQ_LIBRARY@@!$(CONSTRUCTORS_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
@@ -59,8 +62,11 @@ dataset_deploy: check_environment
 	done
 
 ##################### DEPLOY #####################
+BQ_QUADKEY_PATH = ../../quadkey/bq
 deploy: check_environment
-	$(MAKE) storage_upload dataset_create
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_QUADKEY) 2>/dev/null 1>/dev/null || $(MAKE) -C $(BQ_QUADKEY_PATH) $@
+	$(MAKE) storage_upload
+	$(MAKE) dataset_create
 	$(MAKE) dataset_deploy
 
 ##################### INTEGRATION TESTS #####################
@@ -71,7 +77,8 @@ check-integration: check_environment
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
-ifeq ($(POST_INTEGRATION_CLEANUP),1)
+ifeq ($(POST_INTEGRATION_CLEANUP), 1)
 	$(MAKE) storage_remove
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
+	$(MAKE) -C $(BQ_QUADKEY_PATH) $@
 endif

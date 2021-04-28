@@ -1,8 +1,8 @@
-DBS = "bq/"
 LIBRARY = "library/"
-ALL_SUBFOLDERS = $(DBS) $(LIBRARY)
+ALL_SUBFOLDERS = $(LIBRARY) "bq/" "sf/"
 
 ENABLED_BQ ?= 0
+ENABLED_SF ?= 0
 
 TARGET = constructors_library.js
 .PHONY: all build check check-integration check-linter clean deploy linter $(TARGET)
@@ -21,6 +21,6 @@ clean:
 	done;
 
 deploy check-integration:
-ifeq (${ENABLED_BQ}, 1)
+ifeq ($(ENABLED_BQ), 1)
 	$(MAKE) -C bq/ $@
 endif
