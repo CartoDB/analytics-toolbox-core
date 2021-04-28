@@ -3,6 +3,12 @@ This document describes changes between tagged releases of the CARTO Spatial Ext
 
 Not all changes in the project will be included here, but it should mention any new features and user-oriented bug fixes. You can see the full set of change between releases by browsing the git commits.
 
+## 2021-04-29
+
+* Renaming of transformation module to transformations and add functions
+* Add the measurements module (1.0.0)
+* Add functions to constructors module
+
 ## 2021-04-28
 
 * Add the constructors module (1.0.0)
