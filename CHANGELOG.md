@@ -5,7 +5,7 @@ Not all changes in the project will be included here, but it should mention any 
 
 ## 2021-04-29
 
-* Renaming of transformation module to transformations and add functions
+* Rename `transformation` module to `transformations` and add functions
 * Add the measurements module (1.0.0)
 * Add functions to constructors module
 
