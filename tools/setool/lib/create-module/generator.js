@@ -251,9 +251,10 @@ clean:
 }
 
 function createLibTestReadme (name) {
+    const lname = name.toLowerCase();
     const content = `# Tests
 
-These are the set of tests that verify the behaviour of the JS library generated to support the tiler. They are designed to be used under \`node\` and \`npm\` to simulate the behaviour of the library under BigQuery.
+These are the set of tests that verify the behaviour of the JS library generated to support the \`${lname}\` functions. They are designed to be used under \`node\` and \`npm\` to simulate the behaviour of the library under BigQuery.
 
 They can be divided into 2 categories:
 
@@ -508,10 +509,11 @@ check-integration-standalone: node_modules check_environment
 }
 
 function createBQTestReadme (name) {
+    const lname = name.toUpperCase();
     const uname = name.toUpperCase();
     const content = `# BigQuery integration tests
 
-These are integration tests for the tiler under BigQuery. Divided in 2 categories:
+These are integration tests for the \`${lname}\` functions under BigQuery. Divided in 2 categories:
 
 * Those ending in \`_integration.js\`. They are integration tests, they use BigQuery so they require authentication. They require \`BQ_PROJECTID\` and \`BQ_DATASET_${uname}\` environment variables to be defined with the project and dataset where the functions are stored and where tables will be created, and they also require BQ credentials (can be passed in a file using \`GOOGLE_APPLICATION_CREDENTIALS\` environment variable). Check BIGQUERY.md in the project root for more information on how to set these variables.
 * Those ending in \`_integration_standalone.js\`. Integration tests that can't be executed in parallel with anything else.
