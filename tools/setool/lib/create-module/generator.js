@@ -75,7 +75,7 @@ check check-linter linter:
 
 clean:
 	for s in $(ALL_SUBFOLDERS); do \\
-		$(MAKE) -C $\${s} $@ || exit 1; \\
+		if [ -d $\${s} ]; then $(MAKE) -C $\${s} $@ || exit 1; fi \\
 	done;
 
 deploy check-integration:
