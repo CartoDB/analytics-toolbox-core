@@ -27,6 +27,9 @@ endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
 endif
+ifndef BQ_DATASET_QUADKEY
+	$(error BQ_DATASET_QUADKEY is undefined)
+endif
 
 all check:
 
@@ -50,6 +53,7 @@ dataset_remove: check_environment
 
 REPLACEMENTS = -e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 		-e 's!@@BQ_DATASET_CONSTRUCTORS@@!$(BQ_DATASET_CONSTRUCTORS)!g' \
+		-e 's!@@BQ_DATASET_QUADKEY@@!$(BQ_DATASET_QUADKEY)!g' \
 		-e 's!@@CONSTRUCTORS_BQ_LIBRARY@@!$(CONSTRUCTORS_BQ_LIBRARY)!g'
 
 dataset_deploy: check_environment
@@ -58,7 +62,9 @@ dataset_deploy: check_environment
 	done
 
 ##################### DEPLOY #####################
+BQ_QUADKEY_PATH = ../../quadkey/bq
 deploy: check_environment
+	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_QUADKEY) 2>/dev/null 1>/dev/null || $(MAKE) -C $(BQ_QUADKEY_PATH) $@
 	$(MAKE) storage_upload
 	$(MAKE) dataset_create
 	$(MAKE) dataset_deploy
@@ -72,5 +78,7 @@ check-integration: check_environment
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
 ifeq ($(POST_INTEGRATION_CLEANUP), 1)
+	$(MAKE) storage_remove
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
+	$(MAKE) -C $(BQ_QUADKEY_PATH) $@
 endif

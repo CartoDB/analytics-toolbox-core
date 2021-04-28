@@ -9,3 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Initial implementation of the module.
 * Add ST_MAKEENVELOPE function
+* Add ST_TILEENVELOPE function
