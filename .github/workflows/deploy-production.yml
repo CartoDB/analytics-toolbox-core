@@ -29,6 +29,7 @@ jobs:
       BQ_DATASET_QUADKEY: quadkey
       BQ_DATASET_S2: s2
       BQ_DATASET_TRANSFORMATION: transformation
+      BQ_DATASET_CONSTRUCTORS: constructors
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
