@@ -1,7 +1,7 @@
 LIBRARY = "library/"
 ALL_SUBFOLDERS = $(LIBRARY) "bq/" "sf/"
 
-ENABLED_BQ ?= 1
+ENABLED_BQ ?= 0
 ENABLED_SF ?= 0
 
 TARGET = constructors_library.js
