@@ -460,7 +460,8 @@ function createBQSQLVersion (name, library) {
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PROJECTID@@.@@BQ_DATASET_${uname}@@.VERSION\`()
     RETURNS STRING
-    DETERMINISTIC${islib(`LANGUAGE js
+    DETERMINISTIC${islib(`
+    LANGUAGE js
     OPTIONS (library=["@@${uname}_BQ_LIBRARY@@"])`)}
 AS """
     return ${library ? `${lname}Version()` : `'1.0.0'`};
