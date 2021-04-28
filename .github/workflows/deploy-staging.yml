@@ -3,11 +3,15 @@ name: Staging
 on:
   pull_request_review:
     types: [submitted]
+  pull_request_target:
+    types: [labeled]
 
 jobs:
 
   deploy-bq:
-    if: github.event.review.state == 'approved'
+    if: |
+      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
+      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
@@ -37,7 +41,9 @@ jobs:
         run: make deploy
 
   deploy-sf:
-    if: github.event.review.state == 'approved'
+    if: |
+      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
+      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
