@@ -257,12 +257,12 @@ These are the set of tests that verify the behaviour of the JS library generated
 
 They can be divided into 2 categories:
 
-    * Those ending in \`_test.js\`. Unit tests that use the local WASM library.
-    * Those ending in \`_benchmark.js\` are benchmarks to check performance between versions. Used manually (not under CI).
+* Those ending in \`_test.js\`. Unit tests that use the local WASM library.
+* Those ending in \`_benchmark.js\` are benchmarks to check performance between versions. Used manually (not under CI).
 
 When adding new tests make sure they are independent from each other so they can be executed in parallel without issues.
 
-    In order to run all the tests simply call:
+In order to run all the tests simply call:
     
 \`\`\`bash
 make check
@@ -459,8 +459,7 @@ function createBQSQLVersion (name, library) {
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PROJECTID@@.@@BQ_DATASET_${uname}@@.VERSION\`()
     RETURNS STRING
-    DETERMINISTIC
-    LANGUAGE js${islib(`
+    DETERMINISTIC${islib(`LANGUAGE js
     OPTIONS (library=["@@${uname}_BQ_LIBRARY@@"])`)}
 AS """
     return ${library ? `${lname}Version()` : `'1.0.0'`};
@@ -514,14 +513,15 @@ function createBQTestReadme (name) {
 
 These are integration tests for the tiler under BigQuery. Divided in 2 categories:
 
-    * Those ending in \`_integration.js\`. They are integration tests, they use BigQuery so they require authentication. They require \`BQ_PROJECTID\` and \`BQ_DATASET_${uname}\` environment variables to be defined with the project and dataset where the functions are stored and where tables will be created, and they also require BQ credentials (can be passed in a file using \`GOOGLE_APPLICATION_CREDENTIALS\` environment variable). Check BIGQUERY.md in the project root for more information on how to set these variables.
-    * Those ending in \`_integration_standalone.js\`. Integration tests that can't be executed in parallel with anything else.
+* Those ending in \`_integration.js\`. They are integration tests, they use BigQuery so they require authentication. They require \`BQ_PROJECTID\` and \`BQ_DATASET_${uname}\` environment variables to be defined with the project and dataset where the functions are stored and where tables will be created, and they also require BQ credentials (can be passed in a file using \`GOOGLE_APPLICATION_CREDENTIALS\` environment variable). Check BIGQUERY.md in the project root for more information on how to set these variables.
+* Those ending in \`_integration_standalone.js\`. Integration tests that can't be executed in parallel with anything else.
 
 Important notes:
-    * The tests NEED to be independent as they are executed in parallel. The exception are the \`standalone\` ones.
-    * The integration tests are, by BigQuery nature, pretty slow.
 
-    In order to run all the integration tests simply call:
+* The tests NEED to be independent as they are executed in parallel. The exception are the \`standalone\` ones.
+* The integration tests are, by BigQuery nature, pretty slow.
+
+In order to run all the integration tests simply call:
     
 \`\`\`bash
 make check-integration
@@ -673,7 +673,7 @@ ifeq ($(SF_SHARE_ENABLED),1)
 endif
 
 ##################### DEPLOY #####################
-deploy: check_environment
+deploy: ../${lname}_library.js check_environment
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 	$(MAKE) share_create
@@ -741,8 +741,8 @@ function createSFSQLVersion (name, library) {
 -----------------------------------------------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATABASEID@@.@@SF_SCHEMA_${uname}@@.VERSION()
-    RETURNS STRING
-    LANGUAGE JAVASCRIPT
+    RETURNS STRING${islib(`
+    LANGUAGE JAVASCRIPT`)}
 AS $$${islib(`
     @@LIBRARY_FILE_CONTENT@@`)}
     
@@ -815,14 +815,15 @@ function createSFTestReadme (name) {
 
 These are integration tests for ${lname} under Snowflake. Divided in 2 categories:
 
-    * Those ending in \`_integration.js\`. They are integration tests, they use [Snowflake Node.js Driver](https://docs.snowflake.com/en/user-guide/nodejs-driver.html) so they require authentication. They require \`SF_DATABASEID\` and \`SF_SCHEMA_${uname}\` environment variables to be defined with the project and dataset where the functions are stored and where tables will be created, and they also require SNOWSQL credentials (can be passed in a file using \`SNOWSQL_ACCOUNT\`, \`SNOWSQL_USER\` and \`SNOWSQL_PWD\` environment variables). Check SNOWFLAKE.md in the project root for more information on how to set these variables.
-    * Those ending in \`_integration_standalone.js\`. Integration tests that can't be executed in parallel with anything else.
+* Those ending in \`_integration.js\`. They are integration tests, they use [Snowflake Node.js Driver](https://docs.snowflake.com/en/user-guide/nodejs-driver.html) so they require authentication. They require \`SF_DATABASEID\` and \`SF_SCHEMA_${uname}\` environment variables to be defined with the project and dataset where the functions are stored and where tables will be created, and they also require SNOWSQL credentials (can be passed in a file using \`SNOWSQL_ACCOUNT\`, \`SNOWSQL_USER\` and \`SNOWSQL_PWD\` environment variables). Check SNOWFLAKE.md in the project root for more information on how to set these variables.
+* Those ending in \`_integration_standalone.js\`. Integration tests that can't be executed in parallel with anything else.
 
 Important notes:
-    * The tests NEED to be independent as they are executed in parallel. The exception are the \`standalone\` ones.
-    * The integration tests are, by Snowflake nature, pretty slow.
 
-    In order to run all the integration tests simply call:
+* The tests NEED to be independent as they are executed in parallel. The exception are the \`standalone\` ones.
+* The integration tests are, by Snowflake nature, pretty slow.
+
+In order to run all the integration tests simply call:
     
 \`\`\`bash
 make check-integration
