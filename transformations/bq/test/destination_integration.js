@@ -17,6 +17,21 @@ describe('ST_DESTINATION integration tests', () => {
         client = new BigQuery({projectId: `${BQ_PROJECTID}`});
     });
 
+    it ('ST_DESTINATION should work', async () => {
+        const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_DESTINATION(ST_GEOGPOINT(0, 0), 10, 90, "kilometers") as destination1,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_DESTINATION(ST_GEOGPOINT(-3.70325, 40.4167), 5, 45, "kilometers") as destination2,
+        \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_DESTINATION(ST_GEOGPOINT(-43.7625, -20), 150, -20, "miles") as destination3`;
+        
+        let rows;
+        await assert.doesNotReject( async () => {
+            [rows] = await client.query(query, queryOptions);
+        });
+        assert.equal(rows.length, 1);
+        assert.equal(rows[0].destination1.value, 'POINT(0.0899320363724538 5.50674676307584e-18)');
+        assert.equal(rows[0].destination2.value, 'POINT(-3.66146785439614 40.4484882583202)');
+        assert.equal(rows[0].destination3.value, 'POINT(-44.5428812187219 -17.958278944262)');
+    });
+
     it ('ST_DESTINATION should return NULL if any NULL mandatory argument', async () => {
         const query = `SELECT \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_DESTINATION(NULL, 10, 45, "miles") as destination1,
         \`${BQ_PROJECTID}\`.\`${BQ_DATASET_TRANSFORMATIONS}\`.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), NULL, 45, "miles") as destination2,
