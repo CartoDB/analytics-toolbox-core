@@ -33,6 +33,6 @@ linter: eslint
 
 check-linter: check-eslint
 
-$(TARGET): $(JS_FILES)
+$(TARGET): $(JS_FILES) node_modules
 	rm -f $(TARGET)
 	${BROWSERIFY} $(JS_FILES) -o $(TARGET)
