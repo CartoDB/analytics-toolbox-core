@@ -1,6 +1,6 @@
 # Tests
 
-These are the set of tests that verify the behaviour of the JS library generated to support s2. They are designed to be used under `node` and `npm` to simulate the behaviour of the library under BigQuery.
+These are the set of tests that verify the behaviour of the JS library generated to support the `s2` functions. They are designed to be used under `node` and `npm` to simulate the behaviour of the library under BigQuery.
 
 They can be divided into 2 categories:
 
