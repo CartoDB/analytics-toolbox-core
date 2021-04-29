@@ -1,2 +1,3 @@
 node_modules/
 snowsql_rt.*
+.DS_STORE

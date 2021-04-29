@@ -28,8 +28,9 @@ jobs:
       BQ_DATASET_PLACEKEY: placekey
       BQ_DATASET_QUADKEY: quadkey
       BQ_DATASET_S2: s2
-      BQ_DATASET_TRANSFORMATION: transformation
+      BQ_DATASET_TRANSFORMATIONS: transformations
       BQ_DATASET_CONSTRUCTORS: constructors
+      BQ_DATASET_MEASUREMENTS: measurements
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
