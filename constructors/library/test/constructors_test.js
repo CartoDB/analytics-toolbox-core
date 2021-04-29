@@ -6,6 +6,6 @@ eval(fs.readFileSync('../../constructors_library.js')+'');
 describe('CONSTRUCTORS unit tests', () => {
 
     it ('Version', async () => {
-        assert.equal(constructorsVersion(), '1.0.1');
+        assert.equal(constructorsVersion(), '1.1.0');
     });
 });
