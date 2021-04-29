@@ -12,9 +12,9 @@ measurements.ST_ANGLE(startPoint, midPoint, endPoint, mercator)
 
 Finds the angle formed by two adjacent segments defined by 3 points. The result will be the (positive clockwise) angle with origin on the startPoint-midPoint segment, or its explementary angle if required. https://github.com/Turfjs/turf/tree/master/packages/turf-angle
 
-* `startPoint`: `GEOGRAPHY` Start Point Coordinates.
-* `midPoint`: `GEOGRAPHY` Mid Point Coordinates.
-* `endPoint`: `GEOGRAPHY` End Point Coordinates.
+* `startPoint`: `GEOGRAPHY` start Point Coordinates.
+* `midPoint`: `GEOGRAPHY` mid Point Coordinates.
+* `endPoint`: `GEOGRAPHY` end Point Coordinates.
 * `mercator`: `BOOLEAN`|`NULL` if calculations should be performed over Mercator or WGS84 projection. If `NULL` the default value `false` is used.
 
 **Return type**
@@ -62,8 +62,8 @@ measurements.ST_MINKOWSKIDISTANCE(geog, p)
 
 Calculate the Minkowski p-norm distance between two features. https://github.com/Turfjs/turf/tree/master/packages/turf-distance-weight
 
-* `geog`: `ARRAY<GEOGRAPHY>` FeatureCollection.
-* `p`: `FLOAT64` Minkowski p-norm distance parameter. 1: Manhattan distance. 2: Euclidean distance. 1 =< p <= infinity. If `NULL` the default value `2` is used.
+* `geog`: `ARRAY<GEOGRAPHY>` featureCollection.
+* `p`: `FLOAT64` minkowski p-norm distance parameter. 1: Manhattan distance. 2: Euclidean distance. 1 =< p <= infinity. If `NULL` the default value `2` is used.
 
 **Return type**
 
