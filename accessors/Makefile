@@ -24,6 +24,3 @@ deploy check-integration:
 ifeq ($(ENABLED_BQ), 1)
 	$(MAKE) -C bq/ $@
 endif
-ifeq ($(ENABLED_SF), 1)
-	$(MAKE) -C sf/ $@
-endif
