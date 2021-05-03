@@ -1,7 +1,7 @@
 const assert = require('assert').strict;
 const {BigQuery} = require('@google-cloud/bigquery');
-const fixturesIn = require('./fixtures/in');
-const fixturesOut = require('./fixtures/out');
+const fixturesIn = require('./voronoi_fixtures/in');
+const fixturesOut = require('./voronoi_fixtures/out');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_PROCESSING = process.env.BQ_DATASET_PROCESSING;
@@ -74,4 +74,18 @@ describe('PROCESSING integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
     });
+
+//    it('Test random', async () => {
+//        const query = `SELECT * FROM UNNEST(bqcarto.random.ST_GENERATEPOINTS(ST_CONVEXHULL(ST_GEOGFROMTEXT('MULTIPOINT(-76.0 35.0, -76.0 45.0, -70.0 35.0, -70.0 45.0)')), 100)) AS points`;
+//        let rows;
+//        await assert.doesNotReject(async () => {
+//            [rows] = await client.query(query, queryOptions);
+//        });
+//
+//        for (let i = 0; i < rows.length; ++i) {
+//            console.log(rows[i].points.value);
+//        }
+//    });
+
+    
 }); /* CONSTRUCTORS integration tests */

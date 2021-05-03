@@ -1,7 +1,7 @@
 const assert = require('assert').strict;
 const {BigQuery} = require('@google-cloud/bigquery');
-const fixturesIn = require('./fixtures/in');
-const fixturesOut = require('./fixtures/out');
+const fixturesIn = require('./voronoi_fixtures/in');
+const fixturesOut = require('./voronoi_fixtures/out');
 
 const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_PROCESSING = process.env.BQ_DATASET_PROCESSING;
