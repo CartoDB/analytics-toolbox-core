@@ -28,6 +28,7 @@ jobs:
       BQ_DATASET_TRANSFORMATIONS: transformations
       BQ_DATASET_CONSTRUCTORS: constructors
       BQ_DATASET_MEASUREMENTS: measurements
+      BQ_DATASET_PROCESSING: processing
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

@@ -7,7 +7,8 @@ MODULES = \
 	skel \
 	transformations \
 	constructors \
-	measurements
+	measurements \
+	processing
 
 .PHONY: all build check check-integration check-linter clean deploy linter
 
