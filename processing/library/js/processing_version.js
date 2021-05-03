@@ -9,4 +9,3 @@ processingVersion = function() {
     return '1.0.0';
 };
 module.exports.processingVersion = processingVersion;
-
