@@ -6,7 +6,7 @@ eval(fs.readFileSync('../../transformations_library.js')+'');
 describe('TRANSFORMATIONS unit tests', () => {
 
     it ('Version', async () => {
-        assert.equal(transformationsVersion(), '1.1.0');
+        assert.equal(transformationsVersion(), '1.2.0');
     });
 
 });
