@@ -15,7 +15,7 @@ processing.ST_VORONOIPOLYGONS(points, bbox)
 Calculates the Voronoi diagram of the points provided. An array of polygons is returned. https://turfjs.org/docs/#voronoi
 
 * `points`: `ARRAY<GEOGRAPHY>` input to the Voronoi diagram.
-* `bbox`: `ARRAY<FLOAT64|NULL` clipping bounding box. If `NULL` a default [-180,-85,180,-85] bbox will be used.
+* `bbox`: `ARRAY<FLOAT64>|NULL` clipping bounding box. If `NULL` a default [-180,-85,180,-85] bbox will be used.
 
 **Return type**
 
