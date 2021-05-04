@@ -24,6 +24,6 @@ describe('TRANSFORMATIONS integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
         assert.equal(rows.length, 1);
-        assert.equal(rows[0].versioncol, '1.1.0');
+        assert.equal(rows[0].versioncol, '1.2.0');
     });
 }); /* TRANSFORMATIONS integration tests */
