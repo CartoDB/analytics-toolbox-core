@@ -74,18 +74,5 @@ describe('PROCESSING integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
     });
-
-//    it('Test random', async () => {
-//        const query = `SELECT * FROM UNNEST(bqcarto.random.ST_GENERATEPOINTS(ST_CONVEXHULL(ST_GEOGFROMTEXT('MULTIPOINT(-76.0 35.0, -76.0 45.0, -70.0 35.0, -70.0 45.0)')), 100)) AS points`;
-//        let rows;
-//        await assert.doesNotReject(async () => {
-//            [rows] = await client.query(query, queryOptions);
-//        });
-//
-//        for (let i = 0; i < rows.length; ++i) {
-//            console.log(rows[i].points.value);
-//        }
-//    });
-
     
-}); /* CONSTRUCTORS integration tests */
+}); /* PROCESSING integration tests */
