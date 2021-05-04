@@ -12,3 +12,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add ST_VORONOILINES function based on buffer (turfjs v6.3.0).
 * Add ST_DELAUNAYPOLYGONS function.
 * Add ST_DELAUNAYLINES function.
+* Add ST_POLYGONIZE function.
