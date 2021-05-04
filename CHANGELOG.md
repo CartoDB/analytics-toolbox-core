@@ -8,6 +8,10 @@ Not all changes in the project will be included here, but it should mention any 
 * Add the processing module (1.0.0)
 * Add functions to processing module
 
+## 2021-05-03
+
+* Add the accessors module (1.0.0)
+
 ## 2021-04-29
 
 * Rename `transformation` module to `transformations` and add functions
