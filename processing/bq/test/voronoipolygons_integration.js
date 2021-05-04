@@ -7,7 +7,7 @@ const BQ_PROJECTID = process.env.BQ_PROJECTID;
 const BQ_DATASET_PROCESSING = process.env.BQ_DATASET_PROCESSING;
 
 describe('PROCESSING integration tests', () => {
-    const queryOptions = { 'timeoutMs' : 30000 };
+    const queryOptions = { 'timeoutMs' : 60000 };
     let client;
     before(async () => {
         if (!BQ_PROJECTID) {

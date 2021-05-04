@@ -15,7 +15,7 @@ processing.ST_VORONOIPOLYGONS(points, bbox)
 Calculates the Voronoi diagram of the points provided. An array of polygons is returned. https://turfjs.org/docs/#voronoi
 
 * `points`: `ARRAY<GEOGRAPHY>` input to the Voronoi diagram.
-* `bbox`: `ARRAY<FLOAT64>` clipping bounding box. If `null` a default [-180,-85,180,-85] bbox will be used.
+* `bbox`: `ARRAY<FLOAT64>|NULL` clipping bounding box. If `NULL` a default [-180,-85,180,-85] bbox will be used.
 
 **Return type**
 
@@ -41,7 +41,7 @@ processing.ST_VORONOILINES(points, bbox)
 Calculates the Voronoi diagram of the points provided. An array of lines is returned. https://turfjs.org/docs/#voronoi
 
 * `points`: `ARRAY<GEOGRAPHY>` input to the Voronoi diagram.
-* `bbox`: `ARRAY<FLOAT64>` clipping bounding box. If `null` a default [-180,-85,180,-85] bbox will be used.
+* `bbox`: `ARRAY<FLOAT64>|NULL` clipping bounding box. If `NULL` a default [-180,-85,180,-85] bbox will be used.
 
 **Return type**
 
@@ -110,6 +110,31 @@ SELECT bqcarto.processing.ST_DELAUNAYLINES([ST_GEOGPOINT(-74.5366825512491, 43.6
 -- LINESTRING(-73.9704330709753 35.3953164724094, -72.3402283537205 ...
 -- LINESTRING(-73.9704330709753 35.3953164724094, -72.514071762468 ...
 -- LINESTRING(-72.514071762468 36.5823995124737, -73.3262122666779 ...
+```
+
+### ST_POLYGONIZE
+
+{{% bannerNote type="code" %}}
+processing.ST_POLYGONIZE(lines)
+{{%/ bannerNote %}}
+
+**Description**
+
+Creates a set of polygons from geographies which contain lines that represent the their edges.
+
+* `lines`: `ARRAY<GEOGRAPHY>` array of lines which represent the polygons edges.
+
+**Return type**
+
+`ARRAY<GEOGRAPHY>`
+
+**Example**
+
+``` sql
+SELECT bqcarto.processing.ST_POLYGONIZE([ST_GEOGFROMTEXT('LINESTRING(-74.5366825512491 43.6889777784079, -70.7632814028801 42.9679602005825, -70.2005131676838 43.8455720129728, -74.5366825512491 43.6889777784079)'), 
+ST_GEOGFROMTEXT('LINESTRING(-73.9704330709753 35.3953164724094, -72.514071762468 36.5823995124737, -73.3262122666779 41.2706174323278, -73.9704330709753 35.3953164724094)')]);
+-- POLYGON((-74.5366825512491 43.6889777784079, -70.7632814028801 42.9679602005825, -70.2005131676838 43.8455720129728, -74.5366825512491 43.6889777784079))
+-- POLYGON((-73.9704330709753 35.3953164724094, -72.514071762468 36.5823995124737, -73.3262122666779 41.2706174323278, -73.9704330709753 35.3953164724094))
 ```
 
 ### VERSION
