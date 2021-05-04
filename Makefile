@@ -8,6 +8,7 @@ MODULES = \
 	transformations \
 	constructors \
 	measurements \
+	processing \
 	accessors
 
 .PHONY: all build check check-integration check-linter clean deploy linter
