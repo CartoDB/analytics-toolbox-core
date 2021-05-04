@@ -3,6 +3,11 @@ This document describes changes between tagged releases of the CARTO Spatial Ext
 
 Not all changes in the project will be included here, but it should mention any new features and user-oriented bug fixes. You can see the full set of change between releases by browsing the git commits.
 
+## 2021-05-04
+
+* Add the processing module (1.0.0)
+* Add functions to processing module
+
 ## 2021-04-29
 
 * Rename `transformation` module to `transformations` and add functions
