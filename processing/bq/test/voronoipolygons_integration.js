@@ -74,4 +74,4 @@ describe('PROCESSING integration tests', () => {
             [rows] = await client.query(query, queryOptions);
         });
     });
-}); /* CONSTRUCTORS integration tests */
+}); /* PROCESSING integration tests */
