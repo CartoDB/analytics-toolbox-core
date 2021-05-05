@@ -52,7 +52,7 @@ storage_remove: check_environment
 
 dataset_create: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_PLACEKEY) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "PLACEKEY Dataset" $(BQ_PROJECTID):$(BQ_DATASET_PLACEKEY)
+		${BQ} mk -d --description "PLACEKEY Dataset" -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECTID):$(BQ_DATASET_PLACEKEY)
 
 dataset_remove: check_environment
 	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_PLACEKEY)
@@ -64,7 +64,7 @@ REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 
 dataset_deploy: check_environment
 	for n in $(sort $(wildcard sql/*.sql)); do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \
 	done
 
 ##################### DEPLOY #####################
