@@ -5,6 +5,8 @@ GSUTIL ?= gsutil
 
 POST_INTEGRATION_CLEANUP ?= 1
 
+export BQ_PERMISSIONS_TARGET_DATASET = ${BQ_DATASET_PLACEKEY}
+
 # Deployment variables
 PLACEKEY_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_PLACEKEY)/placekey_library.js
 
@@ -68,6 +70,9 @@ deploy: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_H3) 2>/dev/null 1>/dev/null || $(MAKE) -C $(BQ_H3_PATH) $@
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
+ifdef BQ_PERMISSIONS_ROLE
+	../../tools/set_module_permissions.sh
+endif
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment

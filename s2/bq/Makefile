@@ -5,6 +5,8 @@ GSUTIL ?= gsutil
 
 POST_INTEGRATION_CLEANUP ?= 1
 
+export BQ_PERMISSIONS_TARGET_DATASET = ${BQ_DATASET_S2}
+
 # Deployment variables
 S2_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_S2)/s2_library.js
 
@@ -62,6 +64,9 @@ dataset_deploy: check_environment
 deploy: check_environment
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
+ifdef BQ_PERMISSIONS_ROLE
+	../../tools/set_module_permissions.sh
+endif
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment
