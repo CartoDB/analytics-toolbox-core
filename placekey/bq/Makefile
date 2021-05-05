@@ -73,7 +73,7 @@ deploy: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_H3) 2>/dev/null 1>/dev/null || $(MAKE) -C $(BQ_H3_PATH) $@
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
-ifdef BQ_PERMISSIONS_ROLE
+ifdef BQ_PERMISSIONS
 	../../tools/set_module_permissions.sh
 endif
 

@@ -67,7 +67,7 @@ dataset_deploy: check_environment
 deploy: check_environment
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
-ifdef BQ_PERMISSIONS_ROLE
+ifdef BQ_PERMISSIONS
 	../../tools/set_module_permissions.sh
 endif
 
