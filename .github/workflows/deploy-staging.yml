@@ -30,7 +30,6 @@ jobs:
       BQ_DATASET_MEASUREMENTS: measurements
       BQ_DATASET_PROCESSING: processing
       BQ_DATASET_ACCESSORS: accessors
-      BQ_PERMISSIONS: '[{"role":"READER","specialGroup":"allAuthenticatedUsers"}]'
       BQ_MODULE_CORE_LABEL: spatial_extension_module:core
     steps:
       - name: Checkout repo
