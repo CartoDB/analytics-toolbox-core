@@ -29,6 +29,9 @@ endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
 endif
+ifndef BQ_MODULE_CORE_LABEL
+	$(error BQ_MODULE_CORE_LABEL is undefined)
+endif
 
 all check:
 
@@ -45,7 +48,7 @@ storage_remove: check_environment
 ##################### BIGQUERY DATASET #####################
 dataset_create: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_ACCESSORS) 2>/dev/null 1>/dev/null || \
-		$(BQ) mk -d --description "ACCESSORS Dataset" $(BQ_PROJECTID):$(BQ_DATASET_ACCESSORS)
+		$(BQ) mk -d --description "ACCESSORS Dataset" -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECTID):$(BQ_DATASET_ACCESSORS)
 
 dataset_remove: check_environment
 	$(BQ) rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_ACCESSORS)

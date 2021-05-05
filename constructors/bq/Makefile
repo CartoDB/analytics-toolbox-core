@@ -32,6 +32,9 @@ endif
 ifndef BQ_DATASET_QUADKEY
 	$(error BQ_DATASET_QUADKEY is undefined)
 endif
+ifndef BQ_MODULE_CORE_LABEL
+	$(error BQ_MODULE_CORE_LABEL is undefined)
+endif
 
 all check:
 
@@ -48,7 +51,7 @@ storage_remove: check_environment
 ##################### BIGQUERY DATASET #####################
 dataset_create: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_CONSTRUCTORS) 2>/dev/null 1>/dev/null || \
-		$(BQ) mk -d --description "CONSTRUCTORS Dataset" $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)
+		$(BQ) mk -d --description "CONSTRUCTORS Dataset" -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)
 
 dataset_remove: check_environment
 	$(BQ) rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_CONSTRUCTORS)

@@ -32,6 +32,9 @@ endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
 endif
+ifndef BQ_MODULE_CORE_LABEL
+	$(error BQ_MODULE_CORE_LABEL is undefined)
+endif
 
 all check:
 
@@ -61,7 +64,7 @@ REPLACEMENTS = 	-e 's!@@BQ_PROJECTID@@!$(BQ_PROJECTID)!g' \
 
 dataset_deploy: check_environment
 	for n in $(sort $(wildcard sql/*.sql)); do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECTID) query --use_legacy_sql=false || exit; \
 	done
 
 ##################### DEPLOY #####################
