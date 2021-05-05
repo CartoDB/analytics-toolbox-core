@@ -5,6 +5,8 @@ GSUTIL ?= gsutil
 
 POST_INTEGRATION_CLEANUP ?= 1
 
+export BQ_PERMISSIONS_TARGET_DATASET = ${BQ_DATASET_S2}
+
 # Deployment variables
 S2_BQ_LIBRARY ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET_S2)/s2_library.js
 
@@ -27,6 +29,9 @@ endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
 endif
+ifndef BQ_MODULE_CORE_LABEL
+	$(error BQ_MODULE_CORE_LABEL is undefined)
+endif
 
 all check:
 
@@ -44,7 +49,7 @@ storage_remove: check_environment
 
 dataset_create: check_environment
 	$(BQ) --project_id $(BQ_PROJECTID) show $(BQ_DATASET_S2) 2>/dev/null 1>/dev/null || \
-		${BQ} mk -d --description "S2 Dataset" $(BQ_PROJECTID):$(BQ_DATASET_S2)
+		${BQ} mk -d --description "S2 Dataset" -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECTID):$(BQ_DATASET_S2)
 
 dataset_remove: check_environment
 	${BQ} rm -r -f -d $(BQ_PROJECTID):$(BQ_DATASET_S2)
@@ -62,6 +67,9 @@ dataset_deploy: check_environment
 deploy: check_environment
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
+ifdef BQ_PERMISSIONS
+	../../tools/set_module_permissions.sh
+endif
 
 ##################### INTEGRATION TESTS #####################
 check-integration: check_environment
