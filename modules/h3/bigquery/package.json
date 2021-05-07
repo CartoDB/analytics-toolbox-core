@@ -1,0 +1,42 @@
+{
+  "name": "h3_bigquery",
+  "version": "1.0.0",
+  "description": "H3 BigQuery module",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "source": "lib/index.js",
+  "main": "dist/main.js",
+  "sideEffects": false,
+  "scripts": {
+    "r": "rollup --config",
+    "p": "parcel build lib/index.js --target node --experimental-scope-hoisting",
+    "m": "microbundle build -f iife --raw --target browser --compress pretty",
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test:unit": "node test/common/check.js && jest test/unit",
+    "test:integration": "node test/common/check.js && jest test/integration",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "h3-js": "3.7.2"
+  },
+  "devDependencies": {
+    "@google-cloud/bigquery": "^5.3.0",
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "eslint": "^7.25.0",
+    "jest": "^26.6.3",
+    "microbundle": "^0.13.0",
+    "optimize-wasm-webpack-plugin": "^1.0.12",
+    "parcel-bundler": "^1.12.5",
+    "rollup": "^2.47.0",
+    "terser-webpack-plugin": "^5.1.1",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-common-shake": "^2.1.0"
+  }
+}
