@@ -1,4 +1,4 @@
-# H3 BQ
+# Placekey for BigQuery
 
 ## Folder structure
 

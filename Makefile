@@ -1,12 +1,7 @@
 GIT_DIFF ?= off
-MODULES = \
-	processing \
-	constructors
+MODULES = constructors measurements placekey processing
 
 BQ_ENABLED ?= 0
-
-.PHONY: all build lint test-unit test-integration clean deploy
-.SILENT: all build lint test-unit test-integration clean deploy
 
 all build lint test-unit test-integration clean deploy:
 ifeq ($(BQ_ENABLED), 1)
@@ -18,3 +13,6 @@ ifeq ($(BQ_ENABLED), 1)
 else
 	echo "BigQuery disabled. Enable with: BQ_ENABLED=1 make ...";
 endif
+
+.PHONY: all build lint test-unit test-integration clean deploy
+.SILENT: all build lint test-unit test-integration clean deploy
