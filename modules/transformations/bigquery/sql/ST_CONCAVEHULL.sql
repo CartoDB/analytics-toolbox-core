@@ -21,8 +21,8 @@ AS """
     {
         options.units = units;
     }
-    const featuresCollection = turf.featureCollection(geojson.map(x => turf.feature(JSON.parse(x))));
-    var hull = turf.concave(featuresCollection, options);
+    const featuresCollection = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
+    var hull = lib.concave(featuresCollection, options);
     return JSON.stringify(hull.geometry);
 """;
 

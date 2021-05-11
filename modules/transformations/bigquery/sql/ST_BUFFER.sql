@@ -21,7 +21,7 @@ AS """
     {
         options.steps = Number(steps);
     }
-    let buffer = turf.buffer(JSON.parse(geojson), Number(radius), options);
+    let buffer = lib.buffer(JSON.parse(geojson), Number(radius), options);
     return JSON.stringify(buffer.geometry);
 """;
 

@@ -12,7 +12,7 @@ AS """
     if (!geojson) {
         return null;
     }
-    var center = turf.centerMean(JSON.parse(geojson));
+    var center = lib.centerMean(JSON.parse(geojson));
     return JSON.stringify(center.geometry);
 """;
 

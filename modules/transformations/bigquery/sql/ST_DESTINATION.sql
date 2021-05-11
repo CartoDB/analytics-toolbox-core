@@ -17,7 +17,7 @@ AS """
     {
         options.units = units;
     }
-    let destination = turf.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
+    let destination = lib.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
     return JSON.stringify(destination.geometry);
 """;
 

@@ -17,7 +17,7 @@ AS """
     {
         options.npoints = Number(npoints);
     }
-    let greatCircle = turf.greatCircle(JSON.parse(geojsonStart), JSON.parse(geojsonEnd), options);
+    let greatCircle = lib.greatCircle(JSON.parse(geojsonStart), JSON.parse(geojsonEnd), options);
     return JSON.stringify(greatCircle.geometry);
 """;
 

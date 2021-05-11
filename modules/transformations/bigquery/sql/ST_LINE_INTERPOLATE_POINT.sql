@@ -17,7 +17,7 @@ AS """
     {
         options.units = units;
     }
-    let along = turf.along(JSON.parse(geojson), distance, options);
+    let along = lib.along(JSON.parse(geojson), distance, options);
     return JSON.stringify(along.geometry);
 """;
 

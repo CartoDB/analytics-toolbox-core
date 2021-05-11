@@ -12,7 +12,7 @@ AS """
     if (!geojson) {
         return null;
     }
-    let medianCenter = turf.centerMedian(turf.feature(JSON.parse(geojson)));
+    let medianCenter = lib.centerMedian(lib.feature(JSON.parse(geojson)));
     return JSON.stringify(medianCenter.geometry);
 """;
 
