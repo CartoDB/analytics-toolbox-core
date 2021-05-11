@@ -6,7 +6,7 @@
   "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
-    "build": "rollup --config ../../../common/bigquery/rollup.config.js",
+    "build": "NODE_PATH=`pwd`/node_modules rollup --config ../../../common/bigquery/rollup.config.js",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "test-unit": "jest test/unit --testTimeout=30000",
