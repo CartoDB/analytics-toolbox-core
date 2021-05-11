@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.__DESTINATION`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@TRANSFORMATIONS_BQ_LIBRARY@@"])
+OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
     if (!geojsonStart || distance == null || bearing == null) {
         return null;

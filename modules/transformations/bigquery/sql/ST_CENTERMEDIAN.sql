@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.__CENTERMEDIAN`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@TRANSFORMATIONS_BQ_LIBRARY@@"])
+OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
     if (!geojson) {
         return null;
