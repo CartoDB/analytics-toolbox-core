@@ -1,8 +1,4 @@
-const assert = require('assert').strict;
-const {BigQuery} = require('@google-cloud/bigquery');
-
-const BQ_PROJECTID = process.env.BQ_PROJECTID;
-const BQ_DATASET_TRANSFORMATIONS = process.env.BQ_DATASET_TRANSFORMATIONS;
+const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 // Fixtures got from the turfjs tests
 // Convert the points to a way BigQuery can ingest them
@@ -41,54 +37,28 @@ function getFeatureUnits(fixture)
     return null;
 }
 
-describe('ST_CONCAVEHULL integration tests', () => {
-    const queryOptions = { 'timeoutMs' : 30000 };
-    let client;
-    before(async () => {
-        if (!BQ_PROJECTID) {
-            throw "Missing BQ_PROJECTID env variable";
-        }
-        if (!BQ_DATASET_TRANSFORMATIONS) {
-            throw "Missing BQ_DATASET_TRANSFORMATIONS env variable";
-        }
-        client = new BigQuery({projectId: `${BQ_PROJECTID}`});
-    });
+test('ST_CONCAVEHULL should work', async () => {
+    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, ${getFeatureMaxEdge(concaveHullFixturesIn)}, ${getFeatureUnits(concaveHullFixturesIn)}) as concaveHull1,
+    \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(fijiFixturesIn)}, ${getFeatureMaxEdge(fijiFixturesIn)}, ${getFeatureUnits(fijiFixturesIn)}) as concaveHull2,
+    \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(holeFixturesIn)}, ${getFeatureMaxEdge(holeFixturesIn)}, ${getFeatureUnits(holeFixturesIn)}) as concaveHull3`;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].concaveHull1.value).toEqual(concaveHullFixturesOut.value);
+    expect(rows[0].concaveHull2.value).toEqual(fijiFixturesOut.value);
+    expect(rows[0].concaveHull3.value).toEqual(holeFixturesOut.value);
+});
 
-    it ('ST_CONCAVEHULL should work', async () => {
-        const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, ${getFeatureMaxEdge(concaveHullFixturesIn)}, ${getFeatureUnits(concaveHullFixturesIn)}) as concaveHull1,
-        \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(fijiFixturesIn)}, ${getFeatureMaxEdge(fijiFixturesIn)}, ${getFeatureUnits(fijiFixturesIn)}) as concaveHull2,
-        \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(holeFixturesIn)}, ${getFeatureMaxEdge(holeFixturesIn)}, ${getFeatureUnits(holeFixturesIn)}) as concaveHull3`;
-        
-        let rows;
-        await assert.doesNotReject( async () => {
-            [rows] = await client.query(query, queryOptions);
-        });
-        assert.equal(rows.length, 1);
-        assert.equal(rows[0].concaveHull1.value, concaveHullFixturesOut.value);
-        assert.equal(rows[0].concaveHull2.value, fijiFixturesOut.value);
-        assert.equal(rows[0].concaveHull3.value, holeFixturesOut.value);
-    });
+test('ST_CONCAVEHULL should return NULL if any NULL mandatory argument', async () => {
+    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(NULL, 10, 'kilometers') as concaveHull1`;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].concaveHull1).toEqual(null);
+});
 
-    it ('ST_CONCAVEHULL should return NULL if any NULL mandatory argument', async () => {
-        const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL(NULL, 10, 'kilometers') as concaveHull1`;
-        
-        let rows;
-        await assert.doesNotReject( async () => {
-            [rows] = await client.query(query, queryOptions);
-        });
-        assert.equal(rows.length, 1);
-        assert.equal(rows[0].concaveHull1, null);
-    });
-
-    it ('ST_CONCAVEHULL default values should work', async () => {
-        const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, CAST('Infinity' AS FLOAT64), "kilometers") as defaultValue,
-        \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, NULL, NULL) as nullParam1`;
-        
-        let rows;
-        await assert.doesNotReject( async () => {
-            [rows] = await client.query(query, queryOptions);
-        });
-        assert.equal(rows.length, 1);
-        assert.deepEqual(rows[0].nullParam1, rows[0].defaultValue);
-    });
-}); /* ST_CONCAVEHULL integration tests */
+test('ST_CONCAVEHULL default values should work', async () => {
+    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, CAST('Infinity' AS FLOAT64), "kilometers") as defaultValue,
+    \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, NULL, NULL) as nullParam1`;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].nullParam1).toEqual(rows[0].defaultValue);
+});

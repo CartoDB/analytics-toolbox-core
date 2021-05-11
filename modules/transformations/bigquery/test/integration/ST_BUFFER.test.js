@@ -50,13 +50,11 @@ test('ST_BUFFER should fail with wrong arguments', async () => {
     };
     featureJSON = JSON.stringify(feature);
     
-    let query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER(ST_GEOGFROMGEOJSON\`('${featureJSON}'), -1, 'kilometers', 10);`;
+    let query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), -1, 'kilometers', 10);`;
     await expect(runQuery(query)).rejects.toThrow(
-        'Error: Incorrect bounding box passed to UDF. It should contain the bbox extends, i.e., [xmin, ymin, xmax, ymax] at UDF$1(ARRAY<STRING>, ARRAY<FLOAT64>, STRING) line 7, columns 8-9'
+        "TypeError: Cannot read property 'geometry' of undefined at UDF$1(STRING, FLOAT64, STRING, INT64) line 15, columns 33-34"
     );
 
-    query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER(ST_GEOGFROMGEOJSON\`('${featureJSON}'), 1, 'kilometers', -10);`;
-    await expect(runQuery(query)).rejects.toThrow(
-        'Error: Incorrect bounding box passed to UDF. It should contain the bbox extends, i.e., [xmin, ymin, xmax, ymax] at UDF$1(ARRAY<STRING>, ARRAY<FLOAT64>, STRING) line 7, columns 8-9'
-    );
+    query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
+    await expect(runQuery(query)).rejects.toThrow();
 });
