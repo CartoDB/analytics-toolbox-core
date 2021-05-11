@@ -1,6 +1,7 @@
 GIT_DIFF ?= off
 MODULES = \
-	processing
+	processing \
+	constructors
 
 BQ_ENABLED ?= 0
 

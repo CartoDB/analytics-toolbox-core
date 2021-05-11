@@ -1,7 +1,7 @@
 {
-  "name": "processing_bigquery",
-  "version": "1.0.0",
-  "description": "Processing module for BigQuery",
+  "name": "constructors_bigquery",
+  "version": "1.1.0",
+  "description": "Constructors module for BigQuery",
   "author": "CARTO",
   "license": "BSD-3-Clause",
   "private": true,

@@ -5,7 +5,6 @@ GSUTIL ?= gsutil
 SHELL := bash
 
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
-BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
 
@@ -17,8 +16,28 @@ BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
 
 .PHONY: $(BQ_LIBRARY)
 
-
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
+
+all build $(BQ_LIBRARY):
+	yarn
+	yarn build
+
+lint:
+	yarn
+	yarn lint
+
+lint-fix:
+	yarn
+	yarn lint-fix
+
+test-unit: $(BQ_LIBRARY)
+	yarn test-unit
+
+test-integration-only: 
+	yarn test-integration
+
+clean:
+	yarn clean
 
 check_environment:
 ifndef BQ_REGION
@@ -74,7 +93,7 @@ endif
 
 test-integration: check_environment
 	$(MAKE) deploy
-	yarn test-integration || ($(MAKE) integration_cleanup && exit 1)
+	$(MAKE) test-integration-only || ($(MAKE) integration_cleanup && exit 1)
 	$(MAKE) integration_cleanup
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
@@ -83,17 +102,3 @@ integration_cleanup: check_environment
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
 
 .PHONY: all build test-integration test-unit lint clean deploy
-
-all build $(BQ_LIBRARY):
-	yarn
-	yarn build
-
-lint:
-	yarn
-	yarn lint
-
-test-unit: $(BQ_LIBRARY)
-	yarn test-unit
-
-clean:
-	yarn clean
