@@ -13,7 +13,8 @@ module.exports = {
         sourceType: 'module'
     },
     ignorePatterns: [
-        'dist/*'
+        'dist/*',
+        '*fixture*'
     ],
     rules: {
         quotes: ['error', 'single'],

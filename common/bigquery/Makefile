@@ -5,17 +5,21 @@ GSUTIL ?= gsutil
 SHELL := bash
 
 export BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
+export BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
+
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
 
 POST_INTEGRATION_CLEANUP ?= 1
 
 BQ_PERMISSIONS_TARGET_DATASET = $(BQ_DATASET)
 
-BQ_LIBRARY = ./dist/main.js
-BQ_LIBRARY_BUCKET ?= $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/main.js
+BQ_LIBRARY = ./dist/index.js
+BQ_BUCKET = $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
+BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
 
 .PHONY: $(BQ_LIBRARY)
 $(BQ_LIBRARY):
+	yarn
 	yarn build
 
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
@@ -27,8 +31,8 @@ endif
 ifndef BQ_PROJECT
 	$(error BQ_PROJECT is undefined)
 endif
-ifndef BQ_DATASET
-	$(error BQ_DATASET is undefined)
+ifndef BQ_PREFIX
+	$(error BQ_PREFIX is undefined)
 endif
 ifndef BQ_BUCKET_PUBLIC
 	$(error BQ_BUCKET_PUBLIC is undefined)
@@ -40,10 +44,10 @@ endif
 ##################### STORAGE FILES #####################
 
 storage_upload: $(BQ_LIBRARY) check_environment
-	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
+	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET)
 
 storage_remove: check_environment
-	$(GSUTIL) rm -rf $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
+	$(GSUTIL) rm -rf $(BQ_BUCKET)
 
 ##################### BIGQUERY DATASET #####################
 
@@ -54,12 +58,10 @@ dataset_create: check_environment
 dataset_remove: check_environment
 	$(BQ) rm -r -f -d $(BQ_PROJECT):$(BQ_DATASET)
 
-REPLACEMENTS = 	-e 's!%BQ_PROJECT%!$(BQ_PROJECT)!g' \
-		-e 's!%BQ_DATASET%!$(BQ_DATASET)!g' \
-		-e 's!%BQ_LIBRARY_BUCKET%!$(BQ_LIBRARY_BUCKET)!g'
+REPLACEMENTS = 	-e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g'
 
 dataset_deploy: check_environment
-	for n in $(sort $(wildcard sql/*.sql)); do \
+	for n in `node ../../../common/bigquery/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit; \
 	done
 
@@ -76,7 +78,7 @@ endif
 
 test-integration: check_environment
 	$(MAKE) deploy
-	yarn test:integration || ($(MAKE) integration_cleanup && exit 1)
+	yarn test-integration || ($(MAKE) integration_cleanup && exit 1)
 	$(MAKE) integration_cleanup
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
@@ -86,9 +88,7 @@ ifeq ($(POST_INTEGRATION_CLEANUP),1)
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
 endif
 
-ENABLED_BQ ?= 0
-
-.PHONY: all build check check-integration check-linter clean deploy linter
+.PHONY: all build test-integration test-unit lint clean deploy
 
 all build:
 	yarn build
@@ -96,8 +96,8 @@ all build:
 lint:
 	yarn lint
 
-test-unit:
-	yarn test:unit
+test-unit: $(BQ_LIBRARY)
+	yarn test-unit
 
 clean:
 	yarn clean

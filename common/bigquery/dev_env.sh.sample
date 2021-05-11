@@ -1,25 +1,10 @@
 #!/usr/bin/env bash
 
-# This file populates the necessary environment variables to run integration tests for the proejct
-# You can edit this file and rename it into dev_environment.sh to avoid pushing local changes to the repo
+# This file populates the necessary environment variables to run integration tests for the project
+# You can edit this file and rename it into dev_env.sh to avoid pushing local changes to the repo
 
-export ENABLED_BQ=${ENABLED_BQ:-0}
-export BQ_REGION=${BQ_REGION:-us}
-export BQ_PROJECT=${BQ_PROJECT:-"cartodb-gcp-backend-data-team"}
-export BQ_BUCKET_PUBLIC=${BQ_BUCKET_PUBLIC:-"gs://bqcartodev/"}
-
-export BQ_DATASET_PREFIX=${BQ_DATASET_PREFIX:-"jarroyo"}
-export BQ_DATASET_PREFIX=jarroyo
-
-export POST_INTEGRATION_CLEANUP=${POST_INTEGRATION_CLEANUP:-0}
-
+export BQ_REGION="us"
+export BQ_PROJECT="cartodb-gcp-backend-data-team"
+export BQ_BUCKET_PUBLIC="gs://bqcartodev/"
+export BQ_DATASET_PREFIX="jarroyo_"
 export GOOGLE_APPLICATION_CREDENTIALS="/home/jesus/Documents/SAs/cartodb-gcp-backend-data-team-8f1019ad824e.json"
-
-if [ $ENABLED_BQ -eq 1 ] && [ -z "$BQ_DATASET_PREFIX" ]; then
-    echo -e "\e[1;31m\t\$BQ_DATASET_PREFIX must be declared. You can also set it in a copy of dev_environment.sh.sample\e[0m"
-    return 1
-fi
-
-if [ $ENABLED_BQ -eq 1 ] && [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
-    echo -e "\e[1;96m\tNOTICE: BigQuery is enabled but not \$GOOGLE_APPLICATION_CREDENTIALS\e[0m"
-fi

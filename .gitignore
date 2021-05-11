@@ -1,5 +1,6 @@
 dist/
 node_modules/
 
+*.log
 snowsql_rt.*
 .DS_STORE

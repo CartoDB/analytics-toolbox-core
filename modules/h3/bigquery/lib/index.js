@@ -7,13 +7,6 @@ module.exports.h3 = {
     }
 };
 
-// module.exports.h3 = {
-//     geoToH3,
-//     version() {
-//         return '1234'
-//     }
-// };
-
 // import { geoToH3 } from '../node_modules/h3-js/dist/h3-js.js';
 
 // export default {

@@ -1,6 +1,6 @@
-const OptimizeWasmPlugin = require('optimize-wasm-webpack-plugin');
-const TerserPlugin = require("terser-webpack-plugin");
-const ShakePlugin = require('webpack-common-shake').Plugin;
+// const OptimizeWasmPlugin = require('optimize-wasm-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+// const ShakePlugin = require('webpack-common-shake').Plugin;
 
 
 
