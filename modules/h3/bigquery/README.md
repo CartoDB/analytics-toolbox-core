@@ -6,7 +6,6 @@
 - lib/
 - sql/
 - test/
-    - common/
     - integration/
     - unit
 

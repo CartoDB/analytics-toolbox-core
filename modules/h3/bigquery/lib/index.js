@@ -1,17 +1,7 @@
-const { geoToH3 } = require('h3-js');
+import { version }  from '../package.json';
+import { geoToH3 } from 'h3-js';
 
-module.exports.h3 = {
+export default {
     geoToH3,
-    version() {
-        return require('../package.json').version;
-    }
+    version
 };
-
-// import { geoToH3 } from '../node_modules/h3-js/dist/h3-js.js';
-
-// export default {
-//     geoToH3,
-//     version() {
-//         return '1234'
-//     }
-// }

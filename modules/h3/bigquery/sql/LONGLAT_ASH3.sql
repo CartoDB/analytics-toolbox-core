@@ -2,13 +2,13 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `%BQ_PROJECT%.%BQ_DATASET%.LONGLAT_ASH3`(longitude FLOAT64, latitude FLOAT64, resolution INT64)
-    RETURNS STRING
-    DETERMINISTIC
-    LANGUAGE js
-    OPTIONS (library=["%BQ_LIBRARY_BUCKET%"])
-AS
-"""
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.LONGLAT_ASH3`
+(longitude FLOAT64, latitude FLOAT64, resolution INT64)
+RETURNS STRING
+DETERMINISTIC
+LANGUAGE js
+OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+AS """
     if (longitude === null || latitude === null || resolution === null) {
         return null;
     }

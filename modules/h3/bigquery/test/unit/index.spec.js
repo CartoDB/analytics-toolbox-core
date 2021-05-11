@@ -1,10 +1,7 @@
+const lib = require('../../dist/index');
 const version = require('../../package.json').version;
-const lib = require('../../lib/index');
 
-test('version', () => {
-    expect(lib.version).toBe(version);
-});
-
-test('geoToH3', () => {
+test('library defined', () => {
     expect(lib.geoToH3).toBeDefined();
+    expect(lib.version).toBe(version);
 });
