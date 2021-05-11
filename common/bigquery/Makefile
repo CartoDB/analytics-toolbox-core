@@ -5,6 +5,7 @@ GSUTIL ?= gsutil
 SHELL := bash
 
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
+BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
 
