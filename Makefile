@@ -1,21 +1,19 @@
 GIT_DIFF ?= off
 MODULES = \
-	h3 \
-	placekey \
-	quadkey \
-  	s2 \
-	skel \
-	transformations \
-	constructors \
-	measurements \
-	processing \
-	accessors
+	processing
 
-.PHONY: all build check check-integration check-linter clean deploy linter
+BQ_ENABLED ?= 0
 
-all build check check-integration check-linter clean deploy linter:
+.PHONY: all build lint test-unit test-integration clean deploy
+.SILENT: all build lint test-unit test-integration clean deploy
+
+all build lint test-unit test-integration clean deploy:
+ifeq ($(BQ_ENABLED), 1)
 	for module in $(MODULES); do \
 		if [ "$(GIT_DIFF)" = "off" ] || [ `echo "$(GIT_DIFF)" | grep -P $${module}'\/.*(\.js|\.sql|Makefile)' | wc -l` -gt 0 ]; then \
-			$(MAKE) -C $${module} $@ || exit 1; \
+			$(MAKE) -C modules/$${module}/bigquery $@ || exit 1; \
 		fi \
 	done;
+else
+	echo "BigQuery disabled. Enable with: BQ_ENABLED=1 make ...";
+endif

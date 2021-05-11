@@ -9,8 +9,8 @@
     "build": "rollup --config ../../../common/bigquery/rollup.config.js",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "test-unit": "jest test/unit",
-    "test-integration": "NODE_PATH=`pwd`/node_modules && jest test/integration",
+    "test-unit": "jest test/unit --testTimeout=30000",
+    "test-integration": "NODE_PATH=`pwd`/node_modules && jest test/integration --testTimeout=30000",
     "clean": "rm -rf dist"
   },
   "dependencies": {

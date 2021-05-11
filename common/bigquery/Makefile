@@ -4,12 +4,10 @@ BQ ?= bq --location=$(BQ_REGION)
 GSUTIL ?= gsutil
 SHELL := bash
 
-export BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
-export BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
+BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
+BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
-
-POST_INTEGRATION_CLEANUP ?= 1
 
 BQ_PERMISSIONS_TARGET_DATASET = $(BQ_DATASET)
 
@@ -83,10 +81,8 @@ test-integration: check_environment
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
-ifeq ($(POST_INTEGRATION_CLEANUP),1)
 	$(MAKE) storage_remove
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
-endif
 
 .PHONY: all build test-integration test-unit lint clean deploy
 
