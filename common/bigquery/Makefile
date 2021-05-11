@@ -5,6 +5,7 @@ GSUTIL ?= gsutil
 SHELL := bash
 
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
+BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
 
@@ -33,7 +34,7 @@ lint-fix:
 test-unit: $(BQ_LIBRARY)
 	yarn test-unit
 
-test-integration-only: 
+test-integration-dry: 
 	yarn test-integration
 
 clean:
@@ -93,7 +94,7 @@ endif
 
 test-integration: check_environment
 	$(MAKE) deploy
-	$(MAKE) test-integration-only || ($(MAKE) integration_cleanup && exit 1)
+	$(MAKE) test-integration-dry || ($(MAKE) integration_cleanup && exit 1)
 	$(MAKE) integration_cleanup
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
