@@ -1,0 +1,5 @@
+# Processing
+
+## Folder structure
+
+- bigquery
