@@ -20,11 +20,10 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
-    "build": "NODE_PATH=`pwd`/node_modules rollup --config ../../../common/bigquery/rollup.config.js --external h3-js",
+    "build": "NODE_PATH=`pwd`/node_modules rollup --config ../../../common/bigquery/rollup.config.js",
     "lint": "eslint --config ../../../.eslintrc.js .",
     "lint-fix": "eslint --config ../../../.eslintrc.js . --fix",
     "test-unit": "NODE_PATH=`pwd`/node_modules jest test/unit --testTimeout=30000",
-    "test-integration": "NODE_PATH=`pwd`/node_modules jest test/integration --testTimeout=30000",
-    "clean": "rm -rf dist node_modules"
+    "test-integration": "NODE_PATH=`pwd`/node_modules jest test/integration --testTimeout=30000"
   }
 }
