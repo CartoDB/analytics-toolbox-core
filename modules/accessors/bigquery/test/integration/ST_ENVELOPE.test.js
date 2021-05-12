@@ -11,7 +11,7 @@ function getFeatureArray(fixture)
 {
     let featuresArray = '[';
     fixture.geom.features.forEach(function(item){
-        featuresArray += "ST_GEOGFROMGEOJSON('" + JSON.stringify(item.geometry) +"', make_valid => true),";
+        featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
     });
     featuresArray = featuresArray.slice(0, -1) + ']';
     return featuresArray;
@@ -27,7 +27,7 @@ test('ST_ENVELOPE should work', async () => {
 });
 
 test('ST_ENVELOPE should return NULL if any NULL mandatory argument', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(NULL) as envelope1`;
+    const query = 'SELECT `@@BQ_PREFIX@@accessors.ST_ENVELOPE`(NULL) as envelope1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].envelope1).toEqual(null);
