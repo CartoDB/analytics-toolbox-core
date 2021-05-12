@@ -2,22 +2,22 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('Works as expected with invalid data', async () => {
     const query = `
-WITH ids AS
-(
-    -- Invalid parameters
-    SELECT 1 AS id, NULL as hid, 1 as distance UNION ALL
-    SELECT 2 AS id, 'ff283473fffffff' as hid, 1 as distance UNION ALL
-    SELECT 3 as id, '8928308280fffff' as hid, -1 as distance UNION ALL
+        WITH ids AS
+        (
+            -- Invalid parameters
+            SELECT 1 AS id, NULL as hid, 1 as distance UNION ALL
+            SELECT 2 AS id, 'ff283473fffffff' as hid, 1 as distance UNION ALL
+            SELECT 3 as id, '8928308280fffff' as hid, -1 as distance UNION ALL
 
-    -- Distance 0
-    SELECT 4 as id, '8928308280fffff' as hid, 0 as distance
-)
-SELECT
-    id,
-    \`@@BQ_PREFIX@@h3.KRING\`(hid, distance) as parent
-FROM ids
-ORDER BY id ASC
-`;
+            -- Distance 0
+            SELECT 4 as id, '8928308280fffff' as hid, 0 as distance
+        )
+        SELECT
+            id,
+            \`@@BQ_PREFIX@@h3.KRING\`(hid, distance) as parent
+        FROM ids
+        ORDER BY id ASC
+    `;
 
     const rows = await runQuery(query);
     expect(rows.length).toEqual(4);
@@ -29,15 +29,15 @@ ORDER BY id ASC
 
 test('List the ring correctly', async () => {
     const query = `
-WITH ids AS
-(
-    SELECT '8928308280fffff' as hid
-)
-SELECT
-    \`@@BQ_PREFIX@@h3.KRING\`(hid, 1) as d1,
-    \`@@BQ_PREFIX@@h3.KRING\`(hid, 2) as d2
-FROM ids
-`;
+        WITH ids AS
+        (
+            SELECT '8928308280fffff' as hid
+        )
+        SELECT
+            \`@@BQ_PREFIX@@h3.KRING\`(hid, 1) as d1,
+            \`@@BQ_PREFIX@@h3.KRING\`(hid, 2) as d2
+        FROM ids
+    `;
 
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -76,14 +76,14 @@ FROM ids
 
 test('Zero distance returns self', async () => {
     const query = `
-WITH ids AS
-(
-    SELECT '87283080dffffff' as hid
-)
-SELECT
-    \`@@BQ_PREFIX@@h3.KRING\`(hid, 0) AS self_children
-FROM ids
-`;
+        WITH ids AS
+        (
+            SELECT '87283080dffffff' as hid
+        )
+        SELECT
+            \`@@BQ_PREFIX@@h3.KRING\`(hid, 0) AS self_children
+        FROM ids
+    `;
 
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
