@@ -4,3 +4,4 @@ node_modules/
 *.log
 snowsql_rt.*
 .DS_STORE
+dev_env.sh
