@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@s2.LONGLAT_ASID`
 (longitude FLOAT64, latitude FLOAT64, resolution INT64)
-RETURNS INT64
+RETURNS BIGNUMERIC
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
@@ -12,5 +12,6 @@ AS """
     if (latitude == null || longitude == null || resolution == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.keyToId(lib.latLngToKey(Number(latitude), Number(longitude), Number(resolution)));
+    const key = lib.latLngToKey(Number(latitude), Number(longitude), Number(resolution));
+    return lib.keyToId(key);
 """;

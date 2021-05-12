@@ -8,7 +8,7 @@ s2.HILBERTQUADKEY_FROMID(id)
 
 Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert curve quadtree ID).
 
-* `id`: `INT64` S2 cell ID to be converted.
+* `id`: `BIGNUMERIC` S2 cell ID to be converted.
 
 **Return type**
 

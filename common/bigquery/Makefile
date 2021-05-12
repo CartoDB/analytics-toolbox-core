@@ -18,6 +18,7 @@ BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
 .PHONY: $(BQ_LIBRARY)
 
 .PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
+.SILENT: deploy
 
 all build $(BQ_LIBRARY):
 	yarn

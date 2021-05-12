@@ -13,7 +13,7 @@ Returns the S2 cell ID of a given point at a given level of detail.
 
 **Return type**
 
-`INT64`
+`BIGNUMERIC`
 
 **Example**
 
