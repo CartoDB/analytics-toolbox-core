@@ -1,5 +1,5 @@
 GIT_DIFF ?= off
-MODULES = constructors measurements placekey processing s2
+MODULES = constructors measurements placekey processing s2 transformations accessors
 
 BQ_ENABLED ?= 0
 
