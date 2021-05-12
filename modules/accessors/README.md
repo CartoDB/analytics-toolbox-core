@@ -1,4 +1,4 @@
-# Processing
+# Accessors
 
 ## Folder structure
 
