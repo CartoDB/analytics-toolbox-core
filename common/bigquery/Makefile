@@ -39,7 +39,7 @@ test-integration-dry:
 	yarn test-integration
 
 clean:
-	yarn clean
+	rm -rf dist node_modules
 
 check_environment:
 ifndef BQ_REGION

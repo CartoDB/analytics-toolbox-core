@@ -1,7 +1,7 @@
 {
-  "name": "transformations_bigquery",
-  "version": "1.2.0",
-  "description": "Transformations module for BigQuery",
+  "name": "accessors_bigquery",
+  "version": "1.0.0",
+  "description": "Accessors module for BigQuery",
   "author": "CARTO",
   "license": "BSD-3-Clause",
   "private": true,

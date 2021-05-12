@@ -8,9 +8,13 @@ const input = [];
 const output = [];
 
 const files = fs.readdirSync(dir);
+const ignoredFiles = ['.DS_Store'];
 
 files.forEach(file => {
     const name = path.parse(file).name;
+    if(ignoredFiles.includes(name)){
+        return;
+    }
     const content = fs.readFileSync(path.join(dir, file)).toString();
     input.push({
         name,
