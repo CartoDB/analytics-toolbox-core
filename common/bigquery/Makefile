@@ -30,7 +30,7 @@ $(NODE_MODULES_DEPS):
 
 all build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	rollup --config ../../../common/bigquery/rollup.config.js $(BUILD_PARAMS)
+	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 
 lint: $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
@@ -90,7 +90,7 @@ dataset_remove: check_environment
 REPLACEMENTS = 	-e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g'
 
 dataset_deploy: check_environment
-	for n in `node ../../../common/bigquery/sqlsort.js`; do \
+	for n in `node $(COMMON_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit; \
 	done
 
