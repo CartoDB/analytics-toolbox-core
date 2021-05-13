@@ -52,8 +52,8 @@ In addition to the open source modules found here, CARTO also offers customers a
 
 The [CARTO BigQuery Tiler](https://carto.com/bigquery/beta/) is a solution to visualize massive amounts of data in BigQuery. Here are a few screenshots of some visualizations created with it:
 
-![alt text](screenshots/protected-areas.d0a592e5.jpg)
+![alt text](docs/screenshots/protected-areas.d0a592e5.jpg)
 
-![alt text](screenshots/external-tools-s.80d694f9.jpg)
+![alt text](docs/screenshots/external-tools-s.80d694f9.jpg)
 
-![alt text](screenshots/taxi-trips.500de518.jpg)
+![alt text](docs/screenshots/taxi-trips.500de518.jpg)
