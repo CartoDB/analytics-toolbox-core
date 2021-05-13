@@ -12,7 +12,7 @@ test('ST_CENTERMEDIAN should work', async () => {
 });
 
 test('ST_CENTERMEDIAN should return NULL if any NULL mandatory argument', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CENTERMEDIAN\`(NULL) as centermedian1`;
+    const query = 'SELECT `@@BQ_PREFIX@@transformations.ST_CENTERMEDIAN`(NULL) as centermedian1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].centermedian1).toEqual(null);

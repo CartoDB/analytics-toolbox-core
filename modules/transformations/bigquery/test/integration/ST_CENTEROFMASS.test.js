@@ -12,7 +12,7 @@ test('ST_CENTEROFMASS should work', async () => {
 });
 
 test('ST_CENTEROFMASS should return NULL if any NULL mandatory argument', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CENTEROFMASS\`(NULL) as centerofmass1`;
+    const query = 'SELECT `@@BQ_PREFIX@@transformations.ST_CENTEROFMASS`(NULL) as centerofmass1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].centerofmass1).toEqual(null);

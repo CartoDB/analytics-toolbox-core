@@ -13,7 +13,7 @@ function getFeatureArray(fixture)
 {
     let featuresArray = '[';
     fixture.geom.features.forEach(function(item){
-        featuresArray += "ST_GEOGFROMGEOJSON('" + JSON.stringify(item.geometry) +"', make_valid => true),";
+        featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
     });
     featuresArray = featuresArray.slice(0, -1) + ']';
     return featuresArray;
@@ -32,7 +32,7 @@ function getFeatureUnits(fixture)
 {
     if(fixture.geom.properties != null && fixture.geom.properties.units)
     {  
-        return "'" + fixture.geom.properties.units + "'";
+        return '\'' + fixture.geom.properties.units + '\'';
     }
     return null;
 }
@@ -49,7 +49,7 @@ test('ST_CONCAVEHULL should work', async () => {
 });
 
 test('ST_CONCAVEHULL should return NULL if any NULL mandatory argument', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(NULL, 10, 'kilometers') as concaveHull1`;
+    const query = 'SELECT `@@BQ_PREFIX@@transformations.ST_CONCAVEHULL`(NULL, 10, \'kilometers\') as concaveHull1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].concaveHull1).toEqual(null);

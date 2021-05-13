@@ -4,7 +4,7 @@ const pointFixturesIn = require('./buffer_fixtures/in/point');
 const pointFixturesOut = require('./buffer_fixtures/out/point');
 
 test('ST_BUFFER should work', async () => {
-    let featureJSON = JSON.stringify(pointFixturesIn.geom.geometry);
+    const featureJSON = JSON.stringify(pointFixturesIn.geom.geometry);
     const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', 10) as buffer;`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -12,11 +12,11 @@ test('ST_BUFFER should work', async () => {
 });
 
 test('ST_BUFFER should return NULL if any NULL mandatory argument', async () => {
-    let feature = {
-        "type": "Point",
-        "coordinates": [-100, 50]  
+    const feature = {
+        'type': 'Point',
+        'coordinates': [-100, 50]  
     };
-    featureJSON = JSON.stringify(feature);
+    const featureJSON = JSON.stringify(feature);
 
     const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(NULL, 1, 'kilometers', 10) as buffer1,
     \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), CAST(NULL AS FLOAT64), 'kilometers', 10) as buffer2`;
@@ -35,15 +35,15 @@ test('ST_BUFFER default values should work', async () => {
 });
 
 test('ST_BUFFER should fail with wrong arguments', async () => {
-    let feature = {
-        "type": "Point",
-        "coordinates": [-100, 50]  
+    const feature = {
+        'type': 'Point',
+        'coordinates': [-100, 50]  
     };
-    featureJSON = JSON.stringify(feature);
+    const featureJSON = JSON.stringify(feature);
     
     let query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), -1, 'kilometers', 10);`;
     await expect(runQuery(query)).rejects.toThrow(
-        "TypeError: Cannot read property 'geometry' of undefined at UDF$1(STRING, FLOAT64, STRING, INT64) line 15, columns 33-34"
+        'TypeError: Cannot read property \'geometry\' of undefined at UDF$1(STRING, FLOAT64, STRING, INT64) line 15, columns 33-34'
     );
 
     query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
