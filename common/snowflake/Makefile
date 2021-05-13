@@ -12,13 +12,13 @@ SF_LIBRARY = ./dist/index.js
 SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = sql/_SHARE_REMOVE.sql
 
-COMMON_DIR = ../../../common/snowflake/
+COMMON_DIR = ../../../common/snowflake
 
 NODE_MODULES = ./node_modules
 NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
-.PHONY: all build lint lint-fix test-unit test-integration test-integration-dry deploy clean $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
-.SILENT: all build lint lint-fix test-unit test-integration test-integration-dry deploy $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
+.PHONY: build lint lint-fix test-unit test-integration test-integration-dry deploy clean $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
+.SILENT: build lint lint-fix test-unit test-integration test-integration-dry deploy $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
 
 $(NODE_MODULES):
 	yarn
@@ -26,7 +26,7 @@ $(NODE_MODULES):
 $(NODE_MODULES_DEPS):
 	yarn --cwd $(COMMON_DIR)
 
-all build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
+build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 
@@ -39,6 +39,8 @@ lint-fix: $(NODE_MODULES_DEPS)
 	eslint --config ../../../.eslintrc.js . --fix
 
 test-unit: $(BQ_LIBRARY)
+	UNIT_TEST=1 \
+	$(MAKE) build
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/unit --testTimeout=30000
 
@@ -99,6 +101,7 @@ endif
 
 ##################### DEPLOY #####################
 deploy: check_environment
+	$(MAKE) build
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 	$(MAKE) share_create

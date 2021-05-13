@@ -14,13 +14,13 @@ BQ_LIBRARY = ./dist/index.js
 BQ_BUCKET = $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
 BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
 
-COMMON_DIR = ../../../common/bigquery/
+COMMON_DIR = ../../../common/bigquery
 
 NODE_MODULES = ./node_modules
 NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
-.PHONY: all build lint lint-fix test-unit test-integration test-integration-dry deploy clean $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
-.SILENT: all build lint lint-fix test-unit test-integration test-integration-dry deploy $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
+.PHONY: build lint lint-fix test-unit test-integration test-integration-dry deploy clean $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
+.SILENT: build lint lint-fix test-unit test-integration test-integration-dry deploy $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
 
 $(NODE_MODULES):
 	yarn
@@ -28,7 +28,7 @@ $(NODE_MODULES):
 $(NODE_MODULES_DEPS):
 	yarn --cwd $(COMMON_DIR)
 
-all build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
+build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 

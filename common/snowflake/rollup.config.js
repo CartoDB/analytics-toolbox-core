@@ -8,7 +8,7 @@ export default {
     input: 'lib/index.js',
     output: {
         file: 'dist/index.js',
-        format: 'iife',
+        format: process.env.UNIT_TEST ? 'umd': 'iife',
         name: 'lib'
     },
     plugins: [
