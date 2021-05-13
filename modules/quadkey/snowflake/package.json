@@ -1,7 +1,7 @@
 {
-  "name": "quadkey_bigquery",
+  "name": "quadkey_snowflake",
   "version": "1.0.1",
-  "description": "Quadkey module for BigQuery",
+  "description": "Quadkey module for Snowflake",
   "author": "CARTO",
   "license": "BSD-3-Clause",
   "private": true,
