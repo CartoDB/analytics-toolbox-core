@@ -14,7 +14,7 @@ $$
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return bbox(QUADINT);
+    return lib.bbox(QUADINT);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.BBOX

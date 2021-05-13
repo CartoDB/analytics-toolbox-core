@@ -13,7 +13,7 @@ AS $$
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return quadkeyFromQuadint(QUADINT);
+    return lib.quadkeyFromQuadint(QUADINT);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT

@@ -18,7 +18,7 @@ AS $$
     {
         DISTANCE = 1;
     }
-    let neighbors = kring(QUADINT, DISTANCE);
+    let neighbors = lib.kring(QUADINT, DISTANCE);
     return neighbors.map(String);
 $$;
 

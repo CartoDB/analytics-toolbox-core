@@ -15,7 +15,7 @@ AS $$
     }
 
     let pol = JSON.parse(GEOJSON);
-    let quadints = geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
+    let quadints = lib.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
     return quadints.map(String);
 $$;
 

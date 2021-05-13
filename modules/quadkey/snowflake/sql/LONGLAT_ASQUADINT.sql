@@ -13,7 +13,7 @@ AS $$
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return quadintFromLocation(LONGITUDE, LATITUDE, RESOLUTION).toString();
+    return lib.quadintFromLocation(LONGITUDE, LATITUDE, RESOLUTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT

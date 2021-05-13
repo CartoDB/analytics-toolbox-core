@@ -13,7 +13,7 @@ AS $$
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return toParent(QUADINT, RESOLUTION).toString(); 
+    return lib.toParent(QUADINT, RESOLUTION).toString(); 
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.TOPARENT

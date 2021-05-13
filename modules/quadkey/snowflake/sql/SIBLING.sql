@@ -13,7 +13,7 @@ AS $$
     {
         throw new Error('NULL argument passed to UDF');
     }
-    return sibling(QUADINT, DIRECTION).toString();
+    return lib.sibling(QUADINT, DIRECTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.SIBLING

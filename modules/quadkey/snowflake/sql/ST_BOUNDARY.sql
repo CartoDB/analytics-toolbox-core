@@ -14,7 +14,7 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-    let geojson = quadintToGeoJSON(QUADINT);
+    let geojson = lib.quadintToGeoJSON(QUADINT);
     return JSON.stringify(geojson);
 $$;
 

@@ -9,7 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    return quadintFromQuadkey(QUADKEY).toString();
+    return lib.quadintFromQuadkey(QUADKEY).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.QUADINT_FROMQUADKEY

@@ -13,7 +13,7 @@ AS $$
     {
         throw new Error('NULL argument passed to UDF');
     }
-    let quadints = toChildren(QUADINT, RESOLUTION);
+    let quadints = lib.toChildren(QUADINT, RESOLUTION);
     return quadints.map(String);
 $$;
 
