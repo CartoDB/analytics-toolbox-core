@@ -2,7 +2,6 @@
 SED ?= sed
 BQ ?= bq --location=$(BQ_REGION)
 GSUTIL ?= gsutil
-SHELL := bash
 
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)

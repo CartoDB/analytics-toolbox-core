@@ -1,0 +1,11 @@
+{
+  "name": "placekey_snowflake",
+  "version": "1.0.0",
+  "description": "Placekey module for Snowflake",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+    "@placekey/placekey": "1.0.3"
+  }
+}

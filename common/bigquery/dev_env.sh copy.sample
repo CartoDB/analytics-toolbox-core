@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# This file populates the necessary environment variables to run integration tests for the project
+# You can edit this file and rename it into dev_env.sh to avoid pushing local changes to the repo
+
+export BQ_REGION="us"
+export BQ_PROJECT="myproject"
+export BQ_BUCKET_PUBLIC="gs://mybucket/"
+export BQ_DATASET_PREFIX="myprefix_"
+export GOOGLE_APPLICATION_CREDENTIALS="/path/to/the/service/account.json"
