@@ -12,7 +12,7 @@ import {
     quadintFromZXY,
     geojsonToQuadints,
     ZXYFromQuadint
-} from '../../common/lib/quadkey';
+} from './quadkey';
 
 export {
     bbox,
