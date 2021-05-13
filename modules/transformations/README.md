@@ -1,5 +1,0 @@
-# Transformations
-
-## Folder structure
-
-- bigquery

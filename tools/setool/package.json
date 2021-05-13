@@ -1,6 +1,6 @@
 {
   "name": "setool",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-alpha2",
   "description": "A tool to help develop the Spatial Extension",
   "private": true,
   "main": "index.js",

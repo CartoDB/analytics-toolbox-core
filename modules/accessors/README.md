@@ -1,5 +1,0 @@
-# Accessors
-
-## Folder structure
-
-- bigquery

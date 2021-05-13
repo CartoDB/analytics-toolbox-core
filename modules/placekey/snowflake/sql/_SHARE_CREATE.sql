@@ -1,3 +1,7 @@
+----------------------------
+-- Copyright (C) 2021 CARTO
+----------------------------
+
 USE @@SF_DATABASE@@;
 
 CREATE SHARE IF NOT EXISTS @@SF_SHARE_PUBLIC@@;

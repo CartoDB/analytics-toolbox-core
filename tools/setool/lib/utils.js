@@ -15,5 +15,8 @@ module.exports = {
     readFile: (pathlist) => {
         const filepath = path.join(...pathlist);
         return fs.readFileSync(filepath).toString();
+    },
+    currentDate () {
+        return new Date().toISOString().slice(0, 10);
     }
 };
