@@ -1,3 +1,3 @@
 MODULE = quadkey
 
-include ../../../common/bigquery/Makefile
+include ../../../common/snowflake/Makefile
