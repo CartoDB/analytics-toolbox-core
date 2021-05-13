@@ -1,7 +1,8 @@
-USE @@SF_DATABASEID@@;
+USE @@SF_DATABASE@@;
+
 CREATE SHARE IF NOT EXISTS @@SF_SHARE_PUBLIC@@;
-grant usage on database @@SF_DATABASEID@@ to share @@SF_SHARE_PUBLIC@@;
-grant usage on schema @@SF_DATABASEID@@.@@SF_SCHEMA@@ to share @@SF_SHARE_PUBLIC@@;
+grant usage on database @@SF_DATABASE@@ to share @@SF_SHARE_PUBLIC@@;
+grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE_PUBLIC@@;
 
 grant usage on function @@SF_PREFIX@@placekey.H3_ASPLACEKEY(STRING) to share @@SF_SHARE_PUBLIC@@;
 grant usage on function @@SF_PREFIX@@placekey.PLACEKEY_ASH3(STRING) to share @@SF_SHARE_PUBLIC@@;

@@ -9,7 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if (!lib.placekeyIsValid(PLACEKEY))  {
+    if (!lib.placekeyIsValid(PLACEKEY)) {
         return null;
     }
     return lib.placekeyToH3(PLACEKEY);

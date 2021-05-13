@@ -3,10 +3,10 @@
 # This file populates the necessary environment variables to run integration tests for the project
 # You can edit this file and rename it into dev_env.sh to avoid pushing local changes to the repo
 
-export SF_DATABASEID="CARTO_BACKEND_DATA_TEAM"
-export SF_SCHEMA_PREFIX="jarroyo_"
+export SF_DATABASEID="carto_backend_data_team"
+export SF_SCHEMA_PREFIX=""
 export SF_SHARE_ENABLED=0
-export SF_SHARE_PUBLIC="jarroyo_SPATIAL_EXTENSIONS"
+
 export SNOWSQL_ACCOUNT=""
 export SNOWSQL_USER=""
 export SNOWSQL_PWD=""

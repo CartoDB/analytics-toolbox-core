@@ -4,7 +4,8 @@ SNOWSQL ?= snowsql
 GSUTIL ?= gsutil
 
 SF_SCHEMA = $(SF_SCHEMA_PREFIX)$(MODULE)
-SF_PREFIX = $(SF_DATABASEID).$(SF_SCHEMA_PREFIX)
+SF_PREFIX = $(SF_DATABASE).$(SF_SCHEMA_PREFIX)
+SF_SHARE_PUBLIC = $(SF_SCHEMA_PREFIX)SPATIAL_EXTENSIONS
 
 SF_LIBRARY = ./dist/index.js
 
@@ -51,8 +52,8 @@ clean:
 
 
 check_environment:
-ifndef SF_DATABASEID
-	$(error SF_DATABASEID is undefined)
+ifndef SF_DATABASE
+	$(error SF_DATABASE is undefined)
 endif
 ifndef SF_SCHEMA
 	$(error SF_SCHEMA is undefined)
@@ -69,13 +70,13 @@ endif
 ##################### SNOWFLAKE SCHEMA #####################
 
 schema_create: check_environment
-	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA)"
+	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASE).$(SF_SCHEMA)"
 
 schema_remove: check_environment
-	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA) CASCADE"
+	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASE).$(SF_SCHEMA) CASCADE"
 
 REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' \
-		-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
+		-e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' \
 		-e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' \
 		-e 's!@@SF_SHARE_PUBLIC@@!$(SF_SHARE_PUBLIC)!g' \
 		-e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' \

@@ -1,8 +1,8 @@
 const snowflake = require('snowflake-sdk');
 
-const SF_DATABASEID = process.env.SF_DATABASEID;
+const SF_DATABASE = process.env.SF_DATABASE;
 const SF_SCHEMA_PREFIX = process.env.SF_SCHEMA_PREFIX;
-const SF_PREFIX = `${SF_DATABASEID}.${SF_SCHEMA_PREFIX}`;
+const SF_PREFIX = `${SF_DATABASE}.${SF_SCHEMA_PREFIX}`;
 
 let connection = snowflake.createConnection( {
     account: process.env.SNOWSQL_ACCOUNT,
