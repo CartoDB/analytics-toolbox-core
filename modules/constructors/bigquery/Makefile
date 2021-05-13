@@ -1,3 +1,3 @@
-export MODULE = constructors
+MODULE = constructors
 
 include ../../../common/bigquery/Makefile

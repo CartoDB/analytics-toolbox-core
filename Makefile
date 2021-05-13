@@ -1,11 +1,9 @@
 GIT_DIFF ?= off
-MODULES = constructors measurements placekey processing s2 transformations accessors
-
 BQ_ENABLED ?= 0
 
 all build lint test-unit test-integration clean deploy:
 ifeq ($(BQ_ENABLED), 1)
-	for module in $(MODULES); do \
+	for module in `ls modules`; do \
 		if [ "$(GIT_DIFF)" = "off" ] || [ `echo "$(GIT_DIFF)" | grep -P $${module}'\/.*(\.js|\.sql|Makefile)' | wc -l` -gt 0 ]; then \
 			$(MAKE) -C modules/$${module}/bigquery $@ || exit 1; \
 		fi \

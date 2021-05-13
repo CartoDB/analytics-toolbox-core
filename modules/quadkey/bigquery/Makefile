@@ -1,3 +1,3 @@
-export MODULE = quadkey
+MODULE = quadkey
 
 include ../../../common/bigquery/Makefile

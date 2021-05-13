@@ -15,31 +15,44 @@ BQ_LIBRARY = ./dist/index.js
 BQ_BUCKET = $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
 BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
 
-.PHONY: $(BQ_LIBRARY)
+COMMON_DIR = ../../../common/bigquery/
 
-.PHONY: check_environment all check clean storage_upload storage_remove dataset_create dataset_remove dataset_deploy deploy check-integration integration_cleanup
-.SILENT: deploy
+NODE_MODULES = ./node_modules
+NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
-all build $(BQ_LIBRARY):
+.PHONY: all build lint lint-fix test-unit test-integration test-integration-dry deploy clean $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
+.SILENT: all build lint lint-fix test-unit test-integration test-integration-dry deploy $(NODE_MODULES) $(NODE_MODULES_DEPS) $(BQ_LIBRARY)
+
+$(NODE_MODULES):
 	yarn
-	yarn build
 
-lint:
-	yarn
-	yarn lint
+$(NODE_MODULES_DEPS):
+	yarn --cwd $(COMMON_DIR)
 
-lint-fix:
-	yarn
-	yarn lint-fix
+all build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
+	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+	rollup --config ../../../common/bigquery/rollup.config.js $(BUILD_PARAMS)
+
+lint: $(NODE_MODULES_DEPS)
+	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+	eslint --config ../../../.eslintrc.js .
+
+lint-fix: $(NODE_MODULES_DEPS)
+	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+	eslint --config ../../../.eslintrc.js . --fix
 
 test-unit: $(BQ_LIBRARY)
-	yarn test-unit
+	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+	jest test/unit --testTimeout=30000
 
 test-integration-dry: 
-	yarn test-integration
+	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+	jest test/integration --testTimeout=30000
 
 clean:
-	rm -rf dist node_modules
+	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEPS)
+
+
 
 check_environment:
 ifndef BQ_REGION
@@ -102,5 +115,3 @@ test-integration: check_environment
 integration_cleanup: check_environment
 	$(MAKE) storage_remove
 	$(MAKE) dataset_remove || ((sleep 5 && $(MAKE) dataset_remove) || exit 1)
-
-.PHONY: all build test-integration test-unit lint clean deploy

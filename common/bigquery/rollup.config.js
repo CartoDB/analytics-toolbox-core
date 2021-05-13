@@ -17,5 +17,10 @@ export default {
         json(),
         terser(),
         bundleSize()
-    ]
+    ],
+    onwarn(warning, rollupWarn) {
+        if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+            rollupWarn(warning);
+        }
+    }
 };

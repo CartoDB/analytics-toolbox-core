@@ -1,3 +1,3 @@
-export MODULE = measurements
+MODULE = measurements
 
 include ../../../common/bigquery/Makefile

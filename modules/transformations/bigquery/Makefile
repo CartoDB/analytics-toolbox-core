@@ -1,3 +1,3 @@
-export MODULE = transformations
+MODULE = transformations
 
 include ../../../common/bigquery/Makefile

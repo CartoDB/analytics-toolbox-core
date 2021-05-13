@@ -1,3 +1,3 @@
-export MODULE = accessors
+MODULE = accessors
 
 include ../../../common/bigquery/Makefile

@@ -1,3 +1,3 @@
-export MODULE = processing
+MODULE = processing
 
 include ../../../common/bigquery/Makefile

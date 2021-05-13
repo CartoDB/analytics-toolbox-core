@@ -1,3 +1,3 @@
-export MODULE = h3
+MODULE = h3
 
 include ../../../common/bigquery/Makefile
