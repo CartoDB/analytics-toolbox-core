@@ -8,11 +8,10 @@ SF_PREFIX = $(SF_DATABASEID).$(SF_SCHEMA_PREFIX)
 
 SF_LIBRARY = ./dist/index.js
 
-COMMON_DIR = ../../../common/snowflake/
-
 SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = sql/_SHARE_REMOVE.sql
-SQL_DEPLOYABLE = `node ../../../common/snowflake/sqlsort.js`
+
+COMMON_DIR = ../../../common/snowflake/
 
 NODE_MODULES = ./node_modules
 NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
@@ -67,7 +66,6 @@ ifeq ($(SF_SHARE_ENABLED),1)
 	endif
 endif
 
-
 ##################### SNOWFLAKE SCHEMA #####################
 
 schema_create: check_environment
@@ -112,8 +110,5 @@ test-integration: check_environment
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
 integration_cleanup: check_environment
-ifeq ($(POST_INTEGRATION_CLEANUP),1)
 	$(MAKE) share_remove
 	$(MAKE) schema_remove || ((sleep 5 && $(MAKE) schema_remove) || exit 1)
-	$(MAKE) -C $(SF_H3_PATH) $@
-endif
