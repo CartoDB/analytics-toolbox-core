@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
-      BQ_ENABLED: 1
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
       BQ_PROJECT: bqcartost-core-${{ github.event.pull_request.number }}
@@ -34,7 +33,7 @@ jobs:
         shell: bash
         run: ./common/bigquery/create-st.sh
       - name: Deploy to staging
-        run: make deploy
+        run: make deploy CLOUD=bigquery
       - name: Comment PR
         uses: actions/github-script@0.3.0
         with:
@@ -51,21 +50,14 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
-      ENABLED_SF: 1
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
       SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASEID: SFCARTOST
+      SF_DATABASE: SFCARTOST
       SF_SHARE_ENABLED: 1
-      SF_SHARE_PUBLIC: SFCARTOST
-      SF_SCHEMA_SKEL: SKEL
-      SF_SCHEMA_H3: H3
-      SF_SCHEMA_PLACEKEY: PLACEKEY
-      SF_SCHEMA_QUADKEY: QUADKEY
-      SF_SCHEMA_S2: S2
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -74,4 +66,4 @@ jobs:
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Deploy to staging
-        run: make deploy
+        run: make deploy CLOUD=snowflake

@@ -3,7 +3,7 @@
 # This file populates the necessary environment variables to run integration tests for the project
 # You can edit this file and rename it into dev_env.sh to avoid pushing local changes to the repo
 
-export SF_DATABASEID="carto_backend_data_team"
+export SF_DATABASE="carto_backend_data_team"
 export SF_SCHEMA_PREFIX=""
 export SF_SHARE_ENABLED=0
 
