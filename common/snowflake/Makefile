@@ -3,12 +3,15 @@ SED ?= sed
 SNOWSQL ?= snowsql
 GSUTIL ?= gsutil
 
+SF_SCHEMA = $(SF_SCHEMA_PREFIX)$(MODULE)
 SF_PREFIX = $(SF_DATABASEID).$(SF_SCHEMA_PREFIX)
 
 SF_LIBRARY = ./dist/index.js
 
 COMMON_DIR = ../../../common/snowflake/
 
+SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
+SHARE_REMOVE_FILE = sql/_SHARE_REMOVE.sql
 SQL_DEPLOYABLE = `node ../../../common/snowflake/sqlsort.js`
 
 NODE_MODULES = ./node_modules
@@ -25,7 +28,7 @@ $(NODE_MODULES_DEPS):
 
 all build $(BQ_LIBRARY): $(NODE_MODULES) $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	rollup --config ../../../common/snowflake/rollup.config.js $(BUILD_PARAMS)
+	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 
 lint: $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
@@ -52,28 +55,36 @@ check_environment:
 ifndef SF_DATABASEID
 	$(error SF_DATABASEID is undefined)
 endif
-
-
-### TODO v ###
+ifndef SF_SCHEMA
+	$(error SF_SCHEMA is undefined)
+endif
+ifndef SF_PREFIX
+	$(error SF_PREFIX is undefined)
+endif
+ifeq ($(SF_SHARE_ENABLED),1)
+	ifndef SF_SHARE_PUBLIC
+		$(error SF_SHARE_PUBLIC is undefined)
+	endif
+endif
 
 
 ##################### SNOWFLAKE SCHEMA #####################
 
 schema_create: check_environment
-	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA_PLACEKEY)"
+	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASEID).$(SF_SCHEMA)"
 
 schema_remove: check_environment
-	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA_PLACEKEY) CASCADE"
+	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASEID).$(SF_SCHEMA) CASCADE"
 
-REPLACEMENTS = 	-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
-		-e 's!@@SF_SCHEMA_PLACEKEY@@!$(SF_SCHEMA_PLACEKEY)!g' \
-		-e 's!@@SF_SCHEMA_H3@@!$(SF_SCHEMA_H3)!g' \
+REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' \
+		-e 's!@@SF_DATABASEID@@!$(SF_DATABASEID)!g' \
+		-e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' \
 		-e 's!@@SF_SHARE_PUBLIC@@!$(SF_SHARE_PUBLIC)!g' \
-		-e '/@@LIBRARY_FILE_CONTENT@@/ r $(PLACEKEY_SF_LIBRARY)' \
-		-e 's!@@LIBRARY_FILE_CONTENT@@!!g'
+		-e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' \
+		-e 's!@@SF_LIBRARY_CONTENT@@!!g'
 
 schema_deploy: check_environment
-	for n in $(sort $(SQL_DEPLOYABLE)); do \
+	for n in `node $(COMMON_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit; \
 	done
 
@@ -88,17 +99,15 @@ ifeq ($(SF_SHARE_ENABLED),1)
 endif
 
 ##################### DEPLOY #####################
-SF_H3_PATH = ../../h3/sf
-deploy: ../placekey_library.js check_environment
-	$(MAKE) -C $(SF_H3_PATH) $@
+deploy: check_environment
 	$(MAKE) schema_create
 	$(MAKE) schema_deploy
 	$(MAKE) share_create
 
 ##################### INTEGRATION TESTS #####################
-check-integration: check_environment
+test-integration: check_environment
 	$(MAKE) deploy
-	$(MAKE) -C test/ $@ || ($(MAKE) integration_cleanup && exit 1)
+	$(MAKE) test-integration-dry || ($(MAKE) integration_cleanup && exit 1)
 	$(MAKE) integration_cleanup
 
 # Note, on failure we add a explicit sleep to wait until all resources are unused before retrying
