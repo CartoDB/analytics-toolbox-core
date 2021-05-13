@@ -100,7 +100,7 @@ deploy: check_environment
 	$(MAKE) storage_upload dataset_create
 	$(MAKE) dataset_deploy
 ifdef BQ_PERMISSIONS
-	../../tools/set_module_permissions.sh
+	../../common/bigquery/set_module_permissions.sh
 endif
 
 ##################### INTEGRATION TESTS #####################

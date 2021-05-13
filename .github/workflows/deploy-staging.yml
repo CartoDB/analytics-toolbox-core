@@ -32,7 +32,7 @@ jobs:
             export_default_credentials: true
       - name: Create temporary staging environment
         shell: bash
-        run: ./tools/create-bq-st.sh
+        run: ./common/bigquery/create-st.sh
       - name: Deploy to staging
         run: make deploy
       - name: Comment PR
