@@ -1,0 +1,12 @@
+{
+  "name": "quadkey_bigquery",
+  "version": "1.0.1",
+  "description": "Quadkey module for BigQuery",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+    "@mapbox/tile-cover": "3.0.2",
+    "@mapbox/tilebelt": "1.0.2"
+  }
+}
