@@ -2,12 +2,12 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('HILBERTQUADKEY_FROMID.test should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@s2.HILBERTQUADKEY_FROMID(id) as key
-        FROM UNNEST([
+        SELECT @@SF_PREFIX@@s2.HILBERTQUADKEY_FROMID(VALUE) as key
+        FROM LATERAL FLATTEN(input => ARRAY_CONSTRUCT(
             CAST('10160120759347838976' AS BIGINT), CAST('5008548143403368448' AS BIGINT),
             CAST('7416309021449125888' AS BIGINT), CAST('11544114894487945216' AS BIGINT),
             CAST('4985491052606295040' AS BIGINT), CAST('12656544996034831280' AS BIGINT)
-        ]) as id
+        )) as id
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.KEY)).toEqual([
