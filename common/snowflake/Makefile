@@ -64,9 +64,9 @@ ifndef SF_PREFIX
 	$(error SF_PREFIX is undefined)
 endif
 ifeq ($(SF_SHARE_ENABLED),1)
-	ifndef SF_SHARE_PUBLIC
-		$(error SF_SHARE_PUBLIC is undefined)
-	endif
+ifndef SF_SHARE_PUBLIC
+	$(error SF_SHARE_PUBLIC is undefined)
+endif
 endif
 
 ##################### SNOWFLAKE SCHEMA #####################
