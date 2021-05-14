@@ -4,26 +4,22 @@ const SF_DATABASE = process.env.SF_DATABASE;
 const SF_SCHEMA_PREFIX = process.env.SF_SCHEMA_PREFIX;
 const SF_PREFIX = `${SF_DATABASE}.${SF_SCHEMA_PREFIX}`;
 
-let connection = snowflake.createConnection( {
+const connection = snowflake.createConnection( {
     account: process.env.SNOWSQL_ACCOUNT,
     username: process.env.SNOWSQL_USER,
     password: process.env.SNOWSQL_PWD
 });
 
-connection.connect( 
-    function(err) {
-        if (err) {
-            console.error('Unable to connect: ' + err.message);
-        } 
-        else 
-        {
-            // Optional: store the connection ID.
-            //const connection_ID = conn.getId();
-        }
+connection.connect((err) => {
+    if (err) {
+        console.error(`Unable to connect: ${err.message}`);
+    } else {
+        // Optional: store the connection ID.
+        //const connection_ID = conn.getId();
     }
-);
+});
 
-function execAsync(query) {
+function execAsync (query) {
     return new Promise((resolve, reject) => {
         connection.execute({
             sqlText: query,
