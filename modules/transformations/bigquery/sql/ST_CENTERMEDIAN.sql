@@ -12,12 +12,13 @@ AS """
     if (!geojson) {
         return null;
     }
-    let medianCenter = lib.centerMedian(lib.feature(JSON.parse(geojson)));
+    const medianCenter = lib.centerMedian(lib.feature(JSON.parse(geojson)));
     return JSON.stringify(medianCenter.geometry);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_CENTERMEDIAN`
 (geog GEOGRAPHY)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__CENTERMEDIAN`(ST_ASGEOJSON(geog)))
 );

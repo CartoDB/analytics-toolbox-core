@@ -12,17 +12,17 @@ AS """
     if (!geojsonStart || distance == null || bearing == null) {
         return null;
     }
-    let options = {};
-    if(units)
-    {
+    const options = {};
+    if (units) {
         options.units = units;
     }
-    let destination = lib.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
+    const destination = lib.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
     return JSON.stringify(destination.geometry);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_DESTINATION`
 (startPoint GEOGRAPHY, distance FLOAT64, bearing FLOAT64, units STRING)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__DESTINATION`(ST_ASGEOJSON(startPoint), distance, bearing, units))
 );

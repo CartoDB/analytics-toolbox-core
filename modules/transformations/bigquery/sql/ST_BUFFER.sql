@@ -12,21 +12,20 @@ AS """
     if (!geojson || radius == null) {
         return null;
     }
-    let options = {};
-    if(units)
-    {
+    const options = {};
+    if (units) {
         options.units = units;
     }
-    if(steps != null)
-    {
+    if (steps != null) {
         options.steps = Number(steps);
     }
-    let buffer = lib.buffer(JSON.parse(geojson), Number(radius), options);
+    const buffer = lib.buffer(JSON.parse(geojson), Number(radius), options);
     return JSON.stringify(buffer.geometry);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_BUFFER`
 (geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__BUFFER`(ST_ASGEOJSON(geog),radius, units, steps))
 );

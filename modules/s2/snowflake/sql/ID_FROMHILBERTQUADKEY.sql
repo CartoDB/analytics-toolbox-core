@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if(!QUADKEY)
-    {
+    if (!QUADKEY) {
         throw new Error('NULL argument passed to UDF');
     }
 

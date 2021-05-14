@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if(!ID)
-    {
+    if (!ID) {
         throw new Error('NULL argument passed to UDF');
     }
 

@@ -1,19 +1,3 @@
-# Transformations BQ
+# Transformations module for BigQuery
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - common/
-    - integration/
-    - unit
-
-## Commands
-
-```
-yarn
-```
+This module contains functions that compute geometric constructions, or alter geometry size or shape.

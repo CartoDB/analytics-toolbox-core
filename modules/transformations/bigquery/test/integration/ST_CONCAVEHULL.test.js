@@ -9,8 +9,7 @@ const fijiFixturesOut = require('./concavehull_fixtures/out/fiji');
 const holeFixturesIn = require('./concavehull_fixtures/in/hole');
 const holeFixturesOut = require('./concavehull_fixtures/out/hole');
 
-function getFeatureArray(fixture)
-{
+function getFeatureArray (fixture) {
     let featuresArray = '[';
     fixture.geom.features.forEach(function(item){
         featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
@@ -19,19 +18,15 @@ function getFeatureArray(fixture)
     return featuresArray;
 }
 
-function getFeatureMaxEdge(fixture)
-{
-    if(fixture.geom.properties != null && fixture.geom.properties.maxEdge)
-    {  
+function getFeatureMaxEdge (fixture) {
+    if (fixture.geom.properties != null && fixture.geom.properties.maxEdge) {  
         return fixture.geom.properties.maxEdge;
     }
     return null;
 }
 
-function getFeatureUnits(fixture)
-{
-    if(fixture.geom.properties != null && fixture.geom.properties.units)
-    {  
+function getFeatureUnits (fixture) {
+    if (fixture.geom.properties != null && fixture.geom.properties.units) {  
         return '\'' + fixture.geom.properties.units + '\'';
     }
     return null;

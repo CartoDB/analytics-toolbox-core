@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if(LATITUDE == null || LONGITUDE == null || RESOLUTION == null)
-    {
+    if (LATITUDE == null || LONGITUDE == null || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
     const key = lib.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));

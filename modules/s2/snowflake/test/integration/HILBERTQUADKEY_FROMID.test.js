@@ -20,4 +20,3 @@ test('HILBERTQUADKEY_FROMID should fail with NULL argument', async () => {
     const query = 'SELECT @@SF_PREFIX@@s2.HILBERTQUADKEY_FROMID(NULL)';
     await expect(runQuery(query)).rejects.toThrow('NULL argument passed to UDF');
 });
-

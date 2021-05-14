@@ -16,5 +16,5 @@ Returns the current version of the s2 module.
 
 ```sql
 SELECT sfcarto.s2.VERSION();
--- 1.0.1
+-- 1.0.0
 ```

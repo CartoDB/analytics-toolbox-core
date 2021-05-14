@@ -12,12 +12,13 @@ AS """
     if (!geojson) {
         return null;
     }
-    var center = lib.centerMean(JSON.parse(geojson));
+    const center = lib.centerMean(JSON.parse(geojson));
     return JSON.stringify(center.geometry);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_CENTERMEAN`
 (geog GEOGRAPHY)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__CENTERMEAN`(ST_ASGEOJSON(geog)))
 );

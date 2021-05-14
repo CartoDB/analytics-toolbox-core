@@ -12,12 +12,13 @@ AS """
     if (!geojson) {
         return null;
     }
-    var center = lib.centerOfMass(JSON.parse(geojson));
+    const center = lib.centerOfMass(JSON.parse(geojson));
     return JSON.stringify(center.geometry);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_CENTEROFMASS`
 (geog GEOGRAPHY)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__CENTEROFMASS`(ST_ASGEOJSON(geog)))
 );
