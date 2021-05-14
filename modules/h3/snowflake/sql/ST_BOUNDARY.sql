@@ -9,12 +9,14 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!INDEX)
+    if (!INDEX) {
         return null;
-        
-    if (!lib.h3IsValid(INDEX))
+    }
+   
+    if (!lib.h3IsValid(INDEX)) {
         return null;
-        
+    }
+
     const coords = lib.h3ToGeoBoundary(INDEX, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {

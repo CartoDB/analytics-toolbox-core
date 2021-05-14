@@ -8,8 +8,7 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS
-"""
+AS """
     if (!geojson || _resolution == null) {
         return null;
     }
@@ -37,7 +36,6 @@ AS
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.ST_ASH3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
-AS
-(
+AS (
     `@@BQ_PREFIX@@h3.__ST_ASH3_POLYFILL`(ST_ASGEOJSON(geog), resolution)
 );

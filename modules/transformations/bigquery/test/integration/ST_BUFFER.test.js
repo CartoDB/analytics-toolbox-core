@@ -42,9 +42,7 @@ test('ST_BUFFER should fail with wrong arguments', async () => {
     const featureJSON = JSON.stringify(feature);
     
     let query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), -1, 'kilometers', 10);`;
-    await expect(runQuery(query)).rejects.toThrow(
-        'TypeError: Cannot read property \'geometry\' of undefined at UDF$1(STRING, FLOAT64, STRING, INT64) line 15, columns 33-34'
-    );
+    await expect(runQuery(query)).rejects.toThrow();
 
     query = `SELECT \`@@BQ_PREFIX@@transformations.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
     await expect(runQuery(query)).rejects.toThrow();

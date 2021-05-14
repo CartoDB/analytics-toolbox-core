@@ -86,6 +86,6 @@ test('ST_ASH3_POLYFILL returns the expected values', async () => {
             p[OFFSET(0)] != h3_id
     `;
     
-    let rows = await runQuery(query);
+    const rows = await runQuery(query);
     expect(rows.length).toEqual(0);
 });

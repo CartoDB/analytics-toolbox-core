@@ -17,11 +17,11 @@ Returns `true` when the given index is valid, `false` otherwise.
 **Examples**
 
 ```sql
-SELECT bqcarto.h3.ISVALID("847b59dffffffff");
+SELECT bqcarto.h3.ISVALID('847b59dffffffff');
 -- true
 ```
 
 ```sql
-SELECT bqcarto.h3.ISVALID("1");
+SELECT bqcarto.h3.ISVALID('1');
 -- false
 ```

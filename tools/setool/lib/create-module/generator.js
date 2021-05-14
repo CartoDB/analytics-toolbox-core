@@ -195,14 +195,14 @@ function createPackage (name, cloud) {
     const cname = capitalize(name);
     const ccloud = { bigquery: 'BigQuery', snowflake: 'Snowflake' }[cloud];
     const content = `{
-    "name": "${name}_${cloud}",
-    "version": "1.0.0",
-    "description": "${cname} module for ${ccloud}",
-    "author": "CARTO",
-    "license": "BSD-3-Clause",
-    "private": true,
-    "dependencies": {
-    }
+  "name": "${name}_${cloud}",
+  "version": "1.0.0",
+  "description": "${cname} module for ${ccloud}",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+  }
 }`;
 
     createFile(['modules', name, cloud, 'package.json'], content);

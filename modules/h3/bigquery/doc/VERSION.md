@@ -16,5 +16,5 @@ Returns the current version of the H3 module.
 
 ```sql
 SELECT bqcarto.h3.VERSION();
--- 1.0.0
+-- 1.0.1
 ```

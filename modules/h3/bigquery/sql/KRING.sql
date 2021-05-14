@@ -8,13 +8,12 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS
-"""
-    if (!index || distance == null || distance < 0)
+AS """
+    if (!index || distance == null || distance < 0) {
         return null;
-
-    if (!lib.h3IsValid(index))
+    }
+    if (!lib.h3IsValid(index)) {
         return null;
-
+    }
     return lib.kRing(index, parseInt(distance));
 """;

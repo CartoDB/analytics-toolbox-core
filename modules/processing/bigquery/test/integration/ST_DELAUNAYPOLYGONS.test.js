@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 const fixturesIn = require('./delaunay_fixtures/in');
 const fixturesOut = require('./delaunay_fixtures/out');
 
-test('ST_DELAUNAYPOLYGONS should work', async () => {
+test.skip('ST_DELAUNAYPOLYGONS should work', async () => {
     const query = `SELECT \`@@BQ_PREFIX@@processing.ST_DELAUNAYPOLYGONS\`(${fixturesIn.input2}) as delaunay`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

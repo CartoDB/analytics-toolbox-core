@@ -18,7 +18,7 @@ Returns an array with the indexes of all hexagons within `distance` of the given
 **Example**
 
 ```sql
-SELECT bqcarto.h3.KRING("837b59fffffffff", 1);
+SELECT bqcarto.h3.KRING('837b59fffffffff', 1);
 -- 837b59fffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff

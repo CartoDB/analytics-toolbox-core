@@ -18,7 +18,7 @@ Returns an array with the indexes of the children/descendents of the given hexag
 **Example**
 
 ```sql
-SELECT bqcarto.h3.TOCHILDREN("837b59fffffffff", 4);
+SELECT bqcarto.h3.TOCHILDREN('837b59fffffffff', 4);
 -- 847b591ffffffff
 -- 847b593ffffffff
 -- 847b595ffffffff

@@ -8,8 +8,7 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS
-"""
+AS """
     if (!index || distance == null || distance < 0)
         return null;
 

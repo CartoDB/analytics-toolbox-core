@@ -12,7 +12,7 @@ AS $$
     if (H3ARRAY == null || RESOLUTION == null || RESOLUTION < 0 || RESOLUTION > 15) {
         return [];
     }
-    
+
     return lib.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;
 

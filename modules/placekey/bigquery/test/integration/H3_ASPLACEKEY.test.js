@@ -1,6 +1,6 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('H3_ASPLACEKEY should work', async () => {
+test.skip('H3_ASPLACEKEY should work', async () => {
     const query = `
         SELECT \`@@BQ_PREFIX@@placekey.H3_ASPLACEKEY\`(h3) as placekey
         FROM UNNEST([
@@ -15,7 +15,7 @@ test('H3_ASPLACEKEY should work', async () => {
     ]);
 });
 
-test('H3_ASPLACEKEY returns null with invalid input', async () => {
+test.skip('H3_ASPLACEKEY returns null with invalid input', async () => {
     const query = `
         SELECT \`@@BQ_PREFIX@@placekey.H3_ASPLACEKEY\`(h3) as placekey
         FROM UNNEST([

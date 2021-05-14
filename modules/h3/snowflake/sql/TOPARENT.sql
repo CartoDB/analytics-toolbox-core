@@ -9,11 +9,13 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!INDEX)
+    if (!INDEX) {
         return null;
-        
-    if (!lib.h3IsValid(INDEX))
+    }
+
+    if (!lib.h3IsValid(INDEX)) {
         return null;
+    }
 
     return lib.h3ToParent(INDEX, Number(RESOLUTION));
 $$;

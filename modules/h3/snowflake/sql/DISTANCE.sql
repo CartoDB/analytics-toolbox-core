@@ -9,8 +9,9 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!INDEX1 || !INDEX2)
+    if (!INDEX1 || !INDEX2) {
         return null;
+    }
         
     let dist = lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {

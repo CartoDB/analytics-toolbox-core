@@ -37,4 +37,3 @@ test('Returns NULL the expected geography', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(0);
 });
-

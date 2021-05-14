@@ -2,10 +2,10 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-USE @@SF_DATABASEID@@;
+USE @@SF_DATABASE@@;
 
 CREATE SHARE IF NOT EXISTS @@SF_SHARE_PUBLIC@@;
-grant usage on database @@SF_DATABASEID@@ to share @@SF_SHARE_PUBLIC@@;
+grant usage on database @@SF_DATABASE@@ to share @@SF_SHARE_PUBLIC@@;
 grant usage on schema @@SF_PREFIX@@quadkey to share @@SF_SHARE_PUBLIC@@;
 
 grant usage on function @@SF_PREFIX@@quadkey.BBOX(BIGINT) to share @@SF_SHARE_PUBLIC@@;

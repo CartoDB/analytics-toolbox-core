@@ -38,4 +38,3 @@ test('Returns NULL the expected geography', async () => {
     expect(rows[0].EXPECTED).toEqual(rows[0].BOUNDS);
     expect(rows[1].EXPECTED).toEqual(rows[1].BOUNDS);
 });
-

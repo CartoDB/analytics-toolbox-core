@@ -8,9 +8,9 @@ RETURNS BOOLEAN
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS
-"""
-    if (!index)
+AS """
+    if (!index) {
         return false;
+    }   
     return lib.h3IsPentagon(index);
 """;

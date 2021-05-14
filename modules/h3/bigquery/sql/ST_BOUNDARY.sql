@@ -8,13 +8,14 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS
-"""
-    if (!index)
+AS """
+    if (!index) {
         return null;
- 
-    if (!lib.h3IsValid(index))
+    }
+
+    if (!lib.h3IsValid(index)) {
         return null;
+    }
 
     const coords = lib.h3ToGeoBoundary(index, true);
     let output = `POLYGON((`;
@@ -28,7 +29,6 @@ AS
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.ST_BOUNDARY`
 (index STRING)
 RETURNS GEOGRAPHY
-AS
-(
+AS (
     SAFE.ST_GEOGFROMTEXT(`@@BQ_PREFIX@@h3.__ST_BOUNDARY`(index))
 );

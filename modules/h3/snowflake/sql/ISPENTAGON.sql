@@ -9,8 +9,9 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!INDEX)
+    if (!INDEX) {
         return false;
+    }
 
     return lib.h3IsPentagon(INDEX);
 $$;

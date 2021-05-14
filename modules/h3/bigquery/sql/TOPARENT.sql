@@ -8,13 +8,14 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS
-"""
-    if (!index)
+AS """
+    if (!index) {
         return null;
+    }
 
-    if (!lib.h3IsValid(index))
+    if (!lib.h3IsValid(index)) {
         return null;
+    }
 
     return lib.h3ToParent(index, Number(resolution));
 """;

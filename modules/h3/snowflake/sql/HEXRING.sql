@@ -9,11 +9,13 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!INDEX || DISTANCE == null || DISTANCE < 0)
+    if (!INDEX || DISTANCE == null || DISTANCE < 0) {
         return [];
-        
-    if (!lib.h3IsValid(INDEX))
+    }
+
+    if (!lib.h3IsValid(INDEX)) {
         return [];
+    }
 
     try {
         return lib.hexRing(INDEX, parseInt(DISTANCE));

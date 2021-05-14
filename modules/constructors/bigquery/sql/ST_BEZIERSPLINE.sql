@@ -13,12 +13,10 @@ AS """
         return null;
     }
     const options = {};
-    if(resolution != null)
-    {
+    if (resolution != null) {
         options.resolution = Number(resolution);
     }
-    if(sharpness != null)
-    {
+    if (sharpness != null) {
         options.sharpness = Number(sharpness);
     }
     const curved = lib.bezierSpline(JSON.parse(geojson), options);

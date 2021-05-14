@@ -36,7 +36,7 @@ test('Work with polyfill arrays', async () => {
         FROM poly
     `;
 
-    let rows = await runQuery(query);
+    const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].ORIGINAL).toEqual(1253);
     expect(rows[0].COMPACTED).toEqual(209);

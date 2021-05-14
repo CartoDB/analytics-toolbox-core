@@ -18,7 +18,7 @@ Get all hexagons in a **hollow hexagonal ring** centered at origin with sides of
 **Example**
 
 ```sql
-SELECT bqcarto.h3.HEXRING("837b59fffffffff", 1);
+SELECT bqcarto.h3.HEXRING('837b59fffffffff', 1);
 -- 837b5dfffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff
