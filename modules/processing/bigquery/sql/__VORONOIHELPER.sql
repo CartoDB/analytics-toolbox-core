@@ -17,17 +17,17 @@ AS """
         throw new Error('Incorrect bounding box passed to UDF. It should contain the bbox extends, i.e., [xmin, ymin, xmax, ymax]');
     }
 
-    let options = {};
+    const options = {};
 
     // If the bbox parameter is not included, turf.js will use a default [-180,-85,180,-85] bbox 
-    if(bbox != null) {
+    if (bbox != null) {
         options.bbox = bbox;
     }
 
-    let featuresCollection = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
-    let voronoiPolygons = lib.voronoi(featuresCollection, options);
+    const featuresCollection = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
+    const voronoiPolygons = lib.voronoi(featuresCollection, options);
     
-    let returnArray = [];
+    const returnArray = [];
 
     if (typeOfVoronoi === 'poly') {
         voronoiPolygons.features.forEach( function(item) {

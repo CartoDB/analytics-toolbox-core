@@ -3,7 +3,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 const polyfillFixturesOut = require('./st_asquadint_polyfill_fixtures/out/polyfill');
 
 test('ST_ASQUADINT_POLYFILL should work', async () => {
-    let feature = {
+    const feature = {
         'type': 'Polygon',
         'coordinates': [
             [
@@ -54,9 +54,9 @@ test('ST_ASQUADINT_POLYFILL should work', async () => {
             ]
         ]
     };
-    let featureJSON = JSON.stringify(feature);
+    const featureJSON = JSON.stringify(feature);
 
-    let query = `
+    const query = `
         SELECT
             \`@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 10) as polyfill10,
             \`@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 14) as polyfill14`;
@@ -70,7 +70,7 @@ test('ST_ASQUADINT_POLYFILL should fail if any NULL argument', async () => {
     let query = 'SELECT `@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL`(NULL, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    let feature = {
+    const feature = {
         'type': 'Polygon',
         'coordinates': [
             [
@@ -85,7 +85,7 @@ test('ST_ASQUADINT_POLYFILL should fail if any NULL argument', async () => {
             ]
         ]
     };
-    let featureJSON = JSON.stringify(feature);
+    const featureJSON = JSON.stringify(feature);
 
     query = `SELECT \`@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), NULL)`;
     await expect(runQuery(query)).rejects.toThrow();

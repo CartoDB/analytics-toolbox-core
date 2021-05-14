@@ -1,18 +1,3 @@
-# Quadkey for Snowflake
+# Quadkey module for Snowflake
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - integration/
-    - unit
-
-## Commands
-
-```
-yarn
-```
+You can learn more about quadkeys and quandints in the [Overview section](/spatial-extension-sf/overview/spatial-indexes/#quadkey) of the documentation.

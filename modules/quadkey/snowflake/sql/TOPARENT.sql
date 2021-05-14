@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if(!QUADINT || RESOLUTION == null)
-    {
+    if (!QUADINT || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
     return lib.toParent(QUADINT, RESOLUTION).toString(); 

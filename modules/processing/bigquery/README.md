@@ -1,18 +1,3 @@
-# Processing BQ
+# Processing module for BigQuery
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - integration/
-    - unit
-
-## Commands
-
-```
-yarn
-```
+On this module are contained functions that create geographies from already existing geographies by computing a prior processing.

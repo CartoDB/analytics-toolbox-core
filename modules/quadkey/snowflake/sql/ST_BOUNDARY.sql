@@ -9,12 +9,11 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if(!QUADINT)
-    {
+    if (!QUADINT) {
         throw new Error('NULL argument passed to UDF');
     }
 
-    let geojson = lib.quadintToGeoJSON(QUADINT);
+    const geojson = lib.quadintToGeoJSON(QUADINT);
     return JSON.stringify(geojson);
 $$;
 

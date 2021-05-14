@@ -18,4 +18,3 @@ test('ST_BOUNDARY should fail with NULL argument', async () => {
     const query = 'SELECT `@@BQ_PREFIX@@quadkey.ST_BOUNDARY`(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });
-

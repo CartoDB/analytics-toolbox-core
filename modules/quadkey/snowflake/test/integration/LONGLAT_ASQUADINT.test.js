@@ -3,7 +3,7 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 const quadintsFixturesOut = require('./longlat_asquadint_fixtures/out/quadints');
 
 test('LONGLAT_ASQUADINT should not fail at any level of zoom', async () => {
-    let query = `WITH zoomContext AS(
+    const query = `WITH zoomContext AS(
             WITH z AS
             (
                 SELECT seq4() AS z

@@ -1,7 +1,7 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('TOPARENT should work at any level of zoom', async () => {
-    let query = `WITH zoomContext AS(
+    const query = `WITH zoomContext AS(
             WITH z AS
             (
                 SELECT seq4()+1 AS z
@@ -38,7 +38,7 @@ test('TOPARENT should work at any level of zoom', async () => {
 });
 
 test('TOPARENT should reject quadints at zoom 0', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.TOPARENT(0,0)';
+    const query = 'SELECT @@SF_PREFIX@@quadkey.TOPARENT(0,0)';
     await expect(runQuery(query)).rejects.toThrow();
 });
 

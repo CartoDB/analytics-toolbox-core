@@ -1,7 +1,7 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('QUADKEY conversion should work', async () => {
-    let query = `SELECT @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
+    const query = `SELECT @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
                             @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(2, 1, 1)) as quadkey1,
                         @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
                             @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(6, 40, 55)) as quadkey2,
@@ -24,7 +24,7 @@ test('QUADKEY conversion should work', async () => {
 });
 
 test('Should be able to encode/decode between quadint and quadkey at any level of zoom', async () => {
-    let query = `WITH tileContext AS(
+    const query = `WITH tileContext AS(
         WITH z AS
         (
             SELECT seq4() AS z
@@ -63,6 +63,6 @@ test('Should be able to encode/decode between quadint and quadkey at any level o
 });
 
 test('QUADKEY_FROMQUADINT should fail with NULL argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(NULL);';
+    const query = 'SELECT @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

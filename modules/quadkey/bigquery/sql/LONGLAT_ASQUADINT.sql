@@ -9,7 +9,7 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if(longitude == null || latitude == null || resolution == null) {
+    if (longitude == null || latitude == null || resolution == null) {
         throw new Error('NULL argument passed to UDF');
     }
     return lib.quadintFromLocation(Number(longitude), Number(latitude), Number(resolution)).toString();

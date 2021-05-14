@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if(!QUADINT)
-    {
+    if (!QUADINT) {
         throw new Error('NULL argument passed to UDF');
     }
     return lib.quadkeyFromQuadint(QUADINT);

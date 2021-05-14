@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if(!QUADINT || !DIRECTION)
-    {
+    if (!QUADINT || !DIRECTION) {
         throw new Error('NULL argument passed to UDF');
     }
     return lib.sibling(QUADINT, DIRECTION).toString();

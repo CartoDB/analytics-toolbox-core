@@ -1,18 +1,3 @@
-# Quadkey BQ
+# Quadkey module for BigQuery
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - integration/
-    - unit
-
-## Commands
-
-```
-yarn
-```
+You can learn more about quadkeys and quandints in the [Overview section](/spatial-extension-bq/overview/spatial-indexes/#quadkey) of the documentation.

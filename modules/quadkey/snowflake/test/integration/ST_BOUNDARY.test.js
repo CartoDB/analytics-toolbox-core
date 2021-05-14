@@ -1,9 +1,11 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('ST_BOUNDARY should work', async () => {
-    let query = `SELECT @@SF_PREFIX@@quadkey.ST_BOUNDARY(12070922) as geog1,
-    @@SF_PREFIX@@quadkey.ST_BOUNDARY(791040491538) as geog2,
-    @@SF_PREFIX@@quadkey.ST_BOUNDARY(12960460429066265) as geog3`;
+    const query = `
+        SELECT
+            @@SF_PREFIX@@quadkey.ST_BOUNDARY(12070922) as geog1,
+            @@SF_PREFIX@@quadkey.ST_BOUNDARY(791040491538) as geog2,
+            @@SF_PREFIX@@quadkey.ST_BOUNDARY(12960460429066265) as geog3`;
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);  
@@ -12,8 +14,7 @@ test('ST_BOUNDARY should work', async () => {
     expect(JSON.stringify(rows[0]['GEOG3'])).toEqual('{"coordinates":[[[-45,45.00000219906962],[-45,44.999994612636684],[-44.99998927116394,44.999994612636684],[-44.99998927116394,45.00000219906962],[-45,45.00000219906962]]],"type":"Polygon"}'); 
 });
 
-test('__GEOJSONBOUNDARY_FROMQUADINT should fail with NULL argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.__GEOJSONBOUNDARY_FROMQUADINT(NULL);';
+test('ST_BOUNDARY should fail with NULL argument', async () => {
+    const query = 'SELECT @@SF_PREFIX@@quadkey.ST_BOUNDARY(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });
-

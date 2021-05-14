@@ -9,11 +9,10 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if(!QUADINT || RESOLUTION == null)
-    {
+    if (!QUADINT || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    let quadints = lib.toChildren(QUADINT, RESOLUTION);
+    const quadints = lib.toChildren(QUADINT, RESOLUTION);
     return quadints.map(String);
 $$;
 

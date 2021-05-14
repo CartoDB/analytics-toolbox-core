@@ -1,7 +1,7 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('TOCHILDREN should work at any level of zoom', async () => {
-    let query = `WITH tileContext AS(
+    const query = `WITH tileContext AS(
         WITH z AS
         (
             SELECT seq4() AS z
@@ -48,7 +48,7 @@ test('TOCHILDREN should work at any level of zoom', async () => {
 });
 
 test('TOCHILDREN should reject quadints at zoom 29', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.TOCHILDREN(4611686027017322525,30)';
+    const query = 'SELECT @@SF_PREFIX@@quadkey.TOCHILDREN(4611686027017322525,30)';
     await expect(runQuery(query)).rejects.toThrow();
 });
 

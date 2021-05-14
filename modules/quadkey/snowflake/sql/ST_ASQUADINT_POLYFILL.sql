@@ -9,8 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if(!GEOJSON || RESOLUTION == null)
-    {
+    if (!GEOJSON || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
 
