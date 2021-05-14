@@ -6,7 +6,7 @@ h3.VERSION()
 
 **Description**
 
-Returns the current version of the h3 module.
+Returns the current version of the H3 module.
 
 **Return type**
 
@@ -16,5 +16,5 @@ Returns the current version of the h3 module.
 
 ```sql
 SELECT sfcarto.h3.VERSION();
--- 1.0.0
+-- 3.7.0.1
 ```
