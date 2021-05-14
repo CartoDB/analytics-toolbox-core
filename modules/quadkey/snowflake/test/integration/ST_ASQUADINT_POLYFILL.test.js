@@ -1,7 +1,5 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
-const lib = require('../../dist/index');
-console.log('hola');
-console.log(lib);
+
 test('ST_ASQUADINT_POLYFILL should work', async () => {
     let feature = {
         'type': 'Polygon',
@@ -60,11 +58,7 @@ test('ST_ASQUADINT_POLYFILL should work', async () => {
     @@SF_PREFIX@@quadkey._POLYFILL_FROMGEOJSON('${featureJSON}', 14) as polyfill14`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);  
-    let quadints = lib.geojsonToQuadints(feature, {min_zoom: 10, max_zoom: 10});
-    expect(rows[0]['POLYFILL10'].sort()).toEqual(quadints.map(String).sort());
     expect(rows[0]['POLYFILL10'].sort()).toEqual(['12631722', '12664490']);
-    quadints = lib.geojsonToQuadints(feature, {min_zoom: 14, max_zoom: 14});
-    expect(rows[0]['POLYFILL14'].sort()).toEqual(quadints.map(String).sort());
     expect(rows[0]['POLYFILL14'].sort()).toEqual(['3237735182', '3238259438', '3238259470', '3238259502', '3238259534', '3238259566', '3238783694', '3238783726', '3238783758', '3238783790', '3238783822', '3238783854', '3239308014', '3239308046', '3239308078', '3239832270', '3239832302', '3239832334', '3239832366', '3239832398']);
 });
 
