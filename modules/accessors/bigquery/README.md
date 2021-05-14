@@ -1,18 +1,3 @@
-# Accessors BQ
+# Accessors module for BigQuery
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - integration/
-    - unit
-
-## Commands
-
-```
-yarn
-```
+This module contains functions that provide information or transform internal geometries.

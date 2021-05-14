@@ -1,18 +1,3 @@
-# Constructors BQ
+# Constructors module for BigQuery
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - integration/
-    - unit
-
-## Commands
-
-```
-yarn
-```
+This module contains functions that create geographies from coordinates or already existing geographies.

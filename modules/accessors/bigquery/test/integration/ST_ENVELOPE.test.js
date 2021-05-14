@@ -7,8 +7,7 @@ const pointsFixturesOut = require('./envelope_fixtures/out/points');
 const featureColFixturesIn = require('./envelope_fixtures/in/featureCollection');
 const featureColFixturesOut = require('./envelope_fixtures/out/featureCollection');
 
-function getFeatureArray(fixture)
-{
+function getFeatureArray(fixture) {
     let featuresArray = '[';
     fixture.geom.features.forEach(function(item){
         featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
@@ -18,8 +17,10 @@ function getFeatureArray(fixture)
 }
 
 test('ST_ENVELOPE should work', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(pointsFixturesIn)}) as envelope1,
-    \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
+    const query = `
+        SELECT
+            \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(pointsFixturesIn)}) as envelope1,
+            \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].envelope1.value).toEqual(pointsFixturesOut.value);

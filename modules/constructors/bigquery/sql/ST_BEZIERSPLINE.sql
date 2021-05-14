@@ -12,7 +12,7 @@ AS """
     if (!geojson) {
         return null;
     }
-    let options = {};
+    const options = {};
     if(resolution != null)
     {
         options.resolution = Number(resolution);
@@ -27,6 +27,7 @@ AS """
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@constructors.ST_BEZIERSPLINE`
 (geog GEOGRAPHY, resolution INT64, sharpness FLOAT64)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@constructors.__BEZIERSPLINE`(ST_ASGEOJSON(geog), resolution, sharpness))
 );

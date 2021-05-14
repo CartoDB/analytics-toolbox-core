@@ -12,17 +12,14 @@ AS """
     if (!geojson || xSemiAxis == null || ySemiAxis == null) {
         return null;
     }
-    let options = {};
-    if(angle != null)
-    {
+    const options = {};
+    if (angle != null) {
         options.angle = Number(angle);
     }
-    if(units)
-    {
+    if (units) {
         options.units = units;
     }
-    if(steps != null)
-    {
+    if (steps != null) {
         options.steps = Number(steps);
     }
     const ellipse = lib.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
@@ -31,6 +28,7 @@ AS """
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@constructors.ST_MAKEELLIPSE`
 (geog GEOGRAPHY, xSemiAxis FLOAT64, ySemiAxis FLOAT64, angle FLOAT64, units STRING, steps INT64)
+RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@constructors.__MAKEELLIPSE`(ST_ASGEOJSON(geog), xSemiAxis, ySemiAxis, angle, units, steps))
 );
