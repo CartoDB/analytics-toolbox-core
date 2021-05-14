@@ -6,6 +6,6 @@
     "license": "BSD-3-Clause",
     "private": true,
     "dependencies": {
-        "s2-geometry": "1.2.10"
+        "long": "^4.0.0"
     }
 }
