@@ -2,7 +2,7 @@ const lib = require('../../dist/index');
 
 // TODO: refactor tests
 
-test('bbox should work', () => {
+it('bbox should work', async() => {
     expect(lib.bbox(162)).toEqual([-90, 0, 0, 66.51326044311186]);
     expect(lib.bbox(12070922)).toEqual([-45, 44.840290651397986, -44.6484375, 45.08903556483103]);
     expect(lib.bbox(791040491538)).toEqual([-45, 44.99976701918129, -44.998626708984375, 45.00073807829068]);
