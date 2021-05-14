@@ -1,5 +1,5 @@
 import { version }  from '../package.json';
-import { S2 } from 's2-geometry/src/s2geometry';
+import { S2 } from './s2geometry';
 
 export default {
     keyToId: S2.keyToId,
