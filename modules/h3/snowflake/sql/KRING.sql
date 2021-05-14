@@ -12,10 +12,10 @@ AS $$
     if (!INDEX || DISTANCE == null || DISTANCE < 0)
         return [];
         
-    if (!h3.h3IsValid(INDEX))
+    if (!lib.h3IsValid(INDEX))
         return [];
 
-    return h3.kRing(INDEX, parseInt(DISTANCE));
+    return lib.kRing(INDEX, parseInt(DISTANCE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.KRING

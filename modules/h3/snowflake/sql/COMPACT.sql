@@ -13,5 +13,5 @@ AS $$
         return [];
     }
     
-    return h3.compact(H3ARRAY);
+    return lib.compact(H3ARRAY);
 $$;

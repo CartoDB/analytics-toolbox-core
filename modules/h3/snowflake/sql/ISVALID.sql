@@ -12,5 +12,5 @@ AS $$
     if (!INDEX)
         return false;
 
-    return h3.h3IsValid(INDEX);
+    return lib.h3IsValid(INDEX);
 $$;

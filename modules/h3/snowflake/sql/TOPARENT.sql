@@ -12,10 +12,10 @@ AS $$
     if (!INDEX)
         return null;
         
-    if (!h3.h3IsValid(INDEX))
+    if (!lib.h3IsValid(INDEX))
         return null;
 
-    return h3.h3ToParent(INDEX, Number(RESOLUTION));
+    return lib.h3ToParent(INDEX, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.TOPARENT

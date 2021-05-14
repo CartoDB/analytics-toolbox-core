@@ -12,10 +12,10 @@ AS $$
     if (!INDEX)
         return null;
         
-    if (!h3.h3IsValid(INDEX))
+    if (!lib.h3IsValid(INDEX))
         return null;
         
-    const coords = h3.h3ToGeoBoundary(INDEX, true);
+    const coords = lib.h3ToGeoBoundary(INDEX, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
         output += coords[i][0] + ` ` + coords[i][1] + `,`;

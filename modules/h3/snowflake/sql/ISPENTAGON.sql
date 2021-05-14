@@ -12,5 +12,5 @@ AS $$
     if (!INDEX)
         return false;
 
-    return h3.h3IsPentagon(INDEX);
+    return lib.h3IsPentagon(INDEX);
 $$;

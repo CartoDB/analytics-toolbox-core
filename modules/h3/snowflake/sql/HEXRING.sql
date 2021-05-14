@@ -12,11 +12,11 @@ AS $$
     if (!INDEX || DISTANCE == null || DISTANCE < 0)
         return [];
         
-    if (!h3.h3IsValid(INDEX))
+    if (!lib.h3IsValid(INDEX))
         return [];
 
     try {
-        return h3.hexRing(INDEX, parseInt(DISTANCE));
+        return lib.hexRing(INDEX, parseInt(DISTANCE));
     } catch (error) {
         return [];
     }

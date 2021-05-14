@@ -12,7 +12,7 @@ AS $$
     if (!INDEX1 || !INDEX2)
         return null;
         
-    let dist = h3.h3Distance(INDEX1, INDEX2);
+    let dist = lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {
         dist = null;
     }
