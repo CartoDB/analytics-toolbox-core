@@ -17,16 +17,16 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 **Examples**
 
 ```sql
-SELECT bqcarto.placekey.ISVALID("@ff7-swh-m49");
+SELECT bqcarto.placekey.ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT bqcarto.placekey.ISVALID("ff7-swh-m49");
+SELECT bqcarto.placekey.ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT bqcarto.placekey.ISVALID("x");
+SELECT bqcarto.placekey.ISVALID('x');
 -- false
 ```

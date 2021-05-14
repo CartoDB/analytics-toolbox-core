@@ -12,4 +12,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2021-03-31
 
 ### Added
-* Initial implementation of the module based on a stripped version of [placekey-js](https://github.com/Placekey/placekey-js/) v1.0.1.
+* Initial implementation of the module based on a stripped version of [placekey-js](https://github.com/Placekey/placekey-js/).

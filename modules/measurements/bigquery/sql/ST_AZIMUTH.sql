@@ -17,6 +17,7 @@ AS """
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@measurements.ST_AZIMUTH`
 (startPoint GEOGRAPHY, endPoint GEOGRAPHY)
+RETURNS FLOAT64
 AS (
     `@@BQ_PREFIX@@measurements.__AZIMUTH`(ST_ASGEOJSON(startPoint), ST_ASGEOJSON(endPoint))
 );
