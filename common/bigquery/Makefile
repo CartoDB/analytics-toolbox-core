@@ -44,9 +44,9 @@ test-unit: $(BQ_LIBRARY)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/unit --testTimeout=30000
 
-test-integration-dry: 
+test-integration-dry:
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	jest test/integration --testTimeout=30000
+	jest test/integration/$(F) --testTimeout=30000 
 
 clean:
 	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEPS)
