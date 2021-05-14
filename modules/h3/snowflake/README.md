@@ -1,3 +1,16 @@
 # H3 module for Snowflake
 
-TODO: add module description.
+## Folder structure
+
+- doc/
+- lib/
+- sql/
+- test/
+    - integration/
+    - unit
+
+## Commands
+
+```
+yarn
+```

@@ -1,10 +1,11 @@
 {
     "name": "h3_snowflake",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "H3 module for Snowflake",
     "author": "CARTO",
     "license": "BSD-3-Clause",
     "private": true,
     "dependencies": {
+        "h3-js": "^3.7.2"
     }
 }
