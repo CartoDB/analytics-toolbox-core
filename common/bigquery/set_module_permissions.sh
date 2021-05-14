@@ -3,8 +3,8 @@
 # Script to assign permissions to a module
 # Input parameters:
 # * BQ_PROJECT
-# * BQ_PERMISSIONS_TARGET_DATASET (dataset to add permissions to)
 # * BQ_PERMISSIONS (permissions to be added)
+# * BQ_PERMISSIONS_TARGET_DATASET (dataset to add permissions to)
 
 echo "Setting permissions to $BQ_PROJECT:$BQ_PERMISSIONS_TARGET_DATASET"
 
