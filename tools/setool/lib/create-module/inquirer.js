@@ -19,16 +19,16 @@ module.exports = {
             }
         }, {
             type: 'list',
-            name: 'type',
-            message: 'Select the type of module:',
-            choices: ['core', 'advanced'],
-            default: 'core'
-        }, {
-            type: 'list',
             name: 'cloud',
             message: 'Select the cloud for the module:',
             choices: ['bigquery', 'snowflake'],
             default: 'bigquery'
+        }, {
+            type: 'list',
+            name: 'type',
+            message: 'Select the type of module:',
+            choices: ['core', 'advanced'],
+            default: 'core'
         }];
         return inquirer.prompt(questions);
     }

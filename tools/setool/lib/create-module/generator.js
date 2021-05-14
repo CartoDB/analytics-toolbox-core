@@ -1,5 +1,5 @@
 const inquirer  = require('./inquirer');
-const { createDir, createFile, formatDate, currentDate } = require('../utils');
+const { createDir, createFile, currentDate, capitalize } = require('../utils');
 
 module.exports = {
     createModule: async () => {
@@ -192,10 +192,12 @@ include ../../../common/${cloud}/Makefile`;
 }
 
 function createPackage (name, cloud) {
+    const cname = capitalize(name);
+    const ccloud = { bigquery: 'BigQuery', snowflake: 'Snowflake' }[cloud];
     const content = `{
     "name": "${name}_${cloud}",
     "version": "1.0.0",
-    "description": "${name} module for ${cloud}",
+    "description": "${cname} module for ${ccloud}",
     "author": "CARTO",
     "license": "BSD-3-Clause",
     "private": true,
@@ -207,18 +209,11 @@ function createPackage (name, cloud) {
 }
 
 function createReadme (name, cloud) {
-    const content = `# ${name} for ${cloud}
+    const cname = capitalize(name);
+    const ccloud = { bigquery: 'BigQuery', snowflake: 'Snowflake' }[cloud];
+    const content = `# ${cname} module for ${ccloud}
 
-TODO
-
-## Folder structure
-
-- doc/
-- lib/
-- sql/
-- test/
-    - integration/
-    - unit`;
+TODO: add module description.`;
 
     createFile(['modules', name, cloud, 'README.md'], content);
 }

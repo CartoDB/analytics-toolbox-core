@@ -7,7 +7,8 @@ if [[ "$STAGED_FILES" = "" ]]; then
     exit 0
 fi
 
-make check-linter
+make lint CLOUD=bigquery
+
 if [[ "$?" != 0 ]]; then
     printf "\n\033[0;31mCOMMIT FAILED\033[0m, due to some of your files having format issues\n"
     exit 1
