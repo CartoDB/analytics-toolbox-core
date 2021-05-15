@@ -11,7 +11,7 @@ lint lint-fix build test-unit test-integration test-integration-dry deploy clean
 			if [ "$(GIT_DIFF)" = "off" ] || [ `echo "$(GIT_DIFF)" | grep -P modules/$${module}/$(CLOUD)'\/.*(\.js|\.sql|Makefile)' | wc -l` -gt 0 ]; then \
 				if [ -d modules/$${module}/$(CLOUD) ]; then \
 					echo "> Module $${module}"; \
-					$(MAKE) -C modules/$${module}/$(CLOUD) $@; \
+					$(MAKE) -C modules/$${module}/$(CLOUD) $@ || exit 1; \
 				fi \
 			fi \
 		done; \

@@ -14,7 +14,7 @@ AS """
     }
 
     const featuresCollection = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
-    var enveloped = lib.envelope(featuresCollection);
+    const enveloped = lib.envelope(featuresCollection);
     return JSON.stringify(enveloped.geometry);
 """;
 

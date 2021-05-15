@@ -68,7 +68,7 @@ deploy: check
 clean:
 	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEPS)
 
-clean-deploy:
+clean-deploy: check
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
@@ -80,7 +80,7 @@ schema-remove:
 
 schema-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit; \
+		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit 1; \
 	done
 
 share-create:

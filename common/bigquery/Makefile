@@ -25,7 +25,7 @@ REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$
 .SILENT:
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
 
 $(NODE_MODULES):
 	yarn -s
@@ -70,7 +70,7 @@ endif
 clean:
 	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEPS)
 
-clean-deploy:
+clean-deploy: check
 	$(MAKE) storage-remove
 	$(MAKE) dataset-remove || ((sleep 5 && $(MAKE) dataset-remove) || exit 1)
 
@@ -90,7 +90,7 @@ dataset-remove:
 
 dataset-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit; \
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit 1; \
 	done
 
 check:

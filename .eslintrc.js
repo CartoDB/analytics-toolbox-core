@@ -19,6 +19,7 @@ module.exports = {
     rules: {
         quotes: ['error', 'single'],
         indent: ['error', 4],
+        'eol-last': ['error', 'never'],
         'comma-dangle': ['error', 'never'],
         'no-path-concat': ['off']
     }
