@@ -197,7 +197,7 @@ $$;
     if (cloud === 'snowflake') {
         content = readFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
         content += `
-grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).fill('TYPE').join(', ')}) to share @@SF_SHARE_PUBLIC@@;`
+grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).fill('TYPE').join(',')}) to share @@SF_SHARE_PUBLIC@@;`
     
         createFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], content);
     }
