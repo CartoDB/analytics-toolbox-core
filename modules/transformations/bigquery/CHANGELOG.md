@@ -7,21 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2021-05-04
 
 ### Added
-* Add ST_CONCAVEHULL function based on concave (turfjs v6.3.0).
+- Add ST_CONCAVEHULL function.
 
 ## [1.1.0] - 2021-04-29
 
 ### Added
-* Rename module to `transformations`.
-* Add ST_CENTERMEAN function based on centerMean (turfjs v6.3.0).
-* Add ST_CENTERMEDIAN function based on centerMedian (turfjs v6.3.0).
-* Add ST_CENTEROFMASS function based on centerOfMass (turfjs v6.3.0).
-* Add ST_DESTINATION function based on destination (turfjs v6.3.0).
-* Add ST_GREATCIRCLE function based on greatCircle (turfjs v6.3.0).
-* Add ST_LINE_INTERPOLATE_POINT function based on along (turfjs v6.3.0).
+- Rename module to transformations.
+- Add ST_CENTERMEAN function.
+- Add ST_CENTERMEDIAN function.
+- Add ST_CENTEROFMASS function.
+- Add ST_DESTINATION function.
+- Add ST_GREATCIRCLE function.
+- Add ST_LINE_INTERPOLATE_POINT function.
 
 ## [1.0.0] - 2021-04-16
 
 ### Added
-* Initial implementation of the module.
-* Add ST_BUFFER function based on buffer (turfjs v6.3.0).
+- Create transformation module.
+- Add ST_BUFFER function.
+- Add VERSION function.

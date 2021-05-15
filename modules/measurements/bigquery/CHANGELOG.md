@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2021-04-29
 
 ### Added
-* Initial implementation of the module.
-* Add ST_ANGLE function based on angle (turfjs v6.3.0).
-* Add ST_AZIMUTH function based on bearing (turfjs v6.3.0).
-* Add ST_MINKOWSKIDISTANCE function based on distanceWeight (turfjs v6.3.0).
+- Create measurements module.
+- Add ST_ANGLE function.
+- Add ST_AZIMUTH function.
+- Add ST_MINKOWSKIDISTANCE function.

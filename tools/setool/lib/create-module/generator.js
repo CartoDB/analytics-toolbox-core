@@ -1,6 +1,10 @@
 const inquirer  = require('./inquirer');
 const { createDir, createFile, currentDate, capitalize } = require('../utils');
 
+const header = `----------------------------
+-- Copyright (C) 2021 CARTO
+----------------------------`;
+
 module.exports = {
     createModule: async () => {
         const { name, cloud, type } = await inquirer.askModuleDetails();
@@ -83,9 +87,7 @@ export {
 function createSQLVersion (name, cloud) {
     let content = '';
     if (cloud === 'bigquery') {
-        content = `----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+        content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${name}.VERSION\`
 ()
@@ -98,9 +100,7 @@ AS """
 """;`;
     }
     if (cloud === 'snowflake') {
-        content = `----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+        content = `${header}
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${name}.VERSION
 ()
@@ -117,9 +117,7 @@ $$;`;
 }
 
 function createSQLShares (name, cloud) {
-    let content = `----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+    let content = `${header}
 
 USE @@SF_DATABASE@@;
 
@@ -131,9 +129,7 @@ grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE_PUBLI
 
     createFile(['modules', name, cloud, 'sql', '_SHARE_CREATE.sql'], content);
 
-    content = `----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+    content = `${header}
 
 DROP SHARE @@SF_SHARE_PUBLIC@@;`;
 
@@ -178,7 +174,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - ${currentDate()}
 
 ### Added
-* Initial implementation of the module.`;
+- Create ${name} module.
+- Add VERSION function.`;
 
     createFile(['modules', name, cloud, 'CHANGELOG.md'], content);
 }

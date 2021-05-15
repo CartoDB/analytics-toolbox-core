@@ -2,6 +2,10 @@ const chalk = require('chalk');
 const inquirer  = require('./inquirer');
 const { checkDir, createFile, readFile } = require('../utils');
 
+const header = `----------------------------
+-- Copyright (C) 2021 CARTO
+----------------------------`;
+
 module.exports = {
     createFunction: async () => {
         const { mname, cloud, fname, fparams, ftype } = await inquirer.askFunctionDetails();
@@ -58,9 +62,6 @@ SELECT ${project}.${mname}.${fname}(${fparams.join(', ')});
 
 function createSQLFunction (mname, cloud, fname, fparams, ftype) {
     let content;
-    const header = `----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------`;
 
     if (cloud === 'bigquery' && ftype === 'js') {
         content = `${header}
