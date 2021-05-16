@@ -16,7 +16,7 @@ AS """
     if (npoints != null) {
         options.npoints = Number(npoints);
     }
-    const greatCircle = lib.greatCircle(JSON.parse(geojsonStart), JSON.parse(geojsonEnd), options);
+    const greatCircle = transformationsLib.greatCircle(JSON.parse(geojsonStart), JSON.parse(geojsonEnd), options);
     return JSON.stringify(greatCircle.geometry);
 """;
 

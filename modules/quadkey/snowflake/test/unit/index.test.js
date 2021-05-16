@@ -1,16 +1,16 @@
-const lib = require('../../dist/index');
+const quadkeyLib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.bbox).toBeDefined();
-    expect(lib.kring).toBeDefined();
-    expect(lib.sibling).toBeDefined();
-    expect(lib.toChildren).toBeDefined();
-    expect(lib.quadkeyFromQuadint).toBeDefined();
-    expect(lib.quadintFromQuadkey).toBeDefined();
-    expect(lib.quadintFromLocation).toBeDefined();
-    expect(lib.quadintToGeoJSON).toBeDefined();
-    expect(lib.geojsonToQuadints).toBeDefined();
-    expect(lib.ZXYFromQuadint).toBeDefined();
-    expect(lib.version).toBe(version);
+test('quadkey library defined', () => {
+    expect(quadkeyLib.bbox).toBeDefined();
+    expect(quadkeyLib.kring).toBeDefined();
+    expect(quadkeyLib.sibling).toBeDefined();
+    expect(quadkeyLib.toChildren).toBeDefined();
+    expect(quadkeyLib.quadkeyFromQuadint).toBeDefined();
+    expect(quadkeyLib.quadintFromQuadkey).toBeDefined();
+    expect(quadkeyLib.quadintFromLocation).toBeDefined();
+    expect(quadkeyLib.quadintToGeoJSON).toBeDefined();
+    expect(quadkeyLib.geojsonToQuadints).toBeDefined();
+    expect(quadkeyLib.ZXYFromQuadint).toBeDefined();
+    expect(quadkeyLib.version).toBe(version);
 });

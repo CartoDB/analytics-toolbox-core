@@ -12,7 +12,7 @@ AS $$
     if (!QUADINT || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const quadints = lib.toChildren(QUADINT, RESOLUTION);
+    const quadints = quadkeyLib.toChildren(QUADINT, RESOLUTION);
     return quadints.map(String);
 $$;
 

@@ -1,9 +1,9 @@
-const lib = require('../../dist/index');
+const accessorsLib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.featureCollection).toBeDefined();
-    expect(lib.feature).toBeDefined();
-    expect(lib.envelope).toBeDefined();
-    expect(lib.version).toBe(version);
+test('accessors library defined', () => {
+    expect(accessorsLib.featureCollection).toBeDefined();
+    expect(accessorsLib.feature).toBeDefined();
+    expect(accessorsLib.envelope).toBeDefined();
+    expect(accessorsLib.version).toBe(version);
 });

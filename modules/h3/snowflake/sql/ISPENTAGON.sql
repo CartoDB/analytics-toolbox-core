@@ -13,5 +13,5 @@ AS $$
         return false;
     }
 
-    return lib.h3IsPentagon(INDEX);
+    return h3Lib.h3IsPentagon(INDEX);
 $$;

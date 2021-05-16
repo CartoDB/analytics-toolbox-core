@@ -1,11 +1,11 @@
-const lib = require('../../dist/index');
+const measurementsLib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.angle).toBeDefined();
-    expect(lib.bearing).toBeDefined();
-    expect(lib.featureCollection).toBeDefined();
-    expect(lib.feature).toBeDefined();
-    expect(lib.distanceWeight).toBeDefined();
-    expect(lib.version).toBe(version);
+test('measurements library defined', () => {
+    expect(measurementsLib.angle).toBeDefined();
+    expect(measurementsLib.bearing).toBeDefined();
+    expect(measurementsLib.featureCollection).toBeDefined();
+    expect(measurementsLib.feature).toBeDefined();
+    expect(measurementsLib.distanceWeight).toBeDefined();
+    expect(measurementsLib.version).toBe(version);
 });

@@ -13,5 +13,5 @@ AS $$
         return false;
     }
 
-    return lib.h3IsValid(INDEX);
+    return h3Lib.h3IsValid(INDEX);
 $$;

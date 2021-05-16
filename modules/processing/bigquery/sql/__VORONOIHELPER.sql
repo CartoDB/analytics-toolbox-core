@@ -24,8 +24,8 @@ AS """
         options.bbox = bbox;
     }
 
-    const featuresCollection = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
-    const voronoiPolygons = lib.voronoi(featuresCollection, options);
+    const featuresCollection = processingLib.featureCollection(geojson.map(x => processingLib.feature(JSON.parse(x))));
+    const voronoiPolygons = processingLib.voronoi(featuresCollection, options);
     
     const returnArray = [];
 
@@ -37,7 +37,7 @@ AS """
     
     if (typeOfVoronoi === 'lines') {
         voronoiPolygons.features.forEach( function(item) {
-            let lineFeature = lib.polygonToLine(item.geometry);
+            let lineFeature = processingLib.polygonToLine(item.geometry);
             returnArray.push(JSON.stringify(lineFeature.geometry));
         });
     }

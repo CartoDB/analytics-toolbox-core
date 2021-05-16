@@ -10,7 +10,7 @@ We offer this tool as an alternative to "copy and paste a skel directory and do 
 
 ## Installation
 
-To install or update this tool globally, run:
+To install this tool globally, run:
 
 ```bash
 cd tools/setool

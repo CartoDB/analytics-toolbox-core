@@ -1,10 +1,10 @@
-const lib = require('../../dist/index');
+const s2Lib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.keyToId).toBeDefined();
-    expect(lib.idToKey).toBeDefined();
-    expect(lib.latLngToKey).toBeDefined();
-    expect(lib.FromHilbertQuadKey).toBeDefined();
-    expect(lib.version).toBe(version);
+test('s2 library defined', () => {
+    expect(s2Lib.keyToId).toBeDefined();
+    expect(s2Lib.idToKey).toBeDefined();
+    expect(s2Lib.latLngToKey).toBeDefined();
+    expect(s2Lib.FromHilbertQuadKey).toBeDefined();
+    expect(s2Lib.version).toBe(version);
 });

@@ -13,7 +13,7 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
     const pol = JSON.parse(geojson);
-    const quadints = lib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+    const quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
     return quadints.map(String);
 """;
 

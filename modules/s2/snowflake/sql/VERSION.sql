@@ -9,5 +9,5 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    return lib.version;
+    return s2Lib.version;
 $$;

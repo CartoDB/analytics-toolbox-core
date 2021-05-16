@@ -13,7 +13,7 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-    return lib.keyToId(QUADKEY);
+    return s2Lib.keyToId(QUADKEY);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@s2.ID_FROMHILBERTQUADKEY

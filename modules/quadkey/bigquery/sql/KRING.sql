@@ -15,6 +15,6 @@ AS """
     if (distance == null) {
         distance = 1;
     }
-    const neighbors = lib.kring(quadint, Number(distance));
+    const neighbors = quadkeyLib.kring(quadint, Number(distance));
     return neighbors.map(String);
 """;

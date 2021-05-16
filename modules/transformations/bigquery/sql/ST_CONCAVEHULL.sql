@@ -19,8 +19,8 @@ AS """
     if (units) {
         options.units = units;
     }
-    const featuresCollection = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
-    const hull = lib.concave(featuresCollection, options);
+    const featuresCollection = transformationsLib.featureCollection(geojson.map(x => transformationsLib.feature(JSON.parse(x))));
+    const hull = transformationsLib.concave(featuresCollection, options);
     return JSON.stringify(hull.geometry);
 """;
 

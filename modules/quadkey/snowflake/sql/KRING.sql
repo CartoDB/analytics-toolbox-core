@@ -16,7 +16,7 @@ AS $$
     if (DISTANCE == null) {
         DISTANCE = 1;
     }
-    const neighbors = lib.kring(QUADINT, DISTANCE);
+    const neighbors = quadkeyLib.kring(QUADINT, DISTANCE);
     return neighbors.map(String);
 $$;
 

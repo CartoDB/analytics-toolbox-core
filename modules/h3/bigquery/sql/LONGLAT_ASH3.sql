@@ -12,5 +12,5 @@ AS """
     if (longitude === null || latitude === null || resolution === null) {
         return null;
     }
-    return lib.geoToH3(Number(latitude), Number(longitude), Number(resolution));
+    return h3Lib.geoToH3(Number(latitude), Number(longitude), Number(resolution));
 """;

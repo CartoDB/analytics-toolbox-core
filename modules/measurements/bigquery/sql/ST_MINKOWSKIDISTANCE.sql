@@ -16,8 +16,8 @@ AS """
     if(p != null) {
         options.p = Number(p);
     }
-    const features = lib.featureCollection(geojson.map(x => lib.feature(JSON.parse(x))));
-    const distance = lib.distanceWeight(features, options);
+    const features = measurementsLib.featureCollection(geojson.map(x => measurementsLib.feature(JSON.parse(x))));
+    const distance = measurementsLib.distanceWeight(features, options);
     return distance;
 """;
 

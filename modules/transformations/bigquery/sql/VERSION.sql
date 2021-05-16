@@ -9,5 +9,5 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    return lib.version;
+    return transformationsLib.version;
 """;

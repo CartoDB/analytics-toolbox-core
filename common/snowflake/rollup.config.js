@@ -9,7 +9,7 @@ export default {
     output: {
         file: 'dist/index.js',
         format: process.env.UNIT_TEST ? 'umd': 'iife',
-        name: 'lib'
+        name: process.env.NAME
     },
     plugins: [
         resolve(),

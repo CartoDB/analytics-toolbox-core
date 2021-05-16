@@ -9,8 +9,8 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if (!lib.placekeyIsValid(placekey))  {
+    if (!placekeyLib.placekeyIsValid(placekey))  {
         return null;
     }
-    return lib.placekeyToH3(placekey);
+    return placekeyLib.placekeyToH3(placekey);
 """;

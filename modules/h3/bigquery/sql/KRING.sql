@@ -12,8 +12,8 @@ AS """
     if (!index || distance == null || distance < 0) {
         return null;
     }
-    if (!lib.h3IsValid(index)) {
+    if (!h3Lib.h3IsValid(index)) {
         return null;
     }
-    return lib.kRing(index, parseInt(distance));
+    return h3Lib.kRing(index, parseInt(distance));
 """;

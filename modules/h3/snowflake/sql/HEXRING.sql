@@ -13,12 +13,12 @@ AS $$
         return [];
     }
 
-    if (!lib.h3IsValid(INDEX)) {
+    if (!h3Lib.h3IsValid(INDEX)) {
         return [];
     }
 
     try {
-        return lib.hexRing(INDEX, parseInt(DISTANCE));
+        return h3Lib.hexRing(INDEX, parseInt(DISTANCE));
     } catch (error) {
         return [];
     }

@@ -12,6 +12,6 @@ AS """
     if (quadint == null || resolution == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const quadints = lib.toChildren(quadint, Number(resolution));
+    const quadints = quadkeyLib.toChildren(quadint, Number(resolution));
     return quadints.map(String);
 """;

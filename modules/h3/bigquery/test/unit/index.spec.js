@@ -1,18 +1,18 @@
-const lib = require('../../dist/index');
+const h3Lib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.geoToH3).toBeDefined();
-    expect(lib.compact).toBeDefined();
-    expect(lib.h3Distance).toBeDefined();
-    expect(lib.h3IsValid).toBeDefined();
-    expect(lib.hexRing).toBeDefined();
-    expect(lib.h3IsPentagon).toBeDefined();
-    expect(lib.kRing).toBeDefined();
-    expect(lib.polyfill).toBeDefined();
-    expect(lib.h3ToGeoBoundary).toBeDefined();
-    expect(lib.h3ToChildren).toBeDefined();
-    expect(lib.h3ToParent).toBeDefined();
-    expect(lib.uncompact).toBeDefined();
-    expect(lib.version).toBe(version);
+test('h3 library defined', () => {
+    expect(h3Lib.geoToH3).toBeDefined();
+    expect(h3Lib.compact).toBeDefined();
+    expect(h3Lib.h3Distance).toBeDefined();
+    expect(h3Lib.h3IsValid).toBeDefined();
+    expect(h3Lib.hexRing).toBeDefined();
+    expect(h3Lib.h3IsPentagon).toBeDefined();
+    expect(h3Lib.kRing).toBeDefined();
+    expect(h3Lib.polyfill).toBeDefined();
+    expect(h3Lib.h3ToGeoBoundary).toBeDefined();
+    expect(h3Lib.h3ToChildren).toBeDefined();
+    expect(h3Lib.h3ToParent).toBeDefined();
+    expect(h3Lib.uncompact).toBeDefined();
+    expect(h3Lib.version).toBe(version);
 });

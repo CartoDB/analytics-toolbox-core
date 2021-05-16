@@ -13,7 +13,7 @@ AS $$
         return null;
     }
         
-    let dist = lib.h3Distance(INDEX1, INDEX2);
+    let dist = h3Lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {
         dist = null;
     }

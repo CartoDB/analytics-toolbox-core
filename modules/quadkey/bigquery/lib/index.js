@@ -14,7 +14,7 @@ import {
     ZXYFromQuadint
 } from './quadkey';
 
-export {
+export default {
     bbox,
     kring,
     sibling,

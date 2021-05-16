@@ -13,11 +13,11 @@ AS $$
         return [];
     }
 
-    if (!lib.h3IsValid(INDEX)) {
+    if (!h3Lib.h3IsValid(INDEX)) {
         return [];
     }
 
-    return lib.kRing(INDEX, parseInt(DISTANCE));
+    return h3Lib.kRing(INDEX, parseInt(DISTANCE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.KRING

@@ -77,7 +77,7 @@ SELECT ${project}.${name}.VERSION();
 function createLibIndex (name, cloud) {
     const content = `import { version }  from '../package.json';
 
-export {
+export default {
     version
 };`;
 
@@ -96,7 +96,7 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    return lib.version;
+    return ${name}Lib.version;
 """;`;
     }
     if (cloud === 'snowflake') {
@@ -109,7 +109,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    return lib.version;
+    return ${name}Lib.version;
 $$;`;
     }
 
@@ -154,11 +154,11 @@ test('VERSION returns the proper version', async () => {
 }
 
 function createTestUnitIndex (name, cloud) {
-    const content = `const lib = require('../../dist/index');
+    const content = `const ${name}Lib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.version).toBe(version);
+test('${name} library defined', () => {
+    expect(${name}Lib.version).toBe(version);
 });`;
 
     createFile(['modules', name, cloud, 'test', 'unit', 'index.test.js'], content);

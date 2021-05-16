@@ -12,7 +12,7 @@ AS $$
     if (LONGITUDE == null || LATITUDE == null || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.quadintFromLocation(LONGITUDE, LATITUDE, RESOLUTION).toString();
+    return quadkeyLib.quadintFromLocation(LONGITUDE, LATITUDE, RESOLUTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT

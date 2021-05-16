@@ -12,7 +12,7 @@ AS $$
     if (LONGITUDE == null || LATITUDE == null || RESOLUTION == null) {
         return null;
     }
-    const index = lib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+    const index = h3Lib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
     return index;
 $$;
 

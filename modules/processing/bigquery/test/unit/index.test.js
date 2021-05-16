@@ -1,10 +1,10 @@
-const lib = require('../../dist/index');
+const processingLib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.featureCollection).toBeDefined();
-    expect(lib.feature).toBeDefined();
-    expect(lib.voronoi).toBeDefined();
-    expect(lib.polygonToLine).toBeDefined();
-    expect(lib.version).toBe(version);
+test('processing library defined', () => {
+    expect(processingLib.featureCollection).toBeDefined();
+    expect(processingLib.feature).toBeDefined();
+    expect(processingLib.voronoi).toBeDefined();
+    expect(processingLib.polygonToLine).toBeDefined();
+    expect(processingLib.version).toBe(version);
 });

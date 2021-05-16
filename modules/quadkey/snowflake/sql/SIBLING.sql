@@ -12,7 +12,7 @@ AS $$
     if (!QUADINT || !DIRECTION) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.sibling(QUADINT, DIRECTION).toString();
+    return quadkeyLib.sibling(QUADINT, DIRECTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.SIBLING

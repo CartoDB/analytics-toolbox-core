@@ -41,6 +41,7 @@ lint-fix: $(NODE_MODULES_DEPS)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
+	NAME=$(MODULE)Lib \
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 

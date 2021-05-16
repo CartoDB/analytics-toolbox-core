@@ -12,5 +12,5 @@ AS """
     if (quadint == null || !direction) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.sibling(quadint,direction).toString();  
+    return quadkeyLib.sibling(quadint,direction).toString();  
 """;

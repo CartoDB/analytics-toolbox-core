@@ -42,10 +42,12 @@ lint-fix: $(NODE_MODULES_DEPS)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
+	NAME=$(MODULE)Lib \
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 
 test-unit:
+	UNIT_TEST=1 \
 	$(MAKE) build
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/unit --testTimeout=30000

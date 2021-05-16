@@ -12,5 +12,5 @@ AS """
     if (!index) {
         return false;
     }
-    return lib.h3IsValid(index);
+    return h3Lib.h3IsValid(index);
 """;

@@ -8,8 +8,8 @@ export default {
     input: 'lib/index.js',
     output: {
         file: 'dist/index.js',
-        format: 'umd',
-        name: 'lib'
+        format: process.env.UNIT_TEST ? 'umd': 'iife',
+        name: process.env.NAME
     },
     plugins: [
         resolve(),

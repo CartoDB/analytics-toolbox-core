@@ -1,16 +1,16 @@
-const lib = require('../../dist/index');
+const transformationsLib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.version).toBe(version);
-    expect(lib.featureCollection).toBeDefined();
-    expect(lib.feature).toBeDefined();
-    expect(lib.buffer).toBeDefined();
-    expect(lib.centerMean).toBeDefined();
-    expect(lib.centerMedian).toBeDefined();
-    expect(lib.centerOfMass).toBeDefined();
-    expect(lib.concave).toBeDefined();
-    expect(lib.destination).toBeDefined();
-    expect(lib.greatCircle).toBeDefined();
-    expect(lib.along).toBeDefined();
+test('transformations library defined', () => {
+    expect(transformationsLib.version).toBe(version);
+    expect(transformationsLib.featureCollection).toBeDefined();
+    expect(transformationsLib.feature).toBeDefined();
+    expect(transformationsLib.buffer).toBeDefined();
+    expect(transformationsLib.centerMean).toBeDefined();
+    expect(transformationsLib.centerMedian).toBeDefined();
+    expect(transformationsLib.centerOfMass).toBeDefined();
+    expect(transformationsLib.concave).toBeDefined();
+    expect(transformationsLib.destination).toBeDefined();
+    expect(transformationsLib.greatCircle).toBeDefined();
+    expect(transformationsLib.along).toBeDefined();
 });

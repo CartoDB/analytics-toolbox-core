@@ -12,7 +12,7 @@ AS """
     if (quadint == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const geojson = lib.quadintToGeoJSON(quadint);
+    const geojson = quadkeyLib.quadintToGeoJSON(quadint);
     return JSON.stringify(geojson);
 """;
 

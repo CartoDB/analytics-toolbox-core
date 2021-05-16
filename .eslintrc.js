@@ -21,6 +21,7 @@ module.exports = {
         indent: ['error', 4],
         'eol-last': ['error', 'never'],
         'comma-dangle': ['error', 'never'],
+        'keyword-spacing': ['error', { before: true }],
         'no-path-concat': ['off']
     }
 };

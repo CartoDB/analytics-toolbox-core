@@ -13,7 +13,7 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
     
-    const cornerLongLat = lib.FromHilbertQuadKey(lib.idToKey(id)).getCornerLatLngs();
+    const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(id)).getCornerLatLngs();
     const geojson = {
         type: 'Polygon',
         coordinates: [[

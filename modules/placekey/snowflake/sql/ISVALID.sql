@@ -9,5 +9,5 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    return lib.placekeyIsValid(PLACEKEY);
+    return placekeyLib.placekeyIsValid(PLACEKEY);
 $$;

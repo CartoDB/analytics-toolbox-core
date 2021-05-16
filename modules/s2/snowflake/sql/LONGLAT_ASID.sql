@@ -12,8 +12,8 @@ AS $$
     if (LATITUDE == null || LONGITUDE == null || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const key = lib.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
-    return lib.keyToId(key);
+    const key = s2Lib.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+    return s2Lib.keyToId(key);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@s2.LONGLAT_ASID

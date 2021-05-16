@@ -1,8 +1,8 @@
-const lib = require('../../dist/index');
+const constructorsLib = require('../../dist/index');
 const version = require('../../package.json').version;
 
-test('library defined', () => {
-    expect(lib.bezierSpline).toBeDefined();
-    expect(lib.ellipse).toBeDefined();
-    expect(lib.version).toBe(version);
+test('constructors library defined', () => {
+    expect(constructorsLib.bezierSpline).toBeDefined();
+    expect(constructorsLib.ellipse).toBeDefined();
+    expect(constructorsLib.version).toBe(version);
 });

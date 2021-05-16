@@ -19,7 +19,7 @@ AS """
     if (sharpness != null) {
         options.sharpness = Number(sharpness);
     }
-    const curved = lib.bezierSpline(JSON.parse(geojson), options);
+    const curved = constructorsLib.bezierSpline(JSON.parse(geojson), options);
     return JSON.stringify(curved.geometry);
 """;
 

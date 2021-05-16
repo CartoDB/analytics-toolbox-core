@@ -13,7 +13,7 @@ AS $$
         return [];
     }
 
-    return lib.uncompact(H3ARRAY, Number(RESOLUTION));
+    return h3Lib.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.UNCOMPACT

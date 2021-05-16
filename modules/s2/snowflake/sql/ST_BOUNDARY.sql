@@ -13,10 +13,10 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
     
-    var cornerLongLat = lib.FromHilbertQuadKey(lib.idToKey(ID)).getCornerLatLngs();
-    var geojson = {
-        "type": "Polygon",
-        "coordinates": [[
+    const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(ID)).getCornerLatLngs();
+    const geojson = {
+        'type': 'Polygon',
+        'coordinates': [[
         [cornerLongLat[0]['lng'],cornerLongLat[0]['lat']],
         [cornerLongLat[1]['lng'],cornerLongLat[1]['lat']],
         [cornerLongLat[2]['lng'],cornerLongLat[2]['lat']],

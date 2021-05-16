@@ -9,5 +9,5 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    return lib.quadintFromQuadkey(quadkey).toString();
+    return quadkeyLib.quadintFromQuadkey(quadkey).toString();
 """;

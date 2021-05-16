@@ -19,8 +19,8 @@ AS """
 
     const qintIdx = [];
     for (let i = zoomMin; i <= zoomMax; i += zoomStep) {
-        const key = lib.quadintFromLocation(longitude, latitude, i + intResolution);
-        const zxy = lib.ZXYFromQuadint(key);
+        const key = quadkeyLib.quadintFromLocation(longitude, latitude, i + intResolution);
+        const zxy = quadkeyLib.ZXYFromQuadint(key);
         qintIdx.push({ id : key.toString(), z : i, x : zxy.x  >>> intResolution, y : zxy.y  >>> intResolution});
     }
     return qintIdx;

@@ -25,7 +25,7 @@ AS """
 
     const polygonCoordinates =  featureGeometry.type === 'MultiPolygon' ? featureGeometry.coordinates : [featureGeometry.coordinates];
     let hexes = polygonCoordinates.reduce(
-        (acc, coordinates) => acc.concat(lib.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     hexes = [...new Set(hexes)];

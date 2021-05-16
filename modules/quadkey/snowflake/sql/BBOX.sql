@@ -12,7 +12,7 @@ AS $$
     if (!QUADINT) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.bbox(QUADINT);
+    return quadkeyLib.bbox(QUADINT);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.BBOX

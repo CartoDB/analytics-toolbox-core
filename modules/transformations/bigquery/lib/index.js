@@ -12,7 +12,7 @@ import {
     along
 } from '@turf/turf';
 
-export {
+export default {
     featureCollection,
     feature,
     buffer,

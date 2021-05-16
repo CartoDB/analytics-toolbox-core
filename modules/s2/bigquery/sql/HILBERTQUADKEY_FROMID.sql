@@ -12,5 +12,5 @@ AS """
     if (id == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.idToKey(id);
+    return s2Lib.idToKey(id);
 """;

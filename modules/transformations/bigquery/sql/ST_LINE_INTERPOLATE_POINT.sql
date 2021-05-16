@@ -16,7 +16,7 @@ AS """
     if (units) {
         options.units = units;
     }
-    const along = lib.along(JSON.parse(geojson), distance, options);
+    const along = transformationsLib.along(JSON.parse(geojson), distance, options);
     return JSON.stringify(along.geometry);
 """;
 

@@ -9,7 +9,7 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    return lib.h3ToPlacekey(H3INDEX);
+    return placekeyLib.h3ToPlacekey(H3INDEX);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@placekey.H3_ASPLACEKEY

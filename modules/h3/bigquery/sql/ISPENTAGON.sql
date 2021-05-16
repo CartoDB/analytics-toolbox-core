@@ -12,5 +12,5 @@ AS """
     if (!index) {
         return false;
     }   
-    return lib.h3IsPentagon(index);
+    return h3Lib.h3IsPentagon(index);
 """;

@@ -13,8 +13,8 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-    let pol = JSON.parse(GEOJSON);
-    let quadints = lib.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
+    const pol = JSON.parse(GEOJSON);
+    const quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
     return quadints.map(String);
 $$;
 

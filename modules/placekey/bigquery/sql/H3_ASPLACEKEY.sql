@@ -8,7 +8,7 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    return lib.h3ToPlacekey(h3Index);
+    return placekeyLib.h3ToPlacekey(h3Index);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@placekey.H3_ASPLACEKEY`

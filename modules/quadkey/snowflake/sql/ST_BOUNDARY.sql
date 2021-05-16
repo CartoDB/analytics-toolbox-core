@@ -13,7 +13,7 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-    const geojson = lib.quadintToGeoJSON(QUADINT);
+    const geojson = quadkeyLib.quadintToGeoJSON(QUADINT);
     return JSON.stringify(geojson);
 $$;
 
