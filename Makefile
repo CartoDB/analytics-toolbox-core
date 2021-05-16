@@ -1,4 +1,4 @@
-GIT_DIFF ?= off
+export GIT_DIFF ?= off
 
 .SILENT:
 
@@ -8,10 +8,8 @@ help:
 lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy:
 	if [ "$(CLOUD)" = "bigquery" ] || [ "$(CLOUD)" = "snowflake" ]; then \
 		for module in `node scripts/modulesort.js`; do \
-			if [ "$(GIT_DIFF)" = "off" ] || [ `echo "$(GIT_DIFF)" | grep -P modules/$${module}/$(CLOUD)'\/.*(\.js|\.sql|Makefile)' | wc -l` -gt 0 ]; then \
-				echo "> Module $${module}"; \
-				$(MAKE) -C modules/$${module}/$(CLOUD) $@ || exit 1; \
-			fi \
+			echo "> Module $${module}/$(CLOUD)"; \
+			$(MAKE) -C modules/$${module}/$(CLOUD) $@ || exit 1; \
 		done; \
 	else \
 		echo "CLOUD is undefined. Please set one of the following values: bigquery, snowflake"; \

@@ -79,7 +79,9 @@ storage-upload:
 	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET)
 
 storage-remove:
-	$(GSUTIL) rm -rf $(BQ_BUCKET)
+	if [ `$(GSUTIL) ls $(BQ_BUCKET) 2>&1 | grep "$(BQ_BUCKET)"` ]; then \
+		$(GSUTIL) rm -r -f $(BQ_BUCKET); \
+	fi
 
 dataset-create:
 	$(BQ) --project_id $(BQ_PROJECT) show $(BQ_DATASET) 2>/dev/null 1>/dev/null || \

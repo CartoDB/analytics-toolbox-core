@@ -9,32 +9,31 @@ const path = require('path');
 const dir = 'sql';
 const input = [];
 const output = [];
+const ignoredFiles = ['.DS_Store'];
 
 const files = fs.readdirSync(dir);
-const ignoredFiles = ['.DS_Store'];
 
 files.forEach(file => {
     const name = path.parse(file).name;
-    if(ignoredFiles.includes(name)){
+    if (ignoredFiles.includes(name)) {
         return;
     }
     const content = fs.readFileSync(path.join(dir, file)).toString();
     input.push({
         name,
-        deps: files.map(f => path.parse(f).name)
-            .filter(n => n !== name && content.includes(n))
+        deps: files.map(f => path.parse(f).name).filter(n => n !== name && content.includes(n))
     });
 });
 
-function addf (f) {
-    for (const d of f.deps) {
-        addf(input.find(df => df.name === d));
+function add (i) {
+    for (const dep of i.deps) {
+        add(input.find(d => d.name === dep));
     }
-    if (!output.includes(f.name)) {
-        output.push(f.name);
+    if (!output.includes(i.name)) {
+        output.push(i.name);
     }
 }
 
-input.forEach(addf);
+input.forEach(add);
 
 process.stdout.write(output.map(o =>`sql/${o}.sql`).join(' '));
