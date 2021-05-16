@@ -14,7 +14,7 @@ To install or update this tool globally, run:
 
 ```bash
 cd tools/setool
-npm install
+yarn
 npm install -g
 ```
 
@@ -24,10 +24,7 @@ Available commands:
 
 ```bash
 setool create module
-```
-
-![](./doc/setool.gif)
-
-```bash
 setool create function
 ```
+
+![](./assets/setool.gif)

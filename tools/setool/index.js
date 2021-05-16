@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const { createModule } = require('./lib/create-module/generator');
 const { createFunction } = require('./lib/create-function/generator');
 
-console.log(chalk.yellow("Spatial Extension Tool"));
+console.log(chalk.yellow('Spatial Extension Tool'));
 
 function help () {
     return `Available commands:
