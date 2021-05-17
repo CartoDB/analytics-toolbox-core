@@ -1,7 +1,7 @@
-### ST_ASID
+### ST_ASTOKEN
 
 {{% bannerNote type="code" %}}
-s2.ST_ASID(point, resolution)
+s2.ST_ASTOKEN(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -13,11 +13,8 @@ Returns the S2 cell ID of a given point at a given level of detail.
 
 **Return type**
 
-`INT64`
+`STRING` * S2 cell hexified ID.
 
 **Example**
 
-```sql
-SELECT bqcarto.s2.ST_ASID(ST_GEOGPOINT(40.4168, -3.7038), 8);
--- 1735346007979327488
-```
+TO DO

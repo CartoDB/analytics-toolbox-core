@@ -1,8 +1,8 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('HILBERTQUADKEY_FROMID.test should work', async () => {
+test('HILBERTQUADKEY_FROMINT64.test should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@s2.HILBERTQUADKEY_FROMID\`(id) as key
+        SELECT \`@@BQ_PREFIX@@s2.HILBERTQUADKEY_FROMINT64\`(id) as key
         FROM UNNEST([
             -8286623314361712640, 5008548143403368448,
             7416309021449125888, -6902629179221606400,
@@ -16,7 +16,7 @@ test('HILBERTQUADKEY_FROMID.test should work', async () => {
     ]);
 });
 
-test('HILBERTQUADKEY_FROMID should fail with NULL argument', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@s2.HILBERTQUADKEY_FROMID`(NULL)';
+test('HILBERTQUADKEY_FROMINT64 should fail with NULL argument', async () => {
+    const query = 'SELECT `@@BQ_PREFIX@@s2.HILBERTQUADKEY_FROMINT64`(NULL)';
     await expect(runQuery(query)).rejects.toThrow('NULL argument passed to UDF');
 });

@@ -1,7 +1,7 @@
-### LONGLAT_ASID
+### LONGLAT_ASINT64
 
 {{% bannerNote type="code" %}}
-s2.LONGLAT_ASID(longitude, latitude, resolution)
+s2.LONGLAT_ASINT64(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 **Example**
 
 ```sql
-SELECT bqcarto.s2.LONGLAT_ASID(-3.7038, 40.4168, 8);
+SELECT bqcarto.s2.LONGLAT_ASINT64(-3.7038, 40.4168, 8);
 -- 955378847514099712
 ```
