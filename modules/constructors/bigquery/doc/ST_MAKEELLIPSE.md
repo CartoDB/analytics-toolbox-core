@@ -15,6 +15,12 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 * `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
 * `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value `64` is used.
 
+**Return type**
+
+`GEOGRAPHY`
+
+**Example**
+
 ```sql
 SELECT bqcarto.constructors.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, -30, "miles", 80);
 -- POLYGON((-73.8558575786687 40.7004828957859 ... 
