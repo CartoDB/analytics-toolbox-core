@@ -31,6 +31,6 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 **Example**
 
 ```sql
-SELECT bqcarto.constructors.ST_MAKEELLIPSE(ST_Point(-73.9385,40.6643), 5, 3, -30, 'miles', 80);
+SELECT sfcarto.constructors.ST_MAKEELLIPSE(ST_Point(-73.9385,40.6643), 5, 3, -30, 'miles', 80);
 -- { "coordinates": [ [ [ -73.85585757866869, 40.700482895785946 ], [ -73.86194538052666, 40.70635901954343 ], ... 
 ```
