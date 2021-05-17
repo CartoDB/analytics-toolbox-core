@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_PREFIX@@constructors.ST_TILEENVELOPE
+CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@constructors.ST_TILEENVELOPE
 (zoomLevel INT, xTile INT, yTile INT)
 RETURNS GEOGRAPHY
 AS $$
