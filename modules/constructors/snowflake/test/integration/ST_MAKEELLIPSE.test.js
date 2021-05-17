@@ -29,9 +29,15 @@ test('ST_MAKEELLIPSE should return NULL if any NULL mandatory argument', async (
 test('ST_MAKEELLIPSE default values should work', async () => {
     const query = `
         SELECT @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers', 64) as defaultValue,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, NULL, NULL, NULL) as nullParam
+               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, NULL, NULL, NULL) as nullParam1,
+               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3) as nullParam2,
+               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0) as nullParam3,
+               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers') as nullParam4
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].NULLPARAM).toEqual(rows[0].DEFAULTVALUE);
+    expect(rows[0].NULLPARAM1).toEqual(rows[0].DEFAULTVALUE);
+    expect(rows[0].NULLPARAM2).toEqual(rows[0].DEFAULTVALUE);
+    expect(rows[0].NULLPARAM3).toEqual(rows[0].DEFAULTVALUE);
+    expect(rows[0].NULLPARAM4).toEqual(rows[0].DEFAULTVALUE);
 });
