@@ -1,18 +1,20 @@
 ### ST_MINKOWSKIDISTANCE
 
+
+[Signature 1](#signature-1)
+[Signature 2](#signature-2)
+
+#### Signature 1
+
 {{% bannerNote type="code" %}}
 measurements.ST_MINKOWSKIDISTANCE(geog)
-{{%/ bannerNote %}}
-{{% bannerNote type="code" %}}
-measurements.ST_MINKOWSKIDISTANCE(geog, p)
 {{%/ bannerNote %}}
 
 **Description**
 
 Calculate the Minkowski p-norm distance between two features. https://github.com/Turfjs/turf/tree/master/packages/turf-distance-weight
 
-* `geog`: `ARRAY<GEOGRAPHY>` featureCollection.
-* `p`: `DOUBLE` minkowski p-norm distance parameter. 1: Manhattan distance. 2: Euclidean distance. 1 =< p <= infinity. If `NULL` the default value `2` is used.
+* `geog`: `ARRAY` Array of features in GeoJSON format casted to STRING.
 
 **Return type**
 
@@ -21,6 +23,29 @@ Calculate the Minkowski p-norm distance between two features. https://github.com
 **Example**
 
 ``` sql
-SELECT sfcarto.measurements.ST_MINKOWSKIDISTANCE([ST_GEOGPOINT(10,10),ST_GEOGPOINT(13,10)],2);
--- ["0,0.3333333333333333","0.3333333333333333,0"]
+SELECT sfcarto.measurements.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(10,10))::STRING, ST_ASGEOJSON(ST_POINT(13,10))::STRING));
+-- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
+```
+
+#### Signature 2
+
+{{% bannerNote type="code" %}}
+measurements.ST_MINKOWSKIDISTANCE(geog, p)
+{{%/ bannerNote %}}
+
+**Description**
+
+Calculate the Minkowski p-norm distance between two features. https://github.com/Turfjs/turf/tree/master/packages/turf-distance-weight
+
+* `geog`: `ARRAY` Array of features in GeoJSON format casted to STRING.
+
+**Return type**
+
+`ARRAY`
+
+**Example**
+
+``` sql
+SELECT sfcarto.measurements.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(10,10))::STRING, ST_ASGEOJSON(ST_POINT(13,10))::STRING), 2);
+-- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
 ```
