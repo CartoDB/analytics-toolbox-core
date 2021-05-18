@@ -6,5 +6,6 @@
   "license": "BSD-3-Clause",
   "private": true,
   "dependencies": {
+    "@turf/turf": "^6.3.0"
   }
 }

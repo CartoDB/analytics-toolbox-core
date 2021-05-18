@@ -2,7 +2,6 @@ import { version }  from '../package.json';
 import {
     featureCollection,
     feature,
-    buffer,
     centerMean,
     centerMedian,
     centerOfMass,
@@ -15,7 +14,6 @@ import {
 export default {
     featureCollection,
     feature,
-    buffer,
     centerMean,
     centerMedian,
     centerOfMass,

@@ -5,7 +5,6 @@ test('transformations library defined', () => {
     expect(transformationsLib.version).toBe(version);
     expect(transformationsLib.featureCollection).toBeDefined();
     expect(transformationsLib.feature).toBeDefined();
-    expect(transformationsLib.buffer).toBeDefined();
     expect(transformationsLib.centerMean).toBeDefined();
     expect(transformationsLib.centerMedian).toBeDefined();
     expect(transformationsLib.centerOfMass).toBeDefined();
