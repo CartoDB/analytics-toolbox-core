@@ -13,11 +13,11 @@ AS $$
         return null;
     }
     const options = {};
-    if (maxEdge != null) {
-        options.maxEdge = maxEdge;
+    if (MAXEDGE != null) {
+        options.maxEdge = MAXEDGE;
     }
-    if (units) {
-        options.units = units;
+    if (UNITS) {
+        options.units = UNITS;
     }
     const featuresCollection = transformationsLib.featureCollection(GEOJSONS.map(x => transformationsLib.feature(JSON.parse(x))));
     const hull = transformationsLib.concave(featuresCollection, options);
@@ -35,12 +35,12 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@transformations.ST_CONCAVEHULL
 (geojsons ARRAY, maxEdge DOUBLE)
 RETURNS GEOGRAPHY
 AS $$
-   TO_GEOGRAPHY(@@SF_PREFIX@@transformations._CONCAVEHULL(GEOJSONS, maxEdge, NULL))
+   TO_GEOGRAPHY(@@SF_PREFIX@@transformations._CONCAVEHULL(GEOJSONS, MAXEDGE, NULL))
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@transformations.ST_CONCAVEHULL
 (geojsons ARRAY, maxEdge DOUBLE, units STRING)
 RETURNS GEOGRAPHY
 AS $$
-   TO_GEOGRAPHY(@@SF_PREFIX@@transformations._CONCAVEHULL(GEOJSONS, maxEdge, units))
+   TO_GEOGRAPHY(@@SF_PREFIX@@transformations._CONCAVEHULL(GEOJSONS, MAXEDGE, UNITS))
 $$;
