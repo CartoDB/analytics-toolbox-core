@@ -25,10 +25,3 @@ if gsutil ls $BQ_BUCKET_PUBLIC 2>&1 | grep "bucket does not exist" > /dev/null; 
 else
     echo "Public bucket $BQ_BUCKET_PUBLIC already exists"
 fi
-
-# Create private bucket
-if gsutil ls $BQ_BUCKET_PRIVATE 2>&1 | grep "bucket does not exist" > /dev/null; then
-    gsutil mb -l us-east1 -p $BQ_PROJECT $BQ_BUCKET_PRIVATE
-else
-    echo "Private bucket $BQ_BUCKET_PRIVATE already exists"
-fi
