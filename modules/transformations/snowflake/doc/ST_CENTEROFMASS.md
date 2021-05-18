@@ -17,6 +17,6 @@ Takes any Feature or a FeatureCollection and returns its center of mass using th
 **Example**
 
 ``` sql
-SELECT sfcarto.transformations.ST_CENTEROFMASS(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
--- POINT(25.1730977433239 27.2789529273059) 
+SELECT sfcarto.transformations.ST_CENTEROFMASS(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
+-- { "coordinates": [ 25.454545454545453, 26.96969696969697 ], "type": "Point" }
 ```

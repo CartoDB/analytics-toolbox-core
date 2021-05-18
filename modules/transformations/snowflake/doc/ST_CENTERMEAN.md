@@ -17,6 +17,6 @@ Takes a Feature or FeatureCollection and returns the mean center. https://github
 **Example**
 
 ``` sql
-SELECT sfcarto.transformations.ST_CENTERMEAN(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
--- POINT(25.3890912155939 29.7916831655627)
+SELECT sfcarto.transformations.ST_CENTERMEAN(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
+-- { "coordinates": [ 26, 24 ], "type": "Point" }
 ```

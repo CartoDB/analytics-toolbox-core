@@ -17,6 +17,6 @@ Takes a FeatureCollection of points and calculates the median center, algorithim
 **Example**
 
 ``` sql
-SELECT sfcarto.transformations.ST_CENTERMEDIAN(ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
--- POINT(25.3783930513609 29.8376035441371)
+SELECT sfcarto.transformations.ST_CENTERMEDIAN(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
+-- { "coordinates": [ 25, 27.5 ], "type": "Point" }
 ```
