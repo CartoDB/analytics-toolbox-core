@@ -14,7 +14,7 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 
 **Return type**
 
-`BIGNUMERIC`
+`INT64`
 
 **Example**
 
