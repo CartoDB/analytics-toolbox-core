@@ -1,0 +1,10 @@
+{
+  "name": "transformations_snowflake",
+  "version": "1.0.0",
+  "description": "Transformations module for Snowflake",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+  }
+}
