@@ -80,7 +80,7 @@ schema-remove:
 	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASE).$(SF_SCHEMA) CASCADE"
 
 schema-deploy:
-	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit 1; \
 	done
 
