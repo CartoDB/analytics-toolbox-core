@@ -1,9 +1,9 @@
 ### ST_MAKEELLIPSE
 
-[Signature 1](#Signature 1)
-[Signature 2](#Signature 2)
-[Signature 3](#Signature 3)
-[Signature 4](#Signature 4)
+[Signature 1](#signature-1)
+[Signature 2](#signature-2)
+[Signature 3](#signature-3)
+[Signature 4](#signature-4)
 
 #### Signature 1
 
