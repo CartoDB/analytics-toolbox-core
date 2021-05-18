@@ -1,3 +1,3 @@
 # Transformations module for Snowflake
 
-TODO: add module description.
+This module contains functions that compute geometric constructions, or alter geometry size or shape.
