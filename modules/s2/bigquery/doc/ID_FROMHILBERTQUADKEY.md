@@ -12,7 +12,7 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 
 **Return type**
 
-`BIGNUMERIC`
+`INT64`
 
 **Example**
 

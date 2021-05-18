@@ -9,9 +9,9 @@ const path = require('path');
 const dir = 'sql';
 const input = [];
 const output = [];
-const ignoredFiles = ['.DS_Store'];
+const ignoredFiles = process.env.IGNORE || '';
 
-const files = fs.readdirSync(dir);
+const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
 
 files.forEach(file => {
     const name = path.parse(file).name;

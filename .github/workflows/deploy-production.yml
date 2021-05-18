@@ -20,7 +20,7 @@ jobs:
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
-      BQ_PROJECT: ${{ matrix.projectid }}
+      BQ_PROJECT: ${{ matrix.project }}
       BQ_BUCKET_PUBLIC: gs://bqcarto-public/
       BQ_PERMISSIONS: '[{"role":"READER","specialGroup":"allAuthenticatedUsers"}]'
     steps:
