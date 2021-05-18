@@ -19,6 +19,6 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 **Example**
 
 ``` sql
-SELECT sfcarto.transformations.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
--- LINESTRING(-3.70325 40.4167 ... 
+SELECT sfcarto.transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643), 20);
+-- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ... 
 ```

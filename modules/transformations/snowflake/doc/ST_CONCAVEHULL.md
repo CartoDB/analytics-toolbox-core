@@ -19,6 +19,6 @@ Takes a set of points and returns a concave hull Polygon or MultiPolygon. Intern
 **Example**
 
 ``` sql
-SELECT sfcarto.transformations.ST_CONCAVEHULL([ST_GEOGPOINT(-75.833, 39.284),ST_GEOGPOINT(-75.6, 39.984),ST_GEOGPOINT(-75.221, 39.125),ST_GEOGPOINT(-75.521, 39.325)], 100, 'kilometers');
--- POLYGON((-75.68 39.24425, -75.527 39.2045 ...
+SELECT sfcarto.transformations.ST_CONCAVEHULL(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING, ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING, ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING, ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING), 100, 'kilometers');
+-- { "coordinates": [ [ [ -75.833, 39.284 ], [ -75.6, 39.984 ], ...
 ```
