@@ -6,7 +6,6 @@ BQ ?= bq --location=$(BQ_REGION)
 
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
-BQ_PERMISSIONS_TARGET_DATASET = $(BQ_DATASET)
 
 BQ_LIBRARY = ./dist/index.js
 BQ_BUCKET = $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
@@ -66,7 +65,7 @@ deploy: check
 	$(MAKE) dataset-create
 	$(MAKE) dataset-deploy
 ifdef BQ_PERMISSIONS
-	$(COMMON_DIR)/set_module_permissions.sh
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions.sh
 endif
 
 clean:
