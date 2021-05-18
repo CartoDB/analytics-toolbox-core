@@ -10,7 +10,7 @@ AS $$
     @@SF_LIBRARY_CONTENT@@
 
     if (!GEOJSONS) {
-        return null;
+        return [];
     }
     const options = {};
     if(P != null) {
