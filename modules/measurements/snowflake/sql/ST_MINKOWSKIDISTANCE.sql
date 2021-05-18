@@ -2,36 +2,28 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_PREFIX@@measurements._MINKOWSKIDISTANCE
-(geojson STRING, p DOUBLE)
-RETURNS STRING
+CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE
+(geojsons ARRAY, p DOUBLE)
+RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!GEOJSON) {
+    if (!GEOJSONS) {
         return null;
     }
     const options = {};
     if(P != null) {
         options.p = Number(P);
     }
-    const features = measurementsLib.featureCollection(JSON.parse(GEOJSON));
-    return JSON.stringify(features);
+    const features = measurementsLib.featureCollection(GEOJSONS.map(x => measurementsLib.feature(JSON.parse(x))));
     const distance = measurementsLib.distanceWeight(features, options);
     return distance;
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE
-(geog GEOGRAPHY)
-RETURNS STRING
+(geojsons ARRAY)
+RETURNS ARRAY
 AS $$
-    @@SF_PREFIX@@measurements._MINKOWSKIDISTANCE(CAST(ST_ASGEOJSON(GEOG) AS STRING), NULL)
-$$;
-
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE
-(geog GEOGRAPHY, p DOUBLE)
-RETURNS STRING
-AS $$
-    @@SF_PREFIX@@measurements._MINKOWSKIDISTANCE(CAST(ST_ASGEOJSON(GEOG) AS STRING), P)
+    @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE(GEOJSONS, NULL)
 $$;
