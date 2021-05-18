@@ -27,9 +27,11 @@ test('ST_MINKOWSKIDISTANCE should return NULL if any NULL mandatory argument', a
 test('ST_MINKOWSKIDISTANCE default values should work', async () => {
     const query = `
         SELECT @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-3.70325 ,40.4167))::STRING, ST_ASGEOJSON(ST_POINT(-5.70325 ,40.4167))::STRING), 2) as defaultValue,
-               @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-3.70325 ,40.4167))::STRING, ST_ASGEOJSON(ST_POINT(-5.70325 ,40.4167))::STRING), NULL) as nullParam
+               @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-3.70325 ,40.4167))::STRING, ST_ASGEOJSON(ST_POINT(-5.70325 ,40.4167))::STRING), NULL) as nullParam1,
+               @@SF_PREFIX@@measurements.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-3.70325 ,40.4167))::STRING, ST_ASGEOJSON(ST_POINT(-5.70325 ,40.4167))::STRING)) as nullParam2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].NULLPARAM).toEqual(rows[0].DEFAULTVALUE);
+    expect(rows[0].NULLPARAM1).toEqual(rows[0].DEFAULTVALUE);
+    expect(rows[0].NULLPARAM2).toEqual(rows[0].DEFAULTVALUE);
 });
