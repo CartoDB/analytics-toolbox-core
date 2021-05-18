@@ -1,7 +1,7 @@
 ### ST_CONCAVEHULL
 
 {{% bannerNote type="code" %}}
-transformations.ST_CONCAVEHULL(geog ARRAY<GEOGRAPHY>, maxEdge FLOAT64, units STRING)
+transformations.ST_CONCAVEHULL(geog, maxEdge FLOAT64, units STRING)
 {{%/ bannerNote %}}
 
 **Description**
