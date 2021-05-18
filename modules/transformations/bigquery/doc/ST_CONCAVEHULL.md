@@ -9,7 +9,7 @@ transformations.ST_CONCAVEHULL(geog, maxEdge, units)
 Takes a set of points and returns a concave hull Polygon or MultiPolygon. Internally, this uses turf-tin to generate geometries. https://turfjs.org/docs/#concave
 
 * `geog`: `ARRAY<GEOGRAPHY>` input points.
-* `maxEdge`: `FLOAT64` the length (in 'units') of an edge necessary for part of the hull to become concave. If `NULL`the default value `infinity` is used.
+* `maxEdge`: `FLOAT64`|`NULL` the length (in 'units') of an edge necessary for part of the hull to become concave. If `NULL`the default value `infinity` is used.
 * `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**
