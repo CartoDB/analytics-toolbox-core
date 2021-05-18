@@ -14,7 +14,7 @@ measurements.ST_MINKOWSKIDISTANCE(geog)
 
 Calculate the Minkowski p-norm distance between two features. https://github.com/Turfjs/turf/tree/master/packages/turf-distance-weight
 
-* `geog`: `ARRAY` Array of features in GeoJSON format casted to STRING.
+* `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 
 **Return type**
 
@@ -37,7 +37,7 @@ measurements.ST_MINKOWSKIDISTANCE(geog, p)
 
 Calculate the Minkowski p-norm distance between two features. https://github.com/Turfjs/turf/tree/master/packages/turf-distance-weight
 
-* `geog`: `ARRAY` Array of features in GeoJSON format casted to STRING.
+* `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 
 **Return type**
 
