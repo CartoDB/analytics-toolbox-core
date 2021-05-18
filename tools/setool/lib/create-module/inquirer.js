@@ -8,35 +8,27 @@ module.exports = {
             message: 'Enter a name for the module:',
             validate: (value) => {
                 if (value.length) {
-                    return true;
+                    if (value === value.toLowerCase()) {
+                        return true;
+                    } else {
+                        return 'Please enter the name in lowercase.';
+                    }
                 } else {
                     return 'Please enter a name for the module.';
                 }
             }
         }, {
             type: 'list',
-            name: 'visibility',
-            message: 'Public or private:',
-            choices: ['public', 'private'],
-            default: 'public'
+            name: 'cloud',
+            message: 'Select the cloud for the module:',
+            choices: ['bigquery', 'snowflake'],
+            default: 'bigquery'
         }, {
-            type: 'checkbox',
-            name: 'clouds',
-            message: 'Select the clouds you wish to create:',
-            choices: ['bq', 'sf'],
-            default: 'bq',
-            validate: (value) => {
-                if (value.length) {
-                    return true;
-                } else {
-                    return 'Please select at least one cloud.';
-                }
-            }
-        }, {
-            type: 'confirm',
-            name: 'library',
-            message: 'Do you want to create a JS library?:',
-            default: true
+            type: 'list',
+            name: 'type',
+            message: 'Select the type of module:',
+            choices: ['core', 'advanced'],
+            default: 'core'
         }];
         return inquirer.prompt(questions);
     }

@@ -1,0 +1,83 @@
+const { runQuery } = require('../../../../../common/bigquery/test-utils');
+
+test('Works as expected with invalid data', async () => {
+    const query = `
+        WITH ids AS
+        (
+            -- Invalid parameters
+            SELECT 1 AS id, NULL as hid, 1 as distance UNION ALL
+            SELECT 2 AS id, 'ff283473fffffff' as hid, 1 as distance UNION ALL
+            SELECT 3 as id, '8928308280fffff' as hid, -1 as distance UNION ALL
+
+            -- Distance 0
+            SELECT 4 as id, '8928308280fffff' as hid, 0 as distance
+        )
+        SELECT
+            id,
+            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, distance) as parent
+        FROM ids
+        ORDER BY id ASC
+    `;
+
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(4);
+    expect(rows[0].parent).toEqual([]);
+    expect(rows[1].parent).toEqual([]);
+    expect(rows[2].parent).toEqual([]);
+    expect(rows[3].parent).toEqual(['8928308280fffff']);
+});
+
+test('List the ring correctly', async () => {
+    const query = `
+        WITH ids AS
+        (
+            SELECT '8928308280fffff' as hid
+        )
+        SELECT
+            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, 1) as d1,
+            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, 2) as d2
+        FROM ids
+    `;
+
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    /* Data comes from h3core.spec.js */
+    expect(rows[0].d1.sort()).toEqual(
+        [   '8928308280bffff',
+            '89283082807ffff',
+            '89283082877ffff',
+            '89283082803ffff',
+            '89283082873ffff',
+            '8928308283bffff'
+        ].sort());
+    expect(rows[0].d2.sort()).toEqual(
+        [   '89283082813ffff',
+            '89283082817ffff',
+            '8928308281bffff',
+            '89283082863ffff',
+            '89283082823ffff',
+            '8928308287bffff',
+            '89283082833ffff',
+            '8928308282bffff',
+            '89283082857ffff',
+            '892830828abffff',
+            '89283082847ffff',
+            '89283082867ffff'
+        ].sort());
+});
+
+test('Zero distance returns self', async () => {
+    const query = `
+        WITH ids AS
+        (
+            SELECT '87283080dffffff' as hid
+        )
+        SELECT
+            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, 0) AS self_children
+        FROM ids
+    `;
+
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].self_children).toEqual([ '87283080dffffff' ]);
+});

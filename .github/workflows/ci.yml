@@ -9,11 +9,10 @@ on:
 
 env:
   NODE_VERSION: 14
-  POST_INTEGRATION_CLEANUP: 1
 
 jobs:
 
-  linter:
+  lint-bq:
     if: |
       ( github.event_name == 'push' ) ||
       ( github.event_name == 'pull_request_target' && github.event.label.name == 'run_ci' )
@@ -28,10 +27,10 @@ jobs:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
       - name: Check linter
-        run: make check-linter
+        run: make lint CLOUD=bigquery
 
-  test-unit:
-    needs: linter
+  test-unit-bq:
+    needs: lint-bq
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     steps:
@@ -47,18 +46,18 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run unit tests
-        run: make check
+        run: make test-unit CLOUD=bigquery
 
   test-integration-bq:
-    needs: linter
+    needs: lint-bq
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      ENABLED_BQ: 1
       GCLOUD_VERSION: 290.0.1
-      BQ_PROJECTID: bqcartoci
+      BQ_REGION: us
+      BQ_PROJECT: bqcartoci
       BQ_BUCKET_PUBLIC: gs://bqcartoci/
-      BQ_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
+      BQ_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -75,30 +74,61 @@ jobs:
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}
-            project_id: ${{ env.BQ_PROJECTID }}
+            project_id: ${{ env.BQ_PROJECT }}
             service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
             export_default_credentials: true
-      - name: Get environment
-        run: |
-          source tools/dev_environment.sh.sample
-          env >> $GITHUB_ENV
       - name: Run integration tests
-        run: make check-integration
+        run: make test-integration CLOUD=bigquery
+
+  lint-sf:
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'pull_request_target' && github.event.label.name == 'run_ci' )
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Check linter
+        run: make lint CLOUD=snowflake
+
+  test-unit-sf:
+    needs: lint-sf
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run unit tests
+        run: make test-unit CLOUD=snowflake
   
   test-integration-sf:
-    needs: linter
+    needs: lint-sf
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      ENABLED_SF: 1
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
       SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASEID: SFCARTOCI
-      SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}
+      SF_DATABASE: SFCARTOCI
+      SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -115,9 +145,5 @@ jobs:
         run: | 
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-      - name: Get environment
-        run: |
-          source tools/dev_environment.sh.sample
-          env >> $GITHUB_ENV
       - name: Run integration tests
-        run: make check-integration
+        run: make test-integration CLOUD=snowflake

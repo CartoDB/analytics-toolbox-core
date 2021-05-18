@@ -15,22 +15,10 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
-      ENABLED_BQ: 1
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
-      BQ_PROJECTID: bqcartost-core-${{ github.event.pull_request.number }}
+      BQ_PROJECT: bqcartost-core-${{ github.event.pull_request.number }}
       BQ_BUCKET_PUBLIC: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.pull_request.number }}/
-      BQ_DATASET_SKEL: skel
-      BQ_DATASET_H3: h3
-      BQ_DATASET_PLACEKEY: placekey
-      BQ_DATASET_QUADKEY: quadkey
-      BQ_DATASET_S2: s2
-      BQ_DATASET_TRANSFORMATIONS: transformations
-      BQ_DATASET_CONSTRUCTORS: constructors
-      BQ_DATASET_MEASUREMENTS: measurements
-      BQ_DATASET_PROCESSING: processing
-      BQ_DATASET_ACCESSORS: accessors
-      BQ_MODULE_CORE_LABEL: spatial_extension_module:core
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -38,14 +26,14 @@ jobs:
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}
-            project_id: ${{ env.BQ_PROJECTID }}
+            project_id: ${{ env.BQ_PROJECT }}
             service_account_key: ${{ secrets.BQCARTOCUSTOMST_DEPLOY_CLOUD_EXTENSIONS_SA }}
             export_default_credentials: true
       - name: Create temporary staging environment
         shell: bash
-        run: ./tools/create-bq-st.sh
+        run: ./common/bigquery/create_staging_env.sh
       - name: Deploy to staging
-        run: make deploy
+        run: make deploy CLOUD=bigquery
       - name: Comment PR
         uses: actions/github-script@0.3.0
         with:
@@ -53,7 +41,7 @@ jobs:
           script: |
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.pull_request.number }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECTID }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECTID}}' });
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECT }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECT}}' });
 
   deploy-sf:
     if: |
@@ -62,21 +50,14 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
-      ENABLED_SF: 1
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
       SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASEID: SFCARTOST
+      SF_DATABASE: SFCARTOST
       SF_SHARE_ENABLED: 1
-      SF_SHARE_PUBLIC: SFCARTOST
-      SF_SCHEMA_SKEL: SKEL
-      SF_SCHEMA_H3: H3
-      SF_SCHEMA_PLACEKEY: PLACEKEY
-      SF_SCHEMA_QUADKEY: QUADKEY
-      SF_SCHEMA_S2: S2
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -85,4 +66,4 @@ jobs:
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Deploy to staging
-        run: make deploy
+        run: make deploy CLOUD=snowflake
