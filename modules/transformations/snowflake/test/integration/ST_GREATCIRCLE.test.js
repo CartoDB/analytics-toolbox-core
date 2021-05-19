@@ -13,19 +13,19 @@ test('ST_GREATCIRCLE should work', async () => {
 
 test('ST_GREATCIRCLE should return NULL if any NULL mandatory argument', async () => {
     const query = `SELECT @@SF_PREFIX@@transformations.ST_GREATCIRCLE(NULL, ST_POINT(-73.9385,40.6643), 20) as greatcircle1,
-    @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), NULL, 20) as greatcircle2`;
+    @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), NULL, 20) as greatcircle2,
+    @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643), NULL) as greatcircle3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].GREATCIRCLE1).toEqual(null);
     expect(rows[0].GREATCIRCLE2).toEqual(null);
+    expect(rows[0].GREATCIRCLE3).toEqual(null);
 });
 
 test('ST_GREATCIRCLE default values should work', async () => {
     const query = `SELECT @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643), 100) as defaultValue,
-    @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643), NULL) as nullParam1,
-    @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643)) as nullParam2`;
+    @@SF_PREFIX@@transformations.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643)) as nullParam1`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].NULLPARAM1).toEqual(rows[0].DEFAULTVALUE);
-    expect(rows[0].NULLPARAM2).toEqual(rows[0].DEFAULTVALUE);
 });

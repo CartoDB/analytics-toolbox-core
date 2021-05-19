@@ -2,7 +2,8 @@ module.exports = {
     geom : {
     "type": "FeatureCollection",
     "properties": {
-        "maxEdge": 20
+        "maxEdge": 20,
+        "units": "kilometers"
     },
     "features": [
         {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[51.7123413085937,-13.06342578889815]}},

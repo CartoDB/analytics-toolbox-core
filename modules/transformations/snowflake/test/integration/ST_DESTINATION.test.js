@@ -14,20 +14,20 @@ test('ST_DESTINATION should work', async () => {
 test('ST_DESTINATION should return NULL if any NULL mandatory argument', async () => {
     const query = `SELECT @@SF_PREFIX@@transformations.ST_DESTINATION(NULL, 10, 45, 'miles') as destination1,
     @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), NULL, 45, 'miles') as destination2,
-    @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, NULL, 'miles') as destination3`;
+    @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, NULL, 'miles') as destination3,
+    @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45, NULL) as destination4`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].DESTINATION1).toEqual(null);
     expect(rows[0].DESTINATION2).toEqual(null);
     expect(rows[0].DESTINATION3).toEqual(null);
+    expect(rows[0].DESTINATION4).toEqual(null);
 });
 
 test('ST_DESTINATION default values should work', async () => {
     const query = `SELECT @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45, 'kilometers') as defaultValue,
-    @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45, NULL) as nullParam1,
-    @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45) as nullParam2`;
+    @@SF_PREFIX@@transformations.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45) as nullParam1`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].NULLPARAM1).toEqual(rows[0].DEFAULTVALUE);
-    expect(rows[0].NULLPARAM2).toEqual(rows[0].DEFAULTVALUE);
 });

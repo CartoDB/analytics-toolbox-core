@@ -44,20 +44,22 @@ test('ST_CONCAVEHULL should work', async () => {
 });
 
 test('ST_CONCAVEHULL should return NULL if any NULL mandatory argument', async () => {
-    const query = 'SELECT @@SF_PREFIX@@transformations.ST_CONCAVEHULL(NULL, 10, \'kilometers\') as concaveHull1';
+    const query = `SELECT @@SF_PREFIX@@transformations.ST_CONCAVEHULL(NULL, 10, 'kilometers') as concaveHull1,
+        @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, NULL, 'kilometers') as concaveHull2,
+        @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, 10, NULL) as concaveHull3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].CONCAVEHULL1).toEqual(null);
+    expect(rows[0].CONCAVEHULL2).toEqual(null);
+    expect(rows[0].CONCAVEHULL3).toEqual(null);
 });
 
 test('ST_CONCAVEHULL default values should work', async () => {
     const query = `SELECT @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, CAST('inf' AS DOUBLE), 'kilometers') as defaultValue,
-    @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, NULL, NULL) as nullParam1,
-    @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}) as nullParam2,
-    @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, CAST('inf' AS DOUBLE), NULL) as nullParam3`;
+    @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}) as nullParam1,
+    @@SF_PREFIX@@transformations.ST_CONCAVEHULL(${getFeatureArray(concaveHullFixturesIn)}, CAST('inf' AS DOUBLE)) as nullParam2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].NULLPARAM1).toEqual(rows[0].DEFAULTVALUE);
     expect(rows[0].NULLPARAM2).toEqual(rows[0].DEFAULTVALUE);
-    expect(rows[0].NULLPARAM3).toEqual(rows[0].DEFAULTVALUE);
 });
