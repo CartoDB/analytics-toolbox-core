@@ -13,23 +13,25 @@ test('ST_BEZIERSPLINE should work', async () => {
 
 test('ST_BEZIERSPLINE should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(NULL, 10000, 0.9) as bezierspline
+        SELECT @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(NULL, 10000, 0.9) as bezierspline1,
+        @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)'), NULL, 0.9) as bezierspline2,
+        @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)'), 10000, NULL) as bezierspline3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].BEZIERSPLINE).toEqual(null);
+    expect(rows[0].BEZIERSPLINE1).toEqual(null);
+    expect(rows[0].BEZIERSPLINE2).toEqual(null);
+    expect(rows[0].BEZIERSPLINE3).toEqual(null);
 });
 
 test('ST_BEZIERSPLINE default values should work', async () => {
     const query = `
         SELECT @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)'), 10000, 0.85) as defaultValue,
-               @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)'), NULL, NULL) as nullParam1,
-               @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)')) as nullParam2,
-               @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)'), 10000) as nullParam3
+               @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)')) as nullParam1,
+               @@SF_PREFIX@@constructors.ST_BEZIERSPLINE(ST_GEOGFROMTEXT('LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)'), 10000) as nullParam2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].NULLPARAM1).toEqual(rows[0].DEFAULTVALUE);
     expect(rows[0].NULLPARAM2).toEqual(rows[0].DEFAULTVALUE);
-    expect(rows[0].NULLPARAM3).toEqual(rows[0].DEFAULTVALUE);
 });
