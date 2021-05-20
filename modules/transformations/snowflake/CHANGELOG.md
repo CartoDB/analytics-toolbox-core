@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2021-05-20
 
 ### Added
-- Create measurements module.
-- Add ST_ANGLE function.
-- Add ST_AZIMUTH function.
-- Add ST_MINKOWSKIDISTANCE function.
+- Create transformations module.
+- Add ST_CENTERMEAN function.
+- Add ST_CENTERMEDIAN function.
+- Add ST_CENTEROFMASS function.
+- Add ST_CONCAVEHULL function.
+- Add ST_DESTINATION function.
+- Add ST_GREATCIRCLE function.
+- Add ST_LINE_INTERPOLATE_POINT function.
 - Add VERSION function.

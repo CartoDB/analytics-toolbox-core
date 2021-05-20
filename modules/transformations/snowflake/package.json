@@ -1,7 +1,7 @@
 {
-  "name": "constructors_snowflake",
+  "name": "transformations_snowflake",
   "version": "1.0.0",
-  "description": "Constructors module for Snowflake",
+  "description": "Transformations module for Snowflake",
   "author": "CARTO",
   "license": "BSD-3-Clause",
   "private": true,
