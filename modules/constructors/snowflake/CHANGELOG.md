@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Create constructors module.
-- Add ST_MAKEENVELOPE function.
-- Add ST_TILEENVELOPE function.
 - Add ST_BEZIERSPLINE function.
 - Add ST_MAKEELLIPSE function.
+- Add ST_MAKEENVELOPE function.
+- Add ST_TILEENVELOPE function.
 - Add VERSION function.

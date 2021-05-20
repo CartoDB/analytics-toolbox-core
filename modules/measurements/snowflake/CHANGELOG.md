@@ -11,3 +11,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ST_ANGLE function.
 - Add ST_AZIMUTH function.
 - Add ST_MINKOWSKIDISTANCE function.
+- Add VERSION function.
