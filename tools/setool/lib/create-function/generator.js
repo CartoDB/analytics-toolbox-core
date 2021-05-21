@@ -6,69 +6,90 @@ const header = `----------------------------
 -- Copyright (C) 2021 CARTO
 ----------------------------`;
 
-module.exports = {
-    createFunction: async () => {
-        const { mname, cloud, fname, fparams, ftype } = await inquirer.askFunctionDetails();
+let root;
+let mname;
+let cloud;
+let fname;
+let frtype;
+let ftemplate;
+const fparams = [];
 
-        checkModule(mname, cloud);
-        createDocFunction(mname, cloud, fname, fparams);
-        createSQLFunction(mname, cloud, fname, fparams, ftype);
-        CreateTestIntegrationFunction(mname, cloud, fname, fparams);
+module.exports = {
+    createFunction: async (info) => {
+        const response = await inquirer.askFunctionDetails(info);
+
+        root = info.root;
+        mname = info.module || response.mname;
+        cloud = info.cloud  || response.cloud;
+        fname = response.fname;
+        response.fpnames.forEach((value, index) => {
+            fparams.push({
+                name: value,
+                type: response.fptypes.length > index ? response.fptypes[index] : 'TODO'
+            })
+        });
+        frtype = response.frtype || 'TODO';
+        ftemplate = response.ftemplate;
+
+        checkModule();
+        createDocFunction();
+        createSQLFunction();
+        CreateTestIntegrationFunction();
     }
 };
 
-function errorModule (mname, cloud) {
+function errorModule () {
     return `The module "${mname}/${cloud}" does not exist.
 Please create the module first:
 - setool create module`;
 }
 
-function checkModule (mname, cloud) {
-    if (!checkDir(['modules', mname, cloud])) {
+function checkModule () {
+    if (!checkDir([root, 'modules', mname, cloud])) {
         console.log(chalk.red(errorModule(mname, cloud)));
         process.exit(1);
     }
 }
 
-function createDocFunction (mname, cloud, fname, fparams) {
+function createDocFunction () {
     const project = { bigquery: 'bqcarto', snowflake: 'sfcarto' }[cloud];
     let content = `### ${fname}
 
 {{% bannerNote type="code" %}}
-${mname}.${fname}(${fparams.join(', ')})
+${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')})
 {{%/ bannerNote %}}
 
 **Description**
 
-TODO
-${fparams.length ? `\n${fparams.map(fp => `* \`${fp}\`: \`TYPE\` TODO.\n`).join('')}` : ''}
+TODO.
+${fparams.length ? `\n${fparams.map(fp => `* \`${fp.name}\`: \`${fp.type}\` TODO.\n`).join('')}` : ''}
 **Constraints**
 
-TODO
+TODO.
 
 **Return type**
 
-\`TYPE\`
+\`${frtype}\`
 
 **Example**
 
 \`\`\`sql
-SELECT ${project}.${mname}.${fname}(${fparams.join(', ')});
--- OUTPUT
+SELECT ${project}.${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')});
+-- TODO
 \`\`\``;
 
-    createFile(['modules', mname, cloud, 'doc', `${fname}.md`], content);
+    createFile([root, 'modules', mname, cloud, 'doc', `${fname}.md`], content);
 }
 
-function createSQLFunction (mname, cloud, fname, fparams, ftype) {
+function createSQLFunction () {
     let content;
 
-    if (cloud === 'bigquery' && ftype === 'js') {
+    if (cloud === 'bigquery' && ftemplate === 'js') {
         content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
@@ -77,23 +98,23 @@ AS """
 """;`;
     }
 
-    if (cloud === 'bigquery' && ftype === 'sql') {
+    if (cloud === 'bigquery' && ftemplate === 'sql') {
         content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS ((
     TODO
 ));`;
     }
 
-    if (cloud === 'bigquery' && ftype === 'js-combo') {
+    if (cloud === 'bigquery' && ftemplate === 'js-combo') {
         content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.__${fname}\`
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
@@ -102,37 +123,37 @@ AS """
 """;
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS (
-    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.join(', ')})
+    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
 );`;
     }
 
-    if (cloud === 'bigquery' && ftype === 'sql-combo') {
+    if (cloud === 'bigquery' && ftemplate === 'sql-combo') {
         content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.__${fname}\`
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS ((
     TODO
 ));
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS (
-    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.join(', ')})
+    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
 );`;
     }
 
-    if (cloud === 'snowflake' && ftype === 'js') {
+    if (cloud === 'snowflake' && ftemplate === 'js') {
         content = `${header}
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
@@ -141,23 +162,23 @@ AS $$
 $$;`;
     }
 
-    if (cloud === 'snowflake' && ftype === 'sql') {
+    if (cloud === 'snowflake' && ftemplate === 'sql') {
         content = `${header}
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS $$
     TODO
 $$;`;
     }
 
-    if (cloud === 'snowflake' && ftype === 'js-combo') {
+    if (cloud === 'snowflake' && ftemplate === 'js-combo') {
         content = `${header}
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@${mname}._${fname}
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
@@ -166,51 +187,51 @@ AS $$
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS $$
-    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.toUpperCase()).join(', ')})
+    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
 $$;`;
     }
 
-    if (cloud === 'snowflake' && ftype === 'sql-combo') {
+    if (cloud === 'snowflake' && ftemplate === 'sql-combo') {
         content = `${header}
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@${mname}._${fname}
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS $$
     TODO
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp} TYPE`).join(', ')})
-RETURNS TYPE
+(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+RETURNS ${frtype}
 AS $$
-    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.toUpperCase()).join(', ')})
+    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
 $$;
 `;
     }
 
-    createFile(['modules', mname, cloud, 'sql', `${fname}.sql`], content);
+    createFile([root, 'modules', mname, cloud, 'sql', `${fname}.sql`], content);
 
     if (cloud === 'snowflake') {
         content = readFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
         content += `
-grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).fill('TYPE').join(',')}) to share @@SF_SHARE_PUBLIC@@;`
+grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).fill('TODO').join(',')}) to share @@SF_SHARE_PUBLIC@@;`
     
-        createFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], content);
+        createFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], content);
     }
 }
 
-function CreateTestIntegrationFunction (mname, cloud, fname, fparams) {
+function CreateTestIntegrationFunction () {
     let content;
 
     if (cloud === 'bigquery') {
         content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 
 test('${fname} should work', async () => {
-    const query = 'SELECT \`@@BQ_PREFIX@@${mname}.${fname}\`(${fparams.join(', ')}) AS output';
+    const query = 'SELECT \`@@BQ_PREFIX@@${mname}.${fname}\`(${fparams.map(fp => fp.name).join(', ')}) AS output';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].output).toEqual();
@@ -221,12 +242,12 @@ test('${fname} should work', async () => {
         content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 
 test('{fname} should work', async () => {
-    const query = 'SELECT @@SF_PREFIX@@${mname}.${fname}(${fparams.join(', ')}) AS output';
+    const query = 'SELECT @@SF_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')}) AS output';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].OUTPUT).toEqual();
 });`;
     }
 
-    createFile(['modules', mname, cloud, 'test', 'integration', `${fname}.test.js`], content);
+    createFile([root, 'modules', mname, cloud, 'test', 'integration', `${fname}.test.js`], content);
 }
