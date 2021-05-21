@@ -5,50 +5,61 @@ const header = `----------------------------
 -- Copyright (C) 2021 CARTO
 ----------------------------`;
 
+let root;
+let name;
+let cloud;
+let type;
+
 module.exports = {
-    createModule: async () => {
-        const { name, cloud, type } = await inquirer.askModuleDetails();
-        createModule(name, cloud, type);
+    createModule: async (info) => {
+        const response = await inquirer.askModuleDetails(info);
+
+        root = info.root;
+        name = response.name;
+        cloud = response.cloud;
+        type = info.type || response.type;
+
+        createModule();
     }
 };
 
-function createModule (name, cloud, type) {
-    createDir(['modules']);
-    createDir(['modules', name]);
-    createDir(['modules', name, cloud]);
-    createDir(['modules', name, cloud, 'doc']);
-    createDir(['modules', name, cloud, 'lib']);
-    createDir(['modules', name, cloud, 'sql']);
-    createDir(['modules', name, cloud, 'test']);
-    createDir(['modules', name, cloud, 'test', 'unit']);
-    createDir(['modules', name, cloud, 'test', 'integration']);
+function createModule () {
+    createDir([root, 'modules']);
+    createDir([root, 'modules', name]);
+    createDir([root, 'modules', name, cloud]);
+    createDir([root, 'modules', name, cloud, 'doc']);
+    createDir([root, 'modules', name, cloud, 'lib']);
+    createDir([root, 'modules', name, cloud, 'sql']);
+    createDir([root, 'modules', name, cloud, 'test']);
+    createDir([root, 'modules', name, cloud, 'test', 'unit']);
+    createDir([root, 'modules', name, cloud, 'test', 'integration']);
 
-    createDocIntro(name, cloud, type);
-    createDocVersion(name, cloud);
-    createLibIndex(name, cloud);
-    createSQLVersion(name, cloud);
+    createDocIntro();
+    createDocVersion();
+    createLibIndex();
+    createSQLVersion();
     if (cloud === 'snowflake') {
-        createSQLShares(name, cloud);
+        createSQLShares();
     }
-    createTestIntegrationVersion(name, cloud);
-    createTestUnitIndex(name, cloud);
-    createChangelog(name, cloud);
-    createMakefile(name, cloud);
-    createPackage(name, cloud);
-    createReadme(name, cloud);
+    createTestIntegrationVersion();
+    createTestUnitIndex();
+    createChangelog();
+    createMakefile();
+    createPackage();
+    createReadme();
 }
 
-function createDocIntro (name, cloud, type) {
+function createDocIntro () {
     const content = `## ${name}
 
-<div class="badge ${type}"></div>
+<div class="badges"><div class="${type}"></div></div>
 
-TODO: add module description.`;
+TODO.`;
 
-    createFile(['modules', name, cloud, 'doc', '_INTRO.md'], content);
+    createFile([root, 'modules', name, cloud, 'doc', '_INTRO.md'], content);
 }
 
-function createDocVersion (name, cloud) {
+function createDocVersion () {
     const project = { bigquery: 'bqcarto', snowflake: 'sfcarto' }[cloud];
     const content = `### VERSION
 
@@ -71,20 +82,20 @@ SELECT ${project}.${name}.VERSION();
 -- 1.0.0
 \`\`\``;
 
-    createFile(['modules', name, cloud, 'doc', 'VERSION.md'], content);
+    createFile([root, 'modules', name, cloud, 'doc', 'VERSION.md'], content);
 }
 
-function createLibIndex (name, cloud) {
+function createLibIndex () {
     const content = `import { version }  from '../package.json';
 
 export default {
     version
 };`;
 
-    createFile(['modules', name, cloud, 'lib', 'index.js'], content);
+    createFile([root, 'modules', name, cloud, 'lib', 'index.js'], content);
 }
 
-function createSQLVersion (name, cloud) {
+function createSQLVersion () {
     let content = '';
     if (cloud === 'bigquery') {
         content = `${header}
@@ -113,10 +124,10 @@ AS $$
 $$;`;
     }
 
-    createFile(['modules', name, cloud, 'sql', 'VERSION.sql'], content);
+    createFile([root, 'modules', name, cloud, 'sql', 'VERSION.sql'], content);
 }
 
-function createSQLShares (name, cloud) {
+function createSQLShares () {
     let content = `${header}
 
 USE @@SF_DATABASE@@;
@@ -127,16 +138,16 @@ grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE_PUBLIC@@
 
 grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE_PUBLIC@@;`;
 
-    createFile(['modules', name, cloud, 'sql', '_SHARE_CREATE.sql'], content);
+    createFile([root, 'modules', name, cloud, 'sql', '_SHARE_CREATE.sql'], content);
 
     content = `${header}
 
 DROP SHARE @@SF_SHARE_PUBLIC@@;`;
 
-    createFile(['modules', name, cloud, 'sql', '_SHARE_REMOVE.sql'], content);
+    createFile([root, 'modules', name, cloud, 'sql', '_SHARE_REMOVE.sql'], content);
 }
 
-function createTestIntegrationVersion (name, cloud) {
+function createTestIntegrationVersion () {
     const cover = { bigquery: '`', snowflake: '' }[cloud];
     const variable = { bigquery: 'v', snowflake: 'V' }[cloud];
     const prefix = { bigquery: 'BQ_PREFIX', snowflake: 'SF_PREFIX' }[cloud];
@@ -150,10 +161,10 @@ test('VERSION returns the proper version', async () => {
     expect(rows[0].${variable}).toEqual(version);
 });`;
 
-    createFile(['modules', name, cloud, 'test', 'integration', 'VERSION.test.js'], content);
+    createFile([root, 'modules', name, cloud, 'test', 'integration', 'VERSION.test.js'], content);
 }
 
-function createTestUnitIndex (name, cloud) {
+function createTestUnitIndex () {
     const content = `const ${name}Lib = require('../../dist/index');
 const version = require('../../package.json').version;
 
@@ -161,10 +172,10 @@ test('${name} library defined', () => {
     expect(${name}Lib.version).toBe(version);
 });`;
 
-    createFile(['modules', name, cloud, 'test', 'unit', 'index.test.js'], content);
+    createFile([root, 'modules', name, cloud, 'test', 'unit', 'index.test.js'], content);
 }
 
-function createChangelog (name, cloud) {
+function createChangelog () {
     const content = `# Changelog
 All notable changes to this project will be documented in this file.
 
@@ -177,18 +188,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create ${name} module.
 - Add VERSION function.`;
 
-    createFile(['modules', name, cloud, 'CHANGELOG.md'], content);
+    createFile([root, 'modules', name, cloud, 'CHANGELOG.md'], content);
 }
 
-function createMakefile (name, cloud) {
+function createMakefile () {
     const content = `MODULE = ${name}
 
 include ../../../common/${cloud}/Makefile`;
 
-    createFile(['modules', name, cloud, 'Makefile'], content);
+    createFile([root, 'modules', name, cloud, 'Makefile'], content);
 }
 
-function createPackage (name, cloud) {
+function createPackage () {
     const cname = capitalize(name);
     const ccloud = { bigquery: 'BigQuery', snowflake: 'Snowflake' }[cloud];
     const content = `{
@@ -202,15 +213,15 @@ function createPackage (name, cloud) {
   }
 }`;
 
-    createFile(['modules', name, cloud, 'package.json'], content);
+    createFile([root, 'modules', name, cloud, 'package.json'], content);
 }
 
-function createReadme (name, cloud) {
+function createReadme () {
     const cname = capitalize(name);
     const ccloud = { bigquery: 'BigQuery', snowflake: 'Snowflake' }[cloud];
     const content = `# ${cname} module for ${ccloud}
 
 TODO: add module description.`;
 
-    createFile(['modules', name, cloud, 'README.md'], content);
+    createFile([root, 'modules', name, cloud, 'README.md'], content);
 }
