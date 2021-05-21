@@ -3,7 +3,7 @@
 ----------------------------
 
 -- from https://stackoverflow.com/a/51600210
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@s2.TOKEN_FROMINT64`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@s2.TOKEN_FROMID`
 (x INT64)
 RETURNS STRING
 AS ((

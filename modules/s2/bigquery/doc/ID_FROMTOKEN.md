@@ -1,7 +1,7 @@
-### INT64_FROMTOKEN
+### ID_FROMTOKEN
 
 {{% bannerNote type="code" %}}
-s2.INT64_FROMTOKEN(token)
+s2.ID_FROMTOKEN(token)
 {{%/ bannerNote %}}
 
 **Description**

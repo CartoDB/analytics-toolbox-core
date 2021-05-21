@@ -1,7 +1,7 @@
-### TOKEN_FROMINT64
+### TOKEN_FROMID
 
 {{% bannerNote type="code" %}}
-s2.TOKEN_FROMINT64(id)
+s2.TOKEN_FROMID(id)
 {{%/ bannerNote %}}
 
 **Description**
