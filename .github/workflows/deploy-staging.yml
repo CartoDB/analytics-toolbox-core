@@ -58,6 +58,7 @@ jobs:
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: SFCARTOST
       SF_SHARE_ENABLED: 1
+      SF_SHARE_PREFIX: SFCARTOST_
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
