@@ -6,6 +6,7 @@
 
 export SF_DATABASE=""
 export SF_SCHEMA_PREFIX=""
+export SF_SHARE_PREFIX=""
 export SF_SHARE_ENABLED=0
 
 export SNOWSQL_ACCOUNT=""
