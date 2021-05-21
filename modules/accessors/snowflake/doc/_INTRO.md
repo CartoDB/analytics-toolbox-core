@@ -2,4 +2,4 @@
 
 <div class="badge core"></div>
 
-TODO: add module description.
+This module contains functions that provide information or transform internal geometries.

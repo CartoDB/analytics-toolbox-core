@@ -1,3 +1,3 @@
 # Accessors module for Snowflake
 
-TODO: add module description.
+This module contains functions that provide information or transform internal geometries.
