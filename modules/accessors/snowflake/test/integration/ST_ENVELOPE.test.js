@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../../../common/bigquery/test-utils');
+const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 // Points and featureCollection got from the turfjs tests
 // Convert the points to a way BigQuery can ingest them
@@ -7,29 +7,30 @@ const pointsFixturesOut = require('./envelope_fixtures/out/points');
 const featureColFixturesIn = require('./envelope_fixtures/in/featureCollection');
 const featureColFixturesOut = require('./envelope_fixtures/out/featureCollection');
 
-function getFeatureArray(fixture) {
-    let featuresArray = '[';
+function getFeatureArray (fixture) {
+    let featuresArray = 'ARRAY_CONSTRUCT(';
     fixture.geom.features.forEach(function(item){
-        featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
+        featuresArray += 'ST_ASGEOJSON(TO_GEOGRAPHY(\'' + JSON.stringify(item.geometry) +'\'))::STRING,';
     });
-    featuresArray = featuresArray.slice(0, -1) + ']';
+    featuresArray = featuresArray.slice(0, -1) + ')';
     return featuresArray;
 }
 
 test('ST_ENVELOPE should work', async () => {
     const query = `
         SELECT
-            \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(pointsFixturesIn)}) as envelope1,
-            \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
+            @@SF_PREFIX@@accessors.ST_ENVELOPE(${getFeatureArray(pointsFixturesIn)}) as envelope1,
+            @@SF_PREFIX@@accessors.ST_ENVELOPE(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].envelope1.value).toEqual(pointsFixturesOut.value);
-    expect(rows[0].envelope2.value).toEqual(featureColFixturesOut.value);
+    console.log(getFeatureArray(featureColFixturesIn));
+    expect(JSON.stringify(rows[0].ENVELOPE1)).toEqual(pointsFixturesOut.value);
+    expect(JSON.stringify(rows[0].ENVELOPE2)).toEqual(featureColFixturesOut.value);
 });
 
 test('ST_ENVELOPE should return NULL if any NULL mandatory argument', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@accessors.ST_ENVELOPE`(NULL) as envelope1';
+    const query = 'SELECT @@SF_PREFIX@@accessors.ST_ENVELOPE(NULL) as envelope1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].envelope1).toEqual(null);
+    expect(rows[0].ENVELOPE1).toEqual(null);
 });
