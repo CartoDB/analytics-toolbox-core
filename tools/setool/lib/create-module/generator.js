@@ -132,17 +132,17 @@ function createSQLShares () {
 
 USE @@SF_DATABASE@@;
 
-CREATE SHARE IF NOT EXISTS @@SF_SHARE_PUBLIC@@;
-grant usage on database @@SF_DATABASE@@ to share @@SF_SHARE_PUBLIC@@;
-grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE_PUBLIC@@;
+CREATE SHARE IF NOT EXISTS @@SF_SHARE@@;
+grant usage on database @@SF_DATABASE@@ to share @@SF_SHARE@@;
+grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE@@;
 
-grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE_PUBLIC@@;`;
+grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE@@;`;
 
     createFile([root, 'modules', name, cloud, 'sql', '_SHARE_CREATE.sql'], content);
 
     content = `${header}
 
-DROP SHARE @@SF_SHARE_PUBLIC@@;`;
+DROP SHARE @@SF_SHARE@@;`;
 
     createFile([root, 'modules', name, cloud, 'sql', '_SHARE_REMOVE.sql'], content);
 }
