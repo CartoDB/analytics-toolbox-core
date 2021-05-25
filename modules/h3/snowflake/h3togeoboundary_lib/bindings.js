@@ -18,10 +18,8 @@
 
 // Add some aliases to make the function definitions more intelligible
 const NUMBER = 'number';
-const BOOLEAN = NUMBER;
 const H3_LOWER = NUMBER;
 const H3_UPPER = NUMBER;
-const RESOLUTION = NUMBER;
 const POINTER = NUMBER;
 
 // Define the bindings to functions in the C lib. Functions are defined as

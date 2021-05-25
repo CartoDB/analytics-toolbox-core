@@ -21,24 +21,10 @@ const NUMBER = 'number';
 const BOOLEAN = NUMBER;
 const H3_LOWER = NUMBER;
 const H3_UPPER = NUMBER;
-const RESOLUTION = NUMBER;
-const POINTER = NUMBER;
 
 // Define the bindings to functions in the C lib. Functions are defined as
 // [name, return type, [arg types]]. You must run `npm run build-emscripten`
 // before new functions added here will be available.
 export default [
-    // The remaining functions are defined in the core lib in h3Api.h
-    ['h3IsValid', BOOLEAN, [H3_LOWER, H3_UPPER]],
-    ['geoToH3', H3_LOWER, [NUMBER, NUMBER, RESOLUTION]],
-    ['h3ToGeoBoundary', null, [H3_LOWER, H3_UPPER, POINTER]],
-    ['kRing', null, [H3_LOWER, H3_UPPER, NUMBER, POINTER]],
-    ['hexRing', null, [H3_LOWER, H3_UPPER, NUMBER, POINTER]],
-    ['polyfill', null, [POINTER, RESOLUTION, POINTER]],
-    ['compact', NUMBER, [POINTER, POINTER, NUMBER]],
-    ['uncompact', NUMBER, [POINTER, NUMBER, POINTER, NUMBER, RESOLUTION]],
-    ['h3IsPentagon', BOOLEAN, [H3_LOWER, H3_UPPER]],
-    ['h3ToParent', H3_LOWER, [H3_LOWER, H3_UPPER, RESOLUTION]],
-    ['h3ToChildren', null, [H3_LOWER, H3_UPPER, RESOLUTION, POINTER]],
-    ['h3Distance', NUMBER, [H3_LOWER, H3_UPPER, H3_LOWER, H3_UPPER]]
+    ['h3IsValid', BOOLEAN, [H3_LOWER, H3_UPPER]]
 ];
