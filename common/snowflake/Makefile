@@ -20,6 +20,7 @@ NODE_MODULES = ./node_modules
 NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
 REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e 's!@@SF_SHARE@@!$(SF_SHARE)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
+REPLACEMENTS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$f@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$f@@!!g' )
 
 .SILENT:
 
@@ -41,9 +42,13 @@ lint-fix: $(NODE_MODULES_DEPS)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
-	NAME=$(MODULE)Lib \
-	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
+	for f in $(shell ls libs); do \
+		NAME=$(MODULE)Lib \
+		PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+		LIB_DIR=libs/$${f}/index.js \
+		DIST_DIR=dist/$${f}.js \
+		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+	done
 
 test-unit:
 	UNIT_TEST=1 \
