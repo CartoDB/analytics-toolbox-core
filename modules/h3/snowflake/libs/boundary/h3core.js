@@ -37,13 +37,13 @@ const BASE_16 = 16;
 const SZ_INT = 4;
 const SZ_PTR = 4;
 const SZ_DBL = 8;
-const SZ_H3INDEX = H3.sizeOfH3Index();
-const SZ_GEOCOORD = H3.sizeOfGeoCoord();
+/*const SZ_H3INDEX = H3.sizeOfH3Index();
+const SZ_GEOCOORD = H3.sizeOfGeoCoord();*/
 const SZ_GEOBOUNDARY = H3.sizeOfGeoBoundary();
-const SZ_GEOPOLYGON = H3.sizeOfGeoPolygon();
+/*const SZ_GEOPOLYGON = H3.sizeOfGeoPolygon();
 const SZ_GEOFENCE = H3.sizeOfGeofence();
 const SZ_LINKED_GEOPOLYGON = H3.sizeOfLinkedGeoPolygon();
-const SZ_COORDIJ = H3.sizeOfCoordIJ();
+const SZ_COORDIJ = H3.sizeOfCoordIJ();*/
 
 // ----------------------------------------------------------------------------
 // Custom types
