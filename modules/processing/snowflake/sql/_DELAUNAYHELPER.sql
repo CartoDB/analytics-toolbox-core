@@ -30,7 +30,7 @@ AS $$ (
         FROM LATERAL FLATTEN(input => inputPoints) AS unnestedPoints, voronoi, LATERAL FLATTEN(input => voronoiArray) AS unnestedVoronoi
         WHERE ST_CONTAINS(TO_GEOGRAPHY(unnestedVoronoi.VALUE), TO_GEOGRAPHY(unnestedPoints.VALUE))
        )
-        SELECT ARRAY_AGG(ST_ASGEOJSON(TO_GEOGRAPHY(CONCAT('LINESTRING (', ST_X(p1.point), ' ', ST_Y(p1.point), ', ' , ST_X(p2.point), ' ', ST_Y(p2.point), ', ', ST_X(p3.point), ' ', ST_Y(p3.point), ', ', ST_X(p1.point), ' ', ST_Y(p1.point), ')'))))
+        SELECT ARRAY_AGG(ST_ASGEOJSON(TO_GEOGRAPHY(CONCAT('LINESTRING (', ST_X(p1.point), ' ', ST_Y(p1.point), ', ' , ST_X(p2.point), ' ', ST_Y(p2.point), ', ', ST_X(p3.point), ' ', ST_Y(p3.point), ', ', ST_X(p1.point), ' ', ST_Y(p1.point), ')')))::STRING)
         FROM triplets AS p1
         JOIN triplets AS p2
         ON ST_INTERSECTS(p1.poly, p2.poly)
