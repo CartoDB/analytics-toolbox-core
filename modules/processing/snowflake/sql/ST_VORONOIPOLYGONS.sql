@@ -13,5 +13,5 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@processing.ST_VORONOIPOLYGONS
 (points ARRAY)
 RETURNS ARRAY
 AS $$(
-    @@SF_PREFIX@@processing._VORONOIHELPER(points, null, 'poly')
+    @@SF_PREFIX@@processing._VORONOIHELPER(points, ARRAY_CONSTRUCT(-180,-85,180,85), 'poly')
 )$$;

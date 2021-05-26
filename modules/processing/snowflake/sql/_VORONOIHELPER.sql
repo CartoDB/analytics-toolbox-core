@@ -10,8 +10,8 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
 
-    if (!GEOJSON) {
-        return null;
+    if (!GEOJSON || !BBOX) {
+        return [];
     }
     
     if (BBOX != null && BBOX.length != 4) {
@@ -19,11 +19,7 @@ AS $$
     }
 
     const options = {};
-
-    // If the BBOX parameter is not included, turf.js will use a default [-180,-85,180,-85] BBOX 
-    if (BBOX != null) {
-        options.bbox = BBOX;
-    }
+    options.bbox = BBOX;
     
     const featuresCollection = processingLib.featureCollection(GEOJSON.map(x => processingLib.feature(JSON.parse(x))));
     const voronoiPolygons = processingLib.voronoi(featuresCollection, options);

@@ -22,7 +22,7 @@ test('ST_VORONOIPOLYGONS should work', async () => {
 });
 
 
-test('ST_VORONOIPOLYGONS should work with null bbox', async () => {
+test('ST_VORONOIPOLYGONS should work with default bbox', async () => {
     const query = `WITH voronoi AS (
             SELECT @@SF_PREFIX@@processing.ST_VORONOIPOLYGONS(${geojsonArray}) AS geomArray
         ) 
@@ -40,10 +40,21 @@ test('ST_VORONOIPOLYGONS should return an empty array if passed empty geometry',
     expect(rows[0].GEOMARRAY).toEqual([]);
 });
 
-test('ST_VORONOIPOLYGONS should return an empty array if passed empty geometry', async () => {
+test('ST_VORONOIPOLYGONS should fail if passed invalid bbox', async () => {
     const query = `SELECT @@SF_PREFIX@@processing.ST_VORONOIPOLYGONS(${geojsonArray}, 
         ARRAY_CONSTRUCT(1.0, 0.5, 2.5)) AS geomArray`;
     await expect(runQuery(query)).rejects.toThrow(
         'It should contain the BBOX extends, i.e., [xmin, ymin, xmax, ymax]'
     );
+});
+
+test('ST_VORONOIPOLYGONS should return NULL if any NULL mandatory argument', async () => {
+    const query = `
+        SELECT @@SF_PREFIX@@processing.ST_VORONOIPOLYGONS(NULL) as voronoi1,
+               @@SF_PREFIX@@processing.ST_VORONOIPOLYGONS(ARRAY_CONSTRUCT(), NULL) as voronoi2
+    `;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].VORONOI1.length).toEqual(0);
+    expect(rows[0].VORONOI2.length).toEqual(0);
 });
