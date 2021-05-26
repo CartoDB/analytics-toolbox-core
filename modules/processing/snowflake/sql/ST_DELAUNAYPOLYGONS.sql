@@ -1,0 +1,11 @@
+----------------------------
+-- Copyright (C) 2021 CARTO
+----------------------------
+
+CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@processing.ST_DELAUNAYPOLYGONS
+(points ARRAY)
+RETURNS ARRAY
+AS $$(
+    SELECT ARRAY_AGG(ST_ASGEOJSON(ST_MAKEPOLYGON(TO_GEOGRAPHY(unnested.VALUE))))
+    FROM LATERAL FLATTEN(input => @@SF_PREFIX@@processing._DELAUNAYHELPER(points)) AS unnested
+)$$;
