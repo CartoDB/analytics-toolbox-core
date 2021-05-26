@@ -1,0 +1,11 @@
+{
+  "name": "processing_snowflake",
+  "version": "1.0.0",
+  "description": "Processing module for Snowflake",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+    "@turf/turf": "^6.3.0"
+  }
+}
