@@ -1,4 +1,4 @@
-import { uncompact } from './h3core';
+import { uncompact } from './h3core_externalLib';
 
 export default {
     uncompact

@@ -14,7 +14,8 @@ module.exports = {
     },
     ignorePatterns: [
         'dist/*',
-        '*fixture*'
+        '*fixture*',
+        '*externalLib*'
     ],
     rules: {
         quotes: ['error', 'single'],
