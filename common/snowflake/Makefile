@@ -42,13 +42,22 @@ lint-fix: $(NODE_MODULES_DEPS)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
-	for f in $(shell ls libs); do \
+	if [ -d lib ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-		LIB_DIR=libs/$${f}/index.js \
-		DIST_DIR=dist/$${f}.js \
+		LIB_DIR=lib/index.js \
+		DIST_DIR=dist/index.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
-	done
+    fi
+	if [ -d libs ]; then \
+		for f in $(notdir $(basename $(wildcard libs/*))); do \
+			NAME=$(MODULE)Lib \
+			PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+			LIB_DIR=libs/$${f}/index.js \
+			DIST_DIR=dist/$${f}.js \
+			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+		done \
+    fi
 
 test-unit:
 	UNIT_TEST=1 \
