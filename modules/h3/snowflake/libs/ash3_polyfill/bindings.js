@@ -26,6 +26,9 @@ const POINTER = NUMBER;
 // before new functions added here will be available.
 export default [
     ['sizeOfH3Index', NUMBER],
+    ['sizeOfGeoCoord', NUMBER],
+    ['sizeOfGeoPolygon', NUMBER],
+    ['sizeOfGeofence', NUMBER],
     ['maxPolyfillSize', NUMBER, [POINTER, RESOLUTION]],
     ['polyfill', null, [POINTER, RESOLUTION, POINTER]]
 ];

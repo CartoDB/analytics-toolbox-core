@@ -18,6 +18,7 @@
 
 // Add some aliases to make the function definitions more intelligible
 const NUMBER = 'number';
+const BOOLEAN = NUMBER;
 const H3_LOWER = NUMBER;
 const H3_UPPER = NUMBER;
 const POINTER = NUMBER;
@@ -27,6 +28,7 @@ const POINTER = NUMBER;
 // before new functions added here will be available.
 export default [
     ['sizeOfH3Index', NUMBER],
+    ['h3IsValid', BOOLEAN, [H3_LOWER, H3_UPPER]],
     ['maxKringSize', NUMBER, [NUMBER]],
     ['kRing', null, [H3_LOWER, H3_UPPER, NUMBER, POINTER]]
 ];

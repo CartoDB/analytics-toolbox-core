@@ -18,6 +18,7 @@
 
 // Add some aliases to make the function definitions more intelligible
 const NUMBER = 'number';
+const BOOLEAN = NUMBER;
 const H3_LOWER = NUMBER;
 const H3_UPPER = NUMBER;
 const POINTER = NUMBER;
@@ -26,6 +27,7 @@ const POINTER = NUMBER;
 // [name, return type, [arg types]]. You must run `npm run build-emscripten`
 // before new functions added here will be available.
 export default [
+    ['h3IsValid', BOOLEAN, [H3_LOWER, H3_UPPER]],
     ['sizeOfGeoBoundary', NUMBER],
     ['h3ToGeoBoundary', null, [H3_LOWER, H3_UPPER, POINTER]]
 ];
