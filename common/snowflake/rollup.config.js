@@ -13,7 +13,7 @@ export default {
     },
     plugins: [
         resolve(),
-        commonjs(),
+        commonjs({ requireReturnsDefault: 'auto' }),
         json(),
         terser(),
         bundleSize()
