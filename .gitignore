@@ -6,3 +6,4 @@ snowsql_rt.*
 .DS_STORE
 dev_env.sh
 package-lock.json
+yarn.lock

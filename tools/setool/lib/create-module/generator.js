@@ -130,6 +130,7 @@ $$;`;
 function createSQLShares () {
     let content = `${header}
 
+USE role ACCOUNTADMIN;
 USE @@SF_DATABASE@@;
 
 CREATE SHARE IF NOT EXISTS @@SF_SHARE@@;
