@@ -1,17 +1,22 @@
 ### ID_FROM_UINT64REPR
 
 {{% bannerNote type="code" %}}
-s2.ID_FROM_UINT64REPR(ID)
+s2.ID_FROM_UINT64REPR(uid)
 {{%/ bannerNote %}}
 
 **Description**
 
-Returns the UINT64 representation of a cell ID.
+Returns the cell ID from a UINT64 representation.
 
-`INT64` * S2 cell ID.
+* `uid`: `STRING` UINT64 representation of a S2 cell ID.
 
 **Return type**
 
-`STRING`
+`INT64`
 
+**Example**
 
+```sql
+SELECT bqcarto.s2.ID_FROM_UINT64REPR("9926595690882924544");
+-- -8520148382826627072
+```

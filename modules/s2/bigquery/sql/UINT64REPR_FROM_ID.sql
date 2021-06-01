@@ -3,13 +3,13 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@s2.UINT64REPR_FROM_ID`
-(x INT64)
+(id INT64)
 RETURNS STRING
 AS (
-    IF (x < 0,
-        IF (x < -8446744073709551616,
-            CONCAT("9",format("%018d", 1000000000000000000+(8446744073709551616+x))),
-            CONCAT("1",format("%019d", 8446744073709551616+x))
+    IF (id < 0,
+        IF (id < -8446744073709551616,
+            CONCAT("9",format("%018d", 1000000000000000000+(8446744073709551616+id))),
+            CONCAT("1",format("%019d", 8446744073709551616+id))
          ),
-        CAST(x AS STRING))
+        CAST(id AS STRING))
 );
