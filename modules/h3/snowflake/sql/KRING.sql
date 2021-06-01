@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@SF_PREFIX@@h3._KRING
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 AS $$
-    @@SF_LIBRARY_kring@@
+    @@SF_LIBRARY_KRING@@
 
     if (!INDEX || DISTANCE == null || DISTANCE < 0) {
         return [];

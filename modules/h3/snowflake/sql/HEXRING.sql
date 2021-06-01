@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@SF_PREFIX@@h3._HEXRING
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 AS $$
-    @@SF_LIBRARY_hexring@@
+    @@SF_LIBRARY_HEXRING@@
 
     if (!INDEX || DISTANCE == null || DISTANCE < 0) {
         return [];

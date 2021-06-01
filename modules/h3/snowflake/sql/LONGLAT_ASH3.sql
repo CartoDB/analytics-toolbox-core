@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@SF_PREFIX@@h3._LONGLAT_ASH3
 RETURNS STRING
 LANGUAGE JAVASCRIPT
 AS $$
-    @@SF_LIBRARY_longlat_ash3@@
+    @@SF_LIBRARY_LONGLAT_ASH3@@
 
     if (LONGITUDE == null || LATITUDE == null || RESOLUTION == null) {
         return null;
