@@ -5,5 +5,7 @@
   "author": "CARTO",
   "license": "BSD-3-Clause",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "h3-js": "3.7.2"
+  }
 }

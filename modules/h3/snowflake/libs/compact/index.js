@@ -1,4 +1,4 @@
-import { compact} from './h3core_externalLib';
+import { compact } from './h3core_custom';
 
 export default {
     compact

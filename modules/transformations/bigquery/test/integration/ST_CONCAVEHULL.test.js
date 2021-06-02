@@ -11,7 +11,7 @@ const holeFixturesOut = require('./concavehull_fixtures/out/hole');
 
 function getFeatureArray (fixture) {
     let featuresArray = '[';
-    fixture.geom.features.forEach(function(item){
+    fixture.geom.features.forEach(function (item){
         featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
     });
     featuresArray = featuresArray.slice(0, -1) + ']';

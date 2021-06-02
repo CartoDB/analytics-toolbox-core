@@ -7,9 +7,9 @@ const pointsFixturesOut = require('./envelope_fixtures/out/points');
 const featureColFixturesIn = require('./envelope_fixtures/in/featureCollection');
 const featureColFixturesOut = require('./envelope_fixtures/out/featureCollection');
 
-function getFeatureArray(fixture) {
+function getFeatureArray (fixture) {
     let featuresArray = '[';
-    fixture.geom.features.forEach(function(item){
+    fixture.geom.features.forEach(function (item){
         featuresArray += 'ST_GEOGFROMGEOJSON(\'' + JSON.stringify(item.geometry) +'\', make_valid => true),';
     });
     featuresArray = featuresArray.slice(0, -1) + ']';
