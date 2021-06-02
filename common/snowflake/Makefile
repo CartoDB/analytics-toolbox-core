@@ -50,12 +50,14 @@ build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
     fi
 	if [ -d libs ]; then \
-		for f in $(notdir $(basename $(wildcard libs/*))); do \
+		for f in $(notdir $(shell find libs/* -type d)); do \
+			$(PRE_BUILD); \
 			NAME=$(MODULE)Lib \
 			PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 			LIB_DIR=libs/$${f}/index.js \
 			DIST_DIR=dist/$${f}.js \
 			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+			$(POST_BUILD); \
 		done \
     fi
 

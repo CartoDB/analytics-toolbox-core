@@ -1,5 +1,6 @@
 /*
  * Copyright 2018-2019 Uber Technologies, Inc.
+ * Copyright 2021 CARTO
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +19,17 @@
  * @module h3
  */
 
-import C from './libh3_externalLib';
-import BINDINGS from './bindings_externalLib';
+import C from './libh3_custom';
+import BINDINGS from 'h3-js/lib/bindings';
 
 const H3 = {};
 
 // Create the bound functions themselves
-BINDINGS.forEach(function bind(def) {
-    H3[def[0]] = C.cwrap(...def);
+BINDINGS.forEach(function bind (def) {
+    // Bind only exported functions
+    if (C['_' + def[0]]) {
+        H3[def[0]] = C.cwrap(...def);
+    }
 });
 
 // Alias the hexidecimal base for legibility
@@ -37,10 +41,13 @@ const BASE_16 = 16;
 const SZ_INT = 4;
 const SZ_PTR = 4;
 const SZ_DBL = 8;
-const SZ_H3INDEX = H3.sizeOfH3Index();
-const SZ_GEOCOORD = H3.sizeOfGeoCoord();
-const SZ_GEOPOLYGON = H3.sizeOfGeoPolygon();
-const SZ_GEOFENCE = H3.sizeOfGeofence();
+const SZ_H3INDEX = H3.sizeOfH3Index && H3.sizeOfH3Index();
+const SZ_GEOCOORD = H3.sizeOfGeoCoord && H3.sizeOfGeoCoord();
+const SZ_GEOBOUNDARY = H3.sizeOfGeoBoundary && H3.sizeOfGeoBoundary();
+const SZ_GEOPOLYGON = H3.sizeOfGeoPolygon && H3.sizeOfGeoPolygon();
+const SZ_GEOFENCE = H3.sizeOfGeofence && H3.sizeOfGeofence();
+const SZ_LINKED_GEOPOLYGON = H3.sizeOfLinkedGeoPolygon && H3.sizeOfLinkedGeoPolygon();
+const SZ_COORDIJ = H3.sizeOfCoordIJ && H3.sizeOfCoordIJ();
 
 // ----------------------------------------------------------------------------
 // Custom types
@@ -100,7 +107,7 @@ export const UNITS = {
  * @param  {mixed} res Value to validate
  * @throws {Error}     Error if invalid
  */
-function validateRes(res) {
+function validateRes (res) {
     if (typeof res !== 'number' || res < 0 || res > 15 || Math.floor(res) !== res) {
         throw new Error(`Invalid resolution: ${res}`);
     }
@@ -114,7 +121,7 @@ const INVALID_HEXIDECIMAL_CHAR = /[^0-9a-fA-F]/;
  * @param  {H3IndexInput} h3Index  H3 index to check
  * @return {number[]}         A two-element array with 32 lower bits and 32 upper bits
  */
-export function h3IndexToSplitLong(h3Index) {
+export function h3IndexToSplitLong (h3Index) {
     if (
         Array.isArray(h3Index) &&
         h3Index.length === 2 &&
@@ -137,7 +144,7 @@ export function h3IndexToSplitLong(h3Index) {
  * @param  {number} num  Integer to convert
  * @return {H3Index}     Hexidecimal string
  */
-function hexFrom32Bit(num) {
+function hexFrom32Bit (num) {
     if (num >= 0) {
         return num.toString(BASE_16);
     }
@@ -157,7 +164,7 @@ function hexFrom32Bit(num) {
  * @param  {number} upper Upper 32 bits
  * @return {H3Index}       H3 index
  */
-export function splitLongToh3Index(lower, upper) {
+export function splitLongToh3Index (lower, upper) {
     return hexFrom32Bit(upper) + zeroPad(8, hexFrom32Bit(lower));
 }
 
@@ -168,7 +175,7 @@ export function splitLongToh3Index(lower, upper) {
  * @param  {string} numStr  String to zero-pad
  * @return {string}         Zero-padded string
  */
-function zeroPad(fullLen, numStr) {
+function zeroPad (fullLen, numStr) {
     const numZeroes = fullLen - numStr.length;
     let outStr = '';
     for (let i = 0; i < numZeroes; i++) {
@@ -186,7 +193,7 @@ function zeroPad(fullLen, numStr) {
  * @param  {boolean} isGeoJson    Whether coordinates are in [lng, lat] order per GeoJSON spec
  * @return {number}               C pointer to populated Geofence struct
  */
-function polygonArrayToGeofence(polygonArray, geofence, isGeoJson) {
+function polygonArrayToGeofence (polygonArray, geofence, isGeoJson) {
     const numVerts = polygonArray.length;
     const geoCoordArray = C._calloc(numVerts, SZ_GEOCOORD);
     // Support [lng, lat] pairs if GeoJSON is specified
@@ -209,7 +216,7 @@ function polygonArrayToGeofence(polygonArray, geofence, isGeoJson) {
  * @param  {boolean} isGeoJson    Whether coordinates are in [lng, lat] order per GeoJSON spec
  * @return {number}               C pointer to populated GeoPolygon struct
  */
-function coordinatesToGeoPolygon(coordinates, isGeoJson) {
+function coordinatesToGeoPolygon (coordinates, isGeoJson) {
     // Any loops beyond the first loop are holes
     const numHoles = coordinates.length - 1;
     const geoPolygon = C._calloc(SZ_GEOPOLYGON);
@@ -237,7 +244,7 @@ function coordinatesToGeoPolygon(coordinates, isGeoJson) {
  * @private
  * @return {number} geoPolygon C pointer to populated GeoPolygon struct
  */
-function destroyGeoPolygon(geoPolygon) {
+function destroyGeoPolygon (geoPolygon) {
     // Byte positions within the struct
     const geofenceOffset = 0;
     const numHolesOffset = geofenceOffset + SZ_GEOFENCE;
@@ -267,7 +274,7 @@ function destroyGeoPolygon(geoPolygon) {
  *                             value of these functions is a 32-bit integer.
  * @return {number}            Long value as a [lower, upper] pair
  */
-function readLong(invocation) {
+function readLong (invocation) {
     // Upper 32-bits of the long set via side-effect
     const upper = C.getTempRet0();
     return [invocation, upper];
@@ -281,7 +288,7 @@ function readLong(invocation) {
  * @param  {number} invocation  Invoked function returning a single H3 index
  * @return {H3Index}            H3 index, or null if index was invalid
  */
-function readH3Index(invocation) {
+function readH3Index (invocation) {
     const [lower, upper] = readLong(invocation);
     // The lower bits are allowed to be 0s, but if the upper bits are 0
     // this represents an invalid H3 index
@@ -296,7 +303,7 @@ function readH3Index(invocation) {
  *                            reading an array
  * @return {H3Index}          H3 index, or null if index was invalid
  */
-function readH3IndexFromPointer(cAddress, offset = 0) {
+function readH3IndexFromPointer (cAddress, offset = 0) {
     const lower = C.getValue(cAddress + SZ_INT * offset * 2, 'i32');
     const upper = C.getValue(cAddress + SZ_INT * (offset * 2 + 1), 'i32');
     // The lower bits are allowed to be 0s, but if the upper bits are 0
@@ -313,7 +320,7 @@ function readH3IndexFromPointer(cAddress, offset = 0) {
  * @param {number} offset     Offset, in number of H3 indexes from beginning
  *                            of the current array
  */
-function storeH3Index(h3Index, cAddress, offset) {
+function storeH3Index (h3Index, cAddress, offset) {
     // HEAPU32 is a typed array projection on the index space
     // as unsigned 32-bit integers. This means the index needs
     // to be divided by SZ_INT (4) to access correctly. Also,
@@ -332,7 +339,7 @@ function storeH3Index(h3Index, cAddress, offset) {
  *                              necessarily the length of the output array.
  * @return {H3Index[]}          Array of H3 indexes
  */
-function readArrayOfHexagons(cAddress, maxCount) {
+function readArrayOfHexagons (cAddress, maxCount) {
     const out = [];
     for (let i = 0; i < maxCount; i++) {
         const h3Index = readH3IndexFromPointer(cAddress, i);
@@ -349,7 +356,7 @@ function readArrayOfHexagons(cAddress, maxCount) {
  * @param  {number} cAddress    Pointer to C input array
  * @param  {H3IndexInput[]} hexagons H3 indexes to pass to the C lib
  */
-function storeArrayOfHexagons(cAddress, hexagons) {
+function storeArrayOfHexagons (cAddress, hexagons) {
     // Assuming the cAddress points to an already appropriately
     // allocated space
     const count = hexagons.length;
@@ -365,13 +372,13 @@ function storeArrayOfHexagons(cAddress, hexagons) {
  * @param {number} lng     Coordinate longitude
  * @return {number}        C pointer to populated GeoCoord struct
  */
-function storeGeoCoord(lat, lng) {
+function storeGeoCoord (lat, lng) {
     const geoCoord = C._calloc(1, SZ_GEOCOORD);
     C.HEAPF64.set([lat, lng].map(degsToRads), geoCoord / SZ_DBL);
     return geoCoord;
 }
 
-function readSingleCoord(cAddress) {
+function readSingleCoord (cAddress) {
     return radsToDegs(C.getValue(cAddress, 'double'));
 }
 
@@ -381,7 +388,7 @@ function readSingleCoord(cAddress) {
  * @param  {number} cAddress    Pointer to C struct
  * @return {number[]}           [lat, lng] pair
  */
-function readGeoCoord(cAddress) {
+function readGeoCoord (cAddress) {
     return [readSingleCoord(cAddress), readSingleCoord(cAddress + SZ_DBL)];
 }
 
@@ -391,7 +398,7 @@ function readGeoCoord(cAddress) {
  * @param  {number} cAddress    Pointer to C struct
  * @return {number[]}           [lng, lat] pair
  */
-function readGeoCoordGeoJson(cAddress) {
+function readGeoCoordGeoJson (cAddress) {
     return [readSingleCoord(cAddress + SZ_DBL), readSingleCoord(cAddress)];
 }
 
@@ -403,7 +410,7 @@ function readGeoCoordGeoJson(cAddress) {
  * @param {boolean} closedLoop      Whether to close the loop
  * @return {Array[]}                Array of geo coordinate pairs
  */
-function readGeoBoundary(geoBoundary, geoJsonCoords, closedLoop) {
+function readGeoBoundary (geoBoundary, geoJsonCoords, closedLoop) {
     const numVerts = C.getValue(geoBoundary, 'i32');
     // Note that though numVerts is an int, the coordinate doubles have to be
     // aligned to 8 bytes, hence the 8-byte offset here
@@ -428,7 +435,7 @@ function readGeoBoundary(geoBoundary, geoJsonCoords, closedLoop) {
  * @param {boolean} formatAsGeoJson Whether to provide GeoJSON output: [lng, lat], closed loops
  * @return {number[][][][]}         MultiPolygon-style output.
  */
-function readMultiPolygon(polygon, formatAsGeoJson) {
+function readMultiPolygon (polygon, formatAsGeoJson) {
     const output = [];
     const readCoord = formatAsGeoJson ? readGeoCoordGeoJson : readGeoCoord;
     let loops;
@@ -468,7 +475,7 @@ function readMultiPolygon(polygon, formatAsGeoJson) {
  * @param  {number} cAddress    Pointer to C struct
  * @return {CoordIJ}            {i, j} pair
  */
-function readCoordIJ(cAddress) {
+function readCoordIJ (cAddress) {
     return {
         i: C.getValue(cAddress, 'i32'),
         j: C.getValue(cAddress + SZ_INT, 'i32')
@@ -481,7 +488,7 @@ function readCoordIJ(cAddress) {
  * @param  {number} cAddress    Pointer to C struct
  * @return {CoordIJ}            {i, j} pair
  */
-function storeCoordIJ(cAddress, {i, j}) {
+function storeCoordIJ (cAddress, {i, j}) {
     C.setValue(cAddress, i, 'i32');
     C.setValue(cAddress + SZ_INT, j, 'i32');
 }
@@ -494,7 +501,7 @@ function storeCoordIJ(cAddress, {i, j}) {
  * @param  {number} count       Length of C array
  * @return {number[]}           Javascript integer array
  */
-function readArrayOfPositiveIntegers(cAddress, count) {
+function readArrayOfPositiveIntegers (cAddress, count) {
     const out = [];
     for (let i = 0; i < count; i++) {
         const int = C.getValue(cAddress + SZ_INT * i, 'i32');
@@ -514,7 +521,7 @@ function readArrayOfPositiveIntegers(cAddress, count) {
  * @param  {H3IndexInput} h3Index  H3 index to check
  * @return {boolean}          Whether the index is valid
  */
-export function h3IsValid(h3Index) {
+export function h3IsValid (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     return Boolean(H3.h3IsValid(lower, upper));
 }
@@ -525,7 +532,7 @@ export function h3IsValid(h3Index) {
  * @param  {H3IndexInput} h3Index  H3 index to check
  * @return {boolean}          isPentagon
  */
-export function h3IsPentagon(h3Index) {
+export function h3IsPentagon (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     return Boolean(H3.h3IsPentagon(lower, upper));
 }
@@ -538,7 +545,7 @@ export function h3IsPentagon(h3Index) {
  * @param  {H3IndexInput} h3Index  H3 index to check
  * @return {boolean}          isResClassIII
  */
-export function h3IsResClassIII(h3Index) {
+export function h3IsResClassIII (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     return Boolean(H3.h3IsResClassIII(lower, upper));
 }
@@ -549,7 +556,7 @@ export function h3IsResClassIII(h3Index) {
  * @param  {H3IndexInput} h3Index  H3 index to get the base cell for
  * @return {number}           Index of the base cell (0-121)
  */
-export function h3GetBaseCell(h3Index) {
+export function h3GetBaseCell (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     return H3.h3GetBaseCell(lower, upper);
 }
@@ -560,7 +567,7 @@ export function h3GetBaseCell(h3Index) {
  * @param  {H3IndexInput} h3Index  H3 index to get faces for
  * @return {number[]}         Indices (0-19) of all intersected faces
  */
-export function h3GetFaces(h3Index) {
+export function h3GetFaces (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     const count = H3.maxFaceCount(lower, upper);
     const faces = C._malloc(SZ_INT * count);
@@ -576,7 +583,7 @@ export function h3GetFaces(h3Index) {
  * @param  {H3IndexInput} h3Index H3 index to get resolution
  * @return {number}          The number (0-15) resolution, or -1 if invalid
  */
-export function h3GetResolution(h3Index) {
+export function h3GetResolution (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     if (!H3.h3IsValid(lower, upper)) {
         // Compatability with stated API
@@ -593,7 +600,7 @@ export function h3GetResolution(h3Index) {
  * @param  {number} res Resolution of hexagons to return
  * @return {H3Index}    H3 index
  */
-export function geoToH3(lat, lng, res) {
+export function geoToH3 (lat, lng, res) {
     const latlng = C._malloc(SZ_GEOCOORD);
     // Slightly more efficient way to set the memory
     C.HEAPF64.set([lat, lng].map(degsToRads), latlng / SZ_DBL);
@@ -609,7 +616,7 @@ export function geoToH3(lat, lng, res) {
  * @param  {H3IndexInput} h3Index  H3 index
  * @return {number[]}         Point as a [lat, lng] pair
  */
-export function h3ToGeo(h3Index) {
+export function h3ToGeo (h3Index) {
     const latlng = C._malloc(SZ_GEOCOORD);
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     H3.h3ToGeo(lower, upper, latlng);
@@ -627,7 +634,7 @@ export function h3ToGeo(h3Index) {
  * @param {boolean} [formatAsGeoJson] Whether to provide GeoJSON output: [lng, lat], closed loops
  * @return {number[][]}               Array of [lat, lng] pairs
  */
-export function h3ToGeoBoundary(h3Index, formatAsGeoJson) {
+export function h3ToGeoBoundary (h3Index, formatAsGeoJson) {
     const geoBoundary = C._malloc(SZ_GEOBOUNDARY);
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     H3.h3ToGeoBoundary(lower, upper, geoBoundary);
@@ -646,7 +653,7 @@ export function h3ToGeoBoundary(h3Index, formatAsGeoJson) {
  * @param  {number} res       Resolution of hexagon to return
  * @return {H3Index}          H3 index of parent, or null for invalid input
  */
-export function h3ToParent(h3Index, res) {
+export function h3ToParent (h3Index, res) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     return readH3Index(H3.h3ToParent(lower, upper, res));
 }
@@ -658,7 +665,7 @@ export function h3ToParent(h3Index, res) {
  * @param  {number} res       Resolution of hexagons to return
  * @return {H3Index[]}        H3 indexes of children, or empty array for invalid input
  */
-export function h3ToChildren(h3Index, res) {
+export function h3ToChildren (h3Index, res) {
     // Bad input in this case can potentially result in high computation volume
     // using the current C algorithm. Validate and return an empty array on failure.
     if (!h3IsValid(h3Index)) {
@@ -680,7 +687,7 @@ export function h3ToChildren(h3Index, res) {
  * @param  {number} res       Resolution of hexagon to return
  * @return {H3Index}          H3 index of child, or null for invalid input
  */
-export function h3ToCenterChild(h3Index, res) {
+export function h3ToCenterChild (h3Index, res) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     return readH3Index(H3.h3ToCenterChild(lower, upper, res));
 }
@@ -692,7 +699,7 @@ export function h3ToCenterChild(h3Index, res) {
  * @param  {number} ringSize  Radius of k-ring
  * @return {H3Index[]}        H3 indexes for all hexagons in ring
  */
-export function kRing(h3Index, ringSize) {
+export function kRing (h3Index, ringSize) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     const maxCount = H3.maxKringSize(ringSize);
     const hexagons = C._calloc(maxCount, SZ_H3INDEX);
@@ -710,7 +717,7 @@ export function kRing(h3Index, ringSize) {
  * @param  {number} ringSize  Radius of k-ring
  * @return {H3Index[][]}      Array of arrays with H3 indexes for all hexagons each ring
  */
-export function kRingDistances(h3Index, ringSize) {
+export function kRingDistances (h3Index, ringSize) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     const maxCount = H3.maxKringSize(ringSize);
     const kRings = C._calloc(maxCount, SZ_H3INDEX);
@@ -744,7 +751,7 @@ export function kRingDistances(h3Index, ringSize) {
  * @return {H3Index[]}        H3 indexes for all hexagons in ring
  * @throws {Error}            If the algorithm could not calculate the ring
  */
-export function hexRing(h3Index, ringSize) {
+export function hexRing (h3Index, ringSize) {
     const maxCount = ringSize === 0 ? 1 : 6 * ringSize;
     const hexagons = C._calloc(maxCount, SZ_H3INDEX);
     const retVal = H3.hexRing(...h3IndexToSplitLong(h3Index), ringSize, hexagons);
@@ -771,7 +778,7 @@ export function hexRing(h3Index, ringSize) {
  *                                  pairs instead of [lat, lng]
  * @return {H3Index[]}              H3 indexes for all hexagons in polygon
  */
-export function polyfill(coordinates, res, isGeoJson) {
+export function polyfill (coordinates, res, isGeoJson) {
     validateRes(res);
     isGeoJson = Boolean(isGeoJson);
     // Guard against empty input
@@ -809,7 +816,7 @@ export function polyfill(coordinates, res, isGeoJson) {
  *                                    [lng, lat], closed loops
  * @return {number[][][][]}           MultiPolygon-style output.
  */
-export function h3SetToMultiPolygon(h3Indexes, formatAsGeoJson) {
+export function h3SetToMultiPolygon (h3Indexes, formatAsGeoJson) {
     // Early exit on empty input
     if (!h3Indexes || !h3Indexes.length) {
         return [];
@@ -840,7 +847,7 @@ export function h3SetToMultiPolygon(h3Indexes, formatAsGeoJson) {
  * @return {H3Index[]}       Compacted H3 indexes
  * @throws {Error}           If the input is invalid (e.g. duplicate hexagons)
  */
-export function compact(h3Set) {
+export function compact (h3Set) {
     if (!h3Set || !h3Set.length) {
         return [];
     }
@@ -870,7 +877,7 @@ export function compact(h3Set) {
  * @return {H3Index[]}              The uncompacted H3 indexes
  * @throws {Error}                  If the input is invalid (e.g. invalid resolution)
  */
-export function uncompact(compactedSet, res) {
+export function uncompact (compactedSet, res) {
     validateRes(res);
     if (!compactedSet || !compactedSet.length) {
         return [];
@@ -905,7 +912,7 @@ export function uncompact(compactedSet, res) {
  * @param  {H3IndexInput} destination Destination hexagon index
  * @return {boolean}             Whether the hexagons share an edge
  */
-export function h3IndexesAreNeighbors(origin, destination) {
+export function h3IndexesAreNeighbors (origin, destination) {
     const [oLower, oUpper] = h3IndexToSplitLong(origin);
     const [dLower, dUpper] = h3IndexToSplitLong(destination);
     return Boolean(H3.h3IndexesAreNeighbors(oLower, oUpper, dLower, dUpper));
@@ -918,7 +925,7 @@ export function h3IndexesAreNeighbors(origin, destination) {
  * @param  {H3IndexInput} destination Destination hexagon index
  * @return {H3Index}             H3 index of the edge, or null if no edge is shared
  */
-export function getH3UnidirectionalEdge(origin, destination) {
+export function getH3UnidirectionalEdge (origin, destination) {
     const [oLower, oUpper] = h3IndexToSplitLong(origin);
     const [dLower, dUpper] = h3IndexToSplitLong(destination);
     return readH3Index(H3.getH3UnidirectionalEdge(oLower, oUpper, dLower, dUpper));
@@ -930,7 +937,7 @@ export function getH3UnidirectionalEdge(origin, destination) {
  * @param  {H3IndexInput} edgeIndex H3 index of the edge
  * @return {H3Index}           H3 index of the edge origin
  */
-export function getOriginH3IndexFromUnidirectionalEdge(edgeIndex) {
+export function getOriginH3IndexFromUnidirectionalEdge (edgeIndex) {
     const [lower, upper] = h3IndexToSplitLong(edgeIndex);
     return readH3Index(H3.getOriginH3IndexFromUnidirectionalEdge(lower, upper));
 }
@@ -941,7 +948,7 @@ export function getOriginH3IndexFromUnidirectionalEdge(edgeIndex) {
  * @param  {H3IndexInput} edgeIndex H3 index of the edge
  * @return {H3Index}           H3 index of the edge destination
  */
-export function getDestinationH3IndexFromUnidirectionalEdge(edgeIndex) {
+export function getDestinationH3IndexFromUnidirectionalEdge (edgeIndex) {
     const [lower, upper] = h3IndexToSplitLong(edgeIndex);
     return readH3Index(H3.getDestinationH3IndexFromUnidirectionalEdge(lower, upper));
 }
@@ -952,7 +959,7 @@ export function getDestinationH3IndexFromUnidirectionalEdge(edgeIndex) {
  * @param  {H3IndexInput} edgeIndex H3 index of the edge
  * @return {boolean}           Whether the index is valid
  */
-export function h3UnidirectionalEdgeIsValid(edgeIndex) {
+export function h3UnidirectionalEdgeIsValid (edgeIndex) {
     const [lower, upper] = h3IndexToSplitLong(edgeIndex);
     return Boolean(H3.h3UnidirectionalEdgeIsValid(lower, upper));
 }
@@ -963,7 +970,7 @@ export function h3UnidirectionalEdgeIsValid(edgeIndex) {
  * @param  {H3IndexInput} edgeIndex H3 index of the edge
  * @return {H3Index[]}         [origin, destination] pair as H3 indexes
  */
-export function getH3IndexesFromUnidirectionalEdge(edgeIndex) {
+export function getH3IndexesFromUnidirectionalEdge (edgeIndex) {
     const [lower, upper] = h3IndexToSplitLong(edgeIndex);
     const count = 2;
     const hexagons = C._calloc(count, SZ_H3INDEX);
@@ -980,7 +987,7 @@ export function getH3IndexesFromUnidirectionalEdge(edgeIndex) {
  * @param  {H3IndexInput} h3Index   H3 index of the origin hexagon
  * @return {H3Index[]}         List of unidirectional edges
  */
-export function getH3UnidirectionalEdgesFromHexagon(h3Index) {
+export function getH3UnidirectionalEdgesFromHexagon (h3Index) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     const count = 6;
     const edges = C._calloc(count, SZ_H3INDEX);
@@ -998,7 +1005,7 @@ export function getH3UnidirectionalEdgesFromHexagon(h3Index) {
  * @param {boolean} [formatAsGeoJson] Whether to provide GeoJSON output: [lng, lat]
  * @return {number[][]}               Array of geo coordinate pairs
  */
-export function getH3UnidirectionalEdgeBoundary(edgeIndex, formatAsGeoJson) {
+export function getH3UnidirectionalEdgeBoundary (edgeIndex, formatAsGeoJson) {
     const geoBoundary = C._malloc(SZ_GEOBOUNDARY);
     const [lower, upper] = h3IndexToSplitLong(edgeIndex);
     H3.getH3UnidirectionalEdgeBoundary(lower, upper, geoBoundary);
@@ -1017,7 +1024,7 @@ export function getH3UnidirectionalEdgeBoundary(edgeIndex, formatAsGeoJson) {
  * @return {number}              Distance between hexagons, or a negative
  *                               number if the distance could not be computed
  */
-export function h3Distance(origin, destination) {
+export function h3Distance (origin, destination) {
     const [oLower, oUpper] = h3IndexToSplitLong(origin);
     const [dLower, dUpper] = h3IndexToSplitLong(destination);
     return H3.h3Distance(oLower, oUpper, dLower, dUpper);
@@ -1045,7 +1052,7 @@ export function h3Distance(origin, destination) {
  * @return {H3Index[]}           H3 indexes connecting origin and destination
  * @throws {Error}               If the line cannot be calculated
  */
-export function h3Line(origin, destination) {
+export function h3Line (origin, destination) {
     const [oLower, oUpper] = h3IndexToSplitLong(origin);
     const [dLower, dUpper] = h3IndexToSplitLong(destination);
     const count = H3.h3LineSize(oLower, oUpper, dLower, dUpper);
@@ -1078,7 +1085,7 @@ export function h3Line(origin, destination) {
  * @return {CoordIJ}             Coordinates as an `{i, j}` pair
  * @throws {Error}               If the IJ coordinates cannot be calculated
  */
-export function experimentalH3ToLocalIj(origin, destination) {
+export function experimentalH3ToLocalIj (origin, destination) {
     const ij = C._malloc(SZ_COORDIJ);
     const retVal = H3.experimentalH3ToLocalIj(
         ...h3IndexToSplitLong(origin),
@@ -1090,20 +1097,20 @@ export function experimentalH3ToLocalIj(origin, destination) {
     // Return the pair, or throw if an error code was returned.
     // Switch statement and error codes cribbed from h3-java's implementation.
     switch (retVal) {
-        case 0:
-            return coords;
-        case 1:
-            throw new Error('Incompatible origin and index.');
-        case 2:
-        default:
-            throw new Error(
-                'Local IJ coordinates undefined for this origin and index pair. ' +
+    case 0:
+        return coords;
+    case 1:
+        throw new Error('Incompatible origin and index.');
+    case 2:
+    default:
+        throw new Error(
+            'Local IJ coordinates undefined for this origin and index pair. ' +
                     'The index may be too far from the origin.'
-            );
-        case 3:
-        case 4:
-        case 5:
-            throw new Error('Encountered possible pentagon distortion');
+        );
+    case 3:
+    case 4:
+    case 5:
+        throw new Error('Encountered possible pentagon distortion');
     }
 }
 
@@ -1124,7 +1131,7 @@ export function experimentalH3ToLocalIj(origin, destination) {
  * @return {H3Index}            H3 index at the relative coordinates
  * @throws {Error}              If the H3 index cannot be calculated
  */
-export function experimentalLocalIjToH3(origin, coords) {
+export function experimentalLocalIjToH3 (origin, coords) {
     // Validate input coords
     if (!coords || typeof coords.i !== 'number' || typeof coords.j !== 'number') {
         throw new Error('Coordinates must be provided as an {i, j} object');
@@ -1160,22 +1167,22 @@ export function experimentalLocalIjToH3(origin, coords) {
  * @return {number}           Great circle distance
  * @throws {Error}            If the unit is invalid
  */
-export function pointDist(latlng1, latlng2, unit) {
+export function pointDist (latlng1, latlng2, unit) {
     const coord1 = storeGeoCoord(latlng1[0], latlng1[1]);
     const coord2 = storeGeoCoord(latlng2[0], latlng2[1]);
     let result;
     switch (unit) {
-        case UNITS.m:
-            result = H3.pointDistM(coord1, coord2);
-            break;
-        case UNITS.km:
-            result = H3.pointDistKm(coord1, coord2);
-            break;
-        case UNITS.rads:
-            result = H3.pointDistRads(coord1, coord2);
-            break;
-        default:
-            result = null;
+    case UNITS.m:
+        result = H3.pointDistM(coord1, coord2);
+        break;
+    case UNITS.km:
+        result = H3.pointDistKm(coord1, coord2);
+        break;
+    case UNITS.rads:
+        result = H3.pointDistRads(coord1, coord2);
+        break;
+    default:
+        result = null;
     }
     C._free(coord1);
     C._free(coord2);
@@ -1193,17 +1200,17 @@ export function pointDist(latlng1, latlng2, unit) {
  * @return {number}           Cell area
  * @throws {Error}            If the unit is invalid
  */
-export function cellArea(h3Index, unit) {
+export function cellArea (h3Index, unit) {
     const [lower, upper] = h3IndexToSplitLong(h3Index);
     switch (unit) {
-        case UNITS.m2:
-            return H3.cellAreaM2(lower, upper);
-        case UNITS.km2:
-            return H3.cellAreaKm2(lower, upper);
-        case UNITS.rads2:
-            return H3.cellAreaRads2(lower, upper);
-        default:
-            throw new Error(`Unknown unit: ${unit}`);
+    case UNITS.m2:
+        return H3.cellAreaM2(lower, upper);
+    case UNITS.km2:
+        return H3.cellAreaKm2(lower, upper);
+    case UNITS.rads2:
+        return H3.cellAreaRads2(lower, upper);
+    default:
+        throw new Error(`Unknown unit: ${unit}`);
     }
 }
 
@@ -1215,17 +1222,17 @@ export function cellArea(h3Index, unit) {
  * @return {number}           Cell area
  * @throws {Error}            If the unit is invalid
  */
-export function exactEdgeLength(edge, unit) {
+export function exactEdgeLength (edge, unit) {
     const [lower, upper] = h3IndexToSplitLong(edge);
     switch (unit) {
-        case UNITS.m:
-            return H3.exactEdgeLengthM(lower, upper);
-        case UNITS.km:
-            return H3.exactEdgeLengthKm(lower, upper);
-        case UNITS.rads:
-            return H3.exactEdgeLengthRads(lower, upper);
-        default:
-            throw new Error(`Unknown unit: ${unit}`);
+    case UNITS.m:
+        return H3.exactEdgeLengthM(lower, upper);
+    case UNITS.km:
+        return H3.exactEdgeLengthKm(lower, upper);
+    case UNITS.rads:
+        return H3.exactEdgeLengthRads(lower, upper);
+    default:
+        throw new Error(`Unknown unit: ${unit}`);
     }
 }
 
@@ -1237,15 +1244,15 @@ export function exactEdgeLength(edge, unit) {
  * @return {number}      Average area
  * @throws {Error}       If the unit is invalid
  */
-export function hexArea(res, unit) {
+export function hexArea (res, unit) {
     validateRes(res);
     switch (unit) {
-        case UNITS.m2:
-            return H3.hexAreaM2(res);
-        case UNITS.km2:
-            return H3.hexAreaKm2(res);
-        default:
-            throw new Error(`Unknown unit: ${unit}`);
+    case UNITS.m2:
+        return H3.hexAreaM2(res);
+    case UNITS.km2:
+        return H3.hexAreaKm2(res);
+    default:
+        throw new Error(`Unknown unit: ${unit}`);
     }
 }
 
@@ -1257,15 +1264,15 @@ export function hexArea(res, unit) {
  * @return {number}      Average edge length
  * @throws {Error}       If the unit is invalid
  */
-export function edgeLength(res, unit) {
+export function edgeLength (res, unit) {
     validateRes(res);
     switch (unit) {
-        case UNITS.m:
-            return H3.edgeLengthM(res);
-        case UNITS.km:
-            return H3.edgeLengthKm(res);
-        default:
-            throw new Error(`Unknown unit: ${unit}`);
+    case UNITS.m:
+        return H3.edgeLengthM(res);
+    case UNITS.km:
+        return H3.edgeLengthKm(res);
+    default:
+        throw new Error(`Unknown unit: ${unit}`);
     }
 }
 
@@ -1280,7 +1287,7 @@ export function edgeLength(res, unit) {
  * @param  {number} res  Hexagon resolution
  * @return {number}      Count
  */
-export function numHexagons(res) {
+export function numHexagons (res) {
     validateRes(res);
     // Get number as a long value
     const [lower, upper] = readLong(H3.numHexagons(res));
@@ -1299,7 +1306,7 @@ export function numHexagons(res) {
  * @static
  * @return {H3Index[]}  All H3 indexes at res 0
  */
-export function getRes0Indexes() {
+export function getRes0Indexes () {
     const count = H3.res0IndexCount();
     const hexagons = C._malloc(SZ_H3INDEX * count);
     H3.getRes0Indexes(hexagons);
@@ -1314,7 +1321,7 @@ export function getRes0Indexes() {
  * @param  {number} res  Hexagon resolution
  * @return {H3Index[]}  All H3 pentagon indexes at res
  */
-export function getPentagonIndexes(res) {
+export function getPentagonIndexes (res) {
     validateRes(res);
     const count = H3.pentagonIndexCount();
     const hexagons = C._malloc(SZ_H3INDEX * count);
@@ -1330,7 +1337,7 @@ export function getPentagonIndexes(res) {
  * @param  {number} deg Value in degrees
  * @return {number}     Value in radians
  */
-export function degsToRads(deg) {
+export function degsToRads (deg) {
     return (deg * Math.PI) / 180;
 }
 
@@ -1340,6 +1347,6 @@ export function degsToRads(deg) {
  * @param  {number} rad Value in radians
  * @return {number}     Value in degrees
  */
-export function radsToDegs(rad) {
+export function radsToDegs (rad) {
     return (rad * 180) / Math.PI;
 }
