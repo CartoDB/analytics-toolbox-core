@@ -10,8 +10,8 @@ SF_SHARE = $(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS
 
 SF_LIBRARY = ./dist/index.js
 
-SHARE_CREATE_FILE = sql/_SHARE_CREATE.sql
-SHARE_REMOVE_FILE = sql/_SHARE_REMOVE.sql
+SHARE_CREATE_FILE = ./sql/_SHARE_CREATE.sql
+SHARE_REMOVE_FILE = ./sql/_SHARE_REMOVE.sql
 
 COMMON_DIR = ../../../common/snowflake
 SCRIPTS_DIR = ../../../scripts
@@ -20,8 +20,11 @@ NODE_MODULES = ./node_modules
 NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
 REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e 's!@@SF_SHARE@@!$(SF_SHARE)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
+REPLACEMENTS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
 .SILENT:
+
+.PHONY: help lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy
 
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
@@ -41,9 +44,23 @@ lint-fix: $(NODE_MODULES_DEPS)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
-	NAME=$(MODULE)Lib \
-	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
+	if [ -d ./lib ]; then \
+		NAME=$(MODULE)Lib \
+		PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+		LIB_DIR=./lib/index.js \
+		DIST_DIR=./dist/index.js \
+		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+	elif [ -d ./libs ]; then \
+		for f in $(notdir $(shell find ./libs/* -type d 2>/dev/null)); do \
+			$(PRE_BUILD) \
+			NAME=$(MODULE)Lib \
+			PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+			LIB_DIR=./libs/$${f}/index.js \
+			DIST_DIR=./dist/$${f}.js \
+			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+			$(POST_BUILD) \
+		done \
+    fi
 
 test-unit:
 	UNIT_TEST=1 \

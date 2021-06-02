@@ -14,7 +14,8 @@ module.exports = {
     },
     ignorePatterns: [
         'dist/*',
-        '*fixture*'
+        '*fixture*',
+        '*custom*'
     ],
     rules: {
         quotes: ['error', 'single'],
@@ -22,6 +23,8 @@ module.exports = {
         'eol-last': ['error', 'never'],
         'comma-dangle': ['error', 'never'],
         'keyword-spacing': ['error', { before: true }],
-        'no-path-concat': ['off']
+        'no-path-concat': ['off'],
+        'space-before-function-paren': ['error', 'always'],
+        'object-curly-spacing': ['error', 'always']
     }
 };

@@ -5,9 +5,9 @@ import { terser } from 'rollup-plugin-terser';
 import bundleSize from 'rollup-plugin-bundle-size';
 
 export default {
-    input: 'lib/index.js',
+    input: process.env.LIB_DIR,
     output: {
-        file: 'dist/index.js',
+        file: process.env.DIST_DIR,
         format: process.env.UNIT_TEST ? 'umd': 'iife',
         name: process.env.NAME
     },

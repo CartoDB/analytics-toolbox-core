@@ -12,7 +12,7 @@ grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE@@;
 grant usage on function @@SF_PREFIX@@h3.COMPACT(ARRAY) to share @@SF_SHARE@@;
 grant usage on function @@SF_PREFIX@@h3.UNCOMPACT(ARRAY, INT) to share @@SF_SHARE@@;
 grant usage on function @@SF_PREFIX@@h3.DISTANCE(STRING, STRING) to share @@SF_SHARE@@;
-grant usage on function @@SF_PREFIX@@h3.HEXRING(STRING, DOUBLE) to share @@SF_SHARE@@;
+grant usage on function @@SF_PREFIX@@h3.HEXRING(STRING, INT) to share @@SF_SHARE@@;
 grant usage on function @@SF_PREFIX@@h3.ISPENTAGON(STRING) to share @@SF_SHARE@@;
 grant usage on function @@SF_PREFIX@@h3.ISVALID(STRING) to share @@SF_SHARE@@;
 grant usage on function @@SF_PREFIX@@h3.KRING(STRING, INT) to share @@SF_SHARE@@;
