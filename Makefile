@@ -2,6 +2,8 @@ export GIT_DIFF ?= off
 
 .SILENT:
 
+.PHONY: help lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy
+
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
 
