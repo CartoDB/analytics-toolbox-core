@@ -9,7 +9,7 @@ const featureColFixturesOut = require('./envelope_fixtures/out/featureCollection
 
 function getFeatureArray (fixture) {
     let featuresArray = 'ARRAY_CONSTRUCT(';
-    fixture.geom.features.forEach(function(item){
+    fixture.geom.features.forEach(function (item){
         featuresArray += 'ST_ASGEOJSON(TO_GEOGRAPHY(\'' + JSON.stringify(item.geometry) +'\'))::STRING,';
     });
     featuresArray = featuresArray.slice(0, -1) + ')';

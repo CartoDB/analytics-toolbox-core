@@ -2,7 +2,7 @@ const lib = require('../../dist/index');
 
 // TODO: refactor tests
 
-it('bbox should work', async() => {
+it('bbox should work', async () => {
     expect(lib.bbox(162)).toEqual([-90, 0, 0, 66.51326044311186]);
     expect(lib.bbox(12070922)).toEqual([-45, 44.840290651397986, -44.6484375, 45.08903556483103]);
     expect(lib.bbox(791040491538)).toEqual([-45, 44.99976701918129, -44.998626708984375, 45.00073807829068]);
@@ -67,7 +67,7 @@ test('toChildren should work at any level of zoom', () => {
     }
 });
 
-test('Sibling should work at any level of zoom', async() => {
+test('Sibling should work at any level of zoom', async () => {
     let z, lat, lng;
     for (z = 0; z < 29; ++z) {
         for (lat = -90; lat <= 90; lat = lat + 15) {
@@ -83,7 +83,7 @@ test('Sibling should work at any level of zoom', async() => {
     }
 });
 
-test('kring should work', async() => {
+test('kring should work', async () => {
     expect(lib.kring(162, 1).sort().map(String)).toEqual([
         '130', '162', '194', '2', '258', '290', '322', '34', '66'
     ]);
@@ -104,7 +104,7 @@ test('kring should work', async() => {
     ]);
 });
 
-test('Should be able to encode/decode between quadint and quadkey at any level of zoom', async() => {
+test('Should be able to encode/decode between quadint and quadkey at any level of zoom', async () => {
     let tilesPerLevel, x, y, xDecoded, yDecoded, zDecoded;
     for (let z = 0; z < 30; ++z) {
         if (z === 0) {
@@ -141,7 +141,7 @@ test('Should be able to encode/decode between quadint and quadkey at any level o
     }
 });
 
-test('Should be able to encode/decode tiles at any level of zoom', async() => {
+test('Should be able to encode/decode tiles at any level of zoom', async () => {
     let tilesPerLevel, x, y, xDecoded, yDecoded, zDecoded;
     for (let z = 0; z < 30; ++z) {
         if (z === 0) {
