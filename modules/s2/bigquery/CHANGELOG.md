@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ID_FROMTOKEN function.
 - Add ID_FROM_UINT64REPR function.
 - Add UINT64REPR_FROM_ID function.
-- 
+
 ## [1.0.0] - 2021-03-31
 
 ### Added
