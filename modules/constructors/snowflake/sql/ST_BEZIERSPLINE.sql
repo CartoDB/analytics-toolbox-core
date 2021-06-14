@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@constructors._BEZIERSPLINE
+CREATE OR REPLACE FUNCTION @@SF_PREFIX@@constructors._BEZIERSPLINE
 (geojson STRING, resolution DOUBLE, sharpness DOUBLE)
 RETURNS STRING
 LANGUAGE JAVASCRIPT
