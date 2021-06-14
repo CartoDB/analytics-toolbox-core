@@ -11,8 +11,8 @@ test('ST_DELAUNAYPOLYGONS should work', async () => {
       FROM delaunay, LATERAL FLATTEN(input => delaunayArray) AS unnested`
     
     const rows = await runQuery(query);
-    expect(rows.length).toEqual(fixturesOut.expectedTriangles1.length);
-    expect(rows.map(item => item.GEOM)).toEqual(fixturesOut.expectedTriangles2);
+    expect(rows.length).toEqual(fixturesOut.expectedPolygons1.length);
+    expect(rows.map(item => item.GEOM)).toEqual(fixturesOut.expectedPolygons1);
 });
 
 test('ST_DELAUNAYPOLYGONS should return an empty array if passed null geometry', async () => {
