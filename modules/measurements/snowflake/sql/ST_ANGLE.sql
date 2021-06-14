@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements._ANGLE
+CREATE OR REPLACE FUNCTION @@SF_PREFIX@@measurements._ANGLE
 (geojsonStart STRING, geojsonMid STRING, geojsonEnd STRING, mercator BOOLEAN)
 RETURNS DOUBLE
 LANGUAGE JAVASCRIPT

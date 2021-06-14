@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements._AZIMUTH
+CREATE OR REPLACE FUNCTION @@SF_PREFIX@@measurements._AZIMUTH
 (geojsonStart STRING, geojsonEnd STRING)
 RETURNS DOUBLE
 LANGUAGE JAVASCRIPT
