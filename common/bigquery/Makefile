@@ -23,10 +23,10 @@ REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
 $(NODE_MODULES):
 	yarn -s
@@ -53,12 +53,12 @@ test-unit:
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/unit --testTimeout=30000
 
-test-integration:
+test-integration-full:
 	$(MAKE) deploy
-	$(MAKE) test-integration-dry || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
 
-test-integration-dry: check $(NODE_MODULES_DEPS)
+test-integration: check $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/integration/$(F) --testTimeout=30000
 

@@ -78,7 +78,7 @@ jobs:
             service_account_key: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
             export_default_credentials: true
       - name: Run integration tests
-        run: make test-integration CLOUD=bigquery
+        run: make test-integration-full CLOUD=bigquery
 
   lint-sf:
     if: |
@@ -146,4 +146,4 @@ jobs:
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Run integration tests
-        run: make test-integration CLOUD=snowflake
+        run: make test-integration-full CLOUD=snowflake
