@@ -8,8 +8,8 @@ BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 BQ_LIBRARY = ./dist/index.js
-BQ_BUCKET = $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
-BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
+BQ_BUCKET_PATH = $(BQ_BUCKET)$(BQ_DATASET)/
+BQ_LIBRARY_BUCKET = $(BQ_BUCKET_PATH)index.js
 
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
 
@@ -69,6 +69,9 @@ deploy: check
 ifdef BQ_PERMISSIONS
 	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions.sh
 endif
+ifdef BQ_PERMISSIONS_GROUP
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
+endif
 
 clean:
 	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEPS)
@@ -79,11 +82,11 @@ clean-deploy: check
 
 storage-upload:
 	$(MAKE) build
-	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET)
+	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET_PATH)
 
 storage-remove:
-	if [ `$(GSUTIL) ls $(BQ_BUCKET) 2>&1 | grep "$(BQ_BUCKET)"` ]; then \
-		$(GSUTIL) rm -r -f $(BQ_BUCKET); \
+	if [ `$(GSUTIL) ls $(BQ_BUCKET_PATH) 2>&1 | grep "$(BQ_BUCKET_PATH)"` ]; then \
+		$(GSUTIL) rm -r -f $(BQ_BUCKET_PATH); \
 	fi
 
 dataset-create:
@@ -105,6 +108,6 @@ endif
 ifndef BQ_PROJECT
 	$(error BQ_PROJECT is undefined)
 endif
-ifndef BQ_BUCKET_PUBLIC
-	$(error BQ_BUCKET_PUBLIC is undefined)
+ifndef BQ_BUCKET
+	$(error BQ_BUCKET is undefined)
 endif

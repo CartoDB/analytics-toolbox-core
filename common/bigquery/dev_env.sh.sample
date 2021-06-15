@@ -6,6 +6,6 @@
 
 export BQ_REGION="us"
 export BQ_PROJECT="myproject"
-export BQ_BUCKET_PUBLIC="gs://mybucket/"
+export BQ_BUCKET="gs://mybucket/"
 export BQ_DATASET_PREFIX="myprefix_"
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/the/service/account.json"

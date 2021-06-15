@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Script to set module permissions to a Google group email.
+
+# * BQ_PROJECT
+# * BQ_PERMISSIONS_GROUP
+# * BQ_PERMISSIONS_ROLE_NAME
+# * BQ_PERMISSIONS_TARGET_DATASET
+
+BQ_PERMISSIONS_ROLE=projects/$BQ_PROJECT/roles/$BQ_PERMISSIONS_ROLE_NAME
+
+echo "Setting $BQ_PERMISSIONS_GROUP permissions to $BQ_PROJECT:$BQ_PERMISSIONS_TARGET_DATASET"
+
+PERMISSIONS_TEMPFILE_OLD=$(mktemp -u /tmp/old_module_permissions_XXXXXXXXXXXXXXXXX)
+PERMISSIONS_TEMPFILE_NEW=$(mktemp -u /tmp/new_module_permissions_XXXXXXXXXXXXXXXXX)
+
+bq show --format=prettyjson ${BQ_PROJECT}:${BQ_PERMISSIONS_TARGET_DATASET} > ${PERMISSIONS_TEMPFILE_OLD}
+jq --argjson access '[{"groupByEmail":"'"$BQ_PERMISSIONS_GROUP"'","role":"'"$BQ_PERMISSIONS_ROLE"'"}]' \
+   '.access += $access' ${PERMISSIONS_TEMPFILE_OLD} > ${PERMISSIONS_TEMPFILE_NEW}
+bq update --source ${PERMISSIONS_TEMPFILE_NEW} ${BQ_PROJECT}:${BQ_PERMISSIONS_TARGET_DATASET}
+
+rm -f ${PERMISSIONS_TEMPFILE_OLD}*
+rm -f ${PERMISSIONS_TEMPFILE_NEW}*

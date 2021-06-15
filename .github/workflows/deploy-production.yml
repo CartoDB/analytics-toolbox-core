@@ -5,6 +5,19 @@ on:
     branches:
       - master
 
+env:
+  BQ_BUCKET_OS: gs://spatialextension_os/
+  BQ_BUCKET_ST: gs://spatialextension_st/
+  BQ_BUCKET_SM: gs://spatialextension_sm/
+  BQ_BUCKET_ME: gs://spatialextension_me/
+  BQ_BUCKET_LA: gs://spatialextension_la/
+  BQ_BUCKET_UN: gs://spatialextension_un/
+  BQ_GROUP_ST: spatialextension_users_st@cartodb.com
+  BQ_GROUP_SM: spatialextension_users_sm@cartodb.com
+  BQ_GROUP_ME: spatialextension_users_me@cartodb.com
+  BQ_GROUP_LA: spatialextension_users_la@cartodb.com
+  BQ_GROUP_UN: spatialextension_users_un@cartodb.com
+
 jobs:
 
   deploy-bq:
@@ -14,15 +27,61 @@ jobs:
       matrix:
         include:
           - region: us
-            project: bqcarto
+            project: carto-os
+            bucket: ${{ env.BQ_BUCKET_OS }}
+            permissions: '[{"specialGroup":"allAuthenticatedUsers","role":"READER"}]'
+          - region: us
+            project: carto-st
+            bucket: ${{ env.BQ_BUCKET_ST }}
+            group: ${{ env.BQ_GROUP_ST }}
+          - region: us
+            project: carto-sm
+            bucket: ${{ env.BQ_BUCKET_SM }}
+            group: ${{ env.BQ_GROUP_SM }}
+          - region: us
+            project: carto-me
+            bucket: ${{ env.BQ_BUCKET_ME }}
+            group: ${{ env.BQ_GROUP_ME }}
+          - region: us
+            project: carto-la
+            bucket: ${{ env.BQ_BUCKET_LA }}
+            group: ${{ env.BQ_GROUP_LA }}
+          - region: us
+            project: carto-un
+            bucket: ${{ env.BQ_BUCKET_UN }}
+            group: ${{ env.BQ_GROUP_UN }}
           - region: eu
-            project: bqcartoeu
+            project: carto-os-eu
+            bucket: ${{ env.BQ_BUCKET_OS }}
+            permissions: '[{"specialGroup":"allAuthenticatedUsers","role":"READER"}]'
+          - region: eu
+            project: carto-st-eu
+            bucket: ${{ env.BQ_BUCKET_ST }}
+            group: ${{ env.BQ_GROUP_ST }}
+          - region: eu
+            project: carto-sm-eu
+            bucket: ${{ env.BQ_BUCKET_SM }}
+            group: ${{ env.BQ_GROUP_SM }}
+          - region: eu
+            project: carto-me-eu
+            bucket: ${{ env.BQ_BUCKET_ME }}
+            group: ${{ env.BQ_GROUP_ME }}
+          - region: eu
+            project: carto-la-eu
+            bucket: ${{ env.BQ_BUCKET_LA }}
+            group: ${{ env.BQ_GROUP_LA }}
+          - region: eu
+            project: carto-un-eu
+            bucket: ${{ env.BQ_BUCKET_UN }}
+            group: ${{ env.BQ_GROUP_UN }}
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
       BQ_PROJECT: ${{ matrix.project }}
-      BQ_BUCKET_PUBLIC: gs://bqcarto-public/
-      BQ_PERMISSIONS: '[{"role":"READER","specialGroup":"allAuthenticatedUsers"}]'
+      BQ_BUCKET: ${{ matrix.bucket }}
+      BQ_PERMISSIONS: ${{ matrix.permissions }}
+      BQ_PERMISSIONS_GROUP: ${{ matrix.group }}
+      BQ_PERMISSIONS_ROLE_NAME: spatialextensionUser
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
