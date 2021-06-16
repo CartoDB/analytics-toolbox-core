@@ -16,9 +16,11 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.s2.LONGLAT_ASID(-3.7038, 40.4168, 8);
+SELECT carto-os.s2.LONGLAT_ASID(-3.7038, 40.4168, 8);
 -- 955378847514099712
 ```

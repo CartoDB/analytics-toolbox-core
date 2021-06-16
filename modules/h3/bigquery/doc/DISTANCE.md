@@ -15,10 +15,12 @@ Returns the **grid distance** between two hexagon indexes. This function may fai
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.h3.DISTANCE('847b591ffffffff', '847b59bffffffff');
+SELECT carto-os.h3.DISTANCE('847b591ffffffff', '847b59bffffffff');
 -- 1
 ```
 

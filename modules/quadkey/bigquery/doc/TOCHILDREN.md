@@ -15,10 +15,12 @@ Returns an array with the children quadints of a given quadint for a specific re
 
 `ARRAY<INT64>`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.TOCHILDREN(1155, 4);
+SELECT carto-os.quadkey.TOCHILDREN(1155, 4);
 -- 4356
 -- 4868
 -- 4388

@@ -15,9 +15,11 @@ Returns the parent quadint of a given quadint for a specific resolution. A paren
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.TOPARENT(4388, 3);
+SELECT carto-os.quadkey.TOPARENT(4388, 3);
 -- 1155
 ```

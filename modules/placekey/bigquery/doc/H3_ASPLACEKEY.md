@@ -14,9 +14,11 @@ Returns the placekey equivalent to the given H3 index.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.placekey.H3_ASPLACEKEY('847b59dffffffff');
+SELECT carto-os.placekey.H3_ASPLACEKEY('847b59dffffffff');
 -- @ff7-swh-m49
 ```

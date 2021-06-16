@@ -15,9 +15,11 @@ Takes two points and finds the geographic bearing between them, i.e. the angle m
 
 `FLOAT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ``` sql
-SELECT bqcarto.measurements.ST_AZIMUTH(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,41.4167));
+SELECT carto-os.measurements.ST_AZIMUTH(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,41.4167));
 -- -36.75052908494255
 ```

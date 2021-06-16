@@ -14,9 +14,11 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 
 `GEOGRAPHY`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.ST_BOUNDARY(4388);
+SELECT carto-os.quadkey.ST_BOUNDARY(4388);
 -- POLYGON((22.5 0, 22.5 -21.9430455334382, 22.67578125 ...
 ```

@@ -15,9 +15,11 @@ Calculate the Minkowski p-norm distance between two features. https://github.com
 
 `ARRAY<STRING>`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ``` sql
-SELECT bqcarto.measurements.ST_MINKOWSKIDISTANCE([ST_GEOGPOINT(10,10),ST_GEOGPOINT(13,10)],2);
+SELECT carto-os.measurements.ST_MINKOWSKIDISTANCE([ST_GEOGPOINT(10,10),ST_GEOGPOINT(13,10)],2);
 -- ["0,0.3333333333333333","0.3333333333333333,0"]
 ```

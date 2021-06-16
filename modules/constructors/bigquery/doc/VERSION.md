@@ -12,9 +12,11 @@ Returns the current version of the constructors module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.constructors.VERSION();
+SELECT carto-os.constructors.VERSION();
 -- 1.1.0
 ```

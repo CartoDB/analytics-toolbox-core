@@ -12,8 +12,10 @@ Returns the current version of the S2 module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.s2.VERSION();
+SELECT carto-os.s2.VERSION();
 -- 1.0.0

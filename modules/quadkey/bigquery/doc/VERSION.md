@@ -12,9 +12,11 @@ Returns the current version of the quadkey module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.VERSION();
+SELECT carto-os.quadkey.VERSION();
 -- 1.0.1
 ```

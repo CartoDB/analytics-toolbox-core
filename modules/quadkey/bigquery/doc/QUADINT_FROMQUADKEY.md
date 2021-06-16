@@ -14,9 +14,11 @@ Returns the quadint equivalent to the input quadkey.
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.QUADINT_FROMQUADKEY("3001");
+SELECT carto-os.quadkey.QUADINT_FROMQUADKEY("3001");
 -- 4388
 ```

@@ -12,9 +12,11 @@ Returns the current version of the measurements module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.measurements.VERSION();
+SELECT carto-os.measurements.VERSION();
 -- 1.0.0
 ```

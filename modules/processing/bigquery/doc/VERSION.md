@@ -12,9 +12,11 @@ Returns the current version of the processing module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.processing.VERSION();
+SELECT carto-os.processing.VERSION();
 -- 1.0.0
 ```

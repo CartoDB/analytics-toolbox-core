@@ -15,9 +15,11 @@ Returns the quadint directly next to the given quadint at the same zoom level. T
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.SIBLING(4388, 'up');
+SELECT carto-os.quadkey.SIBLING(4388, 'up');
 -- 3876
 ```

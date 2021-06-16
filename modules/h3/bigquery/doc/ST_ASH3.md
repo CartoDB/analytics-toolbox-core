@@ -15,10 +15,12 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.h3.ST_ASH3(ST_GEOGPOINT(40.4168, -3.7038), 4);
+SELECT carto-os.h3.ST_ASH3(ST_GEOGPOINT(40.4168, -3.7038), 4);
 -- 847b59dffffffff
 ```
 
