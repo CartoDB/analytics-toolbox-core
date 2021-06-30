@@ -14,9 +14,11 @@ Returns the cell ID from a UINT64 representation.
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.s2.ID_FROM_UINT64REPR("9926595690882924544");
+SELECT carto-os.s2.ID_FROM_UINT64REPR('9926595690882924544');
 -- -8520148382826627072
 ```

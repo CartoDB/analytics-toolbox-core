@@ -12,9 +12,11 @@ Returns the current version of the accessors module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.accessors.VERSION();
+SELECT carto-os.accessors.VERSION();
 -- 1.0.0
 ```

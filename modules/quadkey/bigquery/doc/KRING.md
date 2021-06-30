@@ -15,10 +15,12 @@ Returns an array containing all the quadints directly next to the given quadint 
 
 `ARRAY<INT64>`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.KRING(4388, 1);
+SELECT carto-os.quadkey.KRING(4388, 1);
 -- 3844
 -- 3876
 -- 3908

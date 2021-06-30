@@ -15,9 +15,11 @@ Returns the quadint of a given point at a given level of detail.
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.ST_ASQUADINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
+SELECT carto-os.quadkey.ST_ASQUADINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
 -- 4388
 ```

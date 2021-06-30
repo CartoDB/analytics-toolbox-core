@@ -8,8 +8,8 @@ BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 BQ_LIBRARY = ./dist/index.js
-BQ_BUCKET = $(BQ_BUCKET_PUBLIC)$(BQ_DATASET)/
-BQ_LIBRARY_BUCKET = $(BQ_BUCKET)index.js
+BQ_BUCKET_PATH = $(BQ_BUCKET)$(BQ_DATASET)/
+BQ_LIBRARY_BUCKET = $(BQ_BUCKET_PATH)index.js
 
 BQ_MODULE_CORE_LABEL = spatial_extension_module:core
 
@@ -23,10 +23,10 @@ REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
 $(NODE_MODULES):
 	yarn -s
@@ -53,12 +53,12 @@ test-unit:
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/unit --testTimeout=30000
 
-test-integration:
+test-integration-full:
 	$(MAKE) deploy
-	$(MAKE) test-integration-dry || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
 
-test-integration-dry: check $(NODE_MODULES_DEPS)
+test-integration: check $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
 	jest test/integration/$(F) --testTimeout=30000
 
@@ -68,6 +68,9 @@ deploy: check
 	$(MAKE) dataset-deploy
 ifdef BQ_PERMISSIONS
 	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions.sh
+endif
+ifdef BQ_PERMISSIONS_GROUP
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
 endif
 
 clean:
@@ -79,11 +82,11 @@ clean-deploy: check
 
 storage-upload:
 	$(MAKE) build
-	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET)
+	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET_PATH)
 
 storage-remove:
-	if [ `$(GSUTIL) ls $(BQ_BUCKET) 2>&1 | grep "$(BQ_BUCKET)"` ]; then \
-		$(GSUTIL) rm -r -f $(BQ_BUCKET); \
+	if [ `$(GSUTIL) ls $(BQ_BUCKET_PATH) 2>&1 | grep "$(BQ_BUCKET_PATH)"` ]; then \
+		$(GSUTIL) rm -r -f $(BQ_BUCKET_PATH); \
 	fi
 
 dataset-create:
@@ -105,6 +108,6 @@ endif
 ifndef BQ_PROJECT
 	$(error BQ_PROJECT is undefined)
 endif
-ifndef BQ_BUCKET_PUBLIC
-	$(error BQ_BUCKET_PUBLIC is undefined)
+ifndef BQ_BUCKET
+	$(error BQ_BUCKET is undefined)
 endif

@@ -14,10 +14,12 @@ Returns an array with the boundary box of a given quadint. This boundary box con
 
 `ARRAY<FLOAT64>`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.BBOX(4388);
+SELECT carto-os.quadkey.BBOX(4388);
 -- 22.5
 -- -21.943045533438177
 -- 45.0

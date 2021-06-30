@@ -12,8 +12,10 @@ Returns the current version of the placekey module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.placekey.VERSION();
+SELECT carto-os.placekey.VERSION();
 -- 1.0.1

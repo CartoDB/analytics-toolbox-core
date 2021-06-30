@@ -9,6 +9,7 @@ const path = require('path');
 const dir = 'modules';
 const cloud = process.env.CLOUD || '';
 const diff = process.env.GIT_DIFF || '';
+const force = process.env.INPUT_FORCE_DEPLOY || '';
 const input = [];
 const output = [];
 
@@ -27,7 +28,7 @@ modules.forEach(module => {
 });
 
 function add (i, include) {
-    include = include || diff === 'off' || diff.includes(path.join(dir, i.name, cloud));
+    include = include || force === 'true' || diff === 'off' || diff.includes(path.join(dir, i.name, cloud));
     for (const dep of i.deps) {
         add(input.find(i => i.name === dep), include);
     }
