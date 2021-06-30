@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment of all modules'
+        default: 'false'
+
+env:
+  INPUT_FORCE_DEPLOY: ${{ github.event.inputs.force_deploy }}
 
 jobs:
 
