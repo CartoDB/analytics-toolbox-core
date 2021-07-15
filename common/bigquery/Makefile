@@ -26,7 +26,7 @@ REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$
 .PHONY: help lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy, serialize_package"
 
 $(NODE_MODULES):
 	yarn -s
@@ -96,6 +96,14 @@ dataset-remove:
 dataset-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit 1; \
+	done
+
+serialize_package:
+	rm -f bundle_pkg.sql; \
+	echo "CREATE SCHEMA IF NOT EXISTS @@BQ_PREFIX@@$(MODULE);" >> bundle_pkg.sql; \
+	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	  	cat $$n >> bundle_pkg.sql; \
+		echo "" >> bundle_pkg.sql; \
 	done
 
 check:
