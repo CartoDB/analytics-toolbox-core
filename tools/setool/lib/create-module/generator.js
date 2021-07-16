@@ -75,7 +75,9 @@ Returns the current version of the ${name} module.
 
 \`STRING\`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 \`\`\`sql
 SELECT ${project}.${name}.VERSION();

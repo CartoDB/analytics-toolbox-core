@@ -18,7 +18,7 @@ jobs:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
       BQ_PROJECT: bqcartost-core-${{ github.event.pull_request.number }}
-      BQ_BUCKET_PUBLIC: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.pull_request.number }}/
+      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.pull_request.number }}/
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

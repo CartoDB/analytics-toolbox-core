@@ -14,19 +14,21 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 
 `BOOLEAN`
 
+{{% customSelector %}}
 **Examples**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.placekey.ISVALID('@ff7-swh-m49');
+SELECT carto-os.placekey.ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT bqcarto.placekey.ISVALID('ff7-swh-m49');
+SELECT carto-os.placekey.ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT bqcarto.placekey.ISVALID('x');
+SELECT carto-os.placekey.ISVALID('x');
 -- false
 ```

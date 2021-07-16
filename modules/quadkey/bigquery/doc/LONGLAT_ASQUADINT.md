@@ -16,9 +16,11 @@ Returns the quadint representation for a given level of detail and geographic co
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.LONGLAT_ASQUADINT(40.4168, -3.7038, 4);
+SELECT carto-os.quadkey.LONGLAT_ASQUADINT(40.4168, -3.7038, 4);
 -- 4388
 ```

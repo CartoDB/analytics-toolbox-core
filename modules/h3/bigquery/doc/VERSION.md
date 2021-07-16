@@ -12,9 +12,11 @@ Returns the current version of the H3 module.
 
 `STRING`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.h3.VERSION();
+SELECT carto-os.h3.VERSION();
 -- 1.0.1
 ```

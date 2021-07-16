@@ -16,9 +16,11 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 
 `GEOGRAPHY`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ``` sql
-SELECT bqcarto.transformations.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
+SELECT carto-os.transformations.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
 -- LINESTRING(-3.70325 40.4167 ... 
 ```

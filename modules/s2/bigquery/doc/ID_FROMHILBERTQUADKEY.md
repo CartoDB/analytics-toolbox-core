@@ -14,9 +14,11 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.s2.ID_FROMHILBERTQUADKEY('0/30002221');
+SELECT carto-os.s2.ID_FROMHILBERTQUADKEY('0/30002221');
 -- 1735346007979327488
 ```

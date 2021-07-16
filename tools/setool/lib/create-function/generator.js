@@ -71,7 +71,9 @@ TODO.
 
 \`${frtype}\`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 \`\`\`sql
 SELECT ${project}.${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')});
