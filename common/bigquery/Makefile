@@ -100,7 +100,7 @@ dataset-deploy:
 
 serialize_package:
 	rm -f bundle_pkg.sql; \
-	echo "CREATE SCHEMA IF NOT EXISTS @@BQ_PREFIX@@$(MODULE);" >> bundle_pkg.sql; \
+	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@$(MODULE)\`;" >> bundle_pkg.sql; \
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	cat $$n >> bundle_pkg.sql; \
 		echo "" >> bundle_pkg.sql; \
