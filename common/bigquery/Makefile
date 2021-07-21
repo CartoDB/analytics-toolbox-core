@@ -99,6 +99,7 @@ dataset-deploy:
 	done
 
 serialize_package:
+	$(MAKE) build
 	rm -f bundle_pkg.sql; \
 	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@$(MODULE)\`;" >> bundle_pkg.sql; \
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
