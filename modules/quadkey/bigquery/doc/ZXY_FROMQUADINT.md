@@ -14,10 +14,12 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 
 `STRUCT<INT64, INT64, INT64>`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.ZXY_FROMQUADINT(4388);
+SELECT carto-os.quadkey.ZXY_FROMQUADINT(4388);
 -- z  x  y
 -- 4  9  8
 ```

@@ -20,9 +20,11 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.quadkey.QUADINT_FROMZXY(4, 9, 8);
+SELECT carto-os.quadkey.QUADINT_FROMZXY(4, 9, 8);
 -- 4388
 ```

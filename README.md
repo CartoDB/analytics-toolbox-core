@@ -12,7 +12,7 @@ SELECT jslibs.h3.ST_H3(ST_GEOGPOINT(10,10),11)
 it is now:
 
 ```sql
-SELECT bqcarto.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
+SELECT carto-os.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
 ```
 
 ## 💬 New Discord channel 
@@ -34,7 +34,7 @@ The project is divided into modules, which are a set of components under a commo
 
 ![image](https://user-images.githubusercontent.com/127803/113288249-fed25100-92ee-11eb-952b-5c01a5976612.png)
 
-We recommend that you pin ```bqcarto``` in your BigQuery console.
+We recommend that you pin ```carto-os``` in your BigQuery console.
 
 ### Quadkey
 

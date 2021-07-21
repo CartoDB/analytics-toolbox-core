@@ -1,0 +1,50 @@
+name: Production old
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment of all modules'
+        default: 'false'
+
+env:
+  INPUT_FORCE_DEPLOY: ${{ github.event.inputs.force_deploy }}
+
+jobs:
+
+  deploy-bq-old:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        include:
+          - region: us
+            project: bqcarto
+          - region: eu
+            project: bqcartoeu
+    env:
+      GCLOUD_VERSION: 290.0.1
+      BQ_REGION: ${{ matrix.region }}
+      BQ_PROJECT: ${{ matrix.project }}
+      BQ_BUCKET: gs://bqcarto-public/
+      BQ_PERMISSIONS: '[{"specialGroup":"allAuthenticatedUsers","role":"READER"}]'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Install gcloud
+        uses: google-github-actions/setup-gcloud@master
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ env.BQ_PROJECT }}
+            service_account_key: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
+            export_default_credentials: true
+      - name: Deploy to production
+        run: make deploy CLOUD=bigquery

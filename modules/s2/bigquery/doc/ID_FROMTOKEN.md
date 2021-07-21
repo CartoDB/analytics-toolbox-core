@@ -14,10 +14,12 @@ Returns the conversion of a token into a S2 cell ID.
 
 `INT64`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.s2.ID_FROMTOKEN("89c25a3000000000");
+SELECT carto-os.s2.ID_FROMTOKEN('89c25a3000000000');
 -- -8520148382826627072
 ```
 

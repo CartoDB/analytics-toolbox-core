@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment of all modules'
+        default: 'false'
+
+env:
+  INPUT_FORCE_DEPLOY: ${{ github.event.inputs.force_deploy }}
 
 jobs:
 
@@ -14,15 +22,61 @@ jobs:
       matrix:
         include:
           - region: us
-            project: bqcarto
+            project: carto-os
+            bucket: gs://spatialextension_os/
+            permissions: '[{"specialGroup":"allAuthenticatedUsers","role":"READER"}]'
+          - region: us
+            project: carto-st
+            bucket: gs://spatialextension_st/
+            group: spatialextension_users_st@cartodb.com
+          - region: us
+            project: carto-sm
+            bucket: gs://spatialextension_sm/
+            group: spatialextension_users_sm@cartodb.com
+          - region: us
+            project: carto-me
+            bucket: gs://spatialextension_me/
+            group: spatialextension_users_me@cartodb.com
+          - region: us
+            project: carto-la
+            bucket: gs://spatialextension_la/
+            group: spatialextension_users_la@cartodb.com
+          - region: us
+            project: carto-un
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
           - region: eu
-            project: bqcartoeu
+            project: carto-os-eu
+            bucket: gs://spatialextension_os/
+            permissions: '[{"specialGroup":"allAuthenticatedUsers","role":"READER"}]'
+          - region: eu
+            project: carto-st-eu
+            bucket: gs://spatialextension_st/
+            group: spatialextension_users_st@cartodb.com
+          - region: eu
+            project: carto-sm-eu
+            bucket: gs://spatialextension_sm/
+            group: spatialextension_users_sm@cartodb.com
+          - region: eu
+            project: carto-me-eu
+            bucket: gs://spatialextension_me/
+            group: spatialextension_users_me@cartodb.com
+          - region: eu
+            project: carto-la-eu
+            bucket: gs://spatialextension_la/
+            group: spatialextension_users_la@cartodb.com
+          - region: eu
+            project: carto-un-eu
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
       BQ_PROJECT: ${{ matrix.project }}
-      BQ_BUCKET_PUBLIC: gs://bqcarto-public/
-      BQ_PERMISSIONS: '[{"role":"READER","specialGroup":"allAuthenticatedUsers"}]'
+      BQ_BUCKET: ${{ matrix.bucket }}
+      BQ_PERMISSIONS: ${{ matrix.permissions }}
+      BQ_PERMISSIONS_GROUP: ${{ matrix.group }}
+      BQ_PERMISSIONS_ROLE_NAME: spatialextensionUser
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

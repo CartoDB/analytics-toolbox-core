@@ -20,8 +20,8 @@ gcloud components install beta --quiet
 gcloud beta billing projects link $BQ_PROJECT --billing-account=$GOOGLE_BILLING_ACCOUNT --quiet
 
 # Create public bucket
-if gsutil ls $BQ_BUCKET_PUBLIC 2>&1 | grep "bucket does not exist" > /dev/null; then
-    gsutil mb -l us-east1 -p $BQ_PROJECT $BQ_BUCKET_PUBLIC
+if gsutil ls $BQ_BUCKET 2>&1 | grep "bucket does not exist" > /dev/null; then
+    gsutil mb -l us-east1 -p $BQ_PROJECT $BQ_BUCKET
 else
-    echo "Public bucket $BQ_BUCKET_PUBLIC already exists"
+    echo "Public bucket $BQ_BUCKET already exists"
 fi

@@ -14,9 +14,11 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 
 `BOOLEAN`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
-SELECT bqcarto.h3.ISPENTAGON('837b59fffffffff');
+SELECT carto-os.h3.ISPENTAGON('837b59fffffffff');
 -- false
 ```
