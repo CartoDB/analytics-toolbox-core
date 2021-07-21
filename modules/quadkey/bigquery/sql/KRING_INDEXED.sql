@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.KRING_INDEXED(quadint INT64,
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.KRING_INDEXED`(quadint INT64,
     distance INT64)
   RETURNS ARRAY<STRUCT<distance INT64,
   quadint ARRAY<INT64>>> DETERMINISTIC
