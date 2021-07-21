@@ -117,25 +117,70 @@ export function sibling (quadint, direction) {
     if (direction !== 'left' && direction !== 'right' && direction !== 'up' && direction !== 'down') {
         throw new Error('Wrong direction argument passed to sibling');
     }
-
-    const tile = ZXYFromQuadint(quadint);
-    const z = tile.z;
-    let x = tile.x;
-    let y = tile.y;
-    const tilesPerLevel = 2 << (z - 1);
     if (direction === 'left') {
-        x = x > 0 ? x - 1 : tilesPerLevel - 1;
+        return sibling_left(quadint);
     }
     if (direction === 'right') {
-        x = x < tilesPerLevel - 1 ? x + 1 : 0;
+        return sibling_right(quadint);
     }
     if (direction === 'up') {
-        y = y > 0 ? y - 1 : tilesPerLevel - 1;
+        return sibling_up(quadint);
     }
     if (direction === 'down') {
-        y = y < tilesPerLevel - 1 ? y + 1 : 0;
+        return sibling_down(quadint);
     }
-    return quadintFromZXY(z, x, y);
+}
+
+/**
+ * returns the sibling of the given quadint and will wrap
+ * @param  {int} quadint      key to get sibling of
+ * @param  {string} direction direction of sibling from key
+ * @return {int}              sibling key
+ */
+export function sibling_left (quadint) {
+    const tile = ZXYFromQuadint(quadint);
+    const tilesPerLevel = 2 << (tile.z - 1);
+    const x = tile.x > 0 ? tile.x - 1 : tilesPerLevel - 1;
+    return quadintFromZXY(tile.z, x, tile.y);
+}
+
+/**
+ * returns the sibling of the given quadint and will wrap
+ * @param  {int} quadint      key to get sibling of
+ * @param  {string} direction direction of sibling from key
+ * @return {int}              sibling key
+ */
+export function sibling_right (quadint) {
+    const tile = ZXYFromQuadint(quadint);
+    const tilesPerLevel = 2 << (tile.z - 1);
+    const x = tile.x < tilesPerLevel - 1 ? tile.x + 1 : 0;
+    return quadintFromZXY(tile.z, x, tile.y);
+}
+
+/**
+ * returns the sibling of the given quadint and will wrap
+ * @param  {int} quadint      key to get sibling of
+ * @param  {string} direction direction of sibling from key
+ * @return {int}              sibling key
+ */
+export function sibling_up (quadint) {
+    const tile = ZXYFromQuadint(quadint);
+    const tilesPerLevel = 2 << (tile.z - 1);
+    const y = tile.y > 0 ? tile.y - 1 : tilesPerLevel - 1;
+    return quadintFromZXY(tile.z, tile.x, y);
+}
+
+/**
+ * returns the sibling of the given quadint and will wrap
+ * @param  {int} quadint      key to get sibling of
+ * @param  {string} direction direction of sibling from key
+ * @return {int}              sibling key
+ */
+export function sibling_down (quadint) {
+    const tile = ZXYFromQuadint(quadint);
+    const tilesPerLevel = 2 << (tile.z - 1);
+    const y = tile.y < tilesPerLevel - 1 ? tile.y + 1 : 0;
+    return quadintFromZXY(tile.z, tile.x, y);
 }
 
 /**
@@ -193,16 +238,19 @@ export function toParent (quadint, resolution) {
  * @return {int}         kring of the input quadint
  */
 export function kring (quadint, distance) {
-    if (distance < 1) {
+    if (distance < 0) {
         throw new Error('Wrong kring distance');
+    }
+    if (distance === 0) {
+        return [quadint];
     }
 
     let i, j;
     let cornerQuadint = quadint;
     // Traverse to top left corner
     for (i = 0; i < distance; i++) {
-        cornerQuadint = sibling(cornerQuadint, 'left');
-        cornerQuadint = sibling(cornerQuadint, 'up');
+        cornerQuadint = sibling_left(cornerQuadint);
+        cornerQuadint = sibling_up(cornerQuadint)
     }
 
     const neighbors = [];
@@ -211,9 +259,86 @@ export function kring (quadint, distance) {
         traversalQuadint = cornerQuadint;
         for (i = 0; i < distance * 2 + 1; i++) {
             neighbors.push(traversalQuadint);
-            traversalQuadint = sibling(traversalQuadint, 'right');
+            traversalQuadint = sibling_right(traversalQuadint);
         }
-        cornerQuadint = sibling(cornerQuadint, 'down');
+        cornerQuadint = sibling_down(cornerQuadint)
+    }
+    return neighbors;
+}
+
+/**
+ * get the kring of a quadint
+ * @param  {int} quadint quadint to get the kring of
+ * @param  {int} distance in tiles of the desired kring
+ * @return {int}         kring of the input quadint
+ */
+export function kring_hollow (quadint, distance) {
+    if (distance < 0) {
+        throw new Error('Wrong kring distance');
+    }
+    if (distance === 0) {
+        return [quadint];
+    }
+
+    let i, j;
+    let cornerQuadint = quadint;
+    // Traverse to top left corner
+    for (i = 0; i < distance; i++) {
+        cornerQuadint = sibling_left(cornerQuadint);
+        cornerQuadint = sibling_up(cornerQuadint)
+    }
+
+    const neighbors = [];
+    for (j = 0; j < distance * 2; j++) {
+        neighbors.push(cornerQuadint);
+        cornerQuadint = sibling_down(cornerQuadint)
+    }
+    for (j = 0; j < distance * 2; j++) {
+        neighbors.push(cornerQuadint);
+        cornerQuadint = sibling_right(cornerQuadint);
+    }
+    for (j = 0; j < distance * 2; j++) {
+        neighbors.push(cornerQuadint);
+        cornerQuadint = sibling_up(cornerQuadint)
+    }
+    for (j = 0; j < distance * 2; j++) {
+        neighbors.push(cornerQuadint);
+        cornerQuadint = sibling_left(cornerQuadint);
+    }
+    return neighbors;
+}
+
+/**
+ * get the kring of a quadint
+ * @param  {int} quadint quadint to get the kring of
+ * @param  {int} distance in tiles of the desired kring
+ * @return {int}         kring of the input quadint
+ */
+export function kring_indexed (quadint, distance) {
+    if (distance < 0) {
+        throw new Error('Wrong kring distance');
+    }
+    if (distance === 0) {
+        return [quadint];
+    }
+
+    let i, j;
+    let cornerQuadint = quadint;
+    // Traverse to top left corner
+    for (i = 0; i < distance; i++) {
+        cornerQuadint = sibling_left(cornerQuadint);
+        cornerQuadint = sibling_up(cornerQuadint)
+    }
+
+    const neighbors = [];
+    let traversalQuadint;
+    for (j = -distance; j <= distance; j++) {
+        traversalQuadint = cornerQuadint;
+        for (i = -distance; i <= distance; i++) {
+            neighbors.push({ 'x':i,'y':j,'idx':traversalQuadint.toString() });
+            traversalQuadint = sibling_right(traversalQuadint);
+        }
+        cornerQuadint = sibling_down(cornerQuadint)
     }
     return neighbors;
 }
