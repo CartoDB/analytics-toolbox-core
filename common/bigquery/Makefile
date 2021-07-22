@@ -103,6 +103,7 @@ dataset-deploy:
 
 serialize-package:
 	$(MAKE) build
+	echo "Serializing $(MODULE)"
 	rm -f dist/bundle_pkg.sql; \
 	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@$(MODULE)\`;" >> dist/bundle_pkg.sql; \
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
