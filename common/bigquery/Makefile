@@ -23,10 +23,10 @@ REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-package"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
 
 $(NODE_MODULES):
 	yarn -s
@@ -101,13 +101,13 @@ dataset-deploy:
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit 1; \
 	done
 
-serialize-package:
+serialize-module:
 	$(MAKE) build
-	rm -f dist/bundle_pkg.sql; \
-	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@$(MODULE)\`;" >> dist/bundle_pkg.sql; \
+	rm -f dist/module.sql
+	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@$(MODULE)\`;" >> dist/module.sql
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	cat $$n >> dist/bundle_pkg.sql; \
-		echo "" >> dist/bundle_pkg.sql; \
+	  	cat $$n >> dist/module.sql; \
+		echo "" >> dist/module.sql; \
 	done
 
 check:
