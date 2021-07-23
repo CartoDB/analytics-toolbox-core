@@ -85,26 +85,6 @@ export function quadkeyFromQuadint (quadint) {
     const tile = ZXYFromQuadint(quadint);
     return tilebelt.tileToQuadkey([tile.x, tile.y, tile.z]);
 }
-
-function tile2lon(x, z) {
-    return x / Math.pow(2, z) * 360 - 180;
-}
-
-function tile2lat(y, z) {
-    var n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
-    return r2d * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
-}
-
-/**
- * get the bounding box for a quadint in location coordinates
- * @param  {int} quadint    quadint to get bounding box from
- * @return {bbox}           bounding box for the input quadint
- */
-export function centroid (quadint) {
-    const tile = ZXYFromQuadint(quadint);
-    return [tilebelt.tile2lon(tile.x + 0.5, tile.z), tilebelt.tile2lat(tile.y + 0.5, tile.z)];
-}
-
 /**
  * get the bounding box for a quadint in location coordinates
  * @param  {int} quadint    quadint to get bounding box from
