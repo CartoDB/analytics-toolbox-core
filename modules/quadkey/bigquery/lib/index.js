@@ -13,7 +13,7 @@ import {
     quadintToGeoJSON,
     quadintFromZXY,
     geojsonToQuadints,
-    ZXYFromQuadint
+    ZXYFromQuadint,
 } from './quadkey';
 
 export default {
