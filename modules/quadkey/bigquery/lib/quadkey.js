@@ -309,6 +309,41 @@ export function kring_hollow (quadint, distance) {
 }
 
 /**
+ * get the kring of a quadint
+ * @param  {int} quadint quadint to get the kring of
+ * @param  {int} distance in tiles of the desired kring
+ * @return {int}         kring of the input quadint
+ */
+export function kring_indexed (quadint, distance) {
+    if (distance < 0) {
+        throw new Error('Wrong kring distance');
+    }
+    if (distance === 0) {
+        return [quadint];
+    }
+
+    let i, j;
+    let cornerQuadint = quadint;
+    // Traverse to top left corner
+    for (i = 0; i < distance; i++) {
+        cornerQuadint = sibling_left(cornerQuadint);
+        cornerQuadint = sibling_up(cornerQuadint)
+    }
+
+    const neighbors = [];
+    let traversalQuadint;
+    for (j = -distance; j <= distance; j++) {
+        traversalQuadint = cornerQuadint;
+        for (i = -distance; i <= distance; i++) {
+            neighbors.push({'x':i,'y':j,'idx':traversalQuadint.toString()});
+            traversalQuadint = sibling_right(traversalQuadint);
+        }
+        cornerQuadint = sibling_down(cornerQuadint)
+    }
+    return neighbors;
+}
+
+/**
  * get an array of quadints containing a geography for given zooms
  * @param  {object} poly    geography we want to extract the quadints from
  * @param  {struct} limits  struct containing the range of zooms
