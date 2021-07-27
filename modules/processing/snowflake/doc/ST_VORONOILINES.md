@@ -6,7 +6,7 @@ processing.ST_VORONOILINES(points [, bbox])
 
 **Description**
 
-Calculates the Voronoi diagram of the points provided. An array of linestrings in GeoJSON format is returned. https://turfjs.org/docs/#voronoi
+Calculates the Voronoi diagram of the points provided. An array of linestrings in GeoJSON format is returned.
 
 * `points`: `ARRAY` array of points in GeoJSON format casted to STRING.
 * `bbox` (optional): `ARRAY` clipping bounding box. By default the [-180,-85,180,85] bbox will be used.

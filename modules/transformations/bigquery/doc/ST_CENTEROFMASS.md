@@ -6,7 +6,7 @@ transformations.ST_CENTEROFMASS(geog)
 
 **Description**
 
-Takes any Feature or a FeatureCollection and returns its center of mass using this formula: Centroid of Polygon. https://turfjs.org/docs/#centerOfMass
+Takes any Feature or a FeatureCollection and returns its center of mass using this formula: Centroid of Polygon.
 
 * `geog`: `GEOGRAPHY` feature to be centered.
 
