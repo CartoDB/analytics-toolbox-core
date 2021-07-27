@@ -4,28 +4,31 @@
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.ST_BOUNDARY`(quadint INT64)
 RETURNS GEOGRAPHY AS (
+COALESCE(
 ST_MAKEPOLYGON(
 ST_MAKELINE([
 ST_GEOGPOINT(
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[0],
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[3]
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(0)],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(3)]
 ),
 ST_GEOGPOINT(
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[0],
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[1]
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(0)],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(1)]
 ),
 ST_GEOGPOINT(
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[2],
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[1]
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(2)],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(1)]
 ),
 ST_GEOGPOINT(
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[2],
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[3]
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(2)],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(3)]
 ),
 ST_GEOGPOINT(
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[0],
-`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[3]
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(0)],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[OFFSET(3)]
 )
 ])
+),
+ERROR('NULL argument passed to UDF')
 )
 );
