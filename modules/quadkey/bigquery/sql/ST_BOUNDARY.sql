@@ -2,23 +2,30 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__GEOJSONBOUNDARY_FROMQUADINT`
-(quadint INT64)
-RETURNS STRING
-DETERMINISTIC
-LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS """
-    if (quadint == null) {
-        throw new Error('NULL argument passed to UDF');
-    }
-    const geojson = quadkeyLib.quadintToGeoJSON(quadint);
-    return JSON.stringify(geojson);
-""";
-
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.ST_BOUNDARY`
-(quadint INT64)
-RETURNS GEOGRAPHY
-AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@quadkey.__GEOJSONBOUNDARY_FROMQUADINT`(quadint))
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.ST_BOUNDARY`(quadint INT64)
+RETURNS GEOGRAPHY AS (
+ST_MAKEPOLYGON(
+ST_MAKELINE([
+ST_GEOGPOINT(
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[0],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[3]
+),
+ST_GEOGPOINT(
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[0],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[1]
+),
+ST_GEOGPOINT(
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[2],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[1]
+),
+ST_GEOGPOINT(
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[2],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[3]
+),
+ST_GEOGPOINT(
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[0],
+`@@BQ_PREFIX@@quadkey.BBOX`(quadint)[3]
+)
+])
+)
 );
