@@ -6,7 +6,7 @@ transformations.ST_CONCAVEHULL(geojsons [, maxEdge] [, units])
 
 **Description**
 
-Takes a set of points and returns a concave hull Polygon or MultiPolygon. Internally, this uses turf-tin to generate geometries.
+Takes a set of points and returns a concave hull Polygon or MultiPolygon.
 
 * `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 * `maxEdge` (optional): `DOUBLE` the length (in 'units') of an edge necessary for part of the hull to become concave. By default `maxEdge` is `infinity`.
