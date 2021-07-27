@@ -6,7 +6,7 @@ measurements.ST_MINKOWSKIDISTANCE(geog, p)
 
 **Description**
 
-Calculate the Minkowski p-norm distance between two features. https://github.com/Turfjs/turf/tree/master/packages/turf-distance-weight
+Calculate the Minkowski p-norm distance between two features.
 
 * `geog`: `ARRAY<GEOGRAPHY>` featureCollection.
 * `p`: `FLOAT64` minkowski p-norm distance parameter. 1: Manhattan distance. 2: Euclidean distance. 1 =< p <= infinity. If `NULL` the default value `2` is used.

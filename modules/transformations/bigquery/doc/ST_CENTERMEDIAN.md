@@ -6,7 +6,7 @@ transformations.ST_CENTERMEDIAN(geog)
 
 **Description**
 
-Takes a FeatureCollection of points and calculates the median center, algorithimically. The median center is understood as the point that is requires the least total travel from all other points. https://github.com/Turfjs/turf/tree/master/packages/turf-center-median
+Takes a FeatureCollection of points and calculates the median center, algorithimically. The median center is understood as the point that is requires the least total travel from all other points.
 
 * `geog`: `GEOGRAPHY` feature to be centered.
 

@@ -6,7 +6,7 @@ transformations.ST_CENTERMEAN(geog)
 
 **Description**
 
-Takes a Feature or FeatureCollection and returns the mean center. https://github.com/Turfjs/turf/tree/master/packages/turf-center-mean
+Takes a Feature or FeatureCollection and returns the mean center.
 
 * `geog`: `GEOGRAPHY` feature to be centered.
 

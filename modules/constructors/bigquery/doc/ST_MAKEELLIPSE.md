@@ -6,13 +6,13 @@ constructors.ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis, angle, units, steps)
 
 **Description**
 
-Takes a Point and calculates the ellipse polygon given two semi-axes expressed in variable units and steps for precision. https://github.com/Turfjs/turf/tree/master/packages/turf-ellipse
+Takes a Point and calculates the ellipse polygon given two semi-axes expressed in variable units and steps for precision.
 
 * `center`: `GEOGRAPHY` center point.
 * `xSemiAxis`: `FLOAT64` semi (major) axis of the ellipse along the x-axis.
 * `ySemiAxis`: `FLOAT64` semi (minor) axis of the ellipse along the y-axis.
 * `angle`: `FLOAT64`|`NULL` angle of rotation (along the vertical axis), from North in decimal degrees, negative clockwise. If `NULL` the default value `0` is used.
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
+* `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
 * `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value `64` is used.
 
 {{% customSelector %}}

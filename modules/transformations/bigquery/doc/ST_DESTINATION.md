@@ -6,12 +6,12 @@ transformations.ST_DESTINATION(startPoint, distance, bearing, units)
 
 **Description**
 
-Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and bearing in degrees. This uses the Haversine formula to account for global curvature. https://turfjs.org/docs/#destination
+Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and bearing in degrees. This uses the Haversine formula to account for global curvature.
 
 * `origin`: `GEOGRAPHY` starting point.
 * `distance`: `FLOAT64` distance from the origin point.
 * `bearing`: `FLOAT64` ranging from -180 to 180.
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
+* `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 

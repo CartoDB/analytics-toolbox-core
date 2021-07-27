@@ -6,11 +6,11 @@ transformations.ST_LINE_INTERPOLATE_POINT(geog, distance, units)
 
 **Description**
 
-Takes a LineString and returns a Point at a specified distance along the line. https://turfjs.org/docs/#along
+Takes a LineString and returns a Point at a specified distance along the line.
 
 * `geog`: `GEOGRAPHY` input line.
 * `distance`: `FLOAT64` distance along the line.
-* `units`: `STRING`|`NULL` any of the options supported by turf units: miles, kilometers, degrees and radians. If `NULL`the default value `kilometers` is used.
+* `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, degrees and radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 
