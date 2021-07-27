@@ -6,7 +6,7 @@ transformations.ST_CONCAVEHULL(geog, maxEdge, units)
 
 **Description**
 
-Takes a set of points and returns a concave hull Polygon or MultiPolygon. Internally, this uses turf-tin to generate geometries.
+Takes a set of points and returns a concave hull Polygon or MultiPolygon.
 
 * `geog`: `ARRAY<GEOGRAPHY>` input points.
 * `maxEdge`: `FLOAT64`|`NULL` the length (in 'units') of an edge necessary for part of the hull to become concave. If `NULL`the default value `infinity` is used.
