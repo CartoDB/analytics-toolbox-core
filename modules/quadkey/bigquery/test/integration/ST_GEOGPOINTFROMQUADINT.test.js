@@ -10,6 +10,6 @@ test('ST_GEOGPOINTFROMQUADINT should work', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);  
     expect(JSON.stringify(rows[0].geog1.value)).toEqual('"POINT(-44.82421875 44.964797930331)"');
-    expect(JSON.stringify(rows[0].geog2.value)).toEqual('"POINT(-44.9993133544922 50.3082806407431)"');
-    expect(JSON.stringify(rows[0].geog3.value)).toEqual('"POINT(-44.999994635582 50.308104008854)"');
+    expect(JSON.stringify(rows[0].geog2.value)).toEqual('"POINT(-44.9993133544922 45.0002525507932)"');
+    expect(JSON.stringify(rows[0].geog3.value)).toEqual('"POINT(-44.999994635582 44.9999984058533)"');
 });
