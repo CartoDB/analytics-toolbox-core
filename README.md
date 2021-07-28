@@ -15,11 +15,11 @@ it is now:
 SELECT carto-os.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
 ```
 
-## 💬 New Discord channel 
+## 💬 New Slack channel 
 
-If you have questions or want to discuss anything about the CARTO Spatial Extension we have created a Discord channel that you can join here:
+If you have questions or want to discuss anything about the CARTO Spatial Extension we have created a Slack channel that you can join here:
 
-https://discord.gg/4U5XVrGyqW
+https://cartousercommunity.slack.com/join/shared_invite/zt-t7t7k5s4-3c4pZJLrLlkVow3AEDt~ZQ#/shared-invite/email
 
 # CARTO Spatial Extension
 
