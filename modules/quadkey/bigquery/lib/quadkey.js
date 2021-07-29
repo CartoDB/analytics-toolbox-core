@@ -335,7 +335,7 @@ export function kring_indexed (quadint, distance) {
     for (j = -distance; j <= distance; j++) {
         traversalQuadint = cornerQuadint;
         for (i = -distance; i <= distance; i++) {
-            neighbors.push({'x':i,'y':j,'idx':traversalQuadint.toString()});
+            neighbors.push({ 'x':i,'y':j,'idx':traversalQuadint.toString() });
             traversalQuadint = sibling_right(traversalQuadint);
         }
         cornerQuadint = sibling_down(cornerQuadint)
