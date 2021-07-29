@@ -6,7 +6,9 @@ SNOWSQL ?= snowsql
 
 SF_SCHEMA = $(SF_SCHEMA_PREFIX)$(MODULE)
 SF_PREFIX = $(SF_DATABASE).$(SF_SCHEMA_PREFIX)
-SF_SHARE = $(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS
+SF_SHARES = \
+	$(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS \
+	$(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)ADVANCED_SPATIAL_EXTENSIONS 
 
 SF_LIBRARY = ./dist/index.js
 
@@ -21,7 +23,7 @@ NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
 REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
-REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e 's!@@SF_SHARE@@!$(SF_SHARE)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
+REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
 REPLACEMENTS += REPLACEMENTS_LIBS
 
 REPLACEMENTS_PKG = -e 's!@@SF_PREFIX@@!!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
@@ -108,12 +110,18 @@ schema-deploy:
 
 share-create:
 ifeq ($(SF_SHARE_ENABLED), 1)
-	$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SNOWSQL) -q "$(xargs)" 
+	for f in ${SF_SHARES}; do \
+		SHARE_QUERY=$$($(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SED) -e 's!@@SF_SHARE@@!'$$f'!g'); \
+		$(SNOWSQL) -q "$$SHARE_QUERY"; \
+	done
 endif
 
 share-remove:
 ifeq ($(SF_SHARE_ENABLED), 1)
-	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(xargs)" 
+	for f in ${SF_SHARES}; do \
+		SHARE_QUERY=$$($(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SED) -e 's!@@SF_SHARE@@!'$$f'!g'); \
+		$(SNOWSQL) -q "$$SHARE_QUERY"; \
+	done
 endif
 
 serialize-module:

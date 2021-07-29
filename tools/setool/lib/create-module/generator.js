@@ -145,6 +145,7 @@ grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE@@;`;
 
     content = `${header}
 
+USE role ACCOUNTADMIN;
 DROP SHARE @@SF_SHARE@@;`;
 
     createFile([root, 'modules', name, cloud, 'sql', '_SHARE_REMOVE.sql'], content);
