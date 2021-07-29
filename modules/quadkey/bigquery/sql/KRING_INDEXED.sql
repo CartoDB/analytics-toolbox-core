@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.KRING_INDEXED`
-(quadint INT64, distance INT64
+(quadint INT64, distance INT64)
 RETURNS ARRAY<STRUCT<x INT64, y INT64, idx INT64>>
 DETERMINISTIC
 LANGUAGE js
