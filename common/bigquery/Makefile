@@ -98,7 +98,7 @@ dataset-remove:
 
 dataset-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) query --use_legacy_sql=false || exit 1; \
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) --format=json query --use_legacy_sql=false || exit 1; \
 	done
 
 serialize-module:
