@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__BBOX_E`
 (quadint INT64)
 RETURNS FLOAT64
 AS (
-    `@@BQ_PREFIX@@quadkey.__TILE2LON`(`@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).x + 1, `@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).z)
+    `@@BQ_PREFIX@@quadkey.__TILE2LON`(`@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).x+1, `@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).z)
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__BBOX_W`
