@@ -19,12 +19,17 @@ SCRIPTS_DIR = ../../../scripts
 NODE_MODULES = ./node_modules
 NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
 
+REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
+
 REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e 's!@@SF_SHARE@@!$(SF_SHARE)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
-REPLACEMENTS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
+REPLACEMENTS += REPLACEMENTS_LIBS
+
+REPLACEMENTS_PKG = -e 's!@@SF_PREFIX@@!!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
+REPLACEMENTS_PKG += REPLACEMENTS_LIBS
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
 
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
@@ -110,6 +115,15 @@ share-remove:
 ifeq ($(SF_SHARE_ENABLED), 1)
 	$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SNOWSQL) -q "$(xargs)" 
 endif
+
+serialize-module:
+	$(MAKE) build
+	rm -f dist/module.sql
+	echo "CREATE SCHEMA IF NOT EXISTS $(MODULE);" >> dist/module.sql
+	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> dist/module.sql; \
+		echo "" >> dist/module.sql; \
+	done
 
 check:
 ifndef SF_DATABASE
