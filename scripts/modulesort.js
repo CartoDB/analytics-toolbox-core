@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // This script returns a list of the modules
-// ordered by checking their dependencies 
+// ordered by checking their dependencies
 
 const fs = require('fs');
 const path = require('path');
