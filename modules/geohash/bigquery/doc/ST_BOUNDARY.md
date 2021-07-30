@@ -6,7 +6,7 @@ geohash.ST_BOUNDARY(index)
 
 **Description**
 
-Returns a geography representing the geohash cell.
+Returns a geography representing the geohash cell. It will return `null` on error (invalid input).
 
 * `index`: `STRING` The Geohash cell index.
 
