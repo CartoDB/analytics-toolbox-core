@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@geohash.ST_ASGEOHASH_POLYFILL`
 RETURNS ARRAY<STRING>
 AS ((
   WITH bbox AS (
+    -- FIXME: random is and advanced module, so we can't get this internal function from it
     SELECT `@@BQ_PREFIX@@random.__BBOX_FROM_GEOJSON`(ST_ASGEOJSON(geog)) AS bb
   ),
   limits AS (
