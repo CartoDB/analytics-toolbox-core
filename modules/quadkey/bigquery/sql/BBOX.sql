@@ -48,13 +48,15 @@ AS (
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__BBOX_N`
 (quadint INT64)
-RETURNS FLOAT64 AS (
+RETURNS FLOAT64
+AS (
     `@@BQ_PREFIX@@quadkey.__TILE2LAT`(`@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).y, `@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).z)
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__BBOX_S`
 (quadint INT64)
-RETURNS FLOAT64 AS (
+RETURNS FLOAT64
+AS (
     `@@BQ_PREFIX@@quadkey.__TILE2LAT`(`@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).y+1, `@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT`(quadint).z)
 );
 
