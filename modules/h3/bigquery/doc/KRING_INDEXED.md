@@ -1,0 +1,31 @@
+### KRING
+
+{{% bannerNote type="code" %}}
+h3.KRING_INDEXED(index, distance)
+{{%/ bannerNote %}}
+
+**Description**
+
+Returns an array with the indexes of all hexagons within `distance` of the given input hexagon. The order of the hexagons is undefined. Returns `null` on invalid input.
+
+* `index`: `STRING` The H3 cell index.
+* `distance`: `INT64` distance (in number of cells) to the source.
+
+**Return type**
+
+`ARRAY<STRING>`
+
+{{% customSelector %}}
+**Example**
+{{%/ customSelector %}}
+
+```sql
+SELECT carto-os.h3.KRING_INDEXED('837b59fffffffff', 1);
+-- 837b59fffffffff
+-- 837b58fffffffff
+-- 837b5bfffffffff
+-- 837a66fffffffff
+-- 837a64fffffffff
+-- 837b4afffffffff
+-- 837b5dfffffffff
+```
