@@ -272,48 +272,6 @@ export function kring (quadint, distance) {
  * @param  {int} distance in tiles of the desired kring
  * @return {int}         kring of the input quadint
  */
-export function kring_hollow (quadint, distance) {
-    if (distance < 0) {
-        throw new Error('Wrong kring distance');
-    }
-    if (distance === 0) {
-        return [quadint];
-    }
-
-    let i, j;
-    let cornerQuadint = quadint;
-    // Traverse to top left corner
-    for (i = 0; i < distance; i++) {
-        cornerQuadint = sibling_left(cornerQuadint);
-        cornerQuadint = sibling_up(cornerQuadint)
-    }
-
-    const neighbors = [];
-    for (j = 0; j < distance * 2; j++) {
-        neighbors.push(cornerQuadint);
-        cornerQuadint = sibling_down(cornerQuadint)
-    }
-    for (j = 0; j < distance * 2; j++) {
-        neighbors.push(cornerQuadint);
-        cornerQuadint = sibling_right(cornerQuadint);
-    }
-    for (j = 0; j < distance * 2; j++) {
-        neighbors.push(cornerQuadint);
-        cornerQuadint = sibling_up(cornerQuadint)
-    }
-    for (j = 0; j < distance * 2; j++) {
-        neighbors.push(cornerQuadint);
-        cornerQuadint = sibling_left(cornerQuadint);
-    }
-    return neighbors;
-}
-
-/**
- * get the kring of a quadint
- * @param  {int} quadint quadint to get the kring of
- * @param  {int} distance in tiles of the desired kring
- * @return {int}         kring of the input quadint
- */
 export function kring_indexed (quadint, distance) {
     if (distance < 0) {
         throw new Error('Wrong kring distance');
