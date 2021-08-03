@@ -6,7 +6,7 @@ accessors.ST_ENVELOPE(geog)
 
 **Description**
 
-Takes any number of features and returns a rectangular Polygon that encompasses all vertices. https://turfjs.org/docs/#envelope
+Takes any number of features and returns a rectangular Polygon that encompasses all vertices.
 
 * `geog`: `ARRAY<GEOGRAPHY>` input features.
 

@@ -15,5 +15,5 @@ if (!idx || distance == null || distance < 0) {
     if (!h3Lib.h3IsValid(idx)) {
         return null;
     }
-    return Array.from(Array(parseInt(distance)).keys()).map(x => ({idx:h3Lib.hexRing(idx, x), distance:x}));
+    return Array.from(Array(parseInt(distance)).keys()).map(x => h3Lib.hexRing(idx, x).map(idx => ({idx:idx, distance:x}))).flat();
 """;

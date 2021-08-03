@@ -6,7 +6,7 @@ processing.ST_VORONOILINES(points, bbox)
 
 **Description**
 
-Calculates the Voronoi diagram of the points provided. An array of lines is returned. https://turfjs.org/docs/#voronoi
+Calculates the Voronoi diagram of the points provided. An array of lines is returned.
 
 * `points`: `ARRAY<GEOGRAPHY>` input to the Voronoi diagram.
 * `bbox`: `ARRAY<FLOAT64>|NULL` clipping bounding box. If `NULL` a default [-180,-85,180,-85] bbox will be used.

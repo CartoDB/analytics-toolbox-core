@@ -6,7 +6,7 @@ constructors.ST_BEZIERSPLINE(geog [, resolution] [, sharpness])
 
 **Description**
 
-Takes a line and returns a curved version by applying a Bezier spline algorithm. https://turfjs.org/docs/#bezierSpline
+Takes a line and returns a curved version by applying a Bezier spline algorithm.
 
 * `geog`: `GEOGRAPHY` input LineString.
 * `resolution` (optional): `INT` time in milliseconds between points. By default `resolution` is `10000`.

@@ -21,7 +21,7 @@ files.forEach(file => {
     const content = fs.readFileSync(path.join(dir, file)).toString();
     input.push({
         name,
-        deps: files.map(f => path.parse(f).name).filter(n => n !== name && content.includes(n))
+        deps: files.map(f => path.parse(f).name).filter(n => n !== name && content.includes(`.${n}`))
     });
 });
 

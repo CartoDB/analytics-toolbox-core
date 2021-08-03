@@ -22,7 +22,7 @@ modules.forEach(module => {
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
         input.push({
             name: module,
-            deps: modules.filter(m => m !== module && content.includes(m))
+            deps: modules.filter(m => m !== module && content.includes('@' + m))
         });
     }
 });

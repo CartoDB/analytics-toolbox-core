@@ -6,7 +6,7 @@ measurements.ST_AZIMUTH(startPoint, endPoint)
 
 **Description**
 
-Takes two points and finds the geographic bearing between them, i.e. the angle measured in degrees from the north line (0 degrees). https://turfjs.org/docs/#bearing
+Takes two points and finds the geographic bearing between them, i.e. the angle measured in degrees from the north line (0 degrees).
 
 * `startPoint`: `GEOGRAPHY` starting Point.
 * `endPoint`: `GEOGRAPHY` ending Point.
