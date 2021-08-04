@@ -118,16 +118,16 @@ export function sibling (quadint, direction) {
         throw new Error('Wrong direction argument passed to sibling');
     }
     if (direction === 'left') {
-        return sibling_left(quadint);
+        return siblingLeft(quadint);
     }
     if (direction === 'right') {
-        return sibling_right(quadint);
+        return siblingRight(quadint);
     }
     if (direction === 'up') {
-        return sibling_up(quadint);
+        return siblingUp(quadint);
     }
     if (direction === 'down') {
-        return sibling_down(quadint);
+        return siblingDown(quadint);
     }
 }
 
@@ -137,7 +137,7 @@ export function sibling (quadint, direction) {
  * @param  {string} direction direction of sibling from key
  * @return {int}              sibling key
  */
-export function sibling_left (quadint) {
+export function siblingLeft (quadint) {
     const tile = ZXYFromQuadint(quadint);
     const tilesPerLevel = 2 << (tile.z - 1);
     const x = tile.x > 0 ? tile.x - 1 : tilesPerLevel - 1;
@@ -150,7 +150,7 @@ export function sibling_left (quadint) {
  * @param  {string} direction direction of sibling from key
  * @return {int}              sibling key
  */
-export function sibling_right (quadint) {
+export function siblingRight (quadint) {
     const tile = ZXYFromQuadint(quadint);
     const tilesPerLevel = 2 << (tile.z - 1);
     const x = tile.x < tilesPerLevel - 1 ? tile.x + 1 : 0;
@@ -163,7 +163,7 @@ export function sibling_right (quadint) {
  * @param  {string} direction direction of sibling from key
  * @return {int}              sibling key
  */
-export function sibling_up (quadint) {
+export function siblingUp (quadint) {
     const tile = ZXYFromQuadint(quadint);
     const tilesPerLevel = 2 << (tile.z - 1);
     const y = tile.y > 0 ? tile.y - 1 : tilesPerLevel - 1;
@@ -176,7 +176,7 @@ export function sibling_up (quadint) {
  * @param  {string} direction direction of sibling from key
  * @return {int}              sibling key
  */
-export function sibling_down (quadint) {
+export function siblingDown (quadint) {
     const tile = ZXYFromQuadint(quadint);
     const tilesPerLevel = 2 << (tile.z - 1);
     const y = tile.y < tilesPerLevel - 1 ? tile.y + 1 : 0;
@@ -249,8 +249,8 @@ export function kring (quadint, distance) {
     let cornerQuadint = quadint;
     // Traverse to top left corner
     for (i = 0; i < distance; i++) {
-        cornerQuadint = sibling_left(cornerQuadint);
-        cornerQuadint = sibling_up(cornerQuadint)
+        cornerQuadint = siblingLeft(cornerQuadint);
+        cornerQuadint = siblingUp(cornerQuadint)
     }
 
     const neighbors = [];
@@ -259,9 +259,9 @@ export function kring (quadint, distance) {
         traversalQuadint = cornerQuadint;
         for (i = 0; i < distance * 2 + 1; i++) {
             neighbors.push(traversalQuadint);
-            traversalQuadint = sibling_right(traversalQuadint);
+            traversalQuadint = siblingRight(traversalQuadint);
         }
-        cornerQuadint = sibling_down(cornerQuadint)
+        cornerQuadint = siblingDown(cornerQuadint)
     }
     return neighbors;
 }
@@ -284,8 +284,8 @@ export function kring_indexed (quadint, distance) {
     let cornerQuadint = quadint;
     // Traverse to top left corner
     for (i = 0; i < distance; i++) {
-        cornerQuadint = sibling_left(cornerQuadint);
-        cornerQuadint = sibling_up(cornerQuadint)
+        cornerQuadint = siblingLeft(cornerQuadint);
+        cornerQuadint = siblingUp(cornerQuadint)
     }
 
     const neighbors = [];
@@ -294,9 +294,9 @@ export function kring_indexed (quadint, distance) {
         traversalQuadint = cornerQuadint;
         for (i = -distance; i <= distance; i++) {
             neighbors.push({ 'x':i,'y':j,'idx':traversalQuadint.toString() });
-            traversalQuadint = sibling_right(traversalQuadint);
+            traversalQuadint = siblingRight(traversalQuadint);
         }
-        cornerQuadint = sibling_down(cornerQuadint)
+        cornerQuadint = siblingDown(cornerQuadint)
     }
     return neighbors;
 }
