@@ -239,7 +239,7 @@ export function toParent (quadint, resolution) {
  */
 export function kring (quadint, distance) {
     if (distance < 0) {
-        throw new Error('Wrong kring distance');
+        throw new Error('Kring distance should be at least zero');
     }
     if (distance === 0) {
         return [quadint];
