@@ -85,14 +85,16 @@ schema-deploy:
 
 share-create:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNC_QUERY=$($(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE))
-	$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY"
+	FUNC_QUERY=$($(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)); \
+	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id') || exit 1; \
+	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager || exit 1;
 endif
 
 share-remove:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNC_QUERY=$($(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE))
-	$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY"
+	FUNC_QUERY=$($(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)); \
+	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id') || exit 1; \
+	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager || exit 1;
 endif
 
 check:
