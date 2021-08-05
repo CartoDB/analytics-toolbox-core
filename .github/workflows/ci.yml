@@ -179,5 +179,9 @@ jobs:
         with:
           PATTERNS: '**/*.+(py)'
           FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+        python-version: 3
       - name: Run unit tests
         run: make test-unit CLOUD=redshift
