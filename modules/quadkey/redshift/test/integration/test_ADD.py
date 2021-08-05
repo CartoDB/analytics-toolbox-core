@@ -1,8 +1,6 @@
 import os
 import redshift_connector
 
-from lib import quadkeyLib
-
 
 # Connects to Redshift cluster using AWS credentials
 conn = redshift_connector.connect(
