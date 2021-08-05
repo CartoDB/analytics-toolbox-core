@@ -8,8 +8,8 @@ quadkey.KRING_INDEXED(quadint, distance)
 
 Returns an array containing all the quadints and their relative position to the given quadint in term of x and y. Quadints returned are directly next to the given quadint at the same level of zoom. Diagonal, horizontal and vertical nearby quadints plus the current quadint are considered, so KRING_INDEXED always returns `(distance*2 + 1)^2` quadints.
 
-* `x`: `INT64` x position relative to the given quadint (in cells).
-* `y`: `INT64` y position relative to the given quadint (in cells).
+* `x`: `INT64` distance along x axis relative to the given quadint (in cells).
+* `y`: `INT64` distance along y axis relative to the given quadint (in cells).
 * `idx`: `INT64` quadint to get the KRING_INDEXED from.
 
 **Return type**
