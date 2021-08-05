@@ -182,6 +182,6 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v2
         with:
-        python-version: 3
+          python-version: 2
       - name: Run unit tests
         run: make test-unit CLOUD=redshift
