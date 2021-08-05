@@ -26,8 +26,6 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
-      - name: Install flake8
-        run: pip install flake8
       - name: Check linter
         run: make lint CLOUD=bigquery
 
@@ -164,5 +162,7 @@ jobs:
         with:
           PATTERNS: '**/*.+(py)'
           FILES: 'Makefile'
+      - name: Install flake8
+        run: pip install flake8
       - name: Check linter
         run: make lint CLOUD=redshift
