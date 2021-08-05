@@ -21,7 +21,7 @@ help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
 
 lint:
-	flake8 lib/ test/ || exit 0
+	flake8 lib/ test/ || exit 1
 
 lint-fix:
 	black . --quiet
