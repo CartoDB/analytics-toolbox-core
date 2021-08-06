@@ -53,9 +53,9 @@ test-integration: check check-extra
 	$(PYTHON) -m pytest test/integration && \
 	deactivate
 
-test-integration-full: check check-extra
+test-integration-full:
 	$(MAKE) deploy
-	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) test-integration
 	$(MAKE) clean-deploy
 
 deploy: check
