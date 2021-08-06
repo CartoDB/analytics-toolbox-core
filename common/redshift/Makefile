@@ -38,6 +38,7 @@ build:
 	mv lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib lib/$(MODULE)Lib
 
 test-unit:
+	$(MAKE) build
 	virtualenv -p python$(PYTHON2_VERSION) $(COMMON_DIR)/redshift/python2_venv
 	. $(COMMON_DIR)/redshift/python2_venv/bin/activate && \
 	python -m pip install -U pip && \
