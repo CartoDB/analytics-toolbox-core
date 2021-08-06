@@ -31,8 +31,9 @@ lint-fix:
 	black . --quiet
 
 build:
-	mv lib/$(MODULE)Lib  lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib
+	mkdir -p dist
 	rm -rf dist/*
+	mv lib/$(MODULE)Lib  lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib
 	cd lib && zip -r ../dist/$(RS_SCHEMA) *
 	mv lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib lib/$(MODULE)Lib
 
