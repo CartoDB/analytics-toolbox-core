@@ -45,6 +45,11 @@ test-unit:
 	$(PYTHON) -m pytest test/unit && \
 	deactivate
 
+test-integration-full:
+	$(MAKE) deploy
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) clean-deploy
+
 test-integration: check check-extra
 	virtualenv -p python$(PYTHON3_VERSION) $(COMMON_DIR)/redshift/python3_venv
 	. $(COMMON_DIR)/redshift/python3_venv/bin/activate && \
@@ -52,11 +57,6 @@ test-integration: check check-extra
 	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt && \
 	$(PYTHON) -m pytest test/integration && \
 	deactivate
-
-test-integration-full:
-	$(MAKE) deploy
-	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
-	$(MAKE) clean-deploy
 
 deploy: check
 	$(MAKE) storage-upload
