@@ -7,7 +7,7 @@ export GIT_DIFF ?= off
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
-lint lint-fix build test-unit test-integration-dry deploy clean clean-deploy:
+lint lint-fix build test-unit test-integration deploy clean clean-deploy:
 	if [ "$(CLOUD)" = "bigquery" ] || [ "$(CLOUD)" = "snowflake" ] || [ "$(CLOUD)" = "redshift" ]; then \
 		for module in `node scripts/modulesort.js`; do \
 			echo "> Module $${module}/$(CLOUD)"; \
