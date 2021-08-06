@@ -22,7 +22,7 @@ REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 .PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
 lint:
 	flake8 lib/ test/ || exit 1
@@ -53,7 +53,7 @@ test-integration: check check-extra
 	$(PYTHON) -m pytest test/integration && \
 	deactivate
 
-test-integration-full:
+test-integration-full: check check-extra
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
