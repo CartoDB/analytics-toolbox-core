@@ -10,6 +10,7 @@ on:
 env:
   NODE_VERSION: 14
   PYTHON2_VERSION: 2.7
+  PYTHON3_VERSION: 3.9.1
 
 jobs:
 
@@ -188,3 +189,37 @@ jobs:
         run: |
           pip install virtualenv
           make test-unit CLOUD=redshift
+
+  test-integration-rs:
+    needs: lint-rs
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    env:
+      RS_REGION: us-east-2
+      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
+      RS_CLUSTER_ID: redshift-cluster-1
+      RS_DATABASE: RSCARTOCI
+      RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+      RS_USER: ${{ secrets.RS_USER }}
+      RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: s3://rscartoci/
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py)'
+          FILES: 'Makefile'
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Run integration tests
+        run: make test-integration-full CLOUD=redshift
