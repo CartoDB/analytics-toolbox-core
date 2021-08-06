@@ -33,8 +33,6 @@ lint-fix:
 build:
 	mkdir -p dist
 	rm -rf dist/*
-	echo lib/$(MODULE)Lib
-	echo lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib
 	mv lib/$(MODULE)Lib  lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib
 	cd lib && zip -r ../dist/$(RS_SCHEMA) *
 	mv lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib lib/$(MODULE)Lib
