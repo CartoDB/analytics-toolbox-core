@@ -9,8 +9,8 @@ on:
 
 env:
   NODE_VERSION: 14
-  PYTHON2_VERSION: 2.7
-  PYTHON3_VERSION: 3.9.1
+  PYTHON2_VERSION: 2.7.18
+  PYTHON3_VERSION: 3.8.10
 
 jobs:
 
@@ -164,6 +164,12 @@ jobs:
         with:
           PATTERNS: '**/*.+(py)'
           FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Install virtualenv
+        run: sudo apt-get install virtualenv
       - name: Check linter
         run: make lint CLOUD=redshift
 
@@ -185,6 +191,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON2_VERSION }}
+      - name: Install virtualenv
+        run: sudo apt-get install virtualenv
       - name: Run unit tests
         run: |
           pip install virtualenv
@@ -217,6 +225,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Install virtualenv
+        run: sudo apt-get install virtualenv
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
