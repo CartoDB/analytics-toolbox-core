@@ -68,3 +68,26 @@ jobs:
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Deploy to staging
         run: make deploy CLOUD=snowflake
+
+  deploy-rs:
+    if: |
+      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
+      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    env:
+      AWS_DEFAULT_REGION: us-east-2
+      RS_REGION: us-east-2
+      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
+      RS_CLUSTER_ID: redshift-cluster-1
+      RS_DATABASE: rscartost
+      RS_USER: ${{ secrets.RS_USER }}
+      RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: s3://rscartost/
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Run integration tests
+        run: make deploy CLOUD=redshift

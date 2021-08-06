@@ -214,10 +214,6 @@ jobs:
         with:
           PATTERNS: '**/*.+(py)'
           FILES: 'Makefile'
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: Setup python
         uses: actions/setup-python@v2
         with:
