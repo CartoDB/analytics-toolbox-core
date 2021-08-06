@@ -185,4 +185,6 @@ jobs:
         with:
           python-version: ${{ env.PYTHON2_VERSION }}
       - name: Run unit tests
-        run: make test-unit CLOUD=redshift
+        run: |
+          pip install virtualenv
+          make test-unit CLOUD=redshift
