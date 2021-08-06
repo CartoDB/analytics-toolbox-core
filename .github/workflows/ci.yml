@@ -173,6 +173,8 @@ jobs:
     needs: lint-rs
     runs-on: ubuntu-20.04
     timeout-minutes: 5
+    env:
+      RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
