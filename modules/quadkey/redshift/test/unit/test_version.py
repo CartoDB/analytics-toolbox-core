@@ -1,5 +1,5 @@
-from lib import quadkeyLib
+from lib import quadkeyLib, __version__
 
 
-def test_version():
-    assert quadkeyLib.__version__ == "1.0.0"
+def test_init():
+    assert quadkeyLib.__version__ == __version__

@@ -39,7 +39,7 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
-      - name: Install gcloud
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}

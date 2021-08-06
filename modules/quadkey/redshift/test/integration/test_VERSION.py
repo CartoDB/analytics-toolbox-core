@@ -1,22 +1,7 @@
-import os
-import redshift_connector
-
-from lib import quadkeyLib
-
-
-# Connects to Redshift cluster using AWS credentials
-conn = redshift_connector.connect(
-    host=os.environ["RS_HOST"],
-    database=os.environ["RS_DATABASE"],
-    user=os.environ["RS_USER"],
-    password=os.environ["RS_PASSWORD"],
-)
-schema_prefix = os.environ["RS_SCHEMA_PREFIX"]
-cursor = conn.cursor()
+from lib import __version__
+from test_utils import run_query
 
 
 def test_version():
-    cursor.execute(f"SELECT {schema_prefix}quadkey.VERSION()")
-    result = cursor.fetchall()
-
-    assert result[0][0] == quadkeyLib.__version__
+    result = run_query("SELECT @@RS_PREFIX@@quadkey.VERSION()")
+    assert result[0][0] == __version__

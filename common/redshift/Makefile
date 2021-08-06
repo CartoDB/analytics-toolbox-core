@@ -2,9 +2,8 @@
 
 SED ?= sed
 AWS ?= aws
-PYTHON ?= python
 PYTHON2_VERSION ?= 2.7
-PYTHON3_VERSOIN ?=3.9.1
+PYTHON3_VERSION ?= 3
 
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
@@ -14,6 +13,10 @@ SHARE_REMOVE_FILE = ./sql/_SHARE_REMOVE.sql
 
 COMMON_DIR = ../../../common
 SCRIPTS_DIR = ../../../scripts
+VENV2_DIR = $(COMMON_DIR)/redshift/venv2
+VENV3_DIR = $(COMMON_DIR)/redshift/venv3
+VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
+VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 
 REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 
@@ -24,40 +27,41 @@ REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
-lint:
-	flake8 lib/ test/ || exit 1
+lint: venv3
+	. $(VENV3_ACTIVATE) && \
+	flake8 lib/ test/ && \
+	deactivate || exit 1
 
-lint-fix:
-	black . --quiet
+lint-fix: venv3
+	. $(VENV3_ACTIVATE) && \
+	black . --quiet && \
+	deactivate
 
 build:
-	mkdir -p dist
-	rm -rf dist/*
-	mv lib/$(MODULE)Lib  lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib
-	cd lib && zip -r ../dist/$(RS_SCHEMA) *
-	mv lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib lib/$(MODULE)Lib
+	rm -rf dist
+	mkdir -p dist/$(RS_SCHEMA)Lib
+	cp `find lib -name "*.py"`  dist/$(RS_SCHEMA)Lib/
+	cd dist && zip -r $(RS_SCHEMA)Lib *
+	rm -rf dist/$(RS_SCHEMA)Lib
 
-test-unit:
-	$(MAKE) build
-	virtualenv -p python$(PYTHON2_VERSION) $(COMMON_DIR)/redshift/python2_venv
-	. $(COMMON_DIR)/redshift/python2_venv/bin/activate && \
-	python -m pip install -U pip && \
-	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt && \
-	$(PYTHON) -m pytest test/unit && \
+test-unit: venv2
+	rm -rf lib/$(MODULE)Lib
+	mkdir -p lib/$(MODULE)Lib
+	cp `find lib -name "*.py"` lib/$(MODULE)Lib/
+	. $(VENV2_ACTIVATE) && \
+	pytest test/unit && \
+	deactivate
+	rm -rf lib/$(MODULE)Lib
+
+test-integration: check check-extra venv3
+	. $(VENV3_ACTIVATE) && \
+	pytest test/integration && \
 	deactivate
 
 test-integration-full:
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
-
-test-integration: check check-extra
-	virtualenv -p python$(PYTHON3_VERSION) $(COMMON_DIR)/redshift/python3_venv
-	. $(COMMON_DIR)/redshift/python3_venv/bin/activate && \
-	python -m pip install -U pip && \
-	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt && \
-	$(PYTHON) -m pytest test/integration && \
-	deactivate
 
 deploy: check
 	$(MAKE) storage-upload
@@ -67,6 +71,7 @@ deploy: check
 
 clean:
 	rm -rf dist
+	rm -rf $(VENV2_DIR) $(VENV3_DIR)
 
 clean-deploy: check
 	$(MAKE) storage-remove
@@ -119,6 +124,20 @@ ifeq ($(RS_SHARE_ENABLED), 1)
 	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id') || exit 1; \
 	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager || exit 1;
 endif
+
+venv2:
+	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
+	. $(VENV2_ACTIVATE) && \
+	python -m pip install -U pip -q 2>/dev/null && \
+	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt -q 2>/dev/null && \
+	deactivate
+
+venv3:
+	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
+	. $(VENV3_ACTIVATE) && \
+	python -m pip install -U pip -q && \
+	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt -q && \
+	deactivate
 
 check:
 ifndef RS_REGION
