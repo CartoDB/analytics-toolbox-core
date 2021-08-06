@@ -17,4 +17,4 @@ def test_add():
     cursor.execute(f"SELECT {schema_prefix}quadkey.ADD(123, 245)")
     result = cursor.fetchall()
 
-    assert result[0][0] == 369
+    assert result[0][0] == 368

@@ -195,7 +195,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      AWS_DEFAULT_REGION: us-east-2
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
       RS_CLUSTER_ID: redshift-cluster-1
@@ -218,5 +217,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
       - name: Run integration tests
         run: make test-integration-full CLOUD=redshift
