@@ -67,6 +67,7 @@ clean:
 	rm -rf dist
 
 clean-deploy: check
+	$(MAKE) storage-remove
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
@@ -81,11 +82,15 @@ storage-upload:
 		$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager || exit 1; \
 	done
 
+storage-remove:
+	for f in $(notdir $(wildcard dist/*.zip)); do \
+		$(AWS) s3 rm $(AWS_S3_BUCKET)$$f || exit 1; \
+	done
+
 schema-create:
 	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA)"; \
 	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id') || exit 1; \
 	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager || exit 1;
-
 
 schema-remove:
 	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; \
