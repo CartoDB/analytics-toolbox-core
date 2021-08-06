@@ -55,7 +55,7 @@ test-integration: check check-extra
 
 test-integration-full:
 	$(MAKE) deploy
-	$(MAKE) test-integration
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
 
 deploy: check
