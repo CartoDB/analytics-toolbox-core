@@ -195,6 +195,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
+      AWS_DEFAULT_REGION: us-east-2
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
       RS_CLUSTER_ID: redshift-cluster-1
