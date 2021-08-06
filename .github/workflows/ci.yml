@@ -9,6 +9,7 @@ on:
 
 env:
   NODE_VERSION: 14
+  PYTHON2_VERSION: 2.7
 
 jobs:
 
@@ -182,6 +183,6 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: 2
+          python-version: ${{ env.PYTHON2_VERSION }}
       - name: Run unit tests
         run: make test-unit CLOUD=redshift

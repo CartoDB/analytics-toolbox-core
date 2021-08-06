@@ -3,6 +3,8 @@
 SED ?= sed
 AWS ?= aws
 PYTHON ?= python
+PYTHON2_VERSION ?= 2.7
+PYTHON3_VERSOIN ?=3.9.1
 
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
@@ -22,15 +24,6 @@ REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
 
-enable-python2:
-	echo temp
-
-enable-python3:
-	python3 -m venv $(COMMON_DIR)/redshift/venv
-	. $(COMMON_DIR)/redshift/venv/bin/activate
-	python -m pip install -U pip
-	pip install -r $(COMMON_DIR)/redshift/requirements_python3.txt
-
 lint:
 	flake8 lib/ test/ || exit 1
 
@@ -44,13 +37,20 @@ build:
 	mv lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib lib/$(MODULE)Lib
 
 test-unit:
-	pytest test/unit
+	virtualenv -p python$(PYTHON2_VERSION) $(COMMON_DIR)/redshift/python2_venv
+	. $(COMMON_DIR)/redshift/python2_venv/bin/activate && \
+	python -m pip install -U pip && \
+	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt && \
+	$(PYTHON) -m pytest test/unit && \
+	deactivate
 
 test-integration: check check-extra
-	pytest test/integration
-# $(MAKE) enable-python3
-# $(PYTHON) -m pytest test/integration
-# deactivate
+	virtualenv -p python$(PYTHON3_VERSION) $(COMMON_DIR)/redshift/python3_venv
+	. $(COMMON_DIR)/redshift/python3_venv/bin/activate && \
+	python -m pip install -U pip && \
+	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt && \
+	$(PYTHON) -m pytest test/integration && \
+	deactivate
 
 test-integration-full:
 	$(MAKE) deploy
