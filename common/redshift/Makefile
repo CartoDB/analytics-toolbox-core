@@ -2,6 +2,7 @@
 
 SED ?= sed
 AWS ?= aws
+PYTHON ?= python
 
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
@@ -9,6 +10,7 @@ RS_PREFIX = $(RS_SCHEMA_PREFIX)
 SHARE_CREATE_FILE = ./sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = ./sql/_SHARE_REMOVE.sql
 
+COMMON_DIR = ../../../common
 SCRIPTS_DIR = ../../../scripts
 
 REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
@@ -20,6 +22,15 @@ REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-dry, deploy, clean, clean-deploy"
 
+enable-python2:
+	echo temp
+
+enable-python3:
+	python3 -m venv $(COMMON_DIR)/redshift/venv
+	. $(COMMON_DIR)/redshift/venv/bin/activate
+	python -m pip install -U pip
+	pip install -r $(COMMON_DIR)/redshift/requirements_python3.txt
+
 lint:
 	flake8 lib/ test/ || exit 1
 
@@ -27,14 +38,19 @@ lint-fix:
 	black . --quiet
 
 build:
+	mv lib/$(MODULE)Lib  lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib
 	rm -rf dist/*
 	cd lib && zip -r ../dist/$(RS_SCHEMA) *
+	mv lib/$(RS_SCHEMA_PREFIX)$(MODULE)Lib lib/$(MODULE)Lib
 
 test-unit:
 	pytest test/unit
 
 test-integration: check check-extra
 	pytest test/integration
+# $(MAKE) enable-python3
+# $(PYTHON) -m pytest test/integration
+# deactivate
 
 test-integration-full:
 	$(MAKE) deploy
