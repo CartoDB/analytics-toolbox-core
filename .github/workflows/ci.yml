@@ -168,8 +168,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Install virtualenv
-        run: sudo apt-get install virtualenv
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Check linter
         run: make lint CLOUD=redshift
 
@@ -191,47 +191,45 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON2_VERSION }}
-      - name: Install virtualenv
-        run: sudo apt-get install virtualenv
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Run unit tests
-        run: |
-          pip install virtualenv
-          make test-unit CLOUD=redshift
+        run: make test-unit CLOUD=redshift
 
-  test-integration-rs:
-    needs: lint-rs
-    runs-on: ubuntu-20.04
-    timeout-minutes: 10
-    env:
-      RS_REGION: us-east-2
-      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
-      RS_CLUSTER_ID: redshift-cluster-1
-      RS_DATABASE: rscartoci
-      RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
-      RS_USER: ${{ secrets.RS_USER }}
-      RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-      AWS_S3_BUCKET: s3://rscartoci/
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Check diff
-        uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(py)'
-          FILES: 'Makefile'
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Install virtualenv
-        run: sudo apt-get install virtualenv
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-      - name: Run integration tests
-        run: make test-integration-full CLOUD=redshift
+  # test-integration-rs:
+  #   needs: lint-rs
+  #   runs-on: ubuntu-20.04
+  #   timeout-minutes: 10
+  #   env:
+  #     RS_REGION: us-east-2
+  #     RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
+  #     RS_CLUSTER_ID: redshift-cluster-1
+  #     RS_DATABASE: rscartoci
+  #     RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+  #     RS_USER: ${{ secrets.RS_USER }}
+  #     RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+  #     AWS_S3_BUCKET: s3://rscartoci/
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v2
+  #     - name: Check diff
+  #       uses: technote-space/get-diff-action@v4
+  #       with:
+  #         PATTERNS: '**/*.+(py)'
+  #         FILES: 'Makefile'
+  #     - name: Setup python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: ${{ env.PYTHON3_VERSION }}
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-2
+  #     - name: Setup virtualenv
+  #       run: pip install virtualenv
+  #     - name: Run integration tests
+  #       run: make test-integration-full CLOUD=redshift
