@@ -198,7 +198,7 @@ jobs:
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
       RS_CLUSTER_ID: redshift-cluster-1
-      RS_DATABASE: RSCARTOCI
+      RS_DATABASE: rscartoci
       RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
       RS_USER: ${{ secrets.RS_USER }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
