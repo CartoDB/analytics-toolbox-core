@@ -48,8 +48,7 @@ test-unit:
 
 test-integration-full:
 	$(MAKE) deploy
-	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
-	$(MAKE) clean-deploy
+	$(MAKE) test-integration
 
 test-integration: check check-extra
 	virtualenv -p python$(PYTHON3_VERSION) $(COMMON_DIR)/redshift/python3_venv
