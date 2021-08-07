@@ -78,8 +78,7 @@ clean-deploy: check
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
-storage-upload:
-	$(MAKE) build
+storage-upload: build
 	for f in $(wildcard dist/*.zip); do \
 		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
 	done
