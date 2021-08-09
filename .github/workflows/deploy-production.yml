@@ -122,11 +122,7 @@ jobs:
       - name: Deploy to production
         run: make deploy CLOUD=snowflake
 
-
   deploy-rs:
-    if: |
-      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
