@@ -10,7 +10,7 @@ Returns the current version of the quadkey module.
 
 **Return type**
 
-`STRING`
+`VARCHAR`
 
 **Example**
 
