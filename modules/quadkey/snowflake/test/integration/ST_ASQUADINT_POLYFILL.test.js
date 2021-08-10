@@ -83,7 +83,20 @@ test('ST_ASQUADINT_POLYFILL should work with GEOMETRYCOLLECTION', async () => {
                         40.59586
                     ]
                 ]
-            }, 
+            },
+            {
+                'type': 'LineString',
+                'coordinates': [
+                    [
+                        -73.96697,
+                        40.59585
+                    ],
+                    [
+                        -73.96697,
+                        40.59586
+                    ]
+                ]
+            },
             { 
                 'type': 'Polygon',
                 'coordinates': [
