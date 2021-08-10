@@ -20,6 +20,9 @@ VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 
 REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 
+AWS_PRINT ?= tr '\r\n' ' ' | jq -M 'if has("Error") then .["QueryString"],.["Error"] else .["QueryString"] end'
+AWS_CHECK ?= tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null
+
 .SILENT:
 
 .PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
@@ -85,8 +88,9 @@ storage-upload: build
 	done
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; \
-		STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id') || exit 1; \
-		$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager --query '[QueryString, Status, Error]' || exit 1; \
+		STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
+		AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; \
+		echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK); \
 	done
 
 storage-remove:
@@ -96,33 +100,38 @@ storage-remove:
 
 schema-create:
 	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA)"; \
-	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id') || exit 1; \
-	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager --query '[QueryString, Status, Error]' || exit 1;
+	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
+	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; \
+	echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK);
 
 schema-remove:
 	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; \
-	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id') || exit 1; \
-	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager --query '[QueryString, Status, Error]' || exit 1;
+	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
+	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; \
+	echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK);
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		FUNC_QUERY=$$($(SED) $(REPLACEMENTS) $$n); \
-		STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id') || exit 1; \
-		$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager --query '[QueryString, Status, Error]' || exit 1; \
+		FUNC_QUERY=`$(SED) $(REPLACEMENTS) $$n`; \
+		STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id'`; \
+		AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; \
+		echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK); \
 	done
 
 share-create:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNC_QUERY=$($(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)); \
-	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id') || exit 1; \
-	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager --query '[QueryString, Status, Error]' || exit 1;
+	FUNC_QUERY=`$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)`; \
+	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id'`; \
+	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; \
+	echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK);
 endif
 
 share-remove:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNC_QUERY=$($(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)); \
-	STATEMENT_ID=$$($(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id') || exit 1; \
-	$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager --query '[QueryString, Status, Error]' || exit 1;
+	FUNC_QUERY=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; \
+	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id'`; \
+	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; \
+	echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK);
 endif
 
 venv2:
