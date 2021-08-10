@@ -13,7 +13,7 @@ jobs:
       GCLOUD_VERSION: 290.0.1
       BQ_PROJECT: bqcartost-core-${{ github.event.pull_request.number }}
     steps:
-      - name: Install gcloud
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}

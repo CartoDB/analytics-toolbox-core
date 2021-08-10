@@ -9,6 +9,8 @@ on:
 
 env:
   NODE_VERSION: 14
+  PYTHON2_VERSION: 2.7.18
+  PYTHON3_VERSION: 3.8.10
 
 jobs:
 
@@ -41,7 +43,7 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
-      - name: Install node
+      - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -66,11 +68,11 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
-      - name: Install node
+      - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install gcloud
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}
@@ -109,13 +111,13 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
-      - name: Install node
+      - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run unit tests
         run: make test-unit CLOUD=snowflake
-  
+
   test-integration-sf:
     needs: lint-sf
     runs-on: ubuntu-20.04
@@ -137,13 +139,97 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
-      - name: Install node
+      - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install snowsql                          
+      - name: Setup snowsql                          
         run: | 
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Run integration tests
         run: make test-integration-full CLOUD=snowflake
+
+  lint-rs:
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'pull_request_target' && github.event.label.name == 'run_ci' )
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py)'
+          FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Check linter
+        run: make lint CLOUD=redshift
+
+  test-unit-rs:
+    needs: lint-rs
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    env:
+      RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py)'
+          FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON2_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Run unit tests
+        run: make test-unit CLOUD=redshift
+
+  test-integration-rs:
+    needs: lint-rs
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    env:
+      RS_REGION: us-east-2
+      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
+      RS_CLUSTER_ID: redshift-cluster-1
+      RS_DATABASE: rscartoci
+      RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+      RS_USER: ${{ secrets.RS_USER }}
+      RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: s3://rscartoci/
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py)'
+          FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Run integration tests
+        run: make test-integration-full CLOUD=redshift

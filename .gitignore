@@ -1,9 +1,14 @@
 dist/
+*venv*/
 node_modules/
+__pycache__/
+.pytest_cache/
 
 *.log
+*.pyc
 snowsql_rt.*
 .DS_STORE
 dev_env.sh
 package-lock.json
 yarn.lock
+MANIFEST
