@@ -13,6 +13,7 @@ test('KRING should work', async () => {
             STRUCT(5, 12070922, 2),
             STRUCT(6, 791040491538, 3)
         ]))
+        -- cast idx to String to avoid INT64 issues in JS
         SELECT ARRAY_AGG(CAST(ke as STRING)) as kring
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row

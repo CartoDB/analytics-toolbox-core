@@ -7,5 +7,13 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE`
 RETURNS GEOGRAPHY
 OPTIONS (description="Creates a rectangular Polygon from the minimum and maximum values for X and Y")
 AS (
-    ST_GeogFromText(CONCAT('POLYGON((', xmin, ' ', ymin, ',', xmin, ' ', ymax, ',', xmax, ' ', ymax, ',', xmax, ' ', ymin, ',', xmin, ' ', ymin, '))'))
+    ST_MAKEPOLYGON(
+        ST_MAKELINE([
+            ST_GEOGPOINT(xmin, ymin),
+            ST_GEOGPOINT(xmin, ymax),
+            ST_GEOGPOINT(xmax, ymax),
+            ST_GEOGPOINT(xmax, ymin),
+            ST_GEOGPOINT(xmin, ymin)
+            ])
+        )
 );
