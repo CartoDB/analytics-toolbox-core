@@ -66,6 +66,68 @@ test('ST_ASQUADINT_POLYFILL should work', async () => {
     expect(rows[0].polyfill14.sort()).toEqual(polyfillFixturesOut.polyfill2);
 });
 
+test('ST_ASQUADINT_POLYFILL should work with GEOMETRYCOLLECTION', async () => {
+    const feature = {
+        'type': 'GeometryCollection',
+        'geometries': [ 
+            {
+                'type': 'LineString',
+                'coordinates': [
+                    [
+                        -73.96697,
+                        40.59585
+                    ],
+                    [
+                        -73.96697,
+                        40.59586
+                    ]
+                ]
+            }, 
+            { 
+                'type': 'Polygon',
+                'coordinates': [
+                    [
+                        [
+                            -73.96697,
+                            40.59585
+                        ],
+                        [
+                            -73.96697,
+                            40.59584
+                        ],
+                        [
+                            -73.96733,
+                            40.5958
+                        ],
+                        [
+                            -73.96732,
+                            40.59574
+                        ],
+                        [
+                            -73.96695,
+                            40.59578
+                        ],
+                        [
+                            -73.96696,
+                            40.5958
+                        ],
+                        [
+                            -73.96697,
+                            40.59585
+                        ]
+                    ]
+                ]
+            }
+        ]
+    };
+    const featureJSON = JSON.stringify(feature);
+
+    const query = `SELECT \`@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 22) as polyfill22`;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].polyfill22.sort()).toEqual(polyfillFixturesOut.polyfill3);
+});
+
 test('ST_ASQUADINT_POLYFILL should fail if any NULL argument', async () => {
     let query = 'SELECT `@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL`(NULL, 10);';
     await expect(runQuery(query)).rejects.toThrow();
