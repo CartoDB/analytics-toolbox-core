@@ -26,6 +26,10 @@ OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
     const pol = JSON.parse(geojson);
     return JSON.stringify(quadkeyLib.geometrycollection(pol))
+    // Iterate through collection features
+    // Concat quadints arrays
+    // Add all of them into a SET
+    // return the SET casted to array
 """;
 
 
