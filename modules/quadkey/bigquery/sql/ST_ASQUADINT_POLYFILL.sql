@@ -17,6 +17,18 @@ AS """
     return quadints.map(String);
 """;
 
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__geometrycollection`
+(geojson STRING)
+RETURNS STRING
+DETERMINISTIC
+LANGUAGE js
+OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+AS """
+    const pol = JSON.parse(geojson);
+    return JSON.stringify(quadkeyLib.geometrycollection(pol))
+""";
+
+
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>

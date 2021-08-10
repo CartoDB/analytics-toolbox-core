@@ -15,6 +15,8 @@ import {
     ZXYFromQuadint
 } from './quadkey';
 
+import { geometryCollection } from '@turf/helpers';
+
 export default {
     bbox,
     kring,
@@ -29,5 +31,6 @@ export default {
     quadintFromZXY,
     geojsonToQuadints,
     ZXYFromQuadint,
+    geometryCollection,
     version
 };
