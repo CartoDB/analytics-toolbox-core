@@ -7,7 +7,6 @@
   "private": true,
   "dependencies": {
     "@mapbox/tile-cover": "3.0.2",
-    "@mapbox/tilebelt": "1.0.2",
-    "@turf/helpers": "^6.5.0"
+    "@mapbox/tilebelt": "1.0.2"
   }
 }

@@ -13,25 +13,19 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
     const pol = JSON.parse(geojson);
-    const quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+    let quadints = [];
+    if (pol.type == 'GeometryCollection') {
+        pol.geometries.forEach(function (geom) {
+            quadints = quadints.concat(quadkeyLib.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
+        });
+        quadints = Array.from(new Set(quadints));
+    }
+    else
+    {
+        quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+    }
     return quadints.map(String);
 """;
-
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__geometrycollection`
-(geojson STRING)
-RETURNS STRING
-DETERMINISTIC
-LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS """
-    const pol = JSON.parse(geojson);
-    return JSON.stringify(quadkeyLib.geometrycollection(pol))
-    // Iterate through collection features
-    // Concat quadints arrays
-    // Add all of them into a SET
-    // return the SET casted to array
-""";
-
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
