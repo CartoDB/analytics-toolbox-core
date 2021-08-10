@@ -26,9 +26,6 @@ AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_C
 AWS_RUN_STATEMENT_SQL = \
     STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
 	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT)
-AWS_RUN_FUNCTION_SQL = \
-	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNCTION_SQL" --output text --query 'Id'`; \
-	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT)
 
 .SILENT:
 
@@ -110,17 +107,17 @@ schema-remove:
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		FUNCTION_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_FUNCTION_SQL); \
+		STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_STATEMENT_SQL); \
 	done
 
 share-create:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNCTION_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)`; $(AWS_RUN_FUNCTION_SQL)
+	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)`; $(AWS_RUN_STATEMENT_SQL)
 endif
 
 share-remove:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNCTION_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; $(AWS_RUN_FUNCTION_SQL)
+	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; $(AWS_RUN_STATEMENT_SQL)
 endif
 
 venv2:
