@@ -23,6 +23,12 @@ REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 AWS_PRINT = tr '\r\n' ' ' | jq -M 'if has("Error") then .["QueryString"],.["Error"] else .["QueryString"] end'
 AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null
 AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK)
+AWS_RUN_STATEMENT_SQL = \
+    STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
+	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT)
+AWS_RUN_FUNCTION_SQL = \
+	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNCTION_SQL" --output text --query 'Id'`; \
+	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT)
 
 .SILENT:
 
@@ -88,9 +94,7 @@ storage-upload: build
 		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
 	done
 	for f in $(notdir $(wildcard dist/*.zip)); do \
-		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; \
-		STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
-		AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT); \
+		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
 
 storage-remove:
@@ -99,34 +103,24 @@ storage-remove:
 	done
 
 schema-create:
-	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA)"; \
-	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
-	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT);
+	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-remove:
-	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; \
-	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
-	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT);
+	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		FUNC_QUERY=`$(SED) $(REPLACEMENTS) $$n`; \
-		STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id'`; \
-		AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT); \
+		FUNCTION_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_FUNCTION_SQL); \
 	done
 
 share-create:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNC_QUERY=`$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)`; \
-	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id'`; \
-	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT);
+	FUNCTION_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE)`; $(AWS_RUN_FUNCTION_SQL)
 endif
 
 share-remove:
 ifeq ($(RS_SHARE_ENABLED), 1)
-	FUNC_QUERY=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; \
-	STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$FUNC_QUERY" --output text --query 'Id'`; \
-	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT);
+	FUNCTION_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; $(AWS_RUN_FUNCTION_SQL)
 endif
 
 venv2:
