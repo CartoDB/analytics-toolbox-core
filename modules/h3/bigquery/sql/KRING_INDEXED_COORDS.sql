@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.KRING_INDEXED_COORDS`
 (idx STRING, distance INT64)
 RETURNS ARRAY<STRUCT<idx STRING, i INT64, j INT64>> DETERMINISTIC LANGUAGE js
-OPTIONS (library=["gs://bqcartodev/fbaptiste_h3/index.js"]) AS R"""
+OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"]) AS R"""
 if (!idx || distance == null || distance < 0) {
         return null;
     }
