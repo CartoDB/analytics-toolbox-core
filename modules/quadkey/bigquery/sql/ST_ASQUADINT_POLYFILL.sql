@@ -13,7 +13,17 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
     const pol = JSON.parse(geojson);
-    const quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+    let quadints = [];
+    if (pol.type == 'GeometryCollection') {
+        pol.geometries.forEach(function (geom) {
+            quadints = quadints.concat(quadkeyLib.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
+        });
+        quadints = Array.from(new Set(quadints));
+    }
+    else
+    {
+        quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+    }
     return quadints.map(String);
 """;
 

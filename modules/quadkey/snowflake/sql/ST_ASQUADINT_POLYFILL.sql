@@ -14,7 +14,17 @@ AS $$
     }
 
     const pol = JSON.parse(GEOJSON);
-    const quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
+    let quadints = [];
+    if (pol.type == 'GeometryCollection') {
+        pol.geometries.forEach(function (geom) {
+            quadints = quadints.concat(quadkeyLib.geojsonToQuadints(geom, {min_zoom: RESOLUTION, max_zoom: RESOLUTION}));
+        });
+        quadints = Array.from(new Set(quadints));
+    }
+    else
+    {
+        quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
+    }
     return quadints.map(String);
 $$;
 
