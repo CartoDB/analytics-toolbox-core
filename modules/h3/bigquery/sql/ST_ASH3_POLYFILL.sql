@@ -19,11 +19,25 @@ AS """
     }
 
     const featureGeometry = JSON.parse(geojson)
-    if (!['Polygon', 'MultiPolygon'].includes(featureGeometry.type)) {
+    if (!['Polygon', 'MultiPolygon', 'GeometryCollection'].includes(featureGeometry.type)) {
         return null;
     }
 
-    const polygonCoordinates =  featureGeometry.type === 'MultiPolygon' ? featureGeometry.coordinates : [featureGeometry.coordinates];
+    let polygonCoordinates = [];
+    if (featureGeometry.type === 'GeometryCollection') {
+        featureGeometry.geometries.forEach(function (geom) {
+            if (geom.type === 'MultiPolygon') {
+                polygonCoordinates.push(geom.coordinates);
+            } else if (geom.type === 'Polygon') {
+                polygonCoordinates.push([geom.coordinates]);
+            }
+        });
+    } else if (featureGeometry.type === 'MultiPolygon') {
+        polygonCoordinates = featureGeometry.coordinates;
+    } else {
+        polygonCoordinates = [featureGeometry.coordinates];
+    }
+
     let hexes = polygonCoordinates.reduce(
         (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
