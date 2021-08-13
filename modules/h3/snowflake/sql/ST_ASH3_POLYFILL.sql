@@ -19,11 +19,31 @@ AS $$
     }
 
     const featureGeometry = JSON.parse(GEOJSON)
-    if (!['Polygon', 'MultiPolygon'].includes(featureGeometry.type)) {
+    let polygonCoordinates = [];
+    switch(featureGeometry.type) {
+        case 'GeometryCollection':
+            featureGeometry.geometries.forEach(function (geom) {
+                if (geom.type === 'MultiPolygon') {
+                    polygonCoordinates = polygonCoordinates.concat(geom.coordinates);
+                } else if (geom.type === 'Polygon') {
+                    polygonCoordinates = polygonCoordinates.concat([geom.coordinates]);
+                }
+            });
+        break;
+        case 'MultiPolygon':
+            polygonCoordinates = featureGeometry.coordinates;
+        break;
+        case 'Polygon':
+            polygonCoordinates = [featureGeometry.coordinates];
+        break;
+        default:
+            return [];
+    }
+
+    if (polygonCoordinates.length === 0) {
         return [];
     }
 
-    const polygonCoordinates =  featureGeometry.type === 'MultiPolygon' ? featureGeometry.coordinates : [featureGeometry.coordinates];
     let hexes = polygonCoordinates.reduce(
         (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
