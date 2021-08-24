@@ -16,5 +16,5 @@ Returns the current version of the H3 module.
 
 ```sql
 SELECT sfcarto.h3.VERSION();
--- 1.0.1
+-- 1.0.2
 ```

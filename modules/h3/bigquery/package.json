@@ -1,6 +1,6 @@
 {
   "name": "h3_bigquery",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "H3 module for BigQuery",
   "author": "CARTO",
   "license": "BSD-3-Clause",
