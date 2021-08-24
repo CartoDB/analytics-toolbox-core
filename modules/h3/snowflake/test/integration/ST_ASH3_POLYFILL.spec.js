@@ -7,10 +7,9 @@ test('ST_ASH3_POLYFILL returns the proper INT64s', async () => {
             SELECT 1 AS id, TO_GEOGRAPHY('POLYGON((-122.4089866999972145 37.813318999983238, -122.3805436999997056 37.7866302000007224, -122.3544736999993603 37.7198061999978478, -122.5123436999983966 37.7076131999975672, -122.5247187000021967 37.7835871999971715, -122.4798767000009008 37.8151571999998453, -122.4089866999972145 37.813318999983238))') as geom, 9 as resolution UNION ALL
             SELECT 2 AS id, TO_GEOGRAPHY('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 2 as resolution UNION ALL
             SELECT 3 AS id, TO_GEOGRAPHY('POLYGON((20 20, 20 30, 30 30, 30 20, 20 20))') as geom, 2 as resolution UNION ALL
-            -- 4 is a multipolygon containing 2 + 3
+            -- 4 is a multipolygon containing geom ids 2, 3
             SELECT 4 AS id, TO_GEOGRAPHY('MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)), ((20 20, 20 30, 30 30, 30 20, 20 20)))') as geom, 2 as resolution UNION ALL
-            -- 5 is a geometry collection containing 3 + 11 + 13
-            SELECT 5 AS id, TO_GEOGRAPHY('GEOMETRYCOLLECTION(POLYGON((20 20, 20 30, 30 30, 30 20, 20 20)), POINT(0 0), LINESTRING(0 0, 1 1))') as geom, 2 as resolution UNION ALL
+            SELECT 5 AS id, TO_GEOGRAPHY('GEOMETRYCOLLECTION(POLYGON((20 20, 20 30, 30 30, 30 20, 20 20)), POINT(0 10), LINESTRING(0 0, 1 1),MULTIPOLYGON(((-50 -50, -50 -40, -40 -40, -40 -50, -50 -50)), ((50 50, 50 40, 40 40, 40 50, 50 50))))') as geom, 2 as resolution UNION ALL
 
             -- NULL and empty
             SELECT 6 AS id, TRY_TO_GEOGRAPHY(NULL) as geom, 2 as resolution UNION ALL
@@ -43,7 +42,7 @@ test('ST_ASH3_POLYFILL returns the proper INT64s', async () => {
         18,
         12,
         30,
-        12,
+        34,
         0,
         0,
         0,
