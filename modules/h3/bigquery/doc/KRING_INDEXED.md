@@ -20,34 +20,11 @@ Returns an array with the indexes and their `distance` in term of cell to the gi
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.KRING_INDEXED('837b59fffffffff', 1) mykring_indexed;
---     "mykring_indexed": [
-      {
-        "idx": "837b59fffffffff",
-        "distance": "0"
-      },
-      {
-        "idx": "837b5dfffffffff",
-        "distance": "1"
-      },
-      {
-        "idx": "837b58fffffffff",
-        "distance": "1"
-      },
-      {
-        "idx": "837b5bfffffffff",
-        "distance": "1"
-      },
-      {
-        "idx": "837a66fffffffff",
-        "distance": "1"
-      },
-      {
-        "idx": "837a64fffffffff",
-        "distance": "1"
-      },
-      {
-        "idx": "837b4afffffffff",
-        "distance": "1"
-      }
-    ]
+SELECT carto-os.h3.KRING_INDEXED('837b59fffffffff', 1);
+-- [{"idx": "837b59fffffffff", "distance": "0"},
+--  {"idx": "837b5dfffffffff", "distance": "1"},
+--  {"idx": "837b58fffffffff", "distance": "1"},
+--  {"idx": "837b5bfffffffff", "distance": "1"},
+--  {"idx": "837a66fffffffff", "distance": "1"},
+--  {"idx": "837a64fffffffff", "distance": "1"},
+--  {"idx": "837b4afffffffff", "distance": "1"}]

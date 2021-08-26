@@ -15,58 +15,19 @@ Returns an array containing all the quadints and their relative position to the 
 
 `ARRAY<STRUCT<x INT64, y INT64, idx INT64>>`
 
-
 {{% customSelector %}}
 **Example**
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.KRING_INDEXED(4388, 1) mykring_indexed;
---     "mykring_indexed": [
-      {
-        "x": "-1",
-        "y": "-1",
-        "idx": "3844"
-      },
-      {
-        "x": "0",
-        "y": "-1",
-        "idx": "3876"
-      },
-      {
-        "x": "1",
-        "y": "-1",
-        "idx": "3908"
-      },
-      {
-        "x": "-1",
-        "y": "0",
-        "idx": "4356"
-      },
-      {
-        "x": "0",
-        "y": "0",
-        "idx": "4388"
-      },
-      {
-        "x": "1",
-        "y": "0",
-        "idx": "4420"
-      },
-      {
-        "x": "-1",
-        "y": "1",
-        "idx": "4868"
-      },
-      {
-        "x": "0",
-        "y": "1",
-        "idx": "4900"
-      },
-      {
-        "x": "1",
-        "y": "1",
-        "idx": "4932"
-      }
-    ]
+SELECT carto-os.quadkey.KRING_INDEXED(4388, 1);
+-- [{"x": "-1", "y": "-1", "idx": "3844"},
+--  {"x": "0", "y": "-1", "idx": "3876"},
+--  {"x": "1", "y": "-1", "idx": "3908"},
+--  {"x": "-1", "y": "0", "idx": "4356"},
+--  {"x": "0", "y": "0", "idx": "4388"},
+--  {"x": "1", "y": "0", "idx": "4420"},
+--  {"x": "-1", "y": "1", "idx": "4868"},
+--  {"x": "0", "y": "1", "idx": "4900"},
+--  {"x": "1", "y": "1", "idx": "4932"}]
 ```
