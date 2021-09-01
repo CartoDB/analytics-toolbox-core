@@ -1,8 +1,8 @@
 # Makefile for BigQuery modules
 
-SED ?= sed
-GSUTIL ?= gsutil
-BQ ?= bq --location=$(BQ_REGION)
+SED = sed
+GSUTIL = gsutil
+BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
@@ -90,15 +90,15 @@ storage-remove:
 	fi
 
 dataset-create:
-	$(BQ) --project_id $(BQ_PROJECT) show $(BQ_DATASET) 2>/dev/null 1>/dev/null || \
-		$(BQ) mk -d --description "$(BQ_DATASET) module" -label $(BQ_MODULE_CORE_LABEL) $(BQ_PROJECT):$(BQ_DATASET)
+	$(BQ) show $(BQ_DATASET) 2>/dev/null 1>/dev/null || \
+		$(BQ) mk -d --description "$(BQ_DATASET) module" -label $(BQ_MODULE_CORE_LABEL) $(BQ_DATASET)
 
 dataset-remove:
-	$(BQ) rm -r -f -d $(BQ_PROJECT):$(BQ_DATASET)
+	$(BQ) rm -r -f -d $(BQ_DATASET)
 
 dataset-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) -q --project_id $(BQ_PROJECT) --format=json query --use_legacy_sql=false || exit 1; \
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) query -q --format=json --use_legacy_sql=false || exit 1; \
 	done
 
 serialize-module:
