@@ -98,6 +98,7 @@ storage-remove:
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		$(AWS) s3 rm $(AWS_S3_BUCKET)$$f || exit 1; \
 	done
+	STATEMENT_SQL="DROP LIBRARY $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-create:
 	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
