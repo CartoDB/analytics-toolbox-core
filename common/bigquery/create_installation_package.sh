@@ -24,7 +24,7 @@ rm -rf $DIST_DIR
 mkdir -p $DIST_DIR/libs
 
 # Generate core modules
-$SCRIPT_DIR/serialize_modules.sh $ROOT_DIR/core $DIST_DIR/core
+$SCRIPT_DIR/serialize_modules.sh $ROOT_DIR $DIST_DIR/core
 cat $DIST_DIR/core/modules.sql >> $DIST_DIR/modules.sql
 mv $DIST_DIR/core/libs/*/ $DIST_DIR/libs/
 rm -rf $DIST_DIR/core
