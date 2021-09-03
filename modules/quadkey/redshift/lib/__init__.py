@@ -43,5 +43,10 @@ def quadkeyFromQuadint(quadint):
     return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
 
 
+def bbox(quadint):
+    tile = ZXYFromQuadint(quadint)
+    return mercantile.bounds(tile['x'], tile['y'], tile['z'])
+
+
 def clipNumber(num, a, b):
     return max(min(num, b), a)
