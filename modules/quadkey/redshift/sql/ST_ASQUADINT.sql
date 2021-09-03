@@ -9,5 +9,5 @@ RETURNS INT
 IMMUTABLE
 AS $$
     SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(ST_X($1), ST_Y($1), $2)
-$$ language sql;
+$$ LANGUAGE sql;
 

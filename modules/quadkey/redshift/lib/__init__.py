@@ -23,11 +23,12 @@ def ZXYFromQuadint(quadint):
     y = quadint >> (z + 5)
     return {'z': z, 'x': x, 'y': y}
 
-def quadintFromQuadkey (quadkey):
-    tile = mercantile.quadkey_to_tile(quadkey);
-    return quadintFromZXY(tile.z, tile.x, tile.y);
+
+def quadintFromQuadkey(quadkey):
+    tile = mercantile.quadkey_to_tile(quadkey)
+    return quadintFromZXY(tile.z, tile.x, tile.y)
 
 
-def quadkeyFromQuadint (quadint):
-    tile = ZXYFromQuadint(quadint);
-    return mercantile.quadkey(tile.x, tile.y, tile.z);
+def quadkeyFromQuadint(quadint):
+    tile = ZXYFromQuadint(quadint)
+    return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
