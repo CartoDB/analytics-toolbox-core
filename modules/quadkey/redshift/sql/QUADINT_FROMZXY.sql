@@ -9,4 +9,4 @@ RETURNS BIGINT
 IMMUTABLE
 AS $$
     SELECT ($1::BIGINT & 31) | ($2::BIGINT << 5) | ($3::BIGINT << ($1 + 5))
-$$ language sql;
+$$ LANGUAGE sql;

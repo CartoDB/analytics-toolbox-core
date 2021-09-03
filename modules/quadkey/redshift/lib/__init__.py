@@ -24,6 +24,15 @@ def ZXYFromQuadint(quadint):
     return {'z': z, 'x': x, 'y': y}
 
 
+def quadintFromLocation(long, lat, zoom):
+    if zoom < 0 or zoom > 29:
+        raise Exception('Wrong zoom')
+
+    lat = clipNumber(lat, -85.05, 85.05)
+    tile = mercantile.tile(long, lat, zoom)
+    return quadintFromZXY(zoom, tile.x, tile.y)
+
+
 def quadintFromQuadkey(quadkey):
     tile = mercantile.quadkey_to_tile(quadkey)
     return quadintFromZXY(tile.z, tile.x, tile.y)
@@ -32,3 +41,7 @@ def quadintFromQuadkey(quadkey):
 def quadkeyFromQuadint(quadint):
     tile = ZXYFromQuadint(quadint)
     return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
+
+
+def clipNumber(num, a, b):
+    return max(min(num, b), a)
