@@ -129,6 +129,7 @@ venv2:
 	. $(VENV2_ACTIVATE) && \
 	python -m pip install -U pip -q 2>/dev/null && \
 	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt -q 2>/dev/null && \
+	pip install -r requirements.txt -q 2>/dev/null && \
 	deactivate
 
 venv3:
