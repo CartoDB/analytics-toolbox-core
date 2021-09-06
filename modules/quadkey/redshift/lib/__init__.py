@@ -85,6 +85,29 @@ def toParent(quadint, resolution):
     )
 
 
+def kring(quadint, distance):
+    if distance < 1:
+        raise Exception('Wrong kring distance')
+
+    cornerQuadint = quadint
+    # Traverse to top left corner
+    for i in range(0, distance):
+        cornerQuadint = sibling(cornerQuadint, 'left')
+        cornerQuadint = sibling(cornerQuadint, 'up')
+
+    neighbors = []
+    traversalQuadint = 0
+
+    for j in range(0, distance * 2 + 1):
+        traversalQuadint = cornerQuadint
+        for i in range(0, distance * 2 + 1):
+            neighbors.append(traversalQuadint)
+            traversalQuadint = sibling(traversalQuadint, 'right')
+        cornerQuadint = sibling(cornerQuadint, 'down')
+
+    return neighbors
+
+
 def quadintFromLocation(long, lat, zoom):
     if zoom < 0 or zoom > 29:
         raise Exception('Wrong zoom')
