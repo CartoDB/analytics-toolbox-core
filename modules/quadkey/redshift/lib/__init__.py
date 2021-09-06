@@ -1,7 +1,7 @@
 import numpy as np
 import mercantile
 
-_version__ = '1.0.0'
+__version__ = '1.0.0'
 
 
 def quadint_from_zxy(z, x, y):
@@ -129,7 +129,8 @@ def quadkey_from_quadint(quadint):
 
 def bbox(quadint):
     tile = zxy_from_quadint(quadint)
-    return mercantile.bounds(tile['x'], tile['y'], tile['z'])
+    bounds = mercantile.bounds(tile['x'], tile['y'], tile['z'])
+    return [bounds.west, bounds.south, bounds.east, bounds.north]
 
 
 def quadint_to_geojson(quadint):

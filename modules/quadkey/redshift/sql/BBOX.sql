@@ -12,8 +12,7 @@ AS $$
     if quadint is None:
         raise Exception('NULL argument passed to UDF')
 
-    quadint_bbox = bbox(quadint)
-    return '[' + str(quadint_bbox.west) + ',' + str(quadint_bbox.south) + ',' + str(quadint_bbox.east) + ',' + str(quadint_bbox.north) + ']'
+    return str(bbox(quadint))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.BBOX
