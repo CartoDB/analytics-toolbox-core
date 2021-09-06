@@ -1,10 +1,9 @@
-import numpy as np
-import mercantile
-
 __version__ = '1.0.0'
 
 
 def quadint_from_zxy(z, x, y):
+    import numpy as np
+
     if z < 0 or z > 29:
         return None
 
@@ -17,6 +16,8 @@ def quadint_from_zxy(z, x, y):
 
 
 def zxy_from_quadint(quadint):
+    import numpy as np
+
     quadint = np.int64(quadint)
     z = quadint & 31
     x = (quadint >> 5) & ((1 << z) - 1)
@@ -109,6 +110,8 @@ def kring(quadint, distance):
 
 
 def quadint_from_location(long, lat, zoom):
+    import mercantile
+
     if zoom < 0 or zoom > 29:
         raise Exception('Wrong zoom')
 
@@ -118,22 +121,30 @@ def quadint_from_location(long, lat, zoom):
 
 
 def quadint_from_quadkey(quadkey):
+    import mercantile
+
     tile = mercantile.quadkey_to_tile(quadkey)
     return quadint_from_zxy(tile.z, tile.x, tile.y)
 
 
 def quadkey_from_quadint(quadint):
+    import mercantile
+
     tile = zxy_from_quadint(quadint)
     return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
 
 
 def bbox(quadint):
+    import mercantile
+
     tile = zxy_from_quadint(quadint)
     bounds = mercantile.bounds(tile['x'], tile['y'], tile['z'])
     return [bounds.west, bounds.south, bounds.east, bounds.north]
 
 
 def quadint_to_geojson(quadint):
+    import mercantile
+
     tile = zxy_from_quadint(quadint)
     return mercantile.feature(mercantile.Tile(tile['x'], tile['y'], tile['z']))
 
