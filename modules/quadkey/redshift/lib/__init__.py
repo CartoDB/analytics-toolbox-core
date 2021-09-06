@@ -24,6 +24,31 @@ def ZXYFromQuadint(quadint):
     return {'z': z, 'x': x, 'y': y}
 
 
+def sibling(quadint, direction):
+    direction = direction.lower()
+    if direction not in ['left', 'right', 'up', 'down']:
+        raise Exception('Wrong direction argument passed to sibling')
+
+    tile = ZXYFromQuadint(quadint)
+    z = tile['z']
+    x = tile['x']
+    y = tile['y']
+    tilesPerLevel = 2 << (z - 1)
+    if direction == 'left':
+        x = x - 1 if x > 0 else tilesPerLevel - 1
+
+    if direction == 'right':
+        x = x + 1 if x < tilesPerLevel - 1 else 0
+
+    if direction == 'up':
+        y = y - 1 if y > 0 else tilesPerLevel - 1
+
+    if direction == 'down':
+        y = y + 1 if y < tilesPerLevel - 1 else 0
+
+    return quadintFromZXY(z, x, y)
+
+
 def toChildren(quadint, resolution):
     zxy = ZXYFromQuadint(quadint)
     if zxy['z'] < 0 or zxy['z'] > 28:
