@@ -24,6 +24,27 @@ def ZXYFromQuadint(quadint):
     return {'z': z, 'x': x, 'y': y}
 
 
+def toChildren(quadint, resolution):
+    zxy = ZXYFromQuadint(quadint)
+    if zxy['z'] < 0 or zxy['z'] > 28:
+        raise Exception('Wrong quadint zoom')
+
+    if resolution < 0 or resolution <= zxy['z']:
+        raise Exception('Wrong resolution')
+
+    diffZ = resolution - zxy['z']
+    mask = (1 << diffZ) - 1
+    minTileX = zxy['x'] << diffZ
+    maxTileX = minTileX | mask
+    minTileY = zxy['y'] << diffZ
+    maxTileY = minTileY | mask
+    children = []
+    for x in range(minTileX, maxTileX + 1):
+        for y in range(minTileY, maxTileY + 1):
+            children.append(quadintFromZXY(resolution, x, y))
+    return children
+
+
 def quadintFromLocation(long, lat, zoom):
     if zoom < 0 or zoom > 29:
         raise Exception('Wrong zoom')
@@ -48,5 +69,11 @@ def bbox(quadint):
     return mercantile.bounds(tile['x'], tile['y'], tile['z'])
 
 
+def quadintToGeoJSON(quadint):
+    tile = ZXYFromQuadint(quadint)
+    return mercantile.feature(mercantile.Tile(tile['x'], tile['y'], tile['z']))
+
+
 def clipNumber(num, a, b):
     return max(min(num, b), a)
+
