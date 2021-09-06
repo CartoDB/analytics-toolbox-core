@@ -3,14 +3,16 @@ set -e
 # Install Pip Module as Redshift Library
 
 function usage {
-	echo "./libraryInstaller.sh -m <module> -s <s3 prefix> -r <iam role> -c <cluster> -d <database> -u <db user> "
+	echo "./libraryInstaller.sh -m <module> -f <requirement_file>"
 	echo
-	echo "where <module> is the name of the Pip module to be installed"
-	echo "      <s3 prefix> is the location on S3 to upload the artifact to. Must be in format s3://bucket/prefix/"
-	echo "      <s3 role> is the role which is attached to the Redshift cluster and has access to read from the s3 upload location"
-	echo "      <cluster> is the Redshift cluster you will deploy the function to"
-	echo "      <database> is the database you will deploy the function to"
-	echo "      <db user> is the db user who will create the function"
+	echo "where <module> is the name of the Pip module to be installed. The next environment variables should be set:"
+	echo "      AWS_S3_BUCKET is the location on S3 to upload the artifact to. Must be in format s3://bucket/prefix/"
+	echo "      AWS_ACCESS_KEY_ID is the AWS access key attached to the Redshift cluster and has access to read from the s3 upload location"
+	echo "      AWS_SECRET_ACCESS_KEY is the AWS secret access key attached to the Redshift cluster and has access to read from the s3 upload location"
+	echo "      RS_CLUSTER_ID is the Redshift cluster you will deploy the function to"
+	echo "      RS_DATABASE is the database you will deploy the function to"
+	echo "      RS_USER is the db user who will create the function"
+	echo "      RS_REGION is the region of the Redshift project"
 
 	exit 0;
 }
@@ -42,17 +44,10 @@ if [ $? != 0 ]; then
 fi
 
 # look up runtime arguments of the module name and the destination S3 Prefix
-while getopts "a:k:m:s:r:c:b:d:u:h" opt; do
+while getopts "m:f:h" opt; do
     case $opt in
-        a) awsKey="$OPTARG";;
-        k) awsSecretKey="$OPTARG";;
-		m) module="$OPTARG";;
-		s) s3Prefix="$OPTARG";;
-		r) s3Role="$OPTARG";;
-		c) cluster="$OPTARG";;
-		d) db="$OPTARG";;
-		u) user="$OPTARG";;
-        b) region="$OPTARG";;
+        m) module="$OPTARG";;
+        f) module_file="$OPTARG";;
 		h) usage;;
 		\?) echo "Invalid option: -"$OPTARG"" >&2
 			exit 1;;
@@ -62,32 +57,27 @@ done
 
 # validate arguments
 notNull "$module" "Please provide the pip module name using -m"
-notNull "$s3Prefix" "Please provide an S3 Prefix to store the library in using -s"
+notNull "$AWS_S3_BUCKET" "Please provide an S3 bucket to store the library in using export AWS_S3_BUCKET=bucket"
+notNull "$RS_DATABASE" "Please provide a Redshift database using export RS_DATABASE=database"
+notNull "$RS_REGION" "Please provide a region using export RS_REGION=region"
+notNull "$RS_USER" "Please provide a Redshift user using export RS_USER=user"
+notNull "$RS_CLUSTER_ID" "Please provide a Redshift cluster using export RS_CLUSTER_ID=cluster"
+notNull "$AWS_ACCESS_KEY_ID" "Please provide an AWS access key ID using export AWS_ACCESS_KEY_ID=key"
+notNull "$AWS_SECRET_ACCESS_KEY" "Please provide an AWS secret access key ID using export AWS_SECRET_ACCESS_KEY=secret_key"
 
 # check that the s3 prefix is in the right format
 # starts with 's3://'
 
-if ! [[ $s3Prefix == s3:\/\/* ]]; then
+if ! [[ $AWS_S3_BUCKET == s3:\/\/* ]]; then
 	echo "S3 Prefix must start with 's3://'"
 	echo
 	usage
 fi
 
-# ends with slash
-#if ! [[ $s3Prefix =~ .*\/$ ]]; then
-#	s3Prefix="$s3Prefix/"
-#fi
-
-# check if this is a valid module in pip
-#pip3 search $module &> /dev/null
-
-#if [ $? -ne 0 ]; then
-#	echo "Unable to find module $module in pip."
-#	exit -1
-#fi
+# extract modules from requirement file
 
 # found the module - install to a local hidden directory
-echo "Installing $module with pip and uploading to $s3Prefix"
+echo "Installing $module with pip and uploading to $AWS_S3_BUCKET"
 
 TMPDIR=.tmp
 if [ ! -d "$TMPDIR" ]; then
@@ -128,12 +118,10 @@ execQuery()
 files=`ls ${TMPDIR}/.${module}/*.whl`
 for depname in `basename -s .whl $files`
 do
-	#depname=${file%.*}
- 	#depname=`basename -s .whl $file`
 	echo $depname
-	aws s3 cp "$TMPDIR/.$module/$depname.whl" "$s3Prefix/$depname.zip"
-	sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$s3Prefix/$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$awsKey;aws_secret_access_key=$awsSecretKey'; "
-    execQuery $cluster $db $user "$sql" $region
+	aws s3 cp "$TMPDIR/.$module/$depname.whl" "$AWS_S3_BUCKET/$depname.zip"
+	sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET/$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY'; "
+    execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
 	if [ $? != 0 ]; then
 		rm -Rf "$TMPDIR/.$module"
 		exit $?
