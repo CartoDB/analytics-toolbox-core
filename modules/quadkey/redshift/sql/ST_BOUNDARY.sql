@@ -13,7 +13,7 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     geojson = quadint_to_geojson(quadint)['geometry']
-    return geojson
+    return str(geojson)
 $$ LANGUAGE plpythonu;
 
 -- CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.ST_BOUNDARY
