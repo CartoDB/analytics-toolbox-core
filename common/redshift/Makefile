@@ -45,7 +45,7 @@ lint-fix: venv3
 	flake8 lib/ test/ --enable-extensions Q0 && \
 	deactivate
 
-build:
+build: venv2
 	rm -rf dist
 	mkdir -p dist/$(RS_SCHEMA)Lib
 	cp `find lib -name "*.py"`  dist/$(RS_SCHEMA)Lib/
