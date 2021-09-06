@@ -45,6 +45,21 @@ def toChildren(quadint, resolution):
     return children
 
 
+def toParent(quadint, resolution):
+    zxy = ZXYFromQuadint(quadint)
+    if zxy['z'] < 1 or zxy['z'] > 29:
+        raise Exception('Wrong quadint zoom')
+
+    if resolution < 0 or resolution >= zxy['z']:
+        raise Exception('Wrong resolution')
+
+    return quadintFromZXY(
+        resolution,
+        zxy['x'] >> (zxy['z'] - resolution),
+        zxy['y'] >> (zxy['z'] - resolution),
+    )
+
+
 def quadintFromLocation(long, lat, zoom):
     if zoom < 0 or zoom > 29:
         raise Exception('Wrong zoom')
@@ -76,4 +91,3 @@ def quadintToGeoJSON(quadint):
 
 def clipNumber(num, a, b):
     return max(min(num, b), a)
-
