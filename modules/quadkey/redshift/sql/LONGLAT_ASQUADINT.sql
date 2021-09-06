@@ -8,10 +8,10 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT
 RETURNS BIGINT
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import quadintFromLocation
+    from @@RS_PREFIX@@quadkeyLib import quadint_from_location
     
     if longitude is None or latitude is None or resolution is None:
         raise Exception('NULL argument passed to UDF')
 
-    return quadintFromLocation(longitude, latitude, resolution)
+    return quadint_from_location(longitude, latitude, resolution)
 $$ LANGUAGE plpythonu;

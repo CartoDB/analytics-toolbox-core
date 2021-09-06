@@ -7,10 +7,10 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.TOPARENT
 RETURNS BIGINT
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import toParent
+    from @@RS_PREFIX@@quadkeyLib import to_parent
     
     if quadint is None or resolution is None:
         raise Exception('NULL argument passed to UDF')
 
-    return toParent(quadint, resolution)
+    return to_parent(quadint, resolution)
 $$ LANGUAGE plpythonu;

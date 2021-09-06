@@ -7,12 +7,12 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._GEOJSONBOUNDARY_FROMQUADINT
 RETURNS VARCHAR
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import quadintToGeoJSON
+    from @@RS_PREFIX@@quadkeyLib import quadint_to_geojson
     
     if quadint is None:
         raise Exception('NULL argument passed to UDF')
 
-    geojson = quadintToGeoJSON(quadint)['geometry'];
+    geojson = quadint_to_geojson(quadint)['geometry']
     return geojson
 $$ LANGUAGE plpythonu;
 

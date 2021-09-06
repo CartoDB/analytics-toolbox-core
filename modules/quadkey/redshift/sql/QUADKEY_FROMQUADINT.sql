@@ -7,10 +7,10 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.QUADKEY_FROMQUADINT
 RETURNS VARCHAR
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import quadkeyFromQuadint
+    from @@RS_PREFIX@@quadkeyLib import quadkey_from_quadint
     
     if quadint is None:
         raise Exception('NULL argument passed to UDF')
     
-    return quadkeyFromQuadint(quadint)
+    return quadkey_from_quadint(quadint)
 $$ LANGUAGE plpythonu;

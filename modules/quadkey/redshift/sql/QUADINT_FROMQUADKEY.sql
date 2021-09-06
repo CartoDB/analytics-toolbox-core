@@ -7,6 +7,6 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.QUADINT_FROMQUADKEY
 RETURNS BIGINT
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import quadintFromQuadkey
-    return quadintFromQuadkey(quadkey)
+    from @@RS_PREFIX@@quadkeyLib import quadint_from_quadkey
+    return quadint_from_quadkey(quadkey)
 $$ LANGUAGE plpythonu;

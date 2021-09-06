@@ -7,12 +7,12 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._TOCHILDREN
 RETURNS VARCHAR
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import toChildren
+    from @@RS_PREFIX@@quadkeyLib import to_children
     
     if quadint is None or resolution is None:
         raise Exception('NULL argument passed to UDF')
 
-    return str(toChildren(quadint, resolution))
+    return str(to_children(quadint, resolution))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.TOCHILDREN

@@ -4,7 +4,7 @@ import mercantile
 _version__ = '1.0.0'
 
 
-def quadintFromZXY(z, x, y):
+def quadint_from_zxy(z, x, y):
     if z < 0 or z > 29:
         return None
 
@@ -16,7 +16,7 @@ def quadintFromZXY(z, x, y):
     return quadint
 
 
-def ZXYFromQuadint(quadint):
+def zxy_from_quadint(quadint):
     quadint = np.int64(quadint)
     z = quadint & 31
     x = (quadint >> 5) & ((1 << z) - 1)
@@ -29,56 +29,56 @@ def sibling(quadint, direction):
     if direction not in ['left', 'right', 'up', 'down']:
         raise Exception('Wrong direction argument passed to sibling')
 
-    tile = ZXYFromQuadint(quadint)
+    tile = zxy_from_quadint(quadint)
     z = tile['z']
     x = tile['x']
     y = tile['y']
-    tilesPerLevel = 2 << (z - 1)
+    tiles_per_level = 2 << (z - 1)
     if direction == 'left':
-        x = x - 1 if x > 0 else tilesPerLevel - 1
+        x = x - 1 if x > 0 else tiles_per_level - 1
 
     if direction == 'right':
-        x = x + 1 if x < tilesPerLevel - 1 else 0
+        x = x + 1 if x < tiles_per_level - 1 else 0
 
     if direction == 'up':
-        y = y - 1 if y > 0 else tilesPerLevel - 1
+        y = y - 1 if y > 0 else tiles_per_level - 1
 
     if direction == 'down':
-        y = y + 1 if y < tilesPerLevel - 1 else 0
+        y = y + 1 if y < tiles_per_level - 1 else 0
 
-    return quadintFromZXY(z, x, y)
+    return quadint_from_zxy(z, x, y)
 
 
-def toChildren(quadint, resolution):
-    zxy = ZXYFromQuadint(quadint)
+def to_children(quadint, resolution):
+    zxy = zxy_from_quadint(quadint)
     if zxy['z'] < 0 or zxy['z'] > 28:
         raise Exception('Wrong quadint zoom')
 
     if resolution < 0 or resolution <= zxy['z']:
         raise Exception('Wrong resolution')
 
-    diffZ = resolution - zxy['z']
-    mask = (1 << diffZ) - 1
-    minTileX = zxy['x'] << diffZ
-    maxTileX = minTileX | mask
-    minTileY = zxy['y'] << diffZ
-    maxTileY = minTileY | mask
+    diff_z = resolution - zxy['z']
+    mask = (1 << diff_z) - 1
+    min_tile_x = zxy['x'] << diff_z
+    max_tile_x = min_tile_x | mask
+    min_tile_y = zxy['y'] << diff_z
+    max_tile_y = min_tile_y | mask
     children = []
-    for x in range(minTileX, maxTileX + 1):
-        for y in range(minTileY, maxTileY + 1):
-            children.append(quadintFromZXY(resolution, x, y))
+    for x in range(min_tile_x, max_tile_x + 1):
+        for y in range(min_tile_y, max_tile_y + 1):
+            children.append(quadint_from_zxy(resolution, x, y))
     return children
 
 
-def toParent(quadint, resolution):
-    zxy = ZXYFromQuadint(quadint)
+def to_parent(quadint, resolution):
+    zxy = zxy_from_quadint(quadint)
     if zxy['z'] < 1 or zxy['z'] > 29:
         raise Exception('Wrong quadint zoom')
 
     if resolution < 0 or resolution >= zxy['z']:
         raise Exception('Wrong resolution')
 
-    return quadintFromZXY(
+    return quadint_from_zxy(
         resolution,
         zxy['x'] >> (zxy['z'] - resolution),
         zxy['y'] >> (zxy['z'] - resolution),
@@ -89,53 +89,53 @@ def kring(quadint, distance):
     if distance < 1:
         raise Exception('Wrong kring distance')
 
-    cornerQuadint = quadint
+    corner_quadint = quadint
     # Traverse to top left corner
     for i in range(0, distance):
-        cornerQuadint = sibling(cornerQuadint, 'left')
-        cornerQuadint = sibling(cornerQuadint, 'up')
+        corner_quadint = sibling(corner_quadint, 'left')
+        corner_quadint = sibling(corner_quadint, 'up')
 
     neighbors = []
-    traversalQuadint = 0
+    traversal_quadint = 0
 
     for j in range(0, distance * 2 + 1):
-        traversalQuadint = cornerQuadint
+        traversal_quadint = corner_quadint
         for i in range(0, distance * 2 + 1):
-            neighbors.append(traversalQuadint)
-            traversalQuadint = sibling(traversalQuadint, 'right')
-        cornerQuadint = sibling(cornerQuadint, 'down')
+            neighbors.append(traversal_quadint)
+            traversal_quadint = sibling(traversal_quadint, 'right')
+        corner_quadint = sibling(corner_quadint, 'down')
 
     return neighbors
 
 
-def quadintFromLocation(long, lat, zoom):
+def quadint_from_location(long, lat, zoom):
     if zoom < 0 or zoom > 29:
         raise Exception('Wrong zoom')
 
-    lat = clipNumber(lat, -85.05, 85.05)
+    lat = clip_number(lat, -85.05, 85.05)
     tile = mercantile.tile(long, lat, zoom)
-    return quadintFromZXY(zoom, tile.x, tile.y)
+    return quadint_from_zxy(zoom, tile.x, tile.y)
 
 
-def quadintFromQuadkey(quadkey):
+def quadint_from_quadkey(quadkey):
     tile = mercantile.quadkey_to_tile(quadkey)
-    return quadintFromZXY(tile.z, tile.x, tile.y)
+    return quadint_from_zxy(tile.z, tile.x, tile.y)
 
 
-def quadkeyFromQuadint(quadint):
-    tile = ZXYFromQuadint(quadint)
+def quadkey_from_quadint(quadint):
+    tile = zxy_from_quadint(quadint)
     return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
 
 
 def bbox(quadint):
-    tile = ZXYFromQuadint(quadint)
+    tile = zxy_from_quadint(quadint)
     return mercantile.bounds(tile['x'], tile['y'], tile['z'])
 
 
-def quadintToGeoJSON(quadint):
-    tile = ZXYFromQuadint(quadint)
+def quadint_to_geojson(quadint):
+    tile = zxy_from_quadint(quadint)
     return mercantile.feature(mercantile.Tile(tile['x'], tile['y'], tile['z']))
 
 
-def clipNumber(num, a, b):
+def clip_number(num, a, b):
     return max(min(num, b), a)
