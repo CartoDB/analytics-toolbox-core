@@ -8,15 +8,15 @@ placekey.H3_ASPLACEKEY(h3index)
 
 Returns the placekey equivalent to the given H3 index.
 
-* `h3index`: `STRING` H3 identifier.
+* `h3index`: `VARCHAR` H3 identifier.
 
 **Return type**
 
-`STRING`
+`VARCHAR`
 
 **Example**
 
 ```sql
-SELECT rscarto.placekey.H3_ASPLACEKEY('847b59dffffffff');
+SELECT placekey.H3_ASPLACEKEY('847b59dffffffff');
 -- @ff7-swh-m49
 ```

@@ -8,15 +8,15 @@ placekey.PLACEKEY_ASH3(placekey)
 
 Returns the H3 index equivalent to the given placekey.
 
-* `placekey`: `STRING` Placekey identifier.
+* `placekey`: `VARCHAR` Placekey identifier.
 
 **Return type**
 
-`STRING`
+`VARCHAR`
 
 **Example**
 
 ```sql
-SELECT rscarto.placekey.PLACEKEY_ASH3('@ff7-swh-m49');
+SELECT placekey.PLACEKEY_ASH3('@ff7-swh-m49');
 -- 8a7b59dffffffff
 ```

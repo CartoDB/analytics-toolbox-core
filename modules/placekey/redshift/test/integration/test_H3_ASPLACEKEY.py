@@ -4,23 +4,23 @@ from test_utils import run_query
 def test_h3_asplacekey():
 
     result = run_query('''
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'847b59dffffffff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('847b59dffffffff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'8a2a9c580577fff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a2a9c580577fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'8a3c9ea2bd4ffff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a3c9ea2bd4ffff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'8a5b4c1047b7fff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a5b4c1047b7fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'8a8e8116a6d7fff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a8e8116a6d7fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'8a3e0ba6659ffff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a3e0ba6659ffff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'8a961652a407fff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a961652a407fff')
         UNION ALL
         SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(NULL)
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(\'ff283473fffffff\')
+        SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('ff283473fffffff')
     ''')
 
     assert result[0][0] == '@ff7-swh-m49'

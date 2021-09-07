@@ -8,7 +8,7 @@ placekey.ISVALID(placekey)
 
 Returns a boolean value `true` when the given string represents a valid Placekey, `false` otherwise.
 
-* `placekey`: `STRING` Placekey identifier.
+* `placekey`: `VARCHAR` Placekey identifier.
 
 **Return type**
 
@@ -17,16 +17,16 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 **Examples**
 
 ```sql
-SELECT rscarto.placekey.ISVALID('@ff7-swh-m49');
+SELECT placekey.ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT rscarto.placekey.ISVALID('ff7-swh-m49');
+SELECT placekey.ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT rscarto.placekey.ISVALID('x');
+SELECT placekey.ISVALID('x');
 -- false
 ```

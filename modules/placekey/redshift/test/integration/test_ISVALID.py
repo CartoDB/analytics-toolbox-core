@@ -6,29 +6,29 @@ def test_isvalid():
     result = run_query('''
         SELECT @@RS_PREFIX@@placekey.ISVALID(NULL)
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'@abc\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('@abc')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'abc-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('abc-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'abcxyz234\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('abcxyz234')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'abc@abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('abc@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'ebc-345@abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('ebc-345@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'bcd-345@\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('bcd-345@')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'22-zzz@abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('22-zzz@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'@abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'bcd-2u4-xez\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('bcd-2u4-xez')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'zzz@abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('zzz@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.ISVALID(\'222-zzz@abc-234-xyz\')
+        SELECT @@RS_PREFIX@@placekey.ISVALID('222-zzz@abc-234-xyz')
     ''')
     
     assert result[0][0] == False

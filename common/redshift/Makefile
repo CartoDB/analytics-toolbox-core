@@ -75,7 +75,6 @@ deploy: check
 	$(MAKE) storage-upload
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
-	$(MAKE) load_external_modules
 	$(MAKE) share-create
 
 clean:
@@ -94,6 +93,9 @@ storage-upload: build
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
+ifneq ("$(wildcard python_requirements.txt)","")
+	. $(COMMON_DIR)/redshift/libraryinstaller.sh -f python_requirements.txt
+endif
 
 storage-remove:
 	for f in $(notdir $(wildcard dist/*.zip)); do \
@@ -105,11 +107,6 @@ schema-create:
 
 schema-remove:
 	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
-
-load_external_modules:
-ifneq ("$(wildcard python_requirements.txt)","")
-	. $(COMMON_DIR)/redshift/libraryinstaller.sh -f python_requirements.txt
-endif
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \

@@ -1,4 +1,3 @@
-import numpy as np
 import re
 
 __version__ = '1.0.0'
@@ -305,7 +304,7 @@ def unshorten_h3_integer(short_h3_integer):
     return rebuilt_int
 
 def int_to_h3_string(h3_integer):
-    return str(np.base_repr(h3_integer, 16)).lower()
+    return str(int(h3_integer, base=16)).lower()
 
 
 # H3 auxiliary functions (These functions should be located in the H3 module)
