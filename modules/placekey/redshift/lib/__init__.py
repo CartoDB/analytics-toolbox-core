@@ -304,7 +304,7 @@ def unshorten_h3_integer(short_h3_integer):
     return rebuilt_int
 
 def int_to_h3_string(h3_integer):
-    return str(int(h3_integer, base=16)).lower()
+    return str(hex(h3_integer)).lstrip("0x")
 
 
 # H3 auxiliary functions (These functions should be located in the H3 module)
