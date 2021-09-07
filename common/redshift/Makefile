@@ -57,13 +57,13 @@ test-unit: venv2
 	mkdir -p lib/$(MODULE)Lib
 	cp `find lib -name "*.py"` lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
-	pytest test/unit && \
+	pytest -rP test/unit && \
 	deactivate
 	rm -rf lib/$(MODULE)Lib
 
 test-integration: check check-extra venv3
 	. $(VENV3_ACTIVATE) && \
-	pytest test/integration && \
+	pytest -rP test/integration && \
 	deactivate
 
 test-integration-full:
