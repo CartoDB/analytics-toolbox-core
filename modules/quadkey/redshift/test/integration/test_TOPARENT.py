@@ -36,12 +36,14 @@ def test_toparent_success():
             SELECT 29, 0, 0
         )
         SELECT *
-        FROM 
+        FROM
         (
             SELECT
-            @@RS_PREFIX@@quadkey.ST_ASQUADINT(ST_POINT(long, lat), zoom - 1) AS expectedParent,
+            @@RS_PREFIX@@quadkey.ST_ASQUADINT(
+                ST_POINT(long, lat), zoom - 1) AS expectedParent,
             @@RS_PREFIX@@quadkey.TOPARENT(
-                @@RS_PREFIX@@quadkey.ST_ASQUADINT(ST_POINT(long, lat), zoom),zoom - 1) AS parent
+                @@RS_PREFIX@@quadkey.ST_ASQUADINT(
+                    ST_POINT(long, lat), zoom),zoom - 1) AS parent
             FROM zoomContext
         )
         WHERE parent != expectedParent;"""

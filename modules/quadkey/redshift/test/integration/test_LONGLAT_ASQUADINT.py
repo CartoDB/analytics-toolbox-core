@@ -2,7 +2,7 @@ from test_utils import run_query, redshift_connector
 import pytest
 
 
-def test_bbox_success():
+def test_longlat_asquadint_success():
     results = run_query(
         """WITH zoomContext AS(
             SELECT 0 AS zoom, -150 AS long, 60 AS lat UNION ALL
@@ -37,8 +37,7 @@ def test_bbox_success():
             SELECT 29, 0, 0
         )
         SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(long, lat, zoom) as quadints
-            FROM zoomContext;
-        """
+            FROM zoomContext;"""
     )
 
     fixture_file = open(

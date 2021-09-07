@@ -4,10 +4,10 @@ import pytest
 
 def test_bbox_success():
     result = run_query(
-        'SELECT @@RS_PREFIX@@quadkey.BBOX(162) as bbox1, '
-        '@@RS_PREFIX@@quadkey.BBOX(12070922) as bbox2, '
-        '@@RS_PREFIX@@quadkey.BBOX(791040491538) as bbox3, '
-        '@@RS_PREFIX@@quadkey.BBOX(12960460429066265) as bbox4'
+        """SELECT @@RS_PREFIX@@quadkey.BBOX(162) as bbox1,
+        @@RS_PREFIX@@quadkey.BBOX(12070922) as bbox2,
+        @@RS_PREFIX@@quadkey.BBOX(791040491538) as bbox3,
+        @@RS_PREFIX@@quadkey.BBOX(12960460429066265) as bbox4"""
     )
 
     assert result[0][0] == '[-90.0,0.0,0.0,66.51326044311186]'
