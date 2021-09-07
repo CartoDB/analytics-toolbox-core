@@ -75,6 +75,7 @@ deploy: check
 	$(MAKE) storage-upload
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
+	$(MAKE) load_external_modules
 	$(MAKE) share-create
 
 clean:
@@ -104,6 +105,9 @@ schema-create:
 
 schema-remove:
 	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
+
+load_external_modules:
+	. $(COMMON_DIR)/redshift/libraryinstaller.sh -f python_requirements.txt
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
