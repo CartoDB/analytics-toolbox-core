@@ -2,12 +2,10 @@ __version__ = '1.0.0'
 
 
 def quadint_from_zxy(z, x, y):
-    import numpy as np
-
     if z < 0 or z > 29:
         return None
 
-    quadint = np.int64(y)
+    quadint = y
     quadint <<= z
     quadint |= x
     quadint <<= 5
@@ -16,9 +14,6 @@ def quadint_from_zxy(z, x, y):
 
 
 def zxy_from_quadint(quadint):
-    import numpy as np
-
-    quadint = np.int64(quadint)
     z = quadint & 31
     x = (quadint >> 5) & ((1 << z) - 1)
     y = quadint >> (z + 5)
@@ -26,6 +21,8 @@ def zxy_from_quadint(quadint):
 
 
 def sibling(quadint, direction):
+    if quadint == 0:
+        return 0
     direction = direction.lower()
     if direction not in ['left', 'right', 'up', 'down']:
         raise Exception('Wrong direction argument passed to sibling')
