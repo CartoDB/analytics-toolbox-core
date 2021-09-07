@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._BBOX
 (quadint BIGINT)
-RETURNS VARCHAR
+RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import bbox

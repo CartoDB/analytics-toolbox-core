@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._TOCHILDREN
 (quadint BIGINT, resolution INT)
-RETURNS VARCHAR
+RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import to_children

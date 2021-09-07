@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._KRING
 (quadint BIGINT, distance INT)
-RETURNS VARCHAR
+RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import kring
