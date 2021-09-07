@@ -107,7 +107,9 @@ schema-remove:
 	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
 
 load_external_modules:
+ifneq ("$(wildcard python_requirements.txt)","")
 	. $(COMMON_DIR)/redshift/libraryinstaller.sh -f python_requirements.txt
+endif
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
