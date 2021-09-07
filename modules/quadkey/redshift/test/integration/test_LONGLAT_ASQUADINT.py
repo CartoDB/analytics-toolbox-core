@@ -2,10 +2,11 @@ from test_utils import run_query, redshift_connector
 import pytest
 
 
-def test_toparent_success():
-    result = run_query(
+def test_bbox_success():
+    results = run_query(
         """WITH zoomContext AS(
-            SELECT 1 AS zoom, -150 AS long, 60 AS lat UNION ALL
+            SELECT 0 AS zoom, -150 AS long, 60 AS lat UNION ALL
+            SELECT 1, -150, 60 UNION ALL
             SELECT 2, 150, 60 UNION ALL
             SELECT 3, -150, -60 UNION ALL
             SELECT 4, 150, -60 UNION ALL
@@ -35,31 +36,37 @@ def test_toparent_success():
             SELECT 28, 45, -25 UNION ALL
             SELECT 29, 0, 0
         )
-        SELECT *
-        FROM 
-        (
-            SELECT
-            @@RS_PREFIX@@quadkey.ST_ASQUADINT(ST_POINT(long, lat), zoom - 1) AS expectedParent,
-            @@RS_PREFIX@@quadkey.TOPARENT(
-                @@RS_PREFIX@@quadkey.ST_ASQUADINT(ST_POINT(long, lat), zoom),zoom - 1) AS parent
-            FROM zoomContext
-        )
-        WHERE parent != expectedParent;"""
+        SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(long, lat, zoom) as quadints
+            FROM zoomContext;
+        """
     )
 
-    assert result == ()
+    fixture_file = open(
+        './test/integration/longlat_asquadint_fixtures/out/quadints.txt', 'r'
+    )
+    lines = fixture_file.readlines()
+    fixture_file.close()
+
+    for idx, result in enumerate(results):
+        assert str(result[0]) == lines[idx].rstrip()
 
 
-def test_toparent_wrong_zoom_failure():
+def test_longlat_asquadint_wrong_zoom_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(0, 0)')
-    assert 'Wrong quadint zoom' in str(excinfo.value)
-
-
-def test_toparent_null_failure():
+        run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(100, 100, 30)')
+    assert 'Wrong zoom' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(NULL, 10)')
+        run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(100, 100, -1)')
+    assert 'Wrong zoom' in str(excinfo.value)
+
+
+def test_longlat_asquadint_null_failure():
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(NULL, 10, 10)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(322, NULL)')
+        run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(10, NULL, 10)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT(10, 10, NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

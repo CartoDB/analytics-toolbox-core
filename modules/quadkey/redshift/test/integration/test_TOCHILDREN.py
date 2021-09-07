@@ -50,7 +50,7 @@ def test_tochildren_success():
     fixture_file.close()
 
     for idx, result in enumerate(results):
-        assert result[0] == lines[idx].strip()
+        assert result[0] == lines[idx].rstrip()
 
 
 def test_tochildren_wrong_zoom_failure():
