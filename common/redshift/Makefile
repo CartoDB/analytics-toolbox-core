@@ -48,14 +48,14 @@ lint-fix: venv3
 build: venv2
 	rm -rf dist
 	mkdir -p dist/$(RS_SCHEMA)Lib
-	cp `find lib -name "*.py"`  dist/$(RS_SCHEMA)Lib/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ dist/$(RS_SCHEMA)Lib/
 	cd dist && zip -r $(RS_SCHEMA)Lib *
 	rm -rf dist/$(RS_SCHEMA)Lib
 
 test-unit: venv2
 	rm -rf lib/$(MODULE)Lib
 	mkdir -p lib/$(MODULE)Lib
-	cp `find lib -name "*.py"` lib/$(MODULE)Lib/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
 	pytest -rP test/unit && \
 	deactivate
