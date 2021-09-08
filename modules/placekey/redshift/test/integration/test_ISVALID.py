@@ -3,7 +3,8 @@ from test_utils import run_query
 
 def test_isvalid():
 
-    result = run_query('''
+    result = run_query(
+        """
         SELECT @@RS_PREFIX@@placekey.ISVALID(NULL)
         UNION ALL
         SELECT @@RS_PREFIX@@placekey.ISVALID('@abc')
@@ -29,18 +30,19 @@ def test_isvalid():
         SELECT @@RS_PREFIX@@placekey.ISVALID('zzz@abc-234-xyz')
         UNION ALL
         SELECT @@RS_PREFIX@@placekey.ISVALID('222-zzz@abc-234-xyz')
-    ''')
-    
-    assert result[0][0] == False
-    assert result[1][0] == False
-    assert result[2][0] == False
-    assert result[3][0] == False
-    assert result[4][0] == False
-    assert result[5][0] == False
-    assert result[6][0] == False
-    assert result[7][0] == False
-    assert result[8][0] == True
-    assert result[9][0] == True
-    assert result[10][0] == True
-    assert result[11][0] == True
-    assert result[12][0] == True
+    """
+    )
+
+    assert result[0][0] is False
+    assert result[1][0] is False
+    assert result[2][0] is False
+    assert result[3][0] is False
+    assert result[4][0] is False
+    assert result[5][0] is False
+    assert result[6][0] is False
+    assert result[7][0] is False
+    assert result[8][0] is True
+    assert result[9][0] is True
+    assert result[10][0] is True
+    assert result[11][0] is True
+    assert result[12][0] is True

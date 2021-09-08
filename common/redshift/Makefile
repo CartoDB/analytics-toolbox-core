@@ -37,13 +37,13 @@ help:
 lint: venv3
 	. $(VENV3_ACTIVATE) && \
 	flake8 lib/ test/ --enable-extensions Q0 && \
-	deactivate || exit 0
+	deactivate
 
 lint-fix: venv3
 	. $(VENV3_ACTIVATE) && \
 	brunette lib/ test/ --line-length=88 --single-quotes --quiet && \
 	flake8 lib/ test/ --enable-extensions Q0 && \
-	deactivate || exit 0
+	deactivate
 
 build:
 	rm -rf dist

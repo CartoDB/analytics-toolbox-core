@@ -3,7 +3,8 @@ from test_utils import run_query
 
 def test_h3_asplacekey():
 
-    result = run_query('''
+    result = run_query(
+        """
         SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('847b59dffffffff')
         UNION ALL
         SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('8a2a9c580577fff')
@@ -21,7 +22,8 @@ def test_h3_asplacekey():
         SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY(NULL)
         UNION ALL
         SELECT @@RS_PREFIX@@placekey.H3_ASPLACEKEY('ff283473fffffff')
-    ''')
+    """
+    )
 
     assert result[0][0] == '@ff7-swh-m49'
     assert result[1][0] == '@63m-vc4-z75'
@@ -30,5 +32,5 @@ def test_h3_asplacekey():
     assert result[4][0] == '@h5z-gcq-kvf'
     assert result[5][0] == '@7v4-m2p-3t9'
     assert result[6][0] == '@hvb-5d7-92k'
-    assert result[7][0] == None
-    assert result[8][0] == None
+    assert result[7][0] is None
+    assert result[8][0] is None
