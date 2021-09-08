@@ -9,7 +9,7 @@ IMMUTABLE
 AS $$
     from @@RS_PREFIX@@placekeyLib import placekey_to_h3, placekey_is_valid
 
-    if placekey is None or not placekey_is_valid(placekey):
+    if not placekey_is_valid(placekey):
         return None
     return placekey_to_h3(placekey)
     
