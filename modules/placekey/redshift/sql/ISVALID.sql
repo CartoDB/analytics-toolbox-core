@@ -9,8 +9,6 @@ IMMUTABLE
 AS $$
     from @@RS_PREFIX@@placekeyLib import placekey_is_valid
 
-    if placekey is None:
-        return False
     return placekey_is_valid(placekey)
 
 $$ LANGUAGE plpythonu;

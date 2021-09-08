@@ -94,7 +94,7 @@ storage-upload: build
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
 ifneq ("$(wildcard python_requirements.txt)","")
-	. $(COMMON_DIR)/redshift/libraryinstaller.sh -f python_requirements.txt
+	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt
 endif
 
 storage-remove:

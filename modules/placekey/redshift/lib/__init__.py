@@ -1,3 +1,6 @@
+# Copyright (c) 2020-2021 SafeGraph Inc.
+# Copyright (c) 2021, CARTO
+
 import re
 
 __version__ = '1.0.0'
@@ -192,6 +195,9 @@ def placekey_is_valid(placekey):
     :param placekey: Placekey (string)
     :return: True if the Placekey is valid, False otherwise
     """
+    if placekey is None:
+        return False
+
     what, where = parse_plakey(placekey)
 
     if what:
