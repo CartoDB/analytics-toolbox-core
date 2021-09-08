@@ -127,8 +127,6 @@ def polygonCover(tileHash, tileArray, geom, zoom):
 
 
 def lineCover(tileHash, coords, maxZoom, ring):
-    from numpy import inf
-
     prevX = None
     prevY = None
     y = None
