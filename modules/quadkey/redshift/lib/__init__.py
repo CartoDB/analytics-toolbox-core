@@ -149,6 +149,11 @@ def quadint_to_geojson(quadint):
 def clip_number(num, a, b):
     return max(min(num, b), a)
 
-def test_tilecover():
+
+def geojsonToQuadints(poly, limits):
     import tilecover
-    return tilecover.__hola__
+
+    return [
+        quadint_from_zxy(int(tile[2]), int(tile[0]), int(tile[1]))
+        for tile in tilecover.getTiles(poly, limits)
+    ]
