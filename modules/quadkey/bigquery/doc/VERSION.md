@@ -18,5 +18,5 @@ Returns the current version of the quadkey module.
 
 ```sql
 SELECT carto-os.quadkey.VERSION();
--- 1.0.3
+-- 1.0.4
 ```
