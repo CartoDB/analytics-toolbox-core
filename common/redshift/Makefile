@@ -45,7 +45,7 @@ lint-fix: venv3
 	flake8 lib/ test/ --enable-extensions Q0 && \
 	deactivate
 
-build: venv2
+build:
 	rm -rf dist
 	mkdir -p dist/$(RS_SCHEMA)Lib
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ dist/$(RS_SCHEMA)Lib/
@@ -129,7 +129,7 @@ venv2:
 	. $(VENV2_ACTIVATE) && \
 	python -m pip install -U pip -q 2>/dev/null && \
 	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt -q 2>/dev/null && \
-	pip install -r python2_requirements.txt -q 2>/dev/null && \
+	([ ! -f python2_module_requirements.txt ] || pip install -r python2_module_requirements.txt -q 2>/dev/null) && \
 	deactivate
 
 venv3:
@@ -137,7 +137,7 @@ venv3:
 	. $(VENV3_ACTIVATE) && \
 	python -m pip install -U pip -q && \
 	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt -q && \
-	pip install -r python3_requirements.txt -q 2>/dev/null && \
+	([ ! -f python3_module_requirements.txt ] || pip install -r python3_module_requirements.txt -q 2>/dev/null) && \
 	deactivate
 
 check:
