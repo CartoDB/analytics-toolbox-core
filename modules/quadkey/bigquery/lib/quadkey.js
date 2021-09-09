@@ -308,7 +308,7 @@ export function kring_indexed (quadint, distance) {
  * @return {array}          array of quadints containing a geography
  */
 export function geojsonToQuadints (poly, limits) {
-    return tilecover.indexes(poly, limits).map(quadintFromQuadkey);
+    return tilecover.tiles(poly, limits).map(tile => quadintFromZXY(tile[2], tile[0], tile[1]));
 }
 
 const clipNumber = (num, a, b) => Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
