@@ -28,3 +28,4 @@ SELECT carto-os.h3.KRING_INDEXED('837b59fffffffff', 1);
 --  {"idx": "837a66fffffffff", "distance": "1"},
 --  {"idx": "837a64fffffffff", "distance": "1"},
 --  {"idx": "837b4afffffffff", "distance": "1"}]
+```
