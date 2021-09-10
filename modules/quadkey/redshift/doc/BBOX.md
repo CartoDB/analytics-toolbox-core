@@ -19,7 +19,7 @@ Returns an array with the boundary box of a given quadint. This boundary box con
 ```sql
 SELECT quadkey.BBOX(4388);
 -- 22.5
--- -21.9430455334
+-- -21.943045533438177
 -- 45.0
 -- 0.0
 ```

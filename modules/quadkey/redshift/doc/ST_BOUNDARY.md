@@ -18,5 +18,5 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 
 ```sql
 SELECT quadkey.ST_BOUNDARY(4388);
--- POLYGON((22.5 0, 22.5 -21.9430455334382, 22.67578125 ...
+-- {'type': 'Polygon', 'coordinates': [[[22.5, -21.943045533438177], [22.5, 0.0], ...
 ```
