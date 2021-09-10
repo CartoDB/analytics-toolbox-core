@@ -226,12 +226,12 @@ def test_kring():
 
 
 def test_quadkey():
-    tilesPerLevel = 0
+    tiles_per_level = 0
     for z in range(0, 30):
         if z == 0:
-            tilesPerLevel = 1
+            tiles_per_level = 1
         else:
-            tilesPerLevel = 2 << (z - 1)
+            tiles_per_level = 2 << (z - 1)
 
         x = 0
         y = 0
@@ -246,8 +246,8 @@ def test_quadkey():
         assert z == z_decoded and x == x_decoded and y == y_decoded
 
         if z > 0:
-            x = tilesPerLevel / 2
-            y = tilesPerLevel / 2
+            x = tiles_per_level / 2
+            y = tiles_per_level / 2
             zxy_decoded = quadkeyLib.zxy_from_quadint(
                 quadkeyLib.quadint_from_quadkey(
                     quadkeyLib.quadkey_from_quadint(
@@ -260,8 +260,8 @@ def test_quadkey():
             y_decoded = zxy_decoded['y']
             assert z == z_decoded and x == x_decoded and y == y_decoded
 
-            x = tilesPerLevel - 1
-            y = tilesPerLevel - 1
+            x = tiles_per_level - 1
+            y = tiles_per_level - 1
             zxy_decoded = quadkeyLib.zxy_from_quadint(
                 quadkeyLib.quadint_from_quadkey(
                     quadkeyLib.quadkey_from_quadint(
@@ -276,12 +276,12 @@ def test_quadkey():
 
 
 def test_quadint():
-    tilesPerLevel = 0
+    tiles_per_level = 0
     for z in range(0, 30):
         if z == 0:
-            tilesPerLevel = 1
+            tiles_per_level = 1
         else:
-            tilesPerLevel = 2 << (z - 1)
+            tiles_per_level = 2 << (z - 1)
 
         x = 0
         y = 0
@@ -292,8 +292,8 @@ def test_quadint():
         assert z == z_decoded and x == x_decoded and y == y_decoded
 
         if z > 0:
-            x = tilesPerLevel / 2
-            y = tilesPerLevel / 2
+            x = tiles_per_level / 2
+            y = tiles_per_level / 2
             zxy_decoded = quadkeyLib.zxy_from_quadint(
                 quadkeyLib.quadint_from_zxy(z, x, y)
             )
@@ -302,8 +302,8 @@ def test_quadint():
             y_decoded = zxy_decoded['y']
             assert z == z_decoded and x == x_decoded and y == y_decoded
 
-            x = tilesPerLevel - 1
-            y = tilesPerLevel - 1
+            x = tiles_per_level - 1
+            y = tiles_per_level - 1
             zxy_decoded = quadkeyLib.zxy_from_quadint(
                 quadkeyLib.quadint_from_zxy(z, x, y)
             )

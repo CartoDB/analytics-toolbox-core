@@ -150,10 +150,10 @@ def clip_number(num, a, b):
     return max(min(num, b), a)
 
 
-def geojsonToQuadints(poly, limits):
+def geojson_to_quadints(poly, limits):
     import tilecover
 
     return [
         quadint_from_zxy(int(tile[2]), int(tile[0]), int(tile[1]))
-        for tile in tilecover.getTiles(poly, limits)
+        for tile in tilecover.get_tiles(poly, limits)
     ]

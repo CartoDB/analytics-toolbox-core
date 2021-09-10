@@ -1,5 +1,6 @@
 flake8==3.9.2
 flake8-quotes==3.2.0
+pep8-naming==0.12.1
 brunette==0.2.0
 pytest==6.2.4
 redshift-connector==2.0.884

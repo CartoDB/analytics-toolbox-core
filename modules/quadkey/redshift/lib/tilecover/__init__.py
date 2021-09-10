@@ -1,100 +1,103 @@
+# Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
+# Copyright (c) 2021, CARTO
+
 import math
 
 d2r = math.pi / 180
 
 
-def getTiles(geom, limits):
+def get_tiles(geom, limits):
     import mercantile
 
     i = None
     tile = None
     coords = geom['coordinates']
-    minZoom = limits['min_zoom']
-    maxZoom = limits['max_zoom']
-    tileHash = {}
+    min_zoom = limits['min_zoom']
+    max_zoom = limits['max_zoom']
+    tile_hash = {}
     tiles = []
 
     if geom['type'] == 'Point':
-        return [mercantile.tile(coords[0], coords[1], maxZoom)]
+        return [mercantile.tile(coords[0], coords[1], max_zoom)]
     elif geom['type'] == 'MultiPoint':
         for i in range(0, len(coords)):
-            tile = mercantile.tile(coords[i][0], coords[i][1], maxZoom)
-            tileHash[toID(tile[0], tile[1], tile[2])] = True
+            tile = mercantile.tile(coords[i][0], coords[i][1], max_zoom)
+            tile_hash[to_id(tile[0], tile[1], tile[2])] = True
     elif geom['type'] == 'LineString':
-        lineCover(tileHash, coords, maxZoom, None)
+        line_cover(tile_hash, coords, max_zoom, None)
     elif geom['type'] == 'MultiLineString':
         for coord in coords:
-            lineCover(tileHash, coord, maxZoom, None)
+            line_cover(tile_hash, coord, max_zoom, None)
     elif geom['type'] == 'Polygon':
-        polygonCover(tileHash, tiles, coords, maxZoom)
+        polygon_cover(tile_hash, tiles, coords, max_zoom)
     elif geom['type'] == 'MultiPolygon':
         for coord in coords:
-            polygonCover(tileHash, tiles, coord, maxZoom)
+            polygon_cover(tile_hash, tiles, coord, max_zoom)
     else:
         raise Exception('Geometry type not implemented')
 
-    if minZoom != maxZoom:
+    if min_zoom != max_zoom:
         #  sync tile hash and tile array so that both contain the same tiles
         tiles_length = len(tiles)
-        appendHashTiles(tileHash, tiles)
+        append_hash_tiles(tile_hash, tiles)
         for i in range(0, tiles_length):
             t = tiles[i]
-            tileHash[toID(t[0], t[1], t[2])] = True
+            tile_hash[to_id(t[0], t[1], t[2])] = True
 
-        return mergeTiles(tileHash, tiles, limits)
+        return merge_tiles(tile_hash, tiles, limits)
 
-    appendHashTiles(tileHash, tiles)
+    append_hash_tiles(tile_hash, tiles)
     return tiles
 
 
-def mergeTiles(tileHash, tiles, limits):
-    mergedTiles = []
-    minZoom = limits['min_zoom']
-    maxZoom = limits['max_zoom']
-    for z in range(maxZoom, minZoom, -1):
-        parentTileHash = {}
-        parentTiles = []
+def merge_tiles(tile_hash, tiles, limits):
+    merged_tiles = []
+    min_zoom = limits['min_zoom']
+    max_zoom = limits['max_zoom']
+    for z in range(max_zoom, min_zoom, -1):
+        parent_tile_hash = {}
+        parent_tiles = []
         tiles_length = len(tiles)
         for i in range(0, tiles_length):
             t = tiles[i]
 
             if t[0] % 2 == 0 and t[1] % 2 == 0:
-                id2 = toID(t[0] + 1, t[1], z)
-                id3 = toID(t[0], t[1] + 1, z)
-                id4 = toID(t[0] + 1, t[1] + 1, z)
+                id2 = to_id(t[0] + 1, t[1], z)
+                id3 = to_id(t[0], t[1] + 1, z)
+                id4 = to_id(t[0] + 1, t[1] + 1, z)
 
-                if tileHash.get(id2) and tileHash.get(id3) and tileHash.get(id4):
-                    tileHash[toID(t[0], t[1], t[2])] = False
-                    tileHash[id2] = False
-                    tileHash[id3] = False
-                    tileHash[id4] = False
+                if tile_hash.get(id2) and tile_hash.get(id3) and tile_hash.get(id4):
+                    tile_hash[to_id(t[0], t[1], t[2])] = False
+                    tile_hash[id2] = False
+                    tile_hash[id3] = False
+                    tile_hash[id4] = False
 
-                    parentTile = [t[0] / 2, t[1] / 2, z - 1]
+                    parent_tile = [t[0] / 2, t[1] / 2, z - 1]
 
                     if z - 1 == limits.min_zoom:
-                        mergedTiles.append(parentTile)
+                        merged_tiles.append(parent_tile)
                     else:
-                        parentTileHash[toID(t[0] / 2, t[1] / 2, z - 1)] = True
-                        parentTiles.append(parentTile)
+                        parent_tile_hash[to_id(t[0] / 2, t[1] / 2, z - 1)] = True
+                        parent_tiles.append(parent_tile)
 
         for i in range(0, tiles_length):
             t = tiles[i]
-            if tileHash.get(toID(t[0], t[1], t[2])):
-                mergedTiles.append(t)
+            if tile_hash.get(to_id(t[0], t[1], t[2])):
+                merged_tiles.append(t)
 
-        tileHash = parentTileHash
-        tiles = parentTiles
+        tile_hash = parent_tile_hash
+        tiles = parent_tiles
 
-    return mergedTiles
+    return merged_tiles
 
 
-def polygonCover(tileHash, tileArray, geom, zoom):
+def polygon_cover(tile_hash, tile_array, geom, zoom):
     intersections = []
 
     geom_length = len(geom)
     for i in range(0, geom_length):
         ring = []
-        lineCover(tileHash, geom[i], zoom, ring)
+        line_cover(tile_hash, geom[i], zoom, ring)
 
         j = 0
         ring_length = len(ring)
@@ -121,21 +124,21 @@ def polygonCover(tileHash, tileArray, geom, zoom):
         #  fill tiles between pairs of intersections
         y = intersections[i][1]
         for x in range(int(intersections[i][0] + 1), int(intersections[i + 1][0])):
-            id = toID(x, y, zoom)
-            if not tileHash.get(id):
-                tileArray.append([x, y, zoom])
+            id = to_id(x, y, zoom)
+            if not tile_hash.get(id):
+                tile_array.append([x, y, zoom])
 
 
-def lineCover(tileHash, coords, maxZoom, ring):
-    prevX = None
-    prevY = None
+def line_cover(tile_hash, coords, max_zoom, ring):
+    prev_x = None
+    prev_y = None
     y = None
 
     coords_length = len(coords)
 
     for i in range(0, coords_length - 1):
-        start = pointToTileFraction(coords[i][0], coords[i][1], maxZoom)
-        stop = pointToTileFraction(coords[i + 1][0], coords[i + 1][1], maxZoom)
+        start = point_to_tile_fraction(coords[i][0], coords[i][1], max_zoom)
+        stop = point_to_tile_fraction(coords[i + 1][0], coords[i + 1][1], max_zoom)
         x0 = start[0]
         y0 = start[1]
         x1 = stop[0]
@@ -150,48 +153,48 @@ def lineCover(tileHash, coords, maxZoom, ring):
         sy = 1 if dy > 0 else -1
         x = math.floor(x0)
         y = math.floor(y0)
-        tMaxX = float('inf') if dx == 0 else abs(((1 if dx > 0 else 0) + x - x0) / dx)
-        tMaxY = float('inf') if dy == 0 else abs(((1 if dy > 0 else 0) + y - y0) / dy)
+        t_max_x = float('inf') if dx == 0 else abs(((1 if dx > 0 else 0) + x - x0) / dx)
+        t_max_y = float('inf') if dy == 0 else abs(((1 if dy > 0 else 0) + y - y0) / dy)
         tdx = float('inf') if dx == 0 else abs(sx / dx)
         tdy = float('inf') if dy == 0 else abs(sy / dy)
 
-        if x != prevX or y != prevY:
-            tileHash[toID(x, y, maxZoom)] = True
-            if ring is not None and y != prevY:
+        if x != prev_x or y != prev_y:
+            tile_hash[to_id(x, y, max_zoom)] = True
+            if ring is not None and y != prev_y:
                 ring.append([x, y])
-            prevX = x
-            prevY = y
+            prev_x = x
+            prev_y = y
 
-        while tMaxX < 1 or tMaxY < 1:
-            if tMaxX < tMaxY:
-                tMaxX += tdx
+        while t_max_x < 1 or t_max_y < 1:
+            if t_max_x < t_max_y:
+                t_max_x += tdx
                 x += sx
             else:
-                tMaxY += tdy
+                t_max_y += tdy
                 y += sy
 
-            tileHash[toID(x, y, maxZoom)] = True
-            if ring is not None and y != prevY:
+            tile_hash[to_id(x, y, max_zoom)] = True
+            if ring is not None and y != prev_y:
                 ring.append([x, y])
-            prevX = x
-            prevY = y
+            prev_x = x
+            prev_y = y
 
     if ring and y == ring[0][1]:
         ring.pop()
 
 
-def appendHashTiles(hash, tiles):
+def append_hash_tiles(hash, tiles):
     keys = list(hash.keys())
     for key in keys:
-        tiles.append(fromID(+key))
+        tiles.append(from_id(+key))
 
 
-def toID(x, y, z):
+def to_id(x, y, z):
     dim = 2 * (1 << int(z))
     return ((dim * y + x) * 32) + z
 
 
-def fromID(id):
+def from_id(id):
     z = id % 32
     dim = 2 * (1 << int(z))
     xy = (id - z) / 32
@@ -201,7 +204,7 @@ def fromID(id):
 
 
 # Tilebelt
-def pointToTileFraction(lon, lat, z):
+def point_to_tile_fraction(lon, lat, z):
     sin = math.sin(lat * d2r)
     z2 = math.pow(2, z)
     x = z2 * (lon / 360 + 0.5)

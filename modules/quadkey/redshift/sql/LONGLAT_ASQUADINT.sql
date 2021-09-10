@@ -4,7 +4,6 @@
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT
 (longitude FLOAT8, latitude FLOAT8, resolution INT)
--- (longitude, latitude, resolution)
 RETURNS BIGINT
 IMMUTABLE
 AS $$

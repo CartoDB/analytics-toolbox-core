@@ -2,16 +2,12 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
-
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._POLYFILL_FROMGEOJSON
 (geojson VARCHAR(MAX), resolution INT)
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import geojsonToQuadints
+    from @@RS_PREFIX@@quadkeyLib import geojson_to_quadints
     import json
 
     if geojson is None or resolution is None:
@@ -21,12 +17,12 @@ AS $$
     quadints = []
     if pol['type'] == 'GeometryCollection':
         for geom in pol['geometries']:
-            quadints += geojsonToQuadints(
+            quadints += geojson_to_quadints(
                 geom, {'min_zoom': resolution, 'max_zoom': resolution}
             )
         quadints = list(set(quadints))
     else:
-        quadints = geojsonToQuadints(
+        quadints = geojson_to_quadints(
             pol, {'min_zoom': resolution, 'max_zoom': resolution}
         )
 
