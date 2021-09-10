@@ -48,22 +48,22 @@ lint-fix: venv3
 build:
 	rm -rf dist
 	mkdir -p dist/$(RS_SCHEMA)Lib
-	cp `find lib -name "*.py"`  dist/$(RS_SCHEMA)Lib/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ dist/$(RS_SCHEMA)Lib/
 	cd dist && zip -r $(RS_SCHEMA)Lib *
 	rm -rf dist/$(RS_SCHEMA)Lib
 
 test-unit: venv2
 	rm -rf lib/$(MODULE)Lib
 	mkdir -p lib/$(MODULE)Lib
-	cp `find lib -name "*.py"` lib/$(MODULE)Lib/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
-	pytest test/unit && \
+	pytest -rP test/unit && \
 	deactivate
 	rm -rf lib/$(MODULE)Lib
 
 test-integration: check check-extra venv3
 	. $(VENV3_ACTIVATE) && \
-	pytest test/integration && \
+	pytest -rP test/integration && \
 	deactivate
 
 test-integration-full:
@@ -86,15 +86,17 @@ clean-deploy: check
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
-storage-upload: build
+storage-upload: build venv3
 	for f in $(wildcard dist/*.zip); do \
 		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
 	done
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
-ifneq ("$(wildcard python_requirements.txt)","")
-	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt
+ifneq ("$(wildcard requirements.txt)","")
+	. $(VENV3_ACTIVATE) && \
+	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt \
+	deactivate
 endif
 
 storage-remove:
@@ -129,6 +131,7 @@ venv2:
 	. $(VENV2_ACTIVATE) && \
 	python -m pip install -U pip -q 2>/dev/null && \
 	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt -q 2>/dev/null && \
+	([ ! -f requirements.txt ] || pip install -r requirements.txt -q 2>/dev/null) && \
 	deactivate
 
 venv3:
