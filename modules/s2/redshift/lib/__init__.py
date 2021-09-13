@@ -1,10 +1,6 @@
-# import json
 import math
 
 import s2sphere
-
-# from shapely import wkt
-# from shapely.geometry import mapping, Polygon
 
 VERSION = '1.0.0'
 
@@ -67,30 +63,25 @@ def to_children(cell_id, resolution=None):
     return children_cell_ids
 
 
-def get_cell_bounds(cell_id):
-    """Return the vertices of an s2 cell.
+def get_vertex_latlng(vertex):
+    """Extract latitude and longitude in degrees from S2 Cell vertex"""
+    vertex_latlng = s2sphere.LatLng.from_point(vertex)
+    vertex_lat = vertex_latlng.lat().degrees
+    vertex_lng = vertex_latlng.lng().degrees
 
-    TO DO: Shapely can't be imported so we have to figure out a way
-    of returning the data: text array, GeoJSON, WKT, etc"""
+    return (vertex_lat, vertex_lng)
+
+
+def get_cell_boundary(cell_id):
+    """Return the vertices of an s2 cell as WKT
+
+    Note that S2 cell vertices must be joined by geodesic edges (great circles)"""
     cell = s2sphere.Cell(s2sphere.CellId(cell_id))
 
-    verts = []
-    for i in range(4):
-        v = cell.get_vertex(i)
-        v_ll = s2sphere.LatLng.from_point(v)
-        v_lat = v_ll.lat().degrees
-        v_lng = v_ll.lng().degrees
+    latlngs = [get_vertex_latlng(cell.get_vertex(i)) for i in range(4)]
+    latlngs.append(latlngs[0])  # Repeat first point for WKT
 
-        # verts.append((v_lat, v_lng))
-        verts.append(str(v_lng) + ',' + str(v_lat))
+    verts_str = ', '.join([(str(lat) + ' ' + str(lng)) for lat, lng in latlngs])
+    boundary_wkt = 'POLYGON (({verts_str}))'.format(verts_str=verts_str)
 
-    # bounds_poly = Polygon(verts)
-
-    # bounds_geojson = json.dumps(mapping(bounds_poly))
-    # return bounds_geojson
-
-    # bounds_wkt = wkt.dumps(bounds_poly)
-    # return bounds_wkt
-
-    verts_str = ' '.join(verts)
-    return verts_str
+    return boundary_wkt

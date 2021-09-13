@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.ST_BOUNDARY(
 RETURNS VARCHAR(MAX) 
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@s2Lib import get_cell_bounds
+    from @@RS_PREFIX@@s2Lib import get_cell_boundary
     
-    return get_cell_bounds(long(id))
+    return get_cell_boundary(long(id))
     
 $$ LANGUAGE plpythonu;
