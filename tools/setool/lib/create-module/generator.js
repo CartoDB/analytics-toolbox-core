@@ -136,7 +136,7 @@ export default {
         break;
 
     case 'redshift':
-        content = '__version__ = \'1.0.0\'';  
+        content = '__version__ = \'1.0.0\'\n';  
         break;
     }
 
@@ -253,7 +253,8 @@ sys.path.insert(
         'common',
         'redshift',
     ),
-)`;
+)
+`;
 
         createFile([root, 'modules', name, cloud, 'test', 'integration', '__init__.py'], content);
 
@@ -263,7 +264,8 @@ from test_utils import run_query
 
 def test_version():
     result = run_query('SELECT @@${prefix}@@${name}.VERSION()')
-    assert result[0][0] == __version__`;
+    assert result[0][0] == __version__
+`;
         break;
     }
 
@@ -291,7 +293,8 @@ import sys
 # Include this to allow importing lib from source code
 sys.path.insert(
     1, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
-)`;
+)
+`;
 
         createFile([root, 'modules', name, cloud, 'test', 'unit', '__init__.py'], content);
 
@@ -299,7 +302,8 @@ sys.path.insert(
 
 
 def test_init():
-    assert ${name}Lib.__version__ == __version__`;
+    assert ${name}Lib.__version__ == __version__
+`;
         break;
         
     }
