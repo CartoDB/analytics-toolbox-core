@@ -25,7 +25,7 @@ module.exports = {
             type: 'list',
             name: 'cloud',
             message: 'Select the cloud for the function:',
-            choices: ['bigquery', 'snowflake'],
+            choices: ['bigquery', 'snowflake', 'redshift'],
             default: 'bigquery'
         });
 
@@ -90,7 +90,7 @@ module.exports = {
             type: 'list',
             name: 'ftemplate',
             message: 'Select the template for the function:',
-            choices: ['js', 'sql', 'js-combo', 'sql-combo'],
+            choices: ['js', 'sql', 'python', 'js-combo', 'sql-combo', 'python-combo'],
             default: 'js'
         });
 
