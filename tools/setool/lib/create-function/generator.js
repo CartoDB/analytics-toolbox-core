@@ -383,7 +383,7 @@ test('{fname} should work', async () => {
 
     case 'redshift':
         if (['sql', 'sql-combo', 'python', 'python-combo'].includes(ftemplate)){
-            content = `from test_utils import import run_query, redshift_connector
+            content = `from test_utils import run_query, redshift_connector
 
 
 def test_${fname.toLowerCase()}():
