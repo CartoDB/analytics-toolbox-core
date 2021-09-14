@@ -90,6 +90,7 @@ SELECT ${project}.${name}.VERSION();
 -- 1.0.0
 \`\`\``;
         break;
+
     case 'redshift':
         content = `### VERSION
 
@@ -121,7 +122,7 @@ SELECT ${name}.VERSION();
 
 function createLibIndex () {
     const filename = { bigquery: 'index.js', snowflake: 'index.js', redshift: '__init__.py' }[cloud];
-    let content = '';
+    let content;
     switch (cloud){
     case 'bigquery':
     case 'snowflake':
@@ -133,6 +134,7 @@ export default {
 
         createFile([root, 'modules', name, cloud, 'lib', 'index.js'], content);
         break;
+
     case 'redshift':
         content = '__version__ = \'1.0.0\'';  
         break;
@@ -142,7 +144,7 @@ export default {
 }
 
 function createSQLVersion () {
-    let content = '';
+    let content;
     switch (cloud){
     case 'bigquery':
         content = `${header}
@@ -157,6 +159,7 @@ AS """
     return ${name}Lib.version;
 """;`;
         break;
+
     case 'snowflake':
         content = `${header}
 
@@ -170,6 +173,7 @@ AS $$
     return ${name}Lib.version;
 $$;`;
         break;
+
     case 'redshift':
         content = `${header}
 
@@ -214,7 +218,7 @@ function createTestIntegrationVersion () {
     const cover = { bigquery: '`', snowflake: '' }[cloud];
     const variable = { bigquery: 'v', snowflake: 'V' }[cloud];
     const prefix = { bigquery: 'BQ_PREFIX', snowflake: 'SF_PREFIX', redshift: 'RS_PREFIX' }[cloud];
-    let content = '';
+    let content;
     switch (cloud){
     case 'bigquery':
     case 'snowflake':
@@ -228,6 +232,7 @@ test('VERSION returns the proper version', async () => {
     expect(rows[0].${variable}).toEqual(version);
 });`;
         break;
+
     case 'redshift':
         content = `import os
 import sys
@@ -267,7 +272,7 @@ def test_version():
 
 function createTestUnitIndex () {
     const filename = { bigquery: 'VERSION.test.js', snowflake: 'VERSION.test.js', redshift: 'test_VERSION.py' }[cloud];
-    let content = '';
+    let content;
     switch (cloud){
     case 'bigquery':
     case 'snowflake':
@@ -277,7 +282,8 @@ const version = require('../../package.json').version;
 test('${name} library defined', () => {
     expect(${name}Lib.version).toBe(version);
 });`;
-        break;     
+        break;
+
     case 'redshift':
         content = `import os
 import sys
