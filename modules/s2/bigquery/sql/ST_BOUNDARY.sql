@@ -14,22 +14,21 @@ AS """
     }
     
     const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(id)).getCornerLatLngs();
-    const geojson = {
-        type: 'Polygon',
-        coordinates: [[
-            [cornerLongLat[0]['lng'],cornerLongLat[0]['lat']],
-            [cornerLongLat[1]['lng'],cornerLongLat[1]['lat']],
-            [cornerLongLat[2]['lng'],cornerLongLat[2]['lat']],
-            [cornerLongLat[3]['lng'],cornerLongLat[3]['lat']],
-            [cornerLongLat[0]['lng'],cornerLongLat[0]['lat']]
-        ]]
-    };
-    return JSON.stringify(geojson);
+
+    const wkt = `POLYGON((` +
+        cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
+        cornerLongLat[1]['lng'] + ` ` + cornerLongLat[1]['lat'] + `, ` +
+        cornerLongLat[2]['lng'] + ` ` + cornerLongLat[2]['lat'] + `, ` +
+        cornerLongLat[3]['lng'] + ` ` + cornerLongLat[3]['lat'] + `, ` +
+        cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] +
+        `))`;
+
+    return wkt;
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@s2.ST_BOUNDARY`
 (id INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@s2.__GEOJSONBOUNDARY`(id))
+    ST_GEOGFROMTEXT(`@@BQ_PREFIX@@s2.__GEOJSONBOUNDARY`(id))
 );
