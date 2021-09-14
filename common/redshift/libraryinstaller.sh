@@ -35,21 +35,31 @@ function notNull {
 
 execQuery()
 {
-  output=`aws redshift-data execute-statement --cluster-identifier $1 --database $2 --db-user $3 --sql "$4" --region $5`
-  id=`echo $output | jq -r .Id`
+	output=`aws redshift-data execute-statement --cluster-identifier $1 --database $2 --db-user $3 --sql "$4" --region $5`
+	id=`echo $output | jq -r .Id`
 
-  status="SUBMITTED"
-  while [ "$status" != "FINISHED" ] && [ "$status" != "FAILED" ]
-  do
-    sleep 1
-    status=`aws redshift-data describe-statement --id $id --region $5 | jq -r .Status`
-  done
+	status="SUBMITTED"
+	while [ "$status" != "FINISHED" ] && [ "$status" != "FAILED" ]
+	do
+		sleep 1
+		status=`aws redshift-data describe-statement --id $id --region $5 | jq -r .Status`
+	done
+
 	if [ "$status" == "FAILED" ]; then
-    aws redshift-data describe-statement --id $id --region $5
-    return 1
-  else
-    echo $id:$status
-  fi
+    	aws redshift-data describe-statement --id $id --region $5
+    	return -1
+  	else
+    	echo $id:$status
+  	fi
+}
+
+numberOfRows()
+{
+	output=`aws redshift-data execute-statement --cluster-identifier $1 --database $2 --db-user $3 --sql "$4" --region $5`
+	id=`echo $output | jq -r .Id`
+	
+	output=`aws redshift-data get-statement-result --id $id --region $5`
+	echo `aws redshift-data get-statement-result --id $id --region $5 | jq '.Records | length'`
 }
 
 # make sure we have pip and the aws cli installed
@@ -126,10 +136,21 @@ do
 	files=`ls ${TMPDIR}/.${m}/*.whl`
 	for depname in `basename -s .whl $files`
 	do
-		echo $depname
-		aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET/$depname.zip"
-		sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET/$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY'; "
-	    execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+		# get lowercase name
+		depname=$(echo "$depname" | tr '[:upper:]' '[:lower:]')
+		echo 'Library to be installed' $depname
+		# check library inclusion
+		sql="SELECT * FROM pg_library WHERE name='${depname%%-*}';"
+		rows=`numberOfRows $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION`
+		if [ $rows == 0 ]; then
+			echo 'Module not found in the cluster. Installing it...'
+			aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
+			sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY'; "
+	    	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+		else
+			echo 'Module already installed'
+		fi
+		
 		if [ $? != 0 ]; then
 			rm -Rf "$TMPDIR/.$m"
 			exit $?

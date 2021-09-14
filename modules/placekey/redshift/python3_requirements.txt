@@ -1,0 +1,3 @@
+short_schema==0.1.1
+wifiPassword==2.0
+short_url==1.2.2
