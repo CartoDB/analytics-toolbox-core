@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.VERSION
 () 
-RETURNS VARCHAR 
+RETURNS VARCHAR
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import __version__

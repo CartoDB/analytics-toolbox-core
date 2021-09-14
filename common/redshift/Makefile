@@ -48,22 +48,22 @@ lint-fix: venv3
 build:
 	rm -rf dist
 	mkdir -p dist/$(RS_SCHEMA)Lib
-	cp `find lib -name "*.py"`  dist/$(RS_SCHEMA)Lib/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ dist/$(RS_SCHEMA)Lib/
 	cd dist && zip -r $(RS_SCHEMA)Lib *
 	rm -rf dist/$(RS_SCHEMA)Lib
 
 test-unit: venv2
 	rm -rf lib/$(MODULE)Lib
 	mkdir -p lib/$(MODULE)Lib
-	cp `find lib -name "*.py"` lib/$(MODULE)Lib/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
-	pytest test/unit && \
+	pytest -rP test/unit && \
 	deactivate
 	rm -rf lib/$(MODULE)Lib
 
 test-integration: check check-extra venv3
 	. $(VENV3_ACTIVATE) && \
-	pytest test/integration && \
+	pytest -rP test/integration && \
 	deactivate
 
 test-integration-full:
@@ -86,7 +86,7 @@ clean-deploy: check
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
-storage-upload: build
+storage-upload: build venv3
 	for f in $(wildcard dist/*.zip); do \
 		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
 	done

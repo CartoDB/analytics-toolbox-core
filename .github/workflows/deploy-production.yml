@@ -147,5 +147,7 @@ jobs:
           aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Deploy to production
         run: make deploy CLOUD=redshift
