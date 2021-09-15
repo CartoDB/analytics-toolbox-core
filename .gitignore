@@ -11,6 +11,5 @@ snowsql_rt.*
 .DS_STORE
 dev_env.sh
 package-lock.json
-.requirements.txt.shasum
 yarn.lock
 MANIFEST
