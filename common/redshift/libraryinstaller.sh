@@ -159,26 +159,30 @@ do
 	do
 		# get lowercase name
 		depname=$(echo "$depname" | tr '[:upper:]' '[:lower:]')
-		echo '> Library to be installed' $depname
+		echo "> Library to be installed: $depname"
 		# check library installed
 		library_installed=`libraryInstalled ${depname%%-*}`
 		if [ $library_installed == 0 ]; then
-			echo "Library not found in the cluster. Installing $depname"
+			echo "- Library not found in the cluster"
+			echo "- Installing $depname"
 			aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
 			sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
 	    	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+			echo "- Done"
 		else
 			# check library version
 			library_version=`libraryVersion ${depname%%-*}`
 			if [[ $depname == ${depname%%-*}-$library_version-* ]]; then
-				echo "Library already installed"
+				echo "- Library already installed"
 			else
-				echo "Library installed: $library_version. Installing $depname"
+				echo "- Library installed with different version: $library_version"
+				echo "- Installing $depname"
 				sql="DROP LIBRARY ${depname%%-*};"
 	    		execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
 				aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
 				sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
 				execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+				echo "- Done"
 			fi
 		fi
 		

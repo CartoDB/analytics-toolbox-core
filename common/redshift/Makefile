@@ -94,9 +94,12 @@ storage-upload: build venv3
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
 ifneq ("$(wildcard requirements.txt)","")
-	. $(VENV2_ACTIVATE) && \
-	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt \
-	deactivate
+	if [ ! -f .requirements.txt.shasum ] || [ "`shasum --check .requirements.txt.shasum | grep "FAILED"`" ]; then \
+		. $(VENV2_ACTIVATE) && \
+		bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt && \
+		shasum requirements.txt > .requirements.txt.shasum && \
+		deactivate; \
+	fi
 endif
 
 storage-remove:
