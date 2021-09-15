@@ -15,7 +15,7 @@ test('ST_TILEENVELOPE should work', async () => {
 
 test('ST_TILEENVELOPE should fail if any NULL argument', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@constructors.ST_MAKEENVELOPE(10, 384, null)
+        SELECT @@SF_PREFIX@@constructors.ST_TILEENVELOPE(10, 384, null)
     `;
     await expect(runQuery(query)).rejects.toThrow();
 });
