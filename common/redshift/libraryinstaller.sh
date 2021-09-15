@@ -64,12 +64,12 @@ numberOfRows()
 
 # make sure we have pip and the aws cli installed
 checkDep "aws"
-checkDep "pip3"
+checkDep "pip"
 
 # make sure we have wheel installed into pip
-pip3 show wheel &> /dev/null
+pip show wheel &> /dev/null
 if [ $? != 0 ]; then
-  echo "pip3 wheel not found. Please install with 'sudo pip install wheel'"
+  echo "pip wheel not found. Please install with 'sudo pip install wheel'"
   exit -1
 fi
 
@@ -125,30 +125,29 @@ do
 	
 	mkdir "$TMPDIR/.$m"
 	
-	pip3 wheel $m --wheel-dir "$TMPDIR/.$m"
+	pip wheel $m --wheel-dir "$TMPDIR/.$m" &> /dev/null
 	if [ $? != 0 ]; then
 		echo "Unable to find module $m in pip."
 		rm -Rf "$TMPDIR/.$m"
 		exit $?
 	fi
 	
-	
 	files=`ls ${TMPDIR}/.${m}/*.whl`
 	for depname in `basename -s .whl $files`
 	do
 		# get lowercase name
 		depname=$(echo "$depname" | tr '[:upper:]' '[:lower:]')
-		echo 'Library to be installed' $depname
+		echo '> Library to be installed' $depname
 		# check library inclusion
 		sql="SELECT * FROM pg_library WHERE name='${depname%%-*}';"
 		rows=`numberOfRows $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION`
 		if [ $rows == 0 ]; then
-			echo 'Module not found in the cluster. Installing it...'
+			echo '- Module not found in the cluster. Installing it...'
 			aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
 			sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY'; "
 	    	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
 		else
-			echo 'Module already installed'
+			echo '- Module already installed'
 		fi
 		
 		if [ $? != 0 ]; then
