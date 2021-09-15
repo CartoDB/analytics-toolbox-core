@@ -49,7 +49,7 @@ execQuery()
 
 	if [ "$status" == "FAILED" ]; then
     	aws redshift-data describe-statement --id $id --region $5
-    	return -1
+    	exit 1
   	else
     	# echo $id:$status
 		if [ "$has_results" == "true" ]; then
@@ -68,9 +68,12 @@ libraryInstalled()
 libraryVersion()
 {
 	timestamp=$(date +%s)
-	function="$1_$timestamp"
+	module=$1
+	function="v$timestamp"
+	# Map Python modules
+	[ "$module" = "python_dateutil" ] && module="dateutil"
 	sql="CREATE OR REPLACE FUNCTION public.$function() RETURNS VARCHAR IMMUTABLE AS \$\$
-    	from $1 import __version__
+    	from $module import __version__
     	return __version__
 	\$\$ LANGUAGE plpythonu;"
 	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
@@ -127,15 +130,20 @@ fi
 
 # extract modules from requirement file
 modules_to_install=($module)
-while IFS= read -r m v || [ -n "$m" ]
-do
+while IFS= read -r m v || [ -n "$m" ]; do
   modules_to_install+=($m)
 done < $modules_file
 
 # found the modules - install to a local hidden directory
-for m in "${modules_to_install[@]}"
-do
-   : 
+for m in "${modules_to_install[@]}"; do
+    redshift_default_libraries='numpy pandas python-dateutil pytz scipy six wsgiref';
+
+	if [[ $redshift_default_libraries == *${m%%==*}* ]]; then
+		echo "Skipping ${m%%==*}"
+		echo "- Library already installed in RedShift"
+		continue
+	fi
+
 	echo "Installing $m in $RS_CLUSTER_ID"
 	
 	TMPDIR=.tmp
@@ -155,10 +163,13 @@ do
 	fi
 	
 	files=`ls ${TMPDIR}/.${m}/*.whl`
-	for depname in `basename -s .whl $files`
-	do
-		# get lowercase name
+	for depname in `basename -s .whl $files`; do
 		depname=$(echo "$depname" | tr '[:upper:]' '[:lower:]')
+		if [[ $redshift_default_libraries == *${depname%%-*}* ]]; then
+			echo "Skipping ${depname%%-*}"
+			echo "- Library already installed in RedShift"
+			continue
+		fi
 		echo "> Library to be installed: $depname"
 		# check library installed
 		library_installed=`libraryInstalled ${depname%%-*}`
