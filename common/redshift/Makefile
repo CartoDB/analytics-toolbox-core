@@ -1,9 +1,9 @@
 # Makefile for Redshift modules
 
-SED ?= sed
-AWS ?= aws
-PYTHON2_VERSION ?= 2.7
-PYTHON3_VERSION ?= 3
+SED = sed
+AWS = aws
+PYTHON2_VERSION = 2.7
+PYTHON3_VERSION = 3
 
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)

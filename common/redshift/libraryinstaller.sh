@@ -42,24 +42,47 @@ execQuery()
 	while [ "$status" != "FINISHED" ] && [ "$status" != "FAILED" ]
 	do
 		sleep 1
-		status=`aws redshift-data describe-statement --id $id --region $5 | jq -r .Status`
+		output=`aws redshift-data describe-statement --id $id --region $5`
+		status=`echo $output | jq -r .Status`
+		has_results=`echo $output | jq -r .HasResultSet`
 	done
 
 	if [ "$status" == "FAILED" ]; then
     	aws redshift-data describe-statement --id $id --region $5
     	return -1
   	else
-    	echo $id:$status
+    	# echo $id:$status
+		if [ "$has_results" == "true" ]; then
+			exec_output=`aws redshift-data get-statement-result --id $id --region $5`
+		fi
   	fi
 }
 
-numberOfRows()
+libraryInstalled()
 {
-	output=`aws redshift-data execute-statement --cluster-identifier $1 --database $2 --db-user $3 --sql "$4" --region $5`
-	id=`echo $output | jq -r .Id`
-	
-	output=`aws redshift-data get-statement-result --id $id --region $5`
-	echo `aws redshift-data get-statement-result --id $id --region $5 | jq '.Records | length'`
+	sql="SELECT * FROM pg_library WHERE name='$1';"
+	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+	echo $exec_output | jq -r '.Records | length'
+}
+
+libraryVersion()
+{
+	timestamp=$(date +%s)
+	function="$1_$timestamp"
+	sql="CREATE OR REPLACE FUNCTION public.$function() RETURNS VARCHAR IMMUTABLE AS \$\$
+    	from $1 import __version__
+    	return __version__
+	\$\$ LANGUAGE plpythonu;"
+	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+
+	sql="SELECT public.$function();"
+	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+	library_version=`echo $exec_output | jq -r '.Records[0][0].stringValue'`
+
+	sql="DROP FUNCTION public.$function();"
+	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+
+	echo $library_version
 }
 
 # make sure we have pip and the aws cli installed
@@ -96,7 +119,6 @@ notNull "$AWS_SECRET_ACCESS_KEY" "Please provide an AWS secret access key ID usi
 
 # check that the s3 prefix is in the right format
 # starts with 's3://'
-
 if ! [[ $AWS_S3_BUCKET == s3:\/\/* ]]; then
 	echo "S3 Prefix must start with 's3://'"
 	echo
@@ -105,7 +127,7 @@ fi
 
 # extract modules from requirement file
 modules_to_install=($module)
-while IFS="==" read -r m v || [ -n "$m" ]
+while IFS= read -r m v || [ -n "$m" ]
 do
   modules_to_install+=($m)
 done < $modules_file
@@ -114,7 +136,7 @@ done < $modules_file
 for m in "${modules_to_install[@]}"
 do
    : 
-	echo "Installing $m with pip and uploading to $AWS_S3_BUCKET"
+	echo "Installing $m in $RS_CLUSTER_ID"
 	
 	TMPDIR=.tmp
 	if [ ! -d "$TMPDIR" ]; then
@@ -138,16 +160,26 @@ do
 		# get lowercase name
 		depname=$(echo "$depname" | tr '[:upper:]' '[:lower:]')
 		echo '> Library to be installed' $depname
-		# check library inclusion
-		sql="SELECT * FROM pg_library WHERE name='${depname%%-*}';"
-		rows=`numberOfRows $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION`
-		if [ $rows == 0 ]; then
-			echo '- Module not found in the cluster. Installing it...'
+		# check library installed
+		library_installed=`libraryInstalled ${depname%%-*}`
+		if [ $library_installed == 0 ]; then
+			echo "Library not found in the cluster. Installing $depname"
 			aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
-			sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY'; "
+			sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
 	    	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
 		else
-			echo '- Module already installed'
+			# check library version
+			library_version=`libraryVersion ${depname%%-*}`
+			if [[ $depname == ${depname%%-*}-$library_version-* ]]; then
+				echo "Library already installed"
+			else
+				echo "Library installed: $library_version. Installing $depname"
+				sql="DROP LIBRARY ${depname%%-*};"
+	    		execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+				aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
+				sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
+				execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+			fi
 		fi
 		
 		if [ $? != 0 ]; then
