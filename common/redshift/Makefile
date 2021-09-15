@@ -93,8 +93,10 @@ storage-upload: build venv3
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
-ifneq ("$(wildcard python2_requirements.txt)","")
-	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f python2_requirements.txt
+ifneq ("$(wildcard requirements.txt)","")
+	. $(VENV3_ACTIVATE) && \
+	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt \
+	deactivate
 endif
 
 storage-remove:
@@ -129,7 +131,7 @@ venv2:
 	. $(VENV2_ACTIVATE) && \
 	python -m pip install -U pip -q 2>/dev/null && \
 	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt -q 2>/dev/null && \
-	pip install -r python2_requirements.txt -q 2>/dev/null && \
+	([ ! -f requirements.txt ] || pip install -r requirements.txt -q 2>/dev/null) && \
 	deactivate
 
 venv3:
@@ -137,7 +139,6 @@ venv3:
 	. $(VENV3_ACTIVATE) && \
 	python -m pip install -U pip -q && \
 	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt -q && \
-	pip install -r python3_requirements.txt -q && \
 	deactivate
 
 check:

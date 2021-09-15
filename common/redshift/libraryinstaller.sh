@@ -4,7 +4,7 @@ set -e
 # It is based on the repository https://github.com/aws-samples/amazon-redshift-udfs
 
 function usage {
-	echo "./libraryInstaller.sh -m <module> -f <requirement_file>"
+	echo "./libraryinstaller.sh -m <module> -f <requirement_file>"
 	echo
 	echo "where <module> is the name of the Pip module to be installed. The next environment variables should be set:"
 	echo "      AWS_S3_BUCKET is the location on S3 to upload the artifact to. Must be in format s3://bucket/prefix/"
