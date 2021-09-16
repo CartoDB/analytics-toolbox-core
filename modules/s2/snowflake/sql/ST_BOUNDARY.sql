@@ -14,17 +14,14 @@ AS $$
     }
     
     const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(ID)).getCornerLatLngs();
-    const geojson = {
-        'type': 'Polygon',
-        'coordinates': [[
-        [cornerLongLat[0]['lng'],cornerLongLat[0]['lat']],
-        [cornerLongLat[1]['lng'],cornerLongLat[1]['lat']],
-        [cornerLongLat[2]['lng'],cornerLongLat[2]['lat']],
-        [cornerLongLat[3]['lng'],cornerLongLat[3]['lat']],
-        [cornerLongLat[0]['lng'],cornerLongLat[0]['lat']]
-        ]]
-    };
-    return JSON.stringify(geojson);
+    const wkt = `POLYGON((` +
+        cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
+        cornerLongLat[1]['lng'] + ` ` + cornerLongLat[1]['lat'] + `, ` +
+        cornerLongLat[2]['lng'] + ` ` + cornerLongLat[2]['lat'] + `, ` +
+        cornerLongLat[3]['lng'] + ` ` + cornerLongLat[3]['lat'] + `, ` +
+        cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] +
+        `))`;
+    return wkt;
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@s2._GEOJSONBOUNDARY_FROMID

@@ -22,3 +22,7 @@ Returns the boundary for a given S2 cell ID. We extract the boundary by getting 
 SELECT carto-os.s2.ST_BOUNDARY(1735346007979327488);
 -- POLYGON((40.6346851320784 -3.8440544113597, 40.6346851320784 ...
 ```
+
+{{% bannerNote title="tip"%}}
+S2 Cell edges are spherical geodesics. The boundary edges can be interpreted as straight lines in other GIS tools, so to export the exact shape of the cells, use `ST_GEOGFROM(ST_ASGEOJSON(geog)`. In this process, BigQuery will add intermediate points to preserve the geodesic curves.
+{{%/ bannerNote %}}

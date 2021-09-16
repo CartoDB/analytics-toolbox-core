@@ -21,7 +21,7 @@ module.exports = {
             type: 'list',
             name: 'cloud',
             message: 'Select the cloud for the module:',
-            choices: ['bigquery', 'snowflake'],
+            choices: ['bigquery', 'snowflake', 'redshift'],
             default: 'bigquery'
         }];
         !info.type && questions.push({

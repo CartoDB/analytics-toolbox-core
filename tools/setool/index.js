@@ -19,11 +19,19 @@ const run = async () => {
     const info = findPathInfo();
 
     if (argv[0] === 'create' && argv[1] === 'module') {
-        await createModule(info);
-        console.log(chalk.green('Module created!'));
+        try {
+            await createModule(info);
+            console.log(chalk.green('Module created!'));
+        } catch (error) {
+            console.error(chalk.red(error));
+        }
     } else if (argv[0] === 'create' && argv[1] === 'function') {
-        await createFunction(info);
-        console.log(chalk.green('Function created!'));
+        try {
+            await createFunction(info);
+            console.log(chalk.green('Function created!'));
+        } catch (error) {
+            console.error(chalk.red(error));
+        }
     } else {
         console.log(help());
     }
