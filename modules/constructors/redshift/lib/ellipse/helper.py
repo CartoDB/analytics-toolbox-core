@@ -1,6 +1,7 @@
 """
 This module will have common utilities.
 """
+from __future__ import division
 from geojson import Feature, Point
 from math import pi
 

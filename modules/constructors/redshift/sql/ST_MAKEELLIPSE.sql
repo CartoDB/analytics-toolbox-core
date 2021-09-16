@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@constructors._MAKEELLIPSE
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@constructorsLib import ellipse
+    from @@RS_PREFIX@@constructorsLib import make_ellipse
     import geojson
 
     if centerPoint is None or xSemiAxis is None or ySemiAxis is None or angle is None or units is None or steps is None:

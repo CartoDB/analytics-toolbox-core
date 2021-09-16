@@ -4,6 +4,7 @@ understand the patterns and relationships of geographic features.
 This is mainly inspired by turf.js.
 link: http://turfjs.org/
 """
+from __future__ import division
 from geojson import Feature, Point
 from helper import length_to_radians, avg_earth_radius_km, convert_length, get_coord
 from math import asin, atan2, cos, degrees, log, pi, radians, sin, sqrt, tan
