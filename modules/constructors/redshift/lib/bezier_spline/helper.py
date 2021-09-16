@@ -1,6 +1,4 @@
-"""
-This module will have common utilities.
-"""
+# Copyright (c) 2020 Omkar Mestry (Python3 implementation)
 
 
 def get_geom(geojson):

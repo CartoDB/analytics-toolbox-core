@@ -1,6 +1,6 @@
-"""
-This module will have common utilities.
-"""
+# Copyright (c) 2020 Omkar Mestry (Python3 implementation)
+# Copyright (c) 2021, CARTO
+
 from __future__ import division
 from geojson import Feature, Point
 from math import pi

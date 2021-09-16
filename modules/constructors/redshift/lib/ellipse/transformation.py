@@ -1,9 +1,6 @@
-"""
-This module implements some of the spatial analysis techniques and processes used to
-understand the patterns and relationships of geographic features.
-This is mainly inspired by turf.js.
-link: http://turfjs.org/
-"""
+# Copyright (c) 2020 Omkar Mestry (Python3 implementation)
+# Copyright (c) 2021, CARTO
+
 import copy
 from geojson import Point as GeoPoint
 

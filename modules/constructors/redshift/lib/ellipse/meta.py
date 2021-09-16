@@ -1,3 +1,7 @@
+# Copyright (c) 2020 Omkar Mestry (Python3 implementation)
+# Copyright (c) 2021, CARTO
+
+
 def coord_each(geojson, callback, exclude_wrap_coord=None):
     """
     Iterate over coordinates in any GeoJSON object, similar to Array.forEach()
