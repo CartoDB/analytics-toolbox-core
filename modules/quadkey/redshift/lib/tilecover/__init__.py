@@ -1,6 +1,7 @@
 # Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
 # Copyright (c) 2021, CARTO
 
+from __future__ import division
 import math
 
 d2r = math.pi / 180
