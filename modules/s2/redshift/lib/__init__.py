@@ -1,24 +1,26 @@
 """"S2 helper lib
 
-Most of this is just a wrapper of the `s2sphere` library. However, some modifications
+Mostly just a wrapper of the `s2sphere` library. However, some adjustments
 have been made for compatibility with Redshift types:
 
-- S2 
+- S2 uses UINT8s for IDs, ranging from 0 to 18446744073709551615, whereas
+  Redshift has a maximum value of INT8 (signed) for integer, ranging from
+  -9223372036854775808 to 9223372036854775807.
 """
 
 import math
 
-import numpy as np
 import s2sphere
 
 __version__ = '1.0.0'
 
-INT64_MAX = np.iinfo(np.int64).max # 9223372036854775807
-UINT64_MAX = np.iinfo(np.uint64).max # 18446744073709551615
+INT64_MAX = 9223372036854775807  # Max integer value in Redshift
+UINT64_MAX = 18446744073709551615  # 2*INT64_MAX + 1. Used by S2
 
 
 class InvalidResolution(Exception):
     pass
+
 
 # Transform all values linearly
 # def uint64_to_int64(uint64):
@@ -30,11 +32,12 @@ class InvalidResolution(Exception):
 
 # Transform only overflow values
 def uint64_to_int64(uint64):
-    return (uint64 if uint64 <= INT64_MAX else uint64 - UINT64_MAX - 1)
+    return uint64 if uint64 <= INT64_MAX else uint64 - UINT64_MAX - 1
+
 
 # Transform only negative values
 def int64_to_uint64(int64):
-    return (int64 if int64 >= 0 else int64 + UINT64_MAX + 1)
+    return int64 if int64 >= 0 else int64 + UINT64_MAX + 1
 
 
 def cell_from_int64_id(int64_id):
@@ -47,27 +50,25 @@ def uint64_repr_from_id(int64_id):
 
 def check_resolution(resolution):
     if not 0 <= resolution <= 30:
-        err = 'Invalid resolution: value must be between 0 and 30, received ' + str(resolution)
+        err = 'Resolution must be between 0 and 30, got {r}'.format(r=resolution)
         raise InvalidResolution(err)
 
 
 def check_valid_parent_resolution(resolution, parent_resolution):
     if parent_resolution > resolution:
-        err = ('Invalid resolution: parent resolution ({parent_resolution}) ' +
-              'must be equal or smaller than cell resolution ({resolution})').format(
-                  parent_resolution=parent_resolution,
-                  resolution=resolution
-              )
+        err = (
+            'Parent resolution ({parent_resolution}) must be '
+            + 'equal or smaller than cell resolution ({resolution})'
+        ).format(parent_resolution=parent_resolution, resolution=resolution)
         raise InvalidResolution(err)
 
 
 def check_valid_children_resolution(resolution, children_resolution):
     if children_resolution < resolution:
-        err = ('Invalid resolution: children resolution ({children_resolution}) ' +
-              'must be equal or greater than cell resolution ({resolution})').format(
-                  children_resolution=children_resolution,
-                  resolution=resolution
-              )
+        err = (
+            'Children resolution ({children_resolution}) must be '
+            + 'equal or greater than cell resolution ({resolution})'
+        ).format(children_resolution=children_resolution, resolution=resolution)
         raise InvalidResolution(err)
 
 
@@ -112,7 +113,7 @@ def to_parent(int64_id, resolution=None):
     """
     cell = cell_from_int64_id(int64_id)
 
-    if resolution != None:
+    if resolution is not None:
         check_resolution(resolution)
         check_valid_parent_resolution(cell.level(), resolution)
         parent_cell = cell.parent(resolution)
@@ -142,7 +143,9 @@ def to_children(int64_id, resolution=None):
         children_cells = cell.children()
 
     children_ids = [int(uint64_to_int64(child.id())) for child in children_cells]
-    children_ids_str = '[' + ','.join([str(child_id) for child_id in children_ids]) + ']'
+    children_ids_str = (
+        '[' + ','.join([str(child_id) for child_id in children_ids]) + ']'
+    )
 
     return children_ids_str
 

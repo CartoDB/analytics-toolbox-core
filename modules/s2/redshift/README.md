@@ -1,3 +1,5 @@
-# Placekey module for Redshift
+# S2 module for Redshift
 
-You can learn more about Placekey on [their website](https://www.placekey.io/) or in the [Overview section](/spatial-extension-rs/sql-reference/placekey/#placekey) of this documentation.
+S2 is a library for spherical geometry that aims to have the same robustness, flexibility, and performance as the very best planar geometry libraries.
+
+You can learn more about S2 on [their website](https://s2geometry.io/) or in the [Overview section](https://s2geometry.io/).
