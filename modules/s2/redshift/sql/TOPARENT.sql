@@ -3,26 +3,26 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOPARENT(
-    id BIGINT,
+    id INT8,
     resolution INTEGER
 ) 
-RETURNS BIGINT 
+RETURNS INT8
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_parent
     
-    return to_parent(long(id), int(resolution))
+    return to_parent(id, resolution)
     
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOPARENT(
-    id BIGINT
+    id INT8
 )
-RETURNS BIGINT 
+RETURNS INT8
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_parent
     
-    return to_parent(long(id))
+    return to_parent(id)
     
 $$ LANGUAGE plpythonu;

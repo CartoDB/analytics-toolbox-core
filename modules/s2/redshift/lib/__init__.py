@@ -1,37 +1,107 @@
+""""S2 helper lib
+
+Most of this is just a wrapper of the `s2sphere` library. However, some modifications
+have been made for compatibility with Redshift types:
+
+- S2 
+"""
+
 import math
 
+import numpy as np
 import s2sphere
 
-VERSION = '1.0.0'
+__version__ = '1.0.0'
+
+INT64_MAX = np.iinfo(np.int64).max # 9223372036854775807
+UINT64_MAX = np.iinfo(np.uint64).max # 18446744073709551615
 
 
-def lnglat_as_id(longitude, latitude, resolution):
+class InvalidResolution(Exception):
+    pass
+
+# Transform all values linearly
+# def uint64_to_int64(uint64):
+#     return uint64 - UINT64_MAX + INT64_MAX
+
+
+# def int64_to_uint64(int64):
+#     return int64 - INT64_MAX + UINT64_MAX
+
+# Transform only overflow values
+def uint64_to_int64(uint64):
+    return (uint64 if uint64 <= INT64_MAX else uint64 - UINT64_MAX - 1)
+
+# Transform only negative values
+def int64_to_uint64(int64):
+    return (int64 if int64 >= 0 else int64 + UINT64_MAX + 1)
+
+
+def cell_from_int64_id(int64_id):
+    return s2sphere.CellId(int64_to_uint64(int64_id))
+
+
+def uint64_repr_from_id(int64_id):
+    return cell_from_int64_id(int64_id).id()
+
+
+def check_resolution(resolution):
+    if not 0 <= resolution <= 30:
+        err = 'Invalid resolution: value must be between 0 and 30, received ' + str(resolution)
+        raise InvalidResolution(err)
+
+
+def check_valid_parent_resolution(resolution, parent_resolution):
+    if parent_resolution > resolution:
+        err = ('Invalid resolution: parent resolution ({parent_resolution}) ' +
+              'must be equal or smaller than cell resolution ({resolution})').format(
+                  parent_resolution=parent_resolution,
+                  resolution=resolution
+              )
+        raise InvalidResolution(err)
+
+
+def check_valid_children_resolution(resolution, children_resolution):
+    if children_resolution < resolution:
+        err = ('Invalid resolution: children resolution ({children_resolution}) ' +
+              'must be equal or greater than cell resolution ({resolution})').format(
+                  children_resolution=children_resolution,
+                  resolution=resolution
+              )
+        raise InvalidResolution(err)
+
+
+def longlat_as_int64_id(longitude, latitude, resolution):
     """Returns the S2 cell ID for a given longitude, latitude, and zoom resolution
 
-    Note: s2sphere always returns cells at zoom resolution 30
+    Returns a string since Redshift's max integer size is too small.
+
+    Note: s2sphere always returns cells at zoom 30 so we have to get
+    the parent at the specified resolution.
     """
+    check_resolution(resolution)
     lat_lng = s2sphere.LatLng(math.radians(latitude), math.radians(longitude))
     cell = s2sphere.CellId.from_lat_lng(lat_lng).parent(resolution)
 
-    return cell.id()
+    return uint64_to_int64(cell.id())
 
 
-def id_to_token(cell_id):
+def int64_id_to_token(int64_id):
     """Returns a unique string token for this cell id.
 
     This is a hex encoded version of the cell id with the right zeros stripped of.
     """
-    cell = s2sphere.CellId(cell_id)
+    cell = cell_from_int64_id(int64_id)
 
     return str(cell.to_token())
 
 
-def get_resolution(cell_id):
+def get_resolution(int64_id):
     """Returns the resolution (level) of a certain cell"""
-    return s2sphere.CellId(cell_id).level()
+    return cell_from_int64_id(int64_id).level()
 
 
-def to_parent(cell_id, resolution=None):
+def to_parent(int64_id, resolution=None):
     """Returns the parent cell ID of a given cell ID for a specific resolution.
 
     A parent cell is the smaller resolution containing cell.
@@ -40,14 +110,20 @@ def to_parent(cell_id, resolution=None):
     is child resolution - 1). However, an optional resolution argument can be passed
     with the desired parent resolution.
     """
-    cell = s2sphere.CellId(cell_id)
-    parent_cell = cell.parent(resolution) if resolution else cell.parent()
+    cell = cell_from_int64_id(int64_id)
 
-    return parent_cell.id()
+    if resolution != None:
+        check_resolution(resolution)
+        check_valid_parent_resolution(cell.level(), resolution)
+        parent_cell = cell.parent(resolution)
+    else:
+        parent_cell = cell.parent()
+
+    return uint64_to_int64(parent_cell.id())
 
 
-def to_children(cell_id, resolution=None):
-    """Returns a string of comma-separated cell IDs of the S2 cell's children
+def to_children(int64_id, resolution=None):
+    """Returns a list of cell IDs, casted to string,  of the S2 cell's children
     for a specific resolution. A child cell is a cell of higher level of detail that is
     contained by the current cell. Each cell has four direct children by definition.
 
@@ -56,11 +132,19 @@ def to_children(cell_id, resolution=None):
     with the desired parent resolution. Note that the amount of children grows to
     the power of four per zoom level.
     """
-    cell = s2sphere.CellId(cell_id)
-    children_cells = cell.children(resolution) if resolution else cell.children()
-    children_cell_ids = ','.join([str(child.id()) for child in children_cells])
+    cell = cell_from_int64_id(int64_id)
 
-    return children_cell_ids
+    if resolution:
+        check_valid_children_resolution(cell.level(), resolution)
+        check_resolution(resolution)
+        children_cells = cell.children(resolution)
+    else:
+        children_cells = cell.children()
+
+    children_ids = [int(uint64_to_int64(child.id())) for child in children_cells]
+    children_ids_str = '[' + ','.join([str(child_id) for child_id in children_ids]) + ']'
+
+    return children_ids_str
 
 
 def get_vertex_latlng(vertex):
@@ -72,11 +156,11 @@ def get_vertex_latlng(vertex):
     return (vertex_lat, vertex_lng)
 
 
-def get_cell_boundary(cell_id):
+def get_cell_boundary(int64_id):
     """Return the vertices of an s2 cell as WKT
 
     Note that S2 cell vertices must be joined by geodesic edges (great circles)"""
-    cell = s2sphere.Cell(s2sphere.CellId(cell_id))
+    cell = s2sphere.Cell(cell_from_int64_id(int64_id))
 
     latlngs = [get_vertex_latlng(cell.get_vertex(i)) for i in range(4)]
     latlngs.append(latlngs[0])  # Repeat first point for WKT

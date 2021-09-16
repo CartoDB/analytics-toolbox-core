@@ -2,31 +2,46 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-
--- This functionality is blocked by the fact that Redshift
--- has a 256 max character limit even for text types
--- so just one zoom level higher breaks he limit
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOCHILDREN(
-    id BIGINT,
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2._TOCHILDREN(
+    id INT8,
     resolution INTEGER
 ) 
-RETURNS VARCHAR(MAX) 
+RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_children
     
-    return to_children(long(id), int(resolution))
+    return to_children(id, resolution)
+    
+$$ LANGUAGE plpythonu;
+
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2._TOCHILDREN(
+    id INT8
+)
+RETURNS VARCHAR(MAX)
+IMMUTABLE
+AS $$
+    from @@RS_PREFIX@@s2Lib import to_children
+    
+    return to_children(id)
     
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOCHILDREN(
-    id BIGINT
+    INT8,
+    INT
 )
-RETURNS VARCHAR(MAX) 
+RETURNS SUPER
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@s2Lib import to_children
-    
-    return to_children(long(id))
-    
-$$ LANGUAGE plpythonu;
+    SELECT json_parse(@@RS_PREFIX@@s2._TOCHILDREN($1, $2))
+$$ LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOCHILDREN(
+    INT8
+)
+RETURNS SUPER
+IMMUTABLE
+AS $$
+    SELECT json_parse(@@RS_PREFIX@@s2._TOCHILDREN($1))
+$$ LANGUAGE sql;

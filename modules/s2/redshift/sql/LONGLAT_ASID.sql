@@ -3,15 +3,15 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.LONGLAT_ASID(
-    longitude NUMERIC,
-    latitude NUMERIC,
+    longitude FLOAT,
+    latitude FLOAT,
     resolution INTEGER
 ) 
-RETURNS BIGINT 
+RETURNS INT8
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@s2Lib import lnglat_as_id
+    from @@RS_PREFIX@@s2Lib import longlat_as_int64_id
     
-    return lnglat_as_id(float(longitude), float(latitude), int(resolution))
+    return longlat_as_int64_id(longitude, latitude, resolution)
     
 $$ LANGUAGE plpythonu;

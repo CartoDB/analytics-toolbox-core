@@ -3,13 +3,13 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.ST_BOUNDARY(
-    id BIGINT
+    id INT8
 ) 
 RETURNS VARCHAR(MAX) 
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import get_cell_boundary
     
-    return get_cell_boundary(long(id))
+    return get_cell_boundary(id)
     
 $$ LANGUAGE plpythonu;

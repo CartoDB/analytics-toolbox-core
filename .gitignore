@@ -3,11 +3,8 @@ dist/
 node_modules/
 __pycache__/
 .pytest_cache/
-<<<<<<< HEAD
 .ipynb_checkpoints/
-=======
 .tmp/
->>>>>>> a0399da0ad06b8e4417d87614281978da8f04b0f
 
 *.log
 *.pyc

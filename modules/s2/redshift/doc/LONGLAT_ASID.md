@@ -1,0 +1,24 @@
+### LONGLAT_ASQUADINT
+
+{{% bannerNote type="code" %}}
+s2.LONGLAT_ASIS(longitude, latitude, resolution)
+{{%/ bannerNote %}}
+
+**Description**
+
+Returns the quadint representation for a given level of detail and geographic coordinates.
+
+* `longitude`: `NUMERIC` horizontal coordinate of the map.
+* `latitude`: `NUMERIC` vertical coordinate of the map.
+* `resolution`: `INT` level of detail or zoom.
+
+**Return type**
+
+`VARCHAR`
+
+**Example**
+
+```sql
+SELECT s2.LONGLAT_ASID(40.4168, -3.7038, 4);
+-- 1733885856537640960
+```
