@@ -4,24 +4,26 @@ from test_utils import run_query
 # import pytest
 
 
-def test_token_fromid_success():
+def test_id_fromuint64repr_success():
     results = run_query(
         """WITH context AS(
-            SELECT -8070450532247928832 AS id UNION ALL
-            SELECT -7782220156096217088 UNION ALL
-            SELECT -7854277750134145024 UNION ALL
-            SELECT -7836263351624663040 UNION ALL
-            SELECT -7840766951252033536 UNION ALL
-            SELECT -7844144650972561408 UNION ALL
-            SELECT -7843300226042429440 UNION ALL
-            SELECT -7843229857298251776 UNION ALL
-            SELECT -7843177080740118528
+            SELECT '10376293541461622784' AS id UNION ALL
+            SELECT '10664523917613334528' UNION ALL
+            SELECT '10592466323575406592' UNION ALL
+            SELECT '10610480722084888576' UNION ALL
+            SELECT '10605977122457518080' UNION ALL
+            SELECT '10602599422736990208' UNION ALL
+            SELECT '10603443847667122176' UNION ALL
+            SELECT '10603514216411299840' UNION ALL
+            SELECT '10603566992969433088'
         )
-        SELECT @@RS_PREFIX@@s2.TOKEN_FROMID(id) AS token
+        SELECT @@RS_PREFIX@@s2.ID_FROMUINT64REPR(id) AS token
         FROM context;"""
     )
 
-    fixture_file = open('./test/integration/token_fromid_fixtures/out/tokens.txt', 'r')
+    fixture_file = open(
+        './test/integration/id_fromuint64repr_fixtures/out/ids.txt', 'r'
+    )
     lines = fixture_file.readlines()
     fixture_file.close()
 

@@ -15,8 +15,7 @@ def test_tochildren_success():
     )
 
     fixture_file = open(
-        './test/integration/tochildren_fixtures/out/children_ids.txt',
-        'r'
+        './test/integration/tochildren_fixtures/out/children_ids.txt', 'r'
     )
     lines = fixture_file.readlines()
     fixture_file.close()

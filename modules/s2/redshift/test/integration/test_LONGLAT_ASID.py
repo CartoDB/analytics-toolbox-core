@@ -2,7 +2,7 @@ from test_utils import run_query, redshift_connector
 import pytest
 
 
-def test_longlat_id_success():
+def test_longlat_asid_success():
     results = run_query(
         """WITH resContext AS(
             SELECT 0 AS res, -150 AS long, 60 AS lat UNION ALL
@@ -42,7 +42,7 @@ def test_longlat_id_success():
     )
 
     fixture_file = open(
-        './test/integration/longlat_asid_fixtures/out/int64_ids.txt', 'r'
+        './test/integration/longlat_asid_fixtures/out/ids.txt', 'r'
     )
     lines = fixture_file.readlines()
     fixture_file.close()

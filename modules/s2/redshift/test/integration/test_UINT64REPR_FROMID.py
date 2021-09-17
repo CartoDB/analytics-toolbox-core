@@ -22,7 +22,7 @@ def test_uint64_from_id_success():
     )
 
     fixture_file = open(
-        './test/integration/uint64repr_from_id_fixtures/out/uint64_ids.txt', 'r'
+        './test/integration/uint64repr_fromid_fixtures/out/uint64_ids.txt', 'r'
     )
     lines = fixture_file.readlines()
     fixture_file.close()

@@ -12,11 +12,10 @@ from math import radians
 
 import s2sphere
 
-from .version import __version__
+from ._version import __version__ # noqa
 
 INT64_MAX = 9223372036854775807  # Max integer value in Redshift
 UINT64_MAX = 18446744073709551615  # 2*INT64_MAX + 1. Used by S2
-__version__  # Just avoiding linter
 
 
 class InvalidResolution(Exception):
@@ -96,6 +95,12 @@ def int64_id_to_token(int64_id):
     cell = cell_from_int64_id(int64_id)
 
     return str(cell.to_token())
+
+
+def token_to_int64_id(token):
+    cell = s2sphere.CellId.from_token(token.decode())
+
+    return uint64_to_int64(cell.id())
 
 
 def get_resolution(int64_id):

@@ -4,24 +4,24 @@ from test_utils import run_query
 # import pytest
 
 
-def test_token_fromid_success():
+def test_id_fromtoken_success():
     results = run_query(
         """WITH context AS(
-            SELECT -8070450532247928832 AS id UNION ALL
-            SELECT -7782220156096217088 UNION ALL
-            SELECT -7854277750134145024 UNION ALL
-            SELECT -7836263351624663040 UNION ALL
-            SELECT -7840766951252033536 UNION ALL
-            SELECT -7844144650972561408 UNION ALL
-            SELECT -7843300226042429440 UNION ALL
-            SELECT -7843229857298251776 UNION ALL
-            SELECT -7843177080740118528
+            SELECT '9' AS token UNION ALL
+            SELECT '94' UNION ALL
+            SELECT '93' UNION ALL
+            SELECT '934' UNION ALL
+            SELECT '933' UNION ALL
+            SELECT '9324' UNION ALL
+            SELECT '9327' UNION ALL
+            SELECT '93274' UNION ALL
+            SELECT '93277'
         )
-        SELECT @@RS_PREFIX@@s2.TOKEN_FROMID(id) AS token
+        SELECT @@RS_PREFIX@@s2.ID_FROMTOKEN(token) AS id
         FROM context;"""
     )
 
-    fixture_file = open('./test/integration/token_fromid_fixtures/out/tokens.txt', 'r')
+    fixture_file = open('./test/integration/id_fromtoken_fixtures/out/ids.txt', 'r')
     lines = fixture_file.readlines()
     fixture_file.close()
 
