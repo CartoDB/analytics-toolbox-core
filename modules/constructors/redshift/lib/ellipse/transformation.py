@@ -4,9 +4,7 @@
 import copy
 from geojson import Point as GeoPoint
 
-# from shapely import geometry as geometry
-
-from helper import get_coord
+from helper import get_coord, PRECISION
 from measurement import (
     centroid,
     rhumb_bearing,
@@ -58,11 +56,14 @@ def transform_rotate(
     def _callback_coord_each(
         coord, coord_index, feature_index, multi_feature_index, geometry_index
     ):
-        initial_angle = rhumb_bearing(GeoPoint(pivot), GeoPoint(coord))
+        initial_angle = rhumb_bearing(
+            GeoPoint(pivot, precision=PRECISION), GeoPoint(coord, precision=PRECISION))
         final_angle = initial_angle + angle
-        distance = rhumb_distance(GeoPoint(pivot), GeoPoint(coord))
+        distance = rhumb_distance(
+            GeoPoint(pivot, precision=PRECISION), GeoPoint(coord, precision=PRECISION))
         new_coords = get_coord(
-            rhumb_destination(GeoPoint(pivot), distance, final_angle)
+            rhumb_destination(
+                GeoPoint(pivot, precision=PRECISION), distance, final_angle)
         )
         coord[0] = new_coords[0]
         coord[1] = new_coords[1]

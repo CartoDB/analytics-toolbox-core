@@ -3,10 +3,10 @@
 
 from __future__ import division
 from geojson import Feature, Point
-from helper import length_to_radians, avg_earth_radius_km, convert_length, get_coord
+from helper import length_to_radians, avg_earth_radius_km, convert_length, get_coord, \
+    PRECISION
 from math import asin, atan2, cos, degrees, log, pi, radians, sin, sqrt, tan
 from meta import coord_each
-
 
 # -------------------------------#
 
@@ -40,7 +40,8 @@ def centroid(geojson, properties=None):
         d['length'] += 1
 
     coord_each(geojson, _callback_coord_each)
-    point = Point((d['x_sum'] / d['length'], d['y_sum'] / d['length']))
+    point = Point((d['x_sum'] / d['length'], d['y_sum'] / d['length']),
+                  precision=PRECISION)
     return Feature(geometry=point, properties=properties if properties else {})
 
 
@@ -93,7 +94,7 @@ def destination(origin, distance, bearing, options={}):
     lng = degrees(longitude2)
     lat = degrees(latitude2)
 
-    point = Point((lng, lat))
+    point = Point((lng, lat), precision=PRECISION)
 
     return Feature(
         geometry=point,
@@ -194,7 +195,7 @@ def rhumb_destination(origin, distance, bearing, options={}):
         coords, distance_in_meters, bearing
     )
     return Feature(
-        geometry=Point(destination_point),
+        geometry=Point(destination_point, precision=PRECISION),
         properties=options.get('properties', ''),
     )
 

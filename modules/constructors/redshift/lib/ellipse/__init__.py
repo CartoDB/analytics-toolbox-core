@@ -4,7 +4,7 @@
 
 from __future__ import division
 from geojson import Feature, Polygon
-from helper import degrees_to_radians, get_coord
+from helper import degrees_to_radians, get_coord, PRECISION
 from math import pow, sqrt, pi, tan, cos, sin
 from measurement import rhumb_destination
 from transformation import transform_rotate
@@ -77,10 +77,11 @@ def ellipse(center, x_semi_axis, y_semi_axis, options={}):
 
     coordinates.append(coordinates[0])
     if units == 'degrees':
-        return Feature(geometry=Polygon([coordinates]))
+        return Feature(geometry=Polygon([coordinates], precision=PRECISION))
     else:
         return transform_rotate(
-            Feature(geometry=Polygon([coordinates])), angle, mutate=True
+            Feature(geometry=Polygon([coordinates], precision=PRECISION)),
+            angle, mutate=True
         )
 
 
