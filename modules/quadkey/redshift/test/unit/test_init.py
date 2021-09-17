@@ -1,4 +1,5 @@
-from lib import quadkeyLib, __version__
+from lib import quadkeyLib
+from lib._version import __version__
 
 
 def test_init():
