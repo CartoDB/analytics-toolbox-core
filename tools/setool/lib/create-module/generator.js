@@ -273,7 +273,7 @@ def test_version():
 }
 
 function createTestUnitIndex () {
-    const filename = { bigquery: 'VERSION.test.js', snowflake: 'VERSION.test.js', redshift: 'test_VERSION.py' }[cloud];
+    const filename = { bigquery: 'index.test.js', snowflake: 'index.test.js', redshift: 'test_init.py' }[cloud];
     let content;
     switch (cloud){
     case 'bigquery':

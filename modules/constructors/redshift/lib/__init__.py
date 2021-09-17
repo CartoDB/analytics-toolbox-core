@@ -1,3 +1,5 @@
+# Copyright (c) 2021, CARTO
+
 from ._version import __version__ # noqa
 
 
