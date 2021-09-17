@@ -3,8 +3,13 @@
 
 from __future__ import division
 from geojson import Feature, Point
-from helper import length_to_radians, avg_earth_radius_km, convert_length, get_coord, \
-    PRECISION
+from helper import (
+    length_to_radians,
+    avg_earth_radius_km,
+    convert_length,
+    get_coord,
+    PRECISION,
+)
 from math import asin, atan2, cos, degrees, log, pi, radians, sin, sqrt, tan
 from meta import coord_each
 
@@ -40,8 +45,9 @@ def centroid(geojson, properties=None):
         d['length'] += 1
 
     coord_each(geojson, _callback_coord_each)
-    point = Point((d['x_sum'] / d['length'], d['y_sum'] / d['length']),
-                  precision=PRECISION)
+    point = Point(
+        (d['x_sum'] / d['length'], d['y_sum'] / d['length']), precision=PRECISION
+    )
     return Feature(geometry=point, properties=properties if properties else {})
 
 

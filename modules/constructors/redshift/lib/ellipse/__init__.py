@@ -81,7 +81,8 @@ def ellipse(center, x_semi_axis, y_semi_axis, options={}):
     else:
         return transform_rotate(
             Feature(geometry=Polygon([coordinates], precision=PRECISION)),
-            angle, mutate=True
+            angle,
+            mutate=True,
         )
 
 

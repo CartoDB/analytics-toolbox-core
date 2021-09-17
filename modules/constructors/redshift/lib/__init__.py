@@ -1,6 +1,6 @@
 # Copyright (c) 2021, CARTO
 
-from ._version import __version__ # noqa
+from ._version import __version__  # noqa
 
 
 def make_ellipse(center, x_semi_axis, y_semi_axis, options={}):

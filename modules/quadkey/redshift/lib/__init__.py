@@ -1,4 +1,4 @@
-from ._version import __version  # noqa
+from ._version import __version__  # noqa
 
 
 def quadint_from_zxy(z, x, y):

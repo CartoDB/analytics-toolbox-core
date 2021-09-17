@@ -19,10 +19,7 @@ def test_makeellipse():
         center={'geometry': {'type': 'Point', 'coordinates': [-73.9385, 40.6643]}},
         x_semi_axis=5,
         y_semi_axis=3,
-        options={
-            'angle': -30,
-            'units': 'miles',
-            'steps': 20
-        })
+        options={'angle': -30, 'units': 'miles', 'steps': 20},
+    )
 
     assert str(ellipse['geometry']) == lines[0].rstrip()

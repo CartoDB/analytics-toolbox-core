@@ -57,13 +57,16 @@ def transform_rotate(
         coord, coord_index, feature_index, multi_feature_index, geometry_index
     ):
         initial_angle = rhumb_bearing(
-            GeoPoint(pivot, precision=PRECISION), GeoPoint(coord, precision=PRECISION))
+            GeoPoint(pivot, precision=PRECISION), GeoPoint(coord, precision=PRECISION)
+        )
         final_angle = initial_angle + angle
         distance = rhumb_distance(
-            GeoPoint(pivot, precision=PRECISION), GeoPoint(coord, precision=PRECISION))
+            GeoPoint(pivot, precision=PRECISION), GeoPoint(coord, precision=PRECISION)
+        )
         new_coords = get_coord(
             rhumb_destination(
-                GeoPoint(pivot, precision=PRECISION), distance, final_angle)
+                GeoPoint(pivot, precision=PRECISION), distance, final_angle
+            )
         )
         coord[0] = new_coords[0]
         coord[1] = new_coords[1]

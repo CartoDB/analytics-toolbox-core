@@ -3,7 +3,7 @@
 
 import re
 
-from ._version import __version__ # noqa
+from ._version import __version__  # noqa
 
 # Placekey constants
 BASE_RESOLUTION = 12
