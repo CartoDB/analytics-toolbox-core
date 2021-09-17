@@ -1,8 +1,8 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('UINT64REPR_FROM_ID should work', async () => {
+test('UINT64REPR_FROMID should work', async () => {
     const query = `
-    SELECT \`@@BQ_PREFIX@@s2.UINT64REPR_FROM_ID\`(key) as id
+    SELECT \`@@BQ_PREFIX@@s2.UINT64REPR_FROMID\`(key) as id
     FROM UNNEST([-8520148382826627072, -2520148382826627072, 2520148382826627072, 8520148382826627072]) as key
     order by id
     `;

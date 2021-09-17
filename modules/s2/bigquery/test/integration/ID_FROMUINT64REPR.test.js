@@ -1,10 +1,10 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('ID_FROM_UINT64REPR should work', async () => {
+test('ID_FROMUINT64REPR should work', async () => {
     const query = `
-    SELECT CAST(\`@@BQ_PREFIX@@s2.ID_FROM_UINT64REPR\`(key) AS STRING) as id
+    SELECT CAST(\`@@BQ_PREFIX@@s2.ID_FROMUINT64REPR\`(key) AS STRING) as id
     FROM UNNEST(["15926595690882924544", "2520148382826627072", "8520148382826627072", "9926595690882924544"]) as key
-    order by \`@@BQ_PREFIX@@s2.ID_FROM_UINT64REPR\`(key)
+    order by \`@@BQ_PREFIX@@s2.ID_FROMUINT64REPR\`(key)
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(4);
