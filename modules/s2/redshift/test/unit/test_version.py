@@ -1,4 +1,5 @@
-from lib import s2Lib, __version__
+from lib import s2Lib
+from lib._version import __version__
 
 
 def test_init():
