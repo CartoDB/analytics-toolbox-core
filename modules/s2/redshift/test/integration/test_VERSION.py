@@ -1,5 +1,8 @@
-from lib import __version__
 from test_utils import run_query
+
+# Initialize variable just to avoid linter complaints
+__version__ = None
+exec(open('./lib/version.py').read())
 
 
 def test_version():

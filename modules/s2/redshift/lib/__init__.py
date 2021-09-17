@@ -12,7 +12,7 @@ from math import radians
 
 import s2sphere
 
-__version__ = '1.0.0'
+from .version import __version__
 
 INT64_MAX = 9223372036854775807  # Max integer value in Redshift
 UINT64_MAX = 18446744073709551615  # 2*INT64_MAX + 1. Used by S2

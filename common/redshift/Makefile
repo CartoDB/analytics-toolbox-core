@@ -142,7 +142,6 @@ venv3:
 	. $(VENV3_ACTIVATE) && \
 	python -m pip install -U pip -q && \
 	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt -q && \
-	([ ! -f python3_requirements.txt ] || pip install -r python3_requirements.txt -q 2>/dev/null) && \
 	deactivate
 
 check:
