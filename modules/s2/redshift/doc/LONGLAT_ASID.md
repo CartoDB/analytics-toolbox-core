@@ -1,7 +1,7 @@
-### LONGLAT_ASQUADINT
+### LONGLAT_ASID
 
 {{% bannerNote type="code" %}}
-s2.LONGLAT_ASIS(longitude, latitude, resolution)
+s2.LONGLAT_ASID(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**

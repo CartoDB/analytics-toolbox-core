@@ -1,7 +1,7 @@
-### TOCHILDREN
+### RESOLUTION
 
 {{% bannerNote type="code" %}}
-s2.GET_RESOLUTION(id)
+s2.RESOLUTION(id)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns a INTEGER with the resolution of given cell ID. S2 defines cells from a 
 **Example**
 
 ```sql
-SELECT s2.GET_RESOLUTION('1733885856537640960');
+SELECT s2.RESOLUTION('1733885856537640960');
 -- 4
 ```
