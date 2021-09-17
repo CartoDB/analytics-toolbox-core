@@ -1,5 +1,5 @@
 from test_utils import run_query
-from lib import __version__
+from lib._version import __version__
 
 
 def test_version():

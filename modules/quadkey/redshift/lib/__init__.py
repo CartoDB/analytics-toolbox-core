@@ -1,4 +1,4 @@
-__version__ = '1.0.0'
+from ._version import __version  # noqa
 
 
 def quadint_from_zxy(z, x, y):
