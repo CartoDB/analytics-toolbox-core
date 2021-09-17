@@ -1,4 +1,5 @@
-from lib import constructorsLib, __version__
+from lib import constructorsLib
+from lib._version import __version__
 
 
 def test_init():

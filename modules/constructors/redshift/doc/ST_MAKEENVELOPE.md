@@ -7,7 +7,6 @@ constructors.ST_MAKEENVELOPE(xmin, ymin, xma, ymax)
 **Description**
 Creates a rectangular Polygon from the minimum and maximum values for X and Y.
 
-
 * `xmin`: `FLOAT8` minimum value for X.
 * `ymin`: `FLOAT8` minimum value for Y.
 * `xmax`: `FLOAT8` maximum value for X.

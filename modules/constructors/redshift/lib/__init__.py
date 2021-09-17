@@ -1,4 +1,4 @@
-__version__ = '1.0.0'
+from ._version import __version__ # noqa
 
 
 def make_ellipse(center, x_semi_axis, y_semi_axis, options={}):

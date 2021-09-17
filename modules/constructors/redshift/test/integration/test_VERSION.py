@@ -1,4 +1,4 @@
-from lib import __version__
+from lib._version import __version__
 from test_utils import run_query
 
 
