@@ -8,7 +8,7 @@ have been made for compatibility with Redshift types:
   -9223372036854775808 to 9223372036854775807.
 """
 
-import math
+from math import radians
 
 import s2sphere
 
@@ -81,7 +81,7 @@ def longlat_as_int64_id(longitude, latitude, resolution):
     the parent at the specified resolution.
     """
     check_resolution(resolution)
-    lat_lng = s2sphere.LatLng(math.radians(latitude), math.radians(longitude))
+    lat_lng = s2sphere.LatLng(radians(latitude), radians(longitude))
     cell = s2sphere.CellId.from_lat_lng(lat_lng).parent(resolution)
 
     return uint64_to_int64(cell.id())
@@ -172,3 +172,23 @@ def get_cell_boundary(int64_id):
     boundary_wkt = 'POLYGON (({verts_str}))'.format(verts_str=verts_str)
 
     return boundary_wkt
+
+
+def polyfill_bbox(
+    min_lng, min_lat, max_lng, max_lat, min_resolution=0, max_resolution=30
+):
+    """Polyfill a planar bounding box with compact s2 cells between resolution levels"""
+    rc = s2sphere.RegionCoverer()
+
+    rc.min_level = min_resolution
+    rc.max_level = max_resolution
+
+    lower_left = s2sphere.LatLng(radians(min_lat), radians(min_lng))
+    upper_right = s2sphere.LatLng(radians(max_lat), radians(max_lng))
+    rect = s2sphere.LatLngRect(lower_left, upper_right)
+
+    cell_ids = [int(uint64_to_int64(cell.id())) for cell in rc.get_covering(rect)]
+
+    cell_ids_str = '[' + ','.join([str(id) for id in cell_ids]) + ']'
+
+    return cell_ids_str
