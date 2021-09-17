@@ -121,7 +121,6 @@ SELECT ${name}.VERSION();
 }
 
 function createLibIndex () {
-    const filename = { bigquery: 'index.js', snowflake: 'index.js', redshift: '__init__.py' }[cloud];
     let content;
     switch (cloud){
     case 'bigquery':
@@ -131,16 +130,16 @@ function createLibIndex () {
 export default {
     version
 };`;
-
         createFile([root, 'modules', name, cloud, 'lib', 'index.js'], content);
         break;
 
     case 'redshift':
-        content = '__version__ = \'1.0.0\'\n';  
+        content = '__version__ = \'1.0.0\'\n';
+        createFile([root, 'modules', name, cloud, 'lib', '_version.py'], content);
+        content = 'from ._version import __version__ # noqa\n';
+        createFile([root, 'modules', name, cloud, 'lib', '__init__.py'], content);
         break;
     }
-
-    createFile([root, 'modules', name, cloud, 'lib', filename], content);
 }
 
 function createSQLVersion () {
@@ -258,8 +257,8 @@ sys.path.insert(
 
         createFile([root, 'modules', name, cloud, 'test', 'integration', '__init__.py'], content);
 
-        content = `from lib import __version__
-from test_utils import run_query
+        content = `from test_utils import run_query
+from lib._version import __version__
 
 
 def test_version():
@@ -298,7 +297,8 @@ sys.path.insert(
 
         createFile([root, 'modules', name, cloud, 'test', 'unit', '__init__.py'], content);
 
-        content = `from lib import ${name}Lib, __version__
+        content = `from lib import ${name}Lib
+from lib._version import __version__
 
 
 def test_init():
