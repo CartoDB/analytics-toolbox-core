@@ -9,7 +9,7 @@ test('KRING_DISTANCES should work', async () => {
             STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
-            STRUCT(4, 12960460429066265, NULL),
+            STRUCT(4, 12960460429066265, 1),
             STRUCT(5, 12070922, 2),
             STRUCT(6, 791040491538, 3)
         ]))

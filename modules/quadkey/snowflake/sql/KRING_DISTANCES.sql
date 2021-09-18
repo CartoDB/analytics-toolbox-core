@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_PREFIX@@quadkey._KRING
+CREATE OR REPLACE FUNCTION @@SF_PREFIX@@quadkey._KRING_DISTANCES
 (origin STRING, size DOUBLE)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
@@ -13,12 +13,12 @@ AS $$
         return null;
     }
 
-    return quadkeyLib.kRing(ORIGIN, parseInt(SIZE));
+    return quadkeyLib.kRingDistances(ORIGIN, parseInt(SIZE));
 $$;
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.KRING
+CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.KRING_DISTANCES
 (origin BIGINT, size INT)
 RETURNS ARRAY
 AS $$
-    @@SF_PREFIX@@quadkey._KRING(CAST(ORIGIN AS STRING), CAST(SIZE AS DOUBLE))
+    @@SF_PREFIX@@quadkey._KRING_DISTANCES(CAST(ORIGIN AS STRING), CAST(SIZE AS DOUBLE))
 $$;

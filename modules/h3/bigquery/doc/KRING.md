@@ -8,8 +8,8 @@ h3.KRING(origin, size)
 
 Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin in no particular order. Returns `null` on invalid input.
 
-* `origin`: `STRING` The H3 cell index of the origin.
-* `size`: `INT64` The size of the ring (distance from the origin).
+* `origin`: `STRING` H3 cell index of the origin.
+* `size`: `INT64` size of the ring (distance from the origin).
 
 **Return type**
 

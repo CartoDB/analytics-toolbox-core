@@ -8,7 +8,7 @@ quadkey.KRING(origin, size)
 
 Returns all cell indexes in a **filled square k-ring** centered at the origin in no particular order. Returns `null` on invalid input.
 
-* `origin`: `STRING` quadint index of the origin.
+* `origin`: `INT64` quadint index of the origin.
 * `size`: `INT64` size of the ring (distance from the origin).
 
 **Return type**

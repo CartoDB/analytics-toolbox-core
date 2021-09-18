@@ -10,17 +10,17 @@ AS $$
     @@SF_LIBRARY_HEXRING@@
 
     if (!ORIGIN || SIZE == null || SIZE < 0) {
-        return [];
+        return null;
     }
 
     if (!h3Lib.h3IsValid(ORIGIN)) {
-        return [];
+        return null;
     }
 
     try {
         return h3Lib.hexRing(ORIGIN, parseInt(SIZE));
     } catch (error) {
-        return [];
+        return null;
     }
 $$;
 

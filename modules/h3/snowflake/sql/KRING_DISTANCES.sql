@@ -10,11 +10,11 @@ AS $$
     @@SF_LIBRARY_KRING_DISTANCES@@
 
     if (!ORIGIN || SIZE == null || SIZE < 0) {
-        return [];
+        return null;
     }
 
     if (!h3Lib.h3IsValid(ORIGIN)) {
-        return [];
+        return null;
     }
 
     const kringDistances = h3Lib.kRingDistances(ORIGIN, parseInt(SIZE));

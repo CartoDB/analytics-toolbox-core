@@ -10,11 +10,11 @@ AS $$
     @@SF_LIBRARY_KRING@@
 
     if (!ORIGIN || SIZE == null || SIZE < 0) {
-        return [];
+        return null;
     }
 
     if (!h3Lib.h3IsValid(ORIGIN)) {
-        return [];
+        return null;
     }
 
     return h3Lib.kRing(ORIGIN, parseInt(SIZE));

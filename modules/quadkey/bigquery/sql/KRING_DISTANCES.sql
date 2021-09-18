@@ -9,11 +9,8 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if (origin == null) {
-        throw new Error('NULL argument passed to UDF');
+    if (!origin || size == null || size < 0) {
+        return null;
     }
-    if (size == null) {
-        size = 1;
-    }
-    return quadkeyLib.kringDistances(origin, Number(size));
+    return quadkeyLib.kRingDistances(origin, Number(size));
 """;

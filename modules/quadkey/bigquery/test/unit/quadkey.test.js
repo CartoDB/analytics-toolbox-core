@@ -84,38 +84,38 @@ test('Sibling should work at any level of zoom', async () => {
     }
 });
 
-test('kring should work', async () => {
-    expect(lib.kring(162, 0).sort().map(String)).toEqual([
+test('kRing should work', async () => {
+    expect(lib.kRing(162, 0).sort().map(String)).toEqual([
         '162'
     ]);
-    expect(lib.kring(162, 1).sort().map(String)).toEqual([
+    expect(lib.kRing(162, 1).sort().map(String)).toEqual([
         '130', '162', '194', '2', '258', '290', '322', '34', '66'
     ]);
-    expect(lib.kring(12070922, 1).sort().map(String)).toEqual([
+    expect(lib.kRing(12070922, 1).sort().map(String)).toEqual([
         '12038122', '12038154', '12038186', '12070890', '12070922', '12070954', '12103658', '12103690', '12103722'
     ]);
-    expect(lib.kring(791040491538, 1).sort().map(String)).toEqual([
+    expect(lib.kRing(791040491538, 1).sort().map(String)).toEqual([
         '791032102898', '791032102930', '791032102962', '791040491506', '791040491538', '791040491570', '791048880114', '791048880146', '791048880178'
     ]);
-    expect(lib.kring(12960460429066265n, 1).sort().map(String)).toEqual([
+    expect(lib.kRing(12960460429066265n, 1).sort().map(String)).toEqual([
         '12960459355324409', '12960459355324441', '12960459355324473', '12960460429066233', '12960460429066265', '12960460429066297', '12960461502808057', '12960461502808089', '12960461502808121'
     ]);
-    expect(lib.kring(12070922, 2).sort().map(String)).toEqual([
+    expect(lib.kRing(12070922, 2).sort().map(String)).toEqual([
         '12005322', '12005354', '12005386', '12005418', '12005450', '12038090', '12038122', '12038154', '12038186', '12038218', '12070858', '12070890', '12070922', '12070954', '12070986', '12103626', '12103658', '12103690', '12103722', '12103754', '12136394', '12136426', '12136458', '12136490', '12136522'
     ]);
-    expect(lib.kring(791040491538, 3).sort().map(String)).toEqual([
+    expect(lib.kRing(791040491538, 3).sort().map(String)).toEqual([
         '791015325618', '791015325650', '791015325682', '791015325714', '791015325746', '791015325778', '791015325810', '791023714226', '791023714258', '791023714290', '791023714322', '791023714354', '791023714386', '791023714418', '791032102834', '791032102866', '791032102898', '791032102930', '791032102962', '791032102994', '791032103026', '791040491442', '791040491474', '791040491506', '791040491538', '791040491570', '791040491602', '791040491634', '791048880050', '791048880082', '791048880114', '791048880146', '791048880178', '791048880210', '791048880242', '791057268658', '791057268690', '791057268722', '791057268754', '791057268786', '791057268818', '791057268850', '791065657266', '791065657298', '791065657330', '791065657362', '791065657394', '791065657426', '791065657458'
     ]);
 });
 
-test('kringDistances should work', async () => {
-    expect(sortByKey(lib.kringDistances(162, 0),'index')).toEqual(sortByKey([
+test('kRingDistances should work', async () => {
+    expect(sortByKey(lib.kRingDistances(162, 0),'index')).toEqual(sortByKey([
         { index: '162', distance: 0 }
     ],'index'));
-    expect(sortByKey(lib.kringDistances(162, 1),'index')).toEqual(sortByKey([
+    expect(sortByKey(lib.kRingDistances(162, 1),'index')).toEqual(sortByKey([
         { index: '162', distance: 0 }, { index: '130', distance: 1 }, { index: '194', distance: 1 }, { index: '2', distance: 1 }, { index: '258', distance: 1 }, { index: '290', distance: 1 }, { index: '322', distance: 1 }, { index: '34', distance: 1 }, { index: '66', distance: 1 }
     ],'index'));
-    expect(sortByKey(lib.kringDistances(12070922, 1),'index')).toEqual(sortByKey([
+    expect(sortByKey(lib.kRingDistances(12070922, 1),'index')).toEqual(sortByKey([
         { index: '12070922', distance: 0 }, { index: '12038122', distance: 1 }, { index: '12038154', distance: 1 }, { index: '12038186', distance: 1 }, { index: '12070890', distance: 1 }, { index: '12070954', distance: 1 }, { index: '12103658', distance: 1 }, { index: '12103690', distance: 1 }, { index: '12103722', distance: 1 }
     ],'index'));
 });

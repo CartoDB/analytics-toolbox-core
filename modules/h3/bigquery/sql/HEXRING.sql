@@ -12,11 +12,9 @@ AS """
     if (!origin || size == null || size < 0) {
         return null;
     }
-
     if (!h3Lib.h3IsValid(origin)) {
         return null;
     }
-
     try {
         return h3Lib.hexRing(origin, parseInt(size));
     } catch (error) {

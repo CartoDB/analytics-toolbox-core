@@ -2,14 +2,14 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('KRING should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@quadkey.KRING(GET(VALUE,'quadint'), GET(VALUE,'distance')) as kring
+        SELECT @@SF_PREFIX@@quadkey.KRING(GET(VALUE,'origin'), GET(VALUE,'size')) as kring
         FROM LATERAL FLATTEN(input => ARRAY_CONSTRUCT(
-            OBJECT_CONSTRUCT('quadint', 162, 'distance', 1),
-            OBJECT_CONSTRUCT('quadint', 12070922, 'distance', 1),
-            OBJECT_CONSTRUCT('quadint', 791040491538, 'distance', 1),
-            OBJECT_CONSTRUCT('quadint', 12960460429066265, 'distance', NULL),
-            OBJECT_CONSTRUCT('quadint', 12070922, 'distance', 2),
-            OBJECT_CONSTRUCT('quadint', 791040491538, 'distance', 3)
+            OBJECT_CONSTRUCT('origin', 162, 'size', 1),
+            OBJECT_CONSTRUCT('origin', 12070922, 'size', 1),
+            OBJECT_CONSTRUCT('origin', 791040491538, 'size', 1),
+            OBJECT_CONSTRUCT('origin', 12960460429066265, 'size', 1),
+            OBJECT_CONSTRUCT('origin', 12070922, 'size', 2),
+            OBJECT_CONSTRUCT('origin', 791040491538, 'size', 3)
         ))
     `;
     const rows = await runQuery(query);
