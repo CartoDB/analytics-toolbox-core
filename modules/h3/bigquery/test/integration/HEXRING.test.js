@@ -5,16 +5,16 @@ test('Works as expected with invalid data', async () => {
         WITH ids AS
         (
             -- Invalid parameters
-            SELECT 1 AS id, NULL as hid, 1 as distance UNION ALL
-            SELECT 2 AS id, 'ff283473fffffff' as hid, 1 as distance UNION ALL
-            SELECT 3 as id, '8928308280fffff' as hid, -1 as distance UNION ALL
+            SELECT 1 AS id, NULL as origin, 1 as size UNION ALL
+            SELECT 2 AS id, 'ff283473fffffff' as origin, 1 as size UNION ALL
+            SELECT 3 as id, '8928308280fffff' as origin, -1 as size UNION ALL
 
-            -- Distance 0
-            SELECT 4 as id, '8928308280fffff' as hid, 0 as distance
+            -- Size 0
+            SELECT 4 as id, '8928308280fffff' as origin, 0 as size
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, distance) as parent
+            \`@@BQ_PREFIX@@h3.HEXRING\`(origin, size) as parent
         FROM ids
         ORDER BY id ASC
     `;
@@ -31,11 +31,11 @@ test('List the ring correctly', async () => {
     const query = `
         WITH ids AS
         (
-            SELECT '8928308280fffff' as hid
+            SELECT '8928308280fffff' as origin
         )
         SELECT
-            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, 1) as d1,
-            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, 2) as d2
+            \`@@BQ_PREFIX@@h3.HEXRING\`(origin, 1) as d1,
+            \`@@BQ_PREFIX@@h3.HEXRING\`(origin, 2) as d2
         FROM ids
     `;
 
@@ -66,14 +66,14 @@ test('List the ring correctly', async () => {
         ].sort());
 });
 
-test('Zero distance returns self', async () => {
+test('Zero size returns self', async () => {
     const query = `
         WITH ids AS
         (
-            SELECT '87283080dffffff' as hid
+            SELECT '87283080dffffff' as origin
         )
         SELECT
-            \`@@BQ_PREFIX@@h3.HEXRING\`(hid, 0) AS self_children
+            \`@@BQ_PREFIX@@h3.HEXRING\`(origin, 0) AS self_children
         FROM ids
     `;
 

@@ -1,13 +1,13 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 
-test('KRING_INDEXED should work', async () => {
+test('KRING_DISTANCES should work', async () => {
     const query = `
         WITH kring_data AS
         ( SELECT myrow,
-            \`@@BQ_PREFIX@@h3.KRING_INDEXED\`(idx, distance) as kring_elem,
+            \`@@BQ_PREFIX@@h3.KRING_DISTANCES\`(origin, size) as kring_elem,
         FROM UNNEST([
-            STRUCT(1 as myrow, "invalid_index" as idx, 1 as distance),
+            STRUCT(1 as myrow, "invalid_index" as origin, 1 as size),
             STRUCT(2, "8928308280fffff", NULL),
             STRUCT(3, "8928308280fffff", 1),
             STRUCT(4, "8928308280fffff", 3)
@@ -15,8 +15,8 @@ test('KRING_INDEXED should work', async () => {
         SELECT
         myrow,
         -- use STRING_AGG to deal with null
-        STRING_AGG(CAST(ke.distance as STRING) ORDER BY ke.idx) as kring_distance,
-        STRING_AGG(CAST(ke.idx as STRING) ORDER BY ke.idx) as kring_idx
+        STRING_AGG(CAST(ke.distance as STRING) ORDER BY ke.index) as kring_distance,
+        STRING_AGG(CAST(ke.index as STRING) ORDER BY ke.index) as kring_index
         FROM kring_data left join UNNEST(kring_elem) as ke
         GROUP BY myrow
     `;
@@ -29,7 +29,7 @@ test('KRING_INDEXED should work', async () => {
             '1,1,1,0,2,2,2,2,3,2,3,2,3,1,3,2,3,3,2,2,2,3,3,1,1,2,3,3,3,2,3,3,3,3,3,3,3'
         ]);
 
-    expect(myrows.map(r => r.kring_idx)).toEqual(
+    expect(myrows.map(r => r.kring_index)).toEqual(
         [
             null,
             null,
@@ -38,9 +38,9 @@ test('KRING_INDEXED should work', async () => {
         ]);
 });
 
-test('KRING_INDEXED should fail with NULL argument', async () => {
+test('KRING_DISTANCES should fail with NULL argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@h3.KRING_INDEXED\`(NULL)
+        SELECT \`@@BQ_PREFIX@@h3.KRING_DISTANCES\`(NULL)
     `;
     await expect(runQuery(query)).rejects.toThrow();
 });
