@@ -1,44 +1,35 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('KRING_INDEXED should work', async () => {
+test('KRING_DISTANCES should work', async () => {
     const query = `
         WITH kring_data AS
         ( SELECT row,
-            \`@@BQ_PREFIX@@quadkey.KRING_INDEXED\`(quadint, distance) as kring_elem,
+            \`@@BQ_PREFIX@@quadkey.KRING_DISTANCES\`(origin, size) as kring_elem,
         FROM UNNEST([
-            STRUCT(1 as row, 162 as quadint, 1 as distance),
+            STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
             STRUCT(4, 12960460429066265, NULL),
             STRUCT(5, 12070922, 2),
             STRUCT(6, 791040491538, 3)
         ]))
-        -- cast idx to String to avoid INT64 issues in JS
+        -- cast index to String to avoid INT64 issues in JS
         SELECT
-        ARRAY_AGG(CAST(ke.x as STRING) ORDER BY ke.idx) as kring_x,
-        ARRAY_AGG(CAST(ke.y as STRING) ORDER BY ke.idx) as kring_y,
-        ARRAY_AGG(CAST(ke.idx as STRING) ORDER BY ke.idx) as kring_idx
+        ARRAY_AGG(CAST(ke.distance as STRING)) as kring_distance,
+        ARRAY_AGG(CAST(ke.index as STRING) ORDER BY ke.index) as kring_index
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row
     `;
     const rows = await runQuery(query);
-    expect(rows.map(r => r.kring_x)).toEqual([
-        ['-1','0','1','-1','0','1','-1','0','1'],
-        ['-1','0','1','-1','0','1','-1','0','1'],
-        ['-1','0','1','-1','0','1','-1','0','1'],
-        ['-1','0','1','-1','0','1','-1','0','1'],
-        ['-2','-1','0','1','2','-2','-1','0','1','2','-2','-1','0','1','2','-2','-1','0','1','2','-2','-1','0','1','2'],
-        ['-3','-2','-1','0','1','2','3','-3','-2','-1','0','1','2','3','-3','-2','-1','0','1','2','3','-3','-2','-1','0','1','2','3','-3','-2','-1','0','1','2','3','-3','-2','-1','0','1','2','3','-3','-2','-1','0','1','2','3']
+    expect(rows.map(r => r.kring_distance)).toEqual([
+        ['0','1','1','1','1','1','1','1','1'],
+        ['0','1','1','1','1','1','1','1','1'],
+        ['0','1','1','1','1','1','1','1','1'],
+        ['0','1','1','1','1','1','1','1','1'],
+        ['0','1','1','1','1','1','1','1','1','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2'],
+        ['0','1','1','1','1','1','1','1','1','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3']
     ]);
-    expect(rows.map(r => r.kring_y)).toEqual([
-        ['-1','-1','-1','0','0','0','1','1','1'],
-        ['-1','-1','-1','0','0','0','1','1','1'],
-        ['-1','-1','-1','0','0','0','1','1','1'],
-        ['-1','-1','-1','0','0','0','1','1','1'],
-        ['-2','-2','-2','-2','-2','-1','-1','-1','-1','-1','0','0','0','0','0','1','1','1','1','1','2','2','2','2','2'],
-        ['-3','-3','-3','-3','-3','-3','-3','-2','-2','-2','-2','-2','-2','-2','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','1','1','1','1','1','1','1','2','2','2','2','2','2','2','3','3','3','3','3','3','3']
-    ]);
-    expect(rows.map(r => r.kring_idx)).toEqual([
+    expect(rows.map(r => r.kring_index)).toEqual([
         ['2','34','66','130','162','194','258','290','322'],
         ['12038122','12038154','12038186','12070890','12070922','12070954','12103658','12103690','12103722'],
         ['791032102898','791032102930','791032102962','791040491506','791040491538','791040491570','791048880114','791048880146','791048880178'],
@@ -48,9 +39,9 @@ test('KRING_INDEXED should work', async () => {
     ]);
 });
 
-test('KRING_INDEXED should fail with NULL argument', async () => {
+test('KRING_DISTANCES should fail with NULL argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@quadkey.KRING_INDEXED\`(NULL)
+        SELECT \`@@BQ_PREFIX@@quadkey.KRING_DISTANCES\`(NULL)
     `;
     await expect(runQuery(query)).rejects.toThrow();
 });

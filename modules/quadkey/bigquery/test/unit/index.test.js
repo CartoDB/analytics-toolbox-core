@@ -4,6 +4,7 @@ const version = require('../../package.json').version;
 test('quadkey library defined', () => {
     expect(quadkeyLib.bbox).toBeDefined();
     expect(quadkeyLib.kring).toBeDefined();
+    expect(quadkeyLib.kringDistances).toBeDefined();
     expect(quadkeyLib.sibling).toBeDefined();
     expect(quadkeyLib.toChildren).toBeDefined();
     expect(quadkeyLib.quadkeyFromQuadint).toBeDefined();

@@ -2,7 +2,7 @@ import { version }  from '../package.json';
 import {
     bbox,
     kring,
-    kring_indexed,
+    kringDistances,
     sibling,
     toParent,
     toChildren,
@@ -18,7 +18,7 @@ import {
 export default {
     bbox,
     kring,
-    kring_indexed,
+    kringDistances,
     sibling,
     toParent,
     toChildren,

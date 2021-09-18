@@ -233,32 +233,32 @@ export function toParent (quadint, resolution) {
 
 /**
  * get the kring of a quadint
- * @param  {int} quadint quadint to get the kring of
- * @param  {int} distance in tiles of the desired kring
+ * @param  {int} origin quadint to get the kring of
+ * @param  {int} size in tiles of the desired kring
  * @return {int}         kring of the input quadint
  */
-export function kring (quadint, distance) {
-    if (distance < 0) {
-        throw new Error('Kring distance should be at least zero');
+export function kring (origin, size) {
+    if (size < 0) {
+        throw new Error('Kring size should be at least zero');
     }
-    if (distance === 0) {
-        return [quadint];
+    if (size === 0) {
+        return [origin.toString()];
     }
 
     let i, j;
-    let cornerQuadint = quadint;
+    let cornerQuadint = origin;
     // Traverse to top left corner
-    for (i = 0; i < distance; i++) {
+    for (i = 0; i < size; i++) {
         cornerQuadint = siblingLeft(cornerQuadint);
         cornerQuadint = siblingUp(cornerQuadint)
     }
 
     const neighbors = [];
     let traversalQuadint;
-    for (j = 0; j < distance * 2 + 1; j++) {
+    for (j = 0; j < size * 2 + 1; j++) {
         traversalQuadint = cornerQuadint;
-        for (i = 0; i < distance * 2 + 1; i++) {
-            neighbors.push(traversalQuadint);
+        for (i = 0; i < size * 2 + 1; i++) {
+            neighbors.push(traversalQuadint.toString());
             traversalQuadint = siblingRight(traversalQuadint);
         }
         cornerQuadint = siblingDown(cornerQuadint)
@@ -267,38 +267,40 @@ export function kring (quadint, distance) {
 }
 
 /**
- * get the kring of a quadint
- * @param  {int} quadint quadint to get the kring of
- * @param  {int} distance in tiles of the desired kring
- * @return {int}         kring of the input quadint
+ * get the kring distances of a quadint
+ * @param  {int} origin quadint to get the kring of
+ * @param  {int} size in tiles of the desired kring
+ * @return {int}         kring distances of the input quadint
  */
-export function kring_indexed (quadint, distance) {
-    if (distance < 0) {
-        throw new Error('Wrong kring distance');
+export function kringDistances (origin, size) {
+    if (size < 0) {
+        throw new Error('Kring size should be at least zero');
     }
-    if (distance === 0) {
-        return [quadint];
+    if (size === 0) {
+        return [{ index: origin.toString(), distance: 0 }];
     }
 
-    let i, j;
-    let cornerQuadint = quadint;
+    let cornerQuadint = origin;
     // Traverse to top left corner
-    for (i = 0; i < distance; i++) {
+    for (let i = 0; i < size; i++) {
         cornerQuadint = siblingLeft(cornerQuadint);
         cornerQuadint = siblingUp(cornerQuadint)
     }
 
     const neighbors = [];
     let traversalQuadint;
-    for (j = -distance; j <= distance; j++) {
+    for (let j = -size; j <= size; j++) {
         traversalQuadint = cornerQuadint;
-        for (i = -distance; i <= distance; i++) {
-            neighbors.push({ 'x':i,'y':j,'idx':traversalQuadint.toString() });
+        for (let i = -size; i <= size; i++) {
+            neighbors.push({
+                index: traversalQuadint.toString(),
+                distance: Math.max(Math.abs(i),Math.abs(j)) // Chebychev distance
+            });
             traversalQuadint = siblingRight(traversalQuadint);
         }
         cornerQuadint = siblingDown(cornerQuadint)
     }
-    return neighbors;
+    return neighbors.sort((a, b) => (a['distance'] > b['distance']) ? 1 : -1);
 }
 
 /**
