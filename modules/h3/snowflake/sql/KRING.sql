@@ -3,26 +3,26 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@h3._KRING
-(index STRING, distance DOUBLE)
+(origin STRING, size DOUBLE)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_KRING@@
 
-    if (!INDEX || DISTANCE == null || DISTANCE < 0) {
+    if (!ORIGIN || SIZE == null || SIZE < 0) {
         return [];
     }
 
-    if (!h3Lib.h3IsValid(INDEX)) {
+    if (!h3Lib.h3IsValid(ORIGIN)) {
         return [];
     }
 
-    return h3Lib.kRing(INDEX, parseInt(DISTANCE));
+    return h3Lib.kRing(ORIGIN, parseInt(SIZE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.KRING
-(index STRING, distance INT)
+(origin STRING, size INT)
 RETURNS ARRAY
 AS $$
-    @@SF_PREFIX@@h3._KRING(INDEX, CAST(DISTANCE AS DOUBLE))
+    @@SF_PREFIX@@h3._KRING(ORIGIN, CAST(SIZE AS DOUBLE))
 $$;

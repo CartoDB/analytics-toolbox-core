@@ -60,7 +60,7 @@ test-integration-full:
 
 test-integration: check $(NODE_MODULES_DEPS)
 	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	jest test/integration/$(F) --testTimeout=30000
+	jest test/integration/$(TEST) --testTimeout=30000
 
 deploy: check
 	$(MAKE) storage-upload
