@@ -9,6 +9,9 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import uint64_repr_from_id
+
+    if id is None:
+        raise Exception('NULL argument passed to UDF')
     
     return str(uint64_repr_from_id(id))
     

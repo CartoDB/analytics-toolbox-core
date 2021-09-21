@@ -41,9 +41,7 @@ def test_longlat_asid_success():
             FROM resContext;"""
     )
 
-    fixture_file = open(
-        './test/integration/longlat_asid_fixtures/out/ids.txt', 'r'
-    )
+    fixture_file = open('./test/integration/longlat_asid_fixtures/out/ids.txt', 'r')
     lines = fixture_file.readlines()
     fixture_file.close()
 

@@ -33,10 +33,13 @@ def test_tochildren_invalid_resolution_failure():
     assert 'InvalidResolution' in str(excinfo.value)
 
 
-# def test_tochildren_null_failure():
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.TOCHILDREN(NULL, 1)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.TOCHILDREN(322, NULL)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
+def test_tochildren_null_failure():
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.TOCHILDREN(NULL, 1)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.TOCHILDREN(-7843177080740118528, NULL)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.TOCHILDREN(NULL)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)

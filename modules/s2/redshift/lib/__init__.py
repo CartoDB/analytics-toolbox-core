@@ -8,11 +8,11 @@ have been made for compatibility with Redshift types:
   -9223372036854775808 to 9223372036854775807.
 """
 
-from math import radians
+from math import floor, radians
 
 import s2sphere
 
-from ._version import __version__ # noqa
+from ._version import __version__  # noqa
 
 INT64_MAX = 9223372036854775807  # Max integer value in Redshift
 UINT64_MAX = 18446744073709551615  # 2*INT64_MAX + 1. Used by S2
@@ -212,3 +212,124 @@ def polyfill_bbox(
     cell_ids_str = '[' + ','.join([str(id) for id in cell_ids]) + ']'
 
     return cell_ids_str
+
+
+def single_st_to_ij(st, maxsize):
+    """The built-in s2sphere.CellId.st_to_ij will not work for us"""
+    ij = floor(st * maxsize)
+    return max(0, min(maxsize - 1, ij))
+
+
+def st_to_ij(st, order):
+    maxsize = 1 << order
+
+    return [int(single_st_to_ij(sti, maxsize)) for sti in st]
+
+
+def point_to_hilbert_quadlist(x, y, order, face):
+    hilbert_map = {
+        'a': [[0, 'd'], [1, 'a'], [3, 'b'], [2, 'a']],
+        'b': [[2, 'b'], [1, 'b'], [3, 'a'], [0, 'c']],
+        'c': [[2, 'c'], [3, 'd'], [1, 'c'], [0, 'b']],
+        'd': [[0, 'a'], [3, 'c'], [1, 'd'], [2, 'd']],
+    }
+    current_square = 'd' if (face % 2) else 'a'
+    positions = []
+
+    for i in range(order - 1, -1, -1):
+        mask = 1 << i
+
+        quad_x = 1 if x & mask else 0
+        quad_y = 1 if y & mask else 0
+
+        t = hilbert_map[current_square][quad_x * 2 + quad_y]
+
+        positions.append(t[0])
+        current_square = t[1]
+
+    return positions
+
+
+def get_quads(cell_id):
+    cell = cell_from_int64_id(cell_id)
+    face = cell.face()
+    order = cell.level()
+
+    uv = cell.get_center_uv()
+    st = [s2sphere.CellId.uv_to_st(uv[0]), s2sphere.CellId.uv_to_st(uv[1])]
+    ij = st_to_ij(st, order)
+
+    return (point_to_hilbert_quadlist(ij[0], ij[1], order, face), face)
+
+
+def id_to_hilbert_quadkey(cell_id):
+    quads, face = get_quads(cell_id)
+
+    return '{f}/{qs}'.format(f=face, qs=''.join([str(q) for q in quads]))
+
+
+def ij_to_st(ij, order, offsets=[0.5, 0.5]):
+    maxsize = 1 << order
+
+    return [(_ij + offset) / maxsize for _ij, offset in zip(ij, offsets)]
+
+
+def st_to_uv(st):
+    return [s2sphere.CellId.st_to_uv(i) for i in st]
+
+
+def face_uv_to_xyz(face, uv):
+    u, v = uv
+
+    opts = {
+        0: [1, u, v],
+        1: [-u, 1, v],
+        2: [-u, -v, 1],
+        3: [-1, -v, -u],
+        4: [v, -1, -u],
+        5: [v, u, -1],
+    }
+
+    return opts[face]
+
+
+def rotate_and_flip_quadrant(n, x, y, rx, ry):
+    if ry == 0:
+        if rx == 1:
+            x = n - 1 - x
+            y = n - 1 - y
+        x, y = y, x
+    return (x, y)
+
+
+def hilbert_quadkey_to_id(hilbert_quadkey):
+    face, position = hilbert_quadkey.split('/')
+    face = int(face)
+    max_level = len(position)
+
+    x, y = (0, 0)
+    for i in range(max_level - 1, -1, -1):
+        level = max_level - i
+        bit = position[i]
+        rx = 1 if bit in ['2', '3'] else 0
+        ry = 1 if bit in ['1', '2'] else 0
+
+        val = 1 << (level - 1)
+        x, y = rotate_and_flip_quadrant(val, x, y, rx, ry)
+
+        x += val * rx
+        y += val * ry
+
+    if face % 2:
+        x, y = y, x
+
+    ij = (x, y)
+    st = ij_to_st(ij, max_level)
+    uv = st_to_uv(st)
+    xyz = face_uv_to_xyz(face, uv)
+
+    point = s2sphere.Point(*xyz)
+    cell_l30 = s2sphere.CellId.from_point(point)
+    cell = cell_l30.parent(max_level)
+
+    return uint64_to_int64(cell.id())

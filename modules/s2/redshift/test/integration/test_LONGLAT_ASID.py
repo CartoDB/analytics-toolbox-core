@@ -41,9 +41,7 @@ def test_longlat_asid_success():
             FROM resContext;"""
     )
 
-    fixture_file = open(
-        './test/integration/longlat_asid_fixtures/out/ids.txt', 'r'
-    )
+    fixture_file = open('./test/integration/longlat_asid_fixtures/out/ids.txt', 'r')
     lines = fixture_file.readlines()
     fixture_file.close()
 
@@ -60,13 +58,13 @@ def test_longlat_asid_invalid_resolution_failure():
     assert 'InvalidResolution' in str(excinfo.value)
 
 
-# def test_longlat_asquadint_null_failure():
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASID(NULL, 10, 10)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASID(10, NULL, 10)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.LONGLAT_ASID(10, 10, NULL)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
+def test_longlat_asid_null_failure():
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.LONGLAT_ASID(NULL, 10, 10)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.LONGLAT_ASID(10, NULL, 10)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.LONGLAT_ASID(10, 10, NULL)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)

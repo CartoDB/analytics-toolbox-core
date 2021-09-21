@@ -1,7 +1,5 @@
-from test_utils import run_query
-
-# from test_utils import run_query, redshift_connector
-# import pytest
+from test_utils import run_query, redshift_connector
+import pytest
 
 
 def test_boundary_success():
@@ -19,7 +17,7 @@ def test_boundary_success():
         assert str(result[0]) == lines[idx].rstrip()
 
 
-# def test_boundary_null_failure():
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.ST_BOUNDARY(NULL)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
+def test_boundary_null_failure():
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.ST_BOUNDARY(NULL)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)

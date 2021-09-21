@@ -10,6 +10,9 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_children
+
+    if id is None or resolution is None:
+        raise Exception('NULL argument passed to UDF')
     
     return to_children(id, resolution)
     
@@ -22,6 +25,9 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_children
+
+    if id is None:
+        raise Exception('NULL argument passed to UDF')
     
     return to_children(id)
     

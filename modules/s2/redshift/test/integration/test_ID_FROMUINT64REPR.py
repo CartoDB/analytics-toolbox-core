@@ -1,13 +1,11 @@
-from test_utils import run_query
-
-# from test_utils import run_query, redshift_connector
-# import pytest
+from test_utils import run_query, redshift_connector
+import pytest
 
 
 def test_id_fromuint64repr_success():
     results = run_query(
         """WITH context AS(
-            SELECT '10376293541461622784' AS id UNION ALL
+            SELECT '10376293541461622784' AS uint64_id UNION ALL
             SELECT '10664523917613334528' UNION ALL
             SELECT '10592466323575406592' UNION ALL
             SELECT '10610480722084888576' UNION ALL
@@ -17,7 +15,7 @@ def test_id_fromuint64repr_success():
             SELECT '10603514216411299840' UNION ALL
             SELECT '10603566992969433088'
         )
-        SELECT @@RS_PREFIX@@s2.ID_FROMUINT64REPR(id) AS token
+        SELECT @@RS_PREFIX@@s2.ID_FROMUINT64REPR(uint64_id) AS id
         FROM context;"""
     )
 
@@ -31,10 +29,7 @@ def test_id_fromuint64repr_success():
         assert str(result[0]) == lines[idx].rstrip()
 
 
-# def test_toparent_null_failure():
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(NULL, 10)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(322, NULL)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
+def test_id_fromuint64repr_null_failure():
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.ID_FROMUINT64REPR(NULL)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)

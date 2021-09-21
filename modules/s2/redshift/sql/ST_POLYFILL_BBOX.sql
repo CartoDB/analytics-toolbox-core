@@ -14,6 +14,12 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import polyfill_bbox
+
+    to_check = [min_longitude, min_latitude, max_longitude,
+                max_latitude, min_resolution, max_resolution]
+    for arg in to_check:
+        if arg is None:
+            raise Exception('NULL argument passed to UDF')
     
     return polyfill_bbox(min_longitude, min_latitude, max_longitude,
                          max_latitude, min_resolution, max_resolution)
@@ -30,6 +36,13 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import polyfill_bbox
+
+
+    to_check = [min_longitude, min_latitude, max_longitude, max_latitude]
+    for arg in to_check:
+        if arg is None:
+            raise Exception('NULL argument passed to UDF')
+    
     
     return polyfill_bbox(min_longitude, min_latitude, max_longitude, max_latitude)
     

@@ -1,7 +1,5 @@
-from test_utils import run_query
-
-# from test_utils import run_query, redshift_connector
-# import pytest
+from test_utils import run_query, redshift_connector
+import pytest
 
 
 def test_id_fromtoken_success():
@@ -29,10 +27,7 @@ def test_id_fromtoken_success():
         assert str(result[0]) == lines[idx].rstrip()
 
 
-# def test_toparent_null_failure():
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(NULL, 10)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
-#     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.TOPARENT(322, NULL)')
-#     assert 'NULL argument passed to UDF' in str(excinfo.value)
+def test_id_fromtoken_null_failure():
+    with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
+        run_query('SELECT @@RS_PREFIX@@s2.ID_FROMTOKEN(NULL)')
+    assert 'NULL argument passed to UDF' in str(excinfo.value)

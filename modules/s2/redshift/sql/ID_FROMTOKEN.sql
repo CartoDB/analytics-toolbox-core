@@ -9,6 +9,9 @@ RETURNS INT8
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import token_to_int64_id
+
+    if token is None:
+        raise Exception('NULL argument passed to UDF')
     
     return token_to_int64_id(token)
     

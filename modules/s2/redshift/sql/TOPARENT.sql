@@ -10,6 +10,9 @@ RETURNS INT8
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_parent
+
+    if id is None or resolution is None:
+        raise Exception('NULL argument passed to UDF')
     
     return to_parent(id, resolution)
     
@@ -22,6 +25,9 @@ RETURNS INT8
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_parent
+
+    if id is None:
+        raise Exception('NULL argument passed to UDF')
     
     return to_parent(id)
     

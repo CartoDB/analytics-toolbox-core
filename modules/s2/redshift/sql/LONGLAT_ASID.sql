@@ -11,6 +11,9 @@ RETURNS INT8
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import longlat_as_int64_id
+
+    if longitude is None or latitude is None or resolution is None:
+        raise Exception('NULL argument passed to UDF')
     
     return longlat_as_int64_id(longitude, latitude, resolution)
     
