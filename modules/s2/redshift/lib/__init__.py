@@ -72,6 +72,18 @@ def check_valid_children_resolution(resolution, children_resolution):
         raise InvalidResolution(err)
 
 
+def check_valid_polyfill_resolution(min_resolution, max_resolution):
+    check_resolution(min_resolution)
+    check_resolution(max_resolution)
+
+    if max_resolution < min_resolution:
+        err = (
+            'Maximum resolution ({max_resolution}) must be '
+            + 'equal or greater than minimum resolution ({min_resolution})'
+        ).format(max_resolution=max_resolution, min_resolution=min_resolution)
+        raise InvalidResolution(err)
+
+
 def longlat_as_int64_id(longitude, latitude, resolution):
     """Returns the S2 cell ID for a given longitude, latitude, and zoom resolution
 
@@ -184,6 +196,8 @@ def polyfill_bbox(
     min_lng, min_lat, max_lng, max_lat, min_resolution=0, max_resolution=30
 ):
     """Polyfill a planar bounding box with compact s2 cells between resolution levels"""
+    check_valid_polyfill_resolution(min_resolution, max_resolution)
+
     rc = s2sphere.RegionCoverer()
 
     rc.min_level = min_resolution
