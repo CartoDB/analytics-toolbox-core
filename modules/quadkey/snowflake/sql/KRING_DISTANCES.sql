@@ -9,8 +9,12 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_CONTENT@@
     
-    if (!ORIGIN || SIZE == null || SIZE < 0) {
-        return null;
+    if (ORIGIN == null || ORIGIN <= 0) {
+        throw new Error('Invalid input origin')
+    }
+
+    if (SIZE == null || SIZE < 0) {
+        throw new Error('Invalid input size')
     }
 
     return quadkeyLib.kRingDistances(ORIGIN, parseInt(SIZE));

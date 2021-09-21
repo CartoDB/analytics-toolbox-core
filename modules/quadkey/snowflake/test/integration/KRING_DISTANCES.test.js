@@ -64,9 +64,13 @@ test('KRING_DISTANCES should work', async () => {
         ],'index'));
 });
 
-test('KRING_DISTANCES should fail with NULL argument', async () => {
-    const query = `
-        SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(NULL)
-    `;
+test('KRING_DISTANCES should fail if any invalid argument', async () => {
+    let query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(NULL, NULL)';
+    await expect(runQuery(query)).rejects.toThrow();
+
+    query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(-1, 1)';
+    await expect(runQuery(query)).rejects.toThrow();
+
+    query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(162, -1)';
     await expect(runQuery(query)).rejects.toThrow();
 });

@@ -9,8 +9,11 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if (!origin || size == null || size < 0) {
-        return null;
+    if (origin == null || origin <= 0) {
+        throw new Error('Invalid input origin')
+    }
+    if (size == null || size < 0) {
+        throw new Error('Invalid input size')
     }
     return quadkeyLib.kRingDistances(origin, Number(size));
 """;

@@ -9,11 +9,11 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if (!origin || size == null || size < 0) {
-        return null;
-    }
     if (!h3Lib.h3IsValid(origin)) {
-        return null;
+        throw new Error('Invalid input origin')
+    }
+    if (size == null || size < 0) {
+        throw new Error('Invalid input size')
     }
     const kringDistances = h3Lib.kRingDistances(origin, size);
     const output = [];

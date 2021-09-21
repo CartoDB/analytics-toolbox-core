@@ -6,7 +6,7 @@ h3.HEXRING(origin, size)
 
 **Description**
 
-Returns all cell indexes in a **hollow hexagonal ring** centered at the origin in no particular order. Unlike KRING, this function will return `null` if there is a pentagon anywhere in the ring.
+Returns all cell indexes in a **hollow hexagonal ring** centered at the origin in no particular order. Unlike [KRING](#kring), this function will throw an exception if there is a pentagon anywhere in the ring.
 
 * `origin`: `STRING` H3 cell index of the origin.
 * `size`: `INT64` size of the ring (distance from the origin).

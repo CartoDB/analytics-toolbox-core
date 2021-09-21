@@ -8,19 +8,19 @@ quadkey.KRING_DISTANCES(origin, size)
 
 Returns all cell indexes and their distances in a **filled square k-ring** centered at the origin in no particular order.
 
-* `origin`: `INT64` quadint index of the origin.
-* `size`: `INT64` size of the ring (distance from the origin).
+* `origin`: `BIGINT` quadint index of the origin.
+* `size`: `INT` size of the ring (distance from the origin).
 
 **Return type**
 
-`ARRAY<STRUCT<index INT64, distance INT64>>`
+`ARRAY`
 
 {{% customSelector %}}
 **Example**
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.KRING_DISTANCES(4388, 1);
+SELECT quadkey.KRING_DISTANCES(4388, 1);
 -- {"index": "4388", "distance": "0"}
 -- {"index": "4932", "distance": "1"}
 -- {"index": "4900", "distance": "1"}

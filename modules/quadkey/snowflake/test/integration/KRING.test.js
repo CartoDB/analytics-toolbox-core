@@ -23,9 +23,13 @@ test('KRING should work', async () => {
     ]);
 });
 
-test('KRING should fail with NULL argument', async () => {
-    const query = `
-        SELECT @@SF_PREFIX@@quadkey.KRING(NULL)
-    `;
-    await expect(runQuery(query)).rejects.toThrow();
+test('KRING should fail if any invalid argument', async () => {
+    let query = 'SELECT @@SF_PREFIX@@quadkey.KRING(NULL, NULL)';
+    await expect(runQuery(query)).rejects.toThrow('Invalid input source');
+
+    query = 'SELECT @@SF_PREFIX@@quadkey.KRING(-1, 1)';
+    await expect(runQuery(query)).rejects.toThrow('Invalid input source');
+
+    query = 'SELECT @@SF_PREFIX@@quadkey.KRING(162, -1)';
+    await expect(runQuery(query)).rejects.toThrow('Invalid input size');
 });

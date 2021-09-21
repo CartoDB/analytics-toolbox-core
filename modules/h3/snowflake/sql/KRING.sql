@@ -9,12 +9,12 @@ LANGUAGE JAVASCRIPT
 AS $$
     @@SF_LIBRARY_KRING@@
 
-    if (!ORIGIN || SIZE == null || SIZE < 0) {
-        return null;
+    if (!h3Lib.h3IsValid(ORIGIN)) {
+        throw new Error('Invalid input origin')
     }
 
-    if (!h3Lib.h3IsValid(ORIGIN)) {
-        return null;
+    if (SIZE == null || SIZE < 0) {
+        throw new Error('Invalid input size')
     }
 
     return h3Lib.kRing(ORIGIN, parseInt(SIZE));

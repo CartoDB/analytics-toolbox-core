@@ -6,10 +6,10 @@ quadkey.KRING_DISTANCES(origin, size)
 
 **Description**
 
-Returns all cell indexes and their distances in a **filled square k-ring** centered at the origin in no particular order. Returns `null` on invalid input.
+Returns all cell indexes and their distances in a **filled square k-ring** centered at the origin in no particular order.
 
 * `origin`: `BIGINT` quadint index of the origin.
-* `size`: `INT64` size of the ring (distance from the origin).
+* `size`: `INT` size of the ring (distance from the origin).
 
 **Return type**
 

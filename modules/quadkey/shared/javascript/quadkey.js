@@ -238,9 +238,6 @@ export function toParent (quadint, resolution) {
  * @return {int}         kring of the input quadint
  */
 export function kRing (origin, size) {
-    if (size < 0) {
-        throw new Error('Kring size should be at least zero');
-    }
     if (size === 0) {
         return [origin.toString()];
     }
@@ -273,9 +270,6 @@ export function kRing (origin, size) {
  * @return {int}         kring distances of the input quadint
  */
 export function kRingDistances (origin, size) {
-    if (size < 0) {
-        throw new Error('Kring size should be at least zero');
-    }
     if (size === 0) {
         return [{ index: origin.toString(), distance: 0 }];
     }
@@ -294,7 +288,7 @@ export function kRingDistances (origin, size) {
         for (let i = -size; i <= size; i++) {
             neighbors.push({
                 index: traversalQuadint.toString(),
-                distance: Math.max(Math.abs(i),Math.abs(j)) // Chebychev distance
+                distance: Math.max(Math.abs(i), Math.abs(j)) // Chebychev distance
             });
             traversalQuadint = siblingRight(traversalQuadint);
         }
