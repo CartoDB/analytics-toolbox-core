@@ -66,11 +66,11 @@ test('KRING_DISTANCES should work', async () => {
 
 test('KRING_DISTANCES should fail if any invalid argument', async () => {
     let query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(NULL, NULL)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
 
     query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(-1, 1)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
 
     query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(162, -1)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input size');
 });

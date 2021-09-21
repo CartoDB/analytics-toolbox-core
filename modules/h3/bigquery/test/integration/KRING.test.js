@@ -45,11 +45,11 @@ test('KRING should work', async () => {
 
 test('KRING should fail if any invalid argument', async () => {
     let query = 'SELECT `@@BQ_PREFIX@@h3.KRING`(NULL, NULL)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
 
     query = 'SELECT `@@BQ_PREFIX@@h3.KRING`("abc", 1)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
 
     query = 'SELECT `@@BQ_PREFIX@@h3.KRING`("ff283473fffffff", -1)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input size');
 });

@@ -45,11 +45,11 @@ test('KRING_DISTANCES should work', async () => {
 
 test('KRING_DISTANCES should fail if any invalid argument', async () => {
     let query = 'SELECT `@@BQ_PREFIX@@h3.KRING_DISTANCES`(NULL, NULL)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
 
     query = 'SELECT `@@BQ_PREFIX@@h3.KRING_DISTANCES`("abc", 1)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
 
     query = 'SELECT `@@BQ_PREFIX@@h3.KRING_DISTANCES`("ff283473fffffff", -1)';
-    await expect(runQuery(query)).rejects.toThrow();
+    await expect(runQuery(query)).rejects.toThrow('Invalid input size');
 });
