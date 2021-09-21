@@ -1,7 +1,7 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches-ignore:
       - master
   pull_request_target:
@@ -16,7 +16,7 @@ jobs:
 
   lint-bq:
     if: |
-      ( github.event_name == 'pull_request' ) ||
+      ( github.event_name == 'push' ) ||
       ( github.event_name == 'pull_request_target' && github.event.label.name == 'run_ci' )
     runs-on: ubuntu-20.04
     timeout-minutes: 5
@@ -84,7 +84,7 @@ jobs:
 
   lint-sf:
     if: |
-      ( github.event_name == 'pull_request' ) ||
+      ( github.event_name == 'push' ) ||
       ( github.event_name == 'pull_request_target' && github.event.label.name == 'run_ci' )
     runs-on: ubuntu-20.04
     timeout-minutes: 5
@@ -152,7 +152,7 @@ jobs:
 
   lint-rs:
     if: |
-      ( github.event_name == 'pull_request' ) ||
+      ( github.event_name == 'push' ) ||
       ( github.event_name == 'pull_request_target' && github.event.label.name == 'run_ci' )
     runs-on: ubuntu-20.04
     timeout-minutes: 5
