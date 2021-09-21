@@ -1,5 +1,8 @@
 const lib = require('../../dist/index');
-const { sortByKey } = require('../../../../../common/bigquery/test-utils');
+
+function sortByKey (list, key) {
+    return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
+}
 
 // TODO: refactor tests
 

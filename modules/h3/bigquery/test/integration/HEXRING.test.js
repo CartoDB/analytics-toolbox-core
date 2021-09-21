@@ -37,11 +37,11 @@ test('HEXRING should work', async () => {
 
 test('HEXRING should fail if any invalid argument', async () => {
     let query = 'SELECT `@@BQ_PREFIX@@h3.HEXRING`(NULL, NULL)';
-    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
     query = 'SELECT `@@BQ_PREFIX@@h3.HEXRING`("abc", 1)';
-    await expect(runQuery(query)).rejects.toThrow('Invalid input origin');
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@h3.HEXRING`("ff283473fffffff", -1)';
-    await expect(runQuery(query)).rejects.toThrow('Invalid input size');
+    query = 'SELECT `@@BQ_PREFIX@@h3.HEXRING`("8928308280fffff", -1)';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });
