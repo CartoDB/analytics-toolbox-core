@@ -4,16 +4,16 @@ test('KRING should work', async () => {
     const query = `
         WITH kring_data AS
         ( SELECT row,
-            \`@@BQ_PREFIX@@quadkey.KRING\`(quadint, distance) as kring_elem,
+            \`@@BQ_PREFIX@@quadkey.KRING\`(origin, size) as kring_elem,
         FROM UNNEST([
-            STRUCT(1 as row, 162 as quadint, 1 as distance),
+            STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
-            STRUCT(4, 12960460429066265, NULL),
+            STRUCT(4, 12960460429066265, 1),
             STRUCT(5, 12070922, 2),
             STRUCT(6, 791040491538, 3)
         ]))
-        -- cast idx to String to avoid INT64 issues in JS
+        -- cast index to String to avoid INT64 issues in JS
         SELECT ARRAY_AGG(CAST(ke as STRING)) as kring
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row
@@ -29,9 +29,13 @@ test('KRING should work', async () => {
     ]);
 });
 
-test('KRING should fail with NULL argument', async () => {
-    const query = `
-        SELECT \`@@BQ_PREFIX@@quadkey.KRING\`(NULL)
-    `;
-    await expect(runQuery(query)).rejects.toThrow();
+test('KRING should fail if any invalid argument', async () => {
+    let query = 'SELECT `@@BQ_PREFIX@@quadkey.KRING`(NULL, NULL);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+
+    query = 'SELECT `@@BQ_PREFIX@@quadkey.KRING`(-1, 1);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+
+    query = 'SELECT `@@BQ_PREFIX@@quadkey.KRING`(162, -1);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

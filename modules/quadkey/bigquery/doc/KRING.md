@@ -1,15 +1,15 @@
 ### KRING
 
 {{% bannerNote type="code" %}}
-quadkey.KRING(quadint, distance)
+quadkey.KRING(origin, size)
 {{%/ bannerNote %}}
 
 **Description**
 
-Returns an array containing all the quadints directly next to the given quadint at the same level of zoom. Diagonal, horizontal and vertical nearby quadints plus the current quadint are considered, so KRING always returns `(distance*2 + 1)^2` quadints.
+Returns all cell indexes in a **filled square k-ring** centered at the origin in no particular order.
 
-* `quadint`: `INT64` quadint to get the KRING from.
-* `distance`: `INT64` distance (in cells) to the source.
+* `origin`: `INT64` quadint index of the origin.
+* `size`: `INT64` size of the ring (distance from the origin).
 
 **Return type**
 

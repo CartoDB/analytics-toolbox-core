@@ -18,5 +18,5 @@ Returns the current version of the H3 module.
 
 ```sql
 SELECT carto-os.h3.VERSION();
--- 1.0.3
+-- 1.0.4
 ```

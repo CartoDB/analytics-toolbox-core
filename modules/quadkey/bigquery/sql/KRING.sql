@@ -3,18 +3,17 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.KRING`
-(quadint INT64, distance INT64)
+(origin INT64, size INT64)
 RETURNS ARRAY<INT64>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if (quadint == null) {
-        throw new Error('NULL argument passed to UDF');
+    if (origin == null || origin <= 0) {
+        throw new Error('Invalid input origin')
     }
-    if (distance == null) {
-        distance = 1;
+    if (size == null || size < 0) {
+        throw new Error('Invalid input size')
     }
-    const neighbors = quadkeyLib.kring(quadint, Number(distance));
-    return neighbors.map(String);
+    return quadkeyLib.kRing(origin, Number(size));
 """;

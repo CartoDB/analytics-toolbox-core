@@ -50,9 +50,9 @@ module.exports = {
             type: 'input',
             name: 'fpnames',
             message: 'Enter the input parameter names:',
-            suffix: ' (separated by commas)',
+            suffix: ' (separated by semicolons)',
             filter: (value) => {
-                return value.replace(/\s/g, '').split(',').filter(p => p);
+                return value.replace(/;\s+/g, ';').split(';').filter(p => p);
             }
         });
 
@@ -60,30 +60,16 @@ module.exports = {
             type: 'input',
             name: 'fptypes',
             message: 'Enter the input parameter types:',
-            suffix: ' (separated by commas)',
+            suffix: ' (separated by semicolons)',
             filter: (value) => {
-                return value.replace(/\s/g, '').split(',').filter(p => p);
-            },
-            validate: (value) => {
-                if (JSON.stringify(value) === JSON.stringify(value.map(v => v.toUpperCase()))) {
-                    return true;
-                } else {
-                    return 'Please enter the types in uppercase.';
-                }
+                return value.replace(/;\s+/g, ';').split(';').filter(p => p);
             }
         });
 
         questions.push({
             type: 'input',
             name: 'frtype',
-            message: 'Enter the return type:',
-            validate: (value) => {
-                if (value === value.toUpperCase()) {
-                    return true;
-                } else {
-                    return 'Please enter the type in uppercase.';
-                }
-            }
+            message: 'Enter the return type:'
         });
         
         questions.push({

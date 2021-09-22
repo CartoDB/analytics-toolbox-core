@@ -22,3 +22,8 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 SELECT carto-os.h3.ISPENTAGON('837b59fffffffff');
 -- false
 ```
+
+```sql
+SELECT carto-os.h3.ISPENTAGON('8075fffffffffff');
+-- true
+```

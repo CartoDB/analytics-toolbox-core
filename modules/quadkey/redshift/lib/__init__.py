@@ -83,23 +83,45 @@ def to_parent(quadint, resolution):
     )
 
 
-def kring(quadint, distance):
-    if distance < 1:
-        raise Exception('Wrong kring distance')
-
-    corner_quadint = quadint
+def kring(origin, size):
+    corner_quadint = origin
     # Traverse to top left corner
-    for i in range(0, distance):
+    for i in range(0, size):
         corner_quadint = sibling(corner_quadint, 'left')
         corner_quadint = sibling(corner_quadint, 'up')
 
     neighbors = []
     traversal_quadint = 0
 
-    for j in range(0, distance * 2 + 1):
+    for j in range(0, size * 2 + 1):
         traversal_quadint = corner_quadint
-        for i in range(0, distance * 2 + 1):
+        for i in range(0, size * 2 + 1):
             neighbors.append(traversal_quadint)
+            traversal_quadint = sibling(traversal_quadint, 'right')
+        corner_quadint = sibling(corner_quadint, 'down')
+
+    return neighbors
+
+
+def kring_distances(origin, size):
+    corner_quadint = origin
+    # Traverse to top left corner
+    for i in range(0, size):
+        corner_quadint = sibling(corner_quadint, 'left')
+        corner_quadint = sibling(corner_quadint, 'up')
+
+    neighbors = []
+    traversal_quadint = 0
+
+    for j in range(0, size * 2 + 1):
+        traversal_quadint = corner_quadint
+        for i in range(0, size * 2 + 1):
+            neighbors.append(
+                {
+                    'index': traversal_quadint,
+                    'distance': max(abs(i), abs(j)),  # Chebychev distance
+                }
+            )
             traversal_quadint = sibling(traversal_quadint, 'right')
         corner_quadint = sibling(corner_quadint, 'down')
 
