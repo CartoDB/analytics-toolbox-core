@@ -1,7 +1,7 @@
-### ID_FROM_UINT64REPR
+### ID_FROMUINT64REPR
 
 {{% bannerNote type="code" %}}
-s2.ID_FROM_UINT64REPR(uid)
+s2.ID_FROMUINT64REPR(uid)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the cell ID from a UINT64 representation.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.s2.ID_FROM_UINT64REPR('9926595690882924544');
+SELECT carto-os.s2.ID_FROMUINT64REPR('9926595690882924544');
 -- -8520148382826627072
 ```
