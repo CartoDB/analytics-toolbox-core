@@ -1,15 +1,15 @@
 ### KRING
 
 {{% bannerNote type="code" %}}
-h3.KRING(index, distance)
+h3.KRING(origin, size)
 {{%/ bannerNote %}}
 
 **Description**
 
-Returns an array with the indexes of all hexagons within `distance` of the given input hexagon. The order of the hexagons is undefined. Returns `null` on invalid input.
+Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin in no particular order.
 
-* `index`: `STRING` The H3 cell index as hexadecimal.
-* `distance`: `INT` distance (in number of cells) to the source.
+* `origin`: `STRING` H3 cell index of the origin.
+* `size`: `INT` size of the ring (distance from the origin).
 
 **Return type**
 

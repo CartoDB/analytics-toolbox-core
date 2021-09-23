@@ -1,4 +1,5 @@
-from lib import placekeyLib, __version__
+from lib import placekeyLib
+from lib._version import __version__
 
 
 def test_init():

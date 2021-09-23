@@ -33,12 +33,17 @@ function execAsync (query) {
     });
 }
 
-const runQuery = async (query) => {
+async function runQuery (query) {
     query = query.replace(/@@SF_PREFIX@@/g, SF_PREFIX);
     const rows = await execAsync(query);
     return rows;
 }
 
+function sortByKey (list, key) {
+    return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
+}
+
 module.exports = {
-    runQuery
+    runQuery,
+    sortByKey
 }

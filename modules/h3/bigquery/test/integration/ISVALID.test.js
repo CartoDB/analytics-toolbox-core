@@ -10,7 +10,7 @@ test('Works as expected', async () => {
 
             -- Valid parameters
             SELECT 3 AS id, '85283473fffffff' as hid UNION ALL
-            SELECT 4 AS id, \`@@BQ_PREFIX@@h3.ST_ASH3\`(ST_GEOGPOINT(-122.0553238, 37.3615593), 5)
+            SELECT 4 AS id, '8075fffffffffff' as hid
         )
         SELECT
             id,

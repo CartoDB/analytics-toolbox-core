@@ -8,11 +8,13 @@ PYTHON3_VERSION = 3
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
-SHARE_CREATE_FILE = ./sql/_SHARE_CREATE.sql
-SHARE_REMOVE_FILE = ./sql/_SHARE_REMOVE.sql
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-COMMON_DIR = ../../../common
-SCRIPTS_DIR = ../../../scripts
+SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
+SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
+
+COMMON_DIR = $(ROOT_DIR)/../../../common
+SCRIPTS_DIR = $(ROOT_DIR)/../../../scripts
 VENV2_DIR = $(COMMON_DIR)/redshift/venv2
 VENV3_DIR = $(COMMON_DIR)/redshift/venv3
 VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
@@ -57,13 +59,13 @@ test-unit: venv2
 	mkdir -p lib/$(MODULE)Lib
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
-	pytest -rP test/unit && \
+	pytest -rP -p no:warnings test/unit/$(TEST) && \
 	deactivate
 	rm -rf lib/$(MODULE)Lib
 
 test-integration: check check-extra venv3
 	. $(VENV3_ACTIVATE) && \
-	pytest -rP test/integration && \
+	pytest -rP -p no:warnings test/integration/$(TEST) && \
 	deactivate
 
 test-integration-full:

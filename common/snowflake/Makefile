@@ -10,16 +10,20 @@ SF_SHARES = \
 	$(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS \
 	$(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)ADVANCED_SPATIAL_EXTENSIONS 
 
-SF_LIBRARY = ./dist/index.js
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-SHARE_CREATE_FILE = ./sql/_SHARE_CREATE.sql
-SHARE_REMOVE_FILE = ./sql/_SHARE_REMOVE.sql
+SF_LIBRARY = $(ROOT_DIR)/dist/index.js
 
-COMMON_DIR = ../../../common/snowflake
-SCRIPTS_DIR = ../../../scripts
+SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
+SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
-NODE_MODULES = ./node_modules
-NODE_MODULES_DEPS = $(COMMON_DIR)/node_modules
+COMMON_DIR = $(ROOT_DIR)/../../../common/snowflake
+SCRIPTS_DIR = $(ROOT_DIR)/../../../scripts
+SHARED_DIR = $(ROOT_DIR)/../shared/javascript
+
+NODE_MODULES = $(ROOT_DIR)/node_modules
+NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
+NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
 REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
@@ -39,21 +43,24 @@ help:
 $(NODE_MODULES):
 	yarn -s
 
-$(NODE_MODULES_DEPS):
+$(NODE_MODULES_DEV):
 	yarn -s --cwd $(COMMON_DIR)
 
-lint: $(NODE_MODULES_DEPS)
-	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+$(NODE_MODULES_SHARED):
+	yarn -s --cwd $(SHARED_DIR)
+
+lint: $(NODE_MODULES_DEV)
+	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config ../../../.eslintrc.js .
 
-lint-fix: $(NODE_MODULES_DEPS)
-	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+lint-fix: $(NODE_MODULES_DEV)
+	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config ../../../.eslintrc.js . --fix
 
-build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
+build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 	if [ -d ./lib ]; then \
 		NAME=$(MODULE)Lib \
-		PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 		LIB_DIR=./lib/index.js \
 		DIST_DIR=./dist/index.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
@@ -61,7 +68,7 @@ build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
 		for f in $(notdir $(shell find ./libs/* -type d 2>/dev/null)); do \
 			$(PRE_BUILD) \
 			NAME=$(MODULE)Lib \
-			PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+			PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 			LIB_DIR=./libs/$${f}/index.js \
 			DIST_DIR=./dist/$${f}.js \
 			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
@@ -72,7 +79,7 @@ build: $(NODE_MODULES) $(NODE_MODULES_DEPS)
 test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
-	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
+	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	jest test/unit --testTimeout=30000
 
 test-integration-full:
@@ -80,9 +87,9 @@ test-integration-full:
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
 
-test-integration: check $(NODE_MODULES_DEPS)
-	PATH=$(NODE_MODULES_DEPS)/.bin/:$(PATH) \
-	jest test/integration/$(F) --testTimeout=30000
+test-integration: check $(NODE_MODULES_DEV)
+	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	jest test/integration/$(TEST) --testTimeout=30000
 
 deploy: check
 	$(MAKE) build
@@ -91,7 +98,7 @@ deploy: check
 	$(MAKE) share-create
 
 clean:
-	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEPS)
+	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEV)
 
 clean-deploy: check
 	$(MAKE) share-remove
