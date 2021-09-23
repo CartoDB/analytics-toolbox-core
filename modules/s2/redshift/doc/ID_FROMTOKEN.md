@@ -8,7 +8,7 @@ s2.ID_FROMTOKEN(token)
 
 Returns the conversion of an S2 cell token (hexified ID) into an unsigned,64 bit ID
 
-* `TOKEN`: `VARCHAR` S2 cell token.
+* `token`: `VARCHAR(MAX)` S2 cell token.
 
 **Return type**
 
@@ -22,5 +22,3 @@ Returns the conversion of an S2 cell token (hexified ID) into an unsigned,64 bit
 SELECT s2.ID_FROMTOKEN('89c25a3');
 -- -8520148382826627072
 ```
-
-

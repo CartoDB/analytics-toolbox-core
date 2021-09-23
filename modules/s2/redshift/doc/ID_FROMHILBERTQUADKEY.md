@@ -8,7 +8,7 @@ s2.ID_FROMHILBERTQUADKEY(hquadkey)
 
 Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) into a S2 cell ID.
 
-* `hilbert_quadkey`: `VARCHAR` Hilbert quadkey to be converted.
+* `hquadkey`: `VARCHAR(MAX)` Hilbert quadkey to be converted.
 
 **Return type**
 

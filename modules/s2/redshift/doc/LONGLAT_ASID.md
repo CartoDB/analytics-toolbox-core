@@ -6,15 +6,15 @@ s2.LONGLAT_ASID(longitude, latitude, resolution)
 
 **Description**
 
-Returns the quadint representation for a given level of detail and geographic coordinates.
+Returns the S2 cell ID representation for a given level of detail and geographic coordinates.
 
-* `longitude`: `FLOAT` horizontal coordinate of the map.
-* `latitude`: `FLOAT` vertical coordinate of the map.
-* `resolution`: `INT` level of detail or zoom.
+* `longitude`: `FLOAT8` horizontal coordinate of the map.
+* `latitude`: `FLOAT8` vertical coordinate of the map.
+* `resolution`: `INT4` level of detail or zoom.
 
 **Return type**
 
-`VARCHAR`
+`INT8`
 
 **Example**
 

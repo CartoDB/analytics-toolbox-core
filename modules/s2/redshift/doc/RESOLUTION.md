@@ -6,13 +6,13 @@ s2.RESOLUTION(id)
 
 **Description**
 
-Returns a INTEGER with the resolution of given cell ID. S2 defines cells from a minimum resolution of 
+Returns a integer with the resolution of given cell ID.
 
-* `id`: `VARCHAR` id to get the resolution from.
+* `id`: `INT8` id to get the resolution from.
 
 **Return type**
 
-`INTEGER`
+`INT4`
 
 **Example**
 

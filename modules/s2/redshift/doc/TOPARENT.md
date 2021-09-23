@@ -15,11 +15,11 @@ However, an optional resolution argument can be passed with the desired parent r
 
 Optional arguments:
 
-* `resolution`: `INT` resolution of the desired parent.
+* `resolution`: `INT4` resolution of the desired parent.
 
 **Return type**
 
-`BIGINT`
+`INT8`
 
 **Example**
 

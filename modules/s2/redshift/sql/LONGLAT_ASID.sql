@@ -2,11 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.LONGLAT_ASID(
-    longitude FLOAT,
-    latitude FLOAT,
-    resolution INTEGER
-) 
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.LONGLAT_ASID
+(longitude FLOAT8, latitude FLOAT8, resolution INT4) 
 RETURNS INT8
 IMMUTABLE
 AS $$

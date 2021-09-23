@@ -1,14 +1,14 @@
 ### ID_FROMUINT64REPR
 
 {{% bannerNote type="code" %}}
-s2.ID_FROMUINT64REPR(uint64_id)
+s2.ID_FROMUINT64REPR(uid)
 {{%/ bannerNote %}}
 
 **Description**
 
 Returns an INT64 cell ID from its UINT64 representation.
 
-* `uint64_id`: `VARCHAR` S2 INT64 cell ID.
+* `uid`: `VARCHAR(MAX)` UINT64 representation of a S2 cell ID.
 
 **Return type**
 

@@ -8,17 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Create s2 module.
-- Add HILBERTQUADKET_FROMID function.
+- Add HILBERTQUADKEY_FROMID function.
 - Add ID_FROMHILBERTQUADKEY function.
 - Add ID_FROMTOKEN function.
 - Add ID_FROMUINT64REPR function.
 - Add LONGLAT_ASID function.
 - Add RESOLUTION function.
-- Add ST_ASID_POLYFILL_BBOX function.
 - Add ST_ASID function.
+- Add ST_ASID_POLYFILL_BBOX function.
 - Add ST_BOUNDARY function.
 - Add TOCHILDREN function.
-- Add TOKEN_FROMID function.
+- Add TOKEN_FROMID function
 - Add TOPARENT function.
 - Add UINT64REPR_FROMID function.
 - Add VERSION function.

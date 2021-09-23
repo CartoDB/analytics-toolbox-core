@@ -193,7 +193,7 @@ def get_cell_boundary(int64_id):
 
 
 def polyfill_bbox(
-    min_lng, min_lat, max_lng, max_lat, min_resolution=0, max_resolution=30
+    min_lng, max_lng, min_lat, max_lat, min_resolution=0, max_resolution=30
 ):
     """Polyfill a planar bounding box with compact s2 cells between resolution levels"""
     check_valid_polyfill_resolution(min_resolution, max_resolution)

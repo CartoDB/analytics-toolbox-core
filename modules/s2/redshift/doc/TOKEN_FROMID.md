@@ -12,7 +12,7 @@ Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 
 **Return type**
 
-`VARCHAR`
+`VARCHAR(MAX)`
 
 {{% customSelector %}}
 **Example**

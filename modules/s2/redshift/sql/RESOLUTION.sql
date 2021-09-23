@@ -2,10 +2,9 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.RESOLUTION(
-    id INT8
-)
-RETURNS INTEGER 
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.RESOLUTION
+(id INT8)
+RETURNS INT4
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import get_resolution

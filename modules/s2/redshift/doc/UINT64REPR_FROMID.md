@@ -12,7 +12,7 @@ Returns the UINT64 representation of a cell ID.
 
 **Return type**
 
-`VARCHAR`
+`VARCHAR(MAX)`
 
 {{% customSelector %}}
 **Example**
