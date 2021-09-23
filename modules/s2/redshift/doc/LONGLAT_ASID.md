@@ -8,8 +8,8 @@ s2.LONGLAT_ASID(longitude, latitude, resolution)
 
 Returns the quadint representation for a given level of detail and geographic coordinates.
 
-* `longitude`: `NUMERIC` horizontal coordinate of the map.
-* `latitude`: `NUMERIC` vertical coordinate of the map.
+* `longitude`: `FLOAT` horizontal coordinate of the map.
+* `latitude`: `FLOAT` vertical coordinate of the map.
 * `resolution`: `INT` level of detail or zoom.
 
 **Return type**
