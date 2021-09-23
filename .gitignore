@@ -3,6 +3,7 @@ dist/
 node_modules/
 __pycache__/
 .pytest_cache/
+.ipynb_checkpoints/
 .tmp/
 
 *.log
@@ -11,4 +12,6 @@ snowsql_rt.*
 .DS_STORE
 dev_env.sh
 package-lock.json
+yarn.lock
 MANIFEST
+*.ipynb

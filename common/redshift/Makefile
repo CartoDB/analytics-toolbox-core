@@ -23,7 +23,7 @@ VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 
 AWS_PRINT = tr '\r\n' ' ' | jq -M 'if has("Error") then .["QueryString"],.["Error"] else .["QueryString"] end'
-AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null
+AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null || exit 1
 AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK)
 AWS_RUN_STATEMENT_SQL = \
     STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
