@@ -69,10 +69,10 @@ def centroid(geog, area_poly, length_line):
         or geog.type == 'Point'
         or geog.type == 'GeometryCollection'
     ):
-        return str(coords_mean(coords))
+        return coords_mean(coords)
     elif geog.type == 'Polygon' or geog.type == 'MultiPolygon':
-        return str(centroid_polygon(coords, area_poly))
+        return centroid_polygon(coords, area_poly)
     elif geog.type == 'LineString' or geog.type == 'MultiLineString':
-        return str(centroid_linestring(coords, length_line))
+        return centroid_linestring(coords, length_line)
     else:
         raise Exception('geometry type not supported')

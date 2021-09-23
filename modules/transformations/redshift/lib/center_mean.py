@@ -32,4 +32,4 @@ def center_mean(geog):
     else:
         coords = list(geojson.utils.coords(geog))
 
-    return str(coords_mean(coords))
+    return coords_mean(coords)

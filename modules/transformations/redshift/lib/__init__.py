@@ -5,6 +5,7 @@
 from ._version import __version__  # noqa
 from center_mean import center_mean
 from centroid import centroid
+from concave import concave
 
 
 # def buffer(geog, radius, bbox, units='kilometers', steps=8):

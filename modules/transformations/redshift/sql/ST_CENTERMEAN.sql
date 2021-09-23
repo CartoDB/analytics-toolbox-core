@@ -13,7 +13,7 @@ AS $$
     if geog is None:
         return None
 
-    return center_mean(geojson.loads(geog))
+    return str(center_mean(geojson.loads(geog)))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTERMEAN

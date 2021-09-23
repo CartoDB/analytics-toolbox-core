@@ -13,7 +13,7 @@ AS $$
     if geog is None:
         return None
 
-    return centroid(geojson.loads(geog), area_poly, length_line)
+    return str(centroid(geojson.loads(geog), area_poly, length_line))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTROID
