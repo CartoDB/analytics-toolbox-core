@@ -1,10 +1,10 @@
 # Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
 # Copyright (c) 2021, CARTO
 
+from __future__ import division
 import geojson
-from helper import distance
+from helper import euclidean_distance
 from center_mean import coords_mean
-
 
 def centroid_polygon(coords, area_poly):
     if area_poly == 0:
@@ -35,7 +35,7 @@ def centroid_linestring(coords, length_line):
     n_coords = len(coords)
 
     for i in range(n_coords - 1):
-        segment_length = distance(coords[i], coords[i + 1])
+        segment_length = euclidean_distance(coords[i], coords[i + 1])
         if segment_length == 0:
             continue
 

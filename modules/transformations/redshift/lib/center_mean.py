@@ -1,8 +1,8 @@
 # Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
 # Copyright (c) 2021, CARTO
 
+from __future__ import division
 import geojson
-
 
 def coords_mean(coords_list):
     sum_x = 0
