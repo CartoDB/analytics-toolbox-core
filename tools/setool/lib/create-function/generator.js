@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 const inquirer  = require('./inquirer');
 const { checkDir, createFile, readFile } = require('../utils');
+const zip = (a, b) => Array.from(Array(Math.max(b.length, a.length)), (_, i) => a[i] + ' ' + b[i]);
 
 const header = `----------------------------
 -- Copyright (C) 2021 CARTO
@@ -118,6 +119,9 @@ SELECT ${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')});
 
 function createSQLFunction () {
     let content = '';
+    let content_share = '';
+    const fparam_names = fparams[0].name.split(',');
+    const fparam_types = fparams[0].type.split(',');
     switch (cloud){
     case 'bigquery':
         switch (ftemplate){
@@ -125,7 +129,7 @@ function createSQLFunction () {
             content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 DETERMINISTIC
 LANGUAGE js
@@ -139,7 +143,7 @@ AS """
             content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS ((
     TODO
@@ -150,7 +154,7 @@ AS ((
             content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.__${fname}\`
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 DETERMINISTIC
 LANGUAGE js
@@ -160,10 +164,10 @@ AS """
 """;
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS (
-    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
+    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparam_names.join(', ')})
 );`;
             break;
 
@@ -171,17 +175,17 @@ AS (
             content = `${header}
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.__${fname}\`
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS ((
     TODO
 ));
 
 CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS (
-    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
+    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparam_names.join(', ')})
 );`;  
             break;
         default:
@@ -195,7 +199,7 @@ AS (
             content = `${header}
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 LANGUAGE JAVASCRIPT
 AS $$
@@ -209,7 +213,7 @@ $$;`;
             content = `${header}
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS $$
     TODO
@@ -220,7 +224,7 @@ $$;`;
             content = `${header}
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@${mname}._${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 LANGUAGE JAVASCRIPT
 AS $$
@@ -230,10 +234,10 @@ AS $$
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS $$
-    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
+    @@SF_PREFIX@@${mname}._${fname}(${fparam_names.map(fp => fp.toUpperCase()).join(', ')})
 $$;`;
             break;
 
@@ -241,17 +245,17 @@ $$;`;
             content = `${header}
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@${mname}._${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS $$
     TODO
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 AS $$
-    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
+    @@SF_PREFIX@@${mname}._${fname}(${fparam_names.map(fp => fp.toUpperCase()).join(', ')})
 $$;
 `;
             break;
@@ -260,11 +264,11 @@ $$;
         }
 
         // Create SHARE
-        content = readFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
-        content += `
-grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).fill('TODO').join(',')}) to share @@SF_SHARE@@;`
+        content_share = readFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
+        content_share += `
+grant usage on function @@SF_PREFIX@@${mname}.${fname}(${fparam_types.join(', ')}) to share @@SF_SHARE@@;`
     
-        createFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], content);
+        createFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], content_share);
 
         break;
 
@@ -274,8 +278,8 @@ grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).f
             content = `${header}
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => fp.type).join(', ')})
--- (${fparams.map(fp => fp.name).join(', ')})
+(${fparam_types.join(', ')})
+-- (${fparam_names.join(', ')})
 RETURNS ${frtype}
 IMMUTABLE
 AS $$
@@ -287,7 +291,7 @@ $$ LANGUAGE sql;`;
             content = `${header}
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 IMMUTABLE
 AS $$
@@ -300,8 +304,8 @@ $$ LANGUAGE plpythonu;`;
             content = `${header}
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}._${fname}
-(${fparams.map(fp => fp.type).join(', ')})
--- (${fparams.map(fp => fp.name).join(', ')})
+(${fparam_types.join(', ')})
+-- (${fparam_names.join(', ')})
 RETURNS ${frtype}
 IMMUTABLE
 AS $$   
@@ -309,19 +313,19 @@ AS $$
 $$ LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => fp.type).join(', ')})
--- (${fparams.map(fp => fp.name).join(', ')})
+(${fparam_types.join(', ')})
+-- (${fparam_names.join(', ')})
 RETURNS ${frtype}
 IMMUTABLE
 AS $$   
-    SELECT @@RS_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name).join(', ')})
+    SELECT @@RS_PREFIX@@${mname}._${fname}(${Array.from(fparam_names.keys()).map(k => '$' + (k + 1)).join(', ')})
 $$ LANGUAGE sql;`;
             break;
         case 'python-combo':
             content = `${header}
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}._${fname}
-(${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
+(${zip(fparam_names, fparam_types).join(', ')})
 RETURNS ${frtype}
 IMMUTABLE
 AS $$
@@ -331,12 +335,12 @@ AS $$
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
-(${fparams.map(fp => fp.type).join(', ')})
--- (${fparams.map(fp => fp.name).join(', ')})
+(${fparam_types.join(', ')})
+-- (${fparam_names.join(', ')})
 RETURNS ${frtype}
 IMMUTABLE
 AS $$   
-    SELECT @@RS_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name).join(', ')})
+    SELECT @@RS_PREFIX@@${mname}._${fname}(${Array.from(fparam_names.keys()).map(k => '$' + (k + 1)).join(', ')})
 $$ LANGUAGE sql;`;
             break;
         default:
@@ -388,7 +392,7 @@ test('{fname} should work', async () => {
 
 def test_${fname.toLowerCase()}():
     result = run_query('SELECT @@RS_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')})')
-    assert result[0][0] == `;
+    assert result[0][0] == ''`;
 
             createFile([root, 'modules', mname, cloud, 'test', 'integration', `test_${fname}.py`], content);
         }
