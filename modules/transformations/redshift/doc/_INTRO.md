@@ -2,4 +2,4 @@
 
 <div class="badges"><div class="core"></div></div>
 
-TODO.
+This module contains functions that compute geometric constructions, or alter geometry size or shape.

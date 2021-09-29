@@ -6,26 +6,20 @@ transformations.ST_DESTINATION(geog, distance, bearing, units)
 
 **Description**
 
-TODO.
+Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and bearing in degrees. This uses the Haversine formula to account for global curvature.
 
-* `geog`: `GEOMETRY` TODO.
-* `distance`: `FLOAT8` TODO.
-* `bearing`: `FLOAT8` TODO.
-* `units`: `VARCHAR(15)` TODO.
-
-**Constraints**
-
-TODO.
+* `geog`: `GEOMETRY` starting point.
+* `distance`: `FLOAT8` distance from the origin point.
+* `bearing`: `FLOAT8` ranging from -180 to 180.
+* `units` (optional): `VARCHAR(15)` units of length, the supported options are: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 
 `GEOMETRY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
-SELECT transformations.ST_DESTINATION(geog, distance, bearing, units);
--- TODO
+SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45, 'miles');
+-- POINT (-3.568625 40.518963)
 ```

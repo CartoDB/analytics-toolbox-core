@@ -9,3 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Create transformations module.
 - Add VERSION function.
+- Add ST_CENTERMEAN function.
+- Add ST_CENTROID function.
+- Add ST_CENTEROFMASS function
+- Add ST_CENTERMEDIAN function
+- Add ST_GREATCIRCLE function
+- Add ST_DESTINATION function

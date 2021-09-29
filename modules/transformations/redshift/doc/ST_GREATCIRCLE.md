@@ -6,25 +6,19 @@ transformations.ST_GREATCIRCLE(start_point, end_point, n_points)
 
 **Description**
 
-TODO.
+Calculate great circles routes as LineString or MultiLineString. If the start and end points span the antimeridian, the resulting feature will be split into a MultiLineString.
 
-* `start_point`: `GEOMETRY` TODO.
-* `end_point`: `GEOMETRY` TODO.
-* `n_points`: `INT` TODO.
-
-**Constraints**
-
-TODO.
+* `start_point`: `GEOMETRY` source point feature.
+* `end_point`: `GEOMETRY` destination point feature.
+* `n_points` (optional): `INT` number of points. If `NULL` the default value `100` is used.
 
 **Return type**
 
 `GEOMETRY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT transformations.ST_GREATCIRCLE(start_point, end_point, n_points);
--- TODO
+-- LINESTRING (-3.70325 40.4167 ...
 ```

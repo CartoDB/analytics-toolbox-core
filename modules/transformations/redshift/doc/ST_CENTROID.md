@@ -6,23 +6,16 @@ transformations.ST_CENTROID(geog)
 
 **Description**
 
-TODO.
+Takes any Feature or a FeatureCollection and returns its centroid.
 
-* `geog`: `GEOMETRY` TODO.
-
-**Constraints**
-
-TODO.
+* `geog`: `GEOMETRY` feature to be centered.
 
 **Return type**
 
 `GEOMETRY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
-SELECT transformations.ST_CENTROID(geog);
--- TODO
-```
+SELECT transformations.ST_CENTROID(ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'))
+-- POINT (25.454545 26.969697)

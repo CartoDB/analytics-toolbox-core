@@ -6,23 +6,18 @@ transformations.ST_CENTERMEAN(geog)
 
 **Description**
 
-TODO.
+Takes a Feature or FeatureCollection and returns the mean center.
 
-* `geog`: `GEOMETRY` TODO.
+* `geog`: `GEOMETRY` feature to be centered.
 
-**Constraints**
-
-TODO.
 
 **Return type**
 
 `GEOMETRY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
-SELECT transformations.ST_CENTERMEAN(geog);
--- TODO
+SELECT transformations.ST_CENTERMEAN(ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'))
+-- POINT (26 24)
 ```
