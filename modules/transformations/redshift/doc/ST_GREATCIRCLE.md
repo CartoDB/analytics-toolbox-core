@@ -6,7 +6,7 @@ transformations.ST_GREATCIRCLE(start_point, end_point, n_points)
 
 **Description**
 
-Calculate great circles routes as LineString or MultiLineString. If the start and end points span the antimeridian, the resulting feature will be split into a MultiLineString.
+Calculate great circles routes as LineString.
 
 * `start_point`: `GEOMETRY` source point feature.
 * `end_point`: `GEOMETRY` destination point feature.
