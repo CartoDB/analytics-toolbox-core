@@ -1,10 +1,11 @@
-# Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
 # Copyright (c) 2021, CARTO
+# http://en.wikipedia.org/wiki/Centroid
 
 from __future__ import division
 import geojson
 from helper import euclidean_distance
 from center_mean import coords_mean
+
 
 def centroid_polygon(coords, area_poly):
     if area_poly == 0:

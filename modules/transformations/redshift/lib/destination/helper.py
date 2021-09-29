@@ -7,14 +7,14 @@ from math import sqrt, radians, sin, cos, atan2, degrees
 
 avg_earth_radius_km = 6371008.8
 conversions = {
-    'km': 0.001,
+    'kilometers': 0.001,
     'm': 1.0,
-    'mi': 0.000621371192,
+    'miles': 0.000621371192,
     'ft': 3.28084,
     'in': 39.370,
-    'deg': 1 / 111325,
+    'degrees': 1 / 111325,
     'cen': 100,
-    'rad': 1 / avg_earth_radius_km,
+    'radians': 1 / avg_earth_radius_km,
     'naut': 0.000539956803,
     'yd': 0.914411119,
 }
@@ -53,7 +53,7 @@ def distance(p1, p2, units):
     return radians_to_length(b, units)
 
 
-def radians_to_length(radians, unit='km'):
+def radians_to_length(radians, unit='kilometres'):
     """#TODO: Add description"""
     if unit not in conversions:
         raise Exception('unit is invalid')
@@ -61,7 +61,7 @@ def radians_to_length(radians, unit='km'):
     return b
 
 
-def length_to_radians(distance, unit='km'):
+def length_to_radians(distance, unit='kilometres'):
     """#TODO: Add description"""
     if unit not in conversions:
         raise Exception('unit is invalid')

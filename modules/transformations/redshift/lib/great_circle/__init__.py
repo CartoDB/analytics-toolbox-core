@@ -1,9 +1,9 @@
-# Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
 # Copyright (c) 2021, CARTO
 
 import pygc
 import geojson
 from numpy import linspace
+
 
 def great_circle(start_point, end_point, n_points):
 
@@ -15,10 +15,20 @@ def great_circle(start_point, end_point, n_points):
 
     start_coords = list(geojson.utils.coords(start_point))
     end_coords = list(geojson.utils.coords(end_point))
-    
-    distance_dict = pygc.great_distance(start_latitude=start_coords[0][1], start_longitude=start_coords[0][0], end_latitude=end_coords[0][1], end_longitude=end_coords[0][0])
+
+    distance_dict = pygc.great_distance(
+        start_latitude=start_coords[0][1],
+        start_longitude=start_coords[0][0],
+        end_latitude=end_coords[0][1],
+        end_longitude=end_coords[0][0],
+    )
     segments = linspace(start=0, stop=distance_dict['distance'], num=n_points)
-    points_dict = pygc.great_circle(distance=segments, azimuth=distance_dict['azimuth'], latitude=start_coords[0][1], longitude=start_coords[0][0])
+    points_dict = pygc.great_circle(
+        distance=segments,
+        azimuth=distance_dict['azimuth'],
+        latitude=start_coords[0][1],
+        longitude=start_coords[0][0],
+    )
 
     coords = []
     for i in range(n_points):

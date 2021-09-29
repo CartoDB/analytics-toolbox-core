@@ -5,6 +5,7 @@ from helper import length_to_radians
 from math import radians, asin, cos, sin, atan2, degrees
 import geojson
 
+
 def destination(geog, distance, bearing, units):
 
     # Check if geog is a point
@@ -17,12 +18,6 @@ def destination(geog, distance, bearing, units):
     lon_orig = radians(float(coords[0][0]))
     lat_orig = radians(float(coords[0][1]))
     bearing_rad = radians(float(bearing))
-
-    # Check units
-#    if "units" in options:
-#        radian = length_to_radians(distance, options["units"])
-#    else:
-#        radian = length_to_radians(distance)
 
     radian = length_to_radians(distance, units)
 

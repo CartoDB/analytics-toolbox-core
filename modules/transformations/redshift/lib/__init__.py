@@ -1,12 +1,31 @@
-# Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
-# Copyright (c) 2020, Omkar Mestry (Python3 implementation)
-# Copyright (c) 2021, CARTO
-
 from ._version import __version__  # noqa
-from center_mean import center_mean
-from center_median import center_median
-from centroid import centroid
-from concave import concave
-from destination import destination
-from along import along
-from great_circle import great_circle
+
+
+def center_mean(geog):
+    from center_lib import center_mean
+
+    return center_mean(geog)
+
+
+def center_median(geog, n_iter):
+    from center_lib import center_median
+
+    return center_median(geog, n_iter)
+
+
+def centroid(geog, area_poly, length_line):
+    from center_lib import centroid
+
+    return centroid(geog, area_poly, length_line)
+
+
+def great_circle(start_point, end_point, n_points):
+    from great_circle import great_circle
+
+    return great_circle(start_point, end_point, n_points)
+
+
+def destination(geog, distance, bearing, units):
+    from destination import destination
+
+    return destination(geog, distance, bearing, units)

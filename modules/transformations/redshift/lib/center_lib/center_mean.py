@@ -1,8 +1,8 @@
-# Copyright (c) 2014, Morgan Herlocker (JavaScript implementation)
 # Copyright (c) 2021, CARTO
 
 from __future__ import division
 import geojson
+
 
 def coords_mean(coords_list):
     sum_x = 0
@@ -20,10 +20,6 @@ def coords_mean(coords_list):
 
 
 def center_mean(geog):
-
-    # validation
-    if geog is None:
-        raise Exception('geog is required')
 
     # Take the type of geometry
     coords = []
