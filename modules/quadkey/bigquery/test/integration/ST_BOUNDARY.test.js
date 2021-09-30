@@ -3,7 +3,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 test('ST_BOUNDARY should work', async () => {
     const query = `
     SELECT
-      ST_BOUNDARY_(quadint) boundary,
+      \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(quadint) boundary,
       quadint
     FROM
       UNNEST([0,1,2,33,34,65,97,130,258,386,12070922,791040491538,12960460429066265]) quadint
