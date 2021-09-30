@@ -5,7 +5,7 @@ test('ST_BOUNDARY should work', async () => {
         SELECT
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(12070922) as geog1,
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(791040491538) as geog2,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(12960460429066265) as geog3`;
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(12960460429066265) as geog3,
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(0) as geog4,
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(1) as geog5,
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(33) as geog6,
