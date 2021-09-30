@@ -15,16 +15,16 @@ test('ST_BOUNDARY should work', async () => {
     expect(JSON.stringify(rows[0].boundary.value)).toEqual('"GEOMETRYCOLLECTION(POLYGON((0 0, 120 0, -120 0, 0 0)), POLYGON((0 0, -120 0, 120 0, 0 0)))"');
     expect(JSON.stringify(rows[1].boundary.value)).toEqual('"POLYGON((0 0, -180 90, -180 0, -90 0, 0 0))"');
     expect(JSON.stringify(rows[2].boundary.value)).toEqual('"POLYGON((-180 85.0511287798066, -180 66.5132604431119, -90 66.5132604431119, -90 85.0511287798066, -180 85.0511287798066))"');
-    expect(JSON.stringify(rows[3].boundary.value)).toEqual('POLYGON((180 0, 180 90, 0 0, 90 0, 180 0))');
-    expect(JSON.stringify(rows[4].boundary.value)).toEqual('POLYGON((-90 85.0511287798066, -90 66.5132604431119, 0 66.5132604431119, 0 85.0511287798066, -90 85.0511287798066))');
-    expect(JSON.stringify(rows[5].boundary.value)).toEqual('POLYGON((0 0, -90 0, -180 0, -180 -90, 0 0))');
-    expect(JSON.stringify(rows[6].boundary.value)).toEqual('POLYGON((180 0, 90 0, 0 0, 180 -90, 180 0))');
-    expect(JSON.stringify(rows[7].boundary.value)).toEqual('POLYGON((-180 66.5132604431119, -180 0, -90 0, -90 66.5132604431119, -180 66.5132604431119))');
-    expect(JSON.stringify(rows[8].boundary.value)).toEqual('POLYGON((-180 0, -180 -66.5132604431119, -90 -66.5132604431119, -90 0, -180 0))');
-    expect(JSON.stringify(rows[9].boundary.value)).toEqual('POLYGON((-180 -66.5132604431119, -180 -85.0511287798066, -90 -85.0511287798066, -90 -66.5132604431119, -180 -66.5132604431119))');
-    expect(JSON.stringify(rows[10].boundary.value)).toEqual('POLYGON((-45 45.089035564831, -45 44.840290651398, -44.6484375 44.840290651398, -44.6484375 45.089035564831, -45 45.089035564831))');
-    expect(JSON.stringify(rows[11].boundary.value)).toEqual('POLYGON((-45 45.0007380782907, -45 44.9997670191813, -44.9986267089844 44.9997670191813, -44.9986267089844 45.0007380782907, -45 45.0007380782907))');
-    expect(JSON.stringify(rows[12].boundary.value)).toEqual('POLYGON((-45 45.0000021990696, -45 44.9999946126367, -44.9999892711639 44.9999946126367, -44.9999892711639 45.0000021990696, -45 45.0000021990696))');
+    expect(JSON.stringify(rows[3].boundary.value)).toEqual('"POLYGON((180 0, 180 90, 0 0, 90 0, 180 0))"');
+    expect(JSON.stringify(rows[4].boundary.value)).toEqual('"POLYGON((-90 85.0511287798066, -90 66.5132604431119, 0 66.5132604431119, 0 85.0511287798066, -90 85.0511287798066))"');
+    expect(JSON.stringify(rows[5].boundary.value)).toEqual('"POLYGON((0 0, -90 0, -180 0, -180 -90, 0 0))"');
+    expect(JSON.stringify(rows[6].boundary.value)).toEqual('"POLYGON((180 0, 90 0, 0 0, 180 -90, 180 0))"');
+    expect(JSON.stringify(rows[7].boundary.value)).toEqual('"POLYGON((-180 66.5132604431119, -180 0, -90 0, -90 66.5132604431119, -180 66.5132604431119))"');
+    expect(JSON.stringify(rows[8].boundary.value)).toEqual('"POLYGON((-180 0, -180 -66.5132604431119, -90 -66.5132604431119, -90 0, -180 0))"');
+    expect(JSON.stringify(rows[9].boundary.value)).toEqual('"POLYGON((-180 -66.5132604431119, -180 -85.0511287798066, -90 -85.0511287798066, -90 -66.5132604431119, -180 -66.5132604431119))"');
+    expect(JSON.stringify(rows[10].boundary.value)).toEqual('"POLYGON((-45 45.089035564831, -45 44.840290651398, -44.6484375 44.840290651398, -44.6484375 45.089035564831, -45 45.089035564831))"');
+    expect(JSON.stringify(rows[11].boundary.value)).toEqual('"POLYGON((-45 45.0007380782907, -45 44.9997670191813, -44.9986267089844 44.9997670191813, -44.9986267089844 45.0007380782907, -45 45.0007380782907))"');
+    expect(JSON.stringify(rows[12].boundary.value)).toEqual('"POLYGON((-45 45.0000021990696, -45 44.9999946126367, -44.9999892711639 44.9999946126367, -44.9999892711639 45.0000021990696, -45 45.0000021990696))"');
 });
 
 test('ST_BOUNDARY should fail with NULL argument', async () => {
