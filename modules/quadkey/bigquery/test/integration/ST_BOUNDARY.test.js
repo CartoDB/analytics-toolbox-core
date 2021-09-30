@@ -5,16 +5,16 @@ test('ST_BOUNDARY should work', async () => {
         SELECT
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(12070922) as geog1,
             \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(791040491538) as geog2,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(0) as geog3`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(1) as geog4`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(33) as geog5`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(65) as geog6`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(97) as geog7`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(2) as geog8`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(130) as geog9`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(258) as geog10`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(386) as geog11`,
-            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(34) as geog12`;
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(0) as geog3,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(1) as geog4,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(33) as geog5,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(65) as geog6,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(97) as geog7,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(2) as geog8,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(130) as geog9,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(258) as geog10,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(386) as geog11,
+            \`@@BQ_PREFIX@@quadkey.ST_BOUNDARY\`(34) as geog12;
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
