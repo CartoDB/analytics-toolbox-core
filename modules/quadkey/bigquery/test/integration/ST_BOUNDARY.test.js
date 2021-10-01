@@ -12,12 +12,12 @@ test('ST_BOUNDARY should work', async () => {
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(13);
-    expect(JSON.stringify(rows[1].boundary.value)).toEqual('"POLYGON((0 0, -180 90, -180 0, -90 0, 0 0))"');
+    expect(JSON.stringify(rows[1].boundary.value)).toEqual('"POLYGON((0 0, 0 85.0511287798066, -180 85.0511287798066, -180 0, -90 0, 0 0))"');
     expect(JSON.stringify(rows[2].boundary.value)).toEqual('"POLYGON((-180 85.0511287798066, -180 66.5132604431119, -90 66.5132604431119, -90 85.0511287798066, -180 85.0511287798066))"');
-    expect(JSON.stringify(rows[3].boundary.value)).toEqual('"POLYGON((180 0, 180 90, 0 0, 90 0, 180 0))"');
+    expect(JSON.stringify(rows[3].boundary.value)).toEqual('"POLYGON((180 0, 180 85.0511287798066, 0 85.0511287798066, 0 0, 90 0, 180 0))"');
     expect(JSON.stringify(rows[4].boundary.value)).toEqual('"POLYGON((-90 85.0511287798066, -90 66.5132604431119, 0 66.5132604431119, 0 85.0511287798066, -90 85.0511287798066))"');
-    expect(JSON.stringify(rows[5].boundary.value)).toEqual('"POLYGON((0 0, -90 0, -180 0, -180 -90, 0 0))"');
-    expect(JSON.stringify(rows[6].boundary.value)).toEqual('"POLYGON((180 0, 90 0, 0 0, 180 -90, 180 0))"');
+    expect(JSON.stringify(rows[5].boundary.value)).toEqual('"POLYGON((0 0, -90 0, 180 0, -180 -85.0511287798066, 0 -85.0511287798066, 0 0))"');
+    expect(JSON.stringify(rows[6].boundary.value)).toEqual('"POLYGON((180 0, 90 0, 0 0, 0 -85.0511287798066, 180 -85.0511287798066, 180 0))"');
     expect(JSON.stringify(rows[7].boundary.value)).toEqual('"POLYGON((-180 66.5132604431119, -180 0, -90 0, -90 66.5132604431119, -180 66.5132604431119))"');
     expect(JSON.stringify(rows[8].boundary.value)).toEqual('"POLYGON((-180 0, -180 -66.5132604431119, -90 -66.5132604431119, -90 0, -180 0))"');
     expect(JSON.stringify(rows[9].boundary.value)).toEqual('"POLYGON((-180 -66.5132604431119, -180 -85.0511287798066, -90 -85.0511287798066, -90 -66.5132604431119, -180 -66.5132604431119))"');
