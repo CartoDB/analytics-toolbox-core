@@ -7,100 +7,19 @@ RETURNS GEOGRAPHY
 AS (
     CASE
     -- Deal with level 0 boundary issue.
-      WHEN quadint=0 THEN ST_GeogFromText('FULLGLOBE')
+      WHEN quadint=0 THEN
+            ST_GEOGFROMGEOJSON('{"coordinates":[[[-180,85.0511287798066],[-180,-85.0511287798066],[180,-85.0511287798066],[180,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}')
     -- Deal with level 1. Prevent error from antipodal vertices.
       WHEN quadint=1 THEN
-            ST_MAKEPOLYGON(
-                ST_MAKELINE([
-                    ST_GEOGPOINT(
-                        0,
-                        0),
-                    ST_GEOGPOINT(
-                        0,
-                        (360/acos(-1)*atan(pow(exp(1),acos(-1))))-90),
-                    ST_GEOGPOINT(
-                        -180,
-                        (360/acos(-1)*atan(pow(exp(1),acos(-1))))-90),
-                    ST_GEOGPOINT(
-                        -180,
-                        0,
-                    ST_GEOGPOINT(
-                        -90,
-                        0),
-                    ST_GEOGPOINT(
-                        0,
-                        0)
-                    ])
-                )
+            ST_GEOGFROMTEXT ("POLYGON((0 0, 0 85.0511287798066, -180 85.0511287798066, -180 0, -90 0, 0 0))")
       WHEN quadint=33 THEN
-            ST_MAKEPOLYGON(
-                ST_MAKELINE([
-                    ST_GEOGPOINT(
-                        180,
-                        0),
-                    ST_GEOGPOINT(
-                        180,
-                        (360/acos(-1)*atan(pow(exp(1),acos(-1))))-90),
-                    ST_GEOGPOINT(
-                        0,
-                        (360/acos(-1)*atan(pow(exp(1),acos(-1))))-90),
-                    ST_GEOGPOINT(
-                        0,
-                        0),
-                    ST_GEOGPOINT(
-                        90,
-                        0),
-                    ST_GEOGPOINT(
-                        180,
-                        0)
-                    ])
-                )
+            ST_GEOGFROMTEXT ("POLYGON((180 0, 180 85.0511287798066, 0 85.0511287798066, 0 0, 90 0, 180 0))")
       WHEN quadint=65 THEN
-            ST_MAKEPOLYGON(
-                ST_MAKELINE([
-                    ST_GEOGPOINT(
-                        0,
-                        0),
-                    ST_GEOGPOINT(
-                        -90,
-                        0,
-                    ST_GEOGPOINT(
-                        -180,
-                        0),
-                    ST_GEOGPOINT(
-                        -180,
-                        90-(360/acos(-1)*atan(pow(exp(1),acos(-1))))),
-                    ST_GEOGPOINT(
-                        0,
-                        90-(360/acos(-1)*atan(pow(exp(1),acos(-1))))),
-                    ST_GEOGPOINT(
-                        180,
-                        0)
-                    ])
-                )
+            ST_GEOGFROMTEXT ("POLYGON((0 0, -90 0, 180 0, -180 -85.0511287798066, 0 -85.0511287798066, 0 0))")
+
       WHEN quadint=97 THEN
-            ST_MAKEPOLYGON(
-                ST_MAKELINE([
-                    ST_GEOGPOINT(
-                        180,
-                        0),
-                    ST_GEOGPOINT(
-                        90,
-                        0,
-                    ST_GEOGPOINT(
-                        0,
-                        0),
-                    ST_GEOGPOINT(
-                        0,
-                        90-(360/acos(-1)*atan(pow(exp(1),acos(-1))))),
-                    ST_GEOGPOINT(
-                        180,
-                        90-(360/acos(-1)*atan(pow(exp(1),acos(-1))))),
-                    ST_GEOGPOINT(
-                        180,
-                        0)
-                    ])
-                )
+            ST_GEOGFROMTEXT ("POLYGON((180 0, 90 0, 0 0, 0 -85.0511287798066, 180 -85.0511287798066, 180 0))")
+
       ELSE COALESCE(
             ST_MAKEPOLYGON(
                 ST_MAKELINE([
