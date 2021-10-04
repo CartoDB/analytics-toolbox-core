@@ -28,4 +28,6 @@ def center_mean(geog):
     else:
         coords = list(geojson.utils.coords(geog))
 
-    return coords_mean(coords)
+    no_duplicates = []
+    [no_duplicates.append(x) for x in coords if x not in no_duplicates]
+    return coords_mean(no_duplicates)
