@@ -40,7 +40,11 @@ def test_great_circle_none():
 def test_great_circle_default():
     results = run_query(
         """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
-            ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167)))"""
+            ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167))),
+        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+            ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167), 100)),
+        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+            ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167), 10))"""
     )
 
     fixture_file = open('./test/integration/greatcircle_fixtures/out/wkts.txt', 'r')
@@ -48,3 +52,5 @@ def test_great_circle_default():
     fixture_file.close()
 
     assert str(results[0][0]) == lines[4].rstrip()
+    assert str(results[0][0]) == str(results[0][1])
+    assert str(results[0][0]) != str(results[0][2])

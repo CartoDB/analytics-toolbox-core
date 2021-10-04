@@ -37,7 +37,13 @@ def test_destination_none():
 def test_destination_default():
     results = run_query(
         """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
-            ST_MakePoint(0, 0), 10, 90))"""
+            ST_MakePoint(0, 0), 10, 90)),
+        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+            ST_MakePoint(0, 0), 10, 90, 'kilometers')),
+        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+            ST_MakePoint(0, 0), 10, 90, 'miles'))"""
     )
 
     assert str(results[0][0]) == 'POINT(0.089932 0)'
+    assert str(results[0][1]) == str(results[0][0])
+    assert str(results[0][1]) != str(results[0][2])
