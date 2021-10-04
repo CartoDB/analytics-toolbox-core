@@ -17,10 +17,10 @@ def test_center_mean_success():
             ST_GeomFromText('{points[3].rstrip()}')))"""
     )
 
-    assert str(results[0][0]) == 'POINT(4.840755 45.756063)'
+    assert str(results[0][0]) == 'POINT(4.840729 45.755812)'
     assert str(results[0][1]) == 'POINT(25.454545 26.969697)'
-    assert str(results[0][2]) == 'POINT(50.19774 -19.152542)'
-    assert str(results[0][3]) == 'POINT(-3.790576 37.77855)'
+    assert str(results[0][2]) == 'POINT(-50.19774 19.152542)'
+    assert str(results[0][3]) == 'POINT(-3.790602 37.778808)'
 
 
 def test_center_mean_none():
