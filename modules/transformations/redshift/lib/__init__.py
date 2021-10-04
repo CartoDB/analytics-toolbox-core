@@ -13,10 +13,10 @@ def center_median(geog, n_iter):
     return center_median(geog, n_iter)
 
 
-def centroid(geog, area_poly, length_line):
+def centroid(geog):
     from center_lib import centroid
 
-    return centroid(geog, area_poly, length_line)
+    return centroid(geog)
 
 
 def great_circle(start_point, end_point, n_points):

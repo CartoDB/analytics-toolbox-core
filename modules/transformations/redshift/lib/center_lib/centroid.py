@@ -7,15 +7,12 @@ from helper import euclidean_distance
 from center_mean import coords_mean
 
 
-def centroid_polygon(coords, area_poly):
-    if area_poly == 0:
-        return geojson.Point(0, 0)
+def centroid_polygon(coords):
 
     sum_x = 0
     sum_y = 0
     n_coords = len(coords)
-    area6 = area_poly * 6
-
+    area = 0
     for i in range(n_coords - 1):
         sum_x += (coords[i][0] + coords[i + 1][0]) * (
             coords[i][0] * coords[i + 1][1] - coords[i + 1][0] * coords[i][1]
@@ -23,17 +20,19 @@ def centroid_polygon(coords, area_poly):
         sum_y += (coords[i][1] + coords[i + 1][1]) * (
             coords[i][0] * coords[i + 1][1] - coords[i + 1][0] * coords[i][1]
         )
+        area += coords[i][0] * coords[i + 1][1] - coords[i + 1][0] * coords[i][1]
 
-    return geojson.Point((sum_x / area6, sum_y / area6))
+    area /= 2
+
+    return geojson.Point((sum_x / (6 * area), sum_y / (6 * area)))
 
 
-def centroid_linestring(coords, length_line):
-    if length_line == 0:
-        return geojson.Point(0, 0)
+def centroid_linestring(coords):
 
     sum_x = 0
     sum_y = 0
     n_coords = len(coords)
+    length_line = 0
 
     for i in range(n_coords - 1):
         segment_length = euclidean_distance(coords[i], coords[i + 1])
@@ -44,19 +43,16 @@ def centroid_linestring(coords, length_line):
         sum_x += segment_length * mid_x
         mid_y = (coords[i][1] + coords[i + 1][1]) / 2
         sum_y += segment_length * mid_y
+        length_line += segment_length
 
     return geojson.Point((sum_x / length_line, sum_y / length_line))
 
 
-def centroid(geog, area_poly, length_line):
+def centroid(geog):
 
     # validation
     if geog is None:
         raise Exception('geog is required')
-    if area_poly is None:
-        raise Exception('area_poly is required')
-    if length_line is None:
-        raise Exception('length_line is required')
 
     # Take the type of geometry
     coords = []
@@ -72,8 +68,8 @@ def centroid(geog, area_poly, length_line):
     ):
         return coords_mean(coords)
     elif geog.type == 'Polygon' or geog.type == 'MultiPolygon':
-        return centroid_polygon(coords, area_poly)
+        return centroid_polygon(coords)
     elif geog.type == 'LineString' or geog.type == 'MultiLineString':
-        return centroid_linestring(coords, length_line)
+        return centroid_linestring(coords)
     else:
         raise Exception('geometry type not supported')
