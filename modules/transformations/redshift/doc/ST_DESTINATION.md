@@ -11,13 +11,18 @@ Takes a Point and calculates the location of a destination point given a distanc
 * `geog`: `GEOMETRY` starting point.
 * `distance`: `FLOAT8` distance from the origin point.
 * `bearing`: `FLOAT8` ranging from -180 to 180.
-* `units` (optional): `VARCHAR(15)` units of length, the supported options are: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
+* `units` (optional): `VARCHAR(15)` units of length, the supported options are: miles, kilometers, degrees or radians. By default `units` is `kilometers`.
 
 **Return type**
 
 `GEOMETRY`
 
-**Example**
+**Examples**
+
+```sql
+SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45);
+-- POINT (-3.619646 40.480261)
+```
 
 ```sql
 SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45, 'miles');
