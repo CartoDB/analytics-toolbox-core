@@ -24,6 +24,11 @@ AS $$
     if bbox is not None and len(bbox_array) != 4:
         return None
 
-    return str(voronoi_generic(geojson.loads(points), bbox_array, voronoi_type))
+    _geom = json.loads(points)
+    _geom['precision'] = 15
+    geom_geojson = json.dumps(_geom)
+    geom_geojson = geojson.loads(geom_geojson)
+
+    return str(voronoi_generic(geom_geojson, bbox_array, voronoi_type))
 
 $$ LANGUAGE plpythonu;

@@ -8,6 +8,7 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     import geojson
+    import json
     from scipy.spatial import Delaunay
 
     if points is None:
@@ -17,7 +18,11 @@ AS $$
         return None
  
     # Take the type of geometry
-    geom = geojson.loads(points)
+    _geom = json.loads(points)
+    _geom['precision'] = 15
+    geom = json.dumps(_geom)
+    geom = geojson.loads(geom)
+    
     coords = []
     if geom.type != 'MultiPoint':
         raise Exception('Invalid operation: Input points parameter must be MultiPoint.')
