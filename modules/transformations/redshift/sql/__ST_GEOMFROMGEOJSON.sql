@@ -8,6 +8,7 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     import geojson
+    import json
     
     def get_ring(coords):
         str_return = '('
@@ -17,6 +18,10 @@ AS $$
 
     if geom is None:
         return None
+
+    _geom = json.loads(geom)
+    _geom['precision'] = 15
+    geom = json.dumps(_geom)
 
     geojson_str = geojson.loads(geom)
     geojson_type = geojson_str.type

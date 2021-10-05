@@ -9,11 +9,22 @@ IMMUTABLE
 AS $$
     from @@RS_PREFIX@@transformationsLib import great_circle
     import geojson
+    import json
 
     if start_point is None or end_point is None or n_points is None:
         return None
 
-    return str(great_circle(geojson.loads(start_point), geojson.loads(end_point), n_points))
+    _geom = json.loads(start_point)
+    _geom['precision'] = 15
+    start_geom = json.dumps(_geom)
+    start_geom = geojson.loads(start_geom)
+
+    _geom = json.loads(end_point)
+    _geom['precision'] = 15
+    end_geom = json.dumps(_geom)
+    end_geom = geojson.loads(end_geom)
+
+    return str(great_circle(start_geom, end_geom, n_points))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_GREATCIRCLE

@@ -9,11 +9,17 @@ IMMUTABLE
 AS $$
     from @@RS_PREFIX@@transformationsLib import center_median
     import geojson
+    import json
     
     if geom is None or n_iter is None:
         return None
 
-    return str(center_median(geojson.loads(geom), n_iter))
+    _geom = json.loads(geom)
+    _geom['precision'] = 15
+    geojson_geom = json.dumps(_geom)
+    geojson_geom = geojson.loads(geojson_geom)
+
+    return str(center_median(geojson_geom, n_iter))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTERMEDIAN
