@@ -1,14 +1,14 @@
 ### ST_DESTINATION
 
 {{% bannerNote type="code" %}}
-transformations.ST_DESTINATION(geog, distance, bearing, units)
+transformations.ST_DESTINATION(geom, distance, bearing, units)
 {{%/ bannerNote %}}
 
 **Description**
 
 Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and bearing in degrees. This uses the Haversine formula to account for global curvature.
 
-* `geog`: `GEOMETRY` starting point.
+* `geom`: `GEOMETRY` starting point.
 * `distance`: `FLOAT8` distance from the origin point.
 * `bearing`: `FLOAT8` ranging from -180 to 180.
 * `units` (optional): `VARCHAR(15)` units of length, the supported options are: miles, kilometers, degrees or radians. By default `units` is `kilometers`.

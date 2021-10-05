@@ -1,14 +1,14 @@
 ### ST_CENTERMEAN
 
 {{% bannerNote type="code" %}}
-transformations.ST_CENTERMEAN(geog)
+transformations.ST_CENTERMEAN(geom)
 {{%/ bannerNote %}}
 
 **Description**
 
 Takes a Feature or FeatureCollection and returns the mean center.
 
-* `geog`: `GEOMETRY` feature to be centered.
+* `geom`: `GEOMETRY` feature to be centered.
 
 
 **Return type**

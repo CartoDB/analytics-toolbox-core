@@ -9,7 +9,7 @@ def great_circle(start_point, end_point, n_points):
 
     # Check if input are Points
     if start_point is None or end_point is None:
-        raise Exception('geog is required')
+        raise Exception('geom is required')
     if start_point.type != 'Point' or end_point.type != 'Point':
         raise Exception('start_point and end_point should be a LineString')
 

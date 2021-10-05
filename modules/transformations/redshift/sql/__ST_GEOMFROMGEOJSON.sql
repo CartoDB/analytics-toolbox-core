@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__GEOJSONTOWKT
-(geog VARCHAR(MAX))
+(geom VARCHAR(MAX))
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
@@ -15,10 +15,10 @@ AS $$
             str_return += str(p[0]) + ' ' + str(p[1]) + ', '
         return str_return[:-1] + ')'
 
-    if geog is None:
+    if geom is None:
         return None
 
-    geojson_str = geojson.loads(geog)
+    geojson_str = geojson.loads(geom)
     geojson_type = geojson_str.type
     
     coords = []
@@ -46,7 +46,7 @@ $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__ST_GEOMFROMGEOJSON
 (VARCHAR(MAX))
--- (geog)
+-- (geom)
 RETURNS GEOMETRY
 IMMUTABLE
 AS $$

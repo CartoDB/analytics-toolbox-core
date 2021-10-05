@@ -48,28 +48,28 @@ def centroid_linestring(coords):
     return geojson.Point((sum_x / length_line, sum_y / length_line))
 
 
-def centroid(geog):
+def centroid(geom):
 
     # validation
-    if geog is None:
-        raise Exception('geog is required')
+    if geom is None:
+        raise Exception('geom is required')
 
     # Take the type of geometry
     coords = []
-    if geog.type == 'GeometryCollection':
-        coords = list(geojson.utils.coords(geog.geometries))
+    if geom.type == 'GeometryCollection':
+        coords = list(geojson.utils.coords(geom.geometries))
     else:
-        coords = list(geojson.utils.coords(geog))
+        coords = list(geojson.utils.coords(geom))
 
     if (
-        geog.type == 'MultiPoint'
-        or geog.type == 'Point'
-        or geog.type == 'GeometryCollection'
+        geom.type == 'MultiPoint'
+        or geom.type == 'Point'
+        or geom.type == 'GeometryCollection'
     ):
         return coords_mean(coords)
-    elif geog.type == 'Polygon' or geog.type == 'MultiPolygon':
+    elif geom.type == 'Polygon' or geom.type == 'MultiPolygon':
         return centroid_polygon(coords)
-    elif geog.type == 'LineString' or geog.type == 'MultiLineString':
+    elif geom.type == 'LineString' or geom.type == 'MultiLineString':
         return centroid_linestring(coords)
     else:
         raise Exception('geometry type not supported')

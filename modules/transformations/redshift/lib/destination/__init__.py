@@ -6,15 +6,15 @@ from math import radians, asin, cos, sin, atan2, degrees
 import geojson
 
 
-def destination(geog, distance, bearing, units):
+def destination(geom, distance, bearing, units):
 
-    # Check if geog is a point
-    if geog is None:
-        raise Exception('geog is required')
-    if geog.type != 'Point':
-        raise Exception('geog should be a Point')
+    # Check if geom is a point
+    if geom is None:
+        raise Exception('geom is required')
+    if geom.type != 'Point':
+        raise Exception('geom should be a Point')
 
-    coords = list(geojson.utils.coords(geog))
+    coords = list(geojson.utils.coords(geom))
     lon_orig = radians(float(coords[0][0]))
     lat_orig = radians(float(coords[0][1]))
     bearing_rad = radians(float(bearing))

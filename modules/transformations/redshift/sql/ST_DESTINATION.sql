@@ -3,23 +3,23 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__DESTINATION
-(geog VARCHAR(MAX), distance FLOAT8, bearing FLOAT8, units VARCHAR(15))
+(geom VARCHAR(MAX), distance FLOAT8, bearing FLOAT8, units VARCHAR(15))
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@transformationsLib import destination
     import geojson
 
-    if geog is None or distance is None or bearing is None or units is None:
+    if geom is None or distance is None or bearing is None or units is None:
         return None
 
-    return str(destination(geojson.loads(geog), distance, bearing, units))
+    return str(destination(geojson.loads(geom), distance, bearing, units))
 $$ LANGUAGE plpythonu;
 
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_DESTINATION
 (GEOMETRY, FLOAT8, FLOAT8)
--- (geog, distance, bearing)
+-- (geom, distance, bearing)
 RETURNS GEOMETRY
 IMMUTABLE
 AS $$
@@ -29,7 +29,7 @@ $$ LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_DESTINATION
 (GEOMETRY, FLOAT8, FLOAT8, VARCHAR(15))
--- (geog, distance, bearing, units)
+-- (geom, distance, bearing, units)
 RETURNS GEOMETRY
 IMMUTABLE
 AS $$

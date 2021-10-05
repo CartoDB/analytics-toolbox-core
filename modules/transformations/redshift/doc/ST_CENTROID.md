@@ -1,14 +1,14 @@
 ### ST_CENTROID
 
 {{% bannerNote type="code" %}}
-transformations.ST_CENTROID(geog)
+transformations.ST_CENTROID(geom)
 {{%/ bannerNote %}}
 
 **Description**
 
 Takes any Feature or a FeatureCollection and returns its centroid.
 
-* `geog`: `GEOMETRY` feature to be centered.
+* `geom`: `GEOMETRY` feature to be centered.
 
 **Return type**
 

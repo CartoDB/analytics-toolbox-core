@@ -18,19 +18,19 @@ def denom_sum(first_median, coords):
     return temp
 
 
-def center_median(geog, n_iter):
+def center_median(geom, n_iter):
 
     # Calculate mean center
-    c_mean = list(geojson.utils.coords(center_mean(geog)))[0]
+    c_mean = list(geojson.utils.coords(center_mean(geom)))[0]
 
     # Calculate centroid of every feature
     coords = []
-    if geog.type == 'GeometryCollection':
-        for feature in geog.geometries:
+    if geom.type == 'GeometryCollection':
+        for feature in geom.geometries:
             cent = center_mean(feature)
             coords.append(list(geojson.utils.coords(cent))[0])
     else:
-        coords = list(geojson.utils.coords(geog))
+        coords = list(geojson.utils.coords(geom))
 
     # Minimize the median
     for i in range(n_iter):

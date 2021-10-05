@@ -19,14 +19,14 @@ def coords_mean(coords_list):
     return geojson.Point((sum_x / total_features, sum_y / total_features))
 
 
-def center_mean(geog):
+def center_mean(geom):
 
     # Take the type of geometry
     coords = []
-    if geog.type == 'GeometryCollection':
-        coords = list(geojson.utils.coords(geog.geometries))
+    if geom.type == 'GeometryCollection':
+        coords = list(geojson.utils.coords(geom.geometries))
     else:
-        coords = list(geojson.utils.coords(geog))
+        coords = list(geojson.utils.coords(geom))
 
     no_duplicates = []
     [no_duplicates.append(x) for x in coords if x not in no_duplicates]

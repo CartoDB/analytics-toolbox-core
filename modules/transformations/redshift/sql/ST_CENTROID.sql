@@ -3,22 +3,22 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__CENTROID
-(geog VARCHAR(MAX))
+(geom VARCHAR(MAX))
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@transformationsLib import centroid
     import geojson
 
-    if geog is None:
+    if geom is None:
         return None
 
-    return str(centroid(geojson.loads(geog)))
+    return str(centroid(geojson.loads(geom)))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTROID
 (GEOMETRY)
--- (geog)
+-- (geom)
 RETURNS GEOMETRY
 IMMUTABLE
 AS $$

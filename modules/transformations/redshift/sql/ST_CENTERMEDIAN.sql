@@ -3,22 +3,22 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__CENTERMEDIAN
-(geog VARCHAR(MAX), n_iter INT)
+(geom VARCHAR(MAX), n_iter INT)
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@transformationsLib import center_median
     import geojson
     
-    if geog is None or n_iter is None:
+    if geom is None or n_iter is None:
         return None
 
-    return str(center_median(geojson.loads(geog), n_iter))
+    return str(center_median(geojson.loads(geom), n_iter))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTERMEDIAN
 (GEOMETRY)
--- (geog)
+-- (geom)
 RETURNS GEOMETRY
 IMMUTABLE
 AS $$
