@@ -13,7 +13,7 @@ def test_check_polygon_intersection():
     intersection1 = processingLib.polygon_polygon_intersection(polygon1, polygon2)
     polygon1 = [[0, 0], [20, 0], [20, 20], [0, 20], [0, 0]]
     intersection2 = processingLib.polygon_polygon_intersection(polygon1, polygon2)
-    polygon2 = [[20, 0], [40, 0], [40, 20], [0, 40], [0, 0]]
+    polygon2 = [[25, 5], [35, 0], [35, 15], [25, 10], [25, 5]]
     intersection3 = processingLib.polygon_polygon_intersection(polygon1, polygon2)
 
     assert str(intersection1) == '[[4, 4], [10.0, 2.8], [10.0, 7.2], [4, 6], [4, 4]]'

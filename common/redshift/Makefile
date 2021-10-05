@@ -60,7 +60,7 @@ test-unit: venv2
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
 	pytest -rP -p no:warnings test/unit/$(TEST) && \
-	deactivate
+	deactivate || (rm -rf lib/$(MODULE)Lib && exit 1)
 	rm -rf lib/$(MODULE)Lib
 
 test-integration: check check-extra venv3
@@ -88,7 +88,7 @@ clean-deploy: check
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
-storage-upload: build venv3
+storage-upload: build venv2
 	for f in $(wildcard dist/*.zip); do \
 		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
 	done
