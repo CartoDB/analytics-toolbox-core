@@ -1,15 +1,18 @@
 from ._version import __version__  # noqa
 
-# from voronoi import voronoi_generic
 
-
-def voronoi_generic(geog, voronoi_type):
+def voronoi_generic(geog, bbox, voronoi_type):
     from voronoi import voronoi_generic
 
-    return voronoi_generic(geog, voronoi_type)
+    return voronoi_generic(geog, bbox, voronoi_type)
 
 
-def clip_line_bbox(linestring, bottom_left, upper_right):
-    from voronoi import clip_line_bbox
+def clip_segment_bbox(linestring, bottom_left, upper_right):
+    from voronoi import clip_segment_bbox
 
-    return clip_line_bbox(linestring, bottom_left, upper_right)
+    return clip_segment_bbox(linestring, bottom_left, upper_right)
+
+def polygon_polygon_intersection(poly1, poly2):
+    from voronoi import polygon_polygon_intersection
+
+    return polygon_polygon_intersection(poly1, poly2)
