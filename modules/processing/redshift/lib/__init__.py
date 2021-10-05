@@ -12,6 +12,7 @@ def clip_segment_bbox(linestring, bottom_left, upper_right):
 
     return clip_segment_bbox(linestring, bottom_left, upper_right)
 
+
 def polygon_polygon_intersection(poly1, poly2):
     from voronoi import polygon_polygon_intersection
 
