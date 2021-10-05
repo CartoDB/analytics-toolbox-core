@@ -1,5 +1,6 @@
 from test_utils import run_query
-from lib._version import __version__
+
+exec(open('./lib/_version.py').read())
 
 
 def test_version():
