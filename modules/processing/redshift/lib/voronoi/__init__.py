@@ -7,11 +7,11 @@ import numpy as np
 import geojson
 
 
-def voronoi_generic(geog, bbox, voronoi_type):
+def voronoi_generic(geom, bbox, voronoi_type):
     """
     Hihg level method for the computation of lines/polygons based voronoi diagrams
     Args:
-        geog: Geojson with the input points
+        geom: Geojson with the input points
         bbox: Bound box used to clip the diagram. If this parameter
         is set to None a default envelope is applied extended by about
         50% in each direction
@@ -24,10 +24,10 @@ def voronoi_generic(geog, bbox, voronoi_type):
 
     # Take the type of geometry
     coords = []
-    if geog.type != 'MultiPoint':
+    if geom.type != 'MultiPoint':
         raise Exception('Invalid operation: Input points parameter must be MultiPoint.')
     else:
-        coords = list(geojson.utils.coords(geog))
+        coords = list(geojson.utils.coords(geom))
 
     # Compute some bounds
     coords_array = np.array(coords)

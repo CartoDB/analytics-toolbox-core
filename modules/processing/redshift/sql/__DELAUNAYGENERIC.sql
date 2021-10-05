@@ -17,12 +17,12 @@ AS $$
         return None
  
     # Take the type of geometry
-    geog = geojson.loads(points)
+    geom = geojson.loads(points)
     coords = []
-    if geog.type != 'MultiPoint':
+    if geom.type != 'MultiPoint':
         raise Exception('Invalid operation: Input points parameter must be MultiPoint.')
     else:
-        coords = list(geojson.utils.coords(geog))
+        coords = list(geojson.utils.coords(geom))
 
     tri = Delaunay(coords)
 
