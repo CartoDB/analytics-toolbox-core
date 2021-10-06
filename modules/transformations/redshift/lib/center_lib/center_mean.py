@@ -21,15 +21,39 @@ def coords_mean(coords_list, n_precision):
     )
 
 
+def remove_end_polygon_point(geom):
+    if len(geom) == 0:
+        raise Exception(
+            'Invalid operation: Found empty point. Please check the input geometry'
+        )
+    elif type(geom[0]) is not list:
+        return tuple(geom)
+    elif type(geom[0][0]) is not list:
+        new_list = []
+        for poly_point in geom[:-1]:
+            new_list.append(remove_end_polygon_point(poly_point))
+        return new_list
+    else:
+        new_list = []
+        for poly in geom:
+            new_list += remove_end_polygon_point(poly)
+        return new_list
+
+
 def center_mean(geom, n_precision):
 
     # Take the type of geometry
     coords = []
+
     if geom.type == 'GeometryCollection':
-        coords = list(geojson.utils.coords(geom.geometries))
+        for feature in geom.geometries:
+            if feature.type == 'Polygon' or feature.type == 'MultiPolygon':
+                coords += remove_end_polygon_point(feature.coordinates)
+            else:
+                coords += list(geojson.utils.coords(feature))
+    elif geom.type == 'Polygon' or geom.type == 'MultiPolygon':
+        coords = remove_end_polygon_point(geom.coordinates)
     else:
         coords = list(geojson.utils.coords(geom))
 
-    no_duplicates = []
-    [no_duplicates.append(x) for x in coords if x not in no_duplicates]
-    return coords_mean(no_duplicates, n_precision)
+    return coords_mean(coords, n_precision)
