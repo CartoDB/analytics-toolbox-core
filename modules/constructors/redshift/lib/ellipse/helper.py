@@ -5,7 +5,7 @@ from __future__ import division
 from geojson import Feature, Point
 from math import pi
 
-PRECISION = 14
+PRECISION = 15
 
 avg_earth_radius_km = 6371008.8
 conversions = {
