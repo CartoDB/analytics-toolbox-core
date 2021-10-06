@@ -19,7 +19,7 @@ AS $$
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
 
-    return str(centroid(geojson_geom, PRECISION))
+    return str(centroid(geojson_geom))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTROID

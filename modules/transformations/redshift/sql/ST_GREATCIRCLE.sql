@@ -24,7 +24,7 @@ AS $$
     end_geom = json.dumps(_geom)
     end_geom = geojson.loads(end_geom)
 
-    return str(great_circle(start_geom, end_geom, n_points, PRECISION))
+    return str(great_circle(start_geom, end_geom, n_points))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_GREATCIRCLE

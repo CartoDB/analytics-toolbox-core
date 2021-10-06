@@ -2,9 +2,10 @@
 
 from __future__ import division
 import geojson
+from ..helper import PRECISION
 
 
-def coords_mean(coords_list, n_precision):
+def coords_mean(coords_list):
     sum_x = 0
     sum_y = 0
     total_features = 0
@@ -17,7 +18,7 @@ def coords_mean(coords_list, n_precision):
         return geojson.Point(0, 0)
 
     return geojson.Point(
-        (sum_x / total_features, sum_y / total_features), precision=n_precision
+        (sum_x / total_features, sum_y / total_features), precision=PRECISION
     )
 
 
@@ -40,7 +41,7 @@ def remove_end_polygon_point(geom):
         return new_list
 
 
-def center_mean(geom, n_precision):
+def center_mean(geom):
 
     # Take the type of geometry
     coords = []
@@ -56,4 +57,4 @@ def center_mean(geom, n_precision):
     else:
         coords = list(geojson.utils.coords(geom))
 
-    return coords_mean(coords, n_precision)
+    return coords_mean(coords)

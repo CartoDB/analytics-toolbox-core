@@ -5,9 +5,10 @@ from __future__ import division
 import geojson
 from helper import euclidean_distance
 from center_mean import coords_mean
+from ..helper import PRECISION
 
 
-def centroid_polygon(coords, n_precision):
+def centroid_polygon(coords):
 
     sum_x = 0
     sum_y = 0
@@ -25,11 +26,11 @@ def centroid_polygon(coords, n_precision):
     area /= 2
 
     return geojson.Point(
-        (sum_x / (6 * area), sum_y / (6 * area)), precision=n_precision
+        (sum_x / (6 * area), sum_y / (6 * area)), precision=PRECISION
     )
 
 
-def centroid_linestring(coords, n_precision):
+def centroid_linestring(coords):
 
     sum_x = 0
     sum_y = 0
@@ -48,11 +49,11 @@ def centroid_linestring(coords, n_precision):
         length_line += segment_length
 
     return geojson.Point(
-        (sum_x / length_line, sum_y / length_line), precision=n_precision
+        (sum_x / length_line, sum_y / length_line), precision=PRECISION
     )
 
 
-def centroid(geom, n_precision):
+def centroid(geom):
 
     # validation
     if geom is None:
@@ -72,8 +73,8 @@ def centroid(geom, n_precision):
     ):
         return coords_mean(coords)
     elif geom.type == 'Polygon' or geom.type == 'MultiPolygon':
-        return centroid_polygon(coords, n_precision)
+        return centroid_polygon(coords)
     elif geom.type == 'LineString' or geom.type == 'MultiLineString':
-        return centroid_linestring(coords, n_precision)
+        return centroid_linestring(coords)
     else:
         raise Exception('geometry type not supported')

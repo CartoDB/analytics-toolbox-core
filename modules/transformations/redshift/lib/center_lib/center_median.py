@@ -5,6 +5,7 @@ from __future__ import division
 import geojson
 from center_mean import center_mean
 from helper import euclidean_distance
+from ..helper import PRECISION
 
 
 def numer_sum(first_median, coords):
@@ -18,10 +19,10 @@ def denom_sum(first_median, coords):
     return temp
 
 
-def center_median(geom, n_iter, n_precision):
+def center_median(geom, n_iter):
 
     # Calculate mean center
-    c_mean = list(geojson.utils.coords(center_mean(geom, n_precision)))[0]
+    c_mean = list(geojson.utils.coords(center_mean(geom)))[0]
 
     # Calculate centroid of every feature
     coords = []
@@ -43,4 +44,4 @@ def center_median(geom, n_iter, n_precision):
             next_y += (coords[j][1] * numer_sum(c_mean, coords[j])) / denom
         c_mean = [next_x, next_y]
 
-    return geojson.Point((c_mean), precision=n_precision)
+    return geojson.Point((c_mean), precision=PRECISION)

@@ -19,7 +19,7 @@ AS $$
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
 
-    return str(center_median(geojson_geom, n_iter, PRECISION))
+    return str(center_median(geojson_geom, n_iter))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTERMEDIAN

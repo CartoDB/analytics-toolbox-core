@@ -3,10 +3,11 @@
 
 from helper import length_to_radians
 from math import radians, asin, cos, sin, atan2, degrees
+from ..helper import PRECISION
 import geojson
 
 
-def destination(geom, distance, bearing, units, n_precision):
+def destination(geom, distance, bearing, units):
 
     # Check if geom is a point
     if geom is None:
@@ -32,4 +33,4 @@ def destination(geom, distance, bearing, units, n_precision):
     lon = degrees(lon_dest)
     lat = degrees(lat_dest)
 
-    return geojson.Point((lon, lat), precision=n_precision)
+    return geojson.Point((lon, lat), precision=PRECISION)

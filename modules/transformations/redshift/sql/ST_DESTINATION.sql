@@ -19,7 +19,7 @@ AS $$
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
 
-    return str(destination(geojson_geom, distance, bearing, units, PRECISION))
+    return str(destination(geojson_geom, distance, bearing, units))
 $$ LANGUAGE plpythonu;
 
 

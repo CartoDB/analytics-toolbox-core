@@ -3,9 +3,10 @@
 import pygc
 import geojson
 from numpy import linspace
+from ..helper import PRECISION
 
 
-def great_circle(start_point, end_point, n_points, n_precision):
+def great_circle(start_point, end_point, n_points):
 
     # Check if input are Points
     if start_point is None or end_point is None:
@@ -34,4 +35,4 @@ def great_circle(start_point, end_point, n_points, n_precision):
     for i in range(n_points):
         coords.append([points_dict['longitude'][i], points_dict['latitude'][i]])
 
-    return geojson.LineString(coords, precision=n_precision)
+    return geojson.LineString(coords, precision=PRECISION)
