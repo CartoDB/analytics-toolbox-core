@@ -2,12 +2,13 @@
 
 from __future__ import division
 from scipy.spatial import Voronoi
+from ..helper import PRECISION
 import helper as lib
 import numpy as np
 import geojson
 
 
-def voronoi_generic(geom, bbox, voronoi_type, precision_n):
+def voronoi_generic(geom, bbox, voronoi_type):
     """
     Hihg level method for the computation of lines/polygons based voronoi diagrams
     Args:
@@ -16,7 +17,6 @@ def voronoi_generic(geom, bbox, voronoi_type, precision_n):
         is set to None a default envelope is applied extended by about
         50% in each direction
         voronoi_type: Type of voronoi (lines/polys)
-        precision_n: Number of decimals to be keep for numerical data types
     Return:
         Geojson with the resulting diagram. It'll return a MultiPolygon or
         MultiLineString in case of 'polys' or 'lines' are received as voronoy_type
@@ -120,7 +120,7 @@ def voronoi_generic(geom, bbox, voronoi_type, precision_n):
                 if len(clipped_list) > 1:
                     lines.append(clipped_list)
 
-        return geojson.MultiLineString(lines, precision=precision_n)
+        return geojson.MultiLineString(lines, precision=PRECISION)
 
     else:
         lines = []
@@ -131,4 +131,4 @@ def voronoi_generic(geom, bbox, voronoi_type, precision_n):
                 clipped_list = lib.polygon_polygon_intersection(point_list, bound_poly)
                 lines.append([clipped_list])
 
-        return geojson.MultiPolygon(lines, precision=precision_n)
+        return geojson.MultiPolygon(lines, precision=PRECISION)

@@ -29,6 +29,6 @@ AS $$
     geom_geojson = json.dumps(_geom)
     geom_geojson = geojson.loads(geom_geojson)
 
-    return str(voronoi_generic(geom_geojson, bbox_array, voronoi_type, PRECISION))
+    return str(voronoi_generic(geom_geojson, bbox_array, voronoi_type))
 
 $$ LANGUAGE plpythonu;
