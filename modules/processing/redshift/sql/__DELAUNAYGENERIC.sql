@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@processing.__DELAUNAYGENERIC
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
+    from @@RS_PREFIX@@processingLib import PRECISION
     import geojson
     import json
     from scipy.spatial import Delaunay
@@ -19,7 +20,7 @@ AS $$
  
     # Take the type of geometry
     _geom = json.loads(points)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     geom = json.dumps(_geom)
     geom = geojson.loads(geom)
     
@@ -43,8 +44,8 @@ AS $$
 
             
     if delaunay_type == 'lines':
-        return str(geojson.MultiLineString(lines))
+        return str(geojson.MultiLineString(lines, precision=PRECISION))
     else:
-        return str(geojson.MultiPolygon(lines))
+        return str(geojson.MultiPolygon(lines, precision=PRECISION))
 
 $$ LANGUAGE plpythonu;

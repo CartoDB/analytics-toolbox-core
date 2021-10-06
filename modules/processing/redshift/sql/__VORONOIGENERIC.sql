@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@processing.__VORONOIGENERIC
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$ 
-    from @@RS_PREFIX@@processingLib import voronoi_generic
+    from @@RS_PREFIX@@processingLib import voronoi_generic, PRECISION
     import geojson
     import json
     
@@ -25,10 +25,10 @@ AS $$
         return None
 
     _geom = json.loads(points)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     geom_geojson = json.dumps(_geom)
     geom_geojson = geojson.loads(geom_geojson)
 
-    return str(voronoi_generic(geom_geojson, bbox_array, voronoi_type))
+    return str(voronoi_generic(geom_geojson, bbox_array, voronoi_type, PRECISION))
 
 $$ LANGUAGE plpythonu;
