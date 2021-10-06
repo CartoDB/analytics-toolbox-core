@@ -5,8 +5,8 @@
 from __future__ import division
 from math import sqrt, radians, sin, cos, atan2, degrees
 
-avg_earth_radius_km = 6371008.8
-conversions = {
+AVG_EARTH_RADIUS_KM = 6371008.8
+CONVERSIONS = {
     'kilometers': 0.001,
     'm': 1.0,
     'miles': 0.000621371192,
@@ -14,7 +14,7 @@ conversions = {
     'in': 39.370,
     'degrees': 1 / 111325,
     'cen': 100,
-    'radians': 1 / avg_earth_radius_km,
+    'radians': 1 / AVG_EARTH_RADIUS_KM,
     'naut': 0.000539956803,
     'yd': 0.914411119,
 }
@@ -55,17 +55,17 @@ def distance(p1, p2, units):
 
 def radians_to_length(radians, unit='kilometres'):
     """#TODO: Add description"""
-    if unit not in conversions:
+    if unit not in CONVERSIONS:
         raise Exception('unit is invalid')
-    b = radians * conversions[unit] * avg_earth_radius_km
+    b = radians * CONVERSIONS[unit] * AVG_EARTH_RADIUS_KM
     return b
 
 
 def length_to_radians(distance, unit='kilometres'):
     """#TODO: Add description"""
-    if unit not in conversions:
+    if unit not in CONVERSIONS:
         raise Exception('unit is invalid')
-    b = distance / (conversions[unit] * avg_earth_radius_km)
+    b = distance / (CONVERSIONS[unit] * AVG_EARTH_RADIUS_KM)
     return b
 
 

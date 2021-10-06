@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__CENTERMEDIAN
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import center_median
+    from @@RS_PREFIX@@transformationsLib import center_median, PRECISION
     import geojson
     import json
     
@@ -15,11 +15,11 @@ AS $$
         return None
 
     _geom = json.loads(geom)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
 
-    return str(center_median(geojson_geom, n_iter))
+    return str(center_median(geojson_geom, n_iter, PRECISION))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTERMEDIAN

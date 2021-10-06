@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__DESTINATION
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import destination
+    from @@RS_PREFIX@@transformationsLib import destination, PRECISION
     import geojson
     import json
 
@@ -15,11 +15,11 @@ AS $$
         return None
 
     _geom = json.loads(geom)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
 
-    return str(destination(geojson_geom, distance, bearing, units))
+    return str(destination(geojson_geom, distance, bearing, units, PRECISION))
 $$ LANGUAGE plpythonu;
 
 

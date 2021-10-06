@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__GEOJSONTOWKT
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
+    from @@RS_PREFIX@@transformationsLib import PRECISION
     import geojson
     import json
     
@@ -20,7 +21,7 @@ AS $$
         return None
 
     _geom = json.loads(geom)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     geom = json.dumps(_geom)
 
     geojson_str = geojson.loads(geom)

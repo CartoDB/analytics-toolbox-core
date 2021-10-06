@@ -11,9 +11,9 @@ def test_destination_success():
             ST_MakePoint(-43.7625, -20), 150, -20, 'miles'))"""
     )
 
-    assert str(results[0][0]) == 'POINT(0.089932 0)'
-    assert str(results[0][1]) == 'POINT(-3.661468 40.448488)'
-    assert str(results[0][2]) == 'POINT(-44.542881 -17.958279)'
+    assert str(results[0][0]) == 'POINT(0.0899320363725 0)'
+    assert str(results[0][1]) == 'POINT(-3.6614678544 40.4484882583)'
+    assert str(results[0][2]) == 'POINT(-44.542881219 -17.9582789435)'
 
 
 def test_destination_none():
@@ -44,6 +44,6 @@ def test_destination_default():
             ST_MakePoint(0, 0), 10, 90, 'miles'))"""
     )
 
-    assert str(results[0][0]) == 'POINT(0.089932 0)'
+    assert str(results[0][0]) == 'POINT(0.0899320363725 0)'
     assert str(results[0][1]) == str(results[0][0])
     assert str(results[0][1]) != str(results[0][2])

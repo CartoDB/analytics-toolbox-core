@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__GREATCIRCLE
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import great_circle
+    from @@RS_PREFIX@@transformationsLib import great_circle, PRECISION
     import geojson
     import json
 
@@ -15,16 +15,16 @@ AS $$
         return None
 
     _geom = json.loads(start_point)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     start_geom = json.dumps(_geom)
     start_geom = geojson.loads(start_geom)
 
     _geom = json.loads(end_point)
-    _geom['precision'] = 15
+    _geom['precision'] = PRECISION
     end_geom = json.dumps(_geom)
     end_geom = geojson.loads(end_geom)
 
-    return str(great_circle(start_geom, end_geom, n_points))
+    return str(great_circle(start_geom, end_geom, n_points, PRECISION))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_GREATCIRCLE

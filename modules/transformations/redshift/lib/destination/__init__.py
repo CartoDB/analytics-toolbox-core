@@ -6,7 +6,7 @@ from math import radians, asin, cos, sin, atan2, degrees
 import geojson
 
 
-def destination(geom, distance, bearing, units):
+def destination(geom, distance, bearing, units, n_precision):
 
     # Check if geom is a point
     if geom is None:
@@ -32,4 +32,4 @@ def destination(geom, distance, bearing, units):
     lon = degrees(lon_dest)
     lat = degrees(lat_dest)
 
-    return geojson.Point((lon, lat))
+    return geojson.Point((lon, lat), precision=n_precision)
