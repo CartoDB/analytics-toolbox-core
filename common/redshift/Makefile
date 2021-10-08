@@ -60,7 +60,7 @@ test-unit: venv2
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
 	pytest -rP -p no:warnings test/unit/$(TEST) && \
-	deactivate
+	deactivate || (rm -rf lib/$(MODULE)Lib && exit 1)
 	rm -rf lib/$(MODULE)Lib
 
 test-integration: check check-extra venv3
