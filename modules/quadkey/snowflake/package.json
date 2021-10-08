@@ -1,12 +1,10 @@
 {
   "name": "quadkey_snowflake",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Quadkey module for Snowflake",
   "author": "CARTO",
   "license": "BSD-3-Clause",
   "private": true,
   "dependencies": {
-    "@mapbox/tile-cover": "3.0.2",
-    "@mapbox/tilebelt": "1.0.2"
   }
 }

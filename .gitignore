@@ -3,7 +3,9 @@ dist/
 node_modules/
 __pycache__/
 .pytest_cache/
+.ipynb_checkpoints/
 .tmp/
+.vscode/
 
 *.log
 *.pyc
@@ -13,3 +15,4 @@ dev_env.sh
 package-lock.json
 yarn.lock
 MANIFEST
+*.ipynb

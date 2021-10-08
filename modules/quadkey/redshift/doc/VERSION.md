@@ -16,5 +16,5 @@ Returns the current version of the quadkey module.
 
 ```sql
 SELECT quadkey.VERSION();
--- 1.0.0
+-- 1.0.1
 ```

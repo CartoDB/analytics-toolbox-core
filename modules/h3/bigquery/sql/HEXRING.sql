@@ -3,23 +3,17 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.HEXRING`
-(index STRING, distance INT64)
+(origin STRING, size INT64)
 RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    if (!index || distance == null || distance < 0) {
-        return null;
+    if (!h3Lib.h3IsValid(origin)) {
+        throw new Error('Invalid input origin')
     }
-
-    if (!h3Lib.h3IsValid(index)) {
-        return null;
+    if (size == null || size < 0) {
+        throw new Error('Invalid input size')
     }
-
-    try {
-        return h3Lib.hexRing(index, parseInt(distance));
-    } catch (error) {
-        return null;
-    }
+    return h3Lib.hexRing(origin, parseInt(size));
 """;

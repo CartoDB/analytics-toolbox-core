@@ -225,6 +225,20 @@ def test_kring():
     )
 
 
+def test_kring_distances():
+    assert quadkeyLib.kring_distances(162, 1) == [
+        {'distance': 0, 'index': 2},
+        {'distance': 1, 'index': 34},
+        {'distance': 2, 'index': 66},
+        {'distance': 1, 'index': 130},
+        {'distance': 1, 'index': 162},
+        {'distance': 2, 'index': 194},
+        {'distance': 2, 'index': 258},
+        {'distance': 2, 'index': 290},
+        {'distance': 2, 'index': 322},
+    ]
+
+
 def test_quadkey():
     tiles_per_level = 0
     for z in range(0, 30):

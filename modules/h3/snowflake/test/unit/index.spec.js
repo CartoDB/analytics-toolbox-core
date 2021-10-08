@@ -5,6 +5,7 @@ const isValidLib = require('../../dist/isvalid');
 const hexRingLib = require('../../dist/hexring');
 const isPentagonLib = require('../../dist/ispentagon');
 const kringLib = require('../../dist/kring');
+const kringDistancesLib = require('../../dist/kring_distances');
 const asH3PolyfillLib = require('../../dist/ash3_polyfill');
 const boundaryLib = require('../../dist/boundary');
 const toChildrenLib = require('../../dist/tochildren');
@@ -23,6 +24,8 @@ test('h3 library defined', () => {
     expect(isPentagonLib.h3IsPentagon).toBeDefined();
     expect(kringLib.kRing).toBeDefined();
     expect(kringLib.h3IsValid).toBeDefined();
+    expect(kringDistancesLib.kRingDistances).toBeDefined();
+    expect(kringDistancesLib.h3IsValid).toBeDefined();
     expect(asH3PolyfillLib.polyfill).toBeDefined();
     expect(boundaryLib.h3ToGeoBoundary).toBeDefined();
     expect(boundaryLib.h3IsValid).toBeDefined();

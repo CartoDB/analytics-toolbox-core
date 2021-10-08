@@ -3,24 +3,24 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._KRING
-(quadint BIGINT, distance INT)
+(origin BIGINT, size INT)
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import kring
-    
-    if quadint is None:
-        raise Exception('NULL argument passed to UDF')
 
-    if distance is None:
-        distance = 1
+    if origin is None or origin <= 0:
+        raise Exception('Invalid input origin')
 
-    return str(kring(quadint, distance))
+    if size is None or size < 0:
+        raise Exception('Invalid input size')
+
+    return str(kring(origin, size))
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.KRING
 (BIGINT, INT)
--- (quadint, distance)
+-- (origin, size)
 RETURNS SUPER
 IMMUTABLE
 AS $$

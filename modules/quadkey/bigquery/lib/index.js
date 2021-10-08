@@ -1,8 +1,8 @@
 import { version }  from '../package.json';
 import {
     bbox,
-    kring,
-    kring_indexed,
+    kRing,
+    kRingDistances,
     sibling,
     toParent,
     toChildren,
@@ -13,12 +13,12 @@ import {
     quadintFromZXY,
     geojsonToQuadints,
     ZXYFromQuadint
-} from './quadkey';
+} from '../../shared/javascript/quadkey';
 
 export default {
     bbox,
-    kring,
-    kring_indexed,
+    kRing,
+    kRingDistances,
     sibling,
     toParent,
     toChildren,

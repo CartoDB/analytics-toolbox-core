@@ -8,13 +8,11 @@ RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
     from @@RS_PREFIX@@constructorsLib import bezier_spline
-    import geojson
 
     if geog is None or resolution is None or sharpness is None:
         return None
 
-    result_geojson = bezier_spline(geojson.loads(geog), resolution, sharpness)
-    return str(result_geojson['geometry'])
+    return bezier_spline(geog, resolution, sharpness)
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@constructors.ST_BEZIERSPLINE
