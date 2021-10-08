@@ -21,10 +21,10 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 ```sql
 SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45);
--- POINT (-3.619646 40.480261)
+-- POINT (-3.61964617436 40.4802614598)
 ```
 
 ```sql
 SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45, 'miles');
--- POINT (-3.568625 40.518963)
+-- POINT (-3.56862505482 40.5189626778)
 ```
