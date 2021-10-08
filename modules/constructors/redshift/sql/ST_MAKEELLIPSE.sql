@@ -7,8 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@constructors._MAKEELLIPSE
 RETURNS VARCHAR(MAX)
 IMMUTABLE
 AS $$
-    from @@RS_PREFIX@@constructorsLib import make_ellipse
-    import geojson
+    from @@RS_PREFIX@@constructorsLib import ellipse
 
     if centerPoint is None or xSemiAxis is None or ySemiAxis is None or angle is None or units is None or steps is None:
         return None
@@ -17,13 +16,12 @@ AS $$
     geom_options['angle'] = angle
     geom_options['steps'] = steps
     geom_options['units'] = units
-    result_geojson = make_ellipse(
-        center=geojson.loads(centerPoint),
+    return ellipse(
+        center=centerPoint,
         x_semi_axis=xSemiAxis,
         y_semi_axis=ySemiAxis,
         options=geom_options,
     )
-    return str(result_geojson['geometry'])
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@constructors.ST_MAKEELLIPSE
