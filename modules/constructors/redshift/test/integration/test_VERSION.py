@@ -1,7 +1,8 @@
 from test_utils import run_query
-from lib._version import __version__
+
+exec(open('./lib/_version.py').read())
 
 
 def test_version():
     result = run_query('SELECT @@RS_PREFIX@@constructors.VERSION()')
-    assert result[0][0] == __version__
+    assert result[0][0] == __version__  # noqa

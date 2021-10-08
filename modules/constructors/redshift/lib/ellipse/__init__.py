@@ -3,8 +3,8 @@
 # Copyright (c) 2021, CARTO
 
 from __future__ import division
-from geojson import Feature, Polygon
-from helper import degrees_to_radians, get_coord, PRECISION
+import geojson
+from helper import load_geom, degrees_to_radians, get_coord, PRECISION
 from math import pow, sqrt, pi, tan, cos, sin
 from measurement import rhumb_destination
 from transformation import transform_rotate
@@ -38,6 +38,7 @@ def ellipse(center, x_semi_axis, y_semi_axis, options={}):
         raise Exception('non valid units')
 
     units = units_mapping[units]
+    center = load_geom(center)
     center_coords = get_coord(center)
     angle_rad = 0
     if units == 'degrees':
@@ -77,12 +78,20 @@ def ellipse(center, x_semi_axis, y_semi_axis, options={}):
 
     coordinates.append(coordinates[0])
     if units == 'degrees':
-        return Feature(geometry=Polygon([coordinates], precision=PRECISION))
+        return geojson.dumps(
+            geojson.Feature(
+                geometry=geojson.Polygon([coordinates], precision=PRECISION)
+            )['geometry']
+        )
     else:
-        return transform_rotate(
-            Feature(geometry=Polygon([coordinates], precision=PRECISION)),
-            angle,
-            mutate=True,
+        return geojson.dumps(
+            transform_rotate(
+                geojson.Feature(
+                    geometry=geojson.Polygon([coordinates], precision=PRECISION)
+                ),
+                angle,
+                mutate=True,
+            )['geometry']
         )
 
 

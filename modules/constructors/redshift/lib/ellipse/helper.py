@@ -5,7 +5,7 @@ from __future__ import division
 from geojson import Feature, Point
 from math import pi
 
-PRECISION = 14
+PRECISION = 15
 
 avg_earth_radius_km = 6371008.8
 conversions = {
@@ -22,15 +22,23 @@ conversions = {
 }
 
 
+def load_geom(geom):
+    from geojson import loads
+    import json
+
+    _geom = json.loads(geom)
+    _geom['precision'] = PRECISION
+    geom = json.dumps(_geom)
+    return loads(geom)
+
+
 def convert_length(length, original_unit='km', final_unit='km'):
-    """#TODO: Add description"""
     if length < 0:
         raise Exception('length must be a positive number')
     return radians_to_length(length_to_radians(length, original_unit), final_unit)
 
 
 def length_to_radians(distance, unit='km'):
-    """#TODO: Add description"""
     if unit not in conversions:
         raise Exception(unit + ' unit is invalid')
     b = distance / (conversions[unit] * avg_earth_radius_km)
@@ -38,7 +46,6 @@ def length_to_radians(distance, unit='km'):
 
 
 def radians_to_length(radians, unit='km'):
-    """#TODO: Add description"""
     if unit not in conversions:
         raise Exception(unit + ' unit is invalid')
     b = radians * conversions[unit] * avg_earth_radius_km
@@ -51,7 +58,6 @@ def degrees_to_radians(degrees):
 
 
 def get_coord(coord):
-    """#TODO: Add description"""
     if not coord:
         raise Exception('coord is required')
 

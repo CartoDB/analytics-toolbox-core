@@ -1,15 +1,8 @@
 # Copyright (c) 2021, CARTO
 
 from ._version import __version__  # noqa
+from .ellipse import ellipse
+from .bezier_spline import bezier_spline
 
 
-def make_ellipse(center, x_semi_axis, y_semi_axis, options={}):
-    from ellipse import ellipse
-
-    return ellipse(center, x_semi_axis, y_semi_axis, options)
-
-
-def bezier_spline(line, resolution=10000, sharpness=0.85):
-    from bezier_spline import bezier_spline
-
-    return bezier_spline(line, resolution, sharpness)
+__all__ = ['__version__', 'ellipse', 'bezier_spline']
