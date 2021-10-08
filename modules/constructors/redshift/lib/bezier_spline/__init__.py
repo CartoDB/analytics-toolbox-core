@@ -4,8 +4,7 @@
 from __future__ import division
 from dev_lib.spline import Spline
 import geojson
-from helper import get_geom, PRECISION
-import json
+from helper import load_geom, PRECISION
 from math import floor
 
 
@@ -32,10 +31,7 @@ def bezier_spline(line, resolution=10000, sharpness=0.85):
     """
     coords = []
     points = []
-    _geom = json.loads(line)
-    _geom['precision'] = PRECISION
-    line = geojson.loads(json.dumps(_geom))
-    geom = get_geom(line)
+    geom = load_geom(line)
 
     for c in geom['coordinates']:
         points.append({'x': c[0], 'y': c[1]})

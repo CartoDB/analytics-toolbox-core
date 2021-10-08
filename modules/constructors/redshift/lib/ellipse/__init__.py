@@ -4,8 +4,7 @@
 
 from __future__ import division
 import geojson
-from helper import degrees_to_radians, get_coord, PRECISION
-import json
+from helper import load_geom, degrees_to_radians, get_coord, PRECISION
 from math import pow, sqrt, pi, tan, cos, sin
 from measurement import rhumb_destination
 from transformation import transform_rotate
@@ -39,9 +38,7 @@ def ellipse(center, x_semi_axis, y_semi_axis, options={}):
         raise Exception('non valid units')
 
     units = units_mapping[units]
-    _geom = json.loads(center)
-    _geom['precision'] = PRECISION
-    center = geojson.loads(json.dumps(_geom))
+    center = load_geom(center)
     center_coords = get_coord(center)
     angle_rad = 0
     if units == 'degrees':
