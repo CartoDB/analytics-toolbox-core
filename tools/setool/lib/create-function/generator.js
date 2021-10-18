@@ -352,7 +352,7 @@ function CreateTestIntegrationFunction () {
 
     switch (cloud){
     case 'bigquery':
-        if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)){
+        if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)) {
             content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 
 test('${fname} should work', async () => {
@@ -367,7 +367,7 @@ test('${fname} should work', async () => {
         break;
 
     case 'snowflake':
-        if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)){
+        if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)) {
             content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 
 test('${fname} should work', async () => {
@@ -382,8 +382,8 @@ test('${fname} should work', async () => {
         break;
 
     case 'redshift':
-        if (['sql', 'sql-combo', 'python', 'python-combo'].includes(ftemplate)){
-            content = `from test_utils import run_query, redshift_connector
+        if (['sql', 'sql-combo', 'python', 'python-combo'].includes(ftemplate)) {
+            content = `from test_utils import run_query
 
 
 def test_${fname.toLowerCase()}():
