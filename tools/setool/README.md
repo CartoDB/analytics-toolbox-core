@@ -14,7 +14,7 @@ To install this tool globally, run:
 
 ```bash
 cd tools/setool
-yarn
+npm install
 npm install -g
 ```
 

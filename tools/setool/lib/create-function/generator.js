@@ -260,11 +260,11 @@ $$;
         }
 
         // Create SHARE
-        content = readFile(['modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
-        content += `
-grant usage on function @@SF_PREFIX@@${mname}.${fname}(${Array(fparams.length).fill('TODO').join(',')}) to share @@SF_SHARE@@;`
+        let shareContent = readFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
+        shareContent += `
+grant usage on function @@SF_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.type).join(',')}) to share @@SF_SHARE@@;`
     
-        createFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], content);
+        createFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], shareContent);
 
         break;
 
@@ -370,7 +370,7 @@ test('${fname} should work', async () => {
         if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)){
             content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 
-test('{fname} should work', async () => {
+test('${fname} should work', async () => {
     const query = 'SELECT @@SF_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')}) AS output';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

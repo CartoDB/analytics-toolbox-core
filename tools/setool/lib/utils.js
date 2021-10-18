@@ -18,6 +18,9 @@ module.exports = {
     },
     readFile: (pathlist) => {
         const filepath = path.join(...pathlist);
+        if (!fs.existsSync(filepath)) {
+            return '';
+        }
         return fs.readFileSync(filepath).toString();
     },
     currentDate: () => {
