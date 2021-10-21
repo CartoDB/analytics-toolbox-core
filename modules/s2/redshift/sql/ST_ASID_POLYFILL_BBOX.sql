@@ -2,11 +2,11 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2._ST_ASID_POLYFILL_BBOX
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.__ST_ASID_POLYFILL_BBOX
 (min_longitude FLOAT8, max_longitude FLOAT8, min_latitude FLOAT8,
  max_latitude FLOAT8, min_resolution INT4, max_resolution INT4)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import polyfill_bbox
 
@@ -21,11 +21,11 @@ AS $$
     
 $$ LANGUAGE plpythonu;
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2._ST_ASID_POLYFILL_BBOX
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.__ST_ASID_POLYFILL_BBOX
 (min_longitude FLOAT8, max_longitude FLOAT8, min_latitude FLOAT8,
  max_latitude FLOAT8)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import polyfill_bbox
 
@@ -44,16 +44,16 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.ST_ASID_POLYFILL_BBOX
 (min_longitude FLOAT8, max_longitude FLOAT8, min_latitude FLOAT8,
  max_latitude FLOAT8, min_resolution INT4, max_resolution INT4)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@s2._ST_ASID_POLYFILL_BBOX($1, $2, $3, $4, $5, $6))
+    SELECT json_parse(@@RS_PREFIX@@s2.__ST_ASID_POLYFILL_BBOX($1, $2, $3, $4, $5, $6))
 $$ LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.ST_ASID_POLYFILL_BBOX
 (min_longitude FLOAT8, max_longitude FLOAT8, min_latitude FLOAT8,
  max_latitude FLOAT8)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@s2._ST_ASID_POLYFILL_BBOX($1, $2, $3, $4))
+    SELECT json_parse(@@RS_PREFIX@@s2.__ST_ASID_POLYFILL_BBOX($1, $2, $3, $4))
 $$ LANGUAGE sql;

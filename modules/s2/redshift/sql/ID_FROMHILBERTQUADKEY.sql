@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.ID_FROMHILBERTQUADKEY
 (hquadkey VARCHAR(MAX)) 
 RETURNS INT8
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import hilbert_quadkey_to_id
 

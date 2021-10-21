@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.__CENTERMEDIAN
 (geom VARCHAR(MAX), n_iter INT)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@transformationsLib import center_median, PRECISION
     import geojson
@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@transformations.ST_CENTERMEDIAN
 (GEOMETRY)
 -- (geom)
 RETURNS GEOMETRY
-IMMUTABLE
+STABLE
 AS $$
     SELECT @@RS_PREFIX@@transformations.__ST_GEOMFROMGEOJSON(@@RS_PREFIX@@transformations.__CENTERMEDIAN(ST_ASGEOJSON($1)::VARCHAR(MAX), 100))
 $$ LANGUAGE sql;

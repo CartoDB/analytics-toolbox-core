@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.QUADKEY_FROMQUADINT
 (quadint BIGINT)
 RETURNS VARCHAR
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import quadkey_from_quadint
     

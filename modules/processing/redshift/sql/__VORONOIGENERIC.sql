@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@processing.__VORONOIGENERIC
 (points VARCHAR(MAX), bbox VARCHAR(MAX), voronoi_type VARCHAR(15))
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$ 
     from @@RS_PREFIX@@processingLib import voronoi_generic, PRECISION
     import geojson
