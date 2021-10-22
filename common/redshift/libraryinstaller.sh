@@ -112,18 +112,18 @@ while getopts "m:f:hs" opt; do
 	esac
 done
 
+if [ -z "$serialize" ]; then
 # validate arguments
-notNull "$AWS_S3_BUCKET" "Please provide an S3 bucket to store the library in using export AWS_S3_BUCKET=bucket"
-notNull "$RS_DATABASE" "Please provide a Redshift database using export RS_DATABASE=database"
-notNull "$RS_REGION" "Please provide a region using export RS_REGION=region"
-notNull "$RS_USER" "Please provide a Redshift user using export RS_USER=user"
-notNull "$RS_CLUSTER_ID" "Please provide a Redshift cluster using export RS_CLUSTER_ID=cluster"
-notNull "$AWS_ACCESS_KEY_ID" "Please provide an AWS access key ID using export AWS_ACCESS_KEY_ID=key"
-notNull "$AWS_SECRET_ACCESS_KEY" "Please provide an AWS secret access key ID using export AWS_SECRET_ACCESS_KEY=secret_key"
+    notNull "$AWS_S3_BUCKET" "Please provide an S3 bucket to store the library in using export AWS_S3_BUCKET=bucket"
+    notNull "$RS_DATABASE" "Please provide a Redshift database using export RS_DATABASE=database"
+    notNull "$RS_REGION" "Please provide a region using export RS_REGION=region"
+    notNull "$RS_USER" "Please provide a Redshift user using export RS_USER=user"
+    notNull "$RS_CLUSTER_ID" "Please provide a Redshift cluster using export RS_CLUSTER_ID=cluster"
+    notNull "$AWS_ACCESS_KEY_ID" "Please provide an AWS access key ID using export AWS_ACCESS_KEY_ID=key"
+    notNull "$AWS_SECRET_ACCESS_KEY" "Please provide an AWS secret access key ID using export AWS_SECRET_ACCESS_KEY=secret_key"
 
 # check that the s3 prefix is in the right format
 # starts with 's3://'
-if [ -z "$serialize" ]; then
     if ! [[ $AWS_S3_BUCKET == s3:\/\/* ]]; then
         echo "S3 Prefix must start with 's3://'"
         echo
