@@ -31,7 +31,7 @@ AWS_RUN_STATEMENT_SQL = \
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-dependency
 
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
@@ -130,16 +130,22 @@ share-remove:
 ifeq ($(RS_SHARE_ENABLED), 1)
 	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; $(AWS_RUN_STATEMENT_SQL)
 endif
-# echo "CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
-	# echo "" >> dist/module.sql;
-serialize-module: build
-	$(MAKE) build
+
+serialize-dependency: venv2
+ifneq ("$(wildcard requirements.txt)","")
+	. $(VENV2_ACTIVATE) && \
+	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt -s && \
+	deactivate; 
+endif
+
+serialize-module: build serialize-dependency
 	rm -f dist/module.sql
 	echo "CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA);" >> dist/module.sql
 	for f in $(notdir $(wildcard dist/*.zip)); do \
-		echo "CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>/$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
-		echo "" >> dist/module.sql; \
+		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
+		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>/$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
 	done
+	echo "" >> dist/module.sql;
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS) $$n >> dist/module.sql; \
 		echo "" >> dist/module.sql; \
