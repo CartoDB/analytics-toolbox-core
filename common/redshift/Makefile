@@ -75,6 +75,7 @@ test-integration-full:
 
 deploy: check
 	$(MAKE) storage-upload
+	$(MAKE) schema-remove
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
 	$(MAKE) share-create
@@ -140,6 +141,7 @@ endif
 
 serialize-module: build serialize-dependency
 	rm -f dist/module.sql
+	echo "DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE;" >> dist/module.sql
 	echo "CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA);" >> dist/module.sql
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
