@@ -140,6 +140,13 @@ serialize-module:
 		echo "" >> dist/module.sql; \
 	done
 
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
+		FUNCT_SCHEMA=$(SF_SCHEMA) FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv; \
+	done
+
 check:
 ifndef SF_DATABASE
 	$(error SF_DATABASE is undefined)
