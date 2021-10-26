@@ -17,11 +17,6 @@ if (ignoredFiles.includes(fileName)) {
     exit();
 }
 
-let content = fs.readFileSync(fileName, 'utf8');
-content = content.replace(/(\r\n|\n|\r)/gm,' ')
-
-let functionMatches = content.matchAll(new RegExp('(?<=FUNCTION)(.*?)(?=RETURNS)','g'));
-
 function addFunctSignature (functSignature) {
     if (functSchema != '')
     {
@@ -33,41 +28,76 @@ function addFunctSignature (functSignature) {
     }
 }
 
-for (const functionMatch of functionMatches) {
-    //Remove spaces and diacritics
-    const functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=[.])(.*?)(?=\\()','g')).next().value[0];
- 
-    if (functName.startsWith('_'))
-    {
-        continue;
-    }
-
-    if (outputFormat == 'argTypes')
-    {
-        //Remove diacritics and go greedy to take the outer parentheses
-        let functArgs = functionMatch[0].replace(/[\p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value[0];
-        
-        //This does not work with BigQuery ARRAY/STRUCT
-        functArgs = functArgs.split(',')
-        let functArgsTypes = [];
-        for (const functArg of functArgs) {
-            const functArgSplitted = functArg.split(' ');
-            functArgsTypes.push(functArgSplitted[functArgSplitted.length - 1]);
+function classifyFunctions(functionMatches)
+{
+    for (const functionMatch of functionMatches) {
+        //Remove spaces and diacritics
+        let functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=[.])(.*?)(?=\\()','g')).next().value;
+        if (functName)
+        {
+            functName = functName[0];
         }
-        const functSignature = functName + '(' + functArgsTypes.join(', ') + ')';
-        addFunctSignature(functSignature);
-    }
-    else if (outputFormat == 'args')
-    {
-        const functArgs = functionMatch[0].replace(/[\p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value[0];
-        const functSignature = functName + '(' + functArgs + ')';
-        addFunctSignature(functSignature);
-    }
-    else
-    {
-        addFunctSignature(functName);
+        else
+        {
+            continue;
+        }
+        
+        if (functName.startsWith('_'))
+        {
+            continue;
+        }
+    
+        if (outputFormat == 'argTypes')
+        {
+            //Remove diacritics and go greedy to take the outer parentheses
+            let functArgs = functionMatch[0].replace(/[\p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value;
+            if (functArgs)
+            {
+                functArgs = functArgs[0];
+            }
+            else
+            {
+                continue;
+            }
+    
+            //This does not work with BigQuery ARRAY/STRUCT
+            functArgs = functArgs.split(',')
+            let functArgsTypes = [];
+            for (const functArg of functArgs) {
+                const functArgSplitted = functArg.split(' ');
+                functArgsTypes.push(functArgSplitted[functArgSplitted.length - 1]);
+            }
+            const functSignature = functName + '(' + functArgsTypes.join(', ') + ')';
+            addFunctSignature(functSignature);
+        }
+        else if (outputFormat == 'args')
+        {
+            let functArgs = functionMatch[0].replace(/[\p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value;
+            if (functArgs)
+            {
+                functArgs = functArgs[0];
+            }
+            else
+            {
+                continue;
+            }
+    
+            const functSignature = functName + '(' + functArgs + ')';
+            addFunctSignature(functSignature);
+        }
+        else
+        {
+            addFunctSignature(functName);
+        }
     }
 }
+
+let content = fs.readFileSync(fileName, 'utf8');
+content = content.replace(/(\r\n|\n|\r)/gm,' ')
+const functionMatches = content.matchAll(new RegExp('(?<=FUNCTION)(.*?)(?=RETURNS)','g'));
+classifyFunctions(functionMatches);
+const procedureMatches = content.matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g'));
+classifyFunctions(procedureMatches);
 
 if (output.length > 0)
 {
