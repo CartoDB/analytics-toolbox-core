@@ -131,6 +131,13 @@ ifeq ($(RS_SHARE_ENABLED), 1)
 	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE)`; $(AWS_RUN_STATEMENT_SQL)
 endif
 
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
+		FUNCT_SCHEMA=$(RS_SCHEMA) FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv; \
+	done
+
 venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
 	. $(VENV2_ACTIVATE) && \

@@ -117,6 +117,13 @@ serialize-module:
 		echo "" >> dist/module.sql; \
 	done
 
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
+		FUNCT_SCHEMA=$(BQ_DATASET) FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv; \
+	done
+
 check:
 ifndef BQ_REGION
 	$(error BQ_REGION is undefined)
