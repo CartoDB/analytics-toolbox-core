@@ -8,7 +8,6 @@ const { exit } = require('process');
 
 const output = [];
 const ignoredFiles = process.env.IGNORE || '';
-
 const fileName = process.env.FILE_NAME || '';
 const functSchema = process.env.FUNCT_SCHEMA || '';
 const outputFormat = process.env.OUTPUT_FORMAT || ''; //Accepted values 'args'|'argTypes'
@@ -32,14 +31,22 @@ function classifyFunctions(functionMatches)
 {
     for (const functionMatch of functionMatches) {
         //Remove spaces and diacritics
-        let functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=[.])(.*?)(?=\\()','g')).next().value;
-        if (functName)
+        let functName;
+        if (functionMatch[0].indexOf('.') == -1)
         {
-            functName = functName[0];
+            functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').split('\(')[0];
         }
         else
         {
-            continue;
+            functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=[.])(.*?)(?=\\()','g')).next().value;
+            if (functName)
+            {
+                functName = functName[0];
+            }
+            else
+            {
+                continue;
+            }
         }
         
         if (functName.startsWith('_'))

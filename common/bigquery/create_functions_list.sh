@@ -4,7 +4,7 @@
 
 PACKAGE_NAME="carto-spatial-extension-bigquery"
 
-echo "Creating installation package funct_names.csv";
+echo "Serializing function names inside funct_names.csv";
 
 SCRIPT_DIR=$( dirname "$0" )
 
