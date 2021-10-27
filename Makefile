@@ -2,7 +2,7 @@ export GIT_DIFF ?= off
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-functions
 
 help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
@@ -21,3 +21,8 @@ test-integration-full:
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
+
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	CLOUD=$(CLOUD) MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node scripts/sqlfunctions.js >> dist/funct_names.csv

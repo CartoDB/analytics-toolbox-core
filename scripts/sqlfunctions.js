@@ -4,14 +4,14 @@
 // declared in a file
 
 const fs = require('fs');
-const { exit } = require('process');
+const path = require('path');
 
 const output = [];
 const cloud = process.env.CLOUD || '';
+const current_module = process.env.MODULE || '';
 const ignoredFiles = process.env.IGNORE || '';
+const qualifyFunctions = process.env.QUALIFY || false;
 const includePrivateFiles = process.env.INCLUDE_PRIVATE || false;
-const fileName = process.env.FILE_NAME || '';
-const functSchema = process.env.FUNCT_SCHEMA || '';
 const outputFormat = process.env.OUTPUT_FORMAT || ''; //Accepted values 'args'|'argTypes'
 
 let functionEndingPattern;
@@ -21,14 +21,10 @@ case 'postgres': functionEndingPattern = 'BEGIN'; break;
 default: functionEndingPattern = 'RETURNS'; break;
 }
 
-if (ignoredFiles.includes(fileName)) {
-    exit();
-}
-
-function addFunctSignature (functSignature) {
-    if (functSchema != '')
+function addFunctSignature (moduleName, functSignature) {
+    if (qualifyFunctions != '')
     {
-        functSignature = functSchema + '.' + functSignature;
+        functSignature = moduleName + '.' + functSignature;
     }
     if (!output.includes(functSignature))
     {
@@ -36,7 +32,7 @@ function addFunctSignature (functSignature) {
     }
 }
 
-function classifyFunctions (functionMatches)
+function classifyFunctions (moduleName, functionMatches)
 {
     for (const functionMatch of functionMatches) {
         //Remove spaces and diacritics
@@ -70,7 +66,7 @@ function classifyFunctions (functionMatches)
                 functArgsTypes.push(functArgSplitted[functArgSplitted.length - 1]);
             }
             const functSignature = functName + '(' + functArgsTypes.join(', ') + ')';
-            addFunctSignature(functSignature);
+            addFunctSignature(moduleName, functSignature);
         }
         else if (outputFormat == 'args')
         {
@@ -85,32 +81,62 @@ function classifyFunctions (functionMatches)
             }
     
             const functSignature = functName + '(' + functArgs + ')';
-            addFunctSignature(functSignature);
+            addFunctSignature(moduleName, functSignature);
         }
         else
         {
-            addFunctSignature(functName);
+            addFunctSignature(moduleName, functName);
         }
     }
 }
 
-let content = fs.readFileSync(fileName, 'utf8');
-content = content.split('\n');
-for (let i = 0 ; i < content.length; i++)
+function addFile (moduleName, fileName)
 {
-    
-    if (content[i].startsWith('--'))
-    {
-        delete content[i];
+    if (ignoredFiles.includes(path.parse(fileName).name)) {
+        return;
     }
-    
+
+    let content = fs.readFileSync(fileName, 'utf8');
+    content = content.split('\n');
+    for (let i = 0 ; i < content.length; i++)
+    {
+        
+        if (content[i].startsWith('--'))
+        {
+            delete content[i];
+        }
+        
+    }
+    content = content.join(' ');
+    content = content.replace(/(\r\n|\n|\r)/gm,' ')
+    const functionMatches = content.matchAll(new RegExp(`(?<=FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
+    classifyFunctions(moduleName, functionMatches);
+    const procedureMatches = content.matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g'));
+    classifyFunctions(moduleName, procedureMatches);
+}    
+
+if (current_module != '')
+{
+    const dir = 'sql'
+    const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
+    files.forEach(file => {
+        addFile(current_module, path.join(dir,file));
+    });
 }
-content = content.join(' ');
-content = content.replace(/(\r\n|\n|\r)/gm,' ')
-const functionMatches = content.matchAll(new RegExp(`(?<=FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
-classifyFunctions(functionMatches);
-const procedureMatches = content.matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g'));
-classifyFunctions(procedureMatches);
+else
+{
+    const dir = 'modules'
+    const modules = fs.readdirSync(dir);
+    modules.forEach(module => {
+        const sqldir = path.join(dir, module, cloud, 'sql');
+        if (fs.existsSync(sqldir)) {
+            const files = fs.readdirSync(sqldir);
+            files.forEach(file => {
+                addFile(module, path.join(sqldir,file));
+            });
+        }
+    });
+}
 
 if (output.length > 0)
 {
