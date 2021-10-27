@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.TOPARENT
 (quadint BIGINT, resolution INT)
 RETURNS BIGINT
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import to_parent
     

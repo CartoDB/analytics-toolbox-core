@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.LONGLAT_ASQUADINT
 (longitude FLOAT8, latitude FLOAT8, resolution INT)
 RETURNS BIGINT
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import quadint_from_location
     

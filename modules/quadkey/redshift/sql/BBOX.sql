@@ -2,10 +2,10 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._BBOX
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.__BBOX
 (quadint BIGINT)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import bbox
     
@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.BBOX
 (BIGINT)
 -- (quadint)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@quadkey._BBOX($1))
+    SELECT json_parse(@@RS_PREFIX@@quadkey.__BBOX($1))
 $$ LANGUAGE sql;

@@ -2,10 +2,10 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._TOCHILDREN
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.__TOCHILDREN
 (quadint BIGINT, resolution INT)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import to_children
     
@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.TOCHILDREN
 (BIGINT, INT)
 -- (quadint, resolution)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@quadkey._TOCHILDREN($1, $2))
+    SELECT json_parse(@@RS_PREFIX@@quadkey.__TOCHILDREN($1, $2))
 $$ LANGUAGE sql;
