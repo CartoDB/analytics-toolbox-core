@@ -13,8 +13,16 @@ const force = process.env.INPUT_FORCE_DEPLOY || '';
 const input = [];
 const output = [];
 
-const modules = fs.readdirSync(dir);
+let sqlFunctions = require('child_process').execSync(`CLOUD=${cloud} IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" ASJSON=1 node ./scripts/sqlfunctions.js`).toString();
+sqlFunctions = JSON.parse(sqlFunctions);
 
+let functionPattern;
+switch (cloud) {
+case 'snowflake': functionPattern = (m, content) => sqlFunctions[m] && new RegExp(sqlFunctions[m].join('|')).test(content); break;
+default: functionPattern = (m, content) => content.includes('@' + m); break;
+}
+
+const modules = fs.readdirSync(dir);
 modules.forEach(module => {
     const sqldir = path.join(dir, module, cloud, 'sql');
     if (fs.existsSync(sqldir)) {
@@ -22,7 +30,7 @@ modules.forEach(module => {
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
         input.push({
             name: module,
-            deps: modules.filter(m => m !== module && content.includes('@' + m))
+            deps: modules.filter(m => m !== module && functionPattern(m, content))
         });
     }
 });
