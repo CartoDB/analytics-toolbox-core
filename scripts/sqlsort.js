@@ -9,7 +9,16 @@ const path = require('path');
 const dir = 'sql';
 const input = [];
 const output = [];
+const cloud = process.env.CLOUD || '';
 const ignoredFiles = process.env.IGNORE || '';
+
+let functionPattern;
+
+switch (cloud) {
+case 'snowflake': functionPattern = (n) => `${n}`; break;
+case 'postgres': functionPattern = (n) => `${n}`; break;
+default: functionPattern = (n) => `.${n}`; break;
+}
 
 const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
 
@@ -21,7 +30,7 @@ files.forEach(file => {
     const content = fs.readFileSync(path.join(dir, file)).toString();
     input.push({
         name,
-        deps: files.map(f => path.parse(f).name).filter(n => n !== name && content.includes(`.${n}`))
+        deps: files.map(f => path.parse(f).name).filter(n => n !== name && content.includes(functionPattern(n)))
     });
 });
 
