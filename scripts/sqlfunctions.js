@@ -6,11 +6,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const output = [];
 const cloud = process.env.CLOUD || '';
 const current_module = process.env.MODULE || '';
 const ignoredFiles = process.env.IGNORE || '';
 const qualifyFunctions = process.env.QUALIFY || false;
+const asJSON = process.env.ASJSON || false;
 const includePrivateFiles = process.env.INCLUDE_PRIVATE || false;
 const outputFormat = process.env.OUTPUT_FORMAT || ''; //Accepted values 'args'|'argTypes'
 
@@ -21,14 +21,26 @@ case 'postgres': functionEndingPattern = 'BEGIN'; break;
 default: functionEndingPattern = 'RETURNS'; break;
 }
 
+let output = asJSON ? {} : [];
 function addFunctSignature (moduleName, functSignature) {
-    if (qualifyFunctions != '')
+    if (asJSON)
     {
-        functSignature = moduleName + '.' + functSignature;
+        if (!output[moduleName])
+        {
+            output[moduleName] = [];
+        }
+        output[moduleName].push(functSignature);
     }
-    if (!output.includes(functSignature))
+    else
     {
-        output.push(functSignature);
+        if (qualifyFunctions != '')
+        {
+            functSignature = moduleName + '.' + functSignature;
+        }
+        if (!output.includes(functSignature))
+        {
+            output.push(functSignature);
+        }
     }
 }
 
@@ -138,7 +150,15 @@ else
     });
 }
 
-if (output.length > 0)
+
+if (asJSON)
 {
-    process.stdout.write(output.join('\n') + '\n');
+    process.stdout.write(JSON.stringify(output));
+}
+else
+{
+    if (output.length > 0)
+    {
+        process.stdout.write(output.join('\n') + '\n');
+    }
 }
