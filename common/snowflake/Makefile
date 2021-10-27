@@ -88,7 +88,7 @@ test-integration-full:
 	$(MAKE) clean-deploy
 
 test-integration: check $(NODE_MODULES_DEV)
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	SF_SCHEMA=$(SF_SCHEMA) PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	jest test/integration/$(TEST) --testTimeout=30000
 
 deploy: check
@@ -105,21 +105,21 @@ clean-deploy: check
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
 schema-create:
-	$(SNOWSQL) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASE).$(SF_SCHEMA)"
+	$(SNOWSQL) -d $(SF_DATABASE) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASE).$(SF_SCHEMA)"
 
 schema-remove:
-	$(SNOWSQL) -q "DROP SCHEMA IF EXISTS $(SF_DATABASE).$(SF_SCHEMA) CASCADE"
+	$(SNOWSQL) -d $(SF_DATABASE) -q "DROP SCHEMA IF EXISTS $(SF_DATABASE).$(SF_SCHEMA) CASCADE"
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -q "$(xargs)" || exit 1; \
+		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1; \
 	done
 
 share-create:
 ifeq ($(SF_SHARE_ENABLED), 1)
 	for f in ${SF_SHARES}; do \
 		SHARE_QUERY=$$($(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SED) -e 's!@@SF_SHARE@@!'$$f'!g'); \
-		$(SNOWSQL) -q "$$SHARE_QUERY"; \
+		$(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$$SHARE_QUERY"; \
 	done
 endif
 
@@ -127,7 +127,7 @@ share-remove:
 ifeq ($(SF_SHARE_ENABLED), 1)
 	for f in ${SF_SHARES}; do \
 		SHARE_QUERY=$$($(SED) $(REPLACEMENTS) $(SHARE_REMOVE_FILE) | $(SED) -e 's!@@SF_SHARE@@!'$$f'!g'); \
-		$(SNOWSQL) -q "$$SHARE_QUERY"; \
+		$(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$$SHARE_QUERY"; \
 	done
 endif
 

@@ -2,7 +2,7 @@ const { runQuery, sortByKey } = require('../../../../../common/snowflake/test-ut
 
 test('KRING_DISTANCES should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(GET(VALUE,'origin'), GET(VALUE,'size')) as kring_distances
+        SELECT KRING_DISTANCES(GET(VALUE,'origin'), GET(VALUE,'size')) as kring_distances
         FROM LATERAL FLATTEN(input => ARRAY_CONSTRUCT(
             OBJECT_CONSTRUCT('origin', 162, 'size', 1),
             OBJECT_CONSTRUCT('origin', 12070922, 'size', 1),
@@ -65,12 +65,12 @@ test('KRING_DISTANCES should work', async () => {
 });
 
 test('KRING_DISTANCES should fail if any invalid argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(NULL, NULL)';
+    let query = 'SELECT KRING_DISTANCES(NULL, NULL)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(-1, 1)';
+    query = 'SELECT KRING_DISTANCES(-1, 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.KRING_DISTANCES(162, -1)';
+    query = 'SELECT KRING_DISTANCES(162, -1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

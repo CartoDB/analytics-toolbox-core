@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('HEXRING should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@h3.HEXRING('8928308280fffff', 0) as d0,
-               @@SF_PREFIX@@h3.HEXRING('8928308280fffff', 1) as d1,
-               @@SF_PREFIX@@h3.HEXRING('8928308280fffff', 2) as d2
+        SELECT HEXRING('8928308280fffff', 0) as d0,
+               HEXRING('8928308280fffff', 1) as d1,
+               HEXRING('8928308280fffff', 2) as d2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -36,12 +36,12 @@ test('HEXRING should work', async () => {
 });
 
 test('HEXRING should fail if any invalid argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@h3.HEXRING(NULL, NULL)';
+    let query = 'SELECT HEXRING(NULL, NULL)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@h3.HEXRING(\'abc\', 1)';
+    query = 'SELECT HEXRING(\'abc\', 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@h3.HEXRING(\'8928308280fffff\', -1)';
+    query = 'SELECT HEXRING(\'8928308280fffff\', -1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

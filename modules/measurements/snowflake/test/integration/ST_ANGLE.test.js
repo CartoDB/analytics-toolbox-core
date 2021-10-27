@@ -2,8 +2,8 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('ST_ANGLE should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@measurements.ST_ANGLE(ST_POINT(10, 0), ST_POINT(0, 0), ST_POINT(0, 10)) as angle1,
-               @@SF_PREFIX@@measurements.ST_ANGLE(ST_POINT(-3.70325 ,40.4167), ST_POINT(-4.70325 ,40.4167), ST_POINT(-5.70325 ,40.4167)) as angle2
+        SELECT ST_ANGLE(ST_POINT(10, 0), ST_POINT(0, 0), ST_POINT(0, 10)) as angle1,
+               ST_ANGLE(ST_POINT(-3.70325 ,40.4167), ST_POINT(-4.70325 ,40.4167), ST_POINT(-5.70325 ,40.4167)) as angle2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -13,9 +13,9 @@ test('ST_ANGLE should work', async () => {
 
 test('ST_ANGLE should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@measurements.ST_ANGLE(NULL, ST_POINT(-4.70325 ,10.4167), ST_POINT(-5.70325 ,40.4167)) as angle1,
-               @@SF_PREFIX@@measurements.ST_ANGLE(ST_POINT(-3.70325 ,40.4167), NULL, ST_POINT(-5.70325 ,40.4167)) as angle2,
-               @@SF_PREFIX@@measurements.ST_ANGLE(ST_POINT(-3.70325 ,40.4167), ST_POINT(-4.70325 ,10.4167), NULL) as angle3
+        SELECT ST_ANGLE(NULL, ST_POINT(-4.70325 ,10.4167), ST_POINT(-5.70325 ,40.4167)) as angle1,
+               ST_ANGLE(ST_POINT(-3.70325 ,40.4167), NULL, ST_POINT(-5.70325 ,40.4167)) as angle2,
+               ST_ANGLE(ST_POINT(-3.70325 ,40.4167), ST_POINT(-4.70325 ,10.4167), NULL) as angle3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

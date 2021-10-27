@@ -10,7 +10,7 @@ test('TOPARENT works as expected with invalid data', async () => {
         )
         SELECT
             id,
-            @@SF_PREFIX@@h3.TOPARENT(hid, 1) as parent
+            TOPARENT(hid, 1) as parent
         FROM ids
         ORDER BY id ASC
     `;
@@ -39,8 +39,8 @@ test('Equivalent to previous resolution level', async () => {
             *
         FROM ids
         WHERE
-            @@SF_PREFIX@@h3.ST_ASH3(point, resolution) != @@SF_PREFIX@@h3.TOPARENT(@@SF_PREFIX@@h3.ST_ASH3(point, resolution + 1), resolution) OR
-            @@SF_PREFIX@@h3.ST_ASH3(point, resolution) != @@SF_PREFIX@@h3.TOPARENT(@@SF_PREFIX@@h3.ST_ASH3(point, resolution + 2), resolution)
+            ST_ASH3(point, resolution) != TOPARENT(ST_ASH3(point, resolution + 1), resolution) OR
+            ST_ASH3(point, resolution) != TOPARENT(ST_ASH3(point, resolution + 2), resolution)
     `;
 
     let rows = await runQuery(query);
@@ -58,8 +58,8 @@ test('Equivalent to previous resolution level', async () => {
             *
         FROM ids
         WHERE
-            @@SF_PREFIX@@h3.ST_ASH3(point, resolution) != @@SF_PREFIX@@h3.TOPARENT(@@SF_PREFIX@@h3.ST_ASH3(point, resolution + 1), resolution) OR
-            @@SF_PREFIX@@h3.ST_ASH3(point, resolution) != @@SF_PREFIX@@h3.TOPARENT(@@SF_PREFIX@@h3.ST_ASH3(point, resolution + 2), resolution)
+            ST_ASH3(point, resolution) != TOPARENT(ST_ASH3(point, resolution + 1), resolution) OR
+            ST_ASH3(point, resolution) != TOPARENT(ST_ASH3(point, resolution + 2), resolution)
     `;
     rows = await runQuery(query);
     expect(rows.length).toEqual(0);

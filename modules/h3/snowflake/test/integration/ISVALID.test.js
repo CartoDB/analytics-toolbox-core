@@ -10,11 +10,11 @@ test('Works as expected', async () => {
         
             -- Valid parameters
             SELECT 3 AS id, '85283473fffffff' as hid UNION ALL
-            SELECT 4 AS id, @@SF_PREFIX@@h3.ST_ASH3(ST_POINT(-122.0553238, 37.3615593), 5)::STRING as hid
+            SELECT 4 AS id, ST_ASH3(ST_POINT(-122.0553238, 37.3615593), 5)::STRING as hid
         )
         SELECT
             id,
-            @@SF_PREFIX@@h3.ISVALID(hid) as valid
+            ISVALID(hid) as valid
         FROM ids
         ORDER BY id ASC
     `;

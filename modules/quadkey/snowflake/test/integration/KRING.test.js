@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('KRING should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@quadkey.KRING(GET(VALUE,'origin'), GET(VALUE,'size')) as kring
+        SELECT KRING(GET(VALUE,'origin'), GET(VALUE,'size')) as kring
         FROM LATERAL FLATTEN(input => ARRAY_CONSTRUCT(
             OBJECT_CONSTRUCT('origin', 162, 'size', 1),
             OBJECT_CONSTRUCT('origin', 12070922, 'size', 1),
@@ -24,12 +24,12 @@ test('KRING should work', async () => {
 });
 
 test('KRING should fail if any invalid argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.KRING(NULL, NULL)';
+    let query = 'SELECT KRING(NULL, NULL)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.KRING(-1, 1)';
+    query = 'SELECT KRING(-1, 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.KRING(162, -1)';
+    query = 'SELECT KRING(162, -1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

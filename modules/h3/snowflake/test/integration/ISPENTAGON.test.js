@@ -16,7 +16,7 @@ test('Works as expected', async () => {
         )
         SELECT
             id,
-            @@SF_PREFIX@@h3.ISPENTAGON(hid) as pent
+            ISPENTAGON(hid) as pent
         FROM ids
         ORDER BY id ASC
     `;

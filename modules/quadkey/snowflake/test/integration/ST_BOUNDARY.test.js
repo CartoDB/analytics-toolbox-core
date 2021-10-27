@@ -3,12 +3,12 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 test('ST_BOUNDARY should work', async () => {
     const query = `
         SELECT
-            @@SF_PREFIX@@quadkey.ST_BOUNDARY(0) as geog1,
-            @@SF_PREFIX@@quadkey.ST_BOUNDARY(1) as geog2,
-            @@SF_PREFIX@@quadkey.ST_BOUNDARY(2) as geog3,
-            @@SF_PREFIX@@quadkey.ST_BOUNDARY(12070922) as geog4,
-            @@SF_PREFIX@@quadkey.ST_BOUNDARY(791040491538) as geog5,
-            @@SF_PREFIX@@quadkey.ST_BOUNDARY(12960460429066265) as geog6`;
+            ST_BOUNDARY(0) as geog1,
+            ST_BOUNDARY(1) as geog2,
+            ST_BOUNDARY(2) as geog3,
+            ST_BOUNDARY(12070922) as geog4,
+            ST_BOUNDARY(791040491538) as geog5,
+            ST_BOUNDARY(12960460429066265) as geog6`;
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -21,6 +21,6 @@ test('ST_BOUNDARY should work', async () => {
 });
 
 test('ST_BOUNDARY should fail with NULL argument', async () => {
-    const query = 'SELECT @@SF_PREFIX@@quadkey.ST_BOUNDARY(NULL);';
+    const query = 'SELECT ST_BOUNDARY(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

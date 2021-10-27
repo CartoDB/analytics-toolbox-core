@@ -18,7 +18,7 @@ test('ST_ASH3 returns the proper INT64', async () => {
             SELECT 8 AS id, -122.0553238 as longitude, 37.3615593 + 360 as latitude, 5 as resolution
         )
         SELECT
-            CAST(@@SF_PREFIX@@h3.LONGLAT_ASH3(longitude, latitude, resolution) AS STRING) as h3_id
+            CAST(LONGLAT_ASH3(longitude, latitude, resolution) AS STRING) as h3_id
         FROM inputs
         ORDER BY id ASC
     `;

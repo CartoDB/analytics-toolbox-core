@@ -57,8 +57,8 @@ test('ST_ASQUADINT_POLYFILL should work', async () => {
     };
     const featureJSON = JSON.stringify(feature);
 
-    const query = `SELECT @@SF_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), 10) as polyfill10,
-    @@SF_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), 14) as polyfill14`;
+    const query = `SELECT ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), 10) as polyfill10,
+    ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), 14) as polyfill14`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);  
     expect(rows[0]['POLYFILL10'].sort()).toEqual(['12631722', '12664490']);
@@ -136,14 +136,14 @@ test('ST_ASQUADINT_POLYFILL should work with GEOMETRYCOLLECTION', async () => {
     };
     const featureJSON = JSON.stringify(feature);
 
-    const query = `SELECT @@SF_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), 22) as polyfill22`;
+    const query = `SELECT ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), 22) as polyfill22`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0]['POLYFILL22'].sort()).toEqual(polyfillFixturesOut.polyfill3);
 });
 
 test('ST_ASQUADINT_POLYFILL should fail if any NULL argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL(NULL, 10);';
+    let query = 'SELECT ST_ASQUADINT_POLYFILL(NULL, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
     const feature = {
@@ -163,6 +163,6 @@ test('ST_ASQUADINT_POLYFILL should fail if any NULL argument', async () => {
     };
     const featureJSON = JSON.stringify(feature);
 
-    query = `SELECT @@SF_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), NULL)`;
+    query = `SELECT ST_ASQUADINT_POLYFILL(TO_GEOGRAPHY('${featureJSON}'), NULL)`;
     await expect(runQuery(query)).rejects.toThrow();
 });

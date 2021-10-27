@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('ISVALID should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@placekey.ISVALID(placekey.value) AS valid
+        SELECT ISVALID(placekey.value) AS valid
         FROM TABLE(FLATTEN(INPUT => PARSE_JSON('[
             NULL, "@abc", "abc-xyz", "abcxyz234", "abc-345@abc-234-xyz",
             "ebc-345@abc-234-xyz", "bcd-345@", "22-zzz@abc-234-xyz",

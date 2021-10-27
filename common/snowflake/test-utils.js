@@ -1,13 +1,11 @@
 const snowflake = require('snowflake-sdk');
 
-const SF_DATABASE = process.env.SF_DATABASE;
-const SF_SCHEMA_PREFIX = process.env.SF_SCHEMA_PREFIX;
-const SF_PREFIX = `${SF_DATABASE}.${SF_SCHEMA_PREFIX}`;
-
 const connection = snowflake.createConnection( {
     account: process.env.SNOWSQL_ACCOUNT,
     username: process.env.SNOWSQL_USER,
-    password: process.env.SNOWSQL_PWD
+    password: process.env.SNOWSQL_PWD,
+    database: process.env.SF_DATABASE,
+    schema: process.env.SF_SCHEMA
 });
 
 connection.connect((err) => {
@@ -34,7 +32,6 @@ function execAsync (query) {
 }
 
 async function runQuery (query) {
-    query = query.replace(/@@SF_PREFIX@@/g, SF_PREFIX);
     const rows = await execAsync(query);
     return rows;
 }

@@ -19,8 +19,8 @@ function getFeatureArray (fixture) {
 test('ST_ENVELOPE should work', async () => {
     const query = `
         SELECT
-            @@SF_PREFIX@@accessors.ST_ENVELOPE(${getFeatureArray(pointsFixturesIn)}) as envelope1,
-            @@SF_PREFIX@@accessors.ST_ENVELOPE(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
+            ST_ENVELOPE(${getFeatureArray(pointsFixturesIn)}) as envelope1,
+            ST_ENVELOPE(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     console.log(getFeatureArray(featureColFixturesIn));
@@ -29,7 +29,7 @@ test('ST_ENVELOPE should work', async () => {
 });
 
 test('ST_ENVELOPE should return NULL if any NULL mandatory argument', async () => {
-    const query = 'SELECT @@SF_PREFIX@@accessors.ST_ENVELOPE(NULL) as envelope1';
+    const query = 'SELECT ST_ENVELOPE(NULL) as envelope1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].ENVELOPE1).toEqual(null);

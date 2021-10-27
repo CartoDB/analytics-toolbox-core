@@ -2,10 +2,10 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('ST_AZIMUTH should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@measurements.ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(10, 0)) as azimuth1,
-               @@SF_PREFIX@@measurements.ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(10, 10)) as azimuth2,
-               @@SF_PREFIX@@measurements.ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(0, 10)) as azimuth3,
-               @@SF_PREFIX@@measurements.ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(0, -10)) as azimuth4
+        SELECT ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(10, 0)) as azimuth1,
+               ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(10, 10)) as azimuth2,
+               ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(0, 10)) as azimuth3,
+               ST_AZIMUTH(ST_POINT(0, 0), ST_POINT(0, -10)) as azimuth4
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -17,8 +17,8 @@ test('ST_AZIMUTH should work', async () => {
 
 test('ST_AZIMUTH should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@measurements.ST_AZIMUTH(NULL, ST_POINT(-4.70325, 41.4167)) as azimuth1,
-               @@SF_PREFIX@@measurements.ST_AZIMUTH(ST_POINT(-3.70325, 40.4167), NULL) as azimuth2
+        SELECT ST_AZIMUTH(NULL, ST_POINT(-4.70325, 41.4167)) as azimuth1,
+               ST_AZIMUTH(ST_POINT(-3.70325, 40.4167), NULL) as azimuth2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

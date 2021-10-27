@@ -15,7 +15,7 @@ test('ST_ASH3 returns the proper INT64', async () => {
             SELECT 7 AS id, ST_POINT(-122.0553238, 37.3615593) as geom, NULL as resolution
         )
         SELECT
-            CAST(@@SF_PREFIX@@h3.ST_ASH3(geom, resolution) AS STRING) as h3_id
+            CAST(ST_ASH3(geom, resolution) AS STRING) as h3_id
         FROM inputs
         ORDER BY id ASC
     `;
@@ -42,7 +42,7 @@ test('ST_ASH3 returns NULL with non POINT geographies', async () => {
             SELECT 3 AS id, TO_GEOGRAPHY('MULTIPOINT(0 0, 0 10, 10 10, 10 0, 0 0)') as geom, 5 as resolution
         )
         SELECT
-            CAST(@@SF_PREFIX@@h3.ST_ASH3(geom, resolution) AS STRING) as h3_id
+            CAST(ST_ASH3(geom, resolution) AS STRING) as h3_id
         FROM inputs
         ORDER BY id ASC
     `;

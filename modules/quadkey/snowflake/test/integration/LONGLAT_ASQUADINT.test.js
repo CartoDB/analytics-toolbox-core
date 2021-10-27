@@ -28,7 +28,7 @@ test('LONGLAT_ASQUADINT should not fail at any level of zoom', async () => {
         SELECT *
         FROM 
         (
-            SELECT ARRAY_AGG(@@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT(long, lat, zoom)) as quadints
+            SELECT ARRAY_AGG(LONGLAT_ASQUADINT(long, lat, zoom)) as quadints
             FROM zoomContext
         )`;
     const rows = await runQuery(query);
@@ -37,20 +37,20 @@ test('LONGLAT_ASQUADINT should not fail at any level of zoom', async () => {
 });
 
 test('Should fail to encode quadints at zooms bigger than 29 or smaller than 0', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT(100, 100, 30)';
+    let query = 'SELECT LONGLAT_ASQUADINT(100, 100, 30)';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT(100, 100, -1)';
+    query = 'SELECT LONGLAT_ASQUADINT(100, 100, -1)';
     await expect(runQuery(query)).rejects.toThrow();
 });
 
 test('LONGLAT_ASQUADINT should fail if any NULL argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT(NULL, 10, 10);';
+    let query = 'SELECT LONGLAT_ASQUADINT(NULL, 10, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT(10, NULL, 10);';
+    query = 'SELECT LONGLAT_ASQUADINT(10, NULL, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.LONGLAT_ASQUADINT(10, 10, NULL);';
+    query = 'SELECT LONGLAT_ASQUADINT(10, 10, NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

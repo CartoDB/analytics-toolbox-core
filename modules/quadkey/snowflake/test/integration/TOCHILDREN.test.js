@@ -26,20 +26,20 @@ test('TOCHILDREN should work at any level of zoom', async () => {
         expectedQuadintContext AS
         (
             SELECT *,
-            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(zoom, tileX, tileY) AS expectedQuadint
+            QUADINT_FROMZXY(zoom, tileX, tileY) AS expectedQuadint
             FROM tileContext
         ),
         childrenContext AS
         (
             SELECT *,
-            @@SF_PREFIX@@quadkey.TOCHILDREN(expectedQuadint, zoom + 1) AS children
+            TOCHILDREN(expectedQuadint, zoom + 1) AS children
             FROM expectedQuadintContext 
         )
         SELECT *
         FROM 
         (
             SELECT expectedQuadint,
-            @@SF_PREFIX@@quadkey.TOPARENT(child.value, zoom) AS currentQuadint
+            TOPARENT(child.value, zoom) AS currentQuadint
             FROM childrenContext, LATERAL FLATTEN(input => children) AS child
         )
         WHERE currentQuadint != expectedQuadint`;
@@ -48,14 +48,14 @@ test('TOCHILDREN should work at any level of zoom', async () => {
 });
 
 test('TOCHILDREN should reject quadints at zoom 29', async () => {
-    const query = 'SELECT @@SF_PREFIX@@quadkey.TOCHILDREN(4611686027017322525,30)';
+    const query = 'SELECT TOCHILDREN(4611686027017322525,30)';
     await expect(runQuery(query)).rejects.toThrow();
 });
 
 test('TOCHILDREN should fail with NULL arguments', async () => {
-    let query = 'SELECT @@SF_PREFIX@@quadkey.TOCHILDREN(NULL, 1);';
+    let query = 'SELECT TOCHILDREN(NULL, 1);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT @@SF_PREFIX@@quadkey.TOCHILDREN(322, NULL);';
+    query = 'SELECT TOCHILDREN(322, NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

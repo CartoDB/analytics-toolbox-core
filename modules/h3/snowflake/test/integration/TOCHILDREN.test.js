@@ -10,7 +10,7 @@ test('TOCHILDREN works as expected with invalid data', async () => {
         )
         SELECT
             id,
-            @@SF_PREFIX@@h3.TOCHILDREN(hid, 1) as parent
+            TOCHILDREN(hid, 1) as parent
         FROM ids
         ORDER BY id ASC
     `;
@@ -26,11 +26,11 @@ test('List children correctly', async () => {
         WITH ids AS
         (
             SELECT
-                @@SF_PREFIX@@h3.ST_ASH3(ST_POINT(-122.409290778685, 37.81331899988944), 7) AS hid
+                ST_ASH3(ST_POINT(-122.409290778685, 37.81331899988944), 7) AS hid
         )
         SELECT
-            ARRAY_SIZE(@@SF_PREFIX@@h3.TOCHILDREN(hid, 8)) AS length_children,
-            ARRAY_SIZE(@@SF_PREFIX@@h3.TOCHILDREN(hid, 9)) AS length_grandchildren
+            ARRAY_SIZE(TOCHILDREN(hid, 8)) AS length_children,
+            ARRAY_SIZE(TOCHILDREN(hid, 9)) AS length_grandchildren
         FROM ids
     `;
 
@@ -47,7 +47,7 @@ test('Same resolution lists self', async () => {
             SELECT '87283080dffffff' as hid
         )
         SELECT
-            @@SF_PREFIX@@h3.TOCHILDREN(hid, 7) AS self_children
+            TOCHILDREN(hid, 7) AS self_children
         FROM ids
     `;
 
@@ -61,10 +61,10 @@ test('Coarser resolution returns empty array', async () => {
         WITH ids AS
         (
             SELECT
-                @@SF_PREFIX@@h3.ST_ASH3(ST_POINT(-122.409290778685, 37.81331899988944), 7) AS hid
+                ST_ASH3(ST_POINT(-122.409290778685, 37.81331899988944), 7) AS hid
         )
         SELECT
-            @@SF_PREFIX@@h3.TOCHILDREN(hid, 6) AS top_children
+            TOCHILDREN(hid, 6) AS top_children
         FROM ids
     `;
 

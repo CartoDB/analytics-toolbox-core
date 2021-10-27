@@ -11,7 +11,7 @@ geojsonArray = geojsonArray.slice(0, -1) + ')';
 
 test('ST_VORONOILINES should work', async () => {
     const query = `WITH voronoi AS (
-            SELECT @@SF_PREFIX@@processing.ST_VORONOILINES(${geojsonArray}, 
+            SELECT ST_VORONOILINES(${geojsonArray}, 
                 ARRAY_CONSTRUCT(-76.0, 35.0, -70.0, 45.0)) AS geomArray
         ) 
         SELECT ST_ASWKT(TO_GEOGRAPHY(unnestedFeatures.value)) as geom
@@ -24,7 +24,7 @@ test('ST_VORONOILINES should work', async () => {
 
 test('ST_VORONOILINES should work with default bbox', async () => {
     const query = `WITH voronoi AS (
-            SELECT @@SF_PREFIX@@processing.ST_VORONOILINES(${geojsonArray}) AS geomArray
+            SELECT ST_VORONOILINES(${geojsonArray}) AS geomArray
         ) 
         SELECT ST_ASWKT(TO_GEOGRAPHY(unnestedFeatures.value)) as geom
         FROM voronoi, LATERAL FLATTEN(input => voronoi.geomArray) as unnestedFeatures`;
@@ -34,14 +34,14 @@ test('ST_VORONOILINES should work with default bbox', async () => {
 });
 
 test('ST_VORONOILINES should return an empty array if passed empty geometry', async () => {
-    const query = 'SELECT @@SF_PREFIX@@processing.ST_VORONOILINES(ARRAY_CONSTRUCT()) AS geomArray';
+    const query = 'SELECT ST_VORONOILINES(ARRAY_CONSTRUCT()) AS geomArray';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].GEOMARRAY).toEqual([]);
 });
 
 test('ST_VORONOILINES should fail if passed invalid bbox', async () => {
-    const query = `SELECT @@SF_PREFIX@@processing.ST_VORONOILINES(${geojsonArray}, 
+    const query = `SELECT ST_VORONOILINES(${geojsonArray}, 
         ARRAY_CONSTRUCT(1.0, 0.5, 2.5)) AS geomArray`;
     await expect(runQuery(query)).rejects.toThrow(
         'It should contain the BBOX extends, i.e., [xmin, ymin, xmax, ymax]'
@@ -50,8 +50,8 @@ test('ST_VORONOILINES should fail if passed invalid bbox', async () => {
 
 test('ST_VORONOILINES should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@processing.ST_VORONOILINES(NULL) as voronoi1,
-               @@SF_PREFIX@@processing.ST_VORONOILINES(ARRAY_CONSTRUCT(), NULL) as voronoi2
+        SELECT ST_VORONOILINES(NULL) as voronoi1,
+               ST_VORONOILINES(ARRAY_CONSTRUCT(), NULL) as voronoi2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

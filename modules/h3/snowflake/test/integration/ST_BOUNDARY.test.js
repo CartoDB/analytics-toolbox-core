@@ -9,7 +9,7 @@ test('Returns NULL with invalid parameters', async () => {
         )
         SELECT
             id,
-            @@SF_PREFIX@@h3.ST_BOUNDARY(hid) as bounds
+            ST_BOUNDARY(hid) as bounds
         FROM ids
         ORDER BY id ASC
     `;
@@ -29,7 +29,7 @@ test('Returns NULL the expected geography', async () => {
         )
         SELECT
             *,
-            @@SF_PREFIX@@h3.ST_BOUNDARY(hid) as bounds
+            ST_BOUNDARY(hid) as bounds
         FROM ids
     `;
 

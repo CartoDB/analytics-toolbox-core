@@ -15,7 +15,7 @@ test('Works as expected with invalid input', async () => {
         )
         SELECT
             id,
-            @@SF_PREFIX@@h3.DISTANCE(hid1, hid2) as distance
+            DISTANCE(hid1, hid2) as distance
         FROM ids
         ORDER BY id ASC
     `;
@@ -44,11 +44,11 @@ test('Works as expected with valid input', async () => {
                 hid2.value as hid2
             FROM
                 distances,
-                lateral FLATTEN(input =>@@SF_PREFIX@@h3.HEXRING('8928308280fffff', distance)) hid2
+                lateral FLATTEN(input =>HEXRING('8928308280fffff', distance)) hid2
         )
-        SELECT @@SF_PREFIX@@h3.DISTANCE(hid1, hid2) as calculated_distance, *
+        SELECT DISTANCE(hid1, hid2) as calculated_distance, *
         FROM ids
-        WHERE @@SF_PREFIX@@h3.DISTANCE(hid1, hid2) != distance;
+        WHERE DISTANCE(hid1, hid2) != distance;
     `;
 
     const rows = await runQuery(query);

@@ -30,7 +30,7 @@ test('ST_ASH3_POLYFILL returns the proper INT64s', async () => {
         
         )
         SELECT
-            ARRAY_SIZE(@@SF_PREFIX@@h3.ST_ASH3_POLYFILL(geom, resolution)) AS id_count
+            ARRAY_SIZE(ST_ASH3_POLYFILL(geom, resolution)) AS id_count
         FROM inputs
         ORDER BY id ASC
     `;
@@ -69,15 +69,15 @@ test('ST_ASH3_POLYFILL returns the expected values', async () => {
         (
             SELECT
                 resolution,
-                @@SF_PREFIX@@h3.ST_ASH3(geog, resolution) AS hex_id,
-                @@SF_PREFIX@@h3.ST_BOUNDARY(@@SF_PREFIX@@h3.ST_ASH3(geog, resolution)) AS boundary
+                ST_ASH3(geog, resolution) AS hex_id,
+                ST_BOUNDARY(ST_ASH3(geog, resolution)) AS boundary
             FROM points
         ),
         polyfill AS
         (
             SELECT
                 *,
-                @@SF_PREFIX@@h3.ST_ASH3_POLYFILL(boundary, resolution) p
+                ST_ASH3_POLYFILL(boundary, resolution) p
             FROM cells
         )
         SELECT
@@ -100,15 +100,15 @@ test('ST_ASH3_POLYFILL returns the expected values', async () => {
         (
             SELECT
                 resolution,
-                @@SF_PREFIX@@h3.ST_ASH3(geog, resolution) AS hex_id,
-                @@SF_PREFIX@@h3.ST_BOUNDARY(@@SF_PREFIX@@h3.ST_ASH3(geog, resolution)) AS boundary
+                ST_ASH3(geog, resolution) AS hex_id,
+                ST_BOUNDARY(ST_ASH3(geog, resolution)) AS boundary
             FROM points
         ),
         polyfill AS
         (
             SELECT
                 *,
-                @@SF_PREFIX@@h3.ST_ASH3_POLYFILL(boundary, resolution) p
+                ST_ASH3_POLYFILL(boundary, resolution) p
             FROM cells
         )
         SELECT
@@ -131,15 +131,15 @@ test('ST_ASH3_POLYFILL returns the expected values', async () => {
         (
             SELECT
                 resolution,
-                @@SF_PREFIX@@h3.ST_ASH3(geog, resolution) AS hex_id,
-                @@SF_PREFIX@@h3.ST_BOUNDARY(@@SF_PREFIX@@h3.ST_ASH3(geog, resolution)) AS boundary
+                ST_ASH3(geog, resolution) AS hex_id,
+                ST_BOUNDARY(ST_ASH3(geog, resolution)) AS boundary
             FROM points
         ),
         polyfill AS
         (
             SELECT
                 *,
-                @@SF_PREFIX@@h3.ST_ASH3_POLYFILL(boundary, resolution) p
+                ST_ASH3_POLYFILL(boundary, resolution) p
             FROM cells
         )
         SELECT

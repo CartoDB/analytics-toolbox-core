@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('KRING should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@h3.KRING('8928308280fffff', 0) as d0,
-               @@SF_PREFIX@@h3.KRING('8928308280fffff', 1) as d1,
-               @@SF_PREFIX@@h3.KRING('8928308280fffff', 2) as d2
+        SELECT KRING('8928308280fffff', 0) as d0,
+               KRING('8928308280fffff', 1) as d1,
+               KRING('8928308280fffff', 2) as d2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -44,12 +44,12 @@ test('KRING should work', async () => {
 });
 
 test('KRING should fail if any invalid argument', async () => {
-    let query = 'SELECT @@SF_PREFIX@@h3.KRING(NULL, NULL)';
+    let query = 'SELECT KRING(NULL, NULL)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@h3.KRING(\'abc\', 1)';
+    query = 'SELECT KRING(\'abc\', 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT @@SF_PREFIX@@h3.KRING(\'8928308280fffff\', -1)';
+    query = 'SELECT KRING(\'8928308280fffff\', -1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('ST_MAKEELLIPSE should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', 20) as ellipse1,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(13.9385,0.6643), 10, 2, 15, 'kilometers', 10) as ellipse2,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(53.9385,-10.6643), 8, 7, 100, 'miles', 15) as ellipse3
+        SELECT ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', 20) as ellipse1,
+               ST_MAKEELLIPSE(ST_POINT(13.9385,0.6643), 10, 2, 15, 'kilometers', 10) as ellipse2,
+               ST_MAKEELLIPSE(ST_POINT(53.9385,-10.6643), 8, 7, 100, 'miles', 15) as ellipse3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -15,12 +15,12 @@ test('ST_MAKEELLIPSE should work', async () => {
 
 test('ST_MAKEELLIPSE should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(NULL, 5, 3, -30, 'miles', 80) as ellipse1,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), NULL, 3, -30, 'miles', 80) as ellipse2,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, NULL, -30, 'miles', 80) as ellipse3,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, NULL, 'miles', 80) as ellipse4,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, -30, NULL, 80) as ellipse5,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', NULL) as ellipse6
+        SELECT ST_MAKEELLIPSE(NULL, 5, 3, -30, 'miles', 80) as ellipse1,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), NULL, 3, -30, 'miles', 80) as ellipse2,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, NULL, -30, 'miles', 80) as ellipse3,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, NULL, 'miles', 80) as ellipse4,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, -30, NULL, 80) as ellipse5,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', NULL) as ellipse6
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -34,10 +34,10 @@ test('ST_MAKEELLIPSE should return NULL if any NULL mandatory argument', async (
 
 test('ST_MAKEELLIPSE default values should work', async () => {
     const query = `
-        SELECT @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers', 64) as defaultValue,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3) as nullParam1,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0) as nullParam2,
-               @@SF_PREFIX@@constructors.ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers') as nullParam3
+        SELECT ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers', 64) as defaultValue,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3) as nullParam1,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0) as nullParam2,
+               ST_MAKEELLIPSE(ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers') as nullParam3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
