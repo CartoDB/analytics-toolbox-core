@@ -7,10 +7,19 @@ const fs = require('fs');
 const { exit } = require('process');
 
 const output = [];
+const cloud = process.env.CLOUD || '';
 const ignoredFiles = process.env.IGNORE || '';
+const includePrivateFiles = process.env.INCLUDE_PRIVATE || false;
 const fileName = process.env.FILE_NAME || '';
 const functSchema = process.env.FUNCT_SCHEMA || '';
 const outputFormat = process.env.OUTPUT_FORMAT || ''; //Accepted values 'args'|'argTypes'
+
+let functionEndingPattern;
+switch (cloud) 
+{
+case 'postgres': functionEndingPattern = 'BEGIN'; break;
+default: functionEndingPattern = 'RETURNS'; break;
+}
 
 if (ignoredFiles.includes(fileName)) {
     exit();
@@ -27,29 +36,15 @@ function addFunctSignature (functSignature) {
     }
 }
 
-function classifyFunctions(functionMatches)
+function classifyFunctions (functionMatches)
 {
     for (const functionMatch of functionMatches) {
         //Remove spaces and diacritics
-        let functName;
-        if (functionMatch[0].indexOf('.') == -1)
-        {
-            functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').split('\(')[0];
-        }
-        else
-        {
-            functName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=[.])(.*?)(?=\\()','g')).next().value;
-            if (functName)
-            {
-                functName = functName[0];
-            }
-            else
-            {
-                continue;
-            }
-        }
+        let qualifiedFunctName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').split('(')[0];
+        qualifiedFunctName = qualifiedFunctName.split('.');
+        const functName = qualifiedFunctName[qualifiedFunctName.length - 1];
         
-        if (functName.startsWith('_'))
+        if (!includePrivateFiles && functName.startsWith('_'))
         {
             continue;
         }
@@ -100,8 +95,19 @@ function classifyFunctions(functionMatches)
 }
 
 let content = fs.readFileSync(fileName, 'utf8');
+content = content.split('\n');
+for (let i = 0 ; i < content.length; i++)
+{
+    
+    if (content[i].startsWith('--'))
+    {
+        delete content[i];
+    }
+    
+}
+content = content.join(' ');
 content = content.replace(/(\r\n|\n|\r)/gm,' ')
-const functionMatches = content.matchAll(new RegExp('(?<=FUNCTION)(.*?)(?=RETURNS)','g'));
+const functionMatches = content.matchAll(new RegExp(`(?<=FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
 classifyFunctions(functionMatches);
 const procedureMatches = content.matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g'));
 classifyFunctions(procedureMatches);
