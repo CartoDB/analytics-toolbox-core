@@ -100,32 +100,35 @@ if [ $? != 0 ]; then
 fi
 
 # look up runtime arguments of the module name and the destination S3 Prefix
-while getopts "m:f:h" opt; do
+while getopts "m:f:hs" opt; do
     case $opt in
         m) module="$OPTARG";;
         f) modules_file="$OPTARG";;
 		h) usage;;
+        s) serialize=1;;
 		\?) echo "Invalid option: -"$OPTARG"" >&2
 			exit 1;;
 		:) usage;;
 	esac
 done
 
+if [ -z "$serialize" ]; then
 # validate arguments
-notNull "$AWS_S3_BUCKET" "Please provide an S3 bucket to store the library in using export AWS_S3_BUCKET=bucket"
-notNull "$RS_DATABASE" "Please provide a Redshift database using export RS_DATABASE=database"
-notNull "$RS_REGION" "Please provide a region using export RS_REGION=region"
-notNull "$RS_USER" "Please provide a Redshift user using export RS_USER=user"
-notNull "$RS_CLUSTER_ID" "Please provide a Redshift cluster using export RS_CLUSTER_ID=cluster"
-notNull "$AWS_ACCESS_KEY_ID" "Please provide an AWS access key ID using export AWS_ACCESS_KEY_ID=key"
-notNull "$AWS_SECRET_ACCESS_KEY" "Please provide an AWS secret access key ID using export AWS_SECRET_ACCESS_KEY=secret_key"
+    notNull "$AWS_S3_BUCKET" "Please provide an S3 bucket to store the library in using export AWS_S3_BUCKET=bucket"
+    notNull "$RS_DATABASE" "Please provide a Redshift database using export RS_DATABASE=database"
+    notNull "$RS_REGION" "Please provide a region using export RS_REGION=region"
+    notNull "$RS_USER" "Please provide a Redshift user using export RS_USER=user"
+    notNull "$RS_CLUSTER_ID" "Please provide a Redshift cluster using export RS_CLUSTER_ID=cluster"
+    notNull "$AWS_ACCESS_KEY_ID" "Please provide an AWS access key ID using export AWS_ACCESS_KEY_ID=key"
+    notNull "$AWS_SECRET_ACCESS_KEY" "Please provide an AWS secret access key ID using export AWS_SECRET_ACCESS_KEY=secret_key"
 
 # check that the s3 prefix is in the right format
 # starts with 's3://'
-if ! [[ $AWS_S3_BUCKET == s3:\/\/* ]]; then
-	echo "S3 Prefix must start with 's3://'"
-	echo
-	usage
+    if ! [[ $AWS_S3_BUCKET == s3:\/\/* ]]; then
+        echo "S3 Prefix must start with 's3://'"
+        echo
+        usage
+    fi
 fi
 
 # extract modules from requirement file
@@ -144,8 +147,12 @@ for m in "${modules_to_install[@]}"; do
 		continue
 	fi
 
-	echo "Installing $m in $RS_CLUSTER_ID"
-	
+    if [ -z "$serialize" ]; then
+	    echo "Installing $m in $RS_CLUSTER_ID"
+    else
+        echo "Serializing $m"
+	fi
+
 	TMPDIR=.tmp
 	if [ ! -d "$TMPDIR" ]; then
 	  mkdir $TMPDIR
@@ -170,33 +177,39 @@ for m in "${modules_to_install[@]}"; do
 			echo "- Library already installed in RedShift"
 			continue
 		fi
-		echo "> Library to be installed: $depname"
-		# check library installed
-		library_installed=`libraryInstalled ${depname%%-*}`
-		if [ $library_installed == 0 ]; then
-			echo "- Library not found in the cluster"
-			echo "- Installing $depname"
-			aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
-			sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
-	    	execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
-			echo "- Done"
-		else
-			# check library version
-			library_version=`libraryVersion ${depname%%-*}`
-			if [[ $depname == ${depname%%-*}-$library_version-* ]]; then
-				echo "- Library already installed"
-			else
-				echo "- Library installed with different version: $library_version"
-				echo "- Installing $depname"
-				sql="DROP LIBRARY ${depname%%-*};"
-	    		execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
-				aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
-				sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
-				execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
-				echo "- Done"
-			fi
-		fi
-		
+        
+        if [ -z "$serialize" ]; then
+            echo "> Library to be installed: $depname"
+            # check library installed
+            library_installed=`libraryInstalled ${depname%%-*}`
+            if [ $library_installed == 0 ]; then
+                echo "- Library not found in the cluster"
+                echo "- Installing $depname"
+                aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
+                sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
+                execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+                echo "- Done"
+            else
+                # check library version
+                library_version=`libraryVersion ${depname%%-*}`
+                if [[ $depname == ${depname%%-*}-$library_version-* ]]; then
+                    echo "- Library already installed"
+                else
+                    echo "- Library installed with different version: $library_version"
+                    echo "- Installing $depname"
+                    sql="DROP LIBRARY ${depname%%-*};"
+                    execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+                    aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
+                    sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
+                    execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
+                    echo "- Done"
+                fi
+            fi
+        else
+        	echo "> Library to be serialized: $depname"
+            cp "$TMPDIR/.$m/$depname.whl" "dist/$depname.zip"
+        fi
+
 		if [ $? != 0 ]; then
 			rm -Rf "$TMPDIR/.$m"
 			exit $?
