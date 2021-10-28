@@ -13,7 +13,7 @@ const force = process.env.INPUT_FORCE_DEPLOY || '';
 const input = [];
 const output = [];
 
-let sqlFunctions = require('child_process').execSync(`CLOUD=${cloud} IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" ASJSON=1 node ./scripts/sqlfunctions.js`).toString();
+let sqlFunctions = require('child_process').execSync(`CLOUD=${cloud} IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" INCLUDE_PRIVATE=1 ASJSON=1 node ./scripts/sqlfunctions.js`).toString();
 sqlFunctions = JSON.parse(sqlFunctions);
 
 let functionPattern;
