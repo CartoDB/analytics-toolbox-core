@@ -18,4 +18,3 @@ grant usage on function ST_MAKEELLIPSE(GEOGRAPHY, DOUBLE, DOUBLE, DOUBLE, STRING
 grant usage on function ST_MAKEELLIPSE(GEOGRAPHY, DOUBLE, DOUBLE, DOUBLE, STRING, INT) to share @@SF_SHARE@@;
 grant usage on function ST_MAKEENVELOPE(DOUBLE, DOUBLE, DOUBLE, DOUBLE) to share @@SF_SHARE@@;
 grant usage on function ST_TILEENVELOPE(INT, INT, INT) to share @@SF_SHARE@@;
-grant usage on function VERSION() to share @@SF_SHARE@@;
