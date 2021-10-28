@@ -114,6 +114,7 @@ schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION/sql/VERSION.sql | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1
 
 share-create:
 ifeq ($(SF_SHARE_ENABLED), 1)
