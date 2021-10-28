@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@processing.__DELAUNAYGENERIC
 (points VARCHAR(MAX), delaunay_type VARCHAR(15))
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@processingLib import PRECISION
     import geojson

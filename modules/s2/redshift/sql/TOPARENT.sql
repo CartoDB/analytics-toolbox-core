@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOPARENT
 (id INT8, resolution INT4) 
 RETURNS INT8
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_parent
 
@@ -19,7 +19,7 @@ $$ LANGUAGE plpythonu;
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.TOPARENT
 (id INT8)
 RETURNS INT8
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import to_parent
 

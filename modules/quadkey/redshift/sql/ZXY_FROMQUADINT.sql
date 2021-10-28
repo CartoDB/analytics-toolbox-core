@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.ZXY_FROMQUADINT
 (BIGINT)
 -- (quadint)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
     SELECT json_parse('{' ||
         '"z": ' || ($1 & 31) || ',' ||

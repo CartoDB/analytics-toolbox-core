@@ -277,7 +277,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
-IMMUTABLE
+STABLE
 AS $$
     TODO
 $$ LANGUAGE sql;`;
@@ -289,7 +289,7 @@ $$ LANGUAGE sql;`;
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@${mname}Lib import 
         
@@ -303,7 +303,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}._${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
-IMMUTABLE
+STABLE
 AS $$   
     TODO
 $$ LANGUAGE sql;
@@ -312,7 +312,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
-IMMUTABLE
+STABLE
 AS $$   
     SELECT @@RS_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name).join(', ')})
 $$ LANGUAGE sql;`;
@@ -323,7 +323,7 @@ $$ LANGUAGE sql;`;
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}._${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@${mname}Lib import 
         
@@ -334,7 +334,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
-IMMUTABLE
+STABLE
 AS $$   
     SELECT @@RS_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name).join(', ')})
 $$ LANGUAGE sql;`;

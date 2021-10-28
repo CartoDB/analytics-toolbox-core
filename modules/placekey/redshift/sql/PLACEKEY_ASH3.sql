@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@placekey.PLACEKEY_ASH3
 (placekey VARCHAR(19)) 
 RETURNS VARCHAR 
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@placekeyLib import placekey_to_h3, placekey_is_valid
 
