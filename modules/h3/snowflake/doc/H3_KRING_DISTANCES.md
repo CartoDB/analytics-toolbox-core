@@ -1,7 +1,7 @@
 ### H3_KRING_DISTANCES
 
 {{% bannerNote type="code" %}}
-h3.H3_KRING_DISTANCES(origin, size)
+carto.H3_KRING_DISTANCES(origin, size)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,7 +20,7 @@ Returns all cell indexes and their distances in a **filled hexagonal k-ring** ce
 {{%/ customSelector %}}
 
 ```sql
-SELECT sfcarto.h3.H3_KRING_DISTANCES('837b59fffffffff', 1);
+SELECT carto.H3_KRING_DISTANCES('837b59fffffffff', 1);
 -- {"index": "837b59fffffffff", "distance": "0"}
 -- {"index": "837b5dfffffffff", "distance": "1"}
 -- {"index": "837b58fffffffff", "distance": "1"}

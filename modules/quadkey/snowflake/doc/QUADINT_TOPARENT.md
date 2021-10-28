@@ -1,7 +1,7 @@
 ### QUADINT_TOPARENT
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_TOPARENT(quadint, resolution)
+carto.QUADINT_TOPARENT(quadint, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,6 +18,6 @@ Returns the parent quadint of a given quadint for a specific resolution. A paren
 **Example**
 
 ```sql
-SELECT sfcarto.quadkey.QUADINT_TOPARENT(4388, 3);
+SELECT carto.QUADINT_TOPARENT(4388, 3);
 -- 1155
 ```

@@ -1,7 +1,7 @@
 ### H3_TOCHILDREN
 
 {{% bannerNote type="code" %}}
-h3.H3_TOCHILDREN(index, resolution)
+carto.H3_TOCHILDREN(index, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,7 +18,7 @@ Returns an array with the indexes of the children/descendents of the given hexag
 **Example**
 
 ```sql
-SELECT sfcarto.h3.H3_TOCHILDREN('837b59fffffffff', 4);
+SELECT carto.H3_TOCHILDREN('837b59fffffffff', 4);
 -- 847b591ffffffff
 -- 847b593ffffffff
 -- 847b595ffffffff

@@ -1,7 +1,7 @@
 ### QUADINT_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROMLONGLAT(longitude, latitude, resolution)
+carto.QUADINT_FROMLONGLAT(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the quadint representation for a given level of detail and geographic co
 **Example**
 
 ```sql
-SELECT sfcarto.quadkey.QUADINT_FROMLONGLAT(40.4168, -3.7038, 4);
+SELECT carto.QUADINT_FROMLONGLAT(40.4168, -3.7038, 4);
 -- 4388
 ```

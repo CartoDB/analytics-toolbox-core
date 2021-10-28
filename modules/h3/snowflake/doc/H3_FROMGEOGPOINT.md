@@ -1,7 +1,7 @@
 ### H3_FROMGEOGPOINT
 
 {{% bannerNote type="code" %}}
-h3.H3_FROMGEOGPOINT(point, resolution)
+carto.H3_FROMGEOGPOINT(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,7 +18,7 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 **Example**
 
 ```sql
-SELECT sfcarto.h3.H3_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4);
+SELECT carto.H3_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4);
 -- 847b59dffffffff
 ```
 

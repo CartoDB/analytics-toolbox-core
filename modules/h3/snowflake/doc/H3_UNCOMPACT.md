@@ -1,7 +1,7 @@
 ### H3_UNCOMPACT
 
 {{% bannerNote type="code" %}}
-h3.H3_UNCOMPACT(indexArray, resolution)
+carto.H3_UNCOMPACT(indexArray, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,7 +18,7 @@ Returns an array with the indexes of a set of hexagons of the same `resolution` 
 **Example**
 
 ```sql
-SELECT sfcarto.h3.H3_UNCOMPACT(ARRAY_CONSTRUCT('847b59dffffffff'), 5);
+SELECT carto.H3_UNCOMPACT(ARRAY_CONSTRUCT('847b59dffffffff'), 5);
 -- 857b59c3fffffff
 -- 857b59c7fffffff
 -- 857b59cbfffffff

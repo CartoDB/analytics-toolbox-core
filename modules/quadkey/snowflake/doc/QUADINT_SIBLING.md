@@ -1,7 +1,7 @@
 ### QUADINT_SIBLING
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_SIBLING(quadint, direction)
+carto.QUADINT_SIBLING(quadint, direction)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,6 +18,6 @@ Returns the quadint directly next to the given quadint at the same zoom level. T
 **Example**
 
 ```sql
-SELECT sfcarto.quadkey.QUADINT_SIBLING(4388, 'up');
+SELECT carto.QUADINT_SIBLING(4388, 'up');
 -- 3876
 ```

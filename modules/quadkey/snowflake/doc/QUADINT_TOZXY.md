@@ -1,7 +1,7 @@
 ### QUADINT_TOZXY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_TOZXY(quadint)
+carto.QUADINT_TOZXY(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,7 +17,7 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 **Example**
 
 ```sql
-SELECT sfcarto.quadkey.QUADINT_TOZXY(4388);
+SELECT carto.QUADINT_TOZXY(4388);
 -- z  x  y
 -- 4  9  8
 ```
