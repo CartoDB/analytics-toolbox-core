@@ -13,6 +13,7 @@ const qualifyFunctions = process.env.QUALIFY || false;
 const asJSON = process.env.ASJSON || false;
 const includePrivateFiles = process.env.INCLUDE_PRIVATE || false;
 const outputFormat = process.env.OUTPUT_FORMAT || ''; //Accepted values 'args'|'argTypes'
+const outputDelimiter = process.env.DELIMITER || '\n';
 
 let functionEndingPattern;
 switch (cloud) 
@@ -159,6 +160,6 @@ else
 {
     if (output.length > 0)
     {
-        process.stdout.write(output.join('\n') + '\n');
+        process.stdout.write(output.join(outputDelimiter) + outputDelimiter);
     }
 }
