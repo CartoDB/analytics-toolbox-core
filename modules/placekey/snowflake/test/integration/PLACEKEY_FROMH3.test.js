@@ -1,8 +1,8 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
-test('H3_ASPLACEKEY should work', async () => {
+test('PLACEKEY_FROMH3 should work', async () => {
     const query = `
-        SELECT H3_ASPLACEKEY(h3.value) AS placekey
+        SELECT PLACEKEY_FROMH3(h3.value) AS placekey
         FROM TABLE(FLATTEN(INPUT => PARSE_JSON('[
             "8a62e9d08a1ffff", "8a2a9c580577fff", "8a3c9ea2bd4ffff", "8a5b4c1047b7fff",
             "8a8e8116a6d7fff", "8a3e0ba6659ffff", "8a961652a407fff", "8a01262c914ffff"
@@ -15,9 +15,9 @@ test('H3_ASPLACEKEY should work', async () => {
     ]);
 });
 
-test('H3_ASPLACEKEY returns null with invalid input', async () => {
+test('PLACEKEY_FROMH3 returns null with invalid input', async () => {
     const query = `
-        SELECT H3_ASPLACEKEY(h3.value) AS placekey
+        SELECT PLACEKEY_FROMH3(h3.value) AS placekey
         FROM TABLE(FLATTEN(INPUT => PARSE_JSON('[
             NULL, "ff283473fffffff"
         ]'))) AS h3

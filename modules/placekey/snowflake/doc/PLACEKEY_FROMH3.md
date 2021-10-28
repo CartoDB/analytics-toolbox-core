@@ -1,7 +1,7 @@
-### H3_ASPLACEKEY
+### PLACEKEY_FROMH3
 
 {{% bannerNote type="code" %}}
-placekey.H3_ASPLACEKEY(h3index)
+placekey.PLACEKEY_FROMH3(h3index)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns the placekey equivalent to the given H3 index.
 **Example**
 
 ```sql
-SELECT sfcarto.placekey.H3_ASPLACEKEY('847b59dffffffff');
+SELECT sfcarto.placekey.PLACEKEY_FROMH3('847b59dffffffff');
 -- @ff7-swh-m49
 ```

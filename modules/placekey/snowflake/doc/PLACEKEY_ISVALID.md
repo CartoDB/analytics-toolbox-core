@@ -1,7 +1,7 @@
-### ISVALID
+### PLACEKEY_ISVALID
 
 {{% bannerNote type="code" %}}
-placekey.ISVALID(placekey)
+placekey.PLACEKEY_ISVALID(placekey)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,16 +17,16 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 **Examples**
 
 ```sql
-SELECT sfcarto.placekey.ISVALID('@ff7-swh-m49');
+SELECT sfcarto.placekey.PLACEKEY_ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT sfcarto.placekey.ISVALID('ff7-swh-m49');
+SELECT sfcarto.placekey.PLACEKEY_ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT sfcarto.placekey.ISVALID('x');
+SELECT sfcarto.placekey.PLACEKEY_ISVALID('x');
 -- false
 ```
