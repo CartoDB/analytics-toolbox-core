@@ -1,7 +1,7 @@
-### ID_FROMHILBERTQUADKEY
+### S2_IDFROMHILBERTQUADKEY
 
 {{% bannerNote type="code" %}}
-s2.ID_FROMHILBERTQUADKEY(hquadkey)
+s2.S2_IDFROMHILBERTQUADKEY(hquadkey)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 **Example**
 
 ```sql
-SELECT sfcarto.s2.ID_FROMHILBERTQUADKEY('0/30002221');
+SELECT sfcarto.s2.S2_IDFROMHILBERTQUADKEY('0/30002221');
 -- 1735346007979327488
 ```

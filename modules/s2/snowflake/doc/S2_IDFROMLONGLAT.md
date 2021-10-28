@@ -1,7 +1,7 @@
-### LONGLAT_ASID
+### S2_IDFROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.LONGLAT_ASID(longitude, latitude, resolution)
+s2.S2_IDFROMLONGLAT(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 **Example**
 
 ```sql
-SELECT sfcarto.s2.LONGLAT_ASID(40.4168, -3.7038, 8);
+SELECT sfcarto.s2.S2_IDFROMLONGLAT(40.4168, -3.7038, 8);
 -- 1735346007979327488
 ```

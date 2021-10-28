@@ -1,7 +1,7 @@
-### ST_BOUNDARY
+### S2_BOUNDARY
 
 {{% bannerNote type="code" %}}
-s2.ST_BOUNDARY(id)
+s2.S2_BOUNDARY(id)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,7 +17,7 @@ Returns the boundary for a given S2 cell ID. We extract the boundary by getting 
 **Example**
 
 ```sql
-SELECT sfcarto.s2.ST_BOUNDARY(1735346007979327488);
+SELECT sfcarto.s2.S2_BOUNDARY(1735346007979327488);
 -- { "coordinates": [ [ [ 40.30886257091771, -3.8626948530725476 ], [ 40.30886257091771, -3.6086596856604585 ] ...
 ```
 
