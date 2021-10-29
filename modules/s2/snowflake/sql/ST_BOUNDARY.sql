@@ -3,16 +3,17 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@s2._GEOJSONBOUNDARY_FROMID
-(id STRING) 
-RETURNS STRING 
+(id STRING)
+RETURNS STRING
 LANGUAGE JAVASCRIPT
+IMMUTABLE
 AS $$
     @@SF_LIBRARY_CONTENT@@
-    
+
     if (!ID) {
         throw new Error('NULL argument passed to UDF');
     }
-    
+
     const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(ID)).getCornerLatLngs();
     const wkt = `POLYGON((` +
         cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
@@ -25,8 +26,9 @@ AS $$
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_PREFIX@@s2._GEOJSONBOUNDARY_FROMID
-(id BIGINT) 
+(id BIGINT)
 RETURNS STRING
+IMMUTABLE
 AS $$
     @@SF_PREFIX@@s2._GEOJSONBOUNDARY_FROMID(CAST(ID AS STRING))
 $$;
@@ -34,6 +36,7 @@ $$;
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@s2.ST_BOUNDARY
 (id BIGINT)
 RETURNS GEOGRAPHY
+IMMUTABLE
 AS $$
     TRY_TO_GEOGRAPHY(@@SF_PREFIX@@s2._GEOJSONBOUNDARY_FROMID(ID))
 $$;

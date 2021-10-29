@@ -6,13 +6,14 @@ CREATE OR REPLACE FUNCTION @@SF_PREFIX@@h3._DISTANCE
 (index1 STRING, index2 STRING)
 RETURNS STRING
 LANGUAGE JAVASCRIPT
+IMMUTABLE
 AS $$
     @@SF_LIBRARY_DISTANCE@@
 
     if (!INDEX1 || !INDEX2) {
         return null;
     }
-        
+
     let dist = h3Lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {
         dist = null;
@@ -23,6 +24,7 @@ $$;
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.DISTANCE
 (index1 STRING, index2 STRING)
 RETURNS BIGINT
+IMMUTABLE
 AS $$
     CAST(@@SF_PREFIX@@h3._DISTANCE(INDEX1, INDEX2) AS BIGINT)
 $$;
