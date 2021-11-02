@@ -6,8 +6,9 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@processing.VERSION
 ()
 RETURNS STRING
 LANGUAGE JAVASCRIPT
+IMMUTABLE
 AS $$
     @@SF_LIBRARY_CONTENT@@
-    
+
     return processingLib.version;
 $$;
