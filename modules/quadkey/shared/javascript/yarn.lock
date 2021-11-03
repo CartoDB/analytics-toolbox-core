@@ -5,11 +5,11 @@
 "@mapbox/tile-cover@3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@mapbox/tile-cover/-/tile-cover-3.0.2.tgz#e10b1bbfe65ee28a7f1a0127deb699635d0f8d7a"
-  integrity "sha1-4Qsbv+Ze4op/GgEn3raZY10PjXo= sha512-A6qvtttsYI66BYi8JMD0v7BzxeuXJf6qSzufmdvvYxDJyXqATZ7ig6OKHFCW7/OsUjpfFu3rB54JM/yHUOVB9g=="
+  integrity sha1-4Qsbv+Ze4op/GgEn3raZY10PjXo=
   dependencies:
     "@mapbox/tilebelt" "^1.0.1"
 
 "@mapbox/tilebelt@1.0.2", "@mapbox/tilebelt@^1.0.1":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@mapbox/tilebelt/-/tilebelt-1.0.2.tgz#32936c3acad3ea3e669bb083a598bcc7d74b4ec9"
-  integrity "sha1-MpNsOsrT6j5mm7CDpZi8x9dLTsk= sha512-tGJN2VIgWrXqBTPIxFVklklIpcy6ss8W5ouq+cjNLXPXFraRaDR4Ice+5Q8/uLX+6aH23lWBMydOIn8PcdVcpA=="
+  integrity sha512-tGJN2VIgWrXqBTPIxFVklklIpcy6ss8W5ouq+cjNLXPXFraRaDR4Ice+5Q8/uLX+6aH23lWBMydOIn8PcdVcpA==
