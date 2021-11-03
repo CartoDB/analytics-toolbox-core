@@ -5,4 +5,4 @@
 h3-js@3.7.2:
   version "3.7.2"
   resolved "https://registry.npmjs.org/h3-js/-/h3-js-3.7.2.tgz"
-  integrity sha512-LPjlHSwB9zQZrMqKloCZmmmt3yZzIK7nqPcXqwU93zT3TtYG6jP4tZBzAPouxut7lLjdFbMQ75wRBiKfpsnY7w==
+  integrity "sha1-YdT+t7tChoypzbLVz52d2pT55aM= sha512-LPjlHSwB9zQZrMqKloCZmmmt3yZzIK7nqPcXqwU93zT3TtYG6jP4tZBzAPouxut7lLjdFbMQ75wRBiKfpsnY7w=="

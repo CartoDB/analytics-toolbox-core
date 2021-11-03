@@ -25,6 +25,8 @@ NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
+UPDATE_CHECKSUMS = #--update-checksums
+
 REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
 REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
@@ -41,13 +43,13 @@ help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
 $(NODE_MODULES):
-	yarn -s
+	yarn -s $(UPDATE_CHECKSUMS)
 
 $(NODE_MODULES_DEV):
-	yarn -s --cwd $(COMMON_DIR)
+	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
-	yarn -s --cwd $(SHARED_DIR)
+	yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR)
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
