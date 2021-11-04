@@ -2,16 +2,18 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION _S2_BOUNDARY(id STRING) 
+CREATE OR REPLACE FUNCTION _S2_BOUNDARY
+(id STRING) 
 RETURNS STRING 
 LANGUAGE JAVASCRIPT
+IMMUTABLE
 AS $$
     @@SF_LIBRARY_CONTENT@@
-    
+
     if (!ID) {
         throw new Error('NULL argument passed to UDF');
     }
-    
+
     const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(ID)).getCornerLatLngs();
     const wkt = `POLYGON((` +
         cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
@@ -25,6 +27,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION _S2_BOUNDARY(id BIGINT) 
 RETURNS STRING
+IMMUTABLE
 AS $$
     _S2_BOUNDARY(CAST(ID AS STRING))
 $$;
@@ -32,6 +35,7 @@ $$;
 CREATE OR REPLACE SECURE FUNCTION S2_BOUNDARY
 (id BIGINT)
 RETURNS GEOGRAPHY
+IMMUTABLE
 AS $$
     TRY_TO_GEOGRAPHY(_S2_BOUNDARY(ID))
 $$;

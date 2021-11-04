@@ -23,6 +23,8 @@ NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
+UPDATE_CHECKSUMS = #--update-checksums
+
 REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g'
 
 .SILENT:
@@ -33,13 +35,13 @@ help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
 
 $(NODE_MODULES):
-	yarn -s
+	yarn -s $(UPDATE_CHECKSUMS)
 
 $(NODE_MODULES_DEV):
-	yarn -s --cwd $(COMMON_DIR)
+	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
-	yarn -s --cwd $(SHARED_DIR)
+	yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR)
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \

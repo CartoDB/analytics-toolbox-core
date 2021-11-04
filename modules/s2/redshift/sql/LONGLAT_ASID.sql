@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.LONGLAT_ASID
 (longitude FLOAT8, latitude FLOAT8, resolution INT4) 
 RETURNS INT8
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import longlat_as_int64_id
 

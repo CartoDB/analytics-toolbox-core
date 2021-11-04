@@ -2,10 +2,10 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey._POLYFILL_FROMGEOJSON
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.__POLYFILL_FROMGEOJSON
 (geojson VARCHAR(MAX), resolution INT)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import geojson_to_quadints
     import json
@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.ST_ASQUADINT_POLYFILL
 (GEOMETRY, INT)
 -- (geo, resolution)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@quadkey._POLYFILL_FROMGEOJSON(ST_ASGEOJSON($1)::VARCHAR(MAX), $2))
+    SELECT json_parse(@@RS_PREFIX@@quadkey.__POLYFILL_FROMGEOJSON(ST_ASGEOJSON($1)::VARCHAR(MAX), $2))
 $$ LANGUAGE sql;

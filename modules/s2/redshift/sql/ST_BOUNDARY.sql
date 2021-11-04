@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@s2.ST_BOUNDARY
 (id INT8) 
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@s2Lib import get_cell_boundary
 
