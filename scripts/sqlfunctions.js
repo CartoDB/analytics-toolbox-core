@@ -78,7 +78,7 @@ function classifyFunctions (moduleName, functionMatches)
                 const functArgSplitted = functArg.split(' ');
                 functArgsTypes.push(functArgSplitted[functArgSplitted.length - 1]);
             }
-            const functSignature = functName + '(' + functArgsTypes.join(', ') + ')';
+            const functSignature = functName + '(' + functArgsTypes.join(',') + ')';
             addFunctSignature(moduleName, functSignature);
         }
         else if (outputFormat == 'args')

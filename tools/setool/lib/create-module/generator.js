@@ -38,9 +38,6 @@ function createModule () {
     createDocVersion();
     createLibIndex();
     createSQLVersion();
-    if (cloud === 'snowflake') {
-        createSQLShares();
-    }
     createTestIntegrationVersion();
     createTestUnitIndex();
     createChangelog();
@@ -188,28 +185,6 @@ $$ LANGUAGE plpythonu;`;
     }
 
     createFile([root, 'modules', name, cloud, 'sql', 'VERSION.sql'], content);
-}
-
-function createSQLShares () {
-    let content = `${header}
-
-USE role ACCOUNTADMIN;
-USE @@SF_DATABASE@@;
-
-CREATE SHARE IF NOT EXISTS @@SF_SHARE@@;
-grant usage on database @@SF_DATABASE@@ to share @@SF_SHARE@@;
-grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE@@;
-
-grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE@@;`;
-
-    createFile([root, 'modules', name, cloud, 'sql', '_SHARE_CREATE.sql'], content);
-
-    content = `${header}
-
-USE role ACCOUNTADMIN;
-DROP SHARE @@SF_SHARE@@;`;
-
-    createFile([root, 'modules', name, cloud, 'sql', '_SHARE_REMOVE.sql'], content);
 }
 
 function createTestIntegrationVersion () {
