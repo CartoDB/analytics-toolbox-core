@@ -31,10 +31,10 @@ AWS_RUN_STATEMENT_SQL = \
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-dependency
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-dependency serialize-functions
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 lint: venv3
 	. $(VENV3_ACTIVATE) && \
