@@ -107,10 +107,10 @@ clean-deploy: check
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
 schema-create:
-	$(SNOWSQL) -d $(SF_DATABASE) -q "CREATE SCHEMA IF NOT EXISTS $(SF_DATABASE).$(SF_SCHEMA)"
+	$(SNOWSQL) -d $(SF_DATABASE) -q "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA)"
 
 schema-remove:
-	$(SNOWSQL) -d $(SF_DATABASE) -q "DROP SCHEMA IF EXISTS $(SF_DATABASE).$(SF_SCHEMA) CASCADE"
+	$(SNOWSQL) -d $(SF_DATABASE) -q "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE"
 
 schema-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \

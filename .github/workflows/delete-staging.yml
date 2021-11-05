@@ -30,3 +30,35 @@ jobs:
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Project `${{ env.BQ_PROJECT }}` deleted! 🔥' });
+
+  delete-sf:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    env:
+      SNOWSQL_VERSION: 1.2.13
+      SNOWSQL: ~/snowflake/snowsql
+      SNOWSQL_DEST: ~/snowflake
+      SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+      SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
+      SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
+      SF_DATABASE: SFCARTOST
+      SF_SCHEMA_PREFIX: ${{ github.event.pull_request.number }}_
+      SF_SHARE_ENABLED: 1
+      SF_SHARE_PREFIX: SFCARTOST_
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup snowsql
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
+      - name: Delete schema and shares
+        run: make clean CLOUD=snowflake
+      - name: Comment PR
+        uses: actions/github-script@0.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }  } = context;
+            const issue_number = ${{ github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Schema `${{ env.SF_DATABASE }}`.`${{ env.SF_SCHEMA_PREFIX }}`carto and shares `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`SPATIAL_EXTENSIONS and `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`ADVANCED_SPATIAL_EXTENSIONS deleted! 🔥' });
