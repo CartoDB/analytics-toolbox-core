@@ -76,7 +76,7 @@ jobs:
           script: |
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.pull_request.number }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}`.`${{ env.SF_SCHEMA_PREFIX }}`carto and shares `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`SPATIAL_EXTENSIONS and `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`ADVANCED_SPATIAL_EXTENSIONS' });
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}`.`${{ env.SF_SCHEMA_PREFIX }}`carto and share `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`SPATIAL_EXTENSIONS' });
 
   deploy-rs:
     if: |
