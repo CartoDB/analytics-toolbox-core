@@ -157,19 +157,7 @@ AS """
         break;
 
     case 'snowflake':
-        content = `${header}
-
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${name}.VERSION
-()
-RETURNS STRING
-LANGUAGE JAVASCRIPT
-AS $$
-    @@SF_LIBRARY_CONTENT@@
-    
-    return ${name}Lib.version;
-$$;`;
-        break;
-
+        return;
     case 'redshift':
         content = `${header}
 
@@ -195,7 +183,6 @@ function createTestIntegrationVersion () {
     let content;
     switch (cloud){
     case 'bigquery':
-    case 'snowflake':
         content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 const version = require('../../package.json').version;
 
@@ -204,6 +191,17 @@ test('VERSION returns the proper version', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].${variable}).toEqual(version);
+});`;
+        break;
+
+    case 'snowflake':
+        content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
+
+test('Test function example', async () => {
+    const query = 'SELECT 123 as v';
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].${variable}).toEqual(123);
 });`;
         break;
 
