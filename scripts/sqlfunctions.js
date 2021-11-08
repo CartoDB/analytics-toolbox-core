@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const inputFiles = process.env.INPUT_FILES || '';
 const cloud = process.env.CLOUD || '';
 const current_module = process.env.MODULE || '';
 const ignoredFiles = process.env.IGNORE || '';
@@ -128,29 +129,37 @@ function addFile (moduleName, fileName)
     classifyFunctions(moduleName, procedureMatches);
 }    
 
-if (current_module != '')
+if (inputFiles != '')
 {
-    const dir = 'sql'
-    const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
-    files.forEach(file => {
-        addFile(current_module, path.join(dir,file));
+    inputFiles.split(/\n|,| /).forEach(file => {
+        addFile(file.match('modules/(.*?)/')[1], file);
     });
 }
 else
 {
-    const dir = 'modules'
-    const modules = fs.readdirSync(dir);
-    modules.forEach(module => {
-        const sqldir = path.join(dir, module, cloud, 'sql');
-        if (fs.existsSync(sqldir)) {
-            const files = fs.readdirSync(sqldir);
-            files.forEach(file => {
-                addFile(module, path.join(sqldir,file));
-            });
-        }
-    });
+    if (current_module != '')
+    {
+        const dir = 'sql'
+        const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
+        files.forEach(file => {
+            addFile(current_module, path.join(dir,file));
+        });
+    }
+    else
+    {
+        const dir = 'modules'
+        const modules = fs.readdirSync(dir);
+        modules.forEach(module => {
+            const sqldir = path.join(dir, module, cloud, 'sql');
+            if (fs.existsSync(sqldir)) {
+                const files = fs.readdirSync(sqldir);
+                files.forEach(file => {
+                    addFile(module, path.join(sqldir,file));
+                });
+            }
+        });
+    }
 }
-
 
 if (asJSON)
 {
