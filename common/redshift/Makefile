@@ -13,10 +13,10 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
-COMMON_DIR = $(ROOT_DIR)/../../../common
+COMMON_DIR = $(ROOT_DIR)/../../../common/redshift
 SCRIPTS_DIR = $(ROOT_DIR)/../../../scripts
-VENV2_DIR = $(COMMON_DIR)/redshift/venv2
-VENV3_DIR = $(COMMON_DIR)/redshift/venv3
+VENV2_DIR = $(COMMON_DIR)/venv2
+VENV3_DIR = $(COMMON_DIR)/venv3
 VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
 VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 
@@ -99,7 +99,7 @@ storage-upload: build venv2
 ifneq ("$(wildcard requirements.txt)","")
 	if [ ! -f requirements.txt.shasum ] || [ "`shasum --check requirements.txt.shasum | grep "FAILED"`" ]; then \
 		. $(VENV2_ACTIVATE) && \
-		bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt && \
+		bash $(COMMON_DIR)/libraryinstaller.sh -f requirements.txt && \
 		shasum requirements.txt > requirements.txt.shasum && \
 		deactivate; \
 	fi
@@ -121,6 +121,7 @@ schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_STATEMENT_SQL); \
 	done
+	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION/sql/VERSION.sql`; $(AWS_RUN_STATEMENT_SQL);
 
 share-create:
 ifeq ($(RS_SHARE_ENABLED), 1)
@@ -135,7 +136,7 @@ endif
 serialize-dependency: venv2
 ifneq ("$(wildcard requirements.txt)","")
 	. $(VENV2_ACTIVATE) && \
-	bash $(COMMON_DIR)/redshift/libraryinstaller.sh -f requirements.txt -s && \
+	bash $(COMMON_DIR)/libraryinstaller.sh -f requirements.txt -s && \
 	deactivate; 
 endif
 
@@ -162,7 +163,7 @@ venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
 	. $(VENV2_ACTIVATE) && \
 	python -m pip install -U pip -q 2>/dev/null && \
-	pip install -r $(COMMON_DIR)/redshift/python2_requirements.txt -q 2>/dev/null && \
+	pip install -r $(COMMON_DIR)/python2_requirements.txt -q 2>/dev/null && \
 	([ ! -f requirements.txt ] || pip install -r requirements.txt -q 2>/dev/null) && \
 	deactivate
 
@@ -170,7 +171,7 @@ venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
 	. $(VENV3_ACTIVATE) && \
 	python -m pip install -U pip -q && \
-	pip install -r $(COMMON_DIR)/redshift/python3_requirements.txt -q && \
+	pip install -r $(COMMON_DIR)/python3_requirements.txt -q && \
 	deactivate
 
 check:
