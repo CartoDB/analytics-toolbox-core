@@ -8,13 +8,21 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (LATITUDE == null || LONGITUDE == null || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const key = s2Lib.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
-    return s2Lib.keyToId(key);
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        s2LibGlobal = s2Lib;
+    }
+
+    if (typeof(s2LibGlobal) === "undefined") {
+        setup();
+    }
+
+    const key = s2LibGlobal.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+    return s2LibGlobal.keyToId(key);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@s2.LONGLAT_ASID

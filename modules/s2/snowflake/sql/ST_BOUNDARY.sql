@@ -8,13 +8,20 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!ID) {
         throw new Error('NULL argument passed to UDF');
     }
 
-    const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(ID)).getCornerLatLngs();
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        s2LibGlobal = s2Lib;
+    }
+
+    if (typeof(s2LibGlobal) === "undefined") {
+        setup();
+    }
+
+    const cornerLongLat = s2LibGlobal.FromHilbertQuadKey(s2LibGlobal.idToKey(ID)).getCornerLatLngs();
     const wkt = `POLYGON((` +
         cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
         cornerLongLat[1]['lng'] + ` ` + cornerLongLat[1]['lat'] + `, ` +
