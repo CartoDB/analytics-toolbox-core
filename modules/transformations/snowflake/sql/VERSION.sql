@@ -7,7 +7,14 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@transformations.VERSION
 RETURNS STRING
 LANGUAGE JAVASCRIPT
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-    
-    return transformationsLib.version;
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        transformationsLibGlobal = transformationsLib;
+    }
+
+    if (typeof(transformationsLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return transformationsLibGlobal.version;
 $$;

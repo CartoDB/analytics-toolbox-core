@@ -8,12 +8,20 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON) {
         return null;
     }
-    const medianCenter = transformationsLib.centerMedian(transformationsLib.feature(JSON.parse(GEOJSON)));
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        transformationsLibGlobal = transformationsLib;
+    }
+
+    if (typeof(transformationsLibGlobal) === "undefined") {
+        setup();
+    }
+
+    const medianCenter = transformationsLibGlobal.centerMedian(transformationsLibGlobal.feature(JSON.parse(GEOJSON)));
     return JSON.stringify(medianCenter.geometry);
 $$;
 

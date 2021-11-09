@@ -8,14 +8,22 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONSTART || !GEOJSONEND || NPOINTS == null) {
         return null;
     }
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        transformationsLibGlobal = transformationsLib;
+    }
+
+    if (typeof(transformationsLibGlobal) === "undefined") {
+        setup();
+    }
+
     const options = {};
     options.npoints = Number(NPOINTS);
-    const greatCircle = transformationsLib.greatCircle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND), options);
+    const greatCircle = transformationsLibGlobal.greatCircle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND), options);
     return JSON.stringify(greatCircle.geometry);
 $$;
 

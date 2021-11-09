@@ -8,14 +8,22 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONSTART || DISTANCE == null || BEARING == null || !UNITS) {
         return null;
     }
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        transformationsLibGlobal = transformationsLib;
+    }
+
+    if (typeof(transformationsLibGlobal) === "undefined") {
+        setup();
+    }
+
     const options = {};
     options.units = UNITS;
-    const destination = transformationsLib.destination(JSON.parse(GEOJSONSTART), Number(DISTANCE), Number(BEARING), options);
+    const destination = transformationsLibGlobal.destination(JSON.parse(GEOJSONSTART), Number(DISTANCE), Number(BEARING), options);
     return JSON.stringify(destination.geometry);
 $$;
 

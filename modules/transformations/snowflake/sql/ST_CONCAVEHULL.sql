@@ -8,16 +8,24 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONS || MAXEDGE == null || !UNITS) {
         return null;
     }
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        transformationsLibGlobal = transformationsLib;
+    }
+
+    if (typeof(transformationsLibGlobal) === "undefined") {
+        setup();
+    }
+
     const options = {};
     options.maxEdge = MAXEDGE;
     options.units = UNITS;
-    const featuresCollection = transformationsLib.featureCollection(GEOJSONS.map(x => transformationsLib.feature(JSON.parse(x))));
-    const hull = transformationsLib.concave(featuresCollection, options);
+    const featuresCollection = transformationsLibGlobal.featureCollection(GEOJSONS.map(x => transformationsLibGlobal.feature(JSON.parse(x))));
+    const hull = transformationsLibGlobal.concave(featuresCollection, options);
     return JSON.stringify(hull.geometry);
 $$;
 
