@@ -8,11 +8,18 @@ RETURNS BOOLEAN
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_ISVALID@@
-
     if (!INDEX) {
         return false;
     }
 
-    return h3Lib.h3IsValid(INDEX);
+    function setup() {
+        @@SF_LIBRARY_ISVALID@@
+        h3IsValid = h3Lib.h3IsValid;
+    }
+
+    if (typeof(h3IsValid) === "undefined") {
+        setup();
+    }
+
+    return h3IsValid(INDEX);
 $$;

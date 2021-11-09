@@ -8,17 +8,25 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_HEXRING@@
-
-    if (!h3Lib.h3IsValid(ORIGIN)) {
-        throw new Error('Invalid input origin')
-    }
-
     if (SIZE == null || SIZE < 0) {
         throw new Error('Invalid input size')
     }
 
-    return h3Lib.hexRing(ORIGIN, parseInt(SIZE));
+    function setup() {
+        @@SF_LIBRARY_HEXRING@@
+        hexRing = h3Lib.hexRing;
+        h3IsValid = h3Lib.h3IsValid;
+    }
+
+    if (typeof(hexRing) === "undefined" || typeof(h3IsValid) === "undefined") {
+        setup();
+    }
+
+    if (!h3IsValid(ORIGIN)) {
+        throw new Error('Invalid input origin')
+    }
+
+    return hexRing(ORIGIN, parseInt(SIZE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.HEXRING

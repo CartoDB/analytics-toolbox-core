@@ -8,11 +8,18 @@ RETURNS BOOLEAN
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_ISPENTAGON@@
-
     if (!INDEX) {
         return false;
     }
 
-    return h3Lib.h3IsPentagon(INDEX);
+    function setup() {
+        @@SF_LIBRARY_ISPENTAGON@@
+        h3IsPentagon = h3Lib.h3IsPentagon;
+    }
+
+    if (typeof(h3IsPentagon) === "undefined") {
+        setup();
+    }
+
+    return h3IsPentagon(INDEX);
 $$;

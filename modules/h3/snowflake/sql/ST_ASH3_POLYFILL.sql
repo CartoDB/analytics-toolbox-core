@@ -8,8 +8,6 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_ASH3_POLYFILL@@
-
     if (!GEOJSON || _RESOLUTION == null) {
         return [];
     }
@@ -17,6 +15,15 @@ AS $$
     const resolution = Number(_RESOLUTION);
     if (resolution < 0 || resolution > 15) {
         return [];
+    }
+
+    function setup() {
+        @@SF_LIBRARY_ASH3_POLYFILL@@
+        polyfill = h3Lib.polyfill;
+    }
+
+    if (typeof(polyfill) === "undefined") {
+        setup();
     }
 
     const featureGeometry = JSON.parse(GEOJSON)
@@ -46,7 +53,7 @@ AS $$
     }
 
     let hexes = polygonCoordinates.reduce(
-        (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     hexes = [...new Set(hexes)];

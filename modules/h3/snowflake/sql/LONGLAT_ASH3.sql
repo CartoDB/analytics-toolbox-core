@@ -8,12 +8,20 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_LONGLAT_ASH3@@
-
     if (LONGITUDE == null || LATITUDE == null || RESOLUTION == null) {
         return null;
     }
-    const index = h3Lib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+
+    function setup() {
+        @@SF_LIBRARY_LONGLAT_ASH3@@
+        geoToH3 = h3Lib.geoToH3;
+    }
+
+    if (typeof(geoToH3) === "undefined") {
+        setup();
+    }
+    
+    const index = geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
     return index;
 $$;
 

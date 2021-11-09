@@ -8,17 +8,25 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_KRING_DISTANCES@@
-
-    if (!h3Lib.h3IsValid(ORIGIN)) {
-        throw new Error('Invalid input origin')
-    }
-
     if (SIZE == null || SIZE < 0) {
         throw new Error('Invalid input size')
     }
 
-    const kringDistances = h3Lib.kRingDistances(ORIGIN, parseInt(SIZE));
+    function setup() {
+        @@SF_LIBRARY_KRING_DISTANCES@@
+        kRingDistances = h3Lib.kRingDistances;
+        h3IsValid = h3Lib.h3IsValid;
+    }
+
+    if (typeof(kRingDistances) === "undefined" || typeof(h3IsValid) === "undefined") {
+        setup();
+    }
+
+    if (!h3IsValid(ORIGIN)) {
+        throw new Error('Invalid input origin')
+    }
+
+    const kringDistances = kRingDistances(ORIGIN, parseInt(SIZE));
     const output = [];
     for (let distance = 0; distance <= parseInt(SIZE); distance++) {
         const indexes = kringDistances[distance];

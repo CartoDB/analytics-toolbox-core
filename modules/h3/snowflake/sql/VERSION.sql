@@ -8,7 +8,14 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_VERSION@@
+    function setup() {
+        @@SF_LIBRARY_VERSION@@
+        version = h3Lib.version;
+    }
 
-    return h3Lib.version;
+    if (typeof(version) === "undefined") {
+        setup();
+    }
+
+    return version;
 $$;
