@@ -8,16 +8,24 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON || XSEMIAXIS == null || YSEMIAXIS == null || ANGLE == null || !UNITS || STEPS == null) {
         return null;
     }
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        constructorsLibGlobal = constructorsLib;
+    }
+
+    if (typeof(constructorsLibGlobal) === "undefined") {
+        setup();
+    }
+
     const options = {};
     options.angle = Number(ANGLE);
     options.units = UNITS;
     options.steps = Number(STEPS);
-    const ellipse = constructorsLib.ellipse(JSON.parse(GEOJSON), Number(XSEMIAXIS), Number(YSEMIAXIS), options);
+    const ellipse = constructorsLibGlobal.ellipse(JSON.parse(GEOJSON), Number(XSEMIAXIS), Number(YSEMIAXIS), options);
     return JSON.stringify(ellipse.geometry);
 $$;
 

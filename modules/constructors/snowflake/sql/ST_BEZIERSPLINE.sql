@@ -8,15 +8,23 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON || RESOLUTION == null || SHARPNESS == null) {
         return null;
     }
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        constructorsLibGlobal = constructorsLib;
+    }
+
+    if (typeof(constructorsLibGlobal) === "undefined") {
+        setup();
+    }
+
     const options = {};
     options.resolution = Number(RESOLUTION);
     options.sharpness = Number(SHARPNESS);
-    const curved = constructorsLib.bezierSpline(JSON.parse(GEOJSON), options);
+    const curved = constructorsLibGlobal.bezierSpline(JSON.parse(GEOJSON), options);
     return JSON.stringify(curved.geometry);
 $$;
 
