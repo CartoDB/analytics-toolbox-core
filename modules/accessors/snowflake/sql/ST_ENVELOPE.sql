@@ -8,14 +8,21 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONS) {
         return null;
     }
 
-    const featuresCollection = accessorsLib.featureCollection(GEOJSONS.map(x => accessorsLib.feature(JSON.parse(x))));
-    const enveloped = accessorsLib.envelope(featuresCollection);
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        accessorsLibGlobal = accessorsLib;
+    }
+
+    if (typeof(accessorsLibGlobal) === "undefined") {
+        setup();
+    }
+
+    const featuresCollection = accessorsLibGlobal.featureCollection(GEOJSONS.map(x => accessorsLibGlobal.feature(JSON.parse(x))));
+    const enveloped = accessorsLibGlobal.envelope(featuresCollection);
     return JSON.stringify(enveloped.geometry);
 $$;
 
