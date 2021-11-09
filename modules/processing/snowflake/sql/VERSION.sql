@@ -8,7 +8,14 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        processingLibGlobal = processingLib;
+    }
 
-    return processingLib.version;
+    if (typeof(processingLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return processingLibGlobal.version;
 $$;
