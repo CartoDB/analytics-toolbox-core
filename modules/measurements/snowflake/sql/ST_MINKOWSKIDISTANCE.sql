@@ -8,15 +8,23 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONS || P == null) {
         return [];
     }
+
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        measurementsLibGlobal = measurementsLib;
+    }
+
+    if (typeof(measurementsLibGlobal) === "undefined") {
+        setup();
+    }
+
     const options = {};
     options.p = Number(P);
-    const features = measurementsLib.featureCollection(GEOJSONS.map(x => measurementsLib.feature(JSON.parse(x))));
-    const distance = measurementsLib.distanceWeight(features, options);
+    const features = measurementsLibGlobal.featureCollection(GEOJSONS.map(x => measurementsLibGlobal.feature(JSON.parse(x))));
+    const distance = measurementsLibGlobal.distanceWeight(features, options);
     return distance;
 $$;
 
