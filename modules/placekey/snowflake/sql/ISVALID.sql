@@ -8,7 +8,14 @@ RETURNS BOOLEAN
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        placekeyLibGlobal = placekeyLib;
+    }
 
-    return placekeyLib.placekeyIsValid(PLACEKEY);
+    if (typeof(placekeyLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return placekeyLibGlobal.placekeyIsValid(PLACEKEY);
 $$;

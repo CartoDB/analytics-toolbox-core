@@ -8,7 +8,14 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        accessorsLibGlobal = accessorsLib;
+    }
 
-    return accessorsLib.version;
+    if (typeof(accessorsLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return accessorsLibGlobal.version;
 $$;
