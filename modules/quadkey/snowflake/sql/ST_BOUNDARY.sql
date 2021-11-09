@@ -8,13 +8,20 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!QUADINT) {
         throw new Error('NULL argument passed to UDF');
     }
 
-    const geojson = quadkeyLib.quadintToGeoJSON(QUADINT);
+   function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        quadkeyLibGlobal = quadkeyLib;
+    }
+
+    if (typeof(quadkeyLibGlobal) === "undefined") {
+        setup();
+    }
+
+    const geojson = quadkeyLibGlobal.quadintToGeoJSON(QUADINT);
     return JSON.stringify(geojson);
 $$;
 

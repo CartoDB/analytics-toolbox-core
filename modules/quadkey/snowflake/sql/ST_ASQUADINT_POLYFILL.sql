@@ -8,23 +8,30 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
+    }
+
+   function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        quadkeyLibGlobal = quadkeyLib;
+    }
+
+    if (typeof(quadkeyLibGlobal) === "undefined") {
+        setup();
     }
 
     const pol = JSON.parse(GEOJSON);
     let quadints = [];
     if (pol.type == 'GeometryCollection') {
         pol.geometries.forEach(function (geom) {
-            quadints = quadints.concat(quadkeyLib.geojsonToQuadints(geom, {min_zoom: RESOLUTION, max_zoom: RESOLUTION}));
+            quadints = quadints.concat(quadkeyLibGlobal.geojsonToQuadints(geom, {min_zoom: RESOLUTION, max_zoom: RESOLUTION}));
         });
         quadints = Array.from(new Set(quadints));
     }
     else
     {
-        quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
+        quadints = quadkeyLibGlobal.geojsonToQuadints(pol, {min_zoom: RESOLUTION, max_zoom: RESOLUTION});
     }
     return quadints.map(String);
 $$;

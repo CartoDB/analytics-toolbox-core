@@ -8,12 +8,20 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!QUADINT || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return quadkeyLib.toParent(QUADINT, RESOLUTION).toString();
+
+   function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        quadkeyLibGlobal = quadkeyLib;
+    }
+
+    if (typeof(quadkeyLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return quadkeyLibGlobal.toParent(QUADINT, RESOLUTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.TOPARENT

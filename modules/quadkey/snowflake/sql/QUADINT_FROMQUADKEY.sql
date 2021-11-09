@@ -8,9 +8,16 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
+    function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        quadkeyLibGlobal = quadkeyLib;
+    }
 
-    return quadkeyLib.quadintFromQuadkey(QUADKEY).toString();
+    if (typeof(quadkeyLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return quadkeyLibGlobal.quadintFromQuadkey(QUADKEY).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.QUADINT_FROMQUADKEY

@@ -8,7 +8,14 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
+   function setup() {
+        @@SF_LIBRARY_CONTENT@@
+        quadkeyLibGlobal = quadkeyLib;
+    }
 
-    return quadkeyLib.version;
+    if (typeof(quadkeyLibGlobal) === "undefined") {
+        setup();
+    }
+
+    return quadkeyLibGlobal.version;
 $$;
