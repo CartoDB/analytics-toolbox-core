@@ -12,14 +12,7 @@ AS $$
         return false;
     }
 
-    function setup() {
-        @@SF_LIBRARY_ISPENTAGON@@
-        h3IsPentagon = h3Lib.h3IsPentagon;
-    }
+    @@SF_LIBRARY_ISPENTAGON@@
 
-    if (typeof(h3IsPentagon) === "undefined") {
-        setup();
-    }
-
-    return h3IsPentagon(INDEX);
+    return h3Lib.h3IsPentagon(INDEX);
 $$;

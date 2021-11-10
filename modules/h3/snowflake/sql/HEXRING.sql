@@ -12,21 +12,13 @@ AS $$
         throw new Error('Invalid input size')
     }
 
-    function setup() {
-        @@SF_LIBRARY_HEXRING@@
-        hexRing = h3Lib.hexRing;
-        h3IsValid = h3Lib.h3IsValid;
-    }
+    @@SF_LIBRARY_HEXRING@@
 
-    if (typeof(hexRing) === "undefined" || typeof(h3IsValid) === "undefined") {
-        setup();
-    }
-
-    if (!h3IsValid(ORIGIN)) {
+    if (!h3Lib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')
     }
 
-    return hexRing(ORIGIN, parseInt(SIZE));
+    return h3Lib.hexRing(ORIGIN, parseInt(SIZE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.HEXRING

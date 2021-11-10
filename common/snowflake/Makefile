@@ -94,7 +94,9 @@ else
 			PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 			LIB_DIR=./libs/$${f}/index.js \
 			DIST_DIR=./dist/$${f}.js \
-			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+			rollup --banner "if (typeof($(MODULE)Lib) === 'undefined') {" \
+			--footer "$(MODULE)Lib = _$(MODULE)Lib;}" \
+			--config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 			$(POST_BUILD) \
 		done \
     fi

@@ -12,14 +12,7 @@ AS $$
         return [];
     }
 
-    function setup() {
-        @@SF_LIBRARY_COMPACT@@
-        compact = h3Lib.compact;
-    }
+    @@SF_LIBRARY_COMPACT@@
 
-    if (typeof(compact) === "undefined") {
-        setup();
-    }
-
-    return compact(H3ARRAY);
+    return h3Lib.compact(H3ARRAY);
 $$;

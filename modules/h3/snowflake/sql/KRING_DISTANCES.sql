@@ -10,23 +10,15 @@ IMMUTABLE
 AS $$
     if (SIZE == null || SIZE < 0) {
         throw new Error('Invalid input size')
-    }
+    }  
 
-    function setup() {
-        @@SF_LIBRARY_KRING_DISTANCES@@
-        kRingDistances = h3Lib.kRingDistances;
-        h3IsValid = h3Lib.h3IsValid;
-    }
+    @@SF_LIBRARY_KRING_DISTANCES@@
 
-    if (typeof(kRingDistances) === "undefined" || typeof(h3IsValid) === "undefined") {
-        setup();
-    }
-
-    if (!h3IsValid(ORIGIN)) {
+    if (!h3Lib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')
     }
 
-    const kringDistances = kRingDistances(ORIGIN, parseInt(SIZE));
+    const kringDistances = h3Lib.kRingDistances(ORIGIN, parseInt(SIZE));
     const output = [];
     for (let distance = 0; distance <= parseInt(SIZE); distance++) {
         const indexes = kringDistances[distance];

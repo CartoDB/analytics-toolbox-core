@@ -12,14 +12,7 @@ AS $$
         return false;
     }
 
-    function setup() {
-        @@SF_LIBRARY_ISVALID@@
-        h3IsValid = h3Lib.h3IsValid;
-    }
+    @@SF_LIBRARY_ISVALID@@
 
-    if (typeof(h3IsValid) === "undefined") {
-        setup();
-    }
-
-    return h3IsValid(INDEX);
+    return h3Lib.h3IsValid(INDEX);
 $$;

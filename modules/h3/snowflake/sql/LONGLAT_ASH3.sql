@@ -12,16 +12,9 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_LONGLAT_ASH3@@
-        geoToH3 = h3Lib.geoToH3;
-    }
+    @@SF_LIBRARY_LONGLAT_ASH3@@
 
-    if (typeof(geoToH3) === "undefined") {
-        setup();
-    }
-    
-    const index = geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+    const index = h3Lib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
     return index;
 $$;
 

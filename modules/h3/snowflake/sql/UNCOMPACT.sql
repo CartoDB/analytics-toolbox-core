@@ -12,16 +12,9 @@ AS $$
         return [];
     }
 
-    function setup() {
-        @@SF_LIBRARY_UNCOMPACT@@
-        uncompact = h3Lib.uncompact;
-    }
+    @@SF_LIBRARY_UNCOMPACT@@
 
-    if (typeof(uncompact) === "undefined") {
-        setup();
-    }
-
-    return uncompact(H3ARRAY, Number(RESOLUTION));
+    return h3Lib.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@h3.UNCOMPACT

@@ -12,16 +12,9 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_DISTANCE@@
-        h3Distance = h3Lib.h3Distance;
-    }
+    @@SF_LIBRARY_DISTANCE@@
 
-    if (typeof(h3Distance) === "undefined") {
-        setup();
-    }
-
-    let dist = h3Distance(INDEX1, INDEX2);
+    let dist = h3Lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {
         dist = null;
     }
