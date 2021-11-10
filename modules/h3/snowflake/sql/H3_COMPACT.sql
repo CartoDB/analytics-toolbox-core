@@ -8,11 +8,11 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_COMPACT@@
-
     if (H3ARRAY == null) {
         return [];
     }
+
+    @@SF_LIBRARY_COMPACT@@
 
     return h3Lib.compact(H3ARRAY);
 $$;

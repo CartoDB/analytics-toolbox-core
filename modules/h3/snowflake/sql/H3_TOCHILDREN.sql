@@ -8,11 +8,11 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_TOCHILDREN@@
-
     if (!INDEX) {
         return [];
     }
+
+    @@SF_LIBRARY_TOCHILDREN@@
 
     if (!h3Lib.h3IsValid(INDEX)) {
         return [];

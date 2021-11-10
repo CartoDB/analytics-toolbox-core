@@ -8,11 +8,11 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_ASH3_POLYFILL@@
-
     if (!GEOJSON || _RESOLUTION == null) {
         return [];
     }
+
+    @@SF_LIBRARY_ASH3_POLYFILL@@
 
     const resolution = Number(_RESOLUTION);
     if (resolution < 0 || resolution > 15) {

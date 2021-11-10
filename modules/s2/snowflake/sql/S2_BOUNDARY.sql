@@ -8,11 +8,11 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!ID) {
         throw new Error('NULL argument passed to UDF');
     }
+
+    @@SF_LIBRARY_CONTENT@@
 
     const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(ID)).getCornerLatLngs();
     const wkt = `POLYGON((` +

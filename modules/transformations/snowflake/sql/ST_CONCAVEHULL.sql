@@ -8,11 +8,12 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONS || MAXEDGE == null || !UNITS) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const options = {};
     options.maxEdge = MAXEDGE;
     options.units = UNITS;

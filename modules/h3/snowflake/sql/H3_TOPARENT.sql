@@ -8,11 +8,11 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_TOPARENT@@
-
     if (!INDEX) {
         return null;
     }
+
+    @@SF_LIBRARY_TOPARENT@@
 
     if (!h3Lib.h3IsValid(INDEX)) {
         return null;

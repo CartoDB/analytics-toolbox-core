@@ -8,11 +8,12 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONS || P == null) {
         return [];
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const options = {};
     options.p = Number(P);
     const features = measurementsLib.featureCollection(GEOJSONS.map(x => measurementsLib.feature(JSON.parse(x))));

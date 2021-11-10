@@ -8,11 +8,12 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON || XSEMIAXIS == null || YSEMIAXIS == null || ANGLE == null || !UNITS || STEPS == null) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const options = {};
     options.angle = Number(ANGLE);
     options.units = UNITS;

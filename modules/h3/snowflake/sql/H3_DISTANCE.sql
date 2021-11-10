@@ -8,11 +8,11 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_DISTANCE@@
-
     if (!INDEX1 || !INDEX2) {
         return null;
     }
+
+    @@SF_LIBRARY_DISTANCE@@
 
     let dist = h3Lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {

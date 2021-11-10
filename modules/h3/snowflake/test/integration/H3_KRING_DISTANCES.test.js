@@ -45,7 +45,7 @@ test('H3_KRING_DISTANCES should work', async () => {
 
 test('H3_KRING_DISTANCES should fail if any invalid argument', async () => {
     let query = 'SELECT H3_KRING_DISTANCES(NULL, NULL)';
-    await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 
     query = 'SELECT H3_KRING_DISTANCES(\'abc\', 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);

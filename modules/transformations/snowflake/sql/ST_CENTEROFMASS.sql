@@ -8,11 +8,12 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const center = transformationsLib.centerOfMass(JSON.parse(GEOJSON));
     return JSON.stringify(center.geometry);
 $$;

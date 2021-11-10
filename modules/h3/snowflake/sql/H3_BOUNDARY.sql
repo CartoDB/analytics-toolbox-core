@@ -8,11 +8,11 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_BOUNDARY@@
-
     if (!INDEX) {
         return null;
     }
+
+    @@SF_LIBRARY_BOUNDARY@@
 
     if (!h3Lib.h3IsValid(INDEX)) {
         return null;
