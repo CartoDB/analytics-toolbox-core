@@ -8,8 +8,6 @@ CREATE OR REPLACE FUNCTION @@SF_PREFIX@@processing._VORONOIHELPER
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON || !BBOX) {
         return [];
     }
@@ -17,6 +15,8 @@ AS $$
     if (BBOX != null && BBOX.length != 4) {
         throw new Error('Incorrect bounding box passed to UDF. It should contain the BBOX extends, i.e., [xmin, ymin, xmax, ymax]');
     }
+
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.bbox = BBOX;

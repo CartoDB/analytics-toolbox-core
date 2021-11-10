@@ -8,11 +8,12 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!QUADINT || RESOLUTION == null) {
         throw new Error('NULL argument passed to UDF');
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const quadints = quadkeyLib.toChildren(QUADINT, RESOLUTION);
     return quadints.map(String);
 $$;

@@ -8,14 +8,14 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
+    if (SIZE == null || SIZE < 0) {
+        throw new Error('Invalid input size')
+    }  
+
     @@SF_LIBRARY_KRING_DISTANCES@@
 
     if (!h3Lib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')
-    }
-
-    if (SIZE == null || SIZE < 0) {
-        throw new Error('Invalid input size')
     }
 
     const kringDistances = h3Lib.kRingDistances(ORIGIN, parseInt(SIZE));

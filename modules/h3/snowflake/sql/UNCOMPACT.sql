@@ -8,11 +8,11 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_UNCOMPACT@@
-
     if (H3ARRAY == null || RESOLUTION == null || RESOLUTION < 0 || RESOLUTION > 15) {
         return [];
     }
+
+    @@SF_LIBRARY_UNCOMPACT@@
 
     return h3Lib.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;

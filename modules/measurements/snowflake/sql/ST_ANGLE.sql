@@ -8,11 +8,12 @@ RETURNS DOUBLE
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONSTART || !GEOJSONMID || !GEOJSONEND) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const options = {};
     if(MERCATOR != null) {
         options.mercator = MERCATOR;

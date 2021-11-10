@@ -8,11 +8,12 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const medianCenter = transformationsLib.centerMedian(transformationsLib.feature(JSON.parse(GEOJSON)));
     return JSON.stringify(medianCenter.geometry);
 $$;

@@ -8,11 +8,12 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSON || DISTANCE == null || !UNITS) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     const options = {};
     options.units = UNITS;
     const along = transformationsLib.along(JSON.parse(GEOJSON), DISTANCE, options);

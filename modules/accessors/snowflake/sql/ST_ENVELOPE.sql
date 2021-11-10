@@ -8,11 +8,11 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONS) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
 
     const featuresCollection = accessorsLib.featureCollection(GEOJSONS.map(x => accessorsLib.feature(JSON.parse(x))));
     const enveloped = accessorsLib.envelope(featuresCollection);

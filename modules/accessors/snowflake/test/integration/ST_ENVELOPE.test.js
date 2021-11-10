@@ -23,7 +23,6 @@ test('ST_ENVELOPE should work', async () => {
             @@SF_PREFIX@@accessors.ST_ENVELOPE(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    console.log(getFeatureArray(featureColFixturesIn));
     expect(JSON.stringify(rows[0].ENVELOPE1)).toEqual(pointsFixturesOut.value);
     expect(JSON.stringify(rows[0].ENVELOPE2)).toEqual(featureColFixturesOut.value);
 });

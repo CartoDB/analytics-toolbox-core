@@ -8,11 +8,11 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!QUADKEY) {
         throw new Error('NULL argument passed to UDF');
     }
+
+    @@SF_LIBRARY_CONTENT@@
 
     return s2Lib.keyToId(QUADKEY);
 $$;

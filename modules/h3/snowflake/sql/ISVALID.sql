@@ -8,11 +8,11 @@ RETURNS BOOLEAN
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_ISVALID@@
-
     if (!INDEX) {
         return false;
     }
+
+    @@SF_LIBRARY_ISVALID@@
 
     return h3Lib.h3IsValid(INDEX);
 $$;

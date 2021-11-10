@@ -8,11 +8,12 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!QUADINT) {
         throw new Error('NULL argument passed to UDF');
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     return quadkeyLib.quadkeyFromQuadint(QUADINT);
 $$;
 

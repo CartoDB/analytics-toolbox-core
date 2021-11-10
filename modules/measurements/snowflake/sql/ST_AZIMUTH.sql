@@ -8,11 +8,12 @@ RETURNS DOUBLE
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (!GEOJSONSTART || !GEOJSONEND) {
         return null;
     }
+
+    @@SF_LIBRARY_CONTENT@@
+
     return measurementsLib.bearing(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND));
 $$;
 

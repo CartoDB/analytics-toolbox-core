@@ -9,7 +9,9 @@ export default {
     output: {
         file: process.env.DIST_DIR,
         format: process.env.UNIT_TEST ? 'umd': 'iife',
-        name: process.env.NAME
+        name: process.env.UNIT_TEST ? process.env.NAME : '_' + process.env.NAME,
+        banner: process.env.UNIT_TEST ? '' : 'if (typeof(' + process.env.NAME +') === "undefined") {',
+        footer: process.env.UNIT_TEST ? '' : process.env.NAME +' = _' + process.env.NAME + ';}'
     },
     plugins: [
         resolve(),

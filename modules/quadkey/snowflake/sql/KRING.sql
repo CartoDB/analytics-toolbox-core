@@ -8,8 +8,6 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    @@SF_LIBRARY_CONTENT@@
-
     if (ORIGIN == null || ORIGIN <= 0) {
         throw new Error('Invalid input origin')
     }
@@ -17,6 +15,8 @@ AS $$
     if (SIZE == null || SIZE < 0) {
         throw new Error('Invalid input size')
     }
+
+    @@SF_LIBRARY_CONTENT@@
 
     return quadkeyLib.kRing(ORIGIN, parseInt(SIZE));
 $$;

@@ -37,7 +37,7 @@ test('HEXRING should work', async () => {
 
 test('HEXRING should fail if any invalid argument', async () => {
     let query = 'SELECT @@SF_PREFIX@@h3.HEXRING(NULL, NULL)';
-    await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 
     query = 'SELECT @@SF_PREFIX@@h3.HEXRING(\'abc\', 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
