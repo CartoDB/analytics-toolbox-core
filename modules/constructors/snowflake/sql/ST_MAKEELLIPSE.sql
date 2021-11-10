@@ -12,20 +12,13 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        constructorsLibGlobal = constructorsLib;
-    }
-
-    if (typeof(constructorsLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.angle = Number(ANGLE);
     options.units = UNITS;
     options.steps = Number(STEPS);
-    const ellipse = constructorsLibGlobal.ellipse(JSON.parse(GEOJSON), Number(XSEMIAXIS), Number(YSEMIAXIS), options);
+    const ellipse = constructorsLib.ellipse(JSON.parse(GEOJSON), Number(XSEMIAXIS), Number(YSEMIAXIS), options);
     return JSON.stringify(ellipse.geometry);
 $$;
 

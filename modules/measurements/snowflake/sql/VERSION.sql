@@ -8,14 +8,7 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        measurementsLibGlobal = measurementsLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(measurementsLibGlobal) === "undefined") {
-        setup();
-    }
-
-    return measurementsLibGlobal.version;
+    return measurementsLib.version;
 $$;

@@ -12,19 +12,12 @@ AS $$
         return [];
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        measurementsLibGlobal = measurementsLib;
-    }
-
-    if (typeof(measurementsLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.p = Number(P);
-    const features = measurementsLibGlobal.featureCollection(GEOJSONS.map(x => measurementsLibGlobal.feature(JSON.parse(x))));
-    const distance = measurementsLibGlobal.distanceWeight(features, options);
+    const features = measurementsLib.featureCollection(GEOJSONS.map(x => measurementsLib.feature(JSON.parse(x))));
+    const distance = measurementsLib.distanceWeight(features, options);
     return distance;
 $$;
 

@@ -8,14 +8,7 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        placekeyLibGlobal = placekeyLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(placekeyLibGlobal) === "undefined") {
-        setup();
-    }
-
-    return placekeyLibGlobal.version;
+    return placekeyLib.version;
 $$;

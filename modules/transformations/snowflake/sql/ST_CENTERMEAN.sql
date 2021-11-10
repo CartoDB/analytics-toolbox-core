@@ -12,16 +12,9 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        transformationsLibGlobal = transformationsLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(transformationsLibGlobal) === "undefined") {
-        setup();
-    }
-
-    const center = transformationsLibGlobal.centerMean(JSON.parse(GEOJSON));
+    const center = transformationsLib.centerMean(JSON.parse(GEOJSON));
     return JSON.stringify(center.geometry);
 $$;
 

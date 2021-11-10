@@ -12,18 +12,11 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        transformationsLibGlobal = transformationsLib;
-    }
-
-    if (typeof(transformationsLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.units = UNITS;
-    const destination = transformationsLibGlobal.destination(JSON.parse(GEOJSONSTART), Number(DISTANCE), Number(BEARING), options);
+    const destination = transformationsLib.destination(JSON.parse(GEOJSONSTART), Number(DISTANCE), Number(BEARING), options);
     return JSON.stringify(destination.geometry);
 $$;
 

@@ -16,16 +16,9 @@ AS $$
         throw new Error('Invalid input size')
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        quadkeyLibGlobal = quadkeyLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(quadkeyLibGlobal) === "undefined") {
-        setup();
-    }
-
-    return quadkeyLibGlobal.kRing(ORIGIN, parseInt(SIZE));
+    return quadkeyLib.kRing(ORIGIN, parseInt(SIZE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.KRING

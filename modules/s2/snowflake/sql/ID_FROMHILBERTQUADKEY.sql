@@ -12,16 +12,9 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        s2LibGlobal = s2Lib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(s2LibGlobal) === "undefined") {
-        setup();
-    }
-
-    return s2LibGlobal.keyToId(QUADKEY);
+    return s2Lib.keyToId(QUADKEY);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@s2.ID_FROMHILBERTQUADKEY

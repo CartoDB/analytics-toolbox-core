@@ -12,16 +12,9 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        measurementsLibGlobal = measurementsLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(measurementsLibGlobal) === "undefined") {
-        setup();
-    }
-
-    return measurementsLibGlobal.bearing(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND));
+    return measurementsLib.bearing(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements.ST_AZIMUTH

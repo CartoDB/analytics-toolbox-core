@@ -12,19 +12,12 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        constructorsLibGlobal = constructorsLib;
-    }
-
-    if (typeof(constructorsLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.resolution = Number(RESOLUTION);
     options.sharpness = Number(SHARPNESS);
-    const curved = constructorsLibGlobal.bezierSpline(JSON.parse(GEOJSON), options);
+    const curved = constructorsLib.bezierSpline(JSON.parse(GEOJSON), options);
     return JSON.stringify(curved.geometry);
 $$;
 

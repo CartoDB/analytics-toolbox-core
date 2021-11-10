@@ -12,20 +12,13 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        measurementsLibGlobal = measurementsLib;
-    }
-
-    if (typeof(measurementsLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     if(MERCATOR != null) {
         options.mercator = MERCATOR;
     }
-    return measurementsLibGlobal.angle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONMID), JSON.parse(GEOJSONEND), options);
+    return measurementsLib.angle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONMID), JSON.parse(GEOJSONEND), options);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@measurements.ST_ANGLE

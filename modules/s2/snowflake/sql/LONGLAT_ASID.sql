@@ -12,17 +12,10 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        s2LibGlobal = s2Lib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(s2LibGlobal) === "undefined") {
-        setup();
-    }
-
-    const key = s2LibGlobal.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
-    return s2LibGlobal.keyToId(key);
+    const key = s2Lib.latLngToKey(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+    return s2Lib.keyToId(key);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@s2.LONGLAT_ASID

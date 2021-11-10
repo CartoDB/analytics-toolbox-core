@@ -12,16 +12,9 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-   function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        quadkeyLibGlobal = quadkeyLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(quadkeyLibGlobal) === "undefined") {
-        setup();
-    }
-
-    return quadkeyLibGlobal.toParent(QUADINT, RESOLUTION).toString();
+    return quadkeyLib.toParent(QUADINT, RESOLUTION).toString();
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@quadkey.TOPARENT

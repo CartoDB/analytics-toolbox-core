@@ -12,16 +12,9 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        transformationsLibGlobal = transformationsLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(transformationsLibGlobal) === "undefined") {
-        setup();
-    }
-
-    const medianCenter = transformationsLibGlobal.centerMedian(transformationsLibGlobal.feature(JSON.parse(GEOJSON)));
+    const medianCenter = transformationsLib.centerMedian(transformationsLib.feature(JSON.parse(GEOJSON)));
     return JSON.stringify(medianCenter.geometry);
 $$;
 

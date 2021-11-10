@@ -12,16 +12,9 @@ AS $$
         throw new Error('NULL argument passed to UDF');
     }
 
-   function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        quadkeyLibGlobal = quadkeyLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(quadkeyLibGlobal) === "undefined") {
-        setup();
-    }
-
-    const geojson = quadkeyLibGlobal.quadintToGeoJSON(QUADINT);
+    const geojson = quadkeyLib.quadintToGeoJSON(QUADINT);
     return JSON.stringify(geojson);
 $$;
 

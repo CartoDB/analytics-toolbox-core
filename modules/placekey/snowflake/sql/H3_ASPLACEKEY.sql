@@ -8,16 +8,9 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        placekeyLibGlobal = placekeyLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(placekeyLibGlobal) === "undefined") {
-        setup();
-    }
-
-    return placekeyLibGlobal.h3ToPlacekey(H3INDEX);
+    return placekeyLib.h3ToPlacekey(H3INDEX);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@placekey.H3_ASPLACEKEY

@@ -12,18 +12,11 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        transformationsLibGlobal = transformationsLib;
-    }
-
-    if (typeof(transformationsLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.npoints = Number(NPOINTS);
-    const greatCircle = transformationsLibGlobal.greatCircle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND), options);
+    const greatCircle = transformationsLib.greatCircle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND), options);
     return JSON.stringify(greatCircle.geometry);
 $$;
 

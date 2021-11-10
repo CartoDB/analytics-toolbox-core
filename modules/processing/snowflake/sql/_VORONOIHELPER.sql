@@ -16,20 +16,13 @@ AS $$
         throw new Error('Incorrect bounding box passed to UDF. It should contain the BBOX extends, i.e., [xmin, ymin, xmax, ymax]');
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        processingLibGlobal = processingLib;
-    }
-
-    if (typeof(processingLibGlobal) === "undefined") {
-        setup();
-    }
+    @@SF_LIBRARY_CONTENT@@
 
     const options = {};
     options.bbox = BBOX;
     
-    const featuresCollection = processingLibGlobal.featureCollection(GEOJSON.map(x => processingLibGlobal.feature(JSON.parse(x))));
-    const voronoiPolygons = processingLibGlobal.voronoi(featuresCollection, options);
+    const featuresCollection = processingLib.featureCollection(GEOJSON.map(x => processingLib.feature(JSON.parse(x))));
+    const voronoiPolygons = processingLib.voronoi(featuresCollection, options);
     
     const returnArray = [];
 
@@ -41,7 +34,7 @@ AS $$
     
     if (TYPEOFVORONOI === 'lines') {
         voronoiPolygons.features.forEach( function(item) {
-            let lineFeature = processingLibGlobal.polygonToLine(item.geometry);
+            let lineFeature = processingLib.polygonToLine(item.geometry);
             returnArray.push(JSON.stringify(lineFeature.geometry));
         });
     }

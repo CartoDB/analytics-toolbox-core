@@ -12,17 +12,10 @@ AS $$
         return null;
     }
 
-    function setup() {
-        @@SF_LIBRARY_CONTENT@@
-        accessorsLibGlobal = accessorsLib;
-    }
+    @@SF_LIBRARY_CONTENT@@
 
-    if (typeof(accessorsLibGlobal) === "undefined") {
-        setup();
-    }
-
-    const featuresCollection = accessorsLibGlobal.featureCollection(GEOJSONS.map(x => accessorsLibGlobal.feature(JSON.parse(x))));
-    const enveloped = accessorsLibGlobal.envelope(featuresCollection);
+    const featuresCollection = accessorsLib.featureCollection(GEOJSONS.map(x => accessorsLib.feature(JSON.parse(x))));
+    const enveloped = accessorsLib.envelope(featuresCollection);
     return JSON.stringify(enveloped.geometry);
 $$;
 
