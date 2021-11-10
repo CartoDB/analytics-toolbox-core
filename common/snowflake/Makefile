@@ -60,7 +60,6 @@ lint-fix: $(NODE_MODULES_DEV)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
-ifdef UNIT_TEST
 	if [ -d ./lib ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -78,30 +77,6 @@ ifdef UNIT_TEST
 			$(POST_BUILD) \
 		done \
     fi
-else
-	if [ -d ./lib ]; then \
-		NAME=_$(MODULE)Lib \
-		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-		LIB_DIR=./lib/index.js \
-		DIST_DIR=./dist/index.js \
-		rollup --banner "if (typeof($(MODULE)Lib) === 'undefined') {" \
-		--footer "$(MODULE)Lib = _$(MODULE)Lib;}" \
-		--config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
-	elif [ -d ./libs ]; then \
-		for f in $(notdir $(shell find ./libs/* -type d 2>/dev/null)); do \
-			$(PRE_BUILD) \
-			NAME=_$(MODULE)Lib \
-			PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-			LIB_DIR=./libs/$${f}/index.js \
-			DIST_DIR=./dist/$${f}.js \
-			rollup --banner "if (typeof($(MODULE)Lib) === 'undefined') {" \
-			--footer "$(MODULE)Lib = _$(MODULE)Lib;}" \
-			--config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
-			$(POST_BUILD) \
-		done \
-    fi
-endif
-
 
 test-unit:
 	UNIT_TEST=1 \
