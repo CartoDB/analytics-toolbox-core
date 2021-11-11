@@ -15,7 +15,7 @@ def test_token_fromid_success():
             SELECT -7843229857298251776 UNION ALL
             SELECT -7843177080740118528
         )
-        SELECT @@RS_PREFIX@@s2.S2_TOKENFROMID(id) AS token
+        SELECT @@RS_PREFIX@@carto.S2_TOKENFROMID(id) AS token
         FROM context;"""
     )
 
@@ -29,5 +29,5 @@ def test_token_fromid_success():
 
 def test_token_fromid_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_TOKENFROMID(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOKENFROMID(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

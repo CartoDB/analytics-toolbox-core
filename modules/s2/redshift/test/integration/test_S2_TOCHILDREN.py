@@ -10,7 +10,7 @@ def test_tochildren_success():
             *
             FROM generate_series(8, 12) resolution
         )
-        SELECT @@RS_PREFIX@@s2.S2_TOCHILDREN(id, resolution) AS children_ids
+        SELECT @@RS_PREFIX@@carto.S2_TOCHILDREN(id, resolution) AS children_ids
         FROM context;"""
     )
 
@@ -26,20 +26,20 @@ def test_tochildren_success():
 
 def test_tochildren_invalid_resolution_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_TOCHILDREN(4611686027017322525, 31)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOCHILDREN(4611686027017322525, 31)')
     assert 'InvalidResolution' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_TOCHILDREN(-7843177080740118528, 5)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOCHILDREN(-7843177080740118528, 5)')
     assert 'InvalidResolution' in str(excinfo.value)
 
 
 def test_tochildren_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_TOCHILDREN(NULL, 1)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOCHILDREN(NULL, 1)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_TOCHILDREN(-7843177080740118528, NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOCHILDREN(-7843177080740118528, NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_TOCHILDREN(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOCHILDREN(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

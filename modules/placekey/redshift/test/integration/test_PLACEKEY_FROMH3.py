@@ -5,23 +5,23 @@ def test_h3_asplacekey():
 
     result = run_query(
         """
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('847b59dffffffff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('847b59dffffffff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('8a2a9c580577fff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('8a2a9c580577fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('8a3c9ea2bd4ffff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('8a3c9ea2bd4ffff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('8a5b4c1047b7fff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('8a5b4c1047b7fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('8a8e8116a6d7fff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('8a8e8116a6d7fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('8a3e0ba6659ffff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('8a3e0ba6659ffff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('8a961652a407fff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('8a961652a407fff')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3(NULL)
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3(NULL)
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_FROMH3('ff283473fffffff')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_FROMH3('ff283473fffffff')
     """
     )
 

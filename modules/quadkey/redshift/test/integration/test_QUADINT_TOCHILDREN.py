@@ -38,10 +38,10 @@ def test_tochildren_success():
         quadintContext AS
         (
             SELECT *,
-            @@RS_PREFIX@@quadkey.QUADINT_FROMZXY(zoom, tileX, tileY) AS quadint
+            @@RS_PREFIX@@carto.QUADINT_FROMZXY(zoom, tileX, tileY) AS quadint
             FROM tileContext
         )
-        SELECT @@RS_PREFIX@@quadkey.QUADINT_TOCHILDREN(quadint, zoom + 1) AS children
+        SELECT @@RS_PREFIX@@carto.QUADINT_TOCHILDREN(quadint, zoom + 1) AS children
         FROM quadintContext;"""
     )
 
@@ -55,14 +55,14 @@ def test_tochildren_success():
 
 def test_tochildren_wrong_zoom_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_TOCHILDREN(4611686027017322525, 30)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOCHILDREN(4611686027017322525, 30)')
     assert 'Wrong quadint zoom' in str(excinfo.value)
 
 
 def test_tochildren_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_TOCHILDREN(NULL, 1)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOCHILDREN(NULL, 1)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_TOCHILDREN(322, NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOCHILDREN(322, NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.__QUADINT_KRING
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADINT_KRING
 (origin BIGINT, size INT)
 RETURNS VARCHAR(MAX)
 STABLE
@@ -18,11 +18,11 @@ AS $$
     return str(kring(origin, size))
 $$ LANGUAGE plpythonu;
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.QUADINT_KRING
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADINT_KRING
 (BIGINT, INT)
 -- (origin, size)
 RETURNS SUPER
 STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@quadkey.__QUADINT_KRING($1, $2))
+    SELECT json_parse(@@RS_PREFIX@@carto.__QUADINT_KRING($1, $2))
 $$ LANGUAGE sql;

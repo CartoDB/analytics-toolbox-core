@@ -5,31 +5,31 @@ def test_isvalid():
 
     result = run_query(
         """
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID(NULL)
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID(NULL)
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('@abc')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('@abc')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('abc-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('abc-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('abcxyz234')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('abcxyz234')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('abc@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('abc@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('ebc-345@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('ebc-345@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('bcd-345@')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('bcd-345@')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('22-zzz@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('22-zzz@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('bcd-2u4-xez')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('bcd-2u4-xez')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('zzz@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('zzz@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ISVALID('222-zzz@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ISVALID('222-zzz@abc-234-xyz')
     """
     )
 

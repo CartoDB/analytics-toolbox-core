@@ -15,7 +15,7 @@ def test_resolution_success():
             SELECT -7843229857298251776 UNION ALL
             SELECT -7843177080740118528
         )
-        SELECT @@RS_PREFIX@@s2.S2_RESOLUTION(res) AS resolution
+        SELECT @@RS_PREFIX@@carto.S2_RESOLUTION(res) AS resolution
         FROM context;"""
     )
 
@@ -25,5 +25,5 @@ def test_resolution_success():
 
 def test_resolution_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_RESOLUTION(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_RESOLUTION(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

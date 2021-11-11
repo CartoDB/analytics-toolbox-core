@@ -15,7 +15,7 @@ def test_id_fromuint64repr_success():
             SELECT '10603514216411299840' UNION ALL
             SELECT '10603566992969433088'
         )
-        SELECT @@RS_PREFIX@@s2.S2_IDFROMUINT64REPR(uint64_id) AS id
+        SELECT @@RS_PREFIX@@carto.S2_IDFROMUINT64REPR(uint64_id) AS id
         FROM context;"""
     )
 
@@ -31,5 +31,5 @@ def test_id_fromuint64repr_success():
 
 def test_id_fromuint64repr_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_IDFROMUINT64REPR(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMUINT64REPR(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

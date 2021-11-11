@@ -36,7 +36,7 @@ def test_longlat_asquadint_success():
             SELECT 28, 45, -25 UNION ALL
             SELECT 29, 0, 0
         )
-        SELECT @@RS_PREFIX@@quadkey.QUADINT_FROMLONGLAT(long, lat, zoom) as quadints
+        SELECT @@RS_PREFIX@@carto.QUADINT_FROMLONGLAT(long, lat, zoom) as quadints
             FROM zoomContext;"""
     )
 
@@ -52,20 +52,20 @@ def test_longlat_asquadint_success():
 
 def test_longlat_asquadint_wrong_zoom_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_FROMLONGLAT(100, 100, 30)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_FROMLONGLAT(100, 100, 30)')
     assert 'Wrong zoom' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_FROMLONGLAT(100, 100, -1)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_FROMLONGLAT(100, 100, -1)')
     assert 'Wrong zoom' in str(excinfo.value)
 
 
 def test_longlat_asquadint_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_FROMLONGLAT(NULL, 10, 10)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_FROMLONGLAT(NULL, 10, 10)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_FROMLONGLAT(10, NULL, 10)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_FROMLONGLAT(10, NULL, 10)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_FROMLONGLAT(10, 10, NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_FROMLONGLAT(10, 10, NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

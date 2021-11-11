@@ -11,9 +11,9 @@ def test_polyfill_success():
     feature_wkt = lines[0].rstrip()
 
     result = run_query(
-        f"""SELECT @@RS_PREFIX@@quadkey.QUADINT_POLYFILL(
+        f"""SELECT @@RS_PREFIX@@carto.QUADINT_POLYFILL(
             ST_GeomFromText('{feature_wkt}'), 10) UNION ALL
-        SELECT @@RS_PREFIX@@quadkey.QUADINT_POLYFILL(
+        SELECT @@RS_PREFIX@@carto.QUADINT_POLYFILL(
             ST_GeomFromText('{feature_wkt}'), 14)"""
     )
 
@@ -38,7 +38,7 @@ def test_polyfill_collection_success():
     feature_wkt = lines[1].rstrip()
 
     result = run_query(
-        f"""SELECT @@RS_PREFIX@@quadkey.QUADINT_POLYFILL(
+        f"""SELECT @@RS_PREFIX@@carto.QUADINT_POLYFILL(
             ST_GeomFromText('{feature_wkt}'), 22)"""
     )
 
@@ -54,13 +54,13 @@ def test_polyfill_collection_success():
 
 def test_polyfill_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_POLYFILL(NULL, 10)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_POLYFILL(NULL, 10)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
 
     feature_wkt = 'POINT(10 2)'
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT @@RS_PREFIX@@quadkey.QUADINT_POLYFILL(
+            f"""SELECT @@RS_PREFIX@@carto.QUADINT_POLYFILL(
                 ST_GeomFromText('{feature_wkt}'), NULL)"""
         )
     assert 'NULL argument passed to UDF' in str(excinfo.value)

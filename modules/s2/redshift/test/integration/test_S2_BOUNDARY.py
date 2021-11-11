@@ -4,9 +4,9 @@ import pytest
 
 def test_boundary_success():
     results = run_query(
-        """SELECT @@RS_PREFIX@@s2.S2_BOUNDARY(955484400630366208) as geog1,
-        @@RS_PREFIX@@s2.S2_BOUNDARY(936748722493063168) as geog2,
-        @@RS_PREFIX@@s2.S2_BOUNDARY(5731435257080539263) as geog3"""
+        """SELECT @@RS_PREFIX@@carto.S2_BOUNDARY(955484400630366208) as geog1,
+        @@RS_PREFIX@@carto.S2_BOUNDARY(936748722493063168) as geog2,
+        @@RS_PREFIX@@carto.S2_BOUNDARY(5731435257080539263) as geog3"""
     )
 
     fixture_file = open('./test/integration/boundary_fixtures/out/wkts.txt', 'r')
@@ -19,5 +19,5 @@ def test_boundary_success():
 
 def test_boundary_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_BOUNDARY(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_BOUNDARY(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

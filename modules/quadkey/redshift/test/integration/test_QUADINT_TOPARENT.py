@@ -39,10 +39,10 @@ def test_toparent_success():
         FROM
         (
             SELECT
-            @@RS_PREFIX@@quadkey.QUADINT_FROMGEOGPOINT(
+            @@RS_PREFIX@@carto.QUADINT_FROMGEOGPOINT(
                 ST_POINT(long, lat), zoom - 1) AS expectedParent,
-            @@RS_PREFIX@@quadkey.QUADINT_TOPARENT(
-                @@RS_PREFIX@@quadkey.QUADINT_FROMGEOGPOINT(
+            @@RS_PREFIX@@carto.QUADINT_TOPARENT(
+                @@RS_PREFIX@@carto.QUADINT_FROMGEOGPOINT(
                     ST_POINT(long, lat), zoom),zoom - 1) AS parent
             FROM zoomContext
         )
@@ -54,14 +54,14 @@ def test_toparent_success():
 
 def test_toparent_wrong_zoom_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_TOPARENT(0, 0)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOPARENT(0, 0)')
     assert 'Wrong quadint zoom' in str(excinfo.value)
 
 
 def test_toparent_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_TOPARENT(NULL, 10)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOPARENT(NULL, 10)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_TOPARENT(322, NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOPARENT(322, NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

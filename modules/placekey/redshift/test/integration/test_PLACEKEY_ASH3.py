@@ -5,21 +5,21 @@ def test_placekey_ash3():
 
     result = run_query(
         """
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@c6z-c2g-dgk')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@c6z-c2g-dgk')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@63m-vc4-z75')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@63m-vc4-z75')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@7qg-xf9-j5f')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@7qg-xf9-j5f')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@bhm-9m8-gtv')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@bhm-9m8-gtv')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@h5z-gcq-kvf')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@h5z-gcq-kvf')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@7v4-m2p-3t9')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@7v4-m2p-3t9')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@hvb-5d7-92k')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@hvb-5d7-92k')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@ab2-k43-xqz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@ab2-k43-xqz')
     """
     )
 
@@ -34,21 +34,21 @@ def test_placekey_ash3():
 
     result = run_query(
         """
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3(NULL)
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3(NULL)
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('@abc')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('@abc')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('abc-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('abc-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('abcxyz234')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('abcxyz234')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('abc-345@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('abc-345@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('ebc-345@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('ebc-345@abc-234-xyz')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('bcd-345@')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('bcd-345@')
         UNION ALL
-        SELECT @@RS_PREFIX@@placekey.PLACEKEY_ASH3('22-zzz@abc-234-xyz')
+        SELECT @@RS_PREFIX@@carto.PLACEKEY_ASH3('22-zzz@abc-234-xyz')
     """
     )
 

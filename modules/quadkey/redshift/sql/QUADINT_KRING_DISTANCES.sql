@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.__QUADINT_KRING_DISTANCES
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADINT_KRING_DISTANCES
 (origin BIGINT, size INT)
 RETURNS VARCHAR(MAX)
 STABLE
@@ -19,11 +19,11 @@ AS $$
     return json.dumps(kring_distances(origin, size))
 $$ LANGUAGE plpythonu;
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES
 (BIGINT, INT)
 -- (origin, size)
 RETURNS SUPER
 STABLE
 AS $$
-    SELECT json_parse(@@RS_PREFIX@@quadkey.__QUADINT_KRING_DISTANCES($1, $2))
+    SELECT json_parse(@@RS_PREFIX@@carto.__QUADINT_KRING_DISTANCES($1, $2))
 $$ LANGUAGE sql;

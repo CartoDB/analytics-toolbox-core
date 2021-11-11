@@ -4,9 +4,9 @@ from test_utils import run_query, redshift_connector
 
 def test_kring_distances_success():
     result = run_query(
-        """SELECT @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES(162, 1),
-            @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES(12070922, 1),
-            @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES(12070922, 2)"""
+        """SELECT @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES(162, 1),
+            @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES(12070922, 1),
+            @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES(12070922, 2)"""
     )
 
     assert result[0][0] == (
@@ -42,13 +42,13 @@ def test_kring_distances_success():
 
 def test_kring_distances_invalid_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES(NULL, NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES(NULL, NULL)')
     assert 'Invalid input origin' in str(excinfo.value)
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES(-1, 1)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES(-1, 1)')
     assert 'Invalid input origin' in str(excinfo.value)
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_KRING_DISTANCES(162, -1)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_KRING_DISTANCES(162, -1)')
     assert 'Invalid input size' in str(excinfo.value)

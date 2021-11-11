@@ -37,7 +37,7 @@ def test_longlat_asid_success():
             SELECT 29, ST_POINT(0, 0) UNION ALL
             SELECT 30, ST_POINT(-3, 40)
         )
-        SELECT @@RS_PREFIX@@s2.S2_IDFROMGEOGPOINT(point, res) as ids
+        SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(point, res) as ids
             FROM resContext;"""
     )
 
@@ -51,20 +51,20 @@ def test_longlat_asid_success():
 
 def test_longlat_asid_invalid_resolution_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), 32)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), 32)')
     assert 'InvalidResolution' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), -1)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), -1)')
     assert 'InvalidResolution' in str(excinfo.value)
 
 
 # def test_longlat_asquadint_null_failure():
 #     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.S2_IDFROMLONGLAT(NULL, 10, 10)')
+#         run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMLONGLAT(NULL, 10, 10)')
 #     assert 'NULL argument passed to UDF' in str(excinfo.value)
 #     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.S2_IDFROMLONGLAT(10, NULL, 10)')
+#         run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMLONGLAT(10, NULL, 10)')
 #     assert 'NULL argument passed to UDF' in str(excinfo.value)
 #     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-#         run_query('SELECT @@RS_PREFIX@@quadkey.S2_IDFROMLONGLAT(10, 10, NULL)')
+#         run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMLONGLAT(10, 10, NULL)')
 #     assert 'NULL argument passed to UDF' in str(excinfo.value)

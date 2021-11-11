@@ -4,10 +4,10 @@ import pytest
 
 def test_bbox_success():
     result = run_query(
-        """SELECT @@RS_PREFIX@@quadkey.QUADINT_BBOX(162) as bbox1,
-        @@RS_PREFIX@@quadkey.QUADINT_BBOX(12070922) as bbox2,
-        @@RS_PREFIX@@quadkey.QUADINT_BBOX(791040491538) as bbox3,
-        @@RS_PREFIX@@quadkey.QUADINT_BBOX(12960460429066265) as bbox4"""
+        """SELECT @@RS_PREFIX@@carto.QUADINT_BBOX(162) as bbox1,
+        @@RS_PREFIX@@carto.QUADINT_BBOX(12070922) as bbox2,
+        @@RS_PREFIX@@carto.QUADINT_BBOX(791040491538) as bbox3,
+        @@RS_PREFIX@@carto.QUADINT_BBOX(12960460429066265) as bbox4"""
     )
 
     assert result[0][0] == '[-90.0,0.0,0.0,66.51326044311186]'
@@ -23,5 +23,5 @@ def test_bbox_success():
 
 def test_bbox_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@quadkey.QUADINT_BBOX(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_BBOX(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)

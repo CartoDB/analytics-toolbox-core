@@ -15,7 +15,7 @@ def test_hilbertquadkey_from_id_success():
             SELECT -7843229857298251776 UNION ALL
             SELECT -7843177080740118528
         )
-        SELECT @@RS_PREFIX@@s2.S2_HILBERTQUADKEYFROMID(id) AS hilbert_quadkey
+        SELECT @@RS_PREFIX@@carto.S2_HILBERTQUADKEYFROMID(id) AS hilbert_quadkey
         FROM context;"""
     )
 
@@ -32,5 +32,5 @@ def test_hilbertquadkey_from_id_success():
 
 def test_hilbertquadkey_fromid_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@s2.S2_HILBERTQUADKEYFROMID(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_HILBERTQUADKEYFROMID(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
