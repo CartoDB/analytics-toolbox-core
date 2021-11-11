@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Deployment schema "carto" instead of "s2".
 - Rename ID_FROMHILBERTQUADKEY function to S2_IDFROMHILBERTQUADKEY.
-- Rename HILBERTQUADKEY_FROMID function to S2_HILBERTQUADKEYFROMCELLID.
+- Rename HILBERTQUADKEY_FROMID function to S2_HILBERTQUADKEYFROMID.
 - Rename LONGLAT_ASID function to S2_IDFROMLONGLAT.
 - Rename ST_ASID function to S2_IDFROMGEOGPOINT.
 - Rename ST_BOUNDARY function to S2_BOUNDARY.

@@ -1,8 +1,8 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
-test('S2_HILBERTQUADKEYFROMCELLID.test should work', async () => {
+test('S2_HILBERTQUADKEYFROMID.test should work', async () => {
     const query = `
-        SELECT S2_HILBERTQUADKEYFROMCELLID(VALUE) as key
+        SELECT S2_HILBERTQUADKEYFROMID(VALUE) as key
         FROM LATERAL FLATTEN(input => ARRAY_CONSTRUCT(
             -8286623314361712640, 5008548143403368448,
             7416309021449125888, -6902629179221606400,
@@ -16,7 +16,7 @@ test('S2_HILBERTQUADKEYFROMCELLID.test should work', async () => {
     ]);
 });
 
-test('S2_HILBERTQUADKEYFROMCELLID should fail with NULL argument', async () => {
-    const query = 'SELECT S2_HILBERTQUADKEYFROMCELLID(NULL)';
+test('S2_HILBERTQUADKEYFROMID should fail with NULL argument', async () => {
+    const query = 'SELECT S2_HILBERTQUADKEYFROMID(NULL)';
     await expect(runQuery(query)).rejects.toThrow('NULL argument passed to UDF');
 });
