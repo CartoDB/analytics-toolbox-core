@@ -51,10 +51,14 @@ def test_longlat_asid_success():
 
 def test_longlat_asid_invalid_resolution_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), 32)')
+        run_query(
+            'SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), 32)'
+        )
     assert 'InvalidResolution' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), -1)')
+        run_query(
+            'SELECT @@RS_PREFIX@@carto.S2_IDFROMGEOGPOINT(ST_POINT(100, 100), -1)'
+        )
     assert 'InvalidResolution' in str(excinfo.value)
 
 

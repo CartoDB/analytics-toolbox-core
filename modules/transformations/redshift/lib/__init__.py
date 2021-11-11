@@ -16,5 +16,5 @@ __all__ = [
     'great_circle',
     'destination',
     'remove_end_polygon_point',
-    'PRECISION'
+    'PRECISION',
 ]

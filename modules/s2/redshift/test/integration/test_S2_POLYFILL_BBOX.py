@@ -71,9 +71,7 @@ def test_st_asid_polyfill_bbox_null_failure():
         )
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query(
-            'SELECT @@RS_PREFIX@@carto.S2_POLYFILL_BBOX(-4, -3, 40, NULL, -1, 2)'
-        )
+        run_query('SELECT @@RS_PREFIX@@carto.S2_POLYFILL_BBOX(-4, -3, 40, NULL, -1, 2)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(

@@ -55,7 +55,9 @@ def test_tochildren_success():
 
 def test_tochildren_wrong_zoom_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOCHILDREN(4611686027017322525, 30)')
+        run_query(
+            'SELECT @@RS_PREFIX@@carto.QUADINT_TOCHILDREN(4611686027017322525, 30)'
+        )
     assert 'Wrong quadint zoom' in str(excinfo.value)
 
 

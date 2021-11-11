@@ -25,9 +25,7 @@ def centroid_polygon(coords):
 
     area /= 2
 
-    return geojson.Point(
-        (sum_x / (6 * area), sum_y / (6 * area)), precision=PRECISION
-    )
+    return geojson.Point((sum_x / (6 * area), sum_y / (6 * area)), precision=PRECISION)
 
 
 def centroid_linestring(coords):
