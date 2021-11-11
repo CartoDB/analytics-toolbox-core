@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@constructors.ST_TILEENVELOPE
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_TILEENVELOPE
 (INT, INT, INT)
 -- (zoomLevel, xTile, yTiel)
 RETURNS VARCHAR

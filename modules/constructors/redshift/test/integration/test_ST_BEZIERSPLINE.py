@@ -7,9 +7,9 @@ def test_bezierspline_success():
     fixture_file.close()
 
     results = run_query(
-        f"""SELECT @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+        f"""SELECT @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
             ST_GeomFromText('{lines[0].rstrip()}'), 100, 0.85),
-        @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+        @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
             ST_GeomFromText('{lines[1].rstrip()}'), 60, 0.85)"""
     )
 
@@ -29,11 +29,11 @@ def test_bezierspline_none_success():
     fixture_file.close()
 
     result = run_query(
-        f"""SELECT @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+        f"""SELECT @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
                 NULL, 10000, 0.9),
-            @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+            @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
                 ST_GeomFromText('{lines[2].rstrip()}'), NULL, 0.9),
-            @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+            @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
                 ST_GeomFromText('{lines[2].rstrip()}'), 10000, NULL)"""
     )
 
@@ -48,11 +48,11 @@ def test_bezierspline_default_args_success():
     fixture_file.close()
 
     result = run_query(
-        f"""SELECT @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+        f"""SELECT @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
                 ST_GeomFromText('{lines[2].rstrip()}'), 10000, 0.85),
-            @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+            @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
                 ST_GeomFromText('{lines[2].rstrip()}')),
-            @@RS_PREFIX@@constructors.ST_BEZIERSPLINE(
+            @@RS_PREFIX@@carto.ST_BEZIERSPLINE(
                 ST_GeomFromText('{lines[2].rstrip()}'), 10000)"""
     )
 

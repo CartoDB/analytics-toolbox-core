@@ -3,11 +3,11 @@ from test_utils import run_query
 
 def test_makeellipse_success():
     results = run_query(
-        """SELECT @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+        """SELECT @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
             ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', 20),
-        @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+        @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
             ST_POINT(13.9385,0.6643), 10, 2, 15, 'kilometers', 10),
-        @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+        @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
             ST_POINT(53.9385,-10.6643), 8, 7, 100, 'miles', 15)"""
     )
 
@@ -23,17 +23,17 @@ def test_makeellipse_success():
 
 def test_makeenvelope_none_success():
     result = run_query(
-        """SELECT @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+        """SELECT @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 NULL, 5, 3, -30, 'miles', 80),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), NULL, 3, -30, 'miles', 80),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, NULL, -30, 'miles', 80),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3, NULL, 'miles', 80),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3, -30, NULL, 80),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', NULL)"""
     )
 
@@ -45,13 +45,13 @@ def test_makeenvelope_none_success():
 
 def test_makeenvelope_default_args_success():
     result = run_query(
-        """SELECT @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+        """SELECT @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers', 64),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3, 0),
-            @@RS_PREFIX@@constructors.ST_MAKEELLIPSE(
+            @@RS_PREFIX@@carto.ST_MAKEELLIPSE(
                 ST_POINT(-73.9385,40.6643), 5, 3, 0, 'kilometers')"""
     )
 
