@@ -5,6 +5,7 @@ AWS = aws
 PYTHON2_VERSION = 2.7
 PYTHON3_VERSION = 3
 
+RS_DEPLOY_SCHEMA = $(RS_SCHEMA_PREFIX)carto
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
@@ -112,10 +113,10 @@ storage-remove:
 	STATEMENT_SQL="DROP LIBRARY $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-create:
-	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
+	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-remove:
-	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
+	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_DEPLOY_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
@@ -142,8 +143,8 @@ endif
 
 serialize-module: build serialize-dependency
 	rm -f dist/module.sql
-	echo "DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE;" >> dist/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA);" >> dist/module.sql
+	echo "DROP SCHEMA IF EXISTS $(RS_DEPLOY_SCHEMA) CASCADE;" >> dist/module.sql
+	echo "CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA);" >> dist/module.sql
 	for f in $(notdir $(wildcard dist/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>/$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
