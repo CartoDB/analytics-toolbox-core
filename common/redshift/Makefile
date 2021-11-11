@@ -25,7 +25,7 @@ REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
 
 AWS_PRINT = tr '\r\n' ' ' | jq -M 'if has("Error") then .["QueryString"],.["Error"] else .["QueryString"] end'
 AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null || exit 1
-AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK)
+AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); if [ -z $$AWS_SKIP_CHECK ]; then echo $$AWS_OUTPUT | $(AWS_CHECK); fi
 AWS_RUN_STATEMENT_SQL = \
     STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
 	AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT)
@@ -118,6 +118,10 @@ schema-remove:
 	STATEMENT_SQL="DROP SCHEMA IF EXISTS $(RS_DEPLOY_SCHEMA) CASCADE"; $(AWS_RUN_STATEMENT_SQL)
 
 schema-deploy:
+	for f in `OUTPUT_FORMAT='argTypes' DELIMITER=' ' MODULE=$(MODULE) node $(SCRIPTS_DIR)/sqlfunctions.js`; do \
+		STATEMENT_SQL="DROP FUNCTION $(RS_DEPLOY_SCHEMA).$$f"; AWS_SKIP_CHECK=1; $(AWS_RUN_STATEMENT_SQL); \
+	done
+
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_STATEMENT_SQL); \
 	done
