@@ -76,7 +76,6 @@ test-integration-full:
 
 deploy: check
 	$(MAKE) storage-upload
-	$(MAKE) schema-remove
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
 	$(MAKE) share-create
