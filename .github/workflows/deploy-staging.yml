@@ -89,6 +89,7 @@ jobs:
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
       RS_CLUSTER_ID: redshift-cluster-1
       RS_DATABASE: rscartost
+      RS_SCHEMA_PREFIX: ${{ github.event.pull_request.number }}_
       RS_USER: ${{ secrets.RS_USER }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
@@ -107,3 +108,11 @@ jobs:
         run: pip install virtualenv
       - name: Deploy to staging
         run: make deploy CLOUD=redshift
+      - name: Comment PR
+        uses: actions/github-script@0.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }  } = context;
+            const issue_number = ${{ github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.RS_DATABASE }}`.`${{ env.RS_SCHEMA_PREFIX }}`carto' });
