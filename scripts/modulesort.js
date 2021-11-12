@@ -18,7 +18,10 @@ sqlFunctions = JSON.parse(sqlFunctions);
 
 let functionPattern;
 switch (cloud) {
-case 'snowflake': functionPattern = (m, content) => sqlFunctions[m] && new RegExp(sqlFunctions[m].join('|')).test(content); break;
+case 'snowflake':
+case 'redshift': 
+    functionPattern = (m, content) => sqlFunctions[m] && new RegExp(sqlFunctions[m].join('|')).test(content);
+    break;
 default: functionPattern = (m, content) => content.includes('@' + m); break;
 }
 
