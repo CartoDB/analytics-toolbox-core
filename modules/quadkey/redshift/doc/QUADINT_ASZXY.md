@@ -1,7 +1,7 @@
 ### QUADINT_ASZXY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_ASZXY(quadint)
+carto.QUADINT_ASZXY(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,7 +17,7 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 **Example**
 
 ```sql
-SELECT quadkey.QUADINT_ASZXY(4388);
+SELECT carto.QUADINT_ASZXY(4388);
 -- z  x  y
 -- 4  9  8
 ```

@@ -1,7 +1,7 @@
 ### QUADINT_BOUNDARY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_BOUNDARY(quadint)
+carto.QUADINT_BOUNDARY(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 **Example**
 
 ```sql
-SELECT quadkey.QUADINT_BOUNDARY(4388);
+SELECT carto.QUADINT_BOUNDARY(4388);
 -- {'type': 'Polygon', 'coordinates': [[[22.5, -21.943045533438177], [22.5, 0.0], ...
 ```

@@ -1,7 +1,7 @@
 ### QUADINT_ASQUADKEY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_ASQUADKEY(quadint)
+carto.QUADINT_ASQUADKEY(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns the quadkey equivalent to the input quadint.
 **Example**
 
 ```sql
-SELECT quadkey.QUADINT_ASQUADKEY(4388);
+SELECT carto.QUADINT_ASQUADKEY(4388);
 -- 3001
 ```

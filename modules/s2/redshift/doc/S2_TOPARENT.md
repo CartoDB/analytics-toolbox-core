@@ -1,7 +1,7 @@
 ### S2_TOPARENT
 
 {{% bannerNote type="code" %}}
-s2.S2_TOPARENT(id, resolution)
+carto.S2_TOPARENT(id, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -24,9 +24,9 @@ Optional arguments:
 **Example**
 
 ```sql
-SELECT s2.S2_TOPARENT(1733885856537640960);
+SELECT carto.S2_TOPARENT(1733885856537640960);
 -- 1747396655419752448
 
-SELECT s2.S2_TOPARENT(1733885856537640960, 1);
+SELECT carto.S2_TOPARENT(1733885856537640960, 1);
 -- 2017612633061982208
 ```

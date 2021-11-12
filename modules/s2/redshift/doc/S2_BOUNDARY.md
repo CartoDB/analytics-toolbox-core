@@ -1,7 +1,7 @@
 ### S2_BOUNDARY
 
 {{% bannerNote type="code" %}}
-s2.S2_BOUNDARY(id)
+carto.S2_BOUNDARY(id)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns the boundary for a given S2 Cell ID as a WKT string. Note that S2 cell v
 **Example**
 
 ```sql
-SELECT s2.S2_BOUNDARY(1733885856537640960);
+SELECT carto.S2_BOUNDARY(1733885856537640960);
 -- POLYGON ((-3.88131218692 39.9812346589, -3.58252176617 45.0, 0.0 45.0, 0.0 39.9812346589, -3.88131218692 39.9812346589))
 ```

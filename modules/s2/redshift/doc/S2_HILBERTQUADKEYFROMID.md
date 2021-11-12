@@ -1,7 +1,7 @@
 ### S2_HILBERTQUADKEYFROMID
 
 {{% bannerNote type="code" %}}
-s2.S2_HILBERTQUADKEYFROMID(id)
+carto.S2_HILBERTQUADKEYFROMID(id)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert cur
 {{%/ customSelector %}}
 
 ```sql
-SELECT s2.S2_HILBERTQUADKEYFROMID(1735346007979327488);
+SELECT carto.S2_HILBERTQUADKEYFROMID(1735346007979327488);
 -- 0/30002221
 ```

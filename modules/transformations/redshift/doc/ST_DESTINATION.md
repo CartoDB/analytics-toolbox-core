@@ -1,7 +1,7 @@
 ### ST_DESTINATION
 
 {{% bannerNote type="code" %}}
-transformations.ST_DESTINATION(geom, distance, bearing, units)
+carto.ST_DESTINATION(geom, distance, bearing, units)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,11 +20,11 @@ Takes a Point and calculates the location of a destination point given a distanc
 **Examples**
 
 ```sql
-SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45);
+SELECT carto.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45);
 -- POINT (-3.61964617436 40.4802614598)
 ```
 
 ```sql
-SELECT transformations.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45, 'miles');
+SELECT carto.ST_DESTINATION(ST_MakePoint(-3.70325,40.4167), 10, 45, 'miles');
 -- POINT (-3.56862505482 40.5189626778)
 ```

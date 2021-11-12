@@ -1,7 +1,7 @@
 ### S2_RESOLUTION
 
 {{% bannerNote type="code" %}}
-s2.S2_RESOLUTION(id)
+carto.S2_RESOLUTION(id)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Returns a integer with the resolution of given cell ID.
 **Example**
 
 ```sql
-SELECT s2.S2_RESOLUTION('1733885856537640960');
+SELECT carto.S2_RESOLUTION('1733885856537640960');
 -- 4
 ```

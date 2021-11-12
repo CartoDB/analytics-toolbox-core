@@ -1,7 +1,7 @@
 ### QUADINT_FROMGEOGPOINT
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROMGEOGPOINT(point, resolution)
+carto.QUADINT_FROMGEOGPOINT(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,6 +18,6 @@ Returns the quadint of a given point at a given level of detail.
 **Example**
 
 ```sql
-SELECT quadkey.QUADINT_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4);
+SELECT carto.QUADINT_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4);
 -- 4388
 ```

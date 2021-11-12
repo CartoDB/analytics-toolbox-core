@@ -1,7 +1,7 @@
 ### ST_TILEENVELOPE
 
 {{% bannerNote type="code" %}}
-constructors.ST_TILEENVELOPE(zoomLevel, xTile, yTile)
+carto.ST_TILEENVELOPE(zoomLevel, xTile, yTile)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,6 +20,6 @@ Returns the boundary polygon of a tile given its zoom level and its X and Y indi
 {{%/ customSelector %}}
 
 ```sql
-SELECT constructors.ST_TILEENVELOPE(10, 384, 368);
+SELECT carto.ST_TILEENVELOPE(10, 384, 368);
 -- {'type': 'Polygon', 'coordinates': [[[-45.0, 44.84029065139799], [-45.0, 45.089035564831015], ...
 ```
