@@ -1,8 +1,8 @@
 # Makefile for Snowflake modules
 
-SED ?= sed
-GSUTIL ?= gsutil
-SNOWSQL ?= snowsql
+SED = sed
+GSUTIL = gsutil
+SNOWSQL = snowsql
 
 SF_SCHEMA ?= $(SF_SCHEMA_PREFIX)carto
 SF_SHARES_ROLE = ACCOUNTADMIN
@@ -11,7 +11,10 @@ SF_SHARES = $(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-SF_LIBRARY = $(ROOT_DIR)/dist/index.js
+LIB_DIR = $(ROOT_DIR)/lib
+LIBS_DIR = $(ROOT_DIR)/libs
+DIST_DIR = $(ROOT_DIR)/dist
+SF_LIBRARY = $(DIST_DIR)/index.js
 
 COMMON_DIR = $(ROOT_DIR)/../../../common/snowflake
 SCRIPTS_DIR = $(ROOT_DIR)/../../../scripts
@@ -25,9 +28,11 @@ NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
 UPDATE_CHECKSUMS = #--update-checksums
 
-REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
+REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard ${DIST_DIR}/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ${DIST_DIR}/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
-REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
+REPLACEMENTS = -e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' \
+               -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g' -e 's!@@SF_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' \
+			   -e 's!@@SF_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g'
 REPLACEMENTS += $(REPLACEMENTS_LIBS)
 
 REPLACEMENTS_PKG = -e 's!@@SF_PREFIX@@!!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
@@ -58,19 +63,19 @@ lint-fix: $(NODE_MODULES_DEV)
 	eslint --config ../../../.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
-	if [ -d ./lib ]; then \
+	if [ -d ${LIB_DIR} ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-		LIB_DIR=./lib/index.js \
-		DIST_DIR=./dist/index.js \
+		LIB_DIR=${LIB_DIR}/index.js \
+		DIST_DIR=${DIST_DIR}/index.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
-	elif [ -d ./libs ]; then \
-		for f in $(notdir $(shell find ./libs/* -type d 2>/dev/null)); do \
+	elif [ -d ${LIBS_DIR} ]; then \
+		for f in $(notdir $(shell find ${LIBS_DIR}/* -type d 2>/dev/null)); do \
 			$(PRE_BUILD) \
 			NAME=$(MODULE)Lib \
 			PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-			LIB_DIR=./libs/$${f}/index.js \
-			DIST_DIR=./dist/$${f}.js \
+			LIB_DIR=${LIBS_DIR}/$${f}/index.js \
+			DIST_DIR=${DIST_DIR}/$${f}.js \
 			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 			$(POST_BUILD) \
 		done \
@@ -98,7 +103,7 @@ deploy: check
 	$(MAKE) share-create
 
 clean:
-	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEV)
+	rm -rf ${DIST_DIR} $(NODE_MODULES) $(NODE_MODULES_DEV)
 
 clean-deploy: check
 	$(MAKE) share-remove
@@ -114,7 +119,7 @@ schema-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION/sql/VERSION.sql | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1
 
 share-create:
 ifeq ($(SF_SHARE_ENABLED), 1)
@@ -140,17 +145,18 @@ endif
 
 serialize-module:
 	$(MAKE) build
-	rm -f dist/$(INSTALLATION_FILE)
-	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> dist/$(INSTALLATION_FILE)
+	rm -f ${DIST_DIR}/module.sql
+	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	$(SED) $(REPLACEMENTS_PKG) $$n >> dist/$(INSTALLATION_FILE); \
-		echo "" >> dist/$(INSTALLATION_FILE); \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
+		echo "" >> ${DIST_DIR}/module.sql; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
 
 serialize-functions:
-	mkdir -p dist
-	rm -f dist/funct_names.csv
-	MODULE=$(MODULE) QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv
+	mkdir -p ${DIST_DIR}
+	rm -f ${DIST_DIR}/funct_names.csv
+	MODULE=$(MODULE) QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> ${DIST_DIR}/funct_names.csv
 
 check:
 ifndef SF_DATABASE

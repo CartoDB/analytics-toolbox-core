@@ -12,6 +12,7 @@ ROOT_DIR=$SCRIPT_DIR/../..
 DIST_DIR=$ROOT_DIR/dist
 
 rm -rf $DIST_DIR
+mkdir -p $DIST_DIR
 
 # Serialize core modules functions
 $SCRIPT_DIR/serialize_functions.sh $ROOT_DIR $DIST_DIR/core
