@@ -1,0 +1,47 @@
+name: Installation package
+
+on:
+  workflow_dispatch:
+    inputs:
+      cloud:
+        description: 'Cloud warehouse (snowflake, redshift, postgres)'
+        required: true
+        default: ''
+
+jobs:
+
+  create-sf:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: ${{ github.event.inputs.cloud == 'snowflake'}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Create installation package
+        run: ./common/snowflake/create_installation_package.sh
+      - name: Upload the artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: carto-spatial-extension-snowflake
+          path: dist/modules.sql
+
+  create-rs:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: ${{ github.event.inputs.cloud == 'redshift'}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Create installation package
+        run: ./common/redshift/create_installation_package.sh
+      - name: Upload the artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: carto-spatial-extension-redshift
+          path: dist/*
