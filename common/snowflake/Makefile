@@ -2,7 +2,7 @@
 
 SED = sed
 GSUTIL = gsutil
-SNOWSQL = snowsql
+SNOWSQL ?= snowsql
 
 SF_SCHEMA ?= $(SF_SCHEMA_PREFIX)carto
 SF_SHARES_ROLE = ACCOUNTADMIN
