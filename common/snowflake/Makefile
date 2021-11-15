@@ -140,11 +140,11 @@ endif
 
 serialize-module:
 	$(MAKE) build
-	rm -f dist/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> dist/module.sql
+	rm -f dist/$(INSTALLATION_FILE)
+	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> dist/$(INSTALLATION_FILE)
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	$(SED) $(REPLACEMENTS_PKG) $$n >> dist/module.sql; \
-		echo "" >> dist/module.sql; \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> dist/$(INSTALLATION_FILE); \
+		echo "" >> dist/$(INSTALLATION_FILE); \
 	done
 
 serialize-functions:
