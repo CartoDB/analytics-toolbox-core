@@ -46,7 +46,7 @@ REPLACEMENTS_PKG += $(REPLACEMENTS_LIBS)
 .PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-functions
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-functions"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 $(NODE_MODULES):
 	yarn -s $(UPDATE_CHECKSUMS)
