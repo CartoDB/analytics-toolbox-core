@@ -19,7 +19,7 @@ LIBS_DIR = $(ROOT_DIR)/libs
 DIST_DIR = $(ROOT_DIR)/dist
 SF_LIBRARY = $(DIST_DIR)/index.js
 
-COMMON_DIR = $(ROOT_DIR)/../../../common/snowflake
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/snowflake
 SCRIPTS_DIR = $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
