@@ -19,6 +19,7 @@ LIBS_DIR = $(ROOT_DIR)/libs
 DIST_DIR = $(ROOT_DIR)/dist
 SF_LIBRARY = $(DIST_DIR)/index.js
 
+LINT_DIR ?= $(ROOT_DIR)/../../..
 COMMON_DIR ?= $(ROOT_DIR)/../../../common/snowflake
 SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
@@ -59,11 +60,11 @@ $(NODE_MODULES_SHARED):
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	eslint --config ../../../.eslintrc.js .
+	eslint --config $(LINT_DIR)/.eslintrc.js .
 
 lint-fix: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	eslint --config ../../../.eslintrc.js . --fix
+	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
 
 build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 	if [ -d ${LIB_DIR} ]; then \
