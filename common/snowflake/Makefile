@@ -50,12 +50,20 @@ help:
 	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 $(NODE_MODULES):
+	echo "NODE_MODULES"
+	echo $(NODE_MODULES)
 	yarn -s $(UPDATE_CHECKSUMS)
 
 $(NODE_MODULES_DEV):
+	echo "NODE_MODULES_DEV"
+	echo $(NODE_MODULES_DEV)
+	echo $(COMMON_DIR)
 	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
+	echo "NODE_MODULES_SHARED"
+	echo $(NODE_MODULES_SHARED)
+	echo $(SHARED_DIR)
 	yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR)
 
 lint: $(NODE_MODULES_DEV)
