@@ -56,7 +56,9 @@ $(NODE_MODULES_DEV):
 	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
-	yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR)
+	if [ -d ${SHARED_DIR} ]; then \
+		yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR); \
+	fi
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -66,7 +68,7 @@ lint-fix: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
 
-build: $(NODE_MODULES) $(NODE_MODULES_DEV)
+build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 	if [ -d ${LIB_DIR} ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -107,7 +109,7 @@ deploy: check
 	$(MAKE) share-create
 
 clean:
-	rm -rf ${DIST_DIR} $(NODE_MODULES) $(NODE_MODULES_DEV)
+	rm -rf ${DIST_DIR} $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 
 clean-deploy: check
 	$(MAKE) share-remove
