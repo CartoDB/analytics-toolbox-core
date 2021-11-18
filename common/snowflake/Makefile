@@ -66,7 +66,7 @@ lint-fix: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
 
-build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+build: $(NODE_MODULES) $(NODE_MODULES_DEV)
 	if [ -d ${LIB_DIR} ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
