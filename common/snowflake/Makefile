@@ -103,6 +103,11 @@ test-integration: check $(NODE_MODULES_DEV)
 	jest test/integration/$(TEST) --testTimeout=30000
 
 deploy: check
+ifdef MODULE_DEPS
+	for core_dep in $(MODULE_DEPS); do \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$core_dep/snowflake deploy || exit 1; \
+	done
+endif
 	$(MAKE) build
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
@@ -112,6 +117,11 @@ clean:
 	rm -rf ${DIST_DIR} $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 
 clean-deploy: check
+ifdef MODULE_DEPS
+	for core_dep in $(MODULE_DEPS); do \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$core_dep/snowflake clean-deploy || exit 1; \
+	done
+endif
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
