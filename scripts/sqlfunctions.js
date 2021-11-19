@@ -179,6 +179,6 @@ else
 {
     if (output.length > 0)
     {
-        process.stdout.write(output.join(outputDelimiter));
+        process.stdout.write(output.join(outputDelimiter) + outputDelimiter);
     }
 }

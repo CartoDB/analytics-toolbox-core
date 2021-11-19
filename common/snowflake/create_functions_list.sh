@@ -2,7 +2,8 @@
 
 # Script to create a list wiht all the functions in the Analytics Toolbox
 
-PACKAGE_NAME="carto-spatial-extension-snowflake"
+export CLOUD=snowflake
+export GIT_DIFF=off
 
 echo "Serializing function names inside funct_names.csv";
 
@@ -14,7 +15,10 @@ DIST_DIR=$ROOT_DIR/dist
 rm -rf $DIST_DIR
 mkdir -p $DIST_DIR
 
-# Serialize core modules functions
-$SCRIPT_DIR/serialize_functions.sh $ROOT_DIR $DIST_DIR/core
-cat $DIST_DIR/core/funct_names.csv >> $DIST_DIR/funct_names.csv
-rm -rf $DIST_DIR/core
+for module in `cd $ROOT_DIR; node scripts/modulesort.js`; do
+    echo ""
+    echo "> Module $module/$CLOUD"
+    make -C $ROOT_DIR/modules/$module/$CLOUD serialize-functions || exit 1
+    cat $ROOT_DIR/modules/$module/$CLOUD/dist/funct_names.csv >> $DIST_DIR/funct_names.csv
+    rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/funct_names.csv
+done

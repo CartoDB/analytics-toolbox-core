@@ -24,7 +24,7 @@ const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
 let sqlFunctions = {};
 files.forEach(file => {
     let sqlFunctionArr = require('child_process').execSync(`CLOUD=${cloud} INPUT_FILES="${process.cwd()}/sql/${file}" IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" INCLUDE_PRIVATE=1 DELIMITER="," node ${__dirname}/sqlfunctions.js`).toString();
-    sqlFunctions[path.parse(file).name] = sqlFunctionArr.split(',');
+    sqlFunctions[path.parse(file).name] = sqlFunctionArr.slice(0, -1).split(',');
 });
 
 files.forEach(file => {
