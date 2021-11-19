@@ -5,7 +5,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { exit } = require('process');
 
 const dir = 'sql';
 const input = [];
