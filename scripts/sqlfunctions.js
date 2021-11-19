@@ -132,7 +132,17 @@ function addFile (moduleName, fileName)
 if (inputFiles != '')
 {
     inputFiles.split(/\n|,| /).forEach(file => {
-        addFile(file.match('modules/(.*?)/')[1], file);
+        if (file.includes('modules'))
+        {
+            addFile(file.match('modules/(.*?)/')[1], file);
+        }
+        else
+        {
+            if (current_module != '')
+            {
+                addFile(current_module, file);
+            }
+        }
     });
 }
 else
@@ -169,6 +179,6 @@ else
 {
     if (output.length > 0)
     {
-        process.stdout.write(output.join(outputDelimiter) + outputDelimiter);
+        process.stdout.write(output.join(outputDelimiter));
     }
 }

@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { exit } = require('process');
 
 const dir = 'sql';
 const input = [];
@@ -13,7 +14,6 @@ const cloud = process.env.CLOUD || '';
 const ignoredFiles = process.env.IGNORE || '';
 
 let functionPattern;
-
 switch (cloud) {
 case 'snowflake': functionPattern = (n) => `${n}`; break;
 case 'postgres': functionPattern = (n) => `${n}`; break;
@@ -21,6 +21,12 @@ default: functionPattern = (n) => `.${n}`; break;
 }
 
 const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
+
+let sqlFunctions = {};
+files.forEach(file => {
+    let sqlFunctionArr = require('child_process').execSync(`CLOUD=${cloud} INPUT_FILES="${process.cwd()}/sql/${file}" IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" INCLUDE_PRIVATE=1 DELIMITER="," node ${__dirname}/sqlfunctions.js`).toString();
+    sqlFunctions[path.parse(file).name] = sqlFunctionArr.split(',');
+});
 
 files.forEach(file => {
     const name = path.parse(file).name;
@@ -30,7 +36,7 @@ files.forEach(file => {
     const content = fs.readFileSync(path.join(dir, file)).toString();
     input.push({
         name,
-        deps: files.map(f => path.parse(f).name).filter(n => n !== name && content.includes(functionPattern(n)))
+        deps: files.map(f => path.parse(f).name).filter(n => n !== name && sqlFunctions[n] && new RegExp(sqlFunctions[n].join('|')).test(content))
     });
 });
 
