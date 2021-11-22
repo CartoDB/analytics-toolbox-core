@@ -10,7 +10,7 @@ help:
 lint lint-fix build test-unit test-integration deploy clean clean-deploy:
 	if [ "$(CLOUD)" = "bigquery" ] || [ "$(CLOUD)" = "snowflake" ] || [ "$(CLOUD)" = "redshift" ]; then \
 		for module in `node scripts/modulesort.js`; do \
-			echo "> Module $${module}/$(CLOUD)"; \
+			echo "> Module $${module}/$(CLOUD)"; 
 			$(MAKE) -C modules/$${module}/$(CLOUD) $@ || exit 1; \
 		done; \
 	else \
@@ -21,8 +21,3 @@ test-integration-full:
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
-
-serialize-functions:
-	mkdir -p dist
-	rm -f dist/funct_names.csv
-	CLOUD=$(CLOUD) MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node scripts/sqlfunctions.js >> dist/funct_names.csv

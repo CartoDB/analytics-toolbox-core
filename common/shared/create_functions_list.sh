@@ -7,14 +7,21 @@ export GIT_DIFF=off
 echo "Serializing function names inside funct_names.csv";
 
 SCRIPT_DIR=$( dirname "$0" )
-
-ROOT_DIR=$SCRIPT_DIR/../..
-DIST_DIR=$ROOT_DIR/dist
+SCRIPTS_DIR=$SCRIPT_DIR/../../scripts
+echo ${SCRIPTS_DIR}
+if [ -z ${ROOT_DIR} ];
+then
+    ROOT_DIR=$SCRIPT_DIR/../..
+fi
+if [ -z ${DIST_DIR} ];
+then
+    DIST_DIR=$ROOT_DIR/dist
+fi
 
 rm -rf $DIST_DIR
 mkdir -p $DIST_DIR
 
-for module in `cd $ROOT_DIR; node scripts/modulesort.js`; do
+for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     echo ""
     echo "> Module $module/$CLOUD"
     make -C $ROOT_DIR/modules/$module/$CLOUD serialize-functions || exit 1
