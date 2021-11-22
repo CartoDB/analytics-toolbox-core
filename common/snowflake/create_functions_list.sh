@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Script to create a list wiht all the functions in the Analytics Toolbox
+# Script to create a list with all the functions in the Analytics Toolbox
 
 export CLOUD=snowflake
 SCRIPT_DIR=$( dirname "$0" )
