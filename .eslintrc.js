@@ -18,13 +18,15 @@ module.exports = {
         '*custom*'
     ],
     rules: {
-        quotes: ['error', 'single'],
-        indent: ['error', 4],
-        'eol-last': ['error', 'never'],
         'comma-dangle': ['error', 'never'],
+        'eol-last': ['error', 'never'],
+        'indent': ['error', 4],
         'keyword-spacing': ['error', { before: true }],
         'no-path-concat': ['off'],
-        'space-before-function-paren': ['error', 'always'],
-        'object-curly-spacing': ['error', 'always']
+        'no-undef': ['off'],
+        'no-unused-vars': ['off'],
+        'object-curly-spacing': ['error', 'always'],
+        'quotes': ['error', 'single', 'avoid-escape'],
+        'space-before-function-paren': ['error', 'always']
     }
 };

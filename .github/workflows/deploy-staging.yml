@@ -1,25 +1,35 @@
-name: Staging
+name: Deploy Staging
 
 on:
   pull_request_review:
     types: [submitted]
-  pull_request_target:
-    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number
+        required: true
+
+env:
+  PR_NUMBER: ${{ github.event.pull_request.number }}
 
 jobs:
 
   deploy-bq:
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+      ( github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
-      BQ_PROJECT: bqcartost-core-${{ github.event.pull_request.number }}
-      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.pull_request.number }}/
+      BQ_PROJECT: bqcartost-core-${{ env.PR_NUMBER }}
+      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ env.PR_NUMBER }}/
     steps:
+      - name: Set conditional env variables
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+            echo "PR_NUMBER=${{ github.event.inputs.pr_number }}" >> $GITHUB_ENV
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup gcloud
@@ -40,13 +50,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ github.event.pull_request.number }};
+            const issue_number = ${{ env.PR_NUMBER }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECT }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECT}}' });
 
   deploy-sf:
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+      ( github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
@@ -57,10 +67,14 @@ jobs:
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: SFCARTOST
-      SF_SCHEMA_PREFIX: ${{ github.event.pull_request.number }}_
+      SF_SCHEMA_PREFIX: ${{ env.PR_NUMBER }}_
       SF_SHARE_ENABLED: 1
       SF_SHARE_PREFIX: SFCARTOST_
     steps:
+      - name: Set conditional env variables
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+            echo "PR_NUMBER=${{ github.event.inputs.pr_number }}" >> $GITHUB_ENV
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup snowsql
@@ -75,13 +89,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ github.event.pull_request.number }};
+            const issue_number = ${{ env.PR_NUMBER }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}`.`${{ env.SF_SCHEMA_PREFIX }}`carto and share `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`SPATIAL_EXTENSIONS' });
 
   deploy-rs:
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+      ( github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
@@ -96,6 +110,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: s3://rscartost/
     steps:
+      - name: Set conditional env variables
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+            echo "PR_NUMBER=${{ github.event.inputs.pr_number }}" >> $GITHUB_ENV
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Configure AWS Credentials

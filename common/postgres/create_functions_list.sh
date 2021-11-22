@@ -2,7 +2,7 @@
 
 # Script to create a list with all the functions in the Analytics Toolbox
 
-export CLOUD=redshift
+export CLOUD=postgres
 
 SCRIPT_DIR=$( dirname "$0" )
 
