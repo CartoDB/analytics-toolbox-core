@@ -14,8 +14,9 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
-COMMON_DIR = $(ROOT_DIR)/../../../common/redshift
-SCRIPTS_DIR = $(ROOT_DIR)/../../../scripts
+LINT_DIR ?= $(ROOT_DIR)/../../..
+COMMON_DIR ?=  $(ROOT_DIR)/../../../common/redshift
+SCRIPTS_DIR ?=  $(ROOT_DIR)/../../../scripts
 VENV2_DIR = $(COMMON_DIR)/venv2
 VENV3_DIR = $(COMMON_DIR)/venv3
 VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
@@ -75,6 +76,11 @@ test-integration-full:
 	$(MAKE) clean-deploy
 
 deploy: check
+ifdef MODULE_DEPS
+	for module_dep in $(MODULE_DEPS); do \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/redshift deploy || exit 1; \
+	done
+endif
 	$(MAKE) storage-upload
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
@@ -85,6 +91,11 @@ clean:
 	rm -rf $(VENV2_DIR) $(VENV3_DIR)
 
 clean-deploy: check
+ifdef MODULE_DEPS
+	for module_dep in $(MODULE_DEPS); do \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/redshift clean-deploy || exit 1; \
+	done
+endif
 	$(MAKE) storage-remove
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
