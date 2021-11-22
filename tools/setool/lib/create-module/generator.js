@@ -63,7 +63,6 @@ function createDocVersion () {
     let content;
     switch (cloud){
     case 'bigquery':
-    case 'snowflake':
         content = `### VERSION
 
 {{% bannerNote type="code" %}}
@@ -88,6 +87,8 @@ SELECT ${project}.${name}.VERSION();
 \`\`\``;
         break;
 
+    case 'snowflake':
+        return;
     case 'redshift':
         content = `### VERSION
 
@@ -195,7 +196,7 @@ test('VERSION returns the proper version', async () => {
         break;
 
     case 'snowflake':
-        content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
+        content = `const { runQuery } = require('../../../../../${ type == 'advanced' ? 'core/': '' }common/${cloud}/test-utils');
 
 test('Test function example', async () => {
     const query = 'SELECT 123 as v';
@@ -285,7 +286,22 @@ def test_init():
 }
 
 function createChangelog () {
-    const content = `# Changelog
+    let content;
+    switch (cloud){
+    case 'snowflake':
+        content = `# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - ${currentDate()}
+
+### Added
+- Create ${name} module.`;
+        break;
+    default:
+        content = `# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -296,6 +312,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Create ${name} module.
 - Add VERSION function.`;
+    }
 
     createFile([root, 'modules', name, cloud, 'CHANGELOG.md'], content);
 }

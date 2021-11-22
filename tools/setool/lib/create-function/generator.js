@@ -9,6 +9,7 @@ const header = `----------------------------
 let root;
 let mname;
 let cloud;
+let type;
 let fname;
 let frtype;
 let ftemplate;
@@ -21,6 +22,7 @@ module.exports = {
         root = info.root;
         mname = info.module || response.mname;
         cloud = info.cloud  || response.cloud;
+        type = info.type || response.type;
         fname = response.fname;
         response.fpnames.forEach((value, index) => {
             fparams.push({
@@ -56,7 +58,6 @@ function createDocFunction () {
     let content;
     switch (cloud){
     case 'bigquery':
-    case 'snowflake':
         content = `### ${fname}
 
 {{% bannerNote type="code" %}}
@@ -81,6 +82,34 @@ TODO.
 
 \`\`\`sql
 SELECT ${project}.${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')});
+-- TODO
+\`\`\``;
+        break;
+    case 'snowflake':
+        content = `### ${fname}
+
+{{% bannerNote type="code" %}}
+carto.${fname}(${fparams.map(fp => fp.name).join(', ')})
+{{%/ bannerNote %}}
+
+**Description**
+
+TODO.
+${fparams.length ? `\n${fparams.map(fp => `* \`${fp.name}\`: \`${fp.type}\` TODO.\n`).join('')}` : ''}
+**Constraints**
+
+TODO.
+
+**Return type**
+
+\`${frtype}\`
+
+{{% customSelector %}}
+**Example**
+{{%/ customSelector %}}
+
+\`\`\`sql
+SELECT carto.${fname}(${fparams.map(fp => fp.name).join(', ')});
 -- TODO
 \`\`\``;
         break;
@@ -194,7 +223,7 @@ AS (
         case 'js':
             content = `${header}
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE SECURE FUNCTION ${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 LANGUAGE JAVASCRIPT
@@ -208,7 +237,7 @@ $$;`;
         case 'sql':
             content = `${header}
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE SECURE FUNCTION ${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS $$
@@ -219,7 +248,7 @@ $$;`;
         case 'js-combo':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION @@SF_PREFIX@@${mname}._${fname}
+CREATE OR REPLACE FUNCTION _${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 LANGUAGE JAVASCRIPT
@@ -229,43 +258,35 @@ AS $$
     TODO
 $$;
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE SECURE FUNCTION ${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS $$
-    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
+    _${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
 $$;`;
             break;
 
         case 'sql-combo':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION @@SF_PREFIX@@${mname}._${fname}
+CREATE OR REPLACE FUNCTION _${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS $$
     TODO
 $$;
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE SECURE FUNCTION ${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS $$
-    @@SF_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
+    _${fname}(${fparams.map(fp => fp.name.toUpperCase()).join(', ')})
 $$;
 `;
             break;
         default:
             throw ftemplate + ' function template not existing in ' + cloud;
         }
-
-        // Create SHARE
-        let shareContent = readFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql']);
-        shareContent += `
-grant usage on function @@SF_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.type).join(',')}) to share @@SF_SHARE@@;`
-    
-        createFile([root, 'modules', mname, cloud, 'sql', '_SHARE_CREATE.sql'], shareContent);
-
         break;
 
     case 'redshift':
@@ -368,10 +389,10 @@ test('${fname} should work', async () => {
 
     case 'snowflake':
         if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)) {
-            content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
+            content = `const { runQuery } = require('../../../../../${ type == 'advanced' ? 'core/': '' }common/${cloud}/test-utils');
 
 test('${fname} should work', async () => {
-    const query = 'SELECT @@SF_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')}) AS output';
+    const query = 'SELECT ${fname}(${fparams.map(fp => fp.name).join(', ')}) AS output';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].OUTPUT).toEqual();
