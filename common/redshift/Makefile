@@ -11,6 +11,9 @@ RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+LIB_DIR = $(ROOT_DIR)/lib
+DIST_DIR = $(ROOT_DIR)/dist
+
 SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
@@ -39,30 +42,30 @@ help:
 
 lint: venv3
 	. $(VENV3_ACTIVATE) && \
-	flake8 lib/ test/ --enable-extensions Q0 && \
+	flake8 $(LIB_DIR)/ test/ --enable-extensions Q0 && \
 	deactivate
 
 lint-fix: venv3
 	. $(VENV3_ACTIVATE) && \
-	brunette lib/ test/ --line-length=88 --single-quotes --quiet && \
-	flake8 lib/ test/ --enable-extensions Q0 && \
+	brunette $(LIB_DIR)/ test/ --line-length=88 --single-quotes --quiet && \
+	flake8 $(LIB_DIR)/ test/ --enable-extensions Q0 && \
 	deactivate
 
 build:
-	rm -rf dist
-	mkdir -p dist/$(RS_SCHEMA)Lib
-	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ dist/$(RS_SCHEMA)Lib/
-	cd dist && zip -r $(RS_SCHEMA)Lib *
-	rm -rf dist/$(RS_SCHEMA)Lib
+	rm -rf $(DIST_DIR)
+	mkdir -p $(DIST_DIR)/$(RS_SCHEMA)Lib
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ $(DIST_DIR)/$(RS_SCHEMA)Lib/
+	cd $(DIST_DIR) && zip -r $(RS_SCHEMA)Lib *
+	rm -rf $(DIST_DIR)/$(RS_SCHEMA)Lib
 
 test-unit: venv2
-	rm -rf lib/$(MODULE)Lib
-	mkdir -p lib/$(MODULE)Lib
-	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ lib/$(MODULE)Lib/
+	rm -rf $(LIB_DIR)/$(MODULE)Lib
+	mkdir -p $(LIB_DIR)/$(MODULE)Lib
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  $(LIB_DIR)/ $(LIB_DIR)/$(MODULE)Lib/
 	. $(VENV2_ACTIVATE) && \
 	pytest -rP -p no:warnings test/unit/$(TEST) && \
-	deactivate || (rm -rf lib/$(MODULE)Lib && exit 1)
-	rm -rf lib/$(MODULE)Lib
+	deactivate || (rm -rf $(LIB_DIR)/$(MODULE)Lib && exit 1)
+	rm -rf $(LIB_DIR)/$(MODULE)Lib
 
 test-integration: check check-extra venv3
 	. $(VENV3_ACTIVATE) && \
@@ -86,7 +89,7 @@ endif
 	$(MAKE) share-create
 
 clean:
-	rm -rf dist
+	rm -rf $(DIST_DIR)
 	rm -rf $(VENV2_DIR) $(VENV3_DIR)
 
 clean-deploy: check
@@ -100,10 +103,10 @@ endif
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
 
 storage-upload: build venv2
-	for f in $(wildcard dist/*.zip); do \
+	for f in $(wildcard $(DIST_DIR)/*.zip); do \
 		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
 	done
-	for f in $(notdir $(wildcard dist/*.zip)); do \
+	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
 ifneq ("$(wildcard requirements.txt)","")
@@ -116,7 +119,7 @@ ifneq ("$(wildcard requirements.txt)","")
 endif
 
 storage-remove:
-	for f in $(notdir $(wildcard dist/*.zip)); do \
+	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		$(AWS) s3 rm $(AWS_S3_BUCKET)$$f || exit 1; \
 	done
 	STATEMENT_SQL="DROP LIBRARY $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
@@ -155,24 +158,24 @@ ifneq ("$(wildcard requirements.txt)","")
 endif
 
 serialize-module: build serialize-dependency
-	rm -f dist/module.sql
-	echo "DROP SCHEMA IF EXISTS $(RS_DEPLOY_SCHEMA) CASCADE;" >> dist/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA);" >> dist/module.sql
-	for f in $(notdir $(wildcard dist/*.zip)); do \
+	rm -f $(DIST_DIR)/module.sql
+	echo "DROP SCHEMA IF EXISTS $(RS_DEPLOY_SCHEMA) CASCADE;" >> $(DIST_DIR)/module.sql
+	echo "CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA);" >> $(DIST_DIR)/module.sql
+	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>/$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
 	done
-	echo "" >> dist/module.sql;
+	echo "" >> $(DIST_DIR)/module.sql;
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	$(SED) $(REPLACEMENTS) $$n >> dist/module.sql; \
-		echo "" >> dist/module.sql; \
+	  	$(SED) $(REPLACEMENTS) $$n >> $(DIST_DIR)/module.sql; \
+		echo "" >> $(DIST_DIR)/module.sql; \
 	done
 	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
 
 serialize-functions:
-	mkdir -p dist
-	rm -f dist/funct_names.csv
-	MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv
+	mkdir -p $(DIST_DIR)
+	rm -f $(DIST_DIR)/funct_names.csv
+	MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> $(DIST_DIR)/funct_names.csv
 
 venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
