@@ -14,7 +14,6 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
-LINT_DIR ?= $(ROOT_DIR)/../../..
 COMMON_DIR ?=  $(ROOT_DIR)/../../../common/redshift
 SCRIPTS_DIR ?=  $(ROOT_DIR)/../../../scripts
 VENV2_DIR = $(COMMON_DIR)/venv2
@@ -136,7 +135,7 @@ schema-deploy:
 	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_STATEMENT_SQL); \
 	done
-	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION/sql/VERSION.sql`; $(AWS_RUN_STATEMENT_SQL);
+	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql`; $(AWS_RUN_STATEMENT_SQL);
 
 share-create:
 ifeq ($(RS_SHARE_ENABLED), 1)
@@ -168,6 +167,7 @@ serialize-module: build serialize-dependency
 	  	$(SED) $(REPLACEMENTS) $$n >> dist/module.sql; \
 		echo "" >> dist/module.sql; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
 
 serialize-functions:
 	mkdir -p dist
