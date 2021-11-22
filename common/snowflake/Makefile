@@ -25,8 +25,6 @@ NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
-UPDATE_CHECKSUMS = #--update-checksums
-
 REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard dist/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ./dist/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
 REPLACEMENTS = 	-e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
@@ -37,19 +35,19 @@ REPLACEMENTS_PKG += $(REPLACEMENTS_LIBS)
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
+.PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
+	echo "Please choose one of the following targets: lint, lint-fix, install, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy"
 
 $(NODE_MODULES):
-	yarn -s $(UPDATE_CHECKSUMS)
+	yarn -s --update-checksums
 
 $(NODE_MODULES_DEV):
-	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
+	yarn -s --update-checksums --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
-	yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR)
+	yarn -s --update-checksums --cwd $(SHARED_DIR)
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -59,7 +57,9 @@ lint-fix: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config ../../../.eslintrc.js . --fix
 
-build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+install: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+
+build: install
 	if [ -d ./lib ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -100,7 +100,8 @@ deploy: check
 	$(MAKE) share-create
 
 clean:
-	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_DEV)
+	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+	yarn -s cache clean
 
 clean-deploy: check
 	$(MAKE) share-remove

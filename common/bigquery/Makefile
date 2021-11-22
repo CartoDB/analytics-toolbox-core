@@ -23,25 +23,23 @@ NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
-UPDATE_CHECKSUMS = #--update-checksums
-
 REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g'
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
+.PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
+	echo "Please choose one of the following targets: lint, lint-fix, install, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
 
 $(NODE_MODULES):
-	yarn -s $(UPDATE_CHECKSUMS)
+	yarn -s --update-checksums
 
 $(NODE_MODULES_DEV):
-	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
+	yarn -s --update-checksums --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
-	yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR)
+	yarn -s --update-checksums --cwd $(SHARED_DIR)
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -51,7 +49,9 @@ lint-fix: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config ../../../.eslintrc.js . --fix
 
-build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+install: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+
+build: install
 	NAME=$(MODULE)Lib \
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
@@ -84,6 +84,7 @@ endif
 
 clean:
 	rm -rf dist $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+	yarn -s cache clean
 
 clean-deploy: check
 	$(MAKE) storage-remove
