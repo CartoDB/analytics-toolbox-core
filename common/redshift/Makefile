@@ -159,7 +159,6 @@ endif
 
 serialize-module: build serialize-dependency
 	rm -f $(DIST_DIR)/module.sql
-	echo "DROP SCHEMA IF EXISTS $(RS_DEPLOY_SCHEMA) CASCADE;" >> $(DIST_DIR)/module.sql
 	echo "CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA);" >> $(DIST_DIR)/module.sql
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
