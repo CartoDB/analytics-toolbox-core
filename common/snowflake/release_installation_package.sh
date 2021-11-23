@@ -14,7 +14,6 @@ echo "Releasing installation package "$PACKAGE_VERSION" in $PACKAGE_BUCKET"
 
 SCRIPT_DIR=$( dirname "$0" )
 SCRIPTS_DIR=$SCRIPT_DIR/../../scripts
-echo ${SCRIPTS_DIR}
 if [ -z ${ROOT_DIR} ];
 then
     ROOT_DIR=$SCRIPT_DIR/../..
