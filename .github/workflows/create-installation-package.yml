@@ -10,6 +10,23 @@ on:
 
 jobs:
 
+  create-sf:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: ${{ github.event.inputs.cloud == 'snowflake'}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Create installation package
+        run: ./common/snowflake/release_installation_package.sh
+      - name: Upload the artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: carto-spatial-extension-snowflake
+          path: dist/modules.sql
+
   create-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15

@@ -40,8 +40,11 @@ for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql
 done
 
-# Upload the package to the bucket
-gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/latest/
-gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/latest/
-gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/$PACKAGE_VERSION/
-gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/$PACKAGE_VERSION/
+if [ -n ${MAKE_RELEASE} ];
+then
+    # Upload the package to the bucket
+    gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/latest/
+    gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/latest/
+    gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/$PACKAGE_VERSION/
+    gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/$PACKAGE_VERSION/
+fi
