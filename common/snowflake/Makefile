@@ -30,8 +30,6 @@ NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
-UPDATE_CHECKSUMS = #--update-checksums
-
 REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard ${DIST_DIR}/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ${DIST_DIR}/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
 REPLACEMENTS = -e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' \
@@ -44,22 +42,22 @@ REPLACEMENTS_PKG += $(REPLACEMENTS_LIBS)
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-functions
+.PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-functions
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
+	echo "Please choose one of the following targets: lint, lint-fix, install, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 $(NODE_MODULES):
-	yarn -s $(UPDATE_CHECKSUMS)
+	yarn -s --update-checksums
 
 $(NODE_MODULES_DEV):
-	yarn -s $(UPDATE_CHECKSUMS) --cwd $(COMMON_DIR)
+	yarn -s --update-checksums --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
 	if [ -d ${SHARED_DIR} ]; then \
-		yarn -s $(UPDATE_CHECKSUMS) --cwd $(SHARED_DIR); \
+		yarn -s --update-checksums --cwd $(SHARED_DIR); \
 	fi
-
+	
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config $(LINT_DIR)/.eslintrc.js .
@@ -68,7 +66,9 @@ lint-fix: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
 
-build: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+install: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+
+build: install
 	if [ -d ${LIB_DIR} ]; then \
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
@@ -115,6 +115,7 @@ endif
 
 clean:
 	rm -rf ${DIST_DIR} $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+	yarn -s cache clean
 
 clean-deploy: check
 ifdef MODULE_DEPS
