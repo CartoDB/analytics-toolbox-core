@@ -20,14 +20,17 @@ fi
 rm -rf $DIST_DIR
 mkdir -p $DIST_DIR
 
+# Generate version
+echo $PACKAGE_VERSION > $DIST_DIR/version
+
 # Generate modules.sql
 export CLOUD=redshift
 export GIT_DIFF=off
 for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     echo -e "\n> Module $module/$CLOUD"
     make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module || exit 1
-    mv $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_DIR
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_DIR/modules.sql
     rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql
-
+    mkdir -p $DIST_DIR/libs
+    mv $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_DIR/libs
 done
