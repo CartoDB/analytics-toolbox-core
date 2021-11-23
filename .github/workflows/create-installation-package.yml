@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     if: ${{ github.event.inputs.cloud == 'snowflake'}}
+    env:
+      PACKAGE_TYPE: CORE
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -24,7 +26,7 @@ jobs:
       - name: Upload the artifact
         uses: actions/upload-artifact@v2
         with:
-          name: carto-spatial-extension-snowflake
+          name: carto-analytics-toolbox-core-snowflake
           path: dist/modules.sql
 
   create-rs:
