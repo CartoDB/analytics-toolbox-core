@@ -9,6 +9,9 @@ RS_DEPLOY_SCHEMA = $(RS_SCHEMA_PREFIX)carto
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
+PACKAGE_VERSION ?= $(date +%Y.%m.%d)
+VERSION_FUNCTION ?= VERSION
+
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 LIB_DIR = $(ROOT_DIR)/lib
@@ -24,7 +27,7 @@ VENV3_DIR = $(COMMON_DIR)/venv3
 VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
 VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 
-REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g'
+REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g' -e 's!@@RS_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@RS_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g'
 
 AWS_PRINT = tr '\r\n' ' ' | jq -M 'if has("Error") then .["QueryString"],.["Error"] else .["QueryString"] end'
 AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null || exit 1

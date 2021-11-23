@@ -2,7 +2,9 @@
 
 # Script to create a Spatial Extension package for Redshift
 
-PACKAGE_NAME="carto-spatial-extension-redshift"
+#PACKAGE_TYPE=CORE
+
+PACKAGE_VERSION=$(date +%Y.%m.%d)
 
 echo "Creating installation package $PACKAGE_NAME.zip";
 
@@ -28,7 +30,8 @@ export CLOUD=redshift
 export GIT_DIFF=off
 for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     echo -e "\n> Module $module/$CLOUD"
-    make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module || exit 1
+    make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module \
+        PACKAGE_VERSION=$PACKAGE_VERSION VERSION_FUNCTION=VERSION_$PACKAGE_TYPE || exit 1
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_DIR/modules.sql
     rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql
     mkdir -p $DIST_DIR/libs
