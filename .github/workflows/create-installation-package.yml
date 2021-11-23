@@ -41,9 +41,9 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Create installation package
-        run: ./common/redshift/create_installation_package.sh
+        run: ./common/redshift/release_installation_package.sh
       - name: Upload the artifact
         uses: actions/upload-artifact@v2
         with:
-          name: carto-spatial-extension-redshift
+          name: carto-analytics-toolbox-core-redshift
           path: dist/*
