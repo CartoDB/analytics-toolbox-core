@@ -23,6 +23,7 @@ jobs:
     env:
       PACKAGE_TYPE: CORE
       PACKAGE_BUCKET: gs://carto-analytics-toolbox/core/snowflake
+      MAKE_RELEASE: 1
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
