@@ -39,7 +39,9 @@ $(NODE_MODULES_DEV):
 	yarn -s --update-checksums --cwd $(COMMON_DIR)
 
 $(NODE_MODULES_SHARED):
-	yarn -s --update-checksums --cwd $(SHARED_DIR)
+	if [ -d ${SHARED_DIR} ]; then \
+		yarn -s --update-checksums --cwd $(SHARED_DIR); \
+	fi
 
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
