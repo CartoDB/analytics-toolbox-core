@@ -13,7 +13,7 @@ Returns all cell indexes and their distances in a **filled square k-ring** cente
 
 **Return type**
 
-`ARRAY`
+`SUPER`
 
 {{% customSelector %}}
 **Example**
