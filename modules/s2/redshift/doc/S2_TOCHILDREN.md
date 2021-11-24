@@ -7,18 +7,12 @@ carto.S2_TOCHILDREN(id [, resolution])
 **Description**
 
 Returns a SUPER containing a plain array of children IDs of a given cell ID for a specific resolution.
-A child is an S2 cell of higher level of detail that is contained by the current cell.
-Each cell has four direct children by definition.
+A child is an S2 cell of higher level of detail that is contained within the current cell. Each cell has four direct children by definition.
 
-By default, this function returns the direct children (where parent resolution is children resolution - 1).
-However, an optional resolution argument can be passed with the desired parent resolution.
-Note that the amount of children grows to the power of four per zoom level.
+By default, this function returns the direct children (where parent resolution is children resolution - 1). However, an optional resolution argument can be passed with the desired parent resolution. Note that the amount of children grows to the power of four per zoom level.
 
 * `id`: `INT8` id to get the children from.
-
-Optional arguments:
-
-* `resolution`: `INT4` resolution of the desired children.
+* `resolution` (optional): `INT4` resolution of the desired children.
 
 **Return type**
 

@@ -6,7 +6,7 @@ carto.QUADINT_BOUNDARY(quadint)
 
 **Description**
 
-Returns the boundary for a given quadint. We extract the boundary in the same way as when we calculate its [QUADINT_BBOX](#bbox), then enclose it in a GeoJSON and finally transform it into a geography.
+Returns the boundary for a given quadint. We extract the boundary in the same way as when we calculate its [QUADINT_BBOX](#quadint_bbox), then enclose it in a GeoJSON and finally transform it into a geography.
 
 * `quadint`: `BIGINT` quadint to get the boundary geography from.
 

@@ -6,7 +6,7 @@ carto.PLACEKEY_FROMH3(h3index)
 
 **Description**
 
-Returns the placekey equivalent to the given H3 index.
+Returns the Placekey equivalent to the given H3 index.
 
 * `h3index`: `VARCHAR` H3 identifier.
 
