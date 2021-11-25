@@ -3,7 +3,7 @@
 ----------------------------
 
 
-CREATE OR REPLACE FUNCTION _DELAUNAYHELPER
+CREATE OR REPLACE FUNCTION __DELAUNAYHELPER
 (inputPoints ARRAY)
 RETURNS ARRAY
 AS $$ (
@@ -17,7 +17,7 @@ AS $$ (
             ABS(MAX(ST_Y(TO_GEOGRAPHY(unnested.VALUE))) - MIN(ST_Y(TO_GEOGRAPHY(unnested.VALUE)))) AS yExtent
         FROM LATERAL FLATTEN(input => inputPoints) AS unnested
       ), voronoi AS (
-      SELECT _VORONOIHELPER(
+      SELECT __VORONOIHELPER(
             arrayPoints, 
             ARRAY_CONSTRUCT(xMin - xExtent * 0.5, 
                             yMin - yExtent * 0.5, 
