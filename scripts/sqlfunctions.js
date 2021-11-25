@@ -23,6 +23,13 @@ case 'postgres': functionEndingPattern = 'BEGIN'; break;
 default: functionEndingPattern = 'RETURNS'; break;
 }
 
+let procedureEndingPattern;
+switch (cloud) 
+{
+case 'postgres': procedureEndingPattern = 'BEGIN'; break;
+default: procedureEndingPattern = 'AS'; break;
+}
+
 let output = asJSON ? {} : [];
 function addFunctSignature (moduleName, functSignature) {
     if (asJSON)
@@ -125,7 +132,7 @@ function addFile (moduleName, fileName)
     content = content.replace(/(\r\n|\n|\r)/gm,' ')
     const functionMatches = content.matchAll(new RegExp(`(?<=FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
     classifyFunctions(moduleName, functionMatches);
-    const procedureMatches = content.matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g'));
+    const procedureMatches = content.matchAll(new RegExp(`(?<=PROCEDURE)(.*?)(?=${procedureEndingPattern})`,'g'));
     classifyFunctions(moduleName, procedureMatches);
 }    
 

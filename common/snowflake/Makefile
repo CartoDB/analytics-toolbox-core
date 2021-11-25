@@ -99,8 +99,10 @@ test-integration-full:
 	$(MAKE) clean-deploy
 
 test-integration: check $(NODE_MODULES_DEV)
-	SF_SCHEMA=$(SF_SCHEMA) PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/integration/$(TEST) --testTimeout=30000
+	SF_SCHEMA=$(SF_SCHEMA) \
+	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	jest test/integration/$(F) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
+
 
 deploy: check
 ifdef MODULE_DEPS
