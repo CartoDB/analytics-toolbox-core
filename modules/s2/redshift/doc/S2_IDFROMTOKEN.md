@@ -6,7 +6,7 @@ carto.S2_IDFROMTOKEN(token)
 
 **Description**
 
-Returns the conversion of an S2 cell token (hexified ID) into an unsigned,64 bit ID
+Returns the conversion of an S2 cell token (hexified ID) into an unsigned, 64 bit ID.
 
 * `token`: `VARCHAR(MAX)` S2 cell token.
 

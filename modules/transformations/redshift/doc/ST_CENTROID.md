@@ -6,9 +6,9 @@ carto.ST_CENTROID(geom)
 
 **Description**
 
-Takes any Feature or a FeatureCollection and returns its centroid. It's equivalent to the center of mass.
+Takes any Feature or a FeatureCollection as input and returns its centroid. It is equivalent to [`ST_CENTEROFMASS`](#st_centerofmass).
 
-* `geom`: `GEOMETRY` feature to be centered.
+* `geom`: `GEOMETRY` for which to compute the centroid.
 
 **Return type**
 

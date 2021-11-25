@@ -8,7 +8,7 @@ carto.QUADINT_BBOX(quadint)
 
 Returns an array with the boundary box of a given quadint. This boundary box contains the minimum and maximum longitude and latitude. The output format is [West-South, East-North] or [min long, min lat, max long, max lat].
 
-* `quadint`: `BIGINT` quadint to get the bbox from.
+* `quadint`: `BIGINT` quadint to get the boundary box from.
 
 **Return type**
 

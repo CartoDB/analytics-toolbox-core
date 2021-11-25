@@ -8,14 +8,10 @@ carto.S2_TOPARENT(id, resolution)
 
 Returns the parent ID of a given cell ID for a specific resolution. A parent cell is the smaller resolution containing cell.
 
-By default, this function returns the direct parent (where parent resolution is child resolution - 1).
-However, an optional resolution argument can be passed with the desired parent resolution.
+By default, this function returns the direct parent (where parent resolution is child resolution + 1). However, an optional resolution argument can be passed with the desired parent resolution.
 
 * `id`: `INT8` quadint to get the parent from.
-
-Optional arguments:
-
-* `resolution`: `INT4` resolution of the desired parent.
+* `resolution` (optional): `INT4` resolution of the desired parent.
 
 **Return type**
 

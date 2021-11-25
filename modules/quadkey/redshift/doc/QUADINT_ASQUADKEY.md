@@ -8,7 +8,7 @@ carto.QUADINT_ASQUADKEY(quadint)
 
 Returns the quadkey equivalent to the input quadint.
 
-* `quadint`: `BIGINT` quadint to be converted to quadkey.
+* `quadint`: `BIGINT` quadint to be converted into quadkey.
 
 **Return type**
 

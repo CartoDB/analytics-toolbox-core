@@ -6,11 +6,11 @@ carto.ST_GREATCIRCLE(start_point, end_point, n_points)
 
 **Description**
 
-Calculate great circles routes as LineString.
+Calculates a great circle route as a LineString.
 
 * `start_point`: `GEOMETRY` source point feature.
 * `end_point`: `GEOMETRY` destination point feature.
-* `n_points` (optional): `INT` number of points. By default `npoints` is `100`.
+* `n_points` (optional): `INT` number of points. Defaults to `100`.
 
 **Return type**
 

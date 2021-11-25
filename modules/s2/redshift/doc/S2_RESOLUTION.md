@@ -6,7 +6,7 @@ carto.S2_RESOLUTION(id)
 
 **Description**
 
-Returns a integer with the resolution of given cell ID.
+Returns an integer with the resolution of a given cell ID.
 
 * `id`: `INT8` id to get the resolution from.
 

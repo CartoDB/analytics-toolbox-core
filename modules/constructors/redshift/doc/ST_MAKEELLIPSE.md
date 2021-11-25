@@ -6,14 +6,14 @@ carto.ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis [, angle] [, units] [, steps])
 
 **Description**
 
-Takes a Point and calculates the ellipse polygon given two semi-axes expressed in variable units and steps for precision.
+Takes a Point as input and calculates the ellipse polygon given two semi-axes expressed in variable units and steps for precision.
 
 * `center`: `GEOMETRY` center point.
 * `xSemiAxis`: `FLOAT8` semi (major) axis of the ellipse along the x-axis.
 * `ySemiAxis`: `FLOAT8` semi (minor) axis of the ellipse along the y-axis.
-* `angle` (optional): `FLOAT8` angle of rotation (along the vertical axis), from North in decimal degrees, negative clockwise. By default `angle` is `0`.
-* `units` (optional): `VARCHAR(10)` units of length, the supported options are: miles, kilometers, meters, and degrees. By default `units` is `kilometers`.
-* `steps` (optional): `INT` number of steps. By default `steps` is `64`.
+* `angle` (optional): `FLOAT8` angle of rotation (along the vertical axis), from North in decimal degrees, negative clockwise. If not specified, the default value of `0` will be used.
+* `units` (optional): `VARCHAR(10)` units of length. The supported options are: miles, kilometers, meters, and degrees. If not specified, `kilometers` will be used.
+* `steps` (optional): `INT` number of steps. If not specified, the default value of `64` will be used.
 
 **Return type**
 
