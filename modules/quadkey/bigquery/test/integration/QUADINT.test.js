@@ -2,12 +2,12 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('QUADKEY conversion should work', async () => {
     const query = `SELECT
-        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(2, 1, 1)) AS quadkey1,
-        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(6, 40, 55)) AS quadkey2,
-        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(12, 1960, 3612)) AS quadkey3,
-        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(18, 131621, 65120)) AS quadkey4,
-        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(24, 9123432, 159830174)) AS quadkey5,
-        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(29, 389462872, 207468912)) AS quadkey6`;
+        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(2, 1, 1)) AS quadkey1,
+        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(6, 40, 55)) AS quadkey2,
+        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(12, 1960, 3612)) AS quadkey3,
+        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(18, 131621, 65120)) AS quadkey4,
+        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(24, 9123432, 159830174)) AS quadkey5,
+        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(29, 389462872, 207468912)) AS quadkey6`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].quadkey1).toEqual('03');
@@ -32,9 +32,9 @@ test('QUADKEY should be able to encode/decode between quadint and quadkey at any
         SELECT *
         FROM (
             SELECT *,
-                \`@@BQ_PREFIX@@quadkey.ZXY_FROMQUADINT\`(
+                \`@@BQ_PREFIX@@quadkey.QUADINT_TOZXY\`(
                     \`@@BQ_PREFIX@@quadkey.QUADINT_FROMQUADKEY\`(
-                        \`@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT\`(
+                        \`@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY\`(
                             \`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(zoom, tileX, tileY)))) AS decodedQuadkey
             FROM tileContext
         )
@@ -44,7 +44,7 @@ test('QUADKEY should be able to encode/decode between quadint and quadkey at any
     expect(rows.length).toEqual(0);
 });
 
-test('QUADKEY_FROMQUADINT should fail with NULL argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADKEY_FROMQUADINT`(NULL);';
+test('QUADINT_TOQUADKEY should fail with NULL argument', async () => {
+    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_TOQUADKEY`(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });
