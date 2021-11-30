@@ -4,7 +4,7 @@ SED = sed
 GSUTIL = gsutil
 BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 
-BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
+BQ_DATASET = $(BQ_DATASET_PREFIX)carto
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
