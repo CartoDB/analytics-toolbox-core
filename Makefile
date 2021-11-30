@@ -10,7 +10,7 @@ help:
 lint lint-fix install build test-unit test-integration deploy clean clean-deploy:
 	if [ "$(CLOUD)" = "bigquery" ] || [ "$(CLOUD)" = "snowflake" ] || [ "$(CLOUD)" = "redshift" ]; then \
 		for module in `node scripts/modulesort.js`; do \
-			echo "\n> Module $${module}/$(CLOUD)"; \
+			echo "> Module $${module}/$(CLOUD)"; \
 			$(MAKE) -C modules/$${module}/$(CLOUD) $@ || exit 1; \
 		done; \
 	else \
