@@ -2,8 +2,8 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('ST_BEZIERSPLINE should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (121.025390625 -22.91792293614603, 130.6494140625 -19.394067895396613, 138.33984375 -25.681137335685307, 138.3837890625 -32.026706293336126)"), 100, 0.85) as bezierspline1,
-               \`@@BQ_PREFIX@@constructors.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (-6 -0.5,-3 0.5,0 -0.5,3 0.5, 6 -0.5,9 0.5)"), 60, 0.85) as bezierspline2
+        SELECT \`@@BQ_PREFIX@@carto.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (121.025390625 -22.91792293614603, 130.6494140625 -19.394067895396613, 138.33984375 -25.681137335685307, 138.3837890625 -32.026706293336126)"), 100, 0.85) as bezierspline1,
+               \`@@BQ_PREFIX@@carto.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (-6 -0.5,-3 0.5,0 -0.5,3 0.5, 6 -0.5,9 0.5)"), 60, 0.85) as bezierspline2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -13,7 +13,7 @@ test('ST_BEZIERSPLINE should work', async () => {
 
 test('ST_BEZIERSPLINE should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_BEZIERSPLINE\`(NULL, 10000, 0.9) as bezierspline
+        SELECT \`@@BQ_PREFIX@@carto.ST_BEZIERSPLINE\`(NULL, 10000, 0.9) as bezierspline
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -22,8 +22,8 @@ test('ST_BEZIERSPLINE should return NULL if any NULL mandatory argument', async 
 
 test('ST_BEZIERSPLINE default values should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), 10000, 0.85) as defaultValue,
-               \`@@BQ_PREFIX@@constructors.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), NULL, NULL) as nullParam
+        SELECT \`@@BQ_PREFIX@@carto.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), 10000, 0.85) as defaultValue,
+               \`@@BQ_PREFIX@@carto.ST_BEZIERSPLINE\`(ST_GEOGFROMTEXT("LINESTRING (-76.091308 18.427501,-76.695556 18.729501,-76.552734 19.40443,-74.61914 19.134789,-73.652343 20.07657,-73.157958 20.210656)"), NULL, NULL) as nullParam
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

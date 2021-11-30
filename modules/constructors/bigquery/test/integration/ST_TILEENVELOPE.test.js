@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('ST_TILEENVELOPE should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_TILEENVELOPE\`(10, 384, 368) as geog1,
-               \`@@BQ_PREFIX@@constructors.ST_TILEENVELOPE\`(18, 98304, 94299) as geog2,
-               \`@@BQ_PREFIX@@constructors.ST_TILEENVELOPE\`(25, 12582912, 12070369) as geog3
+        SELECT \`@@BQ_PREFIX@@carto.ST_TILEENVELOPE\`(10, 384, 368) as geog1,
+               \`@@BQ_PREFIX@@carto.ST_TILEENVELOPE\`(18, 98304, 94299) as geog2,
+               \`@@BQ_PREFIX@@carto.ST_TILEENVELOPE\`(25, 12582912, 12070369) as geog3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -15,7 +15,7 @@ test('ST_TILEENVELOPE should work', async () => {
 
 test('ST_TILEENVELOPE should fail if any NULL argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_TILEENVELOPE\`(10, 384, null)
+        SELECT \`@@BQ_PREFIX@@carto.ST_TILEENVELOPE\`(10, 384, null)
     `;
     await expect(runQuery(query)).rejects.toThrow();
 });
