@@ -116,7 +116,7 @@ dataset-deploy:
 serialize-module:
 	$(MAKE) build
 	rm -f dist/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@$(MODULE)\`;" >> dist/module.sql
+	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@carto\`;" >> dist/module.sql
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	cat $$n >> dist/module.sql; \
 		echo "" >> dist/module.sql; \

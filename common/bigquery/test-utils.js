@@ -3,11 +3,10 @@ const path = require('path');
 
 const { BigQuery } = require('@google-cloud/bigquery');
 
-const MODULE = process.env.MODULE;
 const BQ_PROJECT = process.env.BQ_PROJECT;
 const BQ_DATASET_PREFIX = process.env.BQ_DATASET_PREFIX;
 const BQ_PREFIX = `${BQ_PROJECT}.${BQ_DATASET_PREFIX}`;
-const BQ_DATASET = `${BQ_DATASET_PREFIX}${MODULE}`;
+const BQ_DATASET = `${BQ_DATASET_PREFIX}carto`;
 
 const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
 
