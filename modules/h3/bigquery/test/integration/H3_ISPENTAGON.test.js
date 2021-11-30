@@ -16,7 +16,7 @@ test('Works as expected', async () => {
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@cartortorto.H3_ISPENTAGON\`(hid) as pent
+            \`@@BQ_PREFIX@@cartorto.H3_ISPENTAGON\`(hid) as pent
         FROM ids
         ORDER BY id ASC
     `;

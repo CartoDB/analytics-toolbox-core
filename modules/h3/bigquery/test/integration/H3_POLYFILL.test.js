@@ -30,7 +30,7 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
 
         )
         SELECT
-        ARRAY_LENGTH(\`@@BQ_PREFIX@@cartorto.H3_POLYFILL\`(geom, resolution)) AS id_count
+        ARRAY_LENGTH(\`@@BQ_PREFIX@@carto.H3_POLYFILL\`(geom, resolution)) AS id_count
         FROM inputs
         ORDER BY id ASC
     `;
@@ -70,15 +70,15 @@ test('H3_POLYFILL returns the expected values', async () => {
         (
             SELECT
                 resolution,
-                \`@@BQ_PREFIX@@cartorto.H3_FROMGEOGPOINT\`(geog, resolution) AS h3_id,
-                \`@@BQ_PREFIX@@cartorto.H3_BOUNDARY\`@@BQ_PREFIX@@carto@carto.H3_FROMGEOGPOINT\`(geog, resolution)) AS boundary
+                \`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(geog, resolution) AS h3_id,
+                \`@@BQ_PREFIX@@carto.H3_BOUNDARY\`@@BQ_PREFIX@@carto@carto.H3_FROMGEOGPOINT\`(geog, resolution)) AS boundary
             FROM points, UNNEST(GENERATE_ARRAY(0, 15, 1)) resolution
         ),
         polyfill AS
         (
             SELECT
                 *,
-                \`@@BQ_PREFIX@@cartorto.H3_POLYFILL\`(boundary, resolution) p
+                \`@@BQ_PREFIX@@carto.H3_POLYFILL\`(boundary, resolution) p
             FROM cells
         )
         SELECT
