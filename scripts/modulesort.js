@@ -16,15 +16,6 @@ const output = [];
 let sqlFunctions = require('child_process').execSync(`CLOUD=${cloud} IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" INCLUDE_PRIVATE=1 ASJSON=1 node ${__dirname}/sqlfunctions.js`).toString();
 sqlFunctions = JSON.parse(sqlFunctions);
 
-let functionPattern;
-switch (cloud) {
-case 'snowflake':
-case 'redshift': 
-    functionPattern = (m, content) => sqlFunctions[m] && new RegExp(sqlFunctions[m].join('|')).test(content);
-    break;
-default: functionPattern = (m, content) => content.includes('@' + m); break;
-}
-
 const modules = fs.readdirSync(dir);
 modules.forEach(module => {
     const sqldir = path.join(dir, module, cloud, 'sql');
@@ -33,7 +24,7 @@ modules.forEach(module => {
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
         input.push({
             name: module,
-            deps: modules.filter(m => m !== module && functionPattern(m, content))
+            deps: modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].join('|')).test(content))
         });
     }
 });

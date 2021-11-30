@@ -14,7 +14,7 @@ const ignoredFiles = process.env.IGNORE || '';
 
 let functionPattern;
 switch (cloud) {
-case 'snowflake': functionPattern = (n) => `${n}`; break;
+case 'snowflake':
 case 'postgres': functionPattern = (n) => `${n}`; break;
 default: functionPattern = (n) => `.${n}`; break;
 }
