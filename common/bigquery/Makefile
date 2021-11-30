@@ -4,7 +4,8 @@ SED = sed
 GSUTIL = gsutil
 BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 
-BQ_DATASET = $(BQ_DATASET_PREFIX)carto
+BQ_DEPLOY_DATASET = $(BQ_DATASET_PREFIX)carto
+BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -78,10 +79,10 @@ deploy: check
 	$(MAKE) dataset-create
 	$(MAKE) dataset-deploy
 ifdef BQ_PERMISSIONS
-	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions.sh
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions.sh
 endif
 ifdef BQ_PERMISSIONS_GROUP
-	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
 endif
 
 clean:
@@ -102,15 +103,15 @@ storage-remove:
 	fi
 
 dataset-create:
-	$(BQ) show $(BQ_DATASET) 2>/dev/null 1>/dev/null || \
-		$(BQ) mk -d --description "$(BQ_DATASET) module" -label $(BQ_MODULE_CORE_LABEL) $(BQ_DATASET)
+	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
+		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_CORE_LABEL) $(BQ_DEPLOY_DATASET)
 
 dataset-remove:
-	$(BQ) rm -r -f -d $(BQ_DATASET)
+	$(BQ) rm -r -f -d $(BQ_DEPLOY_DATASET)
 
 dataset-deploy:
 	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DATASET) || exit 1; \
+		$(SED) $(REPLACEMENTS) $$n | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1; \
 	done
 
 serialize-module:
