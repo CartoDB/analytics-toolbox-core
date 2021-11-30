@@ -19,8 +19,8 @@ function getFeatureArray (fixture) {
 test('ST_ENVELOPE should work', async () => {
     const query = `
         SELECT
-            \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(pointsFixturesIn)}) as envelope1,
-            \`@@BQ_PREFIX@@accessors.ST_ENVELOPE\`(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
+            \`@@BQ_PREFIX@@carto.ST_ENVELOPE\`(${getFeatureArray(pointsFixturesIn)}) as envelope1,
+            \`@@BQ_PREFIX@@carto.ST_ENVELOPE\`(${getFeatureArray(featureColFixturesIn)}) as envelope2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].envelope1.value).toEqual(pointsFixturesOut.value);
@@ -28,7 +28,7 @@ test('ST_ENVELOPE should work', async () => {
 });
 
 test('ST_ENVELOPE should return NULL if any NULL mandatory argument', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@accessors.ST_ENVELOPE`(NULL) as envelope1';
+    const query = 'SELECT `@@BQ_PREFIX@@carto.ST_ENVELOPE`(NULL) as envelope1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].envelope1).toEqual(null);

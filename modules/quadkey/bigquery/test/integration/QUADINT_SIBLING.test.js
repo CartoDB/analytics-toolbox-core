@@ -13,27 +13,27 @@ test('QUADINT_SIBLING should work at any level of zoom', async () => {
         ),
         expectedQuadintContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(zoom, tileX, tileY) AS expectedQuadint,
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(zoom, tileX, tileY) AS expectedQuadint,
             FROM zoomContext
         ),
         rightSiblingContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_SIBLING\`(expectedQuadint,'right') AS rightSibling
+            \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(expectedQuadint,'right') AS rightSibling
             FROM expectedQuadintContext 
         ),
         upSiblingContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_SIBLING\`(rightSibling,'up') AS upSibling
+            \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(rightSibling,'up') AS upSibling
             FROM rightSiblingContext 
         ),
         leftSiblingContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_SIBLING\`(upSibling,'left') AS leftSibling
+            \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(upSibling,'left') AS leftSibling
             FROM upSiblingContext 
         ),
         downSiblingContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_SIBLING\`(leftSibling,'down') AS downSibling
+            \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(leftSibling,'down') AS downSibling
             FROM leftSiblingContext 
         )
         SELECT *
@@ -44,9 +44,9 @@ test('QUADINT_SIBLING should work at any level of zoom', async () => {
 });
 
 test('QUADINT_SIBLING should fail if any NULL argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_SIBLING`(NULL, "up")';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_SIBLING`(NULL, "up")';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_SIBLING`(322, NULL)';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_SIBLING`(322, NULL)';
     await expect(runQuery(query)).rejects.toThrow();
 });

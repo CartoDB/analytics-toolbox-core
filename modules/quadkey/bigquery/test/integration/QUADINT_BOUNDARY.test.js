@@ -3,7 +3,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 test('QUADINT_BOUNDARY should work', async () => {
     const query = `
     SELECT
-      \`@@BQ_PREFIX@@quadkey.QUADINT_BOUNDARY\`(quadint) boundary,
+      \`@@BQ_PREFIX@@carto.QUADINT_BOUNDARY\`(quadint) boundary,
       quadint
     FROM
       UNNEST([0,1,2,33,34,65,97,130,258,386,12070922,791040491538,12960460429066265]) quadint
@@ -27,6 +27,6 @@ test('QUADINT_BOUNDARY should work', async () => {
 });
 
 test('QUADINT_BOUNDARY should fail with NULL argument', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_BOUNDARY`(NULL);';
+    const query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_BOUNDARY`(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

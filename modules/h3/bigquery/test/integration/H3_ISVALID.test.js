@@ -14,7 +14,7 @@ test('Works as expected', async () => {
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@h3.H3_ISVALID\`(hid) as valid
+            \`@@BQ_PREFIX@@carto.H3_ISVALID\`(hid) as valid
         FROM ids
         ORDER BY id ASC
     `;

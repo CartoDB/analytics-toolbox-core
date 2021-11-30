@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('H3_KRING should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@h3.H3_KRING\`('8928308280fffff', 0) as d0,
-               \`@@BQ_PREFIX@@h3.H3_KRING\`('8928308280fffff', 1) as d1,
-               \`@@BQ_PREFIX@@h3.H3_KRING\`('8928308280fffff', 2) as d2
+        SELECT \`@@BQ_PREFIX@@carto.H3_KRING\`('8928308280fffff', 0) as d0,
+               \`@@BQ_PREFIX@@carto.H3_KRING\`('8928308280fffff', 1) as d1,
+               \`@@BQ_PREFIX@@carto.H3_KRING\`('8928308280fffff', 2) as d2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -44,12 +44,12 @@ test('H3_KRING should work', async () => {
 });
 
 test('H3_KRING should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@h3.H3_KRING`(NULL, NULL)';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.H3_KRING`(NULL, NULL)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@h3.H3_KRING`("abc", 1)';
+    query = 'SELECT `@@BQ_PREFIX@@carto.H3_KRING`("abc", 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@h3.H3_KRING`("8928308280fffff", -1)';
+    query = 'SELECT `@@BQ_PREFIX@@carto.H3_KRING`("8928308280fffff", -1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.__H3_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__H3_POLYFILL`
 (geojson STRING, _resolution INT64)
 RETURNS ARRAY<STRING>
 DETERMINISTIC
@@ -53,9 +53,9 @@ AS """
     return hexes;
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@h3.H3_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.H3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS (
-    `@@BQ_PREFIX@@h3.__H3_POLYFILL`(ST_ASGEOJSON(geog), resolution)
+    `@@BQ_PREFIX@@carto.__H3_POLYFILL`(ST_ASGEOJSON(geog), resolution)
 );

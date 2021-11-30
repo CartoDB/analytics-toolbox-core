@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('S2_UINT64REPRFROMID should work', async () => {
     const query = `
-    SELECT \`@@BQ_PREFIX@@s2.S2_UINT64REPRFROMID\`(key) as id
+    SELECT \`@@BQ_PREFIX@@carto.S2_UINT64REPRFROMID\`(key) as id
     FROM UNNEST([-8520148382826627072, -2520148382826627072, 2520148382826627072, 8520148382826627072]) as key
     order by id
     `;

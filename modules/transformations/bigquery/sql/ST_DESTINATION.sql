@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.__DESTINATION`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__DESTINATION`
 (geojsonStart STRING, distance FLOAT64, bearing FLOAT64, units STRING)
 RETURNS STRING
 DETERMINISTIC
@@ -20,9 +20,9 @@ AS """
     return JSON.stringify(destination.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_DESTINATION`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.ST_DESTINATION`
 (startPoint GEOGRAPHY, distance FLOAT64, bearing FLOAT64, units STRING)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__DESTINATION`(ST_ASGEOJSON(startPoint), distance, bearing, units))
+    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@carto.__DESTINATION`(ST_ASGEOJSON(startPoint), distance, bearing, units))
 );

@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('QUADINT_BBOX should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@quadkey.QUADINT_BBOX\`(quadint) as bbox
+        SELECT \`@@BQ_PREFIX@@carto.QUADINT_BBOX\`(quadint) as bbox
         FROM UNNEST([162, 12070922, 791040491538, 12960460429066265]) as quadint
     `;
     const rows = await runQuery(query);
@@ -16,7 +16,7 @@ test('QUADINT_BBOX should work', async () => {
 
 test('QUADINT_BBOX should fail with NULL argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@quadkey.QUADINT_BBOX\`(NULL)
+        SELECT \`@@BQ_PREFIX@@carto.QUADINT_BBOX\`(NULL)
     `;
     await expect(runQuery(query)).rejects.toThrow();
 });

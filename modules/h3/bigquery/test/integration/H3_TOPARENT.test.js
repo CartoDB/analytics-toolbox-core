@@ -10,7 +10,7 @@ test('H3_TOPARENT works as expected with invalid data', async () => {
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@h3.H3_TOPARENT\`(hid, 1) as parent
+            \`@@BQ_PREFIX@@carto.H3_TOPARENT\`(hid, 1) as parent
         FROM ids
         ORDER BY id ASC
     `;
@@ -39,8 +39,8 @@ test('Equivalent to previous resolution level', async () => {
             *
         FROM ids
         WHERE
-            \`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(point, resolution) != \`@@BQ_PREFIX@@h3.H3_TOPARENT\`(\`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(point, resolution + 1), resolution) OR
-            \`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(point, resolution) != \`@@BQ_PREFIX@@h3.H3_TOPARENT\`(\`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(point, resolution + 2), resolution)
+            \`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(point, resolution) != \`@@BQ_PREFIX@@carto.H3_TOPARENT\`(\`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(point, resolution + 1), resolution) OR
+            \`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(point, resolution) != \`@@BQ_PREFIX@@carto.H3_TOPARENT\`(\`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(point, resolution + 2), resolution)
     `;
 
     const rows = await runQuery(query);

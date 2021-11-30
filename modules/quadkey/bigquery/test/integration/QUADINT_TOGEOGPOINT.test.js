@@ -3,9 +3,9 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 test('QUADINT_TOGEOGPOINT should work', async () => {
     const query = `
         SELECT
-            \`@@BQ_PREFIX@@quadkey.QUADINT_TOGEOGPOINT\`(12070922) as geog1,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_TOGEOGPOINT\`(791040491538) as geog2,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_TOGEOGPOINT\`(12960460429066265) as geog3`;
+            \`@@BQ_PREFIX@@carto.QUADINT_TOGEOGPOINT\`(12070922) as geog1,
+            \`@@BQ_PREFIX@@carto.QUADINT_TOGEOGPOINT\`(791040491538) as geog2,
+            \`@@BQ_PREFIX@@carto.QUADINT_TOGEOGPOINT\`(12960460429066265) as geog3`;
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);  

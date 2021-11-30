@@ -4,7 +4,7 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
     const query = `
         WITH kring_data AS
         ( SELECT row,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_KRING_DISTANCES\`(origin, size) as kring_elem,
+            \`@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES\`(origin, size) as kring_elem,
         FROM UNNEST([
             STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
@@ -40,12 +40,12 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
 });
 
 test('QUADINT_KRING_DISTANCES should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_KRING_DISTANCES`(NULL, NULL);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(NULL, NULL);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_KRING_DISTANCES`(-1, 1);';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(-1, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_KRING_DISTANCES`(162, -1);';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(162, -1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

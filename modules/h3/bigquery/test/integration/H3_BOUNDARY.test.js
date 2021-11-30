@@ -9,7 +9,7 @@ test('Returns NULL with invalid parameters', async () => {
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@h3.H3_BOUNDARY\`(hid) as bounds
+            \`@@BQ_PREFIX@@cartorto.H3_BOUNDARY\`(hid) as bounds
         FROM ids
         ORDER BY id ASC
     `;
@@ -29,9 +29,9 @@ test('Returns NULL the expected geography', async () => {
         )
         SELECT
             *,
-            \`@@BQ_PREFIX@@h3.H3_BOUNDARY\`(hid) as bounds
+            \`@@BQ_PREFIX@@cartorto.H3_BOUNDARY\`(hid) as bounds
         FROM ids
-        WHERE NOT ST_EQUALS(expected, \`@@BQ_PREFIX@@h3.H3_BOUNDARY\`(hid))
+        WHERE NOT ST_EQUALS(expected, \`@@BQ_PREFIX@@cartorto.H3_BOUNDARY\`(hid))
     `;
 
     const rows = await runQuery(query);

@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('S2_IDFROMHILBERTQUADKEY should work', async () => {
     const query = `
-        SELECT CAST(\`@@BQ_PREFIX@@s2.S2_IDFROMHILBERTQUADKEY\`(key) AS STRING) as id
+        SELECT CAST(\`@@BQ_PREFIX@@carto.S2_IDFROMHILBERTQUADKEY\`(key) AS STRING) as id
         FROM UNNEST([
             '4/12', '2/02300033', '3/03131200023201', '5/0001221313222222120',
             '2/0221200002312111222332101', '5/1331022022103232320303230131'
@@ -16,6 +16,6 @@ test('S2_IDFROMHILBERTQUADKEY should work', async () => {
 });
 
 test('S2_IDFROMHILBERTQUADKEY should fail with NULL argument', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@s2.S2_IDFROMHILBERTQUADKEY`(NULL)';
+    const query = 'SELECT `@@BQ_PREFIX@@carto.S2_IDFROMHILBERTQUADKEY`(NULL)';
     await expect(runQuery(query)).rejects.toThrow('NULL argument passed to UDF');
 });

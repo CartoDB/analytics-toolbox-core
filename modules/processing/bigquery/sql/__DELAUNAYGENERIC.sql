@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@processing.__DELAUNAYGENERIC`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__DELAUNAYGENERIC`
 (inputPoints ARRAY<GEOGRAPHY>)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
@@ -18,7 +18,7 @@ AS ((
     ),
     voronoi AS (
         -- A 50% larger BBOX is applied to avoid issues with very large Voronoi polygons
-        SELECT `@@BQ_PREFIX@@processing.__VORONOIGENERIC`(arrayPoints, 
+        SELECT `@@BQ_PREFIX@@carto.__VORONOIGENERIC`(arrayPoints, 
             [xMin - xExtent * 0.5, 
             yMin - yExtent * 0.5, 
             xMax + xExtent * 0.5, 

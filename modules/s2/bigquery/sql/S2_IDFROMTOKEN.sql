@@ -3,7 +3,7 @@
 ----------------------------
 
 -- from https://stackoverflow.com/a/51600210
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@s2.S2_IDFROMTOKEN`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.S2_IDFROMTOKEN`
 (token STRING)
 RETURNS INT64
 AS ((

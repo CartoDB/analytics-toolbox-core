@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('PLACEKEY_ISVALID should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@placekey.PLACEKEY_ISVALID\`(placekey) as valid
+        SELECT \`@@BQ_PREFIX@@carto.PLACEKEY_ISVALID\`(placekey) as valid
         FROM UNNEST([
             NULL, '@abc', 'abc-xyz', 'abcxyz234', 'abc-345@abc-234-xyz',
             'ebc-345@abc-234-xyz', 'bcd-345@', '22-zzz@abc-234-xyz',

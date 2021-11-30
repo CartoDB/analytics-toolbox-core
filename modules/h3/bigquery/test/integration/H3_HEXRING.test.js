@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('H3_HEXRING should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@h3.H3_HEXRING\`('8928308280fffff', 0) as d0,
-               \`@@BQ_PREFIX@@h3.H3_HEXRING\`('8928308280fffff', 1) as d1,
-               \`@@BQ_PREFIX@@h3.H3_HEXRING\`('8928308280fffff', 2) as d2
+        SELECT \`@@BQ_PREFIX@@cartorto.H3_HEXRING\`('8928308280fffff', 0) as d0,
+               \`@@BQ_PREFIX@@cartorto.H3_HEXRING\`('8928308280fffff', 1) as d1,
+               \`@@BQ_PREFIX@@cartorto.H3_HEXRING\`('8928308280fffff', 2) as d2
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -36,12 +36,12 @@ test('H3_HEXRING should work', async () => {
 });
 
 test('H3_HEXRING should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@h3.H3_HEXRING`(NULL, NULL)';
+    let query = 'SELECT `@@BQ_PREFIX@@cartorto.H3_HEXRING`(NULL, NULL)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@h3.H3_HEXRING`("abc", 1)';
+    query = 'SELECT `@@BQ_PREFIX@@cartorto.H3_HEXRING`("abc", 1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
-    query = 'SELECT `@@BQ_PREFIX@@h3.H3_HEXRING`("8928308280fffff", -1)';
+    query = 'SELECT `@@BQ_PREFIX@@cartorto.H3_HEXRING`("8928308280fffff", -1)';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 });

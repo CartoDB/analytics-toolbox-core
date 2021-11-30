@@ -13,18 +13,18 @@ test('QUADINT_TOCHILDREN should work at any level of zoom', async () => {
         ),
         expectedQuadintContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_FROMZXY\`(zoom, tileX, tileY) AS expectedQuadint,
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(zoom, tileX, tileY) AS expectedQuadint,
             FROM zoomContext
         ),
         childrenContext AS (
             SELECT *,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_TOCHILDREN\`(expectedQuadint, zoom + 1) AS children
+            \`@@BQ_PREFIX@@carto.QUADINT_TOCHILDREN\`(expectedQuadint, zoom + 1) AS children
             FROM expectedQuadintContext 
         )
         SELECT *
         FROM (
             SELECT expectedQuadint,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_TOPARENT\`(child, zoom) AS currentQuadint
+            \`@@BQ_PREFIX@@carto.QUADINT_TOPARENT\`(child, zoom) AS currentQuadint
             FROM childrenContext, UNNEST(children) AS child
         )
         WHERE currentQuadint != expectedQuadint`;
@@ -33,14 +33,14 @@ test('QUADINT_TOCHILDREN should work at any level of zoom', async () => {
 });
 
 test('QUADINT_TOCHILDREN should reject quadints at zoom 29', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_TOCHILDREN`(4611686027017322525,30)';
+    const query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_TOCHILDREN`(4611686027017322525,30)';
     await expect(runQuery(query)).rejects.toThrow();
 });
 
 test('QUADINT_TOCHILDREN should fail with NULL arguments', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_TOCHILDREN`(NULL, 1);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_TOCHILDREN`(NULL, 1);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_TOCHILDREN`(322, NULL);';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_TOCHILDREN`(322, NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.QUADINT_BOUNDARY`(quadint INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_BOUNDARY`(quadint INT64)
 RETURNS GEOGRAPHY
 AS (
     CASE
@@ -24,20 +24,20 @@ AS (
             ST_MAKEPOLYGON(
                 ST_MAKELINE([
                     ST_GEOGPOINT(
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_E`(quadint),
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_N`(quadint)),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_E`(quadint),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_N`(quadint)),
                     ST_GEOGPOINT(
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_E`(quadint),
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_S`(quadint)),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_E`(quadint),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_S`(quadint)),
                     ST_GEOGPOINT(
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_W`(quadint),
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_S`(quadint)),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_W`(quadint),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_S`(quadint)),
                     ST_GEOGPOINT(
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_W`(quadint),
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_N`(quadint)),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_W`(quadint),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_N`(quadint)),
                     ST_GEOGPOINT(
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_E`(quadint),
-                        `@@BQ_PREFIX@@quadkey.__QUADINT_BBOX_N`(quadint))
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_E`(quadint),
+                        `@@BQ_PREFIX@@carto.__QUADINT_BBOX_N`(quadint))
                     ])
                 ),
             ERROR('NULL argument passed to UDF')

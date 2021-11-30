@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.__QUADINT_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADINT_POLYFILL`
 (geojson STRING, resolution INT64)
 RETURNS ARRAY<INT64>
 DETERMINISTIC
@@ -27,9 +27,9 @@ AS """
     return quadints.map(String);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@quadkey.QUADINT_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS (
-    `@@BQ_PREFIX@@quadkey.__QUADINT_POLYFILL`(ST_ASGEOJSON(geog), resolution)
+    `@@BQ_PREFIX@@carto.__QUADINT_POLYFILL`(ST_ASGEOJSON(geog), resolution)
 );

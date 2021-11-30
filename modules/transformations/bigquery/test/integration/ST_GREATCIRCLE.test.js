@@ -1,9 +1,9 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('ST_GREATCIRCLE should work', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 10), 11) as greatcircle1,
-    \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(ST_GEOGPOINT(-1.70325, 1.4167), ST_GEOGPOINT(1.70325, -1.4167), 5) as greatcircle2,
-    \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(ST_GEOGPOINT(5, 5), ST_GEOGPOINT(-5, -5), 9) as greatcircle3`;
+    const query = `SELECT \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 10), 11) as greatcircle1,
+    \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(ST_GEOGPOINT(-1.70325, 1.4167), ST_GEOGPOINT(1.70325, -1.4167), 5) as greatcircle2,
+    \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(ST_GEOGPOINT(5, 5), ST_GEOGPOINT(-5, -5), 9) as greatcircle3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].greatcircle1.value).toEqual('LINESTRING(0 0, 0 1, 0 2, 0 3, 0 4, 0 5, 0 6, 0 7, 0 8, 0 9, 0 10)');
@@ -12,8 +12,8 @@ test('ST_GREATCIRCLE should work', async () => {
 });
 
 test('ST_GREATCIRCLE should return NULL if any NULL mandatory argument', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(NULL, ST_GEOGPOINT(-73.9385,40.6643), 20) as greatcircle1,
-    \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), NULL, 20) as greatcircle2`;
+    const query = `SELECT \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(NULL, ST_GEOGPOINT(-73.9385,40.6643), 20) as greatcircle1,
+    \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), NULL, 20) as greatcircle2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].greatcircle1).toEqual(null);
@@ -21,8 +21,8 @@ test('ST_GREATCIRCLE should return NULL if any NULL mandatory argument', async (
 });
 
 test('ST_GREATCIRCLE default values should work', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 100) as defaultValue,
-    \`@@BQ_PREFIX@@transformations.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), NULL) as nullParam1`;
+    const query = `SELECT \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 100) as defaultValue,
+    \`@@BQ_PREFIX@@carto.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), NULL) as nullParam1`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].nullParam1).toEqual(rows[0].defaultValue);

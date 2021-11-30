@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.__BUFFER`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__BUFFER`
 (geojson STRING, radius FLOAT64, units STRING, steps INT64)
 RETURNS STRING
 DETERMINISTIC
@@ -23,9 +23,9 @@ AS """
     return JSON.stringify(buffer.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_BUFFER`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.ST_BUFFER`
 (geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__BUFFER`(ST_ASGEOJSON(geog),radius, units, steps))
+    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@carto.__BUFFER`(ST_ASGEOJSON(geog),radius, units, steps))
 );

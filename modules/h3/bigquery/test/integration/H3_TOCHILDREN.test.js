@@ -10,7 +10,7 @@ test('H3_TOCHILDREN works as expected with invalid data', async () => {
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@h3.H3_TOCHILDREN\`(hid, 1) as parent
+            \`@@BQ_PREFIX@@cartorto.H3_TOCHILDREN\`(hid, 1) as parent
         FROM ids
         ORDER BY id ASC
     `;
@@ -26,11 +26,11 @@ test('List children correctly', async () => {
         WITH ids AS
         (
             SELECT
-                \`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
+                \`@@BQ_PREFIX@@cartorto.H3_FROMGEOGPOINT\`(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
         )
         SELECT
-            ARRAY_LENGTH(\`@@BQ_PREFIX@@h3.H3_TOCHILDREN\`(hid, 8)) AS length_children,
-            ARRAY_LENGTH(\`@@BQ_PREFIX@@h3.H3_TOCHILDREN\`(hid, 9)) AS length_grandchildren
+            ARRAY_LENGTH(\`@@BQ_PREFIX@@cartorto.H3_TOCHILDREN\`(hid, 8)) AS length_children,
+            ARRAY_LENGTH(\`@@BQ_PREFIX@@cartorto.H3_TOCHILDREN\`(hid, 9)) AS length_grandchildren
         FROM ids
     `;
 
@@ -47,7 +47,7 @@ test('Same resolution lists self', async () => {
             SELECT '87283080dffffff' as hid
         )
         SELECT
-            \`@@BQ_PREFIX@@h3.H3_TOCHILDREN\`(hid, 7) AS self_children
+            \`@@BQ_PREFIX@@cartorto.H3_TOCHILDREN\`(hid, 7) AS self_children
         FROM ids
     `;
 
@@ -61,10 +61,10 @@ test('Coarser resolution returns empty array', async () => {
         WITH ids AS
         (
             SELECT
-                \`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
+                \`@@BQ_PREFIX@@cartorto.H3_FROMGEOGPOINT\`(ST_GEOGPOINT(-122.409290778685, 37.81331899988944), 7) AS hid
         )
         SELECT
-            \`@@BQ_PREFIX@@h3.H3_TOCHILDREN\`(hid, 6) AS top_children
+            \`@@BQ_PREFIX@@cartorto.H3_TOCHILDREN\`(hid, 6) AS top_children
         FROM ids
     `;
 

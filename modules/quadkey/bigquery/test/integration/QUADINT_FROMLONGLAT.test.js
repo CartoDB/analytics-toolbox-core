@@ -13,7 +13,7 @@ test('QUADINT_FROMLONGLAT should not fail at any level of zoom', async () => {
                 UNNEST(GENERATE_ARRAY(-90,90,15)) lat,
                 UNNEST(GENERATE_ARRAY(-180,180,15)) long
         )
-        SELECT \`@@BQ_PREFIX@@quadkey.QUADINT_FROMLONGLAT\`(long, lat, zoom) AS quadints
+        SELECT \`@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT\`(long, lat, zoom) AS quadints
         FROM zoomContext`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(9425);
@@ -21,20 +21,20 @@ test('QUADINT_FROMLONGLAT should not fail at any level of zoom', async () => {
 });
 
 test('QUADINT_FROMLONGLAT should fail to encode quadints at zooms bigger than 29 or smaller than 0', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_FROMLONGLAT`(100, 100, 30)';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`(100, 100, 30)';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_FROMLONGLAT`(100, 100, -1)';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`(100, 100, -1)';
     await expect(runQuery(query)).rejects.toThrow();
 });
 
 test('QUADINT_FROMLONGLAT should fail if any NULL argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_FROMLONGLAT`(NULL, 10, 10);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`(NULL, 10, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_FROMLONGLAT`(10, NULL, 10);';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`(10, NULL, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
-    query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_FROMLONGLAT`(10, 10, NULL);';
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`(10, 10, NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

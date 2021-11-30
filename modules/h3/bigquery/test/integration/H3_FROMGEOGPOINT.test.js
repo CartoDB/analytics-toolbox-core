@@ -14,7 +14,7 @@ test('H3_FROMGEOGPOINT returns the proper INT64', async () => {
             SELECT 6 AS id, ST_GEOGPOINT(-122.0553238, 37.3615593) as geom, 20 as resolution UNION ALL
             SELECT 7 AS id, ST_GEOGPOINT(-122.0553238, 37.3615593) as geom, NULL as resolution
         )
-        SELECT CAST(\`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(geom, resolution) AS STRING) as h3_id
+        SELECT CAST(\`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(geom, resolution) AS STRING) as h3_id
         FROM inputs
         ORDER BY id ASC
     `;
@@ -39,7 +39,7 @@ test('H3_FROMGEOGPOINT returns NULL with non POINT geographies', async () => {
             SELECT 2 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 5 as resolution UNION ALL
             SELECT 3 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 0 10, 10 10, 10 0, 0 0)') as geom, 5 as resolution
         )
-        SELECT CAST(\`@@BQ_PREFIX@@h3.H3_FROMGEOGPOINT\`(geom, resolution) AS STRING) as h3_id
+        SELECT CAST(\`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(geom, resolution) AS STRING) as h3_id
         FROM inputs
         ORDER BY id ASC
     `;

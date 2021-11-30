@@ -15,7 +15,7 @@ test('Works as expected with invalid input', async () => {
         )
         SELECT
             id,
-            \`@@BQ_PREFIX@@h3.H3_DISTANCE\`(hid1, hid2) as distance
+            \`@@BQ_PREFIX@@carto.H3_DISTANCE\`(hid1, hid2) as distance
         FROM ids
         ORDER BY id ASC
     `;
@@ -43,11 +43,11 @@ test('Works as expected with valid input', async () => {
             hid2
         FROM
             distances,
-            UNNEST (\`@@BQ_PREFIX@@h3.H3_HEXRING\`('8928308280fffff', distance)) hid2
+            UNNEST (\`@@BQ_PREFIX@@carto.H3_HEXRING\`('8928308280fffff', distance)) hid2
         )
-        SELECT \`@@BQ_PREFIX@@h3.H3_DISTANCE\`(hid1, hid2) as calculated_distance, *
+        SELECT \`@@BQ_PREFIX@@carto.H3_DISTANCE\`(hid1, hid2) as calculated_distance, *
         FROM ids
-        WHERE \`@@BQ_PREFIX@@h3.H3_DISTANCE\`(hid1, hid2) != distance;
+        WHERE \`@@BQ_PREFIX@@carto.H3_DISTANCE\`(hid1, hid2) != distance;
     `;
 
     const rows = await runQuery(query);

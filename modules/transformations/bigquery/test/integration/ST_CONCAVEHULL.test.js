@@ -33,9 +33,9 @@ function getFeatureUnits (fixture) {
 }
 
 test('ST_CONCAVEHULL should work', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, ${getFeatureMaxEdge(concaveHullFixturesIn)}, ${getFeatureUnits(concaveHullFixturesIn)}) as concaveHull1,
-    \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(fijiFixturesIn)}, ${getFeatureMaxEdge(fijiFixturesIn)}, ${getFeatureUnits(fijiFixturesIn)}) as concaveHull2,
-    \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(holeFixturesIn)}, ${getFeatureMaxEdge(holeFixturesIn)}, ${getFeatureUnits(holeFixturesIn)}) as concaveHull3`;
+    const query = `SELECT \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, ${getFeatureMaxEdge(concaveHullFixturesIn)}, ${getFeatureUnits(concaveHullFixturesIn)}) as concaveHull1,
+    \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(fijiFixturesIn)}, ${getFeatureMaxEdge(fijiFixturesIn)}, ${getFeatureUnits(fijiFixturesIn)}) as concaveHull2,
+    \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(holeFixturesIn)}, ${getFeatureMaxEdge(holeFixturesIn)}, ${getFeatureUnits(holeFixturesIn)}) as concaveHull3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].concaveHull1.value).toEqual(concaveHullFixturesOut.value);
@@ -44,15 +44,15 @@ test('ST_CONCAVEHULL should work', async () => {
 });
 
 test('ST_CONCAVEHULL should return NULL if any NULL mandatory argument', async () => {
-    const query = 'SELECT `@@BQ_PREFIX@@transformations.ST_CONCAVEHULL`(NULL, 10, \'kilometers\') as concaveHull1';
+    const query = 'SELECT `@@BQ_PREFIX@@carto.ST_CONCAVEHULL`(NULL, 10, \'kilometers\') as concaveHull1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].concaveHull1).toEqual(null);
 });
 
 test('ST_CONCAVEHULL default values should work', async () => {
-    const query = `SELECT \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, CAST('Infinity' AS FLOAT64), "kilometers") as defaultValue,
-    \`@@BQ_PREFIX@@transformations.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, NULL, NULL) as nullParam1`;
+    const query = `SELECT \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, CAST('Infinity' AS FLOAT64), "kilometers") as defaultValue,
+    \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(concaveHullFixturesIn)}, NULL, NULL) as nullParam1`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].nullParam1).toEqual(rows[0].defaultValue);

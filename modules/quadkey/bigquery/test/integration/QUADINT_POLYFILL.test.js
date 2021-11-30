@@ -58,8 +58,8 @@ test('QUADINT_POLYFILL should work', async () => {
 
     const query = `
         SELECT
-            \`@@BQ_PREFIX@@quadkey.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 10) as polyfill10,
-            \`@@BQ_PREFIX@@quadkey.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 14) as polyfill14`;
+            \`@@BQ_PREFIX@@carto.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 10) as polyfill10,
+            \`@@BQ_PREFIX@@carto.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 14) as polyfill14`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);  
     expect(rows[0].polyfill10.sort()).toEqual(polyfillFixturesOut.polyfill1);
@@ -135,14 +135,14 @@ test('QUADINT_POLYFILL should work with GEOMETRYCOLLECTION', async () => {
     };
     const featureJSON = JSON.stringify(feature);
 
-    const query = `SELECT \`@@BQ_PREFIX@@quadkey.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 22) as polyfill22`;
+    const query = `SELECT \`@@BQ_PREFIX@@carto.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 22) as polyfill22`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].polyfill22.sort()).toEqual(polyfillFixturesOut.polyfill3);
 });
 
 test('QUADINT_POLYFILL should fail if any NULL argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@quadkey.QUADINT_POLYFILL`(NULL, 10);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_POLYFILL`(NULL, 10);';
     await expect(runQuery(query)).rejects.toThrow();
 
     const feature = {
@@ -162,6 +162,6 @@ test('QUADINT_POLYFILL should fail if any NULL argument', async () => {
     };
     const featureJSON = JSON.stringify(feature);
 
-    query = `SELECT \`@@BQ_PREFIX@@quadkey.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), NULL)`;
+    query = `SELECT \`@@BQ_PREFIX@@carto.QUADINT_POLYFILL\`(ST_GEOGFROMGEOJSON('${featureJSON}'), NULL)`;
     await expect(runQuery(query)).rejects.toThrow();
 });

@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('ST_ANGLE should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(10, 0), ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 10), false) as angle1,
-               \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle2,
-               \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167), true) as angle3
+        SELECT \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(10, 0), ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 10), false) as angle1,
+               \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle2,
+               \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167), true) as angle3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -15,9 +15,9 @@ test('ST_ANGLE should work', async () => {
 
 test('ST_ANGLE should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(NULL, ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle1,
-               \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), NULL, ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle2,
-               \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), NULL, false) as angle3
+        SELECT \`@@BQ_PREFIX@@carto.ST_ANGLE\`(NULL, ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle1,
+               \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), NULL, ST_GEOGPOINT(-5.70325 ,40.4167), false) as angle2,
+               \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), NULL, false) as angle3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -28,8 +28,8 @@ test('ST_ANGLE should return NULL if any NULL mandatory argument', async () => {
 
 test('ST_ANGLE default values should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as defaultValue,
-               \`@@BQ_PREFIX@@measurements.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), NULL) as nullParam
+        SELECT \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false) as defaultValue,
+               \`@@BQ_PREFIX@@carto.ST_ANGLE\`(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), NULL) as nullParam
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

@@ -2,7 +2,7 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('PLACEKEY_TOH3 should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@placekey.PLACEKEY_TOH3\`(placekey) as h3
+        SELECT \`@@BQ_PREFIX@@carto.PLACEKEY_TOH3\`(placekey) as h3
         FROM UNNEST([
             '@c6z-c2g-dgk', '@63m-vc4-z75', '@7qg-xf9-j5f', '@bhm-9m8-gtv',
             '@h5z-gcq-kvf', '@7v4-m2p-3t9', '@hvb-5d7-92k', '@ab2-k43-xqz'
@@ -17,7 +17,7 @@ test('PLACEKEY_TOH3 should work', async () => {
 
 test('PLACEKEY_TOH3 returns null with invalid input', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@placekey.PLACEKEY_TOH3\`(placekey) as h3
+        SELECT \`@@BQ_PREFIX@@carto.PLACEKEY_TOH3\`(placekey) as h3
         FROM UNNEST([
             NULL, '@abc', 'abc-xyz', 'abcxyz234', 'abc-345@abc-234-xyz',
             'ebc-345@abc-234-xyz', 'bcd-345@', '22-zzz@abc-234-xyz'
