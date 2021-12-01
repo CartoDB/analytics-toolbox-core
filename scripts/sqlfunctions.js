@@ -27,6 +27,7 @@ default: functionEndingPattern = 'RETURNS'; break;
 let procedureEndingPattern;
 switch (cloud) 
 {
+case 'bigquery':
 case 'postgres': procedureEndingPattern = 'BEGIN'; break;
 default: procedureEndingPattern = 'AS'; break;
 }
