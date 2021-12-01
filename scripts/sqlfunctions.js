@@ -131,7 +131,7 @@ function addFile (moduleName, fileName)
     }
     content = content.join(' ');
     content = content.replace(/(\r\n|\n|\r)/gm,' ')
-    const functionMatches = content.matchAll(new RegExp(`(?<=FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
+    const functionMatches = content.matchAll(new RegExp(`(?<=(?<!TEMP )FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
     classifyFunctions(moduleName, functionMatches);
     const procedureMatches = content.matchAll(new RegExp(`(?<=PROCEDURE)(.*?)(?=${procedureEndingPattern})`,'g'));
     classifyFunctions(moduleName, procedureMatches);
