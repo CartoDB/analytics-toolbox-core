@@ -19,6 +19,7 @@ const outputDelimiter = process.env.DELIMITER || '\n';
 let functionEndingPattern;
 switch (cloud) 
 {
+case 'bigquery': functionEndingPattern = 'AS'; break;
 case 'postgres': functionEndingPattern = 'BEGIN'; break;
 default: functionEndingPattern = 'RETURNS'; break;
 }

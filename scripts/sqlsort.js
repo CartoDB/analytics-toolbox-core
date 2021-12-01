@@ -35,7 +35,7 @@ files.forEach(file => {
     const content = fs.readFileSync(path.join(dir, file)).toString();
     input.push({
         name,
-        deps: files.map(f => path.parse(f).name).filter(n => n !== name && sqlFunctions[n] && new RegExp(sqlFunctions[n].join('|')).test(content))
+        deps: files.map(f => path.parse(f).name).filter(n => n !== name && sqlFunctions[n] && new RegExp(sqlFunctions[n].map(x => '\\b' + x + '\\b').join('|')).test(content))
     });
 });
 

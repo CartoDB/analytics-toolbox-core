@@ -24,7 +24,7 @@ modules.forEach(module => {
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
         input.push({
             name: module,
-            deps: modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].join('|')).test(content))
+            deps: modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + x + '\\b').join('|')).test(content))
         });
     }
 });
