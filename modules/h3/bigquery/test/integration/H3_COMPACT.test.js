@@ -32,7 +32,7 @@ test('Work with polyfill arrays', async () => {
         SELECT
         ARRAY_LENGTH(v) AS original,
         ARRAY_LENGTH(\`@@BQ_PREFIX@@carto.H3_COMPACT\`(v)) AS compacted,
-        ARRAY_LENGTH(\`@@BQ_PREFIX@@carto.H3_UNCOMPAC@@BQ_PREFIX@@carto@carto@carto.H3_COMPACT\`(v), 9)) AS uncompacted
+        ARRAY_LENGTH(\`@@BQ_PREFIX@@carto.H3_UNCOMPACT\`(\`@@BQ_PREFIX@@carto.H3_COMPACT\`(v), 9)) AS uncompacted
         FROM poly
     `;
 

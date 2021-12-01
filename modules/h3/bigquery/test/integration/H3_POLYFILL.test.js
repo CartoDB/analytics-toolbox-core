@@ -71,7 +71,7 @@ test('H3_POLYFILL returns the expected values', async () => {
             SELECT
                 resolution,
                 \`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(geog, resolution) AS h3_id,
-                \`@@BQ_PREFIX@@carto.H3_BOUNDARY\`@@BQ_PREFIX@@carto@carto.H3_FROMGEOGPOINT\`(geog, resolution)) AS boundary
+                \`@@BQ_PREFIX@@carto.H3_BOUNDARY\`(\`@@BQ_PREFIX@@carto.H3_FROMGEOGPOINT\`(geog, resolution)) AS boundary
             FROM points, UNNEST(GENERATE_ARRAY(0, 15, 1)) resolution
         ),
         polyfill AS
