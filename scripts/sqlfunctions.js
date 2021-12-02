@@ -19,6 +19,7 @@ const outputDelimiter = process.env.DELIMITER || '\n';
 let functionEndingPattern;
 switch (cloud) 
 {
+case 'bigquery': functionEndingPattern = 'AS'; break;
 case 'postgres': functionEndingPattern = 'BEGIN'; break;
 default: functionEndingPattern = 'RETURNS'; break;
 }
@@ -26,6 +27,7 @@ default: functionEndingPattern = 'RETURNS'; break;
 let procedureEndingPattern;
 switch (cloud) 
 {
+case 'bigquery':
 case 'postgres': procedureEndingPattern = 'BEGIN'; break;
 default: procedureEndingPattern = 'AS'; break;
 }
@@ -130,7 +132,7 @@ function addFile (moduleName, fileName)
     }
     content = content.join(' ');
     content = content.replace(/(\r\n|\n|\r)/gm,' ')
-    const functionMatches = content.matchAll(new RegExp(`(?<=FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
+    const functionMatches = content.matchAll(new RegExp(`(?<=(?<!TEMP )FUNCTION)(.*?)(?=${functionEndingPattern})`,'g'));
     classifyFunctions(moduleName, functionMatches);
     const procedureMatches = content.matchAll(new RegExp(`(?<=PROCEDURE)(.*?)(?=${procedureEndingPattern})`,'g'));
     classifyFunctions(moduleName, procedureMatches);
