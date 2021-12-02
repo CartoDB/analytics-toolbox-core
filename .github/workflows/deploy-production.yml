@@ -69,7 +69,7 @@ jobs:
             project: carto-un-eu
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
-          - region: na-ne1
+          - region: northamerica-northeast1
             project: carto-un-na-ne1
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
