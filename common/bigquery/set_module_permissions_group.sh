@@ -17,6 +17,10 @@
 #############################################################################################
 BQ_PERMISSIONS_GROUP_ENV="-prod -stag -dev"
 
+if [ "$BQ_PERMISSIONS_ROLE_NAME" = "" ]; then
+    echo "  BQ_PERMISSIONS_ROLE_NAME must be defined!"
+    exit 1
+fi
 
 BQ_PERMISSIONS_ROLE=projects/$BQ_PROJECT/roles/$BQ_PERMISSIONS_ROLE_NAME
 
