@@ -1,5 +1,7 @@
 # Makefile for Redshift modules
 
+CLOUD = redshift
+
 SED = sed
 AWS = aws
 PYTHON2_VERSION = 2.7
@@ -138,7 +140,7 @@ schema-deploy:
 		STATEMENT_SQL="DROP FUNCTION $(RS_DEPLOY_SCHEMA).$$f"; AWS_SKIP_OUTPUT=1; $(AWS_RUN_STATEMENT_SQL); \
 	done
 
-	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $$n`; $(AWS_RUN_STATEMENT_SQL); \
 	done
 	STATEMENT_SQL=`$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql`; $(AWS_RUN_STATEMENT_SQL);
@@ -168,7 +170,7 @@ serialize-module: build serialize-dependency
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>/$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
 	done
 	echo "" >> $(DIST_DIR)/module.sql;
-	for n in `IGNORE="_SHARE_CREATE _SHARE_REMOVE" node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS) $$n >> $(DIST_DIR)/module.sql; \
 		echo "" >> $(DIST_DIR)/module.sql; \
 	done
