@@ -1,7 +1,7 @@
 ### H3_TOPARENT
 
 {{% bannerNote type="code" %}}
-h3.H3_TOPARENT(index, resolution)
+carto.H3_TOPARENT(index, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,6 +20,6 @@ Returns the H3 cell index of the parent of the given hexagon at the given resolu
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.H3_TOPARENT('847b59dffffffff', 3);
+SELECT carto-os.carto.H3_TOPARENT('847b59dffffffff', 3);
 -- 837b59fffffffff
 ```

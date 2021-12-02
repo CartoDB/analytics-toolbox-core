@@ -1,7 +1,7 @@
 ### QUADINT_TOCHILDREN
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_TOCHILDREN(quadint, resolution)
+carto.QUADINT_TOCHILDREN(quadint, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,7 +20,7 @@ Returns an array with the children quadints of a given quadint for a specific re
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADINT_TOCHILDREN(1155, 4);
+SELECT carto-os.carto.QUADINT_TOCHILDREN(1155, 4);
 -- 4356
 -- 4868
 -- 4388

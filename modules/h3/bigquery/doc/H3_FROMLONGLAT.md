@@ -1,7 +1,7 @@
 ### H3_FROMLONGLAT
 
 {{% bannerNote type="code" %}}
-h3.H3_FROMLONGLAT(longitude, latitude, resolution)
+carto.H3_FROMLONGLAT(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -21,6 +21,6 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.H3_FROMLONGLAT(40.4168, -3.7038, 4);
+SELECT carto-os.carto.H3_FROMLONGLAT(40.4168, -3.7038, 4);
 -- 847b59dffffffff
 ```

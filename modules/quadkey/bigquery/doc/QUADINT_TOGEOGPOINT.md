@@ -1,7 +1,7 @@
 ### QUADINT_TOGEOGPOINT
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_TOGEOGPOINT(quadint)
+carto.QUADINT_TOGEOGPOINT(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the centroid for a given quadint.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADINT_TOGEOGPOINT(4388);
+SELECT carto-os.carto.QUADINT_TOGEOGPOINT(4388);
 -- 	POINT(33.75 22.2982994295938)
 ```

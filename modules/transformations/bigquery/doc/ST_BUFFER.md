@@ -1,7 +1,7 @@
 ### ST_BUFFER
 
 {{% bannerNote type="code" %}}
-transformations.ST_BUFFER(geog, radius, units, steps)
+carto.ST_BUFFER(geog, radius, units, steps)
 {{%/ bannerNote %}}
 
 **Description**
@@ -22,6 +22,6 @@ Calculates a Geography buffer for input features for a given radius. Units suppo
 {{%/ customSelector %}}
 
 ``` sql
-SELECT carto-os.transformations.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, "kilometers", 10);
+SELECT carto-os.carto.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, "kilometers", 10);
 -- POLYGON((-73.9881354374691 40.7127993926494 ... 
 ```

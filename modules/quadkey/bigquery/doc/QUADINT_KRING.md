@@ -1,7 +1,7 @@
 ### QUADINT_KRING
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_KRING(origin, size)
+carto.QUADINT_KRING(origin, size)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,7 +20,7 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADINT_KRING(4388, 1);
+SELECT carto-os.carto.QUADINT_KRING(4388, 1);
 -- 3844
 -- 3876
 -- 3908

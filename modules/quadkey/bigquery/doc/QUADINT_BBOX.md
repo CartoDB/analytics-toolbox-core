@@ -1,7 +1,7 @@
 ### QUADINT_BBOX
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_BBOX(quadint)
+carto.QUADINT_BBOX(quadint)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,7 +19,7 @@ Returns an array with the boundary box of a given quadint. This boundary box con
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADINT_BBOX(4388);
+SELECT carto-os.carto.QUADINT_BBOX(4388);
 -- 22.5
 -- -21.943045533438177
 -- 45.0

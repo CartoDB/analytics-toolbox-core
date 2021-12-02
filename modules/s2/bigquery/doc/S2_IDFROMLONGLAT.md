@@ -1,7 +1,7 @@
 ### S2_IDFROMLONGLAT
 
 {{% bannerNote type="code" %}}
-s2.S2_IDFROMLONGLAT(longitude, latitude, resolution)
+carto.S2_IDFROMLONGLAT(longitude, latitude, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -21,6 +21,6 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.s2.S2_IDFROMLONGLAT(-3.7038, 40.4168, 8);
+SELECT carto-os.carto.S2_IDFROMLONGLAT(-3.7038, 40.4168, 8);
 -- 955378847514099712
 ```

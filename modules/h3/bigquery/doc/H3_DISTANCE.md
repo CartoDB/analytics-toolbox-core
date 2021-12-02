@@ -1,7 +1,7 @@
 ### H3_DISTANCE
 
 {{% bannerNote type="code" %}}
-h3.H3_DISTANCE(origin, destination)
+carto.H3_DISTANCE(origin, destination)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,7 +20,7 @@ Returns the **grid distance** between two hexagon indexes. This function may fai
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
+SELECT carto-os.carto.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
 -- 1
 ```
 

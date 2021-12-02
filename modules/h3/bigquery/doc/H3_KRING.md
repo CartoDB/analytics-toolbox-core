@@ -1,7 +1,7 @@
 ### H3_KRING
 
 {{% bannerNote type="code" %}}
-h3.H3_KRING(origin, size)
+carto.H3_KRING(origin, size)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,7 +20,7 @@ Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.H3_KRING('837b59fffffffff', 1);
+SELECT carto-os.carto.H3_KRING('837b59fffffffff', 1);
 -- 837b59fffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff

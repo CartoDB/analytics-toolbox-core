@@ -1,7 +1,7 @@
 ### QUADINT_TOLIST_FROMLONGLATRESOLUTION
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_TOLIST_FROMLONGLATRESOLUTION(longitude, latitude, zoom_min, zoom_max, zoom_step, resolution)
+carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION(longitude, latitude, zoom_min, zoom_max, zoom_step, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -24,7 +24,7 @@ Returns the quadint index for the given point for each zoom level requested, at 
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADINT_TOLIST_FROMLONGLATRESOLUTION(40.4168, -3.7038, 3, 6, 1, 4);
+SELECT carto-os.carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION(40.4168, -3.7038, 3, 6, 1, 4);
 -- id        z  x   y
 -- 268743    3  4   4
 -- 1069960   4  9   8

@@ -1,7 +1,7 @@
 ### QUADINT_FROMZXY
 
 {{% bannerNote type="code" %}}
-quadkey.QUADINT_FROMZXY(z, x, y)
+carto.QUADINT_FROMZXY(z, x, y)
 {{%/ bannerNote %}}
 
 **Description**
@@ -25,6 +25,6 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADINT_FROMZXY(4, 9, 8);
+SELECT carto-os.carto.QUADINT_FROMZXY(4, 9, 8);
 -- 4388
 ```
