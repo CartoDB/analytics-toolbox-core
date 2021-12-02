@@ -19,7 +19,7 @@ GROUP BY country_code, postal_code;
 
 -- TODO: fix chicken-egg problem: __PC_CODE is in geocoding module which requires these tables
 UPDATE `@@BQ_PREFIX@@carto.postalcodes`
-SET code = `@@BQ_PREFIX@@carto.__PC_CODE`(geoid) WHERE TRUE;
+SET code = `@@BQ_PREFIX@@carto.__PC_CODE`(postal_code) WHERE TRUE;
 
 -- Set release date
 UPDATE `@@BQ_PREFIX@@carto.postalcodes`
