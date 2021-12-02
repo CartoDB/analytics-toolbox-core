@@ -1,5 +1,7 @@
 # Makefile for Snowflake modules
 
+CLOUD = snowflake
+
 SED = sed
 GSUTIL = gsutil
 SNOWSQL ?= snowsql
@@ -103,7 +105,6 @@ test-integration: check $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	jest test/integration/$(F) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 
-
 deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
@@ -135,7 +136,7 @@ schema-remove:
 	$(SNOWSQL) -d $(SF_DATABASE) -q "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE"
 
 schema-deploy:
-	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1; \
 	done
 	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1
@@ -166,7 +167,7 @@ serialize-module:
 	$(MAKE) build
 	rm -f ${DIST_DIR}/module.sql
 	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
-	for n in `node $(SCRIPTS_DIR)/sqlsort.js`; do \
+	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
 		echo "" >> ${DIST_DIR}/module.sql; \
 	done
