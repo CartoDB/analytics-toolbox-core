@@ -146,9 +146,12 @@ storage-remove:
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
 		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_LABEL) $(BQ_DEPLOY_DATASET)
-ifdef BQ_CONNECTION_SPATIAL_CATALOG
+ifdef BQ_CREATE_SPATIAL_CATALOG
 	if [ "$(MODULE)" = "data" ]; then \
-		$(COMMON_DIR)/sync_spatial_catalog.sh; \
+		$(BQ) query --use_legacy_sql=false \
+		'CREATE TABLE IF NOT EXISTS $(BQ_DEPLOY_DATASET).spatial_catalog_datasets(dataset_id string,dataset_slug string,dataset_name string,dataset_country string,dataset_category string,dataset_provider string,dataset_version string,dataset_geom_type string,dataset_is_public boolean,dataset_is_product boolean,associated_geography_id string);'; \
+		$(BQ) query --use_legacy_sql=false \
+		'CREATE TABLE IF NOT EXISTS $(BQ_DEPLOY_DATASET).spatial_catalog_variables(variable_slug string,variable_name string,variable_description string,variable_type string,variable_aggregation string,dataset_slug string);'; \
 	fi
 else ifdef BQ_BUCKET_SPATIAL_CATALOG
 	if [ "$(MODULE)" = "data" ]; then \
