@@ -69,6 +69,10 @@ jobs:
             project: carto-un-eu
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
+          - region: northamerica-northeast1
+            project: carto-un-na-ne1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
