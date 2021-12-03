@@ -10,9 +10,6 @@ on:
         description: PR number
         required: true
 
-env:
-  PR_NUMBER: ${{ github.event.pull_request.number }}
-
 jobs:
 
   delete-bq:
@@ -20,12 +17,8 @@ jobs:
     timeout-minutes: 15
     env:
       GCLOUD_VERSION: 290.0.1
-      BQ_PROJECT: bqcartost-core-${{ env.PR_NUMBER }}
+      BQ_PROJECT: bqcartost-core-${{ github.event.inputs.pr_number || github.event.pull_request.number }}
     steps:
-      - name: Set conditional env variables
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-            echo "PR_NUMBER=${{ github.event.inputs.pr_number }}" >> $GITHUB_ENV
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -41,7 +34,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ env.PR_NUMBER }};
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Project `${{ env.BQ_PROJECT }}` deleted! 🔥' });
 
   delete-sf:
@@ -55,14 +48,10 @@ jobs:
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: SFCARTOST
-      SF_SCHEMA_PREFIX: ${{ env.PR_NUMBER }}_
-      SF_SHARE_ENABLED: 1
+      SF_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
+      SF_SHARE_ENABLED: 0
       SF_SHARE_PREFIX: SFCARTOST_
     steps:
-      - name: Set conditional env variables
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-            echo "PR_NUMBER=${{ github.event.inputs.pr_number }}" >> $GITHUB_ENV
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup snowsql
@@ -77,5 +66,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ env.PR_NUMBER }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Schema `${{ env.SF_DATABASE }}`.`${{ env.SF_SCHEMA_PREFIX }}`carto and share `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`SPATIAL_EXTENSIONS deleted! 🔥' });
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto` deleted! 🔥' });
