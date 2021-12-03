@@ -163,7 +163,8 @@ endif
 serialize-module:
 	$(MAKE) build
 	rm -f ${DIST_DIR}/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
+	echo "USE SCHEMA $(SF_DATABASE).$(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module.sql;
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
 		echo "" >> ${DIST_DIR}/module.sql; \
