@@ -1,7 +1,7 @@
-### S2_IDFROMGEOGPOINT
+### S2_FROMGEOGPOINT
 
 {{% bannerNote type="code" %}}
-carto.S2_IDFROMGEOGPOINT(point, resolution)
+carto.S2_FROMGEOGPOINT(point, resolution)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,6 +18,6 @@ Returns the S2 cell ID of a given point at a given level of detail.
 **Example**
 
 ```sql
-SELECT carto.S2_IDFROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 8);
+SELECT carto.S2_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 8);
 -- 1735346007979327488
 ```

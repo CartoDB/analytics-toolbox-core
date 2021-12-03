@@ -2,7 +2,6 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-
 CREATE OR REPLACE FUNCTION _VORONOIHELPER
 (geojson ARRAY, bbox ARRAY, typeOfVoronoi STRING)
 RETURNS ARRAY

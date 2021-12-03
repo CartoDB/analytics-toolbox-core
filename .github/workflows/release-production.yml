@@ -1,13 +1,10 @@
 name: Release Production
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud (snowflake)'
+        description: 'Cloud warehouse (snowflake)'
         required: true
         default: ''
 
@@ -21,9 +18,7 @@ jobs:
     timeout-minutes: 10
     if: ${{ github.event.inputs.cloud == 'snowflake'}}
     env:
-      PACKAGE_TYPE: CORE
-      PACKAGE_BUCKET: gs://carto-analytics-toolbox/core/snowflake
-      MAKE_RELEASE: 1
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -39,9 +34,13 @@ jobs:
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
             service_account_key: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
             export_default_credentials: true
-      - name: Release installation package
-        run: ./common/snowflake/release_installation_package.sh
-      - name: Upload the artifact
+      - name: Create installation package
+        run: ./common/snowflake/create_installation_package.sh
+      - name: Upload the package to the bucket
+        run: |
+          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/
+          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/
+      - name: Upload the package as an artifact
         uses: actions/upload-artifact@v2
         with:
           name: carto-analytics-toolbox-core-snowflake

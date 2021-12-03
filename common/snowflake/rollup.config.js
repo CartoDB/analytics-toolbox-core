@@ -21,7 +21,7 @@ export default {
         bundleSize()
     ],
     onwarn (warning, rollupWarn) {
-        if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+        if (!['CIRCULAR_DEPENDENCY', 'THIS_IS_UNDEFINED'].includes(warning.code)) {
             rollupWarn(warning);
         }
     }
