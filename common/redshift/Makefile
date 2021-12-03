@@ -181,6 +181,11 @@ serialize-functions:
 	rm -f $(DIST_DIR)/funct_names.csv
 	MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> $(DIST_DIR)/funct_names.csv
 
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv
+
 venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
 	. $(VENV2_ACTIVATE) && \

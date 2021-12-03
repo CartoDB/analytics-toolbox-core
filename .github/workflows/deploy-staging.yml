@@ -9,9 +9,6 @@ on:
         description: PR number
         required: true
 
-env:
-  PR_NUMBER: ${{ github.event.pull_request.number }}
-
 jobs:
 
   deploy-bq:
@@ -23,8 +20,8 @@ jobs:
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
-      BQ_PROJECT: bqcartost-core-${{ env.PR_NUMBER }}
-      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ env.PR_NUMBER }}/
+      BQ_PROJECT: bqcartost-core-${{ github.event.inputs.pr_number || github.event.pull_request.number }}
+      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.inputs.pr_number || github.event.pull_request.number }}/
     steps:
       - name: Set conditional env variables
         if: github.event_name == 'workflow_dispatch'
@@ -50,7 +47,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ env.PR_NUMBER }};
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECT }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECT}}' });
 
   deploy-sf:
@@ -67,8 +64,8 @@ jobs:
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: SFCARTOST
-      SF_SCHEMA_PREFIX: ${{ env.PR_NUMBER }}_
-      SF_SHARE_ENABLED: 1
+      SF_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
+      SF_SHARE_ENABLED: 0
       SF_SHARE_PREFIX: SFCARTOST_
     steps:
       - name: Set conditional env variables
@@ -89,8 +86,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ env.PR_NUMBER }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}`.`${{ env.SF_SCHEMA_PREFIX }}`carto and share `${{ env.SF_SCHEMA_PREFIX }}``${{ env.SF_SHARE_PREFIX }}`SPATIAL_EXTENSIONS' });
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto`' });
 
   deploy-rs:
     if: |
@@ -133,4 +130,4 @@ jobs:
           script: |
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.pull_request.number }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.RS_DATABASE }}`.`${{ env.RS_SCHEMA_PREFIX }}`carto' });
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.RS_DATABASE }}.${{ env.RS_SCHEMA_PREFIX }}carto`' });
