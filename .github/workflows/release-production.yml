@@ -18,7 +18,6 @@ jobs:
     timeout-minutes: 10
     if: ${{ github.event.inputs.cloud == 'snowflake'}}
     env:
-      PACKAGE_TYPE: CORE
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
     steps:
       - name: Checkout repo
