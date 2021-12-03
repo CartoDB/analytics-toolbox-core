@@ -3,7 +3,7 @@
 ----------------------------
 
 -- from https://stackoverflow.com/a/51600210
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.S2_TOKENFROMID`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.S2_TOTOKEN`
 (id INT64)
 RETURNS STRING
 AS ((
