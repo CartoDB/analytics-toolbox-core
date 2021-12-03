@@ -11,6 +11,9 @@ BQ_DEPLOY_DATASET = $(BQ_DATASET_PREFIX)carto
 BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
+PACKAGE_VERSION ?= $(date +%Y.%m.%d)
+VERSION_FUNCTION ?= VERSION
+
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 LIB_DIR = $(ROOT_DIR)/lib
@@ -30,7 +33,7 @@ NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
 MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
 
-REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' $(REPLACEMENTS_EXTRA) -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g'
 
 .SILENT:
 
@@ -179,6 +182,7 @@ serialize-module:
 	  	cat $$n >> $(DIST_DIR)/module.sql; \
 		echo "" >> $(DIST_DIR)/module.sql; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
 
 serialize-functions:
 	mkdir -p $(DIST_DIR)

@@ -2,12 +2,9 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.VERSION`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.@@BQ_VERSION_FUNCTION@@`
 ()
 RETURNS STRING
-DETERMINISTIC
-LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS """
-    return accessorsLib.version;
-""";
+AS (
+    '@@BQ_PACKAGE_VERSION@@'
+);
