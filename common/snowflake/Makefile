@@ -11,8 +11,9 @@ SF_SHARES_ROLE = ACCOUNTADMIN
 SF_PREFIX = $(SF_DATABASE).$(SF_SCHEMA_PREFIX)
 SF_SHARES = $(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS
 
+PACKAGE_TYPE ?= CORE
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
-VERSION_FUNCTION ?= VERSION_CORE
+VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -163,8 +164,10 @@ endif
 serialize-module:
 	$(MAKE) build
 	rm -f ${DIST_DIR}/module.sql
-	echo "USE SCHEMA $(SF_DATABASE).$(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module.sql;
+	echo "USE SCHEMA $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
+	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
+		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module.sql; \
+	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
 		echo "" >> ${DIST_DIR}/module.sql; \

@@ -4,7 +4,7 @@ LANGUAGE javascript
 IMMUTABLE
 AS $$
     let rs = snowflake.execute({
-        sqlText: 'SHOW USER FUNCTIONS IN SCHEMA @@SF_DATABASE@@.@@SF_SCHEMA@@;'
+        sqlText: 'SHOW USER FUNCTIONS IN SCHEMA @@SF_SCHEMA@@;'
     });
     let cmd1_dict = {
       sqlText: `
@@ -44,7 +44,7 @@ LANGUAGE javascript
 IMMUTABLE
 AS $$
     let rs = snowflake.execute({
-        sqlText: 'SHOW USER PROCEDURES IN SCHEMA @@SF_DATABASE@@.@@SF_SCHEMA@@;'
+        sqlText: 'SHOW USER PROCEDURES IN SCHEMA @@SF_SCHEMA@@;'
     });
     let cmd1_dict = {
       sqlText: `

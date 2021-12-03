@@ -2,13 +2,9 @@
 
 # Script to create an installation package for Snowflake
 
-# * PACKAGE_TYPE
-
-#PACKAGE_TYPE=CORE
-
 PACKAGE_VERSION=$(date +%Y.%m.%d)
 
-echo "Releasing installation package "$PACKAGE_VERSION" in $PACKAGE_BUCKET"
+echo "Creating installation package $PACKAGE_VERSION"
 
 SCRIPT_DIR=$( dirname "$0" )
 SCRIPTS_DIR=$SCRIPT_DIR/../../scripts
@@ -33,7 +29,7 @@ export GIT_DIFF=off
 for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     echo -e "\n> Module $module/$CLOUD"
     make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module \
-        PACKAGE_VERSION=$PACKAGE_VERSION VERSION_FUNCTION=VERSION_$PACKAGE_TYPE || exit 1
+        PACKAGE_VERSION=$PACKAGE_VERSION || exit 1
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_DIR/modules.sql
     rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql
 done
