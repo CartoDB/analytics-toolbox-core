@@ -177,6 +177,7 @@ $$ LANGUAGE plpythonu;`;
 }
 
 function createTestIntegrationVersion () {
+    if (cloud === 'snowflake') return;
     const filename = { bigquery: 'VERSION.test.js', snowflake: 'VERSION.test.js', redshift: 'test_VERSION.py' }[cloud];
     const cover = { bigquery: '`', snowflake: '' }[cloud];
     const variable = { bigquery: 'v', snowflake: 'V' }[cloud];
@@ -192,17 +193,6 @@ test('VERSION returns the proper version', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].${variable}).toEqual(version);
-});`;
-        break;
-
-    case 'snowflake':
-        content = `const { runQuery } = require('../../../../../${ type == 'advanced' ? 'core/': '' }common/${cloud}/test-utils');
-
-test('Test function example', async () => {
-    const query = 'SELECT 123 as v';
-    const rows = await runQuery(query);
-    expect(rows.length).toEqual(1);
-    expect(rows[0].${variable}).toEqual(123);
 });`;
         break;
 
@@ -292,8 +282,7 @@ function createChangelog () {
         content = `# Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - ${currentDate()}
 
@@ -304,8 +293,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         content = `# Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - ${currentDate()}
 

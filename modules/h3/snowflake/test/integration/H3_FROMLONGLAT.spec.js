@@ -1,6 +1,6 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
-test('H3_FROMGEOGPOINT returns the proper INT64', async () => {
+test('H3_FROMLONGLAT returns the proper INT64', async () => {
     const query = `
         WITH inputs AS
         (

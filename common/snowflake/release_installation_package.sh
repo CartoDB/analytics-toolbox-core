@@ -6,7 +6,7 @@
 # * PACKAGE_BUCKET
 
 #PACKAGE_TYPE=CORE
-#PACKAGE_BUCKET=gs://carto-analytics-toolbox/core/snowflake
+#PACKAGE_BUCKET=gs://carto-analytics-toolbox-core/snowflake
 
 PACKAGE_VERSION=$(date +%Y.%m.%d)
 
@@ -45,6 +45,6 @@ then
     # Upload the package to the bucket
     gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/latest/
     gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/latest/
-    gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/$PACKAGE_VERSION/
-    gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/$PACKAGE_VERSION/
+    #gsutil -h "Content-Type:text/plain" cp $DIST_DIR/version $PACKAGE_BUCKET/$PACKAGE_VERSION/
+    #gsutil -h "Content-Type:application/sql" cp $DIST_DIR/modules.sql $PACKAGE_BUCKET/$PACKAGE_VERSION/
 fi

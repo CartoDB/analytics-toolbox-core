@@ -1,15 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.1.0] - 2021-11-25
+## [1.1.0] - 2021-12-03
 
 ### Changed
 - Deployment schema "carto" instead of "quadkey".
 - Rename ZXY_FROMQUADINT function to QUADINT_TOZXY.
-- Rename LONGLAT_ASQUADINT function to QUADINT_FROMGEOGPOINT.
+- Rename LONGLAT_ASQUADINT function to QUADINT_FROMLONGLAT.
 - Rename QUADKEY_FROMQUADINT function to QUADINT_TOQUADKEY.
 - Rename TOPARENT function to QUADINT_TOPARENT.
 - Rename TOCHILDREN function to QUADINT_TOCHILDREN.
@@ -20,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename ST_ASQUADINT function to QUADINT_FROMGEOGPOINT.
 - Rename ST_ASQUADINT_POLYFILL function to QUADINT_POLYFILL.
 - Rename ST_BOUNDARY function to QUADINT_BOUNDARY.
+
+### Removed
 - Remove VERSION function.
 
 ## [1.0.3] - 2021-09-22
