@@ -31,10 +31,10 @@ AWS_RUN_STATEMENT_SQL = \
 
 .SILENT:
 
-.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-dependency
+.PHONY: help lint lint-fix build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-dependency serialize-functions
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
+	echo "Please choose one of the following targets: lint, lint-fix, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 lint: venv3
 	. $(VENV3_ACTIVATE) && \
@@ -152,6 +152,11 @@ serialize-module: build serialize-dependency
 	  	$(SED) $(REPLACEMENTS) $$n >> dist/module.sql; \
 		echo "" >> dist/module.sql; \
 	done
+
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	MODULE=$(MODULE) IGNORE="_SHARE_CREATE _SHARE_REMOVE" QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv
 
 venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q

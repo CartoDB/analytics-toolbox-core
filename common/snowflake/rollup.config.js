@@ -20,8 +20,8 @@ export default {
         terser(),
         bundleSize()
     ],
-    onwarn(warning, rollupWarn) {
-        if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+    onwarn (warning, rollupWarn) {
+        if (!['CIRCULAR_DEPENDENCY', 'THIS_IS_UNDEFINED'].includes(warning.code)) {
             rollupWarn(warning);
         }
     }

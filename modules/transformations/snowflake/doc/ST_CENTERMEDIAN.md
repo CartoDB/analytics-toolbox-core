@@ -1,7 +1,7 @@
 ### ST_CENTERMEDIAN
 
 {{% bannerNote type="code" %}}
-transformations.ST_CENTERMEDIAN(geog)
+carto.ST_CENTERMEDIAN(geog)
 {{%/ bannerNote %}}
 
 **Description**
@@ -17,6 +17,6 @@ Takes a FeatureCollection of points and calculates the median center, algorithim
 **Example**
 
 ``` sql
-SELECT sfcarto.transformations.ST_CENTERMEDIAN(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
+SELECT carto.ST_CENTERMEDIAN(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
 -- { "coordinates": [ 25, 27.5 ], "type": "Point" }
 ```

@@ -13,17 +13,26 @@ const force = process.env.INPUT_FORCE_DEPLOY || '';
 const input = [];
 const output = [];
 
-const modules = fs.readdirSync(dir);
+let sqlFunctions = require('child_process').execSync(`CLOUD=${cloud} IGNORE="VERSION _SHARE_CREATE _SHARE_REMOVE" INCLUDE_PRIVATE=1 ASJSON=1 node ${__dirname}/sqlfunctions.js`).toString();
+sqlFunctions = JSON.parse(sqlFunctions);
 
+const modules = fs.readdirSync(dir);
 modules.forEach(module => {
     const sqldir = path.join(dir, module, cloud, 'sql');
     if (fs.existsSync(sqldir)) {
         const files = fs.readdirSync(sqldir);
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
-        input.push({
-            name: module,
-            deps: modules.filter(m => m !== module && content.includes('@' + m))
-        });
+        let deps;
+        switch (cloud) {
+            case 'bigquery':
+            case 'redshift':
+                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + m + '.' + x + '\\b').join('|')).test(content));
+                break;
+            case 'snowflake':
+                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + x + '\\b').join('|')).test(content));
+                break;
+        }
+        input.push({ name: module, deps });
     }
 });
 

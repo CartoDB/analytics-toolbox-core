@@ -38,9 +38,6 @@ function createModule () {
     createDocVersion();
     createLibIndex();
     createSQLVersion();
-    if (cloud === 'snowflake') {
-        createSQLShares();
-    }
     createTestIntegrationVersion();
     createTestUnitIndex();
     createChangelog();
@@ -66,7 +63,6 @@ function createDocVersion () {
     let content;
     switch (cloud){
     case 'bigquery':
-    case 'snowflake':
         content = `### VERSION
 
 {{% bannerNote type="code" %}}
@@ -91,6 +87,8 @@ SELECT ${project}.${name}.VERSION();
 \`\`\``;
         break;
 
+    case 'snowflake':
+        return;
     case 'redshift':
         content = `### VERSION
 
@@ -160,19 +158,7 @@ AS """
         break;
 
     case 'snowflake':
-        content = `${header}
-
-CREATE OR REPLACE SECURE FUNCTION @@SF_PREFIX@@${name}.VERSION
-()
-RETURNS STRING
-LANGUAGE JAVASCRIPT
-AS $$
-    @@SF_LIBRARY_CONTENT@@
-    
-    return ${name}Lib.version;
-$$;`;
-        break;
-
+        return;
     case 'redshift':
         content = `${header}
 
@@ -190,29 +176,8 @@ $$ LANGUAGE plpythonu;`;
     createFile([root, 'modules', name, cloud, 'sql', 'VERSION.sql'], content);
 }
 
-function createSQLShares () {
-    let content = `${header}
-
-USE role ACCOUNTADMIN;
-USE @@SF_DATABASE@@;
-
-CREATE SHARE IF NOT EXISTS @@SF_SHARE@@;
-grant usage on database @@SF_DATABASE@@ to share @@SF_SHARE@@;
-grant usage on schema @@SF_DATABASE@@.@@SF_SCHEMA@@ to share @@SF_SHARE@@;
-
-grant usage on function @@SF_PREFIX@@${name}.VERSION() to share @@SF_SHARE@@;`;
-
-    createFile([root, 'modules', name, cloud, 'sql', '_SHARE_CREATE.sql'], content);
-
-    content = `${header}
-
-USE role ACCOUNTADMIN;
-DROP SHARE @@SF_SHARE@@;`;
-
-    createFile([root, 'modules', name, cloud, 'sql', '_SHARE_REMOVE.sql'], content);
-}
-
 function createTestIntegrationVersion () {
+    if (cloud === 'snowflake') return;
     const filename = { bigquery: 'VERSION.test.js', snowflake: 'VERSION.test.js', redshift: 'test_VERSION.py' }[cloud];
     const cover = { bigquery: '`', snowflake: '' }[cloud];
     const variable = { bigquery: 'v', snowflake: 'V' }[cloud];
@@ -220,7 +185,6 @@ function createTestIntegrationVersion () {
     let content;
     switch (cloud){
     case 'bigquery':
-    case 'snowflake':
         content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
 const version = require('../../package.json').version;
 
@@ -312,17 +276,31 @@ def test_init():
 }
 
 function createChangelog () {
-    const content = `# Changelog
+    let content;
+    switch (cloud){
+    case 'snowflake':
+        content = `# Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [1.0.0] - ${currentDate()}
+
+### Added
+- Create ${name} module.`;
+        break;
+    default:
+        content = `# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - ${currentDate()}
 
 ### Added
 - Create ${name} module.
 - Add VERSION function.`;
+    }
 
     createFile([root, 'modules', name, cloud, 'CHANGELOG.md'], content);
 }

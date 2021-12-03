@@ -1,24 +1,27 @@
-name: Staging
+name: Deploy Staging
 
 on:
   pull_request_review:
     types: [submitted]
-  pull_request_target:
-    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number
+        required: true
 
 jobs:
 
   deploy-bq:
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+      ( github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
-      BQ_PROJECT: bqcartost-core-${{ github.event.pull_request.number }}
-      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.pull_request.number }}/
+      BQ_PROJECT: bqcartost-core-${{ github.event.inputs.pr_number || github.event.pull_request.number }}
+      BQ_BUCKET: gs://carto-ext-ci-public-bqcartost-core-${{ github.event.inputs.pr_number || github.event.pull_request.number }}/
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -40,13 +43,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ github.event.pull_request.number }};
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECT }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECT}}' });
 
   deploy-sf:
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+      ( github.event_name == 'workflow_dispatch' )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
@@ -57,7 +60,8 @@ jobs:
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: SFCARTOST
-      SF_SHARE_ENABLED: 1
+      SF_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
+      SF_SHARE_ENABLED: 0
       SF_SHARE_PREFIX: SFCARTOST_
     steps:
       - name: Checkout repo
@@ -68,11 +72,19 @@ jobs:
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Deploy to staging
         run: make deploy CLOUD=snowflake
+      - name: Comment PR
+        uses: actions/github-script@0.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }  } = context;
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto`' });
 
   deploy-rs:
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'pull_request_target' && github.event.label.name == 'deploy_st' )
+      ( github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:

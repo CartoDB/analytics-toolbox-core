@@ -80,6 +80,14 @@ module.exports = {
             default: 'js'
         });
 
+        !info.type && questions.push({
+            type: 'list',
+            name: 'type',
+            message: 'Select the type of module:',
+            choices: ['core', 'advanced'],
+            default: 'core'
+        });
+        
         return inquirer.prompt(questions);
     }
 };

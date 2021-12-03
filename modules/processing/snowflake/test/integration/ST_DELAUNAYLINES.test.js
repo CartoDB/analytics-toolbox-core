@@ -4,7 +4,7 @@ const fixturesOut = require('./delaunay_fixtures/out');
 
 test('ST_DELAUNAYLINES should work', async () => {
     const query = `WITH delaunay AS (
-        SELECT @@SF_PREFIX@@processing.ST_DELAUNAYLINES(${fixturesIn.input1})
+        SELECT ST_DELAUNAYLINES(${fixturesIn.input1})
         AS delaunayArray
       )
       SELECT ST_ASWKT(TO_GEOGRAPHY(unnested.VALUE)) AS geom
@@ -16,7 +16,7 @@ test('ST_DELAUNAYLINES should work', async () => {
 });
 
 test('ST_DELAUNAYLINES should return an empty array if passed an empty array geometry', async () => {
-    const query = 'SELECT @@SF_PREFIX@@processing.ST_DELAUNAYLINES(ARRAY_CONSTRUCT()) as delaunay';
+    const query = 'SELECT ST_DELAUNAYLINES(ARRAY_CONSTRUCT()) as delaunay';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].DELAUNAY).toEqual([]);

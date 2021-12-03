@@ -27,10 +27,10 @@ REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$
 
 .SILENT:
 
-.PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module
+.PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy serialize-module serialize-functions
 
 help:
-	echo "Please choose one of the following targets: lint, lint-fix, install, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module"
+	echo "Please choose one of the following targets: lint, lint-fix, install, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 $(NODE_MODULES):
 	yarn -s --update-checksums
@@ -121,6 +121,11 @@ serialize-module:
 	  	cat $$n >> dist/module.sql; \
 		echo "" >> dist/module.sql; \
 	done
+
+serialize-functions:
+	mkdir -p dist
+	rm -f dist/funct_names.csv
+	MODULE=$(MODULE) QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv
 
 check:
 ifndef BQ_REGION

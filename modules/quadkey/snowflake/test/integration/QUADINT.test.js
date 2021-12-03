@@ -1,18 +1,18 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('QUADKEY conversion should work', async () => {
-    const query = `SELECT @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(2, 1, 1)) as quadkey1,
-                        @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(6, 40, 55)) as quadkey2,
-                        @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(12, 1960, 3612)) as quadkey3,
-                        @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(18, 131621, 65120)) as quadkey4,
-                        @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(24, 9123432, 159830174)) as quadkey5,
-                        @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                            @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(29, 389462872, 207468912)) as quadkey6`;
+    const query = `SELECT QUADINT_TOQUADKEY(
+                            QUADINT_FROMZXY(2, 1, 1)) as quadkey1,
+                        QUADINT_TOQUADKEY(
+                            QUADINT_FROMZXY(6, 40, 55)) as quadkey2,
+                        QUADINT_TOQUADKEY(
+                            QUADINT_FROMZXY(12, 1960, 3612)) as quadkey3,
+                        QUADINT_TOQUADKEY(
+                            QUADINT_FROMZXY(18, 131621, 65120)) as quadkey4,
+                        QUADINT_TOQUADKEY(
+                            QUADINT_FROMZXY(24, 9123432, 159830174)) as quadkey5,
+                        QUADINT_TOQUADKEY(
+                            QUADINT_FROMZXY(29, 389462872, 207468912)) as quadkey6`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].QUADKEY1).toEqual('03');
@@ -50,10 +50,10 @@ test('Should be able to encode/decode between quadint and quadkey at any level o
         FROM 
         (
             SELECT *,
-            @@SF_PREFIX@@quadkey.ZXY_FROMQUADINT(
-                @@SF_PREFIX@@quadkey.QUADINT_FROMQUADKEY(
-                    @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(
-                    @@SF_PREFIX@@quadkey.QUADINT_FROMZXY(zoom, tileX, tileY)))) AS decodedQuadkey
+            QUADINT_TOZXY(
+                QUADINT_FROMQUADKEY(
+                    QUADINT_TOQUADKEY(
+                    QUADINT_FROMZXY(zoom, tileX, tileY)))) AS decodedQuadkey
             FROM tileContext
         )
         WHERE tileX != GET(decodedQuadkey,'x') OR tileY != GET(decodedQuadkey,'y') OR zoom != GET(decodedQuadkey,'z')`;
@@ -62,7 +62,7 @@ test('Should be able to encode/decode between quadint and quadkey at any level o
     expect(rows.length).toEqual(0);
 });
 
-test('QUADKEY_FROMQUADINT should fail with NULL argument', async () => {
-    const query = 'SELECT @@SF_PREFIX@@quadkey.QUADKEY_FROMQUADINT(NULL);';
+test('QUADINT_TOQUADKEY should fail with NULL argument', async () => {
+    const query = 'SELECT QUADINT_TOQUADKEY(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });

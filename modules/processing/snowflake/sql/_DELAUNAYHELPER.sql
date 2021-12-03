@@ -2,8 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-
-CREATE OR REPLACE FUNCTION @@SF_PREFIX@@processing._DELAUNAYHELPER
+CREATE OR REPLACE FUNCTION _DELAUNAYHELPER
 (inputPoints ARRAY)
 RETURNS ARRAY
 AS $$ (
@@ -17,7 +16,7 @@ AS $$ (
             ABS(MAX(ST_Y(TO_GEOGRAPHY(unnested.VALUE))) - MIN(ST_Y(TO_GEOGRAPHY(unnested.VALUE)))) AS yExtent
         FROM LATERAL FLATTEN(input => inputPoints) AS unnested
       ), voronoi AS (
-      SELECT @@SF_PREFIX@@processing._VORONOIHELPER(
+      SELECT _VORONOIHELPER(
             arrayPoints, 
             ARRAY_CONSTRUCT(xMin - xExtent * 0.5, 
                             yMin - yExtent * 0.5, 
