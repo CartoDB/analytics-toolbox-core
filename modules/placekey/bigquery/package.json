@@ -1,6 +1,6 @@
 {
   "name": "placekey_bigquery",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Placekey module for BigQuery",
   "author": "CARTO",
   "license": "BSD-3-Clause",
