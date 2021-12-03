@@ -2,7 +2,6 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-
 CREATE OR REPLACE FUNCTION _DELAUNAYHELPER
 (inputPoints ARRAY)
 RETURNS ARRAY

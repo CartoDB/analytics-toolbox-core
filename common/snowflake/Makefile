@@ -11,8 +11,9 @@ SF_SHARES_ROLE = ACCOUNTADMIN
 SF_PREFIX = $(SF_DATABASE).$(SF_SCHEMA_PREFIX)
 SF_SHARES = $(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)SPATIAL_EXTENSIONS
 
+PACKAGE_TYPE ?= CORE
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
-VERSION_FUNCTION ?= VERSION
+VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -59,7 +60,7 @@ $(NODE_MODULES_SHARED):
 	if [ -d ${SHARED_DIR} ]; then \
 		yarn -s --update-checksums --cwd $(SHARED_DIR); \
 	fi
-	
+
 lint: $(NODE_MODULES_DEV)
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	eslint --config $(LINT_DIR)/.eslintrc.js .
@@ -139,15 +140,12 @@ schema-deploy:
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1
 
 share-create:
 ifeq ($(SF_SHARE_ENABLED), 1)
 	for share in ${SF_SHARES}; do \
 		CREATE_SHARE_QUERY=$$($(SED) $(REPLACEMENTS) $(SHARE_CREATE_FILE) | $(SED) -e 's!@@SF_SHARE@@!'$$share'!g'); \
 		$(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -r $(SF_SHARES_ROLE) -q "$$CREATE_SHARE_QUERY" || exit 1; \
-		SHARE_VERSION_QUERY="GRANT USAGE ON FUNCTION VERSION() TO SHARE $$share;"; \
-		$(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -r $(SF_SHARES_ROLE) -q "$$SHARE_VERSION_QUERY" || exit 1; \
 		for f in `OUTPUT_FORMAT='argTypes' DELIMITER=' ' MODULE=$(MODULE) FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js`; do \
 			SHARE_FUNCTION_QUERY="GRANT USAGE ON FUNCTION $$f TO SHARE $$share;"; \
 			$(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -r $(SF_SHARES_ROLE) -q "$$SHARE_FUNCTION_QUERY" || exit 1; \
@@ -166,7 +164,10 @@ endif
 serialize-module:
 	$(MAKE) build
 	rm -f ${DIST_DIR}/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
+	echo "USE SCHEMA $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
+	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
+		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module.sql; \
+	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
 		echo "" >> ${DIST_DIR}/module.sql; \

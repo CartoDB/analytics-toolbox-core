@@ -271,7 +271,7 @@ export function kRing (origin, size) {
  */
 export function kRingDistances (origin, size) {
     if (size === 0) {
-        return [{ index: origin.toString(), distance: 0 }];
+        return [{ index: origin, distance: 0 }];
     }
 
     let cornerQuadint = origin;
@@ -287,7 +287,7 @@ export function kRingDistances (origin, size) {
         traversalQuadint = cornerQuadint;
         for (let i = -size; i <= size; i++) {
             neighbors.push({
-                index: traversalQuadint.toString(),
+                index: traversalQuadint,
                 distance: Math.max(Math.abs(i), Math.abs(j)) // Chebychev distance
             });
             traversalQuadint = siblingRight(traversalQuadint);

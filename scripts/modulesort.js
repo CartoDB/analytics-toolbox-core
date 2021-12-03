@@ -22,10 +22,17 @@ modules.forEach(module => {
     if (fs.existsSync(sqldir)) {
         const files = fs.readdirSync(sqldir);
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
-        input.push({
-            name: module,
-            deps: modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + x + '\\b').join('|')).test(content))
-        });
+        let deps;
+        switch (cloud) {
+            case 'bigquery':
+            case 'redshift':
+                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + m + '.' + x + '\\b').join('|')).test(content));
+                break;
+            case 'snowflake':
+                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + x + '\\b').join('|')).test(content));
+                break;
+        }
+        input.push({ name: module, deps });
     }
 });
 
