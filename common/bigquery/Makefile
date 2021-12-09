@@ -96,7 +96,7 @@ test-integration-full:
 test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/integration/$(TEST) --testTimeout=30000 $(TEST_INTEGRATION_EXTRA)
+	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 endif
 ifdef MAKE_LIB
 ifndef TEST
