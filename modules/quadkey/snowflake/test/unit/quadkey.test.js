@@ -113,13 +113,13 @@ test('kRing should work', async () => {
 
 test('kRingDistances should work', async () => {
     expect(sortByKey(lib.kRingDistances(162, 0),'index')).toEqual(sortByKey([
-        { index: 162, distance: 0 }
+        { index: '162', distance: 0 }
     ],'index'));
     expect(sortByKey(lib.kRingDistances(162, 1),'index')).toEqual(sortByKey([
-        { index: 162, distance: 0 }, { index: 130, distance: 1 }, { index: 194, distance: 1 }, { index: 2, distance: 1 }, { index: 258, distance: 1 }, { index: 290, distance: 1 }, { index: 322, distance: 1 }, { index: 34, distance: 1 }, { index: 66, distance: 1 }
+        { index: '162', distance: 0 }, { index: '130', distance: 1 }, { index: '194', distance: 1 }, { index: '2', distance: 1 }, { index: '258', distance: 1 }, { index: '290', distance: 1 }, { index: '322', distance: 1 }, { index: '34', distance: 1 }, { index: '66', distance: 1 }
     ],'index'));
     expect(sortByKey(lib.kRingDistances(12070922, 1),'index')).toEqual(sortByKey([
-        { index: 12070922, distance: 0 }, { index: 12038122, distance: 1 }, { index: 12038154, distance: 1 }, { index: 12038186, distance: 1 }, { index: 12070890, distance: 1 }, { index: 12070954, distance: 1 }, { index: 12103658, distance: 1 }, { index: 12103690, distance: 1 }, { index: 12103722, distance: 1 }
+        { index: '12070922', distance: 0 }, { index: '12038122', distance: 1 }, { index: '12038154', distance: 1 }, { index: '12038186', distance: 1 }, { index: '12070890', distance: 1 }, { index: '12070954', distance: 1 }, { index: '12103658', distance: 1 }, { index: '12103690', distance: 1 }, { index: '12103722', distance: 1 }
     ],'index'));
 });
 
