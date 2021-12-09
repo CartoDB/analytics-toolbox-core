@@ -185,9 +185,9 @@ serialize-module:
 	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
 
 serialize-functions:
-	mkdir -p $(DIST_DIR)
-	rm -f $(DIST_DIR)/funct_names.csv
-	MODULE=$(MODULE) QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> $(DIST_DIR)/funct_names.csv
+	mkdir -p ${DIST_DIR}
+	rm -f ${DIST_DIR}/funct_names.csv
+	MODULE=$(MODULE) node $(SCRIPTS_DIR)/sqlfunctions.js >> ${DIST_DIR}/funct_names.csv
 
 check:
 ifndef BQ_REGION
