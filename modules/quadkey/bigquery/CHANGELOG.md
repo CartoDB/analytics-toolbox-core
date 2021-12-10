@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deployment schema "carto" instead of "quadkey".
 - Rename ZXY_FROMQUADINT function to QUADINT_TOZXY.
 - Rename LONGLAT_ASQUADINT function to QUADINT_FROMLONGLAT.
-- Rename LONGLAT_ASQUADINTLIST_RESOLUTION function to QUADINT_TOLIST_FROMLONGLATRESOLUTION.
+- Rename LONGLAT_ASQUADINTLIST_RESOLUTION function to QUADINT_FROMLONGLAT_ZOOMRANGE.
 - Rename QUADKEY_FROMQUADINT function to QUADINT_TOQUADKEY.
 - Rename TOPARENT function to QUADINT_TOPARENT.
 - Rename TOCHILDREN function to QUADINT_TOCHILDREN.

@@ -1,11 +1,11 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('QUADINT_TOLIST_FROMLONGLATRESOLUTION should work', async () => {
+test('QUADINT_FROMLONGLAT_ZOOMRANGE should work', async () => {
     const query = `
         SELECT
-            \`@@BQ_PREFIX@@carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION\`(-45,30,2,10,2,5) AS agg1,
-            \`@@BQ_PREFIX@@carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION\`(150,-30,16,18,1,5) AS agg2,
-            \`@@BQ_PREFIX@@carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION\`(170,-80,20,24,1,4) AS agg3`;
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT_ZOOMRANGE\`(-45,30,2,10,2,5) AS agg1,
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT_ZOOMRANGE\`(150,-30,16,18,1,5) AS agg2,
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT_ZOOMRANGE\`(170,-80,20,24,1,4) AS agg3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].agg1).toEqual([
@@ -29,11 +29,11 @@ test('QUADINT_TOLIST_FROMLONGLATRESOLUTION should work', async () => {
     ]);
 });
 
-test('QUADINT_TOLIST_FROMLONGLATRESOLUTION should return [] with NULL latitud/longitud', async () => {
+test('QUADINT_FROMLONGLAT_ZOOMRANGE should return [] with NULL latitud/longitud', async () => {
     const query = `
         SELECT
-            \`@@BQ_PREFIX@@carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION\`(NULL,10,10,12,1,5) AS agg1,
-            \`@@BQ_PREFIX@@carto.QUADINT_TOLIST_FROMLONGLATRESOLUTION\`(10,NULL,10,12,1,5) AS agg2`;
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT_ZOOMRANGE\`(NULL,10,10,12,1,5) AS agg1,
+            \`@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT_ZOOMRANGE\`(10,NULL,10,12,1,5) AS agg2`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].agg1).toEqual([]);
