@@ -1,12 +1,12 @@
-### S2_TOKENFROMID
+### S2_TOUINT64REPR
 
 {{% bannerNote type="code" %}}
-carto.S2_TOKENFROMID(id)
+carto.S2_TOUINT64REPR(id)
 {{%/ bannerNote %}}
 
 **Description**
 
-Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
+Returns the UINT64 representation of a cell ID.
 
 * `id`: `INT8` S2 cell ID.
 
@@ -19,8 +19,6 @@ Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto.S2_TOKENFROMID(-8520148382826627072);
--- 89c25a3
+SELECT carto.S2_TOUINT64REPR(-8520148382826627072);
+-- 9926595690882924544
 ```
-
-

@@ -2,7 +2,7 @@ from test_utils import run_query, redshift_connector
 import pytest
 
 
-def test_token_fromid_success():
+def test_uint64_from_id_success():
     results = run_query(
         """WITH context AS(
             SELECT -8070450532247928832 AS id UNION ALL
@@ -15,11 +15,13 @@ def test_token_fromid_success():
             SELECT -7843229857298251776 UNION ALL
             SELECT -7843177080740118528
         )
-        SELECT @@RS_PREFIX@@carto.S2_TOKENFROMID(id) AS token
+        SELECT @@RS_PREFIX@@carto.S2_TOUINT64REPR(id) AS uint64_id
         FROM context;"""
     )
 
-    fixture_file = open('./test/integration/token_fromid_fixtures/out/tokens.txt', 'r')
+    fixture_file = open(
+        './test/integration/uint64repr_fromid_fixtures/out/uint64_ids.txt', 'r'
+    )
     lines = fixture_file.readlines()
     fixture_file.close()
 
@@ -27,7 +29,7 @@ def test_token_fromid_success():
         assert str(result[0]) == lines[idx].rstrip()
 
 
-def test_token_fromid_null_failure():
+def test_uint64repr_fromid_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@carto.S2_TOKENFROMID(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOUINT64REPR(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
