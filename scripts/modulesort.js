@@ -24,15 +24,13 @@ modules.forEach(module => {
         const content = files.map(f => fs.readFileSync(path.join(sqldir, f)).toString()).join('');
         let deps;
         switch (cloud) {
-            case 'bigquery':
-                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + m + '.' + x + '\\b').join('|')).test(content));
-                break;
-            case 'redshift':
-                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + 'carto.' + x + '\\b').join('|')).test(content));
-                break;
-            case 'snowflake':
-                deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + x + '\\b').join('|')).test(content));
-                break;
+        case 'bigquery':
+        case 'redshift':
+            deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + 'carto.' + x + '\\b').join('|')).test(content));
+            break;
+        case 'snowflake':
+            deps = modules.filter(m => m !== module && sqlFunctions[m] && new RegExp(sqlFunctions[m].map(x => '\\b' + x + '\\b').join('|')).test(content));
+            break;
         }
         input.push({ name: module, deps });
     }
