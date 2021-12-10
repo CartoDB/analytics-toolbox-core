@@ -81,6 +81,7 @@ jobs:
       BQ_PERMISSIONS: ${{ matrix.permissions }}
       BQ_PERMISSIONS_GROUP: ${{ matrix.group }}
       BQ_PERMISSIONS_ROLE_NAME: spatialextensionUser
+      PACKAGE_TYPE: CORE
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

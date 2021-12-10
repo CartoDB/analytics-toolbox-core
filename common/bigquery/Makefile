@@ -33,7 +33,8 @@ NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
 MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
 
-REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' $(REPLACEMENTS_EXTRA) -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g'
+REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS_PKG = -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
 
 .SILENT:
 
@@ -179,10 +180,10 @@ serialize-module:
 	rm -f $(DIST_DIR)/module.sql
 	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@carto\`;" >> $(DIST_DIR)/module.sql
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	cat $$n >> $(DIST_DIR)/module.sql; \
-		echo "" >> $(DIST_DIR)/module.sql; \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
+		echo "" >> ${DIST_DIR}/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
+	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
 
 serialize-functions:
 	mkdir -p ${DIST_DIR}
