@@ -1,7 +1,7 @@
-### S2_IDFROMTOKEN
+### S2_FROMTOKEN
 
 {{% bannerNote type="code" %}}
-carto.S2_IDFROMTOKEN(token)
+carto.S2_FROMTOKEN(token)
 {{%/ bannerNote %}}
 
 **Description**
@@ -19,6 +19,6 @@ Returns the conversion of an S2 cell token (hexified ID) into an unsigned, 64 bi
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto.S2_IDFROMTOKEN('89c25a3');
+SELECT carto.S2_FROMTOKEN('89c25a3');
 -- -8520148382826627072
 ```

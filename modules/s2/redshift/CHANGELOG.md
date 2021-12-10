@@ -4,23 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2021-11-25
+## [1.1.0] - 2021-12-10
 
 ### Changed
 - Deployment schema "carto" instead of "s2".
-- Rename HILBERTQUADKEY_FROMID function to S2_HILBERTQUADKEYFROMID.
-- Rename ID_FROMHILBERTQUADKEY function to S2_IDFROMHILBERTQUADKEY.
-- Rename ID_FROMTOKEN function to S2_IDFROMTOKEN.
-- Rename ID_FROMUINT64REPR function to S2_IDFROMUINT64REPR.
-- Rename LONGLAT_ASID function to S2_IDFROMLONGLAT.
+- Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
+- Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
+- Rename ID_FROMTOKEN function to S2_FROMTOKEN.
+- Rename ID_FROMUINT64REPR function to S2_FROMUINT64REPR.
+- Rename LONGLAT_ASID function to S2_FROMLONGLAT.
 - Rename RESOLUTION function to S2_RESOLUTION.
-- Rename ST_ASID function to S2_IDFROMGEOGPOINT.
+- Rename ST_ASID function to S2_FROMGEOGPOINT.
 - Rename ST_ASID_POLYFILL_BBOX function to S2_POLYFILL_BBOX.
 - Rename ST_BOUNDARY function to S2_BOUNDARY.
 - Rename TOCHILDREN function to S2_TOCHILDREN.
-- Rename TOKEN_FROMID function to S2_TOKENFROMID.
+- Rename TOKEN_FROMID function to S2_TOTOKEN.
 - Rename TOPARENT function to S2_TOPARENT.
-- Rename UINT64REPR_FROMID function to S2_UINT64REPRFROMID.
+- Rename UINT64REPR_FROMID function to S2_TOUINT64REPR.
+
+### Removed
 - Remove VERSION function.
 
 ## [1.0.0] - 2021-09-23

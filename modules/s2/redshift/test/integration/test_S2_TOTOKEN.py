@@ -2,7 +2,7 @@ from test_utils import run_query, redshift_connector
 import pytest
 
 
-def test_hilbertquadkey_from_id_success():
+def test_token_fromid_success():
     results = run_query(
         """WITH context AS(
             SELECT -8070450532247928832 AS id UNION ALL
@@ -15,14 +15,11 @@ def test_hilbertquadkey_from_id_success():
             SELECT -7843229857298251776 UNION ALL
             SELECT -7843177080740118528
         )
-        SELECT @@RS_PREFIX@@carto.S2_HILBERTQUADKEYFROMID(id) AS hilbert_quadkey
+        SELECT @@RS_PREFIX@@carto.S2_TOTOKEN(id) AS token
         FROM context;"""
     )
 
-    fixture_file = open(
-        './test/integration/hilbertquadkey_fromid_fixtures/out/hilbert_quadkeys.txt',
-        'r',
-    )
+    fixture_file = open('./test/integration/token_fromid_fixtures/out/tokens.txt', 'r')
     lines = fixture_file.readlines()
     fixture_file.close()
 
@@ -30,7 +27,7 @@ def test_hilbertquadkey_from_id_success():
         assert str(result[0]) == lines[idx].rstrip()
 
 
-def test_hilbertquadkey_fromid_null_failure():
+def test_token_fromid_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@carto.S2_HILBERTQUADKEYFROMID(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.S2_TOTOKEN(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
