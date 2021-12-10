@@ -54,14 +54,13 @@ function checkModule () {
 }
 
 function createDocFunction () {
-    const project = { bigquery: 'bqcarto', snowflake: 'sfcarto' }[cloud];
     let content;
     switch (cloud){
     case 'bigquery':
         content = `### ${fname}
 
 {{% bannerNote type="code" %}}
-${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')})
+carto.${fname}(${fparams.map(fp => fp.name).join(', ')})
 {{%/ bannerNote %}}
 
 **Description**
@@ -81,10 +80,11 @@ TODO.
 {{%/ customSelector %}}
 
 \`\`\`sql
-SELECT ${project}.${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')});
+SELECT ${ type == 'advanced' ? 'carto-st': 'carto-os' }.carto.${fname}(${fparams.map(fp => fp.name).join(', ')});
 -- TODO
 \`\`\``;
         break;
+
     case 'snowflake':
         content = `### ${fname}
 
@@ -113,6 +113,7 @@ SELECT carto.${fname}(${fparams.map(fp => fp.name).join(', ')});
 -- TODO
 \`\`\``;
         break;
+
     case 'redshift':
         content = `### ${fname}
 
@@ -153,7 +154,7 @@ function createSQLFunction () {
         case 'js':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
+CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@carto.${fname}\`
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 DETERMINISTIC
@@ -167,7 +168,7 @@ AS """
         case 'sql':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
+CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@carto.${fname}\`
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS ((
@@ -178,7 +179,7 @@ AS ((
         case 'js-combo':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.__${fname}\`
+CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@carto.__${fname}\`
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 DETERMINISTIC
@@ -188,29 +189,29 @@ AS """
     TODO
 """;
 
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
+CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@carto.${fname}\`
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS (
-    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
+    \`@@BQ_PREFIX@@carto.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
 );`;
             break;
 
         case 'sql-combo':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.__${fname}\`
+CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@carto.__${fname}\`
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS ((
     TODO
 ));
 
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${mname}.${fname}\`
+CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@carto.${fname}\`
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 AS (
-    \`@@BQ_PREFIX@@${mname}.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
+    \`@@BQ_PREFIX@@carto.__${fname}\`(${fparams.map(fp => fp.name).join(', ')})
 );`;  
             break;
         default:
@@ -374,10 +375,10 @@ function CreateTestIntegrationFunction () {
     switch (cloud){
     case 'bigquery':
         if (['sql', 'sql-combo', 'js', 'js-combo'].includes(ftemplate)) {
-            content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
+            content = `const { runQuery } = require('../../../../../${ type == 'advanced' ? 'core/': '' }common/${cloud}/test-utils');
 
 test('${fname} should work', async () => {
-    const query = 'SELECT \`@@BQ_PREFIX@@${mname}.${fname}\`(${fparams.map(fp => fp.name).join(', ')}) AS output';
+    const query = 'SELECT \`@@BQ_PREFIX@@carto.${fname}\`(${fparams.map(fp => fp.name).join(', ')}) AS output';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].output).toEqual();

@@ -35,9 +35,7 @@ function createModule () {
     createDir([root, 'modules', name, cloud, 'test', 'integration']);
 
     createDocIntro();
-    createDocVersion();
     createLibIndex();
-    createSQLVersion();
     createTestIntegrationVersion();
     createTestUnitIndex();
     createChangelog();
@@ -56,43 +54,6 @@ function createDocIntro () {
 TODO.`;
 
     createFile([root, 'modules', name, cloud, 'doc', '_INTRO.md'], content);
-}
-
-function createDocVersion () {
-    const project = { bigquery: 'bqcarto', snowflake: 'sfcarto' }[cloud];
-    let content;
-    switch (cloud){
-    case 'bigquery':
-        content = `### VERSION
-
-{{% bannerNote type="code" %}}
-${name}.VERSION()
-{{%/ bannerNote %}}
-
-**Description**
-
-Returns the current version of the ${name} module.
-
-**Return type**
-
-\`STRING\`
-
-{{% customSelector %}}
-**Example**
-{{%/ customSelector %}}
-
-\`\`\`sql
-SELECT ${project}.${name}.VERSION();
--- 1.0.0
-\`\`\``;
-        break;
-
-    case 'snowflake':
-    case 'redshift':
-        return;
-    }
-
-    createFile([root, 'modules', name, cloud, 'doc', 'VERSION.md'], content);
 }
 
 function createLibIndex () {
@@ -117,48 +78,22 @@ export default {
     }
 }
 
-function createSQLVersion () {
-    let content;
-    switch (cloud){
-    case 'bigquery':
-        content = `${header}
-
-CREATE OR REPLACE FUNCTION \`@@BQ_PREFIX@@${name}.VERSION\`
-()
-RETURNS STRING
-DETERMINISTIC
-LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS """
-    return ${name}Lib.version;
-""";`;
-        break;
-
-    case 'snowflake':
-    case 'redshift':
-        return;
-    }
-
-    createFile([root, 'modules', name, cloud, 'sql', 'VERSION.sql'], content);
-}
-
 function createTestIntegrationVersion () {
-    if (cloud === 'snowflake') return;
-    const filename = { bigquery: 'VERSION.test.js', snowflake: 'VERSION.test.js', redshift: 'test_VERSION.py' }[cloud];
+    const filename = { bigquery: 'EXAMPLE.test.js', snowflake: 'EXAMPLE.test.js', redshift: 'test_EXAMPLE.py' }[cloud];
     const cover = { bigquery: '`', snowflake: '' }[cloud];
     const variable = { bigquery: 'v', snowflake: 'V' }[cloud];
     const prefix = { bigquery: 'BQ_PREFIX', snowflake: 'SF_PREFIX', redshift: 'RS_PREFIX' }[cloud];
     let content;
     switch (cloud){
     case 'bigquery':
-        content = `const { runQuery } = require('../../../../../common/${cloud}/test-utils');
-const version = require('../../package.json').version;
+    case 'snowflake':
+        content = `const { runQuery } = require('../../../../../${ type == 'advanced' ? 'core/': '' }common/${cloud}/test-utils');
 
-test('VERSION returns the proper version', async () => {
-    const query = 'SELECT ${cover}@@${prefix}@@${name}.VERSION${cover}() as v';
+test('Example of running a query', async () => {
+    const query = 'SELECT 123 as v';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].${variable}).toEqual(version);
+    expect(rows[0].${variable}).toEqual(123);
 });`;
         break;
 
@@ -241,11 +176,7 @@ def test_init():
 }
 
 function createChangelog () {
-    let content;
-    switch (cloud){
-    case 'snowflake':
-    case 'redshift':
-        content = `# Changelog
+    let content = `# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
@@ -253,20 +184,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.0.0] - ${currentDate()}
 
 ### Added
-- Create ${name} module.`;
-        break;
-    default:
-        content = `# Changelog
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-
-## [1.0.0] - ${currentDate()}
-
-### Added
-- Create ${name} module.
-- Add VERSION function.`;
-    }
+- Create ${name} module.`
 
     createFile([root, 'modules', name, cloud, 'CHANGELOG.md'], content);
 }
