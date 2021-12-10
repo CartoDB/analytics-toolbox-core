@@ -95,7 +95,7 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Delete schema
-        run: make clean CLOUD=redshift
+        run: make clean-deploy CLOUD=redshift
       - name: Comment PR
         uses: actions/github-script@0.3.0
         with:
