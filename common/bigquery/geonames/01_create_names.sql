@@ -14,7 +14,7 @@ CREATE OR REPLACE TABLE `@@BQ_PREFIX@@carto.names` (
   main BOOLEAN,
   preferred BOOLEAN,
   language STRING
-);
+) CLUSTER BY code;
 
 -- countries
 INSERT INTO `@@BQ_PREFIX@@carto.names`(name, geoid, level, level_id, level0, main, relevance)
