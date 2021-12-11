@@ -19,6 +19,6 @@ Returns the quadkey equivalent to the input quadint.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.QUADKEY_FROMQUADINT(4388);
+SELECT `carto-os`.quadkey.QUADKEY_FROMQUADINT(4388);
 -- 3001
 ```

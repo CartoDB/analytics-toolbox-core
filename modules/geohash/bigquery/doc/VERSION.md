@@ -17,6 +17,6 @@ Returns the current version of the geohash module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.geohash.VERSION();
+SELECT `carto-os`.geohash.VERSION();
 -- 1.0.0
 ```

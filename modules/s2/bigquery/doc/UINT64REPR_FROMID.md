@@ -19,6 +19,6 @@ Returns the UINT64 representation of a cell ID.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.s2.UINT64REPR_FROMID(-8520148382826627072);
+SELECT `carto-os`.s2.UINT64REPR_FROMID(-8520148382826627072);
 -- 9926595690882924544
 ```

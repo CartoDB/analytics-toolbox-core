@@ -17,6 +17,6 @@ Returns the current version of the measurements module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.measurements.VERSION();
+SELECT `carto-os`.measurements.VERSION();
 -- 1.0.0
 ```

@@ -17,6 +17,6 @@ Returns the current version of the processing module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.processing.VERSION();
+SELECT `carto-os`.processing.VERSION();
 -- 1.0.0
 ```

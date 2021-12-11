@@ -19,16 +19,16 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.placekey.ISVALID('@ff7-swh-m49');
+SELECT `carto-os`.placekey.ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT carto-os.placekey.ISVALID('ff7-swh-m49');
+SELECT `carto-os`.placekey.ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT carto-os.placekey.ISVALID('x');
+SELECT `carto-os`.placekey.ISVALID('x');
 -- false
 ```

@@ -17,5 +17,5 @@ Returns the current version of the S2 module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.s2.VERSION();
+SELECT `carto-os`.s2.VERSION();
 -- 1.0.0

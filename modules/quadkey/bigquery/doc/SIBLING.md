@@ -20,6 +20,6 @@ Returns the quadint directly next to the given quadint at the same zoom level. T
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.SIBLING(4388, 'up');
+SELECT `carto-os`.quadkey.SIBLING(4388, 'up');
 -- 3876
 ```

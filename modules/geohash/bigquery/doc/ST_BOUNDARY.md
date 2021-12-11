@@ -19,6 +19,6 @@ Returns a geography representing the geohash cell. It will return `null` on erro
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.geohash.ST_BOUNDARY('ezrqcjzgdr3');
+SELECT `carto-os`.geohash.ST_BOUNDARY('ezrqcjzgdr3');
 -- POLYGON((-1.00000128149986 41.9999988377094, -0.999999940395355 41.9999988377094, ...
 ```

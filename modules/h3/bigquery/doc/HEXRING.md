@@ -20,7 +20,7 @@ Returns all cell indexes in a **hollow hexagonal ring** centered at the origin i
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.HEXRING('837b59fffffffff', 1);
+SELECT `carto-os`.h3.HEXRING('837b59fffffffff', 1);
 -- 837b5dfffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff

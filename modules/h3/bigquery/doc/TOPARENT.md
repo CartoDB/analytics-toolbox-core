@@ -20,6 +20,6 @@ Returns the H3 cell index of the parent of the given hexagon at the given resolu
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.TOPARENT('847b59dffffffff', 3);
+SELECT `carto-os`.h3.TOPARENT('847b59dffffffff', 3);
 -- 837b59fffffffff
 ```

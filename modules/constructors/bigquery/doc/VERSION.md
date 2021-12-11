@@ -17,6 +17,6 @@ Returns the current version of the constructors module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.constructors.VERSION();
+SELECT `carto-os`.constructors.VERSION();
 -- 1.1.0
 ```

@@ -17,6 +17,6 @@ Returns the current version of the quadkey module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.VERSION();
+SELECT `carto-os`.quadkey.VERSION();
 -- 1.0.5
 ```

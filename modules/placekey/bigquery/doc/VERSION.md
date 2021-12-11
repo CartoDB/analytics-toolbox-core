@@ -17,5 +17,5 @@ Returns the current version of the placekey module.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.placekey.VERSION();
+SELECT `carto-os`.placekey.VERSION();
 -- 1.0.1

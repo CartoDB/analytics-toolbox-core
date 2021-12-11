@@ -19,11 +19,11 @@ Returns `true` when the given index is valid, `false` otherwise.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.ISVALID('847b59dffffffff');
+SELECT `carto-os`.h3.ISVALID('847b59dffffffff');
 -- true
 ```
 
 ```sql
-SELECT carto-os.h3.ISVALID('1');
+SELECT `carto-os`.h3.ISVALID('1');
 -- false
 ```

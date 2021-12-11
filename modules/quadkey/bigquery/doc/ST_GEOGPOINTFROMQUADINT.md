@@ -19,6 +19,6 @@ Returns the centroid for a given quadint.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.quadkey.ST_GEOGPOINTFROMQUADINT(4388);
+SELECT `carto-os`.quadkey.ST_GEOGPOINTFROMQUADINT(4388);
 -- 	POINT(33.75 22.2982994295938)
 ```

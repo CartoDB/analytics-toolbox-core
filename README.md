@@ -12,7 +12,7 @@ SELECT jslibs.h3.ST_H3(ST_GEOGPOINT(10,10),11)
 it is now:
 
 ```sql
-SELECT carto-os.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
+SELECT `carto-os`.h3.ST_ASH3(ST_GEOGPOINT(10,10),11) 
 ```
 
 ## 💬 New Slack channel 

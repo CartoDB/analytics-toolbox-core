@@ -20,7 +20,7 @@ Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.h3.KRING('837b59fffffffff', 1);
+SELECT `carto-os`.h3.KRING('837b59fffffffff', 1);
 -- 837b59fffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff
