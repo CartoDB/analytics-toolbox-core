@@ -25,7 +25,7 @@ mkdir -p $DIST_DIR
 # Generate version
 echo $PACKAGE_VERSION > $DIST_DIR/version
 
-# Generate modules.sql
+# Generate libraries.sql and modules.sql
 export CLOUD=redshift
 export GIT_DIFF=off
 for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
@@ -34,6 +34,10 @@ for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
         PACKAGE_VERSION=$PACKAGE_VERSION VERSION_FUNCTION=VERSION_$PACKAGE_TYPE || exit 1
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_DIR/modules.sql
     rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql
+    cat $ROOT_DIR/modules/$module/$CLOUD/dist/library.sql >> $DIST_DIR/libraries_raw.sql
+    rm -f $ROOT_DIR/modules/$module/$CLOUD/dist/library.sql
     mkdir -p $DIST_DIR/libs
     mv $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_DIR/libs
 done
+sort -u $DIST_DIR/libraries_raw.sql >> $DIST_DIR/libraries.sql
+rm -f $DIST_DIR/libraries_raw.sql
