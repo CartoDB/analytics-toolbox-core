@@ -167,7 +167,7 @@ serialize-module: build serialize-dependency
 	echo "CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA);" >> $(DIST_DIR)/module.sql
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
-		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '<$(notdir $$f)>';" >> dist/library.sql; \
+		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '@@$(notdir $$f)@@';" >> dist/library.sql; \
 	done
 	echo "" >> $(DIST_DIR)/module.sql;
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
