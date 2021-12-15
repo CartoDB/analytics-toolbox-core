@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# Script to create an installation package for Snowflake
+# Script to create a Spatial Extension package for Redshift
 
 PACKAGE_VERSION=$(date +%Y.%m.%d)
 
-echo "Creating installation package $PACKAGE_VERSION"
+echo "Creating installation package $PACKAGE_VERSION";
 
 SCRIPT_DIR=$( dirname "$0" )
 SCRIPTS_DIR=$SCRIPT_DIR/../../scripts
@@ -23,9 +23,10 @@ mkdir -p $DIST_DIR
 # Generate version
 echo $PACKAGE_VERSION > $DIST_DIR/version
 
-# Generate SQL scripts
-export CLOUD=snowflake
+# Generate SQL scripts and libs
+export CLOUD=redshift
 export GIT_DIFF=off
+mkdir -p $DIST_DIR/libs
 for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     echo -e "\n> Module $module/$CLOUD"
     make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module \
@@ -33,5 +34,7 @@ for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-header.sql > $DIST_DIR/modules-header.sql
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_DIR/modules-content.sql
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-footer.sql > $DIST_DIR/modules-footer.sql
+    cat $ROOT_DIR/modules/$module/$CLOUD/dist/libraries.sql >> $DIST_DIR/libraries.sql
+    cp $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_DIR/libs
 done
 cat $DIST_DIR/modules-header.sql $DIST_DIR/modules-content.sql $DIST_DIR/modules-footer.sql > $DIST_DIR/modules.sql
