@@ -12,7 +12,7 @@ RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
 PACKAGE_TYPE ?= CORE
-PACKAGE_URL ?= https://storage.googleapis.com/carto-analytics-toolbox-core/redshift
+PACKAGE_URL ?= https:<PACKAGE_URL>
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
