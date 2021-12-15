@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (snowflake)'
+        description: 'Cloud warehouse (snowflake, redshift)'
         required: true
         default: ''
 
@@ -38,10 +38,38 @@ jobs:
         run: ./common/snowflake/create_installation_package.sh
       - name: Upload the package to the bucket
         run: |
-          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/
-          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/
+          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
+          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-snowflake-modules.sql
       - name: Upload the package as an artifact
         uses: actions/upload-artifact@v2
         with:
           name: carto-analytics-toolbox-core-snowflake
+          path: dist/*
+
+  release-rs:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: ${{ github.event.inputs.cloud == 'redshift'}}
+    env:
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
+      PACKAGE_URL: https://storage.googleapis.com/carto-analytics-toolbox-advanced/redshift
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Create installation package
+        run: ./common/redshift/create_installation_package.sh
+      - name: Upload the package to the bucket
+        run: |
+          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
+          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-redshift-modules.sql
+          gsutil -h "Content-Type:application/sql" cp dist/libraries.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-redshift-libraries.sql
+          gsutil -h "Content-Type:application/zip" cp dist/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
+      - name: Upload the package as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: carto-analytics-toolbox-core-redshift
           path: dist/*

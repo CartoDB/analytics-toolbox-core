@@ -88,31 +88,8 @@ SELECT ${project}.${name}.VERSION();
         break;
 
     case 'snowflake':
-        return;
     case 'redshift':
-        content = `### VERSION
-
-{{% bannerNote type="code" %}}
-${name}.VERSION()
-{{%/ bannerNote %}}
-
-**Description**
-
-Returns the current version of the ${name} module.
-
-**Return type**
-
-\`VARCHAR\`
-
-{{% customSelector %}}
-**Example**
-{{%/ customSelector %}}
-
-\`\`\`sql
-SELECT ${name}.VERSION();
--- 1.0.0
-\`\`\``;
-        break;
+        return;
     }
 
     createFile([root, 'modules', name, cloud, 'doc', 'VERSION.md'], content);
@@ -158,19 +135,8 @@ AS """
         break;
 
     case 'snowflake':
-        return;
     case 'redshift':
-        content = `${header}
-
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${name}.VERSION
-() 
-RETURNS VARCHAR
-IMMUTABLE
-AS $$
-    from @@RS_PREFIX@@${name}Lib import __version__
-    return __version__
-$$ LANGUAGE plpythonu;`;
-        break;
+        return;
     }
 
     createFile([root, 'modules', name, cloud, 'sql', 'VERSION.sql'], content);
@@ -212,7 +178,7 @@ sys.path.insert(
         '..',
         '..',
         '..',
-        '..',
+        '..',${ type == 'advanced' ? "\n\t\t'core',": '' }
         'common',
         'redshift',
     ),
@@ -222,12 +188,11 @@ sys.path.insert(
         createFile([root, 'modules', name, cloud, 'test', 'integration', '__init__.py'], content);
 
         content = `from test_utils import run_query
-from lib._version import __version__
 
 
-def test_version():
-    result = run_query('SELECT @@${prefix}@@${name}.VERSION()')
-    assert result[0][0] == __version__
+def test_sql_sample():
+    result = run_query('SELECT 123')
+    assert result[0][0] == 123
 `;
         break;
     }
@@ -279,6 +244,7 @@ function createChangelog () {
     let content;
     switch (cloud){
     case 'snowflake':
+    case 'redshift':
         content = `# Changelog
 All notable changes to this project will be documented in this file.
 

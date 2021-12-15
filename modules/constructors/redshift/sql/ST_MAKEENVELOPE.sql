@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@constructors.ST_MAKEENVELOPE
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_MAKEENVELOPE
 (FLOAT8, FLOAT8, FLOAT8, FLOAT8)
 -- (xmin, ymin, xmax, ymax)
 RETURNS GEOMETRY

@@ -8,9 +8,9 @@ def test_delaunay_lines_success():
     fixture_file.close()
 
     results = run_query(
-        f"""SELECT @@RS_PREFIX@@processing.ST_DELAUNAYLINES(
+        f"""SELECT @@RS_PREFIX@@carto.ST_DELAUNAYLINES(
             ST_GeomFromText('{points[0].rstrip()}')),
-        @@RS_PREFIX@@processing.ST_DELAUNAYLINES(
+        @@RS_PREFIX@@carto.ST_DELAUNAYLINES(
             ST_GeomFromText('{points[1].rstrip()}'))"""
     )
 
@@ -26,7 +26,7 @@ def test_delaunay_lines_success():
 
 def test_delaunay_lines_none():
     results = run_query(
-        """SELECT @@RS_PREFIX@@processing.ST_DELAUNAYLINES(
+        """SELECT @@RS_PREFIX@@carto.ST_DELAUNAYLINES(
             ST_GeomFromText(Null))"""
     )
 
@@ -40,7 +40,7 @@ def test_delaunay_lines_wrong_geom_type():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT @@RS_PREFIX@@processing.ST_DELAUNAYLINES(
+            f"""SELECT @@RS_PREFIX@@carto.ST_DELAUNAYLINES(
                 ST_GeomFromText('{points[3].rstrip()}'))"""
         )
 
@@ -54,7 +54,7 @@ def test_delaunay_lines_geom_too_long():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT @@RS_PREFIX@@processing.ST_DELAUNAYLINES(
+            f"""SELECT @@RS_PREFIX@@carto.ST_DELAUNAYLINES(
                 ST_GeomFromText('{points[2].rstrip()}'))"""
         )
 

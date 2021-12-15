@@ -7,13 +7,13 @@ def test_center_mean_success():
     fixture_file.close()
 
     results = run_query(
-        f"""SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_CENTROID(
+        f"""SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTROID(
             ST_GeomFromText('{points[0].rstrip()}'))),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_CENTROID(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTROID(
             ST_GeomFromText('{points[1].rstrip()}'))),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_CENTROID(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTROID(
             ST_GeomFromText('{points[2].rstrip()}'))),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_CENTROID(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTROID(
             ST_GeomFromText('{points[3].rstrip()}')))"""
     )
 
@@ -25,7 +25,7 @@ def test_center_mean_success():
 
 def test_center_mean_none():
     results = run_query(
-        """SELECT @@RS_PREFIX@@transformations.ST_CENTROID(
+        """SELECT @@RS_PREFIX@@carto.ST_CENTROID(
             ST_GeomFromText(NULL))"""
     )
 

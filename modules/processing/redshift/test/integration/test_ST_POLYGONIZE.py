@@ -8,33 +8,33 @@ def test_polygonize_success():
     fixture_file.close()
 
     results = run_query(
-        f"""SELECT ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        f"""SELECT ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[0].rstrip()}'))),
-       ST_AsText( @@RS_PREFIX@@processing.ST_POLYGONIZE(
+       ST_AsText( @@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[1].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[2].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[3].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[4].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[5].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[6].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[7].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[8].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[9].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[10].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[11].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[12].rstrip()}'))),
-        ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+        ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
             ST_GeomFromText('{lines[13].rstrip()}')))"""
     )
 
@@ -53,7 +53,7 @@ def test_polygonize_wrong_parameter():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+            f"""SELECT ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
                 ST_GeomFromText('{lines[15].rstrip()}')))"""
         )
 
@@ -61,7 +61,7 @@ def test_polygonize_wrong_parameter():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+            f"""SELECT ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
                 ST_GeomFromText('{lines[16].rstrip()}')))"""
         )
 
@@ -75,7 +75,7 @@ def test_polygonize_invalid_path():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT ST_AsText(@@RS_PREFIX@@processing.ST_POLYGONIZE(
+            f"""SELECT ST_AsText(@@RS_PREFIX@@carto.ST_POLYGONIZE(
                 ST_GeomFromText('{lines[14].rstrip()}')))"""
         )
 

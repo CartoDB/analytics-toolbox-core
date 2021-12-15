@@ -8,9 +8,9 @@ def test_voronoi_lines_success():
     fixture_file.close()
 
     results = run_query(
-        f"""SELECT @@RS_PREFIX@@processing.ST_VORONOILINES(
+        f"""SELECT @@RS_PREFIX@@carto.ST_VORONOILINES(
             ST_GeomFromText('{points[0].rstrip()}')),
-        @@RS_PREFIX@@processing.ST_VORONOILINES(
+        @@RS_PREFIX@@carto.ST_VORONOILINES(
             ST_GeomFromText('{points[1].rstrip()}'))"""
     )
 
@@ -26,7 +26,7 @@ def test_voronoi_lines_success():
 
 def test_voronoi_lines_none():
     results = run_query(
-        """SELECT @@RS_PREFIX@@processing.ST_VORONOILINES(
+        """SELECT @@RS_PREFIX@@carto.ST_VORONOILINES(
             ST_GeomFromText(Null))"""
     )
 
@@ -40,7 +40,7 @@ def test_voronoi_lines_wrong_geom_type():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT @@RS_PREFIX@@processing.ST_VORONOILINES(
+            f"""SELECT @@RS_PREFIX@@carto.ST_VORONOILINES(
                 ST_GeomFromText('{points[3].rstrip()}'))"""
         )
 
@@ -54,7 +54,7 @@ def test_voronoi_lines_geom_too_long():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT @@RS_PREFIX@@processing.ST_VORONOILINES(
+            f"""SELECT @@RS_PREFIX@@carto.ST_VORONOILINES(
                 ST_GeomFromText('{points[2].rstrip()}'))"""
         )
 
@@ -68,7 +68,7 @@ def test_voronoi_lines_default_not_succeed():
 
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query(
-            f"""SELECT @@RS_PREFIX@@processing.ST_VORONOILINES(
+            f"""SELECT @@RS_PREFIX@@carto.ST_VORONOILINES(
                 ST_GeomFromText('{points[1].rstrip()}'), JSON_PARSE('[
                     -80.73611869702799,30.50013148785057,
                     -55.200433643307896, 41.019920879156246]'))"""
@@ -83,10 +83,10 @@ def test_voronoi_lines_default():
     fixture_file.close()
 
     results = run_query(
-        f"""SELECT @@RS_PREFIX@@processing.ST_VORONOILINES(
+        f"""SELECT @@RS_PREFIX@@carto.ST_VORONOILINES(
             ST_GeomFromText('{points[0].rstrip()}'), JSON_PARSE('[-76.704999999999998,
             38.655000000000001, -74.594999999999999, 40.475000000000009]')),
-        @@RS_PREFIX@@processing.ST_VORONOILINES(
+        @@RS_PREFIX@@carto.ST_VORONOILINES(
             ST_GeomFromText('{points[0].rstrip()}'))"""
     )
 

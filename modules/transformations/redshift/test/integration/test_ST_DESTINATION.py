@@ -3,11 +3,11 @@ from test_utils import run_query
 
 def test_destination_success():
     results = run_query(
-        """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(0, 0), 10, 90, 'kilometers')),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(-3.70325, 40.4167), 5, 45, 'kilometers')),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(-43.7625, -20), 150, -20, 'miles'))"""
     )
 
@@ -18,13 +18,13 @@ def test_destination_success():
 
 def test_destination_none():
     results = run_query(
-        """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             NULL, 10, 90, 'kilometers')),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(-3.70325, 40.4167), NULL, 45, 'kilometers')),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(-43.7625, -20), 150, NULL, 'miles')),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(-43.7625, -20), 150, -20, NULL))"""
     )
 
@@ -36,11 +36,11 @@ def test_destination_none():
 
 def test_destination_default():
     results = run_query(
-        """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(0, 0), 10, 90)),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(0, 0), 10, 90, 'kilometers')),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_DESTINATION(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
             ST_MakePoint(0, 0), 10, 90, 'miles'))"""
     )
 

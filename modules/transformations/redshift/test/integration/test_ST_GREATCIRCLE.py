@@ -3,13 +3,13 @@ from test_utils import run_query
 
 def test_great_circle_success():
     results = run_query(
-        """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(0,0), ST_MakePoint(0,10), 11)),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167), 5)),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(5, 5), ST_MakePoint(-5,-5), 9)),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-86.90549445521091, 40.42831126209373),
             ST_MakePoint(-3.79289595262835, 37.776008883554354), 15))"""
     )
@@ -24,11 +24,11 @@ def test_great_circle_success():
 
 def test_great_circle_none():
     results = run_query(
-        """SELECT @@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        """SELECT @@RS_PREFIX@@carto.ST_GREATCIRCLE(
             NULL, ST_MakePoint(-5,-5), 5),
-        @@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        @@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-5,-5), NULL, 5),
-        @@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        @@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-5,-5), ST_MakePoint(5,5), NULL) """
     )
 
@@ -39,11 +39,11 @@ def test_great_circle_none():
 
 def test_great_circle_default():
     results = run_query(
-        """SELECT ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167))),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167), 100)),
-        ST_ASTEXT(@@RS_PREFIX@@transformations.ST_GREATCIRCLE(
+        ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
             ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167), 10))"""
     )
 

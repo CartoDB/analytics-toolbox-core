@@ -1,14 +1,14 @@
 ### ST_CENTROID
 
 {{% bannerNote type="code" %}}
-transformations.ST_CENTROID(geom)
+carto.ST_CENTROID(geom)
 {{%/ bannerNote %}}
 
 **Description**
 
-Takes any Feature or a FeatureCollection and returns its centroid. It's equivalent to the center of mass.
+Takes any Feature or a FeatureCollection as input and returns its centroid. It is equivalent to [`ST_CENTEROFMASS`](#st_centerofmass).
 
-* `geom`: `GEOMETRY` feature to be centered.
+* `geom`: `GEOMETRY` for which to compute the centroid.
 
 **Return type**
 
@@ -17,5 +17,5 @@ Takes any Feature or a FeatureCollection and returns its centroid. It's equivale
 **Example**
 
 ```sql
-SELECT transformations.ST_CENTROID(ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
+SELECT carto.ST_CENTROID(ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
 -- POINT (25.4545454545 26.9696969697)

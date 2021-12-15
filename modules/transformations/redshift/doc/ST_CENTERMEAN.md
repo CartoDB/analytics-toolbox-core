@@ -1,14 +1,14 @@
 ### ST_CENTERMEAN
 
 {{% bannerNote type="code" %}}
-transformations.ST_CENTERMEAN(geom)
+carto.ST_CENTERMEAN(geom)
 {{%/ bannerNote %}}
 
 **Description**
 
-Takes a Feature or FeatureCollection and returns the mean center.
+Takes a Feature or FeatureCollection as input and returns the mean center.
 
-* `geom`: `GEOMETRY` feature to be centered.
+* `geom`: `GEOMETRY` for which to compute the mean center.
 
 
 **Return type**
@@ -18,6 +18,6 @@ Takes a Feature or FeatureCollection and returns the mean center.
 **Example**
 
 ```sql
-SELECT transformations.ST_CENTERMEAN(ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
+SELECT carto.ST_CENTERMEAN(ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
 -- POINT (25 27.5)
 ```

@@ -117,7 +117,7 @@ SELECT carto.${fname}(${fparams.map(fp => fp.name).join(', ')});
         content = `### ${fname}
 
 {{% bannerNote type="code" %}}
-${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')})
+carto.${fname}(${fparams.map(fp => fp.name).join(', ')})
 {{%/ bannerNote %}}
 
 **Description**
@@ -137,7 +137,7 @@ TODO.
 {{%/ customSelector %}}
 
 \`\`\`sql
-SELECT ${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')});
+SELECT carto.${fname}(${fparams.map(fp => fp.name).join(', ')});
 -- TODO
 \`\`\``;
         break;
@@ -294,7 +294,7 @@ $$;
         case 'sql':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
@@ -307,7 +307,7 @@ $$ LANGUAGE sql;`;
         case 'python':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 STABLE
@@ -320,7 +320,7 @@ $$ LANGUAGE plpythonu;`;
         case 'sql-combo':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}._${fname}
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto._${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
@@ -329,19 +329,19 @@ AS $$
     TODO
 $$ LANGUAGE sql;
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
 STABLE
 AS $$   
-    SELECT @@RS_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name).join(', ')})
+    SELECT @@RS_PREFIX@@carto._${fname}(${fparams.map(fp => fp.name).join(', ')})
 $$ LANGUAGE sql;`;
             break;
         case 'python-combo':
             content = `${header}
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}._${fname}
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto._${fname}
 (${fparams.map(fp => `${fp.name} ${fp.type}`).join(', ')})
 RETURNS ${frtype}
 STABLE
@@ -351,13 +351,13 @@ AS $$
     TODO
 $$ LANGUAGE plpythonu;
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@${mname}.${fname}
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.${fname}
 (${fparams.map(fp => fp.type).join(', ')})
 -- (${fparams.map(fp => fp.name).join(', ')})
 RETURNS ${frtype}
 STABLE
 AS $$   
-    SELECT @@RS_PREFIX@@${mname}._${fname}(${fparams.map(fp => fp.name).join(', ')})
+    SELECT @@RS_PREFIX@@carto._${fname}(${fparams.map(fp => fp.name).join(', ')})
 $$ LANGUAGE sql;`;
             break;
         default:
@@ -408,7 +408,7 @@ test('${fname} should work', async () => {
 
 
 def test_${fname.toLowerCase()}():
-    result = run_query('SELECT @@RS_PREFIX@@${mname}.${fname}(${fparams.map(fp => fp.name).join(', ')})')
+    result = run_query('SELECT @@RS_PREFIX@@carto.${fname}(${fparams.map(fp => fp.name).join(', ')})')
     assert result[0][0] == `;
 
             createFile([root, 'modules', mname, cloud, 'test', 'integration', `test_${fname}.py`], content);

@@ -164,15 +164,17 @@ endif
 serialize-module:
 	$(MAKE) build
 	rm -f ${DIST_DIR}/module.sql
-	echo "USE SCHEMA $(SF_SCHEMA);" >> ${DIST_DIR}/module.sql
+	rm -f ${DIST_DIR}/module-header.sql
+	rm -f ${DIST_DIR}/module-footer.sql
+	echo "USE SCHEMA $(SF_SCHEMA);" >> ${DIST_DIR}/module-header.sql
 	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
-		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module.sql; \
+		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module-header.sql; \
 	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
 		echo "" >> ${DIST_DIR}/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module-footer.sql;
 
 serialize-functions:
 	mkdir -p ${DIST_DIR}
