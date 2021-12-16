@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__GREATCIRCLE
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import great_circle, PRECISION
+    from @@RS_PREFIX@@transformationsLib import great_circle, PRECISION, geom_from_geojson
     import geojson
     import json
 
@@ -23,8 +23,10 @@ AS $$
     _geom['precision'] = PRECISION
     end_geom = json.dumps(_geom)
     end_geom = geojson.loads(end_geom)
+    geojson_str = str(great_circle(start_geom, end_geom, n_points))
 
-    return str(great_circle(start_geom, end_geom, n_points))
+    return geom_from_geojson(geojson_str)
+
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_GREATCIRCLE
@@ -33,7 +35,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_GREATCIRCLE
 RETURNS GEOMETRY
 STABLE
 AS $$
-    SELECT @@RS_PREFIX@@carto.__ST_GEOMFROMGEOJSON(@@RS_PREFIX@@carto.__GREATCIRCLE(ST_ASGEOJSON($1)::VARCHAR(MAX), ST_ASGEOJSON($2)::VARCHAR(MAX), 100))
+    SELECT ST_GEOMFROMTEXT(@@RS_PREFIX@@carto.__GREATCIRCLE(ST_ASGEOJSON($1)::VARCHAR(MAX), ST_ASGEOJSON($2)::VARCHAR(MAX), 100))
 $$ LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_GREATCIRCLE
@@ -42,5 +44,5 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_GREATCIRCLE
 RETURNS GEOMETRY
 STABLE
 AS $$
-    SELECT @@RS_PREFIX@@carto.__ST_GEOMFROMGEOJSON(@@RS_PREFIX@@carto.__GREATCIRCLE(ST_ASGEOJSON($1)::VARCHAR(MAX), ST_ASGEOJSON($2)::VARCHAR(MAX), $3))
+    SELECT ST_GEOMFROMTEXT(@@RS_PREFIX@@carto.__GREATCIRCLE(ST_ASGEOJSON($1)::VARCHAR(MAX), ST_ASGEOJSON($2)::VARCHAR(MAX), $3))
 $$ LANGUAGE sql;

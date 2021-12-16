@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__CENTERMEAN
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import center_mean, PRECISION
+    from @@RS_PREFIX@@transformationsLib import center_mean, PRECISION, geom_from_geojson
     import geojson
     import json
 
@@ -18,8 +18,10 @@ AS $$
     _geom['precision'] = PRECISION
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
-
-    return str(center_mean(geojson_geom))
+    geojson_str = str(center_mean(geojson_geom))
+    
+    return geom_from_geojson(geojson_str)
+    
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_CENTERMEAN
@@ -28,5 +30,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_CENTERMEAN
 RETURNS GEOMETRY
 STABLE
 AS $$
-    SELECT @@RS_PREFIX@@carto.__ST_GEOMFROMGEOJSON(@@RS_PREFIX@@carto.__CENTERMEAN(ST_ASGEOJSON($1)::VARCHAR(MAX)))
+
+    SELECT ST_GEOMFROMTEXT(@@RS_PREFIX@@carto.__CENTERMEAN(ST_ASGEOJSON($1)::VARCHAR(MAX)))
+    
 $$ LANGUAGE sql;

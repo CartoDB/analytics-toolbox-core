@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__DESTINATION
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import destination, PRECISION
+    from @@RS_PREFIX@@transformationsLib import destination, PRECISION, geom_from_geojson
     import geojson
     import json
 
@@ -18,8 +18,10 @@ AS $$
     _geom['precision'] = PRECISION
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
+    geojson_str = str(destination(geojson_geom, distance, bearing, units))
+    
+    return geom_from_geojson(geojson_str)
 
-    return str(destination(geojson_geom, distance, bearing, units))
 $$ LANGUAGE plpythonu;
 
 
@@ -29,7 +31,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_DESTINATION
 RETURNS GEOMETRY
 STABLE
 AS $$
-    SELECT @@RS_PREFIX@@carto.__ST_GEOMFROMGEOJSON(@@RS_PREFIX@@carto.__DESTINATION(ST_ASGEOJSON($1)::VARCHAR(MAX), $2, $3, 'kilometers'))
+    SELECT ST_GEOMFROMTEXT(@@RS_PREFIX@@carto.__DESTINATION(ST_ASGEOJSON($1)::VARCHAR(MAX), $2, $3, 'kilometers'))
 $$ LANGUAGE sql;
 
 
@@ -39,5 +41,5 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.ST_DESTINATION
 RETURNS GEOMETRY
 STABLE
 AS $$
-    SELECT @@RS_PREFIX@@carto.__ST_GEOMFROMGEOJSON(@@RS_PREFIX@@carto.__DESTINATION(ST_ASGEOJSON($1)::VARCHAR(MAX), $2, $3, $4))
+    SELECT ST_GEOMFROMTEXT(@@RS_PREFIX@@carto.__DESTINATION(ST_ASGEOJSON($1)::VARCHAR(MAX), $2, $3, $4))
 $$ LANGUAGE sql;
