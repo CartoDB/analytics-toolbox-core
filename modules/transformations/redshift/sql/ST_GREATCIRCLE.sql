@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__GREATCIRCLE
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import great_circle, PRECISION, geom_from_geojson
+    from @@RS_PREFIX@@transformationsLib import great_circle, PRECISION, wkt_from_geojson
     import geojson
     import json
 
@@ -25,7 +25,7 @@ AS $$
     end_geom = geojson.loads(end_geom)
     geojson_str = str(great_circle(start_geom, end_geom, n_points))
 
-    return geom_from_geojson(geojson_str)
+    return wkt_from_geojson(geojson_str)
 
 $$ LANGUAGE plpythonu;
 

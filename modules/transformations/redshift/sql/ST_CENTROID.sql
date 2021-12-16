@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__CENTROID
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import centroid, PRECISION, geom_from_geojson
+    from @@RS_PREFIX@@transformationsLib import centroid, PRECISION, wkt_from_geojson
     import geojson
     import json
     
@@ -20,7 +20,7 @@ AS $$
     geojson_geom = geojson.loads(geojson_geom)
     geojson_str = str(centroid(geojson_geom))
     
-    return geom_from_geojson(geojson_str)
+    return wkt_from_geojson(geojson_str)
 
 $$ LANGUAGE plpythonu;
 

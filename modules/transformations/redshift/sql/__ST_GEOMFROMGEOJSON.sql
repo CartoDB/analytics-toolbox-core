@@ -7,9 +7,9 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__GEOJSONTOWKT
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
-    from @@RS_PREFIX@@transformationsLib import geom_from_geojson
+    from @@RS_PREFIX@@transformationsLib import wkt_from_geojson
 
-    return geom_from_geojson(geom)
+    return wkt_from_geojson(geom)
 $$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__ST_GEOMFROMGEOJSON

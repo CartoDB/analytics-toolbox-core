@@ -107,7 +107,7 @@ def calculate_final_bearing(start, end):
     return bear
 
 
-def geom_from_geojson(geom):
+def wkt_from_geojson(geom):
     def get_ring(coords):
         str_return = '('
         for p in coords:

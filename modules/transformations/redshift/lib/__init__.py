@@ -4,7 +4,7 @@ from .center_lib.centroid import centroid_polygon, centroid_linestring
 from .center_lib.center_mean import remove_end_polygon_point
 from .destination import destination
 from .great_circle import great_circle
-from .helper import geom_from_geojson
+from .helper import wkt_from_geojson
 from .helper import PRECISION
 
 __all__ = [
@@ -17,6 +17,6 @@ __all__ = [
     'great_circle',
     'destination',
     'remove_end_polygon_point',
-    'geom_from_geojson',
+    'wkt_from_geojson',
     'PRECISION',
 ]
