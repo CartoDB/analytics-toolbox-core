@@ -8,7 +8,6 @@ BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 
 BQ_MODULE_LABEL ?= spatial_extension_module:core
 BQ_DEPLOY_DATASET = $(BQ_DATASET_PREFIX)carto
-BQ_DATASET = $(BQ_DATASET_PREFIX)$(MODULE)
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
@@ -19,7 +18,7 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 LIB_DIR = $(ROOT_DIR)/lib
 DIST_DIR = $(ROOT_DIR)/dist
 BQ_LIBRARY = $(DIST_DIR)/index.js
-BQ_BUCKET_PATH = $(BQ_BUCKET)$(BQ_DATASET)/
+BQ_BUCKET_PATH = $(BQ_BUCKET)$(BQ_DATASET_PREFIX)$(MODULE)/
 BQ_LIBRARY_BUCKET = $(BQ_BUCKET_PATH)index.js
 
 LINT_DIR ?= $(ROOT_DIR)/../../..
@@ -150,21 +149,9 @@ storage-remove:
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
 		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_LABEL) $(BQ_DEPLOY_DATASET)
-ifdef BQ_CREATE_SPATIAL_CATALOG
-	if [ "$(MODULE)" = "data" ]; then \
-		$(BQ) query --use_legacy_sql=false \
-		'CREATE TABLE IF NOT EXISTS $(BQ_DEPLOY_DATASET).spatial_catalog_datasets(dataset_id string,dataset_slug string,dataset_name string,dataset_country string,dataset_category string,dataset_provider string,dataset_version string,dataset_geom_type string,dataset_is_public boolean,dataset_is_product boolean,associated_geography_id string);'; \
-		$(BQ) query --use_legacy_sql=false \
-		'CREATE TABLE IF NOT EXISTS $(BQ_DEPLOY_DATASET).spatial_catalog_variables(variable_slug string,variable_name string,variable_description string,variable_type string,variable_aggregation string,dataset_slug string);'; \
-	fi
-else ifdef BQ_BUCKET_SPATIAL_CATALOG
-	if [ "$(MODULE)" = "data" ]; then \
-		$(BQ) load --source_format=CSV --skip_leading_rows=1 --allow_quoted_newlines --replace $(BQ_DEPLOY_DATASET).spatial_catalog_datasets $(BQ_BUCKET_SPATIAL_CATALOG)spatial_catalog_datasets.csv \
-			dataset_id:string,dataset_slug:string,dataset_name:string,dataset_country:string,dataset_category:string,dataset_provider:string,dataset_version:string,dataset_geom_type:string,dataset_is_public:boolean,dataset_is_product:boolean,associated_geography_id:string; \
-		$(BQ) load --source_format=CSV --skip_leading_rows=1 --allow_quoted_newlines --replace $(BQ_DEPLOY_DATASET).spatial_catalog_variables $(BQ_BUCKET_SPATIAL_CATALOG)spatial_catalog_variables.csv \
-			variable_slug:string,variable_name:string,variable_description:string,variable_type:string,variable_aggregation:string,dataset_slug:string; \
-	fi
-endif
+	$(MAKE) post-dataset-create
+
+post-dataset-create:
 
 dataset-remove:
 	$(BQ) rm -r -f -d $(BQ_DEPLOY_DATASET)
