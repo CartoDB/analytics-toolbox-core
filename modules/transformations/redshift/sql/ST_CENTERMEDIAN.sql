@@ -18,7 +18,7 @@ AS $$
     _geom['precision'] = PRECISION
     geojson_geom = json.dumps(_geom)
     geojson_geom = geojson.loads(geojson_geom)
-    geojson_str = str(center_median(geojson_geom))
+    geojson_str = str(center_median(geojson_geom, n_iter))
     
     return geom_from_geojson(geojson_str)
 $$ LANGUAGE plpythonu;
