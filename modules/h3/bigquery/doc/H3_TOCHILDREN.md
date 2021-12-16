@@ -20,7 +20,7 @@ Returns an array with the indexes of the children/descendents of the given hexag
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.H3_TOCHILDREN('837b59fffffffff', 4);
+SELECT `carto-os`.carto.H3_TOCHILDREN('837b59fffffffff', 4);
 -- 847b591ffffffff
 -- 847b593ffffffff
 -- 847b595ffffffff

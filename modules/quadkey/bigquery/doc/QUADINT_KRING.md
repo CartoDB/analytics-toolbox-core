@@ -20,7 +20,7 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.QUADINT_KRING(4388, 1);
+SELECT `carto-os`.carto.QUADINT_KRING(4388, 1);
 -- 3844
 -- 3876
 -- 3908

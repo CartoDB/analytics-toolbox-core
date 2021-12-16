@@ -11,8 +11,10 @@ RS_DEPLOY_SCHEMA = $(RS_SCHEMA_PREFIX)carto
 RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
+PACKAGE_TYPE ?= CORE
+PACKAGE_URL ?= https:<PACKAGE_URL>
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
-VERSION_FUNCTION ?= VERSION
+VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -127,7 +129,7 @@ storage-remove:
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		$(AWS) s3 rm $(AWS_S3_BUCKET)$$f || exit 1; \
 	done
-	STATEMENT_SQL="DROP LIBRARY $(RS_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
+	STATEMENT_SQL="DROP LIBRARY $(RS_SCHEMA)"; AWS_SKIP_OUTPUT=1; $(AWS_RUN_STATEMENT_SQL)
 
 schema-create:
 	STATEMENT_SQL="CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA)"; $(AWS_RUN_STATEMENT_SQL)
@@ -163,18 +165,22 @@ ifneq ("$(wildcard requirements.txt)","")
 endif
 
 serialize-module: build serialize-dependency
-	rm -f $(DIST_DIR)/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS $(RS_DEPLOY_SCHEMA);" >> $(DIST_DIR)/module.sql
+	rm -f $(DIST_DIR)/libraries.sql
+	rm -f ${DIST_DIR}/module.sql
+	rm -f ${DIST_DIR}/module-header.sql
+	rm -f ${DIST_DIR}/module-footer.sql
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
-		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '<AWS_S3_BUCKET>/$(notdir $$f)' CREDENTIALS 'aws_access_key_id=<AWS_ACCESS_KEY_ID>;aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>';" >> dist/module.sql; \
+		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(PACKAGE_URL)/latest/libs/$(notdir $$f)';" >> $(DIST_DIR)/libraries.sql; \
 	done
-	echo "" >> $(DIST_DIR)/module.sql;
+	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
+		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module-header.sql; \
+	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS) $$n >> $(DIST_DIR)/module.sql; \
 		echo "" >> $(DIST_DIR)/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module-footer.sql;
 
 serialize-functions:
 	mkdir -p $(DIST_DIR)

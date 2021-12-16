@@ -19,11 +19,11 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.H3_ISPENTAGON('837b59fffffffff');
+SELECT `carto-os`.carto.H3_ISPENTAGON('837b59fffffffff');
 -- false
 ```
 
 ```sql
-SELECT carto-os.carto.H3_ISPENTAGON('8075fffffffffff');
+SELECT `carto-os`.carto.H3_ISPENTAGON('8075fffffffffff');
 -- true
 ```

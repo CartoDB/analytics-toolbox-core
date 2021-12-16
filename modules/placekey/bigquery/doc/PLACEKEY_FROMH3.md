@@ -19,6 +19,6 @@ Returns the placekey equivalent to the given H3 index.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.PLACEKEY_FROMH3('847b59dffffffff');
+SELECT `carto-os`.carto.PLACEKEY_FROMH3('847b59dffffffff');
 -- @ff7-swh-m49
 ```

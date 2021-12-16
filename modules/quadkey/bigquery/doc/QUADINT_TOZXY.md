@@ -19,7 +19,7 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.QUADINT_TOZXY(4388);
+SELECT `carto-os`.carto.QUADINT_TOZXY(4388);
 -- z  x  y
 -- 4  9  8
 ```

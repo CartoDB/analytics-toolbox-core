@@ -92,7 +92,7 @@ jobs:
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
       RS_CLUSTER_ID: redshift-cluster-1
       RS_DATABASE: rscartost
-      RS_SCHEMA_PREFIX: ${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
+      RS_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
       RS_USER: ${{ secrets.RS_USER }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}

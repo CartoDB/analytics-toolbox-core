@@ -19,6 +19,6 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.S2_FROMHILBERTQUADKEY('0/30002221');
+SELECT `carto-os`.carto.S2_FROMHILBERTQUADKEY('0/30002221');
 -- 1735346007979327488
 ```

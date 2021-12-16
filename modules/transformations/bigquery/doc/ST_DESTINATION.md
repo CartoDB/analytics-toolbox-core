@@ -22,6 +22,6 @@ Takes a Point and calculates the location of a destination point given a distanc
 {{%/ customSelector %}}
 
 ``` sql
-SELECT carto-os.carto.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), 10, 45, "miles");
+SELECT `carto-os`.carto.ST_DESTINATION(ST_GEOGPOINT(-3.70325,40.4167), 10, 45, "miles");
 -- POINT(-3.56862505487045 40.5189626777536)
 ```

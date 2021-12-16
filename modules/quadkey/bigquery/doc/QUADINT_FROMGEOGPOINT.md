@@ -20,6 +20,6 @@ Returns the quadint of a given point at a given level of detail.
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.QUADINT_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
+SELECT `carto-os`.carto.QUADINT_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
 -- 4388
 ```

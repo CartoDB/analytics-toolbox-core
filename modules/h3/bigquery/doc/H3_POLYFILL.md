@@ -20,7 +20,7 @@ Returns an array with all the H3 cell indexes **with centers** contained in a gi
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.H3_POLYFILL(
+SELECT `carto-os`.carto.H3_POLYFILL(
     ST_GEOGFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
 -- 846b26bffffffff
 -- 843e8b1ffffffff

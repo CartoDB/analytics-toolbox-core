@@ -24,7 +24,7 @@ Returns the quadint index for the given point for each zoom level requested, at 
 {{%/ customSelector %}}
 
 ```sql
-SELECT carto-os.carto.QUADINT_FROMLONGLAT_ZOOMRANGE(40.4168, -3.7038, 3, 6, 1, 4);
+SELECT `carto-os`.carto.QUADINT_FROMLONGLAT_ZOOMRANGE(40.4168, -3.7038, 3, 6, 1, 4);
 -- id        z  x   y
 -- 268743    3  4   4
 -- 1069960   4  9   8
