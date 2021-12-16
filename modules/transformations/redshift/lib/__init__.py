@@ -18,5 +18,5 @@ __all__ = [
     'destination',
     'remove_end_polygon_point',
     'geom_from_geojson',
-    'PRECISION'
+    'PRECISION',
 ]

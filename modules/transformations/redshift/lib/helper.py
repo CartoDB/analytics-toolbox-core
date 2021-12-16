@@ -106,8 +106,8 @@ def calculate_final_bearing(start, end):
     bear = (bear + 180) % 360
     return bear
 
-def geom_from_geojson(geom):
 
+def geom_from_geojson(geom):
     def get_ring(coords):
         str_return = '('
         for p in coords:
@@ -123,16 +123,14 @@ def geom_from_geojson(geom):
 
     geojson_str = geojson.loads(geom)
     geojson_type = geojson_str.type
-    
+
     coords = []
     # TODO: Include multitypes
-    #if geojson_type == 'GeometryCollection':
-    #    coords = list(geojson.utils.coords(geojson_str.geometries))
 
     if geojson_type == 'Point':
         coords = list(geojson.utils.coords(geojson_str))
         return 'POINT (' + str(coords[0][0]) + ' ' + str(coords[0][1]) + ')'
-    
+
     elif geojson_type == 'LineString':
         coords = list(geojson.utils.coords(geojson_str))
         return 'LINESTRING' + get_ring(coords)
