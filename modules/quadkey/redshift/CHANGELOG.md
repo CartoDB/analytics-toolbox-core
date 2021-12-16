@@ -23,26 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Remove VERSION function.
 
-## [1.1.0] - 2021-12-10
-
-### Changed
-- Deployment schema "carto" instead of "quadkey".
-- Rename ZXY_FROMQUADINT function to QUADINT_TOZXY.
-- Rename LONGLAT_ASQUADINT function to QUADINT_FROMGEOGPOINT.
-- Rename QUADKEY_FROMQUADINT function to QUADINT_TOQUADKEY.
-- Rename TOPARENT function to QUADINT_TOPARENT.
-- Rename TOCHILDREN function to QUADINT_TOCHILDREN.
-- Rename SIBLING function to QUADINT_SIBLING.
-- Rename KRING function to QUADINT_KRING.
-- Rename KRING_DISTANCES function to QUADINT_KRING_DISTANCES.
-- Rename BBOX function to QUADINT_BBOX.
-- Rename ST_ASQUADINT function to QUADINT_FROMGEOGPOINT.
-- Rename ST_ASQUADINT_POLYFILL function to QUADINT_POLYFILL.
-- Rename ST_BOUNDARY function to QUADINT_BOUNDARY.
-
-### Removed
-- Remove VERSION function.
-
 ## [1.0.1] - 2021-09-22
 
 ### Added

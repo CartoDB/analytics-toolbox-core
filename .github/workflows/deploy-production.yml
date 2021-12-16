@@ -99,9 +99,6 @@ jobs:
             export_default_credentials: true
       - name: Deploy to production
         run: make deploy CLOUD=bigquery
-      - name: Create installation package
-        if: ${{ env.BQ_REGION == 'us' }}
-        run: ./common/bigquery/create_installation_package.sh
 
   deploy-sf:
     runs-on: ubuntu-20.04
