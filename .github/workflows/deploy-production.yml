@@ -112,7 +112,7 @@ jobs:
       SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
       SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASE: SFCARTO
+      SF_DATABASE: CARTO_OS
       SF_SHARE_ENABLED: 1
       SF_SHARES: carto_os
     steps:
