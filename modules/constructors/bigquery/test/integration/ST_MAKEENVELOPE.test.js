@@ -2,9 +2,9 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('ST_MAKEENVELOPE should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(10.0, 10.0, 11.0, 11.0) as poly1,
-               \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(-179.0, 10.0, 179.0, 11.0) as poly2,
-               \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(179.0, 10.0, -179.0, 11.0) as poly3
+        SELECT \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(10.0, 10.0, 11.0, 11.0) as poly1,
+               \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(-179.0, 10.0, 179.0, 11.0) as poly2,
+               \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(179.0, 10.0, -179.0, 11.0) as poly3
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -15,10 +15,10 @@ test('ST_MAKEENVELOPE should work', async () => {
 
 test('ST_MAKEENVELOPE should return NULL if any NULL argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(NULL, 10.0, 11.0, 11.0) as poly1,
-               \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(10.0, NULL, 11.0, 11.0) as poly2,
-               \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(10.0, 10.0, NULL, 11.0) as poly3,
-               \`@@BQ_PREFIX@@constructors.ST_MAKEENVELOPE\`(10.0, 10.0, 11.0, NULL) as poly4
+        SELECT \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(NULL, 10.0, 11.0, 11.0) as poly1,
+               \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(10.0, NULL, 11.0, 11.0) as poly2,
+               \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(10.0, 10.0, NULL, 11.0) as poly3,
+               \`@@BQ_PREFIX@@carto.ST_MAKEENVELOPE\`(10.0, 10.0, 11.0, NULL) as poly4
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

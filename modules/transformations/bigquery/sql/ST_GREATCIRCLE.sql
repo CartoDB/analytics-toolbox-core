@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.__GREATCIRCLE`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__GREATCIRCLE`
 (geojsonStart STRING, geojsonEnd STRING, npoints INT64)
 RETURNS STRING
 DETERMINISTIC
@@ -20,9 +20,9 @@ AS """
     return JSON.stringify(greatCircle.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_GREATCIRCLE`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.ST_GREATCIRCLE`
 (startPoint GEOGRAPHY, endPoint GEOGRAPHY, npoints INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__GREATCIRCLE`(ST_ASGEOJSON(startPoint), ST_ASGEOJSON(endPoint), npoints))
+    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@carto.__GREATCIRCLE`(ST_ASGEOJSON(startPoint), ST_ASGEOJSON(endPoint), npoints))
 );

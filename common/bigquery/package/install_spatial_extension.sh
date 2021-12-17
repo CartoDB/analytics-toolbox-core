@@ -20,7 +20,7 @@ fi
 
 echo "Checking datasets..."
 for dataset in $(ls $SCRIPT_DIR/libs); do
-    if $BQ ls 2>&1 | grep $dataset > /dev/null; then
+    if $BQ ls --datasets --max_results=10000 2>&1 | grep $dataset > /dev/null; then
         echo "- Dataset '$dataset' exists"
     else
         echo "* Dataset '$dataset' does not exist!"
@@ -32,6 +32,15 @@ read -p "Do you want to continue with the installation? [ENTER]" -n 1 -r
 # Perform the variables replacement
 sed -e "s!@@BQ_PREFIX@@!$TARGET_PROJECT.!g" -e "s!@@BQ_LIBRARY_BUCKET@@!$TARGET_BUCKET!g" \
 $SCRIPT_DIR/modules.sql > $SCRIPT_DIR/modules_rep.sql
+
+# Deploy the data module tables
+if [[ -d "$SCRIPT_DIR/tables/data" ]]; then
+    $BQ show data >/dev/null || $BQ mk --dataset data
+    for table in $(ls $SCRIPT_DIR/tables/data); do
+        $BQ load --source_format=CSV --skip_leading_rows=1 --allow_quoted_newlines --replace \
+        data.${table%.*} $SCRIPT_DIR/tables/data/${table%.*}.csv $SCRIPT_DIR/schemas/data/${table%.*}.json
+    done
+fi
 
 # Deploy the JS libs into the bucket
 gsutil -m cp -r $SCRIPT_DIR/libs/ $TARGET_BUCKET/

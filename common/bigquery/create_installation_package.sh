@@ -2,38 +2,45 @@
 
 # Script to create a Spatial Extension package for BigQuery
 
-# * BQ_PROJECT
-# * BQ_BUCKET
+export PACKAGE_TYPE=${PACKAGE_TYPE:=CORE}
+PACKAGE_VERSION=$(date +%Y.%m.%d)
 
-if [[ ! "$BQ_PROJECT" =~ ^(carto-os)$ ]]; then
-    echo "Invalid project $BQ_PROJECT"
-    exit 0
-fi
-
-PACKAGE_BUCKET="${BQ_BUCKET}bigquery/packages"
-PACKAGE_NAME="$BQ_PROJECT-spatial-extension-bigquery"
-
-echo "Creating installation package $PACKAGE_BUCKET/$PACKAGE_NAME.zip"
+echo "Creating installation package $PACKAGE_VERSION";
 
 SCRIPT_DIR=$( dirname "$0" )
-
-ROOT_DIR=$SCRIPT_DIR/../..
-DIST_DIR=$ROOT_DIR/dist
+SCRIPTS_DIR=$SCRIPT_DIR/../../scripts
+if [ -z ${ROOT_DIR} ];
+then
+    ROOT_DIR=$SCRIPT_DIR/../..
+fi
+if [ -z ${DIST_DIR} ];
+then
+    DIST_DIR=$ROOT_DIR/dist
+fi
 
 rm -rf $DIST_DIR
+mkdir -p $DIST_DIR
+
+# Generate version
+echo $PACKAGE_VERSION > $DIST_DIR/version
+
+# Generate SQL scripts and libs
+export CLOUD=bigquery
+export GIT_DIFF=off
 mkdir -p $DIST_DIR/libs
-
-# Generate core modules
-$SCRIPT_DIR/serialize_modules.sh $ROOT_DIR $DIST_DIR/core
-cat $DIST_DIR/core/modules.sql >> $DIST_DIR/modules.sql
-mv $DIST_DIR/core/libs/*/ $DIST_DIR/libs/
-rm -rf $DIST_DIR/core
-
-# Generate the package
-cp $SCRIPT_DIR/package/README.md $DIST_DIR/
-cp $SCRIPT_DIR/package/install_spatial_extension.sh $DIST_DIR/
-CWD=$(pwd)
-cd $DIST_DIR && zip -r $PACKAGE_NAME.zip * && cd $CWD
-
-# Upload the package to the bucket
-gsutil -h "Content-Type:application/zip" cp $DIST_DIR/$PACKAGE_NAME.zip $PACKAGE_BUCKET/
+for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
+    echo -e "\n> Module $module/$CLOUD"
+    make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module \
+        PACKAGE_VERSION=$PACKAGE_VERSION || exit 1
+    touch $DIST_DIR/modules-header.sql
+    if [ "$PACKAGE_TYPE" = "CORE" ]; then
+        cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-header.sql > $DIST_DIR/modules-header.sql
+    fi
+    cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_DIR/modules-content.sql
+    cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-footer.sql > $DIST_DIR/modules-footer.sql
+    cp $ROOT_DIR/modules/$module/$CLOUD/dist/index.js $DIST_DIR/libs/${module}Lib.js
+done
+cat $DIST_DIR/modules-header.sql $DIST_DIR/modules-content.sql $DIST_DIR/modules-footer.sql > $DIST_DIR/modules.sql
+rm $DIST_DIR/modules-header.sql
+rm $DIST_DIR/modules-content.sql
+rm $DIST_DIR/modules-footer.sql

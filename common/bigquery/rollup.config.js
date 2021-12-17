@@ -8,7 +8,7 @@ export default {
     input: 'lib/index.js',
     output: {
         file: 'dist/index.js',
-        format: process.env.UNIT_TEST ? 'umd': 'iife',
+        format: process.env.UNIT_TEST ? 'umd' : 'iife',
         name: process.env.NAME
     },
     plugins: [
@@ -18,8 +18,8 @@ export default {
         terser(),
         bundleSize()
     ],
-    onwarn(warning, rollupWarn) {
-        if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+    onwarn (warning, rollupWarn) {
+        if (!['CIRCULAR_DEPENDENCY', 'MISSING_NODE_BUILTINS', 'THIS_IS_UNDEFINED'].includes(warning.code)) {
             rollupWarn(warning);
         }
     }

@@ -1,7 +1,7 @@
 ### ST_ANGLE
 
 {{% bannerNote type="code" %}}
-measurements.ST_ANGLE(startPoint, midPoint, endPoint, mercator)
+carto.ST_ANGLE(startPoint, midPoint, endPoint, mercator)
 {{%/ bannerNote %}}
 
 **Description**
@@ -22,6 +22,6 @@ Finds the angle formed by two adjacent segments defined by 3 points. The result 
 {{%/ customSelector %}}
 
 ``` sql
-SELECT `carto-os`.measurements.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false);
+SELECT `carto-os`.carto.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false);
 -- 3.933094586038578
 ```

@@ -1,8 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [1.1.0] - 2021-12-16
+
+### Changed
+- Deployment schema "carto" instead of "h3".
+- Rename ST_ASH3 function to H3_FROMGEOGPOINT.
+- Rename LONGLAT_ASH3 function to H3_FROMLONGLAT.
+- Rename ST_ASH3_POLYFILL function to H3_POLYFILL.
+- Rename ST_BOUNDARY function to H3_BOUNDARY.
+- Rename ISVALID function to H3_ISVALID.
+- Rename COMPACT function to H3_COMPACT.
+- Rename UNCOMPACT function to H3_UNCOMPACT.
+- Rename TOPARENT function to H3_TOPARENT.
+- Rename TOCHILDREN function to H3_TOCHILDREN.
+- Rename ISPENTAGON function to H3_ISPENTAGON.
+- Rename DISTANCE function to H3_DISTANCE.
+- Rename KRING function to H3_KRING.
+- Rename KRING_DISTANCES function to H3_KRING_DISTANCES.
+- Rename HEXRING function to H3_HEXRING.
+
+### Removed
+- Remove VERSION function.
 
 ## [1.0.4] - 2021-09-22
 

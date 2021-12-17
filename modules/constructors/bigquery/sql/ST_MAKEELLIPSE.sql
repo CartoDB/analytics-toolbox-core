@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@constructors.__MAKEELLIPSE`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__MAKEELLIPSE`
 (geojson STRING, xSemiAxis FLOAT64, ySemiAxis FLOAT64, angle FLOAT64, units STRING, steps INT64)
 RETURNS STRING
 DETERMINISTIC
@@ -26,9 +26,9 @@ AS """
     return JSON.stringify(ellipse.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@constructors.ST_MAKEELLIPSE`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.ST_MAKEELLIPSE`
 (geog GEOGRAPHY, xSemiAxis FLOAT64, ySemiAxis FLOAT64, angle FLOAT64, units STRING, steps INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@constructors.__MAKEELLIPSE`(ST_ASGEOJSON(geog), xSemiAxis, ySemiAxis, angle, units, steps))
+    ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@carto.__MAKEELLIPSE`(ST_ASGEOJSON(geog), xSemiAxis, ySemiAxis, angle, units, steps))
 );

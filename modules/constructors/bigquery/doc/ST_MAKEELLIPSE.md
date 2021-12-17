@@ -1,7 +1,7 @@
 ### ST_MAKEELLIPSE
 
 {{% bannerNote type="code" %}}
-constructors.ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis, angle, units, steps)
+carto.ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis, angle, units, steps)
 {{%/ bannerNote %}}
 
 **Description**
@@ -20,6 +20,6 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 {{%/ customSelector %}}
 
 ```sql
-SELECT `carto-os`.constructors.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, -30, "miles", 80);
+SELECT `carto-os`.carto.ST_MAKEELLIPSE(ST_GEOGPOINT(-73.9385,40.6643), 5, 3, -30, "miles", 80);
 -- POLYGON((-73.8558575786687 40.7004828957859 ... 
 ```

@@ -2,10 +2,10 @@ const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
 test('ST_MINKOWSKIDISTANCE should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(1,0)], 2) as minkowskidistance1,
-               \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(100,0)], 2) as minkowskidistance2,
-               \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(10,10)], 2) as minkowskidistance3,
-               \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(10,10)], 1) as minkowskidistance4,
+        SELECT \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(1,0)], 2) as minkowskidistance1,
+               \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(100,0)], 2) as minkowskidistance2,
+               \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(10,10)], 2) as minkowskidistance3,
+               \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(0,0),ST_GEOGPOINT(10,10)], 1) as minkowskidistance4,
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -17,7 +17,7 @@ test('ST_MINKOWSKIDISTANCE should work', async () => {
 
 test('ST_MINKOWSKIDISTANCE should return NULL if any NULL mandatory argument', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`(NULL, 2) as minkowskidistance1
+        SELECT \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`(NULL, 2) as minkowskidistance1
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
@@ -26,8 +26,8 @@ test('ST_MINKOWSKIDISTANCE should return NULL if any NULL mandatory argument', a
 
 test('ST_MINKOWSKIDISTANCE default values should work', async () => {
     const query = `
-        SELECT \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167)], 2) as defaultValue,
-               \`@@BQ_PREFIX@@measurements.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167)], NULL) as nullParam
+        SELECT \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167)], 2) as defaultValue,
+               \`@@BQ_PREFIX@@carto.ST_MINKOWSKIDISTANCE\`([ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-5.70325 ,40.4167)], NULL) as nullParam
     `;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

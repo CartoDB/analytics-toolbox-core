@@ -1,7 +1,7 @@
 ### ST_GREATCIRCLE
 
 {{% bannerNote type="code" %}}
-transformations.ST_GREATCIRCLE(startPoint, endPoint, npoints)
+carto.ST_GREATCIRCLE(startPoint, endPoint, npoints)
 {{%/ bannerNote %}}
 
 **Description**
@@ -21,6 +21,6 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 {{%/ customSelector %}}
 
 ``` sql
-SELECT `carto-os`.transformations.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
+SELECT `carto-os`.carto.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
 -- LINESTRING(-3.70325 40.4167 ... 
 ```

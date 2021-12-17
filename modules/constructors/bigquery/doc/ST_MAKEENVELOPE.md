@@ -1,7 +1,7 @@
 ### ST_MAKEENVELOPE
 
 {{% bannerNote type="code" %}}
-constructors.ST_MAKEENVELOPE(xmin, ymin, xma, ymax)
+carto.ST_MAKEENVELOPE(xmin, ymin, xma, ymax)
 {{%/ bannerNote %}}
 
 **Description**
@@ -22,6 +22,6 @@ Creates a rectangular Polygon from the minimum and maximum values for X and Y.
 {{%/ customSelector %}}
 
 ```sql
-SELECT `carto-os`.constructors.ST_MAKEENVELOPE(0,0,1,1);
+SELECT `carto-os`.carto.ST_MAKEENVELOPE(0,0,1,1);
 -- POLYGON((1 0, 1 1, 0 1, 0 0, 1 0)) 
 ```

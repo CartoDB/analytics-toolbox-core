@@ -1,6 +1,6 @@
 {
   "name": "processing_bigquery",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Processing module for BigQuery",
   "author": "CARTO",
   "license": "BSD-3-Clause",

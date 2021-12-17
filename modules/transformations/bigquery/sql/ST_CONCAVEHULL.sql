@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.__CONCAVEHULL`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__CONCAVEHULL`
 (geojson ARRAY<STRING>, maxEdge FLOAT64, units STRING)
 RETURNS STRING
 DETERMINISTIC
@@ -24,9 +24,9 @@ AS """
     return JSON.stringify(hull.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@transformations.ST_CONCAVEHULL`
+CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.ST_CONCAVEHULL`
 (geog ARRAY<GEOGRAPHY>, maxEdge FLOAT64, units STRING)
 RETURNS GEOGRAPHY
 AS ((
-    SELECT ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@transformations.__CONCAVEHULL`(ARRAY_AGG(ST_ASGEOJSON(x)), maxEdge, units)) FROM unnest(geog) x
+    SELECT ST_GEOGFROMGEOJSON(`@@BQ_PREFIX@@carto.__CONCAVEHULL`(ARRAY_AGG(ST_ASGEOJSON(x)), maxEdge, units)) FROM unnest(geog) x
 ));

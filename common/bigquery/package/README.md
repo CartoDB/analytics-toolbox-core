@@ -3,8 +3,8 @@
 First, download and uncompress the package, for example:
 
 ```
-gsutil cp gs://spatialextension_os/bigquery/packages/carto-os-spatial-extension-bigquery.zip .
-unzip carto-os-spatial-extension-bigquery.zip 
+gsutil cp gs://spatialextension_@@BQ_PROJECT_SUFFIX@@/bigquery/packages/carto-@@BQ_PROJECT_SUFFIX@@-spatial-extension-bigquery.zip .
+unzip carto-@@BQ_PROJECT_SUFFIX@@-spatial-extension-bigquery.zip 
 ```
 
 Then, declare the input variables and run the installation script:

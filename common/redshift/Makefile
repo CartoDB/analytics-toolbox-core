@@ -12,7 +12,7 @@ RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
 PACKAGE_TYPE ?= CORE
-PACKAGE_URL ?= https:<PACKAGE_URL>
+PACKAGE_URL ?= https://<PACKAGE_URL>
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
@@ -166,21 +166,21 @@ endif
 
 serialize-module: build serialize-dependency
 	rm -f $(DIST_DIR)/libraries.sql
-	rm -f ${DIST_DIR}/module.sql
-	rm -f ${DIST_DIR}/module-header.sql
-	rm -f ${DIST_DIR}/module-footer.sql
+	rm -f $(DIST_DIR)/module.sql
+	rm -f $(DIST_DIR)/module-header.sql
+	rm -f $(DIST_DIR)/module-footer.sql
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(PACKAGE_URL)/latest/libs/$(notdir $$f)';" >> $(DIST_DIR)/libraries.sql; \
 	done
 	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
-		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module-header.sql; \
+		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
 	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS) $$n >> $(DIST_DIR)/module.sql; \
 		echo "" >> $(DIST_DIR)/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module-footer.sql;
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
 
 serialize-functions:
 	mkdir -p $(DIST_DIR)
