@@ -39,7 +39,7 @@ jobs:
       - name: Upload the package as an artifact
         uses: actions/upload-artifact@v2
         with:
-          name: carto-analytics-toolbox-core-redshift
+          name: carto-analytics-toolbox-core-bigquery
           path: dist/*
 
   release-sf:
