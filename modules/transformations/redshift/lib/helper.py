@@ -4,6 +4,8 @@
 
 from __future__ import division
 from math import sqrt, radians, sin, cos, atan2, degrees
+import geojson
+import json
 
 PRECISION = 15
 AVG_EARTH_RADIUS_KM = 6371008.8
@@ -103,3 +105,45 @@ def calculate_final_bearing(start, end):
     bear = bearing(end, start)
     bear = (bear + 180) % 360
     return bear
+
+
+def wkt_from_geojson(geom):
+    def get_ring(coords):
+        str_return = '('
+        for p in coords:
+            str_return += str(p[0]) + ' ' + str(p[1]) + ','
+        return str_return[:-1] + ')'
+
+    if geom is None:
+        return None
+
+    _geom = json.loads(geom)
+    _geom['precision'] = PRECISION
+    geom = json.dumps(_geom)
+
+    geojson_str = geojson.loads(geom)
+    geojson_type = geojson_str.type
+
+    coords = []
+    # TODO: Include multitypes
+
+    if geojson_type == 'Point':
+        coords = list(geojson.utils.coords(geojson_str))
+        return 'POINT (' + str(coords[0][0]) + ' ' + str(coords[0][1]) + ')'
+
+    elif geojson_type == 'LineString':
+        coords = list(geojson.utils.coords(geojson_str))
+        return 'LINESTRING' + get_ring(coords)
+
+    elif geojson_type == 'Polygon':
+        coords = geojson_str['coordinates']
+        str_return = 'POLYGON ( '
+        for ring in coords:
+            str_return += get_ring(ring) + ','
+        return str_return[:-1] + ')'
+
+    elif geojson_type == 'MultiPoint':
+        return 'MULTIPOINT' + get_ring(coords)
+
+    else:
+        raise Exception(geojson_type + ' not supported')
