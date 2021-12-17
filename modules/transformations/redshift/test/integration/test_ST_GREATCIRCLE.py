@@ -94,5 +94,4 @@ def test_read_from_table_success():
     fixture_file.close()
 
     for idx, result in enumerate(results):
-        # print(str(result[0]) + ' == ' + lines[idx].rstrip())
         assert str(result[0]) == lines[idx].rstrip()
