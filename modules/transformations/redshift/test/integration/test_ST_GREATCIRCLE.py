@@ -63,24 +63,36 @@ def test_read_from_table_success():
     cursor.execute(
         """
         CREATE TEMP TABLE test_data AS
-        SELECT ST_MakePoint(0,0) AS start_point, ST_MakePoint(0,10) AS end_point, 11 AS npoints, 1 AS idx UNION ALL
-        SELECT ST_MakePoint(-1.70325, 1.4167) AS start_point, ST_MakePoint(1.70325, -1.4167) AS end_point, 5 AS npoints, 2 AS idx UNION ALL
-        SELECT ST_MakePoint(5, 5) AS start_points, ST_MakePoint(-5,-5) AS end_point, 9 AS npoints, 3 AS idx
+        SELECT ST_MakePoint(0,0) AS start_point,
+            ST_MakePoint(0,10) AS end_point,
+            11 AS npoints, 1 AS idx UNION ALL
+        SELECT ST_MakePoint(-1.70325, 1.4167) AS start_point,
+            ST_MakePoint(1.70325, -1.4167) AS end_point,
+            5 AS npoints, 2 AS idx UNION ALL
+        SELECT ST_MakePoint(5, 5) AS start_points,
+            ST_MakePoint(-5,-5) AS end_point,
+            9 AS npoints, 3 AS idx
         """
     )
 
     cursor.execute(
         """
-        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(start_point, end_point, npoints)) FROM test_data ORDER BY idx
-        """.replace('@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX'])
+        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_GREATCIRCLE(
+            start_point, end_point, npoints))
+        FROM test_data ORDER BY idx
+        """.replace(
+            '@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']
+        )
     )
 
     results = cursor.fetchall()
 
-    fixture_file = open('./test/integration/greatcircle_fixtures/out/wkts_table.txt', 'r')
+    fixture_file = open(
+        './test/integration/greatcircle_fixtures/out/wkts_table.txt', 'r'
+    )
     lines = fixture_file.readlines()
     fixture_file.close()
 
     for idx, result in enumerate(results):
-        #print(str(result[0]) + ' == ' + lines[idx].rstrip()) 
+        # print(str(result[0]) + ' == ' + lines[idx].rstrip())
         assert str(result[0]) == lines[idx].rstrip()

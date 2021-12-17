@@ -1,6 +1,7 @@
 from test_utils import run_query, get_cursor
 import os
 
+
 def test_center_mean_success():
     fixture_file = open('./test/integration/center_fixtures/in/wkts.txt', 'r')
     points = fixture_file.readlines()
@@ -31,6 +32,7 @@ def test_center_mean_none():
 
     assert results[0][0] is None
 
+
 def test_read_from_table_success():
     fixture_file = open('./test/integration/center_fixtures/in/wkts.txt', 'r')
     points = fixture_file.readlines()
@@ -49,8 +51,11 @@ def test_read_from_table_success():
 
     cursor.execute(
         """
-        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTERMEDIAN(geom)) FROM test_data ORDER BY idx
-        """.replace('@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX'])
+        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTERMEDIAN(geom))
+        FROM test_data ORDER BY idx
+        """.replace(
+            '@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']
+        )
     )
 
     results = cursor.fetchall()

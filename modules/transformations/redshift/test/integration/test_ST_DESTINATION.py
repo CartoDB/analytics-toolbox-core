@@ -56,16 +56,23 @@ def test_read_from_table_success():
     cursor.execute(
         """
         CREATE TEMP TABLE test_data AS
-        SELECT ST_MakePoint(0, 0) AS geom, 10 AS distance, 90 AS bearing, 'kilometers' AS units, 1 AS idx UNION ALL
-        SELECT ST_MakePoint(-3.70325, 40.4167) AS geom, 5 AS distance, 45 AS bearing, 'kilometers' AS units, 2 AS idx UNION ALL
-        SELECT ST_MakePoint(-43.7625, -20) AS geom, 150 AS distance, -20 AS bearing, 'miles' AS units, 3 AS idx
+        SELECT ST_MakePoint(0, 0) AS geom, 10 AS distance, 90 AS bearing,
+            'kilometers' AS units, 1 AS idx UNION ALL
+        SELECT ST_MakePoint(-3.70325, 40.4167) AS geom, 5 AS distance, 45 AS bearing,
+            'kilometers' AS units, 2 AS idx UNION ALL
+        SELECT ST_MakePoint(-43.7625, -20) AS geom, 150 AS distance, -20 AS bearing,
+            'miles' AS units, 3 AS idx
         """
     )
 
     cursor.execute(
         """
-        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(geom, distance, bearing, units)) FROM test_data ORDER BY idx
-        """.replace('@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX'])
+        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_DESTINATION(
+            geom, distance, bearing, units))
+        FROM test_data ORDER BY idx
+        """.replace(
+            '@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']
+        )
     )
 
     results = cursor.fetchall()

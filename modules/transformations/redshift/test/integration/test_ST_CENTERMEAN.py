@@ -51,8 +51,11 @@ def test_read_from_table_success():
 
     cursor.execute(
         """
-        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTERMEAN(geom)) FROM test_data ORDER BY idx
-        """.replace('@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX'])
+        SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_CENTERMEAN(geom))
+        FROM test_data ORDER BY idx
+        """.replace(
+            '@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']
+        )
     )
 
     results = cursor.fetchall()
