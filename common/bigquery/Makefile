@@ -10,16 +10,17 @@ BQ_MODULE_LABEL ?= spatial_extension_module:core
 BQ_DEPLOY_DATASET = $(BQ_DATASET_PREFIX)carto
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
+PACKAGE_TYPE ?= CORE
 PACKAGE_VERSION ?= $(date +%Y.%m.%d)
-VERSION_FUNCTION ?= VERSION
+VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 LIB_DIR = $(ROOT_DIR)/lib
 DIST_DIR = $(ROOT_DIR)/dist
+BQ_BUCKET ?= gs://<BUCKET>/
 BQ_LIBRARY = $(DIST_DIR)/index.js
-BQ_BUCKET_PATH = $(BQ_BUCKET)$(BQ_DATASET_PREFIX)$(MODULE)/
-BQ_LIBRARY_BUCKET = $(BQ_BUCKET_PATH)index.js
+BQ_LIBRARY_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/libs/$(MODULE)Lib.js
 
 LINT_DIR ?= $(ROOT_DIR)/../../..
 COMMON_DIR ?= $(ROOT_DIR)/../../../common/bigquery
@@ -33,7 +34,7 @@ NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
 
 REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' $(REPLACEMENTS_EXTRA)
-REPLACEMENTS_PKG = -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS_PKG = -e 's!@@BQ_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e "s!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g" -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
 
 .SILENT:
 
@@ -139,11 +140,11 @@ endif
 
 storage-upload:
 	$(MAKE) build
-	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_BUCKET_PATH)
+	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_LIBRARY_BUCKET)
 
 storage-remove:
-	if [ `$(GSUTIL) ls $(BQ_BUCKET_PATH) 2>&1 | grep "$(BQ_BUCKET_PATH)"` ]; then \
-		$(GSUTIL) rm -r -f $(BQ_BUCKET_PATH); \
+	if [ `$(GSUTIL) ls $(BQ_LIBRARY_BUCKET) 2>&1 | grep "$(BQ_LIBRARY_BUCKET)"` ]; then \
+		$(GSUTIL) rm -r -f $(BQ_LIBRARY_BUCKET); \
 	fi
 
 dataset-create:
@@ -162,20 +163,23 @@ dataset-deploy:
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1; \
 	done
 
-serialize-module:
-	$(MAKE) build
+serialize-module: build
 	rm -f $(DIST_DIR)/module.sql
-	echo "CREATE SCHEMA IF NOT EXISTS \`@@BQ_PREFIX@@carto\`;" >> $(DIST_DIR)/module.sql
+	rm -f $(DIST_DIR)/module-header.sql
+	rm -f $(DIST_DIR)/module-footer.sql
+	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
+		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
+	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
-		echo "" >> ${DIST_DIR}/module.sql; \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> $(DIST_DIR)/module.sql; \
+		echo "" >> $(DIST_DIR)/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module.sql;
+	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
 
 serialize-functions:
-	mkdir -p ${DIST_DIR}
-	rm -f ${DIST_DIR}/funct_names.csv
-	MODULE=$(MODULE) node $(SCRIPTS_DIR)/sqlfunctions.js >> ${DIST_DIR}/funct_names.csv
+	mkdir -p $(DIST_DIR)
+	rm -f $(DIST_DIR)/funct_names.csv
+	MODULE=$(MODULE) node $(SCRIPTS_DIR)/sqlfunctions.js >> $(DIST_DIR)/funct_names.csv
 
 check:
 ifndef BQ_REGION

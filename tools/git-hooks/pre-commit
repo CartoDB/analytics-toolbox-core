@@ -7,8 +7,11 @@ if [[ "$STAGED_FILES" = "" ]]; then
     exit 0
 fi
 
+echo "BigQuery"
 make lint CLOUD=bigquery
+echo "Snowflake"
 make lint CLOUD=snowflake
+echo "Redshift"
 make lint CLOUD=redshift
 
 if [[ "$?" != 0 ]]; then

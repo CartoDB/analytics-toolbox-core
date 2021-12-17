@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (snowflake, redshift)'
+        description: 'Cloud warehouse (bigquery, snowflake, redshift)'
         required: true
         default: ''
 
@@ -12,6 +12,35 @@ env:
   GCLOUD_VERSION: 290.0.1
 
 jobs:
+
+  release-bq:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    if: ${{ github.event.inputs.cloud == 'bigquery'}}
+    env:
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@master
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+            service_account_key: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+            export_default_credentials: true
+      - name: Create installation package
+        run: ./common/bigquery/create_installation_package.sh
+      - name: Upload the package to the bucket
+        run: |
+          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
+          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-bigquery-modules.sql
+          gsutil -h "Content-Type:application/javascript" cp dist/libs/*.js ${{ env.PACKAGE_BUCKET }}/latest/libs/
+      - name: Upload the package as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: carto-analytics-toolbox-core-redshift
+          path: dist/*
 
   release-sf:
     runs-on: ubuntu-20.04
@@ -22,11 +51,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Check diff
-        uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -48,16 +72,21 @@ jobs:
 
   release-rs:
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     if: ${{ github.event.inputs.cloud == 'redshift'}}
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
-      PACKAGE_URL: https://storage.googleapis.com/carto-analytics-toolbox-advanced/redshift
+      PACKAGE_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@master
         with:
-          submodules: recursive
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+            service_account_key: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+            export_default_credentials: true
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Create installation package

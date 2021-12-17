@@ -42,3 +42,6 @@ for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     cp $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_DIR/libs
 done
 cat $DIST_DIR/modules-header.sql $DIST_DIR/modules-content.sql $DIST_DIR/modules-footer.sql > $DIST_DIR/modules.sql
+rm $DIST_DIR/modules-header.sql
+rm $DIST_DIR/modules-content.sql
+rm $DIST_DIR/modules-footer.sql

@@ -19,7 +19,7 @@ export default {
         bundleSize()
     ],
     onwarn (warning, rollupWarn) {
-        if (!['CIRCULAR_DEPENDENCY', 'MISSING_NODE_BUILTINS'].includes(warning.code)) {
+        if (!['CIRCULAR_DEPENDENCY', 'MISSING_NODE_BUILTINS', 'THIS_IS_UNDEFINED'].includes(warning.code)) {
             rollupWarn(warning);
         }
     }
