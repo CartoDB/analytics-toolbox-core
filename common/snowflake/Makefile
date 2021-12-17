@@ -108,9 +108,11 @@ test-integration: check $(NODE_MODULES_DEV)
 
 deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/snowflake deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/snowflake deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) build
 	$(MAKE) schema-create
@@ -123,9 +125,11 @@ clean:
 
 clean-deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/snowflake clean-deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/snowflake clean-deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) share-remove
 	$(MAKE) schema-remove || ((sleep 5 && $(MAKE) schema-remove) || exit 1)
