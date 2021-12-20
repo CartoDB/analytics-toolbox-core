@@ -35,7 +35,6 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
-            export_default_credentials: true
       - name: Create temporary staging environment
         shell: bash
         run: ./common/bigquery/create_staging_env.sh

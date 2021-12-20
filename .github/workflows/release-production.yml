@@ -32,7 +32,6 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-            export_default_credentials: true
       - name: Create installation package
         run: ./common/bigquery/create_installation_package.sh
       - name: Upload the package to the bucket
@@ -65,7 +64,6 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-            export_default_credentials: true
       - name: Create installation package
         run: ./common/snowflake/create_installation_package.sh
       - name: Upload the package to the bucket
@@ -98,7 +96,6 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-            export_default_credentials: true
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Create installation package

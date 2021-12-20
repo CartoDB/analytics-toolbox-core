@@ -49,6 +49,5 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
-            export_default_credentials: true
       - name: Deploy to production
         run: make deploy CLOUD=bigquery
