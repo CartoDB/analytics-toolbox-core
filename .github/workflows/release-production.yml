@@ -55,12 +55,16 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-            service_account_key: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
             export_default_credentials: true
       - name: Create installation package
         run: ./common/snowflake/create_installation_package.sh
@@ -84,12 +88,16 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@master
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-            service_account_key: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
             export_default_credentials: true
       - name: Setup virtualenv
         run: pip install virtualenv
