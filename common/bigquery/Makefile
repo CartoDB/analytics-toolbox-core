@@ -11,7 +11,7 @@ BQ_DEPLOY_DATASET = $(BQ_DATASET_PREFIX)carto
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 PACKAGE_TYPE ?= CORE
-PACKAGE_VERSION ?= $(date +%Y.%m.%d)
+PACKAGE_VERSION ?= dev
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -33,8 +33,9 @@ NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
 MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
 
-REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' $(REPLACEMENTS_EXTRA)
-REPLACEMENTS_PKG = -e 's!@@BQ_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e "s!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g" -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS_COMMON = -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' $(REPLACEMENTS_COMMON)
+REPLACEMENTS_PKG = -e 's!@@BQ_PREFIX@@!$(BQ_DATASET_PREFIX)!g' $(REPLACEMENTS_COMMON)
 
 .SILENT:
 
@@ -162,6 +163,7 @@ dataset-deploy:
 		echo Deploying $$n; \
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1;
 
 serialize-module: build
 	rm -f $(DIST_DIR)/module.sql

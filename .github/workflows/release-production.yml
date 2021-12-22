@@ -1,12 +1,10 @@
 name: Release Production
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
-    inputs:
-      cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift)'
-        required: true
-        default: ''
 
 env:
   GCLOUD_VERSION: 290.0.1
@@ -16,8 +14,8 @@ jobs:
   release-bq:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ github.event.inputs.cloud == 'bigquery'}}
     env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-bigquery
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
     steps:
       - name: Checkout repo
@@ -36,19 +34,12 @@ jobs:
         run: ./common/bigquery/create_installation_package.sh
       - name: Upload the package to the bucket
         run: |
-          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
-          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-bigquery-modules.sql
-          gsutil -h "Content-Type:application/javascript" cp dist/libs/*.js ${{ env.PACKAGE_BUCKET }}/latest/libs/
-      - name: Upload the package as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: carto-analytics-toolbox-core-bigquery
-          path: dist/*
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
 
   release-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ github.event.inputs.cloud == 'snowflake'}}
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
     steps:
@@ -79,7 +70,6 @@ jobs:
   release-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ github.event.inputs.cloud == 'redshift'}}
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
       PACKAGE_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift
