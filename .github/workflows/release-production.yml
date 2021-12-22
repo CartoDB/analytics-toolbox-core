@@ -67,8 +67,9 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-redshift
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
-      PACKAGE_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift
+      LIBS_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift/latest/libs
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -88,12 +89,6 @@ jobs:
         run: ./common/redshift/create_installation_package.sh
       - name: Upload the package to the bucket
         run: |
-          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
-          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-redshift-modules.sql
-          gsutil -h "Content-Type:application/sql" cp dist/libraries.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-redshift-libraries.sql
-          gsutil -h "Content-Type:application/zip" cp dist/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
-      - name: Upload the package as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: carto-analytics-toolbox-core-redshift
-          path: dist/*
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/zip" cp dist/**/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
