@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     if: |
-      ( github.event_name == 'pull_request' ) ||
+      ( github.event_name == 'push' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(['snowflake', 'all'], github.event.inputs.cloud) )
     env:
       SNOWSQL_VERSION: 1.2.13
@@ -145,7 +145,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     if: |
-      ( github.event_name == 'pull_request' ) ||
+      ( github.event_name == 'push' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(['redshift', 'all'], github.event.inputs.cloud) )
     env:
       RS_REGION: us-east-2
