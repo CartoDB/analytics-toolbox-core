@@ -37,6 +37,7 @@ for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_PACKAGE_DIR/modules-content.sql
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-footer.sql > $DIST_PACKAGE_DIR/modules-footer.sql
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/libraries.sql >> $DIST_PACKAGE_DIR/libraries.sql
+    sort -u $DIST_PACKAGE_DIR/libraries.sql -o $DIST_PACKAGE_DIR/libraries.sql
     cp $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_PACKAGE_DIR/libs
 done
 

@@ -5,6 +5,11 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      cloud:
+        description: 'Cloud warehouse (bigquery, snowflake, redshift, all)'
+        required: true
+        default: 'all'
 
 env:
   GCLOUD_VERSION: 290.0.1
@@ -14,6 +19,9 @@ jobs:
   release-bq:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'workflow_dispatch' && contains(['bigquery', 'all'], github.event.inputs.cloud) )
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-bigquery
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
@@ -40,6 +48,9 @@ jobs:
   release-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'workflow_dispatch' && contains(['snowflake', 'all'], github.event.inputs.cloud) )
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
@@ -66,6 +77,9 @@ jobs:
   release-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'workflow_dispatch' && contains(['redshift', 'all'], github.event.inputs.cloud) )
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-redshift
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
