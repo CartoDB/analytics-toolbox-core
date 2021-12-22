@@ -170,6 +170,7 @@ serialize-module: build
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql
+	touch $(DIST_DIR)/module-header.sql
 	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
 		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
 	fi

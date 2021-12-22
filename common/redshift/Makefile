@@ -177,6 +177,7 @@ serialize-module: build serialize-dependency
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(LIBS_URL)/$(notdir $$f)';" >> $(DIST_DIR)/libraries.sql; \
 	done
 	sort -u $(DIST_DIR)/libraries.sql -o $(DIST_DIR)/libraries.sql
+	touch $(DIST_DIR)/module-header.sql
 	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
 		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
 	fi

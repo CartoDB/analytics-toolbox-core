@@ -17,7 +17,6 @@ fi
 
 export GIT_DIFF=off
 export CLOUD=bigquery
-export PACKAGE_TYPE=${PACKAGE_TYPE:=CORE}
 export PACKAGE_NAME=${PACKAGE_NAME:=carto-analytics-toolbox-core-$CLOUD}
 export PACKAGE_VERSION=$(cat $ROOT_DIR/common/$CLOUD/version)
 export PACKAGE_FULL_NAME=$PACKAGE_NAME-$PACKAGE_VERSION
@@ -33,10 +32,7 @@ mkdir -p $DIST_PACKAGE_DIR/libs
 for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
     echo -e "\n> Module $module/$CLOUD"
     make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module  || exit 1
-    touch $DIST_PACKAGE_DIR/modules-header.sql
-    if [ "$PACKAGE_TYPE" = "CORE" ]; then
-        cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-header.sql > $DIST_PACKAGE_DIR/modules-header.sql
-    fi
+    cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-header.sql > $DIST_PACKAGE_DIR/modules-header.sql
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_PACKAGE_DIR/modules-content.sql
     cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-footer.sql > $DIST_PACKAGE_DIR/modules-footer.sql
     cp $ROOT_DIR/modules/$module/$CLOUD/dist/index.js $DIST_PACKAGE_DIR/libs/${module}Lib.js
