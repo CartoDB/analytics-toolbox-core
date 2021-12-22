@@ -12,8 +12,8 @@ RS_SCHEMA = $(RS_SCHEMA_PREFIX)$(MODULE)
 RS_PREFIX = $(RS_SCHEMA_PREFIX)
 
 PACKAGE_TYPE ?= CORE
-PACKAGE_URL ?= https://<PACKAGE_URL>
-PACKAGE_VERSION ?= $(date +%Y.%m.%d)
+PACKAGE_VERSION ?= dev
+LIBS_URL ?= https://<URL>/libs
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -24,14 +24,17 @@ DIST_DIR = $(ROOT_DIR)/dist
 SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
-COMMON_DIR ?=  $(ROOT_DIR)/../../../common/redshift
+COMMON_DIR ?=  $(ROOT_DIR)/../../../common/$(CLOUD)
 SCRIPTS_DIR ?=  $(ROOT_DIR)/../../../scripts
 VENV2_DIR = $(COMMON_DIR)/venv2
 VENV3_DIR = $(COMMON_DIR)/venv3
 VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
 VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 
-REPLACEMENTS = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g' -e 's!@@RS_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@RS_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g'
+REPLACEMENTS_COMMON = -e 's!@@RS_PREFIX@@!$(RS_PREFIX)!g' -e 's!@@RS_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' \
+                      -e 's!@@RS_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS = $(REPLACEMENTS_COMMON)
+REPLACEMENTS_PKG = $(REPLACEMENTS_COMMON)
 
 AWS_PRINT = tr '\r\n' ' ' | jq -M 'if has("Error") then .["QueryString"],.["Error"] else .["QueryString"] end'
 AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null || exit 1
@@ -87,7 +90,7 @@ test-integration-full:
 deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/redshift deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-upload
@@ -102,7 +105,7 @@ clean:
 clean-deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/redshift clean-deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-remove
@@ -171,16 +174,18 @@ serialize-module: build serialize-dependency
 	rm -f $(DIST_DIR)/module-footer.sql
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
 		LIBRARY_NAME=$$(echo $$f | $(SED) -e 's/Lib.*//g' -e 's/-.*//g'); \
-		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(PACKAGE_URL)/latest/libs/$(notdir $$f)';" >> $(DIST_DIR)/libraries.sql; \
+		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(LIBS_URL)/$(notdir $$f)';" >> $(DIST_DIR)/libraries.sql; \
 	done
+	sort -u $(DIST_DIR)/libraries.sql -o $(DIST_DIR)/libraries.sql
+	touch $(DIST_DIR)/module-header.sql
 	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
-		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
+		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
 	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	$(SED) $(REPLACEMENTS) $$n >> $(DIST_DIR)/module.sql; \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> $(DIST_DIR)/module.sql; \
 		echo "" >> $(DIST_DIR)/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
+	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
 
 serialize-functions:
 	mkdir -p $(DIST_DIR)

@@ -12,7 +12,7 @@ SF_PREFIX = $(SF_DATABASE).$(SF_SCHEMA_PREFIX)
 SF_SHARES ?= $(SF_SCHEMA_PREFIX)$(SF_SHARE_PREFIX)ANALYTICS_TOOLBOX
 
 PACKAGE_TYPE ?= CORE
-PACKAGE_VERSION ?= $(date +%Y.%m.%d)
+PACKAGE_VERSION ?= dev
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -23,7 +23,7 @@ DIST_DIR = $(ROOT_DIR)/dist
 SF_LIBRARY = $(DIST_DIR)/index.js
 
 LINT_DIR ?= $(ROOT_DIR)/../../..
-COMMON_DIR ?= $(ROOT_DIR)/../../../common/snowflake
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
 SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
@@ -33,15 +33,12 @@ NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
-REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard ${DIST_DIR}/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r ${DIST_DIR}/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
+REPLACEMENTS_LIBS += $(foreach f,$(notdir $(basename $(wildcard $(DIST_DIR)/*.js))),-e '/@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@/ r $(DIST_DIR)/$f.js' -e 's!@@SF_LIBRARY_$(shell echo $f | tr a-z A-Z)@@!!g' )
 
-REPLACEMENTS = -e 's!@@SF_PREFIX@@!$(SF_PREFIX)!g' -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' \
-               -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g' -e 's!@@SF_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' \
-			   -e 's!@@SF_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g'
-REPLACEMENTS += $(REPLACEMENTS_LIBS)
-
-REPLACEMENTS_PKG = -e 's!@@SF_PREFIX@@!!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' -e 's!@@SF_LIBRARY_CONTENT@@!!g'
-REPLACEMENTS_PKG += $(REPLACEMENTS_LIBS)
+REPLACEMENTS_COMMON = -e 's!@@SF_DATABASE@@!$(SF_DATABASE)!g' -e 's!@@SF_SCHEMA@@!$(SF_SCHEMA)!g' -e '/@@SF_LIBRARY_CONTENT@@/ r $(SF_LIBRARY)' $(REPLACEMENTS_LIBS) \
+					  -e 's!@@SF_LIBRARY_CONTENT@@!!g' -e 's!@@SF_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@SF_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS = $(REPLACEMENTS_COMMON)
+REPLACEMENTS_PKG = $(REPLACEMENTS_COMMON)
 
 .SILENT:
 
@@ -76,7 +73,7 @@ build: install
 		NAME=$(MODULE)Lib \
 		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 		LIB_DIR=${LIB_DIR}/index.js \
-		DIST_DIR=${DIST_DIR}/index.js \
+		DIST_DIR=$(DIST_DIR)/index.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 	elif [ -d ${LIBS_DIR} ]; then \
 		for f in $(notdir $(shell find ${LIBS_DIR}/* -type d 2>/dev/null)); do \
@@ -84,7 +81,7 @@ build: install
 			NAME=$(MODULE)Lib \
 			PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 			LIB_DIR=${LIBS_DIR}/$${f}/index.js \
-			DIST_DIR=${DIST_DIR}/$${f}.js \
+			DIST_DIR=$(DIST_DIR)/$${f}.js \
 			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 			$(POST_BUILD) \
 		done \
@@ -110,7 +107,7 @@ deploy: check
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
-			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/snowflake deploy || exit 1; \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 		done \
 	fi;
 endif
@@ -120,14 +117,14 @@ endif
 	$(MAKE) share-create
 
 clean:
-	rm -rf ${DIST_DIR} $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
+	rm -rf $(DIST_DIR) $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 	yarn -s cache clean
 
 clean-deploy: check
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
-			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/snowflake clean-deploy || exit 1; \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 		done \
 	fi;
 endif
@@ -144,6 +141,7 @@ schema-deploy:
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(SNOWSQL) -d $(SF_DATABASE) -s $(SF_SCHEMA) -q "$(xargs)" || exit 1
 
 share-create:
 ifeq ($(SF_SHARE_ENABLED), 1)
@@ -165,25 +163,24 @@ ifeq ($(SF_SHARE_ENABLED), 1)
 	done
 endif
 
-serialize-module:
-	$(MAKE) build
-	rm -f ${DIST_DIR}/module.sql
-	rm -f ${DIST_DIR}/module-header.sql
-	rm -f ${DIST_DIR}/module-footer.sql
-	echo "USE SCHEMA $(SF_SCHEMA);" >> ${DIST_DIR}/module-header.sql
+serialize-module: build
+	rm -f $(DIST_DIR)/module.sql
+	rm -f $(DIST_DIR)/module-header.sql
+	rm -f $(DIST_DIR)/module-footer.sql
+	echo "USE SCHEMA $(SF_SCHEMA);" >> $(DIST_DIR)/module-header.sql
 	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
-		$(SED) $(REPLACEMENTS) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> ${DIST_DIR}/module-header.sql; \
+		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
 	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
-	  	$(SED) $(REPLACEMENTS_PKG) $$n >> ${DIST_DIR}/module.sql; \
-		echo "" >> ${DIST_DIR}/module.sql; \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> $(DIST_DIR)/module.sql; \
+		echo "" >> $(DIST_DIR)/module.sql; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql >> ${DIST_DIR}/module-footer.sql;
+	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
 
 serialize-functions:
-	mkdir -p ${DIST_DIR}
-	rm -f ${DIST_DIR}/funct_names.csv
-	MODULE=$(MODULE) node $(SCRIPTS_DIR)/sqlfunctions.js >> ${DIST_DIR}/funct_names.csv
+	mkdir -p $(DIST_DIR)
+	rm -f $(DIST_DIR)/funct_names.csv
+	MODULE=$(MODULE) node $(SCRIPTS_DIR)/sqlfunctions.js >> $(DIST_DIR)/funct_names.csv
 
 check:
 ifndef SF_DATABASE

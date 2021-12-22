@@ -1,12 +1,15 @@
 name: Release Production
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift)'
+        description: 'Cloud warehouse (bigquery, snowflake, redshift, all)'
         required: true
-        default: ''
+        default: 'all'
 
 env:
   GCLOUD_VERSION: 290.0.1
@@ -16,8 +19,11 @@ jobs:
   release-bq:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ github.event.inputs.cloud == 'bigquery'}}
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'workflow_dispatch' && contains(['bigquery', 'all'], github.event.inputs.cloud) )
     env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-bigquery
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
     steps:
       - name: Checkout repo
@@ -36,20 +42,17 @@ jobs:
         run: ./common/bigquery/create_installation_package.sh
       - name: Upload the package to the bucket
         run: |
-          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
-          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-bigquery-modules.sql
-          gsutil -h "Content-Type:application/javascript" cp dist/libs/*.js ${{ env.PACKAGE_BUCKET }}/latest/libs/
-      - name: Upload the package as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: carto-analytics-toolbox-core-bigquery
-          path: dist/*
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
 
   release-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ github.event.inputs.cloud == 'snowflake'}}
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'workflow_dispatch' && contains(['snowflake', 'all'], github.event.inputs.cloud) )
     env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
     steps:
       - name: Checkout repo
@@ -68,21 +71,19 @@ jobs:
         run: ./common/snowflake/create_installation_package.sh
       - name: Upload the package to the bucket
         run: |
-          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
-          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-snowflake-modules.sql
-      - name: Upload the package as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: carto-analytics-toolbox-core-snowflake
-          path: dist/*
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
 
   release-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ github.event.inputs.cloud == 'redshift'}}
+    if: |
+      ( github.event_name == 'push' ) ||
+      ( github.event_name == 'workflow_dispatch' && contains(['redshift', 'all'], github.event.inputs.cloud) )
     env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-redshift
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
-      PACKAGE_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift
+      LIBS_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift/latest/libs
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -102,12 +103,6 @@ jobs:
         run: ./common/redshift/create_installation_package.sh
       - name: Upload the package to the bucket
         run: |
-          gsutil -h "Content-Type:text/plain" cp dist/version ${{ env.PACKAGE_BUCKET }}/latest/version
-          gsutil -h "Content-Type:application/sql" cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-redshift-modules.sql
-          gsutil -h "Content-Type:application/sql" cp dist/libraries.sql ${{ env.PACKAGE_BUCKET }}/latest/sql/carto-analytics-toolbox-core-redshift-libraries.sql
-          gsutil -h "Content-Type:application/zip" cp dist/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
-      - name: Upload the package as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: carto-analytics-toolbox-core-redshift
-          path: dist/*
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/zip" cp dist/**/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/

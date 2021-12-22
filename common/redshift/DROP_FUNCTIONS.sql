@@ -34,7 +34,7 @@ BEGIN
 
 	FOR row IN SELECT drop_command
 	FROM (
-    SELECT 'DROP ' || CASE f_kind WHEN 'p' THEN 'PROCEDURE' ELSE 'FUNCTION' END || ' @@RS_PREFIX@@carto.' || f_name || '(' || listagg(f_argtype,',' ) WITHIN GROUP (ORDER BY arg_index) || ');' AS drop_command
+    SELECT 'DROP ' || CASE f_kind WHEN 'p' THEN 'PROCEDURE' ELSE 'FUNCTION' END || ' ' || schema_name || '.' || f_name || '(' || listagg(f_argtype,',' ) WITHIN GROUP (ORDER BY arg_index) || ');' AS drop_command
     FROM _udfs_info
     GROUP BY f_oid, f_name, f_kind
   )
