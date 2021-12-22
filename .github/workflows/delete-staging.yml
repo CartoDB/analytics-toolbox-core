@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 15
     if: |
       ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(['bigquery', 'all'], github.event.inputs.cloud) )
+      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["bigquery", "all"]'), github.event.inputs.cloud) )
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_PROJECT: bqcartost-core-${{ github.event.inputs.pr_number || github.event.pull_request.number }}
@@ -51,7 +51,7 @@ jobs:
     timeout-minutes: 15
     if: |
       ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(['snowflake', 'all'], github.event.inputs.cloud) )
+      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
     env:
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL: ~/snowflake/snowsql
@@ -86,7 +86,7 @@ jobs:
     timeout-minutes: 15
     if: |
       ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(['redshift', 'all'], github.event.inputs.cloud) )
+      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
     env:
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com

@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 10
     if: |
       ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(['bigquery', 'all'], github.event.inputs.cloud) )
+      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["bigquery", "all"]'), github.event.inputs.cloud) )
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-bigquery
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
@@ -50,7 +50,7 @@ jobs:
     timeout-minutes: 10
     if: |
       ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(['snowflake', 'all'], github.event.inputs.cloud) )
+      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
@@ -79,7 +79,7 @@ jobs:
     timeout-minutes: 10
     if: |
       ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(['redshift', 'all'], github.event.inputs.cloud) )
+      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-redshift
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
