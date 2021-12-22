@@ -23,7 +23,7 @@ BQ_LIBRARY = $(DIST_DIR)/index.js
 BQ_LIBRARY_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/libs/$(MODULE)Lib.js
 
 LINT_DIR ?= $(ROOT_DIR)/../../..
-COMMON_DIR ?= $(ROOT_DIR)/../../../common/bigquery
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
 SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
@@ -33,7 +33,8 @@ NODE_MODULES_SHARED = $(SHARED_DIR)/node_modules
 
 MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
 
-REPLACEMENTS_COMMON = -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
+REPLACEMENTS_COMMON = -e 's!@@BQ_LIBRARY_BUCKET@@!$(BQ_LIBRARY_BUCKET)!g' -e 's!@@BQ_PROJECT@@!$(BQ_PROJECT)!g' -e 's!@@BQ_DATASET_PREFIX@@!$(BQ_DATASET_PREFIX)!g' \
+                      -e 's!@@BQ_REGION@@!$(BQ_REGION)!g' -e 's!@@BQ_PACKAGE_VERSION@@!$(PACKAGE_VERSION)!g' -e 's!@@BQ_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
 REPLACEMENTS = -e 's!@@BQ_PREFIX@@!$(BQ_PREFIX)!g' $(REPLACEMENTS_COMMON)
 REPLACEMENTS_PKG = -e 's!@@BQ_PREFIX@@!$(BQ_DATASET_PREFIX)!g' $(REPLACEMENTS_COMMON)
 
@@ -109,7 +110,7 @@ endif
 deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/bigquery deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-upload
@@ -133,7 +134,7 @@ endif
 clean-deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/bigquery clean-deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-remove
@@ -163,7 +164,7 @@ dataset-deploy:
 		echo Deploying $$n; \
 		$(SED) $(REPLACEMENTS) $$n | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1; \
 	done
-	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1;
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1
 
 serialize-module: build
 	rm -f $(DIST_DIR)/module.sql

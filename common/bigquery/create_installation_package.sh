@@ -18,13 +18,13 @@ fi
 export GIT_DIFF=off
 export CLOUD=bigquery
 export PACKAGE_TYPE=${PACKAGE_TYPE:=CORE}
-export PACKAGE_NAME=${PACKAGE_NAME:=carto-analytics-toolbox-core-bigquery}
+export PACKAGE_NAME=${PACKAGE_NAME:=carto-analytics-toolbox-core-$CLOUD}
 export PACKAGE_VERSION=$(cat $ROOT_DIR/common/$CLOUD/version)
 export PACKAGE_FULL_NAME=$PACKAGE_NAME-$PACKAGE_VERSION
 
 DIST_PACKAGE_DIR=$DIST_DIR/$PACKAGE_FULL_NAME
 
-echo "Creating installation package 'v$PACKAGE_VERSION'";
+echo "Creating installation package '$CLOUD-v$PACKAGE_VERSION'";
 
 rm -rf $DIST_DIR
 mkdir -p $DIST_PACKAGE_DIR
