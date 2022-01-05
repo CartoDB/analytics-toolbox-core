@@ -2,19 +2,14 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
-
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__ZXY_QUADINT_SIBLING`
   (origin STRUCT<z INT64, x INT64, y INT64>, dx INT64, dy INT64)
 AS (
     IF(origin.y+dy >= 0 and origin.y+dy < (1 << origin.z),
       `@@BQ_PREFIX@@carto.QUADINT_FROMZXY`(origin.z,
-              IF(origin.x+dx<0,origin.x+dx+(1 << origin.z),origin.x+dx),
+              MOD(origin.x+dx, (1 << origin.z)) + IF(origin.x+dx<0,(1 << origin.z),0),
               origin.y+dy),
-              NULL
+          NULL
     )
 );
 

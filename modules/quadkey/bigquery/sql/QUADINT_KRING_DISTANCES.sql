@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADINT_ZXY_KRING_DISTANCES`
 AS ((
     SELECT
       ARRAY_AGG(STRUCT((`@@BQ_PREFIX@@carto.QUADINT_FROMZXY`(origin.z,
-              IF(origin.x+dx<0,origin.x+dx+(1 << origin.z),origin.x+dx),
+              MOD(origin.x+dx, (1 << origin.z)) + IF(origin.x+dx<0,(1 << origin.z),0),
               origin.y+dy)) as index,
               greatest(abs(dx), abs(dy)) as distance -- Chebychev distance
               ))
