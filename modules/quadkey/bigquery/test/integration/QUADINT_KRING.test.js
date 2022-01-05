@@ -14,9 +14,10 @@ test('QUADINT_KRING should work', async () => {
             STRUCT(6, 791040491538, 3)
         ]))
         -- cast index to String to avoid INT64 issues in JS
-        SELECT ARRAY_AGG(CAST(ke as STRING)) as kring
+        SELECT ARRAY_AGG(CAST(ke as STRING) order by ke) as kring
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row
+        ORDER BY row
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.kring.sort())).toEqual([

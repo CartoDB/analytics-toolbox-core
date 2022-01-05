@@ -15,10 +15,11 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
         ]))
         -- cast index to String to avoid INT64 issues in JS
         SELECT
-        ARRAY_AGG(CAST(ke.distance as STRING)) as kring_distance,
+        ARRAY_AGG(CAST(ke.distance as STRING) ORDER BY ke.index) as kring_distance,
         ARRAY_AGG(CAST(ke.index as STRING) ORDER BY ke.index) as kring_index
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row
+        ORDER BY row
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.kring_distance)).toEqual([
