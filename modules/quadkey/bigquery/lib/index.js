@@ -1,9 +1,6 @@
 import { version }  from '../package.json';
 import {
     bbox,
-    kRing,
-    kRingDistances,
-    sibling,
     toParent,
     toChildren,
     quadkeyFromQuadint,
@@ -17,9 +14,6 @@ import {
 
 export default {
     bbox,
-    kRing,
-    kRingDistances,
-    sibling,
     toParent,
     toChildren,
     quadkeyFromQuadint,
