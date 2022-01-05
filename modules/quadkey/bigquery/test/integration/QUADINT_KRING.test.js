@@ -30,11 +30,14 @@ test('QUADINT_KRING should work', async () => {
 });
 
 test('QUADINT_KRING should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(NULL, NULL);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(NULL, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(-1, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(162, NULL);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(162, -1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);

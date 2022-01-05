@@ -40,11 +40,14 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
 });
 
 test('QUADINT_KRING_DISTANCES should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(NULL, NULL);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(NULL, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(-1, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(162, NULL);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(162, -1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
