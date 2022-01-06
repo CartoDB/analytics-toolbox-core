@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADINT_ZXY_KRING`
   (origin STRUCT<z INT64, x INT64, y INT64>, size INT64)
 AS ((
     SELECT
-      ARRAY_AGG((`@@BQ_PREFIX@@carto.QUADINT_FROMZXY`(origin.z,
+      ARRAY_AGG(DISTINCT (`@@BQ_PREFIX@@carto.QUADINT_FROMZXY`(origin.z,
               MOD(origin.x+dx, (1 << origin.z)) + IF(origin.x+dx<0,(1 << origin.z),0),
               origin.y+dy)))
     FROM
