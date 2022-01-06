@@ -19,22 +19,26 @@ test('QUADINT_SIBLING should work at any level of zoom', async () => {
         rightSiblingContext AS (
             SELECT *,
             \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(expectedQuadint,'right') AS rightSibling
-            FROM expectedQuadintContext 
+            FROM expectedQuadintContext
+            WHERE expectedQuadint IS NOT NULL
         ),
         upSiblingContext AS (
             SELECT *,
             \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(rightSibling,'up') AS upSibling
-            FROM rightSiblingContext 
+            FROM rightSiblingContext
+            WHERE rightSibling IS NOT NULL
         ),
         leftSiblingContext AS (
             SELECT *,
             \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(upSibling,'left') AS leftSibling
-            FROM upSiblingContext 
+            FROM upSiblingContext
+            WHERE upSibling IS NOT NULL
         ),
         downSiblingContext AS (
             SELECT *,
             \`@@BQ_PREFIX@@carto.QUADINT_SIBLING\`(leftSibling,'down') AS downSibling
-            FROM leftSiblingContext 
+            FROM leftSiblingContext
+            WHERE leftSibling IS NOT NULL
         )
         SELECT *
         FROM downSiblingContext

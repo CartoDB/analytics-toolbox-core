@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADINT_SIBLING`
 (origin INT64, dx INT64, dy INT64)
 AS (
     `@@BQ_PREFIX@@carto.__ZXY_QUADINT_SIBLING`(`@@BQ_PREFIX@@carto.QUADINT_TOZXY`(
-      IFNULL(IF(origin > 0, origin, NULL), Error('NULL argument passed to UDF'))),
+      IFNULL(IF(origin < 0, Error('QUADINT cannot be negative'), origin), Error('NULL argument passed to UDF'))),
       IFNULL(dx, Error('Invalid input dx')),
       IFNULL(dy, Error('Invalid input dy'))));
 
