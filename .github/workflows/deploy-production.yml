@@ -133,7 +133,7 @@ jobs:
       SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: CARTO_OS
       SF_SHARE_ENABLED: 1
-      SF_SHARES: carto_os
+      SF_SHARES: carto_os_temp
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
