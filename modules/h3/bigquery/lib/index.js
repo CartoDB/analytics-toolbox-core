@@ -5,6 +5,7 @@ export default {
     geoToH3,
     compact,
     h3Distance,
+    h3GetResolution,
     h3IsValid,
     hexRing,
     h3IsPentagon,
