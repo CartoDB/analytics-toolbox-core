@@ -12,7 +12,8 @@ import {
     quadintToGeoJSON,
     quadintFromZXY,
     geojsonToQuadints,
-    ZXYFromQuadint
+    ZXYFromQuadint,
+    getQuadintResolution
 } from '../../shared/javascript/quadkey';
 
 export default {
@@ -29,5 +30,6 @@ export default {
     quadintFromZXY,
     geojsonToQuadints,
     ZXYFromQuadint,
+    getQuadintResolution,
     version
 };

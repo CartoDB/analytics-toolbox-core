@@ -13,5 +13,6 @@ test('quadkey library defined', () => {
     expect(quadkeyLib.quadintToGeoJSON).toBeDefined();
     expect(quadkeyLib.geojsonToQuadints).toBeDefined();
     expect(quadkeyLib.ZXYFromQuadint).toBeDefined();
+    expect(quadkeyLib.getQuadintResolution).toBeDefined();
     expect(quadkeyLib.version).toBe(version);
 });

@@ -193,3 +193,31 @@ test('Should be able to encode/decode tiles at any level of zoom', async () => {
         }
     }
 });
+
+test('Should be able to get resolution of tiles at any level of zoom', async () => {
+    let tilesPerLevel, x, y;
+    for (let z = 0; z < 30; ++z) {
+        if (z === 0) {
+            tilesPerLevel = 1;
+        } else {
+            tilesPerLevel = 2 << (z - 1);
+        }
+
+        x = 0;
+        y = 0;
+        let resolution = lib.getQuadintResolution(lib.quadintFromZXY(z, x, y));
+        expect(resolution === z).toBeTruthy();
+
+        if (z > 0) {
+            x = tilesPerLevel / 2;
+            y = tilesPerLevel / 2;
+            resolution = lib.getQuadintResolution(lib.quadintFromZXY(z, x, y));
+            expect(resolution === z).toBeTruthy();
+
+            x = tilesPerLevel - 1;
+            y = tilesPerLevel - 1;
+            resolution = lib.getQuadintResolution(lib.quadintFromZXY(z, x, y));
+            expect(resolution === z).toBeTruthy();
+        }
+    }
+});

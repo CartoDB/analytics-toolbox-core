@@ -307,4 +307,13 @@ export function geojsonToQuadints (poly, limits) {
     return tilecover.tiles(poly, limits).map(tile => quadintFromZXY(tile[2], tile[0], tile[1]));
 }
 
+/**
+ * get the resolution of a quadint
+ * @param  {int} quadint quadint to get the resolution of
+ * @return {int}         resolution of the input quadint
+ */
+ export function getQuadintResolution (quadint) {
+    return quadkeyFromQuadint(quadint).length;
+}
+
 const clipNumber = (num, a, b) => Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
