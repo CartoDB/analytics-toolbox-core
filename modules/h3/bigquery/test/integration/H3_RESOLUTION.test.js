@@ -31,7 +31,7 @@ test('Returns NULL the expected resolution', async () => {
             *,
             \`@@BQ_PREFIX@@carto.H3_RESOLUTION\`(hid) as resolution
         FROM ids
-        WHERE NOT expected = \`@@BQ_PREFIX@@carto.H3_RESOLUTION\`(hid)
+        WHERE expected != \`@@BQ_PREFIX@@carto.H3_RESOLUTION\`(hid)
     `;
 
     const rows = await runQuery(query);
