@@ -1,6 +1,6 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
-test('QUADINT_BOUNDARY should work', async () => {
+test('QUADINT_CENTER should work', async () => {
     const query = `
     SELECT
       \`@@BQ_PREFIX@@carto.QUADINT_CENTER\`(quadint) boundary,
@@ -12,13 +12,14 @@ test('QUADINT_BOUNDARY should work', async () => {
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(13);
-    expect(JSON.stringify(rows[1].boundary.value)).toEqual('"POINT(0 0)"');
-    expect(JSON.stringify(rows[2].boundary.value)).toEqual('"POINT(-90 66.5132604431119)"');
-    expect(JSON.stringify(rows[3].boundary.value)).toEqual('"POINT(-135 79.1713346408195)"');
-    expect(JSON.stringify(rows[4].boundary.value)).toEqual('"POINT(90 66.5132604431119)"');
-    expect(JSON.stringify(rows[5].boundary.value)).toEqual('"POINT(-45 79.1713346408195)"');
-    expect(JSON.stringify(rows[6].boundary.value)).toEqual('"POINT(-90 -66.5132604431119)"');
-    expect(JSON.stringify(rows[7].boundary.value)).toEqual('"POINT(90 -66.5132604431119)"');
+    expect(JSON.stringify(rows[0].boundary.value)).toEqual('"POINT(0 0)"');
+    expect(JSON.stringify(rows[1].boundary.value)).toEqual('"POINT(-90 45)"');
+    expect(JSON.stringify(rows[2].boundary.value)).toEqual('"POINT(-135 79.1713346408195)"');
+    expect(JSON.stringify(rows[3].boundary.value)).toEqual('"POINT(90 45)"');
+    expect(JSON.stringify(rows[4].boundary.value)).toEqual('"POINT(-45 79.1713346408195)"');
+    expect(JSON.stringify(rows[5].boundary.value)).toEqual('"POINT(-90 -45)"');
+    expect(JSON.stringify(rows[6].boundary.value)).toEqual('"POINT(90 -45)"');
+    expect(JSON.stringify(rows[7].boundary.value)).toEqual('"POINT(-135 40.9798980696201)"');
     expect(JSON.stringify(rows[8].boundary.value)).toEqual('"POINT(-135 -40.9798980696201)"');
     expect(JSON.stringify(rows[9].boundary.value)).toEqual('"POINT(-135 -79.1713346408195)"');
     expect(JSON.stringify(rows[10].boundary.value)).toEqual('"POINT(-44.82421875 44.964797930331)"');
