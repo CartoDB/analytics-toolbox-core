@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed QUADINT_KRING_DISTANCES
 - Fixed QUADINT_SIBLING
 
+### Added
+- Add QUADINT_CENTER
+
 ## [1.1.0] - 2021-12-16
 
 ### Changed
