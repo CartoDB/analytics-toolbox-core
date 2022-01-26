@@ -27,7 +27,7 @@ test('QUADINT_CENTER should work', async () => {
     expect(JSON.stringify(rows[12].boundary.value)).toEqual('"POINT(-44.999994635582 44.9999984058533)"');
 });
 
-test('QUADINT_BOUNDARY should fail with NULL argument', async () => {
+test('QUADINT_CENTER should fail with NULL argument', async () => {
     const query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_CENTER`(NULL);';
     await expect(runQuery(query)).rejects.toThrow();
 });
