@@ -24,8 +24,3 @@ test('QUADINT_RESOLUTION should work at any level of zoom', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(0);
 });
-
-test('QUADINT_RESOLUTION should fail with NULL argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_RESOLUTION`(NULL);';
-    await expect(runQuery(query)).rejects.toThrow();
-});
