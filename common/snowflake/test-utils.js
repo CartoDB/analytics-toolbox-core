@@ -3,7 +3,8 @@ const snowflake = require('snowflake-sdk');
 
 const SF_PREFIX = `${process.env.SF_DATABASE}.${process.env.SF_SCHEMA_PREFIX}`;
 
-const connection = snowflake.createConnection( {
+snowflake.configure({insecureConnect: true})
+const connection = snowflake.createConnection({
     account: process.env.SF_ACCOUNT,
     username: process.env.SF_USER,
     password: process.env.SF_PASSWORD,

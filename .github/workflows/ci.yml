@@ -127,7 +127,7 @@ jobs:
     timeout-minutes: 10
     env:
       SNOWSQL_VERSION: 1.2.13
-      SNOWSQL: ~/snowflake/snowsql
+      SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
       SF_USER: ${{ secrets.SF_USERNAME }}
