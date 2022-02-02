@@ -2,9 +2,25 @@
 
 CLOUD = snowflake
 
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+LIB_DIR = $(ROOT_DIR)/lib
+LIBS_DIR = $(ROOT_DIR)/libs
+DIST_DIR = $(ROOT_DIR)/dist
+ENV_DIR ?= $(ROOT_DIR)/../../..
+LINT_DIR ?= $(ROOT_DIR)/../../..
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
+SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
+SHARED_DIR = $(ROOT_DIR)/../shared/javascript
+
+ifneq (,$(wildcard $(ENV_DIR)/.env))
+	include $(ENV_DIR)/.env
+	export
+endif
+
 SED = sed
 GSUTIL = gsutil
-SNOWSQL ?= snowsql
+SNOWSQL ?= SNOWSQL_PWD=$(SF_PASSWORD) snowsql -a $(SF_ACCOUNT) -u $(SF_USER)
 
 SF_SCHEMA = $(SF_SCHEMA_PREFIX)carto
 SF_SHARES_ROLE = ACCOUNTADMIN
@@ -15,17 +31,7 @@ PACKAGE_TYPE ?= CORE
 PACKAGE_VERSION ?= dev
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
-LIB_DIR = $(ROOT_DIR)/lib
-LIBS_DIR = $(ROOT_DIR)/libs
-DIST_DIR = $(ROOT_DIR)/dist
 SF_LIBRARY = $(DIST_DIR)/index.js
-
-LINT_DIR ?= $(ROOT_DIR)/../../..
-COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
-SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
-SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 SHARE_CREATE_FILE = $(COMMON_DIR)/_SHARE_CREATE.sql
 
@@ -186,12 +192,12 @@ check:
 ifndef SF_DATABASE
 	$(error SF_DATABASE is undefined)
 endif
-ifndef SNOWSQL_ACCOUNT
-	$(error SNOWSQL_ACCOUNT is undefined)
+ifndef SF_ACCOUNT
+	$(error SF_ACCOUNT is undefined)
 endif
-ifndef SNOWSQL_USER
-	$(error SNOWSQL_USER is undefined)
+ifndef SF_USER
+	$(error SF_USER is undefined)
 endif
-ifndef SNOWSQL_PWD
-	$(error SNOWSQL_PWD is undefined)
+ifndef SF_PASSWORD
+	$(error SF_PASSWORD is undefined)
 endif

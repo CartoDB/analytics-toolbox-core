@@ -7,7 +7,7 @@ function usage {
 	echo "./libraryinstaller.sh -m <module> -f <requirement_file>"
 	echo
 	echo "where <module> is the name of the Pip module to be installed. The next environment variables should be set:"
-	echo "      AWS_S3_BUCKET is the location on S3 to upload the artifact to. Must be in format s3://bucket/prefix/"
+	echo "      RS_BUCKET is the location on S3 to upload the artifact to. Must be in format s3://bucket/prefix/"
 	echo "      AWS_ACCESS_KEY_ID is the AWS access key attached to the Redshift cluster and has access to read from the s3 upload location"
 	echo "      AWS_SECRET_ACCESS_KEY is the AWS secret access key attached to the Redshift cluster and has access to read from the s3 upload location"
 	echo "      RS_CLUSTER_ID is the Redshift cluster you will deploy the function to"
@@ -114,7 +114,7 @@ done
 
 if [ -z "$serialize" ]; then
 # validate arguments
-    notNull "$AWS_S3_BUCKET" "Please provide an S3 bucket to store the library in using export AWS_S3_BUCKET=bucket"
+    notNull "$RS_BUCKET" "Please provide an S3 bucket to store the library in using export RS_BUCKET=bucket"
     notNull "$RS_DATABASE" "Please provide a Redshift database using export RS_DATABASE=database"
     notNull "$RS_REGION" "Please provide a region using export RS_REGION=region"
     notNull "$RS_USER" "Please provide a Redshift user using export RS_USER=user"
@@ -124,7 +124,7 @@ if [ -z "$serialize" ]; then
 
 # check that the s3 prefix is in the right format
 # starts with 's3://'
-    if ! [[ $AWS_S3_BUCKET == s3:\/\/* ]]; then
+    if ! [[ $RS_BUCKET == s3:\/\/* ]]; then
         echo "S3 Prefix must start with 's3://'"
         echo
         usage
@@ -185,8 +185,8 @@ for m in "${modules_to_install[@]}"; do
             if [ $library_installed == 0 ]; then
                 echo "- Library not found in the cluster"
                 echo "- Installing $depname"
-                aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
-                sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
+                aws s3 cp "$TMPDIR/.$m/$depname.whl" "$RS_BUCKET$depname.zip"
+                sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$RS_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
                 execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
                 echo "- Done"
             else
@@ -199,8 +199,8 @@ for m in "${modules_to_install[@]}"; do
                     echo "- Installing $depname"
                     sql="DROP LIBRARY ${depname%%-*};"
                     execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
-                    aws s3 cp "$TMPDIR/.$m/$depname.whl" "$AWS_S3_BUCKET$depname.zip"
-                    sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$AWS_S3_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
+                    aws s3 cp "$TMPDIR/.$m/$depname.whl" "$RS_BUCKET$depname.zip"
+                    sql="CREATE OR REPLACE LIBRARY ${depname%%-*} LANGUAGE plpythonu FROM '$RS_BUCKET$depname.zip' WITH CREDENTIALS 'aws_access_key_id=$AWS_ACCESS_KEY_ID;aws_secret_access_key=$AWS_SECRET_ACCESS_KEY';"
                     execQuery $RS_CLUSTER_ID $RS_DATABASE $RS_USER "$sql" $RS_REGION
                     echo "- Done"
                 fi
