@@ -127,11 +127,11 @@ jobs:
     timeout-minutes: 10
     env:
       SNOWSQL_VERSION: 1.2.13
-      SNOWSQL: ~/snowflake/snowsql
+      SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
-      SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
-      SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+      SF_USER: ${{ secrets.SF_USERNAME }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: SFCARTOCI
       SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
     steps:
@@ -213,7 +213,7 @@ jobs:
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-      AWS_S3_BUCKET: s3://rscartoci/
+      RS_BUCKET: s3://rscartoci/
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

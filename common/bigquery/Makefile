@@ -2,6 +2,21 @@
 
 CLOUD = bigquery
 
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+LIB_DIR = $(ROOT_DIR)/lib
+DIST_DIR = $(ROOT_DIR)/dist
+ENV_DIR ?= $(ROOT_DIR)/../../..
+LINT_DIR ?= $(ROOT_DIR)/../../..
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
+SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
+SHARED_DIR = $(ROOT_DIR)/../shared/javascript
+
+ifneq (,$(wildcard $(ENV_DIR)/.env))
+	include $(ENV_DIR)/.env
+	export
+endif
+
 SED = sed
 GSUTIL = gsutil
 BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
@@ -14,18 +29,9 @@ PACKAGE_TYPE ?= CORE
 PACKAGE_VERSION ?= dev
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
-LIB_DIR = $(ROOT_DIR)/lib
-DIST_DIR = $(ROOT_DIR)/dist
 BQ_BUCKET ?= gs://<BUCKET>/
 BQ_LIBRARY = $(DIST_DIR)/index.js
 BQ_LIBRARY_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/libs/$(MODULE)Lib.js
-
-LINT_DIR ?= $(ROOT_DIR)/../../..
-COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
-SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
-SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules

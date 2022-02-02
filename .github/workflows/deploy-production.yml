@@ -126,11 +126,11 @@ jobs:
       ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
     env:
       SNOWSQL_VERSION: 1.2.13
-      SNOWSQL: ~/snowflake/snowsql
+      SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
-      SNOWSQL_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SNOWSQL_USER: ${{ secrets.SF_USERNAME }}
-      SNOWSQL_PWD: ${{ secrets.SF_PASSWORD }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+      SF_USER: ${{ secrets.SF_USERNAME }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
       SF_DATABASE: CARTO_OS
       SF_SHARE_ENABLED: 1
       SF_SHARES: carto_os_temp
@@ -164,7 +164,7 @@ jobs:
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-      AWS_S3_BUCKET: s3://rscarto/
+      RS_BUCKET: s3://rscarto/
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
