@@ -29,17 +29,30 @@ rm -rf $DIST_DIR
 mkdir -p $DIST_PACKAGE_DIR
 mkdir -p $DIST_PACKAGE_DIR/libs
 
-for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
-    echo -e "\n> Module $module/$CLOUD"
-    make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module || exit 1
+if [ -z ${MODULE} ];
+then
+    for module in `node ${SCRIPTS_DIR}/modulesort.js`; do
+        echo -e "\n> Module $module/$CLOUD"
+        make -C $ROOT_DIR/modules/$module/$CLOUD serialize-module || exit 1
+        touch $DIST_PACKAGE_DIR/modules-header.sql
+        cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-header.sql > $DIST_PACKAGE_DIR/modules-header.sql
+        cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_PACKAGE_DIR/modules-content.sql
+        cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-footer.sql > $DIST_PACKAGE_DIR/modules-footer.sql
+        cat $ROOT_DIR/modules/$module/$CLOUD/dist/libraries.sql >> $DIST_PACKAGE_DIR/libraries.sql
+        sort -u $DIST_PACKAGE_DIR/libraries.sql -o $DIST_PACKAGE_DIR/libraries.sql
+        cp $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_PACKAGE_DIR/libs
+    done
+else
+    echo -e "\n> Module $MODULE/$CLOUD"
+    make -C $ROOT_DIR/modules/$MODULE/$CLOUD serialize-module || exit 1
     touch $DIST_PACKAGE_DIR/modules-header.sql
-    cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-header.sql > $DIST_PACKAGE_DIR/modules-header.sql
-    cat $ROOT_DIR/modules/$module/$CLOUD/dist/module.sql >> $DIST_PACKAGE_DIR/modules-content.sql
-    cat $ROOT_DIR/modules/$module/$CLOUD/dist/module-footer.sql > $DIST_PACKAGE_DIR/modules-footer.sql
-    cat $ROOT_DIR/modules/$module/$CLOUD/dist/libraries.sql >> $DIST_PACKAGE_DIR/libraries.sql
+    cat $ROOT_DIR/modules/$MODULE/$CLOUD/dist/module-header.sql > $DIST_PACKAGE_DIR/modules-header.sql
+    cat $ROOT_DIR/modules/$MODULE/$CLOUD/dist/module.sql >> $DIST_PACKAGE_DIR/modules-content.sql
+    cat $ROOT_DIR/modules/$MODULE/$CLOUD/dist/module-footer.sql > $DIST_PACKAGE_DIR/modules-footer.sql
+    cat $ROOT_DIR/modules/$MODULE/$CLOUD/dist/libraries.sql >> $DIST_PACKAGE_DIR/libraries.sql
     sort -u $DIST_PACKAGE_DIR/libraries.sql -o $DIST_PACKAGE_DIR/libraries.sql
-    cp $ROOT_DIR/modules/$module/$CLOUD/dist/*.zip $DIST_PACKAGE_DIR/libs
-done
+    cp $ROOT_DIR/modules/$MODULE/$CLOUD/dist/*.zip $DIST_PACKAGE_DIR/libs
+fi
 
 cat $DIST_PACKAGE_DIR/modules-header.sql $DIST_PACKAGE_DIR/modules-content.sql $DIST_PACKAGE_DIR/modules-footer.sql > $DIST_PACKAGE_DIR/modules.sql
 rm $DIST_PACKAGE_DIR/modules-header.sql
