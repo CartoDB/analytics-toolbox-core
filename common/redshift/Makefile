@@ -14,7 +14,7 @@ VENV3_DIR = $(COMMON_DIR)/venv3
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
-	export
+	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
 SED = sed
