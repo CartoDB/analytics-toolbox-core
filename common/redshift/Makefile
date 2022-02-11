@@ -96,7 +96,7 @@ test-integration-full:
 deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-upload
@@ -111,7 +111,7 @@ clean:
 clean-deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-remove
