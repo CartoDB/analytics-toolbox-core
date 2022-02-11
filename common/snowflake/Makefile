@@ -15,6 +15,7 @@ SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
 	include $(ENV_DIR)/.env
+	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
 SED = sed

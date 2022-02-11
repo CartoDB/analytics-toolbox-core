@@ -13,7 +13,8 @@ SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
-	include $(ENV_DIR)/.env
+	include $(ENV_DIR)/.env 
+	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
 SED = sed
@@ -104,10 +105,12 @@ test-integration-full:
 test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 endif
 ifdef MAKE_LIB
 ifndef TEST
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	$(MAKE) -C test/integration-old/ test-integration TEST_OLD=$(TEST_OLD)
 endif
 endif
