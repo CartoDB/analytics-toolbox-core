@@ -13,8 +13,7 @@ SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
-	include $(ENV_DIR)/.env
-	export
+	include $(ENV_DIR)/.env	
 endif
 
 SED = sed
@@ -116,7 +115,7 @@ endif
 deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-upload
@@ -140,7 +139,7 @@ endif
 clean-deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-remove
