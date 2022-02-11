@@ -14,7 +14,6 @@ VENV3_DIR = $(COMMON_DIR)/venv3
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
-	export
 endif
 
 SED = sed
@@ -96,7 +95,7 @@ test-integration-full:
 deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-upload
@@ -111,7 +110,7 @@ clean:
 clean-deploy: check
 ifdef MODULE_DEPS
 	for module_dep in $(MODULE_DEPS); do \
-		MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 	done
 endif
 	$(MAKE) storage-remove

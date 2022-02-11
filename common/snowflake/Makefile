@@ -15,7 +15,6 @@ SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
 	include $(ENV_DIR)/.env
-	export
 endif
 
 SED = sed
@@ -114,7 +113,7 @@ deploy: check
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
-			MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
 		done \
 	fi;
 endif
@@ -131,7 +130,7 @@ clean-deploy: check
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
-			MODULE_DEPS='' $(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
 		done \
 	fi;
 endif
