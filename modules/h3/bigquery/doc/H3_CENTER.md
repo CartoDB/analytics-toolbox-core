@@ -20,5 +20,5 @@ Returns the center of the H3 cell as a geogpoint. It will return `null` on error
 
 ```sql
 SELECT `carto-os`.carto.H3_CENTER('847b59dffffffff');
--- 4
+-- POINT(40.3054764231743 -3.74320332556168)
 ```
