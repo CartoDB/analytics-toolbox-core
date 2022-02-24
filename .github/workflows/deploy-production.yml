@@ -29,6 +29,8 @@ jobs:
       sf_password: ${{ steps.gcp-secrets.outputs.SF_PASSWORD }}
       rs_user: ${{ steps.gcp-secrets.outputs.RS_USER }}
       rs_password: ${{ steps.gcp-secrets.outputs.RS_PASSWORD }}
+      aws_access_key_id: ${{ steps.gcp-secrets.outputs.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ steps.gcp-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
     env:
       GOOGLE_SECRETS_PROJECT_ID: 'carto-terraform-ci-cd'
     steps:
@@ -47,6 +49,8 @@ jobs:
             SF_PASSWORD:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-snowflake-ci-password
             RS_USER:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-redshift-ci-user
             RS_PASSWORD:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-redshift-ci-password
+            AWS_ACCESS_KEY_ID:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-github-actions-carto-analytics-toolbox-access-key-id
+            AWS_SECRET_ACCESS_KEY:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-github-actions-carto-analytics-toolbox-secret-access-key
 
   deploy-bq:
     runs-on: ubuntu-20.04
@@ -215,11 +219,9 @@ jobs:
             rs_database: ci
             rs_user: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
             rs_password: ${{ needs.obtain-ci-credentials.outputs.rs_password }}
-            # FIXME: Create programatic user for this
-            aws_access_key_id: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
-            aws_secret_access_key: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
-            # FIXME: Create real bucket
-            rs_bucket: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
+            aws_access_key_id: ${{ needs.obtain-ci-credentials.outputs.aws_access_key_id }}
+            aws_secret_access_key: ${{ needs.obtain-ci-credentials.outputs.aws_secret_access_key }}
+            rs_bucket: s3://carto-analytics-toolbox-deployment-ci/
     env:
       RS_REGION: ${{ matrix.rs_region }}
       RS_HOST: ${{ matrix.rs_host }}
