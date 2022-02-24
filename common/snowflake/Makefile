@@ -82,6 +82,7 @@ build: install
 		LIB_DIR=${LIB_DIR}/index.js \
 		DIST_DIR=$(DIST_DIR)/index.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+		$(POST_BUILD) \
 	elif [ -d ${LIBS_DIR} ]; then \
 		for f in $(notdir $(shell find ${LIBS_DIR}/* -type d 2>/dev/null)); do \
 			$(PRE_BUILD) \
