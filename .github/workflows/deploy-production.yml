@@ -20,6 +20,35 @@ env:
 
 jobs:
 
+  obtain-ci-credentials:
+    runs-on: ubuntu-20.04
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    outputs:
+      # TODO: Add BigQuery
+      sf_user: ${{ steps.gcp-secrets.outputs.SF_USER }}
+      sf_password: ${{ steps.gcp-secrets.outputs.SF_PASSWORD }}
+      rs_user: ${{ steps.gcp-secrets.outputs.RS_USER }}
+      rs_password: ${{ steps.gcp-secrets.outputs.RS_PASSWORD }}
+    env:
+      GOOGLE_SECRETS_PROJECT_ID: 'carto-terraform-ci-cd'
+    steps:
+      - name: Google Cloud Auth
+        uses: google-github-actions/auth@v0
+        with:
+          # FIXME: We need to add this SA to both repositories
+          credentials_json: ${{ secrets.CARTO_MONITORING_SERVICE_ACCOUNT }}
+          project_id: ${{ env.GOOGLE_SECRETS_PROJECT_ID }}
+
+      - name: Retrieve secrets
+        id: gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v0
+        with:
+          secrets: |-
+            SF_USER:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-snowflake-ci-user
+            SF_PASSWORD:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-snowflake-ci-password
+            RS_USER:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-redshift-ci-user
+            RS_PASSWORD:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-redshift-ci-password
+
   deploy-bq:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
@@ -121,17 +150,30 @@ jobs:
   deploy-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
+    needs: [obtain-ci-credentials]
     if: |
       ( github.event_name == 'push' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
+    strategy:
+      matrix:
+        include:
+          - sf_account: ${{ secrets.SF_ACCOUNT }}
+            sf_user: ${{ secrets.SF_USERNAME }}
+            sf_password: ${{ secrets.SF_PASSWORD }}
+            sf_database: CARTO_OS
+          - sf_account: sxa81489
+            sf_user: ${{ needs.obtain-ci-credentials.outputs.sf_user }}
+            sf_password: ${{ needs.obtain-ci-credentials.outputs.sf_password }}
+            sf_database: CI
     env:
+      # FIXME: Add which Role to use?
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SF_USER: ${{ secrets.SF_USERNAME }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASE: CARTO_OS
+      SF_ACCOUNT: ${{ matrix.sf_account }}
+      SF_USER: ${{ matrix.sf_user }}
+      SF_PASSWORD: ${{ matrix.sf_password }}
+      SF_DATABASE: ${{ matrix.sf_database }}
       SF_SHARE_ENABLED: 1
       SF_SHARES: carto_os_temp
     steps:
@@ -152,28 +194,52 @@ jobs:
   deploy-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
+    needs: [obtain-ci-credentials]
     if: |
       ( github.event_name == 'push' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
+    strategy:
+      matrix:
+        include:
+          - rs_region: us-east-2
+            rs_host: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
+            rs_cluster_id: redshift-cluster-1
+            rs_database: rscarto
+            rs_user: ${{ secrets.RS_USER }}
+            rs_password: ${{ secrets.RS_PASSWORD }}
+            aws_access_key_id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
+            aws_secret_access_key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
+            rs_bucket: s3://rscarto/
+          - rs_region: us-east-1
+            rs_host: carto-redshift-ci-9597.cot5dbai0lq0.us-east-1.redshift.amazonaws.com
+            rs_cluster_id: carto-redshift-ci-9597
+            rs_database: ci
+            rs_user: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
+            rs_password: ${{ needs.obtain-ci-credentials.outputs.rs_password }}
+            # FIXME: Create programatic user for this
+            aws_access_key_id: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
+            aws_secret_access_key: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
+            # FIXME: Create real bucket
+            rs_bucket: ${{ needs.obtain-ci-credentials.outputs.rs_user }}
     env:
-      RS_REGION: us-east-2
-      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
-      RS_CLUSTER_ID: redshift-cluster-1
-      RS_DATABASE: rscarto
-      RS_USER: ${{ secrets.RS_USER }}
-      RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-      RS_BUCKET: s3://rscarto/
+      RS_REGION: ${{ matrix.rs_region }}
+      RS_HOST: ${{ matrix.rs_host }}
+      RS_CLUSTER_ID: ${{ matrix.rs_cluster_id }}
+      RS_DATABASE: ${{ matrix.rs_database }}
+      RS_USER: ${{ matrix.rs_user }}
+      RS_PASSWORD: ${{ matrix.rs_password }}
+      AWS_ACCESS_KEY_ID: ${{ matrix.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ matrix.aws_secret_access_key }}
+      RS_BUCKET: ${{ matrix.rs_bucket }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.RS_REGION }}
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Deploy to production
