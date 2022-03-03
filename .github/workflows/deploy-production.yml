@@ -170,6 +170,7 @@ jobs:
             sf_database: CI
     env:
       # FIXME: Add which Role to use?
+      # FIXME: Add Warehuse to use? (COMPUTE_CI)
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
