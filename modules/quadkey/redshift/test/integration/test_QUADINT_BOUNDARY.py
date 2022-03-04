@@ -4,9 +4,9 @@ import pytest
 
 def test_boundary_success():
     results = run_query(
-        """SELECT @@RS_PREFIX@@carto.QUADINT_BOUNDARY(12070922) as geog1,
-        @@RS_PREFIX@@carto.QUADINT_BOUNDARY(791040491538) as geog2,
-        @@RS_PREFIX@@carto.QUADINT_BOUNDARY(12960460429066265) as geog3"""
+        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.QUADINT_BOUNDARY(12070922)) as geog1,
+        ST_ASTEXT(@@RS_PREFIX@@carto.QUADINT_BOUNDARY(791040491538)) as geog2,
+        ST_ASTEXT(@@RS_PREFIX@@carto.QUADINT_BOUNDARY(12960460429066265)) as geog3"""
     )
 
     fixture_file = open('./test/integration/boundary_fixtures/out/geojsons.txt', 'r')

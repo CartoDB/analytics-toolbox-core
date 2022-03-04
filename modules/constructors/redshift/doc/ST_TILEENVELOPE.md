@@ -13,7 +13,7 @@ Returns the boundary polygon of a tile given its zoom level and its X and Y indi
 
 **Return type**
 
-`VARCHAR`
+`GEOMETRY`
 
 {{% customSelector %}}
 **Example**
@@ -21,5 +21,5 @@ Returns the boundary polygon of a tile given its zoom level and its X and Y indi
 
 ```sql
 SELECT carto.ST_TILEENVELOPE(10, 384, 368);
--- {'type': 'Polygon', 'coordinates': [[[-45.0, 44.84029065139799], [-45.0, 45.089035564831015], ...
+-- POLYGON ((-45 44.8402906514, -45 45.0890355648, -44.6484375 45.0890355648, -44.6484375 44.8402906514, -45 44.8402906514))
 ```
