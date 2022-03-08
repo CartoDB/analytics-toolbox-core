@@ -4,9 +4,9 @@ import pytest
 
 def test_tileenvelope_success():
     results = run_query(
-        """SELECT ST_ASTEXT(@@RS_PREFIX@@carto.ST_TILEENVELOPE(10, 384, 368)),
-        ST_ASTEXT(@@RS_PREFIX@@carto.ST_TILEENVELOPE(18, 98304, 94299)),
-        ST_ASTEXT(@@RS_PREFIX@@carto.ST_TILEENVELOPE(25, 12582912, 12070369))"""
+        """SELECT @@RS_PREFIX@@carto.ST_TILEENVELOPE(10, 384, 368),
+        @@RS_PREFIX@@carto.ST_TILEENVELOPE(18, 98304, 94299),
+        @@RS_PREFIX@@carto.ST_TILEENVELOPE(25, 12582912, 12070369)"""
     )
 
     fixture_file = open(

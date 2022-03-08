@@ -18,5 +18,5 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 
 ```sql
 SELECT carto.QUADINT_BOUNDARY(4388);
--- POLYGON ((22.5 -21.9430455334, 22.5 0, 45 0, 45 -21.9430455334, 22.5 -21.9430455334))
+-- {'type': 'Polygon', 'coordinates': [[[22.5, -21.943045533438177], [22.5, 0.0], ...
 ```
