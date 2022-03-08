@@ -47,7 +47,7 @@ AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null || exit 1
 AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK)
 AWS_RUN_STATEMENT_SQL = \
     STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
-	if [ -z $$AWS_SKIP_OUTPUT ]; then AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION)`; $(AWS_PARSE_OUTPUT); fi
+	if [ -z $$AWS_SKIP_OUTPUT ]; then AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT); fi
 
 .SILENT:
 
