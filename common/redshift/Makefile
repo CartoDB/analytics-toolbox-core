@@ -47,7 +47,7 @@ AWS_CHECK = tr '\r\n' ' ' | jq -e 'has("Error") | not' 1>/dev/null || exit 1
 AWS_PARSE_OUTPUT = echo $$AWS_OUTPUT | $(AWS_PRINT); echo $$AWS_OUTPUT | $(AWS_CHECK)
 AWS_RUN_STATEMENT_SQL = \
     STATEMENT_ID=`$(AWS) redshift-data execute-statement --region $(RS_REGION) --cluster-identifier $(RS_CLUSTER_ID) --database $(RS_DATABASE) --db-user $(RS_USER) --sql "$$STATEMENT_SQL" --output text --query 'Id'`; \
-	if [ -z $$AWS_SKIP_OUTPUT ]; then AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION) --no-cli-pager`; $(AWS_PARSE_OUTPUT); fi
+	if [ -z $$AWS_SKIP_OUTPUT ]; then AWS_OUTPUT=`$(AWS) redshift-data describe-statement --id $$STATEMENT_ID --region $(RS_REGION)`; $(AWS_PARSE_OUTPUT); fi
 
 .SILENT:
 
@@ -73,6 +73,7 @@ build:
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ $(DIST_DIR)/$(RS_SCHEMA)Lib/
 	cd $(DIST_DIR) && zip -r $(RS_SCHEMA)Lib *
 	rm -rf $(DIST_DIR)/$(RS_SCHEMA)Lib
+	$(POST_BUILD)
 
 test-unit: venv2
 	rm -rf $(LIB_DIR)/$(MODULE)Lib
