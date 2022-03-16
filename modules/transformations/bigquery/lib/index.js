@@ -9,7 +9,11 @@ import {
     concave,
     destination,
     greatCircle,
-    along
+    along,
+    lineString,
+    cleanCoords,
+    multiPoint,
+    point
 } from '@turf/turf';
 
 export default {
@@ -23,5 +27,9 @@ export default {
     destination,
     greatCircle,
     along,
+    lineString,
+    cleanCoords,
+    multiPoint,
+    point,
     version
 };

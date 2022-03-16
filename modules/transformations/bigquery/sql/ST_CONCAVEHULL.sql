@@ -19,7 +19,25 @@ AS """
     if (units) {
         options.units = units;
     }
-    const featuresCollection = transformationsLib.featureCollection(geojson.map(x => transformationsLib.feature(JSON.parse(x))));
+
+    const multiPoints = transformationsLib.multiPoint(geojson.map(x => JSON.parse(x).coordinates));
+    const nonDuplicates = transformationsLib.cleanCoords(multiPoints).geometry;
+    const arrayCoordinates = nonDuplicates.coordinates;
+
+    // Point
+    if (arrayCoordinates.length == 1) {
+        return JSON.stringify(transformationsLib.point(arrayCoordinates[0]).geometry);
+    } 
+
+    // Segment
+    if (arrayCoordinates.length == 2) {
+        const start = arrayCoordinates[0];
+        const end = arrayCoordinates[1];
+        const lineString = transformationsLib.lineString([start, end]);
+        return JSON.stringify(lineString.geometry);
+    }
+
+    const featuresCollection = transformationsLib.featureCollection(arrayCoordinates.map(x => transformationsLib.point(x)));
     const hull = transformationsLib.concave(featuresCollection, options);
     return JSON.stringify(hull.geometry);
 """;
