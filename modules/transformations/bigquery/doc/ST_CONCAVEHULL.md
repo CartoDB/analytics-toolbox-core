@@ -6,7 +6,7 @@ carto.ST_CONCAVEHULL(geog, maxEdge, units)
 
 **Description**
 
-Takes a set of points and returns a concave hull Polygon or MultiPolygon.
+Takes a set of points and returns a concave hull Polygon or MultiPolygon. In case of a single or a couple of points are passed as input, the function will return that point or a segment respectively.
 
 * `geog`: `ARRAY<GEOGRAPHY>` input points.
 * `maxEdge`: `FLOAT64`|`NULL` the length (in 'units') of an edge necessary for part of the hull to become concave. If `NULL`the default value `infinity` is used.
