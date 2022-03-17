@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.1] - 2022-03-17
+
+### Changed
+- ST_CONCAVEHULL now allows arrays with one/two points as input.
+
 ## [1.3.0] - 2021-12-16
 
 ### Changed
