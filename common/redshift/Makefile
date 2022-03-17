@@ -73,6 +73,7 @@ build:
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ $(DIST_DIR)/$(RS_SCHEMA)Lib/
 	cd $(DIST_DIR) && zip -r $(RS_SCHEMA)Lib *
 	rm -rf $(DIST_DIR)/$(RS_SCHEMA)Lib
+	$(POST_BUILD)
 
 test-unit: venv2
 	rm -rf $(LIB_DIR)/$(MODULE)Lib

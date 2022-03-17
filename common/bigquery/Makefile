@@ -83,6 +83,7 @@ ifndef NO_BUILD
 	NAME=$(MODULE)Lib \
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
+	$(POST_BUILD)
 endif
 ifdef MAKE_LIB
 	$(MAKE) -C $(LIB_DIR) build
