@@ -35,7 +35,7 @@ jobs:
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}

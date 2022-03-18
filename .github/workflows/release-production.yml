@@ -34,7 +34,7 @@ jobs:
           project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
@@ -63,7 +63,7 @@ jobs:
           project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
@@ -93,7 +93,7 @@ jobs:
           project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
