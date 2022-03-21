@@ -93,7 +93,7 @@ jobs:
             project: carto-un-as-se1
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
-          
+
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
@@ -116,7 +116,7 @@ jobs:
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
