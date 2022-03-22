@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_CONTENT@@
+    @@SF_LIBRARY_CENTER@@
 
     const medianCenter = transformationsLib.centerMedian(transformationsLib.feature(JSON.parse(GEOJSON)));
     return JSON.stringify(medianCenter.geometry);
