@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION _BUFFER
-(geojson STRING, radius DOUBLE, units STRING, steps DOUBLE)
+(geojson STRING, radius DOUBLE)
 RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
@@ -12,13 +12,10 @@ AS $$
         return null;
     }
 
-    const options = {};
-    if (UNITS) {
-        options.units = UNITS;
-    }
-    if (STEPS != null) {
-        options.steps = Number(STEPS);
-    }
+    const options = {
+        units: 'meters',
+        steps: 8
+    };
 
     @@SF_LIBRARY_BUFFER@@
 
@@ -29,9 +26,9 @@ AS $$
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION ST_BUFFER
-(geog GEOGRAPHY, radius DOUBLE, units STRING, steps DOUBLE)
+(geog GEOGRAPHY, radius DOUBLE)
 RETURNS GEOGRAPHY
 IMMUTABLE
 AS $$
-    TO_GEOGRAPHY(_BUFFER(CAST(ST_ASGEOJSON(GEOG) AS STRING), RADIUS, UNITS, STEPS))
+    TO_GEOGRAPHY(_BUFFER(CAST(ST_ASGEOJSON(GEOG) AS STRING), RADIUS))
 $$;
