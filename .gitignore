@@ -11,6 +11,8 @@ __pycache__/
 *.pyc
 snowsql_rt.*
 .DS_STORE
+.env*
+!.env.template
 dev_env.sh
 package-lock.json
 MANIFEST

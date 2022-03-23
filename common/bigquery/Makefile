@@ -2,6 +2,21 @@
 
 CLOUD = bigquery
 
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+LIB_DIR = $(ROOT_DIR)/lib
+DIST_DIR = $(ROOT_DIR)/dist
+ENV_DIR ?= $(ROOT_DIR)/../../..
+LINT_DIR ?= $(ROOT_DIR)/../../..
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
+SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
+SHARED_DIR = $(ROOT_DIR)/../shared/javascript
+
+ifneq (,$(wildcard $(ENV_DIR)/.env))
+	include $(ENV_DIR)/.env 
+	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
+endif
+
 SED = sed
 GSUTIL = gsutil
 BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
@@ -14,18 +29,9 @@ PACKAGE_TYPE ?= CORE
 PACKAGE_VERSION ?= dev
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
-LIB_DIR = $(ROOT_DIR)/lib
-DIST_DIR = $(ROOT_DIR)/dist
 BQ_BUCKET ?= gs://<BUCKET>/
 BQ_LIBRARY = $(DIST_DIR)/index.js
 BQ_LIBRARY_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/libs/$(MODULE)Lib.js
-
-LINT_DIR ?= $(ROOT_DIR)/../../..
-COMMON_DIR ?= $(ROOT_DIR)/../../../common/$(CLOUD)
-SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
-SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
@@ -77,6 +83,7 @@ ifndef NO_BUILD
 	NAME=$(MODULE)Lib \
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
+	$(POST_BUILD)
 endif
 ifdef MAKE_LIB
 	$(MAKE) -C $(LIB_DIR) build
@@ -99,10 +106,12 @@ test-integration-full:
 test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 endif
 ifdef MAKE_LIB
 ifndef TEST
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	$(MAKE) -C test/integration-old/ test-integration TEST_OLD=$(TEST_OLD)
 endif
 endif

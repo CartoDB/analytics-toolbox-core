@@ -2,6 +2,21 @@
 
 CLOUD = redshift
 
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+LIB_DIR = $(ROOT_DIR)/lib
+DIST_DIR = $(ROOT_DIR)/dist
+ENV_DIR ?= $(ROOT_DIR)/../../..
+COMMON_DIR ?=  $(ROOT_DIR)/../../../common/$(CLOUD)
+SCRIPTS_DIR ?=  $(ROOT_DIR)/../../../scripts
+VENV2_DIR = $(COMMON_DIR)/venv2
+VENV3_DIR = $(COMMON_DIR)/venv3
+
+ifneq (,$(wildcard $(ENV_DIR)/.env))
+    include $(ENV_DIR)/.env
+	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
+endif
+
 SED = sed
 AWS = aws
 PYTHON2_VERSION = 2.7
@@ -16,18 +31,9 @@ PACKAGE_VERSION ?= dev
 LIBS_URL ?= https://<URL>/libs
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
-LIB_DIR = $(ROOT_DIR)/lib
-DIST_DIR = $(ROOT_DIR)/dist
-
 SHARE_CREATE_FILE = $(ROOT_DIR)/sql/_SHARE_CREATE.sql
 SHARE_REMOVE_FILE = $(ROOT_DIR)/sql/_SHARE_REMOVE.sql
 
-COMMON_DIR ?=  $(ROOT_DIR)/../../../common/$(CLOUD)
-SCRIPTS_DIR ?=  $(ROOT_DIR)/../../../scripts
-VENV2_DIR = $(COMMON_DIR)/venv2
-VENV3_DIR = $(COMMON_DIR)/venv3
 VENV2_ACTIVATE = $(VENV2_DIR)/bin/activate
 VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 
@@ -67,6 +73,7 @@ build:
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ $(DIST_DIR)/$(RS_SCHEMA)Lib/
 	cd $(DIST_DIR) && zip -r $(RS_SCHEMA)Lib *
 	rm -rf $(DIST_DIR)/$(RS_SCHEMA)Lib
+	$(POST_BUILD)
 
 test-unit: venv2
 	rm -rf $(LIB_DIR)/$(MODULE)Lib
@@ -114,10 +121,10 @@ endif
 
 storage-upload: build venv2
 	for f in $(wildcard $(DIST_DIR)/*.zip); do \
-		$(AWS) s3 cp $$f $(AWS_S3_BUCKET) || exit 1; \
+		$(AWS) s3 cp $$f $(RS_BUCKET) || exit 1; \
 	done
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
-		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(AWS_S3_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
+		STATEMENT_SQL="CREATE OR REPLACE LIBRARY $(RS_SCHEMA) LANGUAGE plpythonu FROM '$(RS_BUCKET)$(notdir $$f)' CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)';"; $(AWS_RUN_STATEMENT_SQL); \
 	done
 ifneq ("$(wildcard requirements.txt)","")
 	if [ ! -f requirements.txt.shasum ] || [ "`shasum --check requirements.txt.shasum | grep "FAILED"`" ]; then \
@@ -130,7 +137,7 @@ endif
 
 storage-remove:
 	for f in $(notdir $(wildcard $(DIST_DIR)/*.zip)); do \
-		$(AWS) s3 rm $(AWS_S3_BUCKET)$$f || exit 1; \
+		$(AWS) s3 rm $(RS_BUCKET)$$f || exit 1; \
 	done
 	STATEMENT_SQL="DROP LIBRARY $(RS_SCHEMA)"; AWS_SKIP_OUTPUT=1; $(AWS_RUN_STATEMENT_SQL)
 
@@ -220,14 +227,14 @@ endif
 ifndef RS_USER
 	$(error RS_USER is undefined)
 endif
+ifndef RS_BUCKET
+	$(error RS_BUCKET is undefined)
+endif
 ifndef AWS_ACCESS_KEY_ID
 	$(error AWS_ACCESS_KEY_ID is undefined)
 endif
 ifndef AWS_SECRET_ACCESS_KEY
 	$(error AWS_SECRET_ACCESS_KEY is undefined)
-endif
-ifndef AWS_S3_BUCKET
-	$(error AWS_S3_BUCKET is undefined)
 endif
 
 check-extra:
