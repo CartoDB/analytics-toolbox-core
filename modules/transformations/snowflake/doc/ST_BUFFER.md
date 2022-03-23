@@ -1,27 +1,29 @@
 ### ST_BUFFER
 
 {{% bannerNote type="code" %}}
-carto.ST_BUFFER(geog, radius, units, steps)
+carto.ST_BUFFER(geog, distance [, segments])
 {{%/ bannerNote %}}
 
 **Description**
 
-Calculates a Geography buffer for input features for a given radius. Units supported are miles, kilometers, and degrees.
+Calculates a Geography buffer for input features for a given distance.
 
 * `geog`: `GEOGRAPHY` input to be buffered.
-* `radius`: `DOUBLE` distance to draw the buffer (negative values are allowed).
-* `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
-* `steps`: `DOUBLE`|`NULL` number of steps. If `NULL` the default value `8` is used.
+* `distance`: `DOUBLE` distance of the buffer around the input geography. The value is in meters. Negative values are allowed.
+* `segments` (optional): `INTEGER` number of segments used to approximate a quarter circle. The default value is `8`.
 
 **Return type**
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ``` sql
-SELECT carto.ST_BUFFER(ST_POINT(-74.00, 40.7128), 1, 'kilometers', 10);
+SELECT carto.ST_BUFFER(ST_POINT(-74.00, 40.7128), 1000);
+-- { "coordinates": [ [ [ -73.98813543746913, 40.712799392649444 ], ...
+```
+
+``` sql
+SELECT carto.ST_BUFFER(ST_POINT(-74.00, 40.7128), 1000, 10);
 -- { "coordinates": [ [ [ -73.98813543746913, 40.712799392649444 ], ...
 ```
