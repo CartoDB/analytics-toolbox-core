@@ -96,9 +96,11 @@ test-integration-full:
 
 deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-upload
 	$(MAKE) schema-create
@@ -111,9 +113,11 @@ clean:
 
 clean-deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-remove
 	$(MAKE) share-remove
