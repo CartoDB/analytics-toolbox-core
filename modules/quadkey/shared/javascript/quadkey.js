@@ -8,46 +8,72 @@ import tilecover from '@mapbox/tile-cover';
 /**
  * convert tile coordinates to quadint at specific zoom level
  * @param  {zxycoord} zxy   zoom and tile coordinates
- * @return {int}            quadint for input tile coordinates at input zoom level
+ * @return {BigInt}            quadint for input tile coordinates at input zoom level
  */
-export function quadintFromZXY (z, x, y) {
+export function quadintFromZXY(z, x, y) {
     if (z < 0 || z > 29) {
         throw new Error('Wrong zoom');
     }
-    const zI = z;
-    if (zI <= 13) {
-        let quadint = y;
-        quadint <<= zI;
-        quadint |= x;
-        quadint <<= 5;
-        quadint |= zI;
-        return quadint;
-    }
-    let quadint = BigInt(y);
-    quadint <<= BigInt(z);
-    quadint |= BigInt(x);
-    quadint <<= BigInt(5);
-    quadint |= BigInt(z);
+    const useBigInt = z > 13;
+    const B = [0x5555555555555555n, 0x3333333333333333n, 0x0F0F0F0F0F0F0F0Fn, 0x00FF00FF00FF00FFn, 0x0000FFFF0000FFFFn];
+    const S = [1n, 2n, 4n, 8n, 16n];
+    x = BigInt(x);
+    y = BigInt(y);
+    z = BigInt(z);
+    x = (x | (x << S[4])) & B[4];
+    y = (y | (y << S[4])) & B[4];
+
+    x = (x | (x << S[3])) & B[3];
+    y = (y | (y << S[3])) & B[3];
+
+    x = (x | (x << S[2])) & B[2];
+    y = (y | (y << S[2])) & B[2];
+
+    x = (x | (x << S[1])) & B[1];
+    y = (y | (y << S[1])) & B[1];
+
+    x = (x | (x << S[0])) & B[0];
+    y = (y | (y << S[0])) & B[0];
+    let quadint = x | (y << 1n);
+    quadint <<= 5n;
+    quadint |= z;
     return quadint;
 }
 
 /**
  * convert quadint to tile coordinates and level of zoom
- * @param  {int} quadint   quadint to be converted
+ * @param  {int|BigInt} quadint   quadint to be converted
  * @return {zxycoord}      level of zoom and tile coordinates
  */
-export function ZXYFromQuadint (quadint) {
-    const quadintBig = BigInt(quadint);
-    const z = quadintBig & BigInt(0x1F);
-    if (z <= 13n) {
-        const zNumber = Number(z);
-        const x = (quadint >> 5) & ((1 << zNumber) - 1);
-        const y = quadint >> (zNumber + 5);
-        return { z: zNumber, x: x, y: y };
-    }
-    const x = (quadintBig >> (5n)) & ((1n << z) - 1n);
-    const y = quadintBig >> (5n + z);
-    return { z: Number(z), x: Number(x), y: Number(y) };
+export function ZXYFromQuadint(quadint) {
+    const B = [0x5555555555555555n, 0x3333333333333333n, 0x0F0F0F0F0F0F0F0Fn, 0x00FF00FF00FF00FFn, 0x0000FFFF0000FFFFn,
+        0x00000000FFFFFFFFn];
+    const S = [0n, 1n, 2n, 4n, 8n, 16n];
+    quadint = BigInt(quadint);
+    const z = quadint & 0x1Fn;
+    quadint >>= 5n;
+    let x = quadint;
+    let y = quadint >> 1n;
+
+    x = (x | (x >> S[0])) & B[0];
+    y = (y | (y >> S[0])) & B[0];
+
+    x = (x | (x >> S[1])) & B[1];
+    y = (y | (y >> S[1])) & B[1];
+
+    x = (x | (x >> S[2])) & B[2];
+    y = (y | (y >> S[2])) & B[2];
+
+    x = (x | (x >> S[3])) & B[3];
+    y = (y | (y >> S[3])) & B[3];
+
+    x = (x | (x >> S[4])) & B[4];
+    y = (y | (y >> S[4])) & B[4];
+
+    x = (x | (x >> S[5])) & B[5];
+    y = (y | (y >> S[5])) & B[5];
+
+    return {x: Number(x), y: Number(y), z: Number(z)};
 }
 
 /**
