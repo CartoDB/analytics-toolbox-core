@@ -84,9 +84,7 @@ jobs:
   delete-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-    if: |
-      ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
+    if: false
     env:
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
