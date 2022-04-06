@@ -93,6 +93,106 @@ jobs:
             project: carto-un-as-se1
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
+          - region: us-central1
+            project: carto-un-us-ce1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west1
+            project: carto-un-us-we1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west2
+            project: carto-un-us-we2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west3
+            project: carto-un-us-we3
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west4
+            project: carto-un-us-we4
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-east1
+            project: carto-un-us-ea1 
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-east4
+            project: carto-un-us-ea4
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: southamerica-east1
+            project: carto-un-sa-ea1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: southamerica-west1
+            project: carto-un-sa-we1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: northamerica-northeast2
+            project: carto-un-na-ne2   
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-south1
+            project: carto-un-as-so1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-south2
+            project: carto-un-as-so2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-east1
+            project: carto-un-as-ea1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-east2
+            project: carto-un-as-ea2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-northeast2
+            project: carto-un-as-ne2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-northeast3
+            project: carto-un-as-ne3
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-southeast2
+            project: carto-un-as-se2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: australia-southeast2
+            project: carto-un-au-se2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west1
+            project: carto-un-eu-we1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west2
+            project: carto-un-eu-we2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west3
+            project: carto-un-eu-we3
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west4
+            project: carto-un-eu-we4
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west6
+            project: carto-un-eu-we6
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-north1
+            project: carto-un-eu-no1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-central2
+            project: carto-un-eu-ce2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
 
     env:
       GCLOUD_VERSION: 290.0.1
