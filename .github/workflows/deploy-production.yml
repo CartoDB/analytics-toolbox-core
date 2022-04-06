@@ -114,7 +114,7 @@ jobs:
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
           - region: us-east1
-            project: carto-un-us-ea1 
+            project: carto-un-us-ea1
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
           - region: us-east4
@@ -130,7 +130,7 @@ jobs:
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
           - region: northamerica-northeast2
-            project: carto-un-na-ne2   
+            project: carto-un-na-ne2
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
           - region: asia-south1
@@ -257,9 +257,7 @@ jobs:
   deploy-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-    if: |
-      ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
+    if: false
     env:
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com

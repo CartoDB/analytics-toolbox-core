@@ -211,16 +211,16 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      RS_REGION: us-east-2
-      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
-      RS_CLUSTER_ID: redshift-cluster-1
-      RS_DATABASE: rscartoci
+      RS_REGION: ${{ secrets.RS_REGION }}
+      RS_HOST: ${{ secrets.RS_HOST }}
+      RS_CLUSTER_ID: ${{ secrets.RS_CLUSTER_ID }}
+      RS_DATABASE: ${{ secrets.RS_DATABASE }}
       RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
       RS_USER: ${{ secrets.RS_USER }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-      RS_BUCKET: s3://rscartoci/
+      RS_BUCKET: ${{ secrets.RS_BUCKET }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

@@ -89,9 +89,7 @@ jobs:
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto`' });
 
   deploy-rs:
-    if: |
-      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
+    if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
