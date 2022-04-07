@@ -12,13 +12,12 @@ AS $$
         return null;
     }
 
+    @@SF_LIBRARY_BUFFER@@
+
     const options = {
         units: 'meters',
         steps: Number(SEGMENTS)
     };
-
-    @@SF_LIBRARY_BUFFER@@
-
     const buffer = transformationsLib.buffer(JSON.parse(GEOJSON), Number(DISTANCE), options);
     if (buffer) {
         return JSON.stringify(buffer.geometry);
