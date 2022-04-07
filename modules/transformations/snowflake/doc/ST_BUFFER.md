@@ -6,7 +6,7 @@ carto.ST_BUFFER(geog, distance [, segments])
 
 **Description**
 
-Calculates a Geography buffer for input features for a given distance.
+Calculates a buffer for the input features for a given distance.
 
 * `geog`: `GEOGRAPHY` input to be buffered.
 * `distance`: `DOUBLE` distance of the buffer around the input geography. The value is in meters. Negative values are allowed.
