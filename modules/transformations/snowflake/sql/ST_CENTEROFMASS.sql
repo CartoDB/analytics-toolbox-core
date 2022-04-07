@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_CONTENT@@
+    @@SF_LIBRARY_CENTER@@
 
     const center = transformationsLib.centerOfMass(JSON.parse(GEOJSON));
     return JSON.stringify(center.geometry);

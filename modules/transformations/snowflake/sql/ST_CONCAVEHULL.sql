@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_CONTENT@@
+    @@SF_LIBRARY_CONCAVE@@
 
     const multiPoints = transformationsLib.multiPoint(GEOJSONS.map(x => JSON.parse(x).coordinates));
     const nonDuplicates = transformationsLib.cleanCoords(multiPoints).geometry;
@@ -21,7 +21,7 @@ AS $$
     // Point
     if (arrayCoordinates.length == 1) {
         return JSON.stringify(transformationsLib.point(arrayCoordinates[0]).geometry);
-    } 
+    }
 
     // Segment
     if (arrayCoordinates.length == 2) {
