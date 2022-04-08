@@ -118,9 +118,11 @@ endif
 
 deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-upload
 	$(MAKE) dataset-create
@@ -142,9 +144,11 @@ endif
 
 clean-deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-remove
 	$(MAKE) dataset-remove || ((sleep 5 && $(MAKE) dataset-remove) || exit 1)
