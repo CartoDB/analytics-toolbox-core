@@ -13,7 +13,7 @@ SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
-	include $(ENV_DIR)/.env 
+	include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
@@ -179,7 +179,7 @@ dataset-deploy:
 	done
 	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1
 
-serialize-module: build
+serialize-module:: build
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql

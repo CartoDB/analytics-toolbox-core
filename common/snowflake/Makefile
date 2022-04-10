@@ -173,7 +173,7 @@ ifeq ($(SF_SHARE_ENABLED), 1)
 	done
 endif
 
-serialize-module: build
+serialize-module:: build
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql
