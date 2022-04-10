@@ -49,9 +49,7 @@ jobs:
   delete-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-    if: |
-      ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
+    if: false
     env:
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL_BIN: ~/snowflake/snowsql
