@@ -22,6 +22,7 @@ SED = sed
 GSUTIL = gsutil
 SNOWSQL_BIN ?= snowsql
 SF_ROLE ?= SYSADMIN
+export SF_ROLE
 SNOWSQL := SNOWSQL_PWD='$(SF_PASSWORD)' $(SNOWSQL_BIN) -a $(SF_ACCOUNT) -u $(SF_USER) -r $(SF_ROLE)
 
 SF_SCHEMA = $(SF_SCHEMA_PREFIX)carto
@@ -172,7 +173,7 @@ ifeq ($(SF_SHARE_ENABLED), 1)
 	done
 endif
 
-serialize-module: build
+serialize-module:: build
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql

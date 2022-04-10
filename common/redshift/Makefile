@@ -175,10 +175,10 @@ serialize-dependency: venv2
 ifneq ("$(wildcard requirements.txt)","")
 	. $(VENV2_ACTIVATE) && \
 	bash $(COMMON_DIR)/libraryinstaller.sh -f requirements.txt -s && \
-	deactivate; 
+	deactivate;
 endif
 
-serialize-module: build serialize-dependency
+serialize-module:: build serialize-dependency
 	rm -f $(DIST_DIR)/libraries.sql
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql

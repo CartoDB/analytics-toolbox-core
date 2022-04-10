@@ -130,9 +130,9 @@ jobs:
       SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SF_USER: ${{ secrets.SF_USERNAME }}
+      SF_USER: ${{ secrets.SF_USER }}
       SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASE: SFCARTOCI
+      SF_DATABASE: ${{ secrets.SF_DATABASE }}
       SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
     steps:
       - name: Checkout repo
@@ -150,13 +150,6 @@ jobs:
         run: |
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-      - name: Prepare env
-        run: |
-          echo "SF_ACCOUNT=$SF_ACCOUNT" >> .env
-          echo "SF_DATABASE=$SF_DATABASE" >> .env
-          echo "SF_SCHEMA_PREFIX=$SF_SCHEMA_PREFIX" >> .env
-          echo "SF_USER=$SF_USER" >> .env
-          echo "SF_PASSWORD=$SF_PASSWORD" >> .env
       - name: Run integration tests
         run: make test-integration-full CLOUD=snowflake
 
