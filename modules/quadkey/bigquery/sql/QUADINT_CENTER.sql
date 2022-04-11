@@ -21,9 +21,9 @@ AS (
 
       ELSE COALESCE(
             ST_GEOGPOINT(
-                @@BQ_PREFIX@@carto.__TILE_TOLONG(`@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).x*2+1, `@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).z+1),
-                @@BQ_PREFIX@@carto.__TILE_TOLAT(`@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).y*2+1, `@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).z+1)
-                ),
+                `@@BQ_PREFIX@@carto.__TILE_TOLONG`(`@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).x*2+1, `@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).z+1),
+                `@@BQ_PREFIX@@carto.__TILE_TOLAT`(`@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).y*2+1, `@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint).z+1)
+            ),
             ERROR('NULL argument passed to UDF')
         )
     END

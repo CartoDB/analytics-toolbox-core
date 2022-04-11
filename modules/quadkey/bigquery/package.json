@@ -1,6 +1,6 @@
 {
   "name": "quadkey_bigquery",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Quadkey module for BigQuery",
   "author": "CARTO",
   "license": "BSD-3-Clause",
