@@ -34,5 +34,5 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`
 AS (
     `@@BQ_PREFIX@@carto.__QUADINT_ZXY_KRING_DISTANCES`(`@@BQ_PREFIX@@carto.QUADINT_TOZXY`(
       IFNULL(IF(origin < 0, NULL, origin), Error('Invalid input origin'))),
-      IFNULL(IF(size > 0, size, NULL), Error('Invalid input size'))));
+      IFNULL(IF(size >= 0, size, NULL), Error('Invalid input size'))));
 
