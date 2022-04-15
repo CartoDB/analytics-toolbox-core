@@ -8,7 +8,7 @@ AS ((
     WITH T AS (
       SELECT
         `@@BQ_PREFIX@@carto.QUADINT_FROMZXY`(origin.z,
-              MOD(origin.x+dx, (1 << origin.z)) + IF(origin.x+dx<0,(1 << origin.z),0),
+              MOD(origin.x+dx+(1 << origin.z), (1 << origin.z)),
               origin.y+dy) myindex,
         greatest(abs(dx), abs(dy)) distance -- Chebychev distance
       FROM

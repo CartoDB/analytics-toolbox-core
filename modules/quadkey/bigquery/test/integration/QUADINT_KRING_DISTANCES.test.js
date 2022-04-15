@@ -6,6 +6,7 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
         ( SELECT row,
             \`@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES\`(origin, size) as kring_elem,
         FROM UNNEST([
+            STRUCT(0 as row, 0 as origin, 1 as size),
             STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
@@ -23,6 +24,7 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.kring_distance)).toEqual([
+        ['0'],
         ['1','1','1','1','0','1','1','1','1'],
         ['1','1','1','1','0','1','1','1','1'],
         ['1','1','1','1','0','1','1','1','1'],
@@ -31,6 +33,7 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
         ['3','3','3','3','3','3','3','3','2','2','2','2','2','3','3','2','1','1','1','2','3','3','2','1','0','1','2','3','3','2','1','1','1','2','3','3','2','2','2','2','2','3','3','3','3','3','3','3','3']
     ]);
     expect(rows.map(r => r.kring_index)).toEqual([
+        ['0'],
         ['2','34','66','130','162','194','258','290','322'],
         ['12038122','12038154','12038186','12070890','12070922','12070954','12103658','12103690','12103722'],
         ['791032102898','791032102930','791032102962','791040491506','791040491538','791040491570','791048880114','791048880146','791048880178'],

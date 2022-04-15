@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADINT_ZXY_KRING`
 AS ((
     SELECT
       ARRAY_AGG(DISTINCT (`@@BQ_PREFIX@@carto.QUADINT_FROMZXY`(origin.z,
-              MOD(origin.x+dx, (1 << origin.z)) + IF(origin.x+dx<0,(1 << origin.z),0),
+              MOD(origin.x+dx+(1 << origin.z), (1 << origin.z)),
               origin.y+dy)))
     FROM
       UNNEST(GENERATE_ARRAY(-size,size)) dx,

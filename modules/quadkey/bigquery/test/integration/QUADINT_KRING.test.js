@@ -6,6 +6,7 @@ test('QUADINT_KRING should work', async () => {
         ( SELECT row,
             \`@@BQ_PREFIX@@carto.QUADINT_KRING\`(origin, size) as kring_elem,
         FROM UNNEST([
+            STRUCT(0 as row, 0 as origin, 1 as size),
             STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
@@ -21,6 +22,7 @@ test('QUADINT_KRING should work', async () => {
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.kring.sort())).toEqual([
+        ['0'],
         ['130', '162', '194', '2', '258', '290', '322', '34', '66'],
         ['12038122', '12038154', '12038186', '12070890', '12070922', '12070954', '12103658', '12103690', '12103722'],
         ['791032102898', '791032102930', '791032102962', '791040491506', '791040491538', '791040491570', '791048880114', '791048880146', '791048880178'],
