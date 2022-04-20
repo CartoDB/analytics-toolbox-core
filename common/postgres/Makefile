@@ -62,7 +62,7 @@ test-integration-full:
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
 
-deploy: check
+deploy: check install-postgis
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
@@ -70,7 +70,6 @@ ifdef MODULE_DEPS
 		done \
 	fi;
 endif
-	$(MAKE) install-postgis
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
 
