@@ -17,15 +17,15 @@ const outputFormat = process.env.OUTPUT_FORMAT || ''; //Accepted values 'args'|'
 const outputDelimiter = process.env.DELIMITER || '\n';
 
 let functionEndingPattern;
-switch (cloud) 
+switch (cloud)
 {
-case 'bigquery': functionEndingPattern = 'AS'; break;
-case 'postgres': functionEndingPattern = 'BEGIN'; break;
+case 'bigquery':
+case 'postgres': functionEndingPattern = 'AS'; break;
 default: functionEndingPattern = 'RETURNS'; break;
 }
 
 let procedureEndingPattern;
-switch (cloud) 
+switch (cloud)
 {
 case 'bigquery':
 case 'postgres': procedureEndingPattern = 'BEGIN'; break;
@@ -62,12 +62,10 @@ function classifyFunctions (moduleName, functionMatches)
         let qualifiedFunctName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').split('(')[0];
         qualifiedFunctName = qualifiedFunctName.split('.');
         const functName = qualifiedFunctName[qualifiedFunctName.length - 1];
-        
         if (!includePrivateFiles && functName.startsWith('_'))
         {
             continue;
         }
-    
         if (outputFormat == 'argTypes')
         {
             //Remove diacritics and go greedy to take the outer parentheses
@@ -80,7 +78,6 @@ function classifyFunctions (moduleName, functionMatches)
             {
                 continue;
             }
-    
             //This does not work with BigQuery ARRAY/STRUCT
             functArgs = functArgs.split(',')
             let functArgsTypes = [];
@@ -102,7 +99,6 @@ function classifyFunctions (moduleName, functionMatches)
             {
                 continue;
             }
-    
             const functSignature = functName + '(' + functArgs + ')';
             addFunctSignature(moduleName, functSignature);
         }
@@ -123,12 +119,10 @@ function addFile (moduleName, fileName)
     content = content.split('\n');
     for (let i = 0 ; i < content.length; i++)
     {
-        
         if (content[i].startsWith('--'))
         {
             delete content[i];
         }
-        
     }
     content = content.join(' ');
     content = content.replace(/(\r\n|\n|\r)/gm,' ')
@@ -136,7 +130,7 @@ function addFile (moduleName, fileName)
     classifyFunctions(moduleName, functionMatches);
     const procedureMatches = content.matchAll(new RegExp(`(?<=PROCEDURE)(.*?)(?=${procedureEndingPattern})`,'g'));
     classifyFunctions(moduleName, procedureMatches);
-}    
+}
 
 if (inputFiles != '')
 {
