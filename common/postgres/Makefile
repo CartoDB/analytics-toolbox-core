@@ -63,6 +63,13 @@ test-integration-full:
 	$(MAKE) clean-deploy
 
 deploy: check
+ifdef MODULE_DEPS
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		done \
+	fi;
+endif
 	$(MAKE) install-postgis
 	$(MAKE) schema-create
 	$(MAKE) schema-deploy
@@ -72,6 +79,13 @@ clean:
 	rm -rf $(VENV3_DIR)
 
 clean-deploy: check
+ifdef MODULE_DEPS
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		done \
+	fi;
+endif
 	$(MAKE) schema-remove
 
 schema-create: pgpass
