@@ -11,9 +11,12 @@ PG_PREFIX = $(PG_SCHEMA_PREFIX)
 CLOUD = postgres
 COMMON_DIR ?= $(ROOT_DIR)/../../../common
 SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
+DIST_DIR = $(ROOT_DIR)/dist
 VENV3_DIR = $(COMMON_DIR)/venv3
 VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 ENV_DIR ?= $(ROOT_DIR)/../../..
+PACKAGE_TYPE ?= CORE
+VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
@@ -25,6 +28,7 @@ REPLACEMENTS_COMMON = -e 's!@@PG_PREFIX@@!$(PG_PREFIX)!g' -e 's!@@PG_PACKAGE_VER
                       -e 's!@@PG_VERSION_FUNCTION@@!$(VERSION_FUNCTION)!g' $(REPLACEMENTS_EXTRA)
 
 REPLACEMENTS = $(REPLACEMENTS_COMMON)
+REPLACEMENTS_PKG = $(REPLACEMENTS_COMMON)
 
 PG_RUN_STATEMENT_SQL = PGPASSFILE=$(COMMON_DIR)/.pgpass ${PSQL} --no-psqlrc -h $(PG_HOST) -d $(PG_DATABASE) -U $(PG_USER)
 
@@ -102,14 +106,18 @@ schema-deploy: pgpass
 	done
 
 serialize-module:
-	rm -f dist/module.sql
-	mkdir -p dist
-	echo "CREATE SCHEMA IF NOT EXISTS $(PG_SCHEMA);" >> dist/module.sql
-	echo "CREATE EXTENSION IF NOT EXISTS postgis;" >> dist/module.sql
+	rm -f $(DIST_DIR)/module.sql
+	rm -f $(DIST_DIR)/module-header.sql
+	rm -f $(DIST_DIR)/module-footer.sql
+	touch $(DIST_DIR)/module-header.sql
+	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
+		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
+	fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
-		$(SED) $(REPLACEMENTS) $$n >> dist/module.sql; \
-		echo "" >> dist/module.sql; \
+	  	$(SED) $(REPLACEMENTS_PKG) $$n >> $(DIST_DIR)/module.sql; \
+		echo "" >> $(DIST_DIR)/module.sql; \
 	done
+	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
 
 serialize-functions:
 	mkdir -p dist
