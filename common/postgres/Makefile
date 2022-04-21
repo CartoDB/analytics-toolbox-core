@@ -78,7 +78,7 @@ endif
 	$(MAKE) schema-deploy
 
 clean:
-	rm -rf dist
+	rm -rf $(DIST_DIR)
 	rm -rf $(VENV3_DIR)
 
 clean-deploy: check
@@ -110,9 +110,10 @@ serialize-module:
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql
 	touch $(DIST_DIR)/module-header.sql
-	if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
+	# Fixme: By now, no core module is included for postgres, so DROP_FUNCTIONS should be handled in a custom way
+	# if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
 		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
-	fi
+	# fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> $(DIST_DIR)/module.sql; \
 		echo "" >> $(DIST_DIR)/module.sql; \
@@ -120,9 +121,9 @@ serialize-module:
 	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/VERSION.sql >> $(DIST_DIR)/module-footer.sql;
 
 serialize-functions:
-	mkdir -p dist
-	rm -f dist/funct_names.csv
-	MODULE=$(MODULE) QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> dist/funct_names.csv
+	mkdir -p $(DIST_DIR)
+	rm -f $(DIST_DIR)/funct_names.csv
+	MODULE=$(MODULE) QUALIFY=1 FILE_NAME=$${n} node $(SCRIPTS_DIR)/sqlfunctions.js >> $(DIST_DIR)/funct_names.csv
 
 pgpass:
 	echo "$(PG_HOST):5432:$(PG_DATABASE):$(PG_USER):$(PG_PASSWORD)" > $(COMMON_DIR)/.pgpass
