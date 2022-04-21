@@ -282,8 +282,8 @@ jobs:
 
   deploy-pg:
     runs-on: ubuntu-20.04
-    timeout-minutes: 30
-    if: ( github.event_name == 'push' )
+    timeout-minutes: 15
+    if: false
     env:
       PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
       PG_DATABASE: pgcarto

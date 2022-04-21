@@ -124,9 +124,9 @@ jobs:
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.RS_DATABASE }}.${{ env.RS_SCHEMA_PREFIX }}carto`' });
 
   deploy-pg:
-    if: ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
+    if: false
     env:
       PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
       PG_DATABASE: pgcartost
