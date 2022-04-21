@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift, all)'
+        description: 'Cloud warehouse (bigquery, snowflake, redshift, postgres, all)'
         required: true
         default: 'all'
       pr_number:
