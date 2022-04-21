@@ -58,7 +58,7 @@ test-unit:
 
 test-integration: check venv3
 	. $(VENV3_ACTIVATE) && \
-	PG_SCHEMA=$(PG_SCHEMA) pytest test/integration -p no:warnings && \
+	PG_SCHEMA=$(PG_SCHEMA) pytest -rP -p no:warnings test/integration/$(TEST) && \
 	deactivate
 
 test-integration-full:
