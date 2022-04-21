@@ -279,3 +279,18 @@ jobs:
         run: pip install virtualenv
       - name: Deploy to production
         run: make deploy CLOUD=redshift
+
+  deploy-pg:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    if: ( github.event_name == 'push' )
+    env:
+      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
+      PG_DATABASE: pgcarto
+      PG_USER: ${{ secrets.PG_USER }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Deploy to production
+        run: make deploy CLOUD=postgres
