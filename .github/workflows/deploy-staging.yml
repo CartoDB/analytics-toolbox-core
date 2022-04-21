@@ -126,7 +126,7 @@ jobs:
   deploy-pg:
     if: ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' )
     runs-on: ubuntu-20.04
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
       PG_DATABASE: pgcartost
