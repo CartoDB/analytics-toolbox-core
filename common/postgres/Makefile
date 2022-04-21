@@ -113,7 +113,7 @@ serialize-module:
 	touch $(DIST_DIR)/module-header.sql
 	# Fixme: By now, no core module is included for postgres, so DROP_FUNCTIONS should be handled in a custom way
 	# if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
-		$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
+	#	$(SED) $(REPLACEMENTS_PKG) $(COMMON_DIR)/DROP_FUNCTIONS.sql >> $(DIST_DIR)/module-header.sql; \
 	# fi
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 	  	$(SED) $(REPLACEMENTS_PKG) $$n >> $(DIST_DIR)/module.sql; \
