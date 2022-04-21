@@ -75,14 +75,16 @@ function sortByKey (list, key) {
 }
 
 function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
-    return list.sort((a, b) => (a[orderKey] > b[orderKey]) ? 1 : -1).map(row => {
+    list = list.sort((a, b) => (a[orderKey] > b[orderKey]) ? 1 : -1);
+    for (let row of list) {
         for (let roundKey of roundedKeys) {
+            console.log('round ',roundKey);
             if (row[roundKey]) {
                 row[roundKey] = row[roundKey].toPrecision(precision);
             }
-            return row;
         }
-    });
+    }
+    return list;
 }
 
 module.exports = {
