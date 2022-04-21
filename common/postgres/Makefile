@@ -109,6 +109,7 @@ serialize-module:
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql
+	mkdir -p $(DIST_DIR)
 	touch $(DIST_DIR)/module-header.sql
 	# Fixme: By now, no core module is included for postgres, so DROP_FUNCTIONS should be handled in a custom way
 	# if [ "$(PACKAGE_TYPE)" = "CORE" ]; then \
