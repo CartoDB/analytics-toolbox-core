@@ -6,6 +6,7 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
         ( SELECT row,
             \`@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES\`(origin, size) as kring_elem,
         FROM UNNEST([
+            STRUCT(0 as row, 0 as origin, 1 as size),
             STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
@@ -15,21 +16,24 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
         ]))
         -- cast index to String to avoid INT64 issues in JS
         SELECT
-        ARRAY_AGG(CAST(ke.distance as STRING)) as kring_distance,
+        ARRAY_AGG(CAST(ke.distance as STRING) ORDER BY ke.index) as kring_distance,
         ARRAY_AGG(CAST(ke.index as STRING) ORDER BY ke.index) as kring_index
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row
+        ORDER BY row
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.kring_distance)).toEqual([
-        ['0','1','1','1','1','1','1','1','1'],
-        ['0','1','1','1','1','1','1','1','1'],
-        ['0','1','1','1','1','1','1','1','1'],
-        ['0','1','1','1','1','1','1','1','1'],
-        ['0','1','1','1','1','1','1','1','1','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2'],
-        ['0','1','1','1','1','1','1','1','1','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3']
+        ['0'],
+        ['1','1','1','1','0','1','1','1','1'],
+        ['1','1','1','1','0','1','1','1','1'],
+        ['1','1','1','1','0','1','1','1','1'],
+        ['1','1','1','1','0','1','1','1','1'],
+        ['2','2','2','2','2','2','1','1','1','2','2','1','0','1','2','2','1','1','1','2','2','2','2','2','2'],
+        ['3','3','3','3','3','3','3','3','2','2','2','2','2','3','3','2','1','1','1','2','3','3','2','1','0','1','2','3','3','2','1','1','1','2','3','3','2','2','2','2','2','3','3','3','3','3','3','3','3']
     ]);
     expect(rows.map(r => r.kring_index)).toEqual([
+        ['0'],
         ['2','34','66','130','162','194','258','290','322'],
         ['12038122','12038154','12038186','12070890','12070922','12070954','12103658','12103690','12103722'],
         ['791032102898','791032102930','791032102962','791040491506','791040491538','791040491570','791048880114','791048880146','791048880178'],
@@ -40,11 +44,14 @@ test('QUADINT_KRING_DISTANCES should work', async () => {
 });
 
 test('QUADINT_KRING_DISTANCES should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(NULL, NULL);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(NULL, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(-1, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(162, NULL);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING_DISTANCES`(162, -1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);

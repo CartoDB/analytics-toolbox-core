@@ -6,6 +6,7 @@ test('QUADINT_KRING should work', async () => {
         ( SELECT row,
             \`@@BQ_PREFIX@@carto.QUADINT_KRING\`(origin, size) as kring_elem,
         FROM UNNEST([
+            STRUCT(0 as row, 0 as origin, 1 as size),
             STRUCT(1 as row, 162 as origin, 1 as size),
             STRUCT(2, 12070922, 1),
             STRUCT(3, 791040491538, 1),
@@ -14,12 +15,14 @@ test('QUADINT_KRING should work', async () => {
             STRUCT(6, 791040491538, 3)
         ]))
         -- cast index to String to avoid INT64 issues in JS
-        SELECT ARRAY_AGG(CAST(ke as STRING)) as kring
+        SELECT ARRAY_AGG(CAST(ke as STRING) order by ke) as kring
         FROM kring_data, UNNEST(kring_elem) as ke
         GROUP BY row
+        ORDER BY row
     `;
     const rows = await runQuery(query);
     expect(rows.map(r => r.kring.sort())).toEqual([
+        ['0'],
         ['130', '162', '194', '2', '258', '290', '322', '34', '66'],
         ['12038122', '12038154', '12038186', '12070890', '12070922', '12070954', '12103658', '12103690', '12103722'],
         ['791032102898', '791032102930', '791032102962', '791040491506', '791040491538', '791040491570', '791048880114', '791048880146', '791048880178'],
@@ -30,11 +33,14 @@ test('QUADINT_KRING should work', async () => {
 });
 
 test('QUADINT_KRING should fail if any invalid argument', async () => {
-    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(NULL, NULL);';
+    let query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(NULL, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(-1, 1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input origin/);
+
+    query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(162, NULL);';
+    await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
 
     query = 'SELECT `@@BQ_PREFIX@@carto.QUADINT_KRING`(162, -1);';
     await expect(runQuery(query)).rejects.toThrow(/Invalid input size/);
