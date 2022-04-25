@@ -110,9 +110,7 @@ jobs:
   release-pg:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: |
-      ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["postgres", "all"]'), github.event.inputs.cloud) )
+    if: false
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-postgres
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/postgres
