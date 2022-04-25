@@ -101,7 +101,7 @@ test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/unit --testTimeout=30000
+	jest test/unit/$(TEST) --testTimeout=30000
 
 test-integration-full:
 	$(MAKE) deploy
@@ -111,7 +111,7 @@ test-integration-full:
 test-integration: check $(NODE_MODULES_DEV)
 	SF_SCHEMA=$(SF_SCHEMA) \
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/integration/$(F) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
+	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 
 deploy: check
 ifdef MODULE_DEPS

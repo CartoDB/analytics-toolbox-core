@@ -93,7 +93,7 @@ test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/unit --testTimeout=30000
+	jest test/unit/$(TEST) --testTimeout=30000
 ifdef MAKE_LIB
 	$(MAKE) -C test/unit-old/ test-unit
 endif
