@@ -1,4 +1,6 @@
-CREATE OR REPLACE PROCEDURE @@PG_PREFIX@@carto.__DROP_FUNCTIONS
+SET search_path TO @@PG_PREFIX@@carto,public,"$user";
+
+CREATE OR REPLACE PROCEDURE __DROP_FUNCTIONS
 (schema_name TEXT)
 AS $$
 DECLARE
@@ -14,4 +16,5 @@ begin
 	END LOOP;
 END;
 $$ LANGUAGE plpgsql;
-CALL @@PG_PREFIX@@carto.__DROP_FUNCTIONS('@@PG_PREFIX@@carto');
+
+CALL __DROP_FUNCTIONS('@@PG_PREFIX@@carto');
