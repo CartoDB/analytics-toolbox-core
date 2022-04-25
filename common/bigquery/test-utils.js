@@ -37,6 +37,19 @@ async function loadTable (tablename, filepath, columns, viewName) {
     }
 }
 
+async function loadTableJSON (tablename, filepath, columns, viewName) {
+    const metadata = {
+        sourceFormat: 'NEWLINE_DELIMITED_JSON',
+        schema: { fields: columns },
+        writeDisposition: 'WRITE_TRUNCATE'
+    };
+
+    await client.dataset(BQ_DATASET).table(tablename).load(filepath, metadata);
+    if (viewName) {
+        await createView(viewName, `SELECT * FROM \`${BQ_DATASET}.${tablename}\``);
+    }
+}
+
 async function createView (viewName, query) {
     const options = {
         view: query
@@ -70,25 +83,10 @@ async function cancelJob (jobId) {
     return apiResult;
 }
 
-function sortByKey (list, key) {
-    return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
-}
-
-function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
-    list = list.sort((a, b) => (a[orderKey] > b[orderKey]) ? 1 : -1);
-    for (let row of list) {
-        for (let roundKey of roundedKeys) {
-            if (row[roundKey]) {
-                row[roundKey] = row[roundKey].toPrecision(precision);
-            }
-        }
-    }
-    return list;
-}
-
 module.exports = {
     runQuery,
     loadTable,
+    loadTableJSON,
     createView,
     deleteTable,
     readJSONFixture,
