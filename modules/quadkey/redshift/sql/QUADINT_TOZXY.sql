@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADINT_ASZXY
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADINT_TOZXY
 (BIGINT)
 -- (quadint)
 RETURNS SUPER
