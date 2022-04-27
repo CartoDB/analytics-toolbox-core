@@ -107,7 +107,7 @@ test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
-	jest test/integration/$(TEST) --testTimeout=50000 $(TEST_INTEGRATION_EXTRA)
+	jest test/integration/$(TEST) --testTimeout=120000 $(TEST_INTEGRATION_EXTRA)
 endif
 ifdef MAKE_LIB
 ifndef TEST

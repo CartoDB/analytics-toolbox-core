@@ -11,7 +11,7 @@ const BQ_DATASET = `${BQ_DATASET_PREFIX}carto`;
 const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
 
 async function runQuery (query, options) {
-    options = Object.assign({}, { 'timeoutMs' : 40000 }, options);
+    options = Object.assign({}, { 'timeoutMs' : 60000 }, options);
     query = replaceBQPrefix(query);
     const [rows] = await client.query(query, options);
     return rows;
