@@ -6,8 +6,12 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADBIN_FROMZXY`
 (z INT64, x INT64, y INT64)
 RETURNS INT64 AS ((
   WITH
+  __check AS (
+    SELECT COALESCE(z, x, y, ERROR('NULL argument(s) passed to QUADBIN_FROMZXY')) AS _checked
+  ),
   __ints AS (
-    SELECT CAST(x AS INT64) << (32-Z) AS x, CAST(y AS INT64) << (32-Z) AS y, z
+    SELECT _checked, CAST(x AS INT64) << (32-Z) AS x, CAST(y AS INT64) << (32-Z) AS y, z
+    FROM __check
   ),
   __interleaved1 AS (
       SELECT
