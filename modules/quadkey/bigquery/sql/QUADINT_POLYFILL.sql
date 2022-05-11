@@ -6,11 +6,17 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-  WITH bbox AS (
-    SELECT ST_BOUNDINGBOX(geog) AS box
+  WITH
+  __check AS (
+    SELECT COALESCE(z, x, y, ERROR('NULL argument(s) passed to QUADBIN_FROMZXY')) AS _checked
+  ),
+  bbox AS (
+    SELECT ST_BOUNDINGBOX(COALESCE(
+      geog, ERROR('NULL argument(s) passed to QUADINT_POLYFILL')
+    )) AS box
   ),
   params AS (
-    SELECT resolution AS z,
+    SELECT COALESCE(resolution, ERROR('NULL argument(s) passed to QUADINT_POLYFILL')) AS z,
       box.xmin AS minlon, box.ymin AS minlat,
       box.xmax AS maxlon, box.ymax AS maxlat,
       ACOS(-1) AS PI
