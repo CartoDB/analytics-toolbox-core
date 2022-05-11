@@ -19,17 +19,20 @@ env:
   INPUT_FORCE_DEPLOY: ${{ github.event.inputs.force_deploy }}
 
 jobs:
+  # More info: https://github.com/CartoDB/cloud-native/wiki/CI-Datawarehouses
   obtain-ci-credentials:
     runs-on: ubuntu-20.04
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     outputs:
       # TODO: Add BigQuery
+      bq_
       sf_user: ${{ steps.gcp-secrets.outputs.SF_USER }}
       sf_password: ${{ steps.gcp-secrets.outputs.SF_PASSWORD }}
       rs_user: ${{ steps.gcp-secrets.outputs.RS_USER }}
       rs_password: ${{ steps.gcp-secrets.outputs.RS_PASSWORD }}
       aws_access_key_id: ${{ steps.gcp-secrets.outputs.AWS_ACCESS_KEY_ID }}
       aws_secret_access_key: ${{ steps.gcp-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
+      pg_user: ${{ steps.gcp-secrets.outputs.PG_USER }}
+      pg_password: ${{ steps.gcp-secrets.outputs.PG_PASSWORD }}
     env:
       GOOGLE_SECRETS_PROJECT_ID: "carto-terraform-ci-cd"
     steps:
@@ -50,6 +53,8 @@ jobs:
             RS_PASSWORD:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-redshift-ci-password
             AWS_ACCESS_KEY_ID:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-github-actions-carto-analytics-toolbox-access-key-id
             AWS_SECRET_ACCESS_KEY:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-github-actions-carto-analytics-toolbox-secret-access-key
+            PG_USER:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-aurora-ci-master-user
+            PG_PASSWORD:projects/${{ env.GOOGLE_SECRETS_PROJECT_ID }}/secrets/terraform-carto3-aurora-ci-master-password
 
   deploy-bq:
     runs-on: ubuntu-20.04
@@ -224,6 +229,11 @@ jobs:
             project: carto-un-eu-ce2
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
+          # FIXME: Is this ok? Do we need any further configuration?
+          - region: europe-central2
+            project: carto-ci-resources
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
 
     env:
       GCLOUD_VERSION: 290.0.1
@@ -243,6 +253,7 @@ jobs:
           FILES: "Makefile"
       - uses: google-github-actions/auth@v0
         with:
+          # FIXME: What are this SA for?
           credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
@@ -258,10 +269,8 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     needs: [obtain-ci-credentials]
-    if: |
-      ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
-      && false
+    # FIXME: Do we need to set the same if: as BigQuery one?
+    if: false
     strategy:
       matrix:
         include:
@@ -304,10 +313,8 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     needs: [obtain-ci-credentials]
-    if: |
-      ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
-      && false
+    # FIXME: Do we need to set the same if: as BigQuery one?
+    if: false
     strategy:
       matrix:
         include:
@@ -356,12 +363,25 @@ jobs:
   deploy-pg:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
+    needs: [obtain-ci-credentials]
+    # FIXME: Do we need to set the same if: as BigQuery one?
     if: false
+    strategy:
+      matrix:
+        include:
+          - pg_host: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
+            pg_database: pgcarto
+            pg_user: ${{ secrets.PG_USER }}
+            pg_password: ${{ secrets.PG_PASSWORD }}
+          - pg_host: aurora-postgres-ci.cluster-cmqqdf7fv289.us-east-1.rds.amazonaws.com
+            pg_database: ci
+            pg_user: ${{ needs.obtain-ci-credentials.outputs.pg_user }}
+            pg_password: ${{ needs.obtain-ci-credentials.outputs.pg_password }}
     env:
-      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
-      PG_DATABASE: pgcarto
-      PG_USER: ${{ secrets.PG_USER }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+      PG_HOST: ${{ matrix.pg_host }}
+      PG_DATABASE: ${{ matrix.pg_database }}
+      PG_USER: ${{ matrix.pg_user }}
+      PG_PASSWORD: ${{ matrix.pg_password }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
