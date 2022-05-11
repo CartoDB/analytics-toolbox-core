@@ -21,7 +21,9 @@ endif
 SED = sed
 GSUTIL = gsutil
 SNOWSQL_BIN ?= snowsql
-SNOWSQL := SNOWSQL_PWD='$(SF_PASSWORD)' $(SNOWSQL_BIN) -a $(SF_ACCOUNT) -u $(SF_USER)
+SF_ROLE ?= SYSADMIN
+export SF_ROLE
+SNOWSQL := SNOWSQL_PWD='$(SF_PASSWORD)' $(SNOWSQL_BIN) -a $(SF_ACCOUNT) -u $(SF_USER) -r $(SF_ROLE)
 
 SF_SCHEMA = $(SF_SCHEMA_PREFIX)carto
 SF_SHARES_ROLE = ACCOUNTADMIN
@@ -99,7 +101,7 @@ test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/unit --testTimeout=30000
+	jest test/unit/$(TEST) --testTimeout=30000
 
 test-integration-full:
 	$(MAKE) deploy
@@ -109,7 +111,7 @@ test-integration-full:
 test-integration: check $(NODE_MODULES_DEV)
 	SF_SCHEMA=$(SF_SCHEMA) \
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/integration/$(F) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
+	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 
 deploy: check
 ifdef MODULE_DEPS
@@ -171,7 +173,7 @@ ifeq ($(SF_SHARE_ENABLED), 1)
 	done
 endif
 
-serialize-module: build
+serialize-module:: build
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql

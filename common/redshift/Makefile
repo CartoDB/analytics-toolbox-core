@@ -73,6 +73,7 @@ build:
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ $(DIST_DIR)/$(RS_SCHEMA)Lib/
 	cd $(DIST_DIR) && zip -r $(RS_SCHEMA)Lib *
 	rm -rf $(DIST_DIR)/$(RS_SCHEMA)Lib
+	$(POST_BUILD)
 
 test-unit: venv2
 	rm -rf $(LIB_DIR)/$(MODULE)Lib
@@ -95,9 +96,11 @@ test-integration-full:
 
 deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-upload
 	$(MAKE) schema-create
@@ -110,9 +113,11 @@ clean:
 
 clean-deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-remove
 	$(MAKE) share-remove
@@ -170,10 +175,10 @@ serialize-dependency: venv2
 ifneq ("$(wildcard requirements.txt)","")
 	. $(VENV2_ACTIVATE) && \
 	bash $(COMMON_DIR)/libraryinstaller.sh -f requirements.txt -s && \
-	deactivate; 
+	deactivate;
 endif
 
-serialize-module: build serialize-dependency
+serialize-module:: build serialize-dependency
 	rm -f $(DIST_DIR)/libraries.sql
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql

@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_CONTENT@@
+    @@SF_LIBRARY_GREAT_CIRCLE@@
 
     const options = {};
     options.npoints = Number(NPOINTS);

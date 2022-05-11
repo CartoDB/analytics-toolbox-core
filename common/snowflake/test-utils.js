@@ -9,7 +9,8 @@ const connection = snowflake.createConnection({
     username: process.env.SF_USER,
     password: process.env.SF_PASSWORD,
     database: process.env.SF_DATABASE,
-    schema: process.env.SF_SCHEMA
+    schema: process.env.SF_SCHEMA,
+    role: process.env.SF_ROLE
 });
 
 connection.connect((err) => {
@@ -60,9 +61,22 @@ function sortByKey (list, key) {
     return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
 }
 
+function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
+    list = list.sort((a, b) => (a[orderKey] > b[orderKey]) ? 1 : -1);
+    for (let row of list) {
+        for (let roundKey of roundedKeys) {
+            if (row[roundKey]) {
+                row[roundKey] = row[roundKey].toPrecision(precision);
+            }
+        }
+    }
+    return list;
+}
+
 module.exports = {
     runQuery,
     createTable,
     deleteTable,
-    sortByKey
+    sortByKey,
+    sortByKeyAndRound
 }

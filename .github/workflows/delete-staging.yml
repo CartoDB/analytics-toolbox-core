@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift, all)'
+        description: 'Cloud warehouse (bigquery, snowflake, redshift, postgres, all)'
         required: true
         default: 'all'
       pr_number:
@@ -30,13 +30,13 @@ jobs:
           credentials_json: ${{ secrets.BQCARTOCUSTOMST_DEPLOY_CLOUD_EXTENSIONS_SA }}
           project_id: ${{ env.BQ_PROJECT }}
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
       - name: Delete project
         shell: bash
-        run: gcloud projects delete ${{ env.BQ_PROJECT }} --quiet 
+        run: gcloud projects delete ${{ env.BQ_PROJECT }} --quiet
       - name: Comment PR
         uses: actions/github-script@0.3.0
         with:
@@ -49,9 +49,7 @@ jobs:
   delete-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-    if: |
-      ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
+    if: false
     env:
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL_BIN: ~/snowflake/snowsql
@@ -84,9 +82,7 @@ jobs:
   delete-rs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-    if: |
-      ( github.event_name == 'pull_request' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
+    if: false
     env:
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
@@ -119,3 +115,27 @@ jobs:
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Schema `${{ env.RS_DATABASE }}.${{ env.RS_SCHEMA_PREFIX }}carto` deleted! 🔥' });
+
+  delete-pg:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: false
+    env:
+      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
+      PG_DATABASE: pgcartost
+      PG_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
+      PG_USER: ${{ secrets.PG_USER }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Delete schema
+        run: make clean-deploy CLOUD=postgres
+      - name: Comment PR
+        uses: actions/github-script@0.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }  } = context;
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Schema `${{ env.PG_DATABASE }}.${{ env.PG_SCHEMA_PREFIX }}carto` deleted! 🔥' });

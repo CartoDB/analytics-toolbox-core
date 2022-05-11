@@ -13,7 +13,7 @@ SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 SHARED_DIR = $(ROOT_DIR)/../shared/javascript
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
-	include $(ENV_DIR)/.env 
+	include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
@@ -83,6 +83,7 @@ ifndef NO_BUILD
 	NAME=$(MODULE)Lib \
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
+	$(POST_BUILD)
 endif
 ifdef MAKE_LIB
 	$(MAKE) -C $(LIB_DIR) build
@@ -92,7 +93,7 @@ test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
-	jest test/unit --testTimeout=30000
+	jest test/unit/$(TEST) --testTimeout=30000
 ifdef MAKE_LIB
 	$(MAKE) -C test/unit-old/ test-unit
 endif
@@ -106,7 +107,7 @@ test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
 	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
-	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
+	jest test/integration/$(TEST) --testTimeout=120000 $(TEST_INTEGRATION_EXTRA)
 endif
 ifdef MAKE_LIB
 ifndef TEST
@@ -117,9 +118,11 @@ endif
 
 deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-upload
 	$(MAKE) dataset-create
@@ -141,9 +144,11 @@ endif
 
 clean-deploy: check
 ifdef MODULE_DEPS
-	for module_dep in $(MODULE_DEPS); do \
-		$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
-	done
+	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
+		for module_dep in $(MODULE_DEPS); do \
+			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
+		done \
+	fi;
 endif
 	$(MAKE) storage-remove
 	$(MAKE) dataset-remove || ((sleep 5 && $(MAKE) dataset-remove) || exit 1)
@@ -174,7 +179,7 @@ dataset-deploy:
 	done
 	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | $(BQ) query -q --format=json --use_legacy_sql=false --project_id=$(BQ_PROJECT) --dataset_id=$(BQ_DEPLOY_DATASET) || exit 1
 
-serialize-module: build
+serialize-module:: build
 	rm -f $(DIST_DIR)/module.sql
 	rm -f $(DIST_DIR)/module-header.sql
 	rm -f $(DIST_DIR)/module-footer.sql

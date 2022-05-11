@@ -7,19 +7,18 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift, all)'
+        description: "Cloud warehouse (bigquery, snowflake, redshift, postgres, all)"
         required: true
-        default: 'all'
+        default: "all"
       force_deploy:
-        description: 'Force deployment of all modules'
+        description: "Force deployment of all modules"
         required: true
-        default: 'false'
+        default: "false"
 
 env:
   INPUT_FORCE_DEPLOY: ${{ github.event.inputs.force_deploy }}
 
 jobs:
-
   obtain-ci-credentials:
     runs-on: ubuntu-20.04
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -32,7 +31,7 @@ jobs:
       aws_access_key_id: ${{ steps.gcp-secrets.outputs.AWS_ACCESS_KEY_ID }}
       aws_secret_access_key: ${{ steps.gcp-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
     env:
-      GOOGLE_SECRETS_PROJECT_ID: 'carto-terraform-ci-cd'
+      GOOGLE_SECRETS_PROJECT_ID: "carto-terraform-ci-cd"
     steps:
       - name: Google Cloud Auth
         uses: google-github-actions/auth@v0
@@ -121,6 +120,111 @@ jobs:
             project: carto-un-na-ne1
             bucket: gs://spatialextension_un/
             group: spatialextension_users_un@cartodb.com
+          - region: asia-southeast1
+            project: carto-un-as-se1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-central1
+            project: carto-un-us-ce1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west1
+            project: carto-un-us-we1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west2
+            project: carto-un-us-we2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west3
+            project: carto-un-us-we3
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-west4
+            project: carto-un-us-we4
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-east1
+            project: carto-un-us-ea1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: us-east4
+            project: carto-un-us-ea4
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: southamerica-east1
+            project: carto-un-sa-ea1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: southamerica-west1
+            project: carto-un-sa-we1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: northamerica-northeast2
+            project: carto-un-na-ne2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-south1
+            project: carto-un-as-so1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-south2
+            project: carto-un-as-so2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-east1
+            project: carto-un-as-ea1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-east2
+            project: carto-un-as-ea2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-northeast2
+            project: carto-un-as-ne2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-northeast3
+            project: carto-un-as-ne3
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: asia-southeast2
+            project: carto-un-as-se2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: australia-southeast2
+            project: carto-un-au-se2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west1
+            project: carto-un-eu-we1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west2
+            project: carto-un-eu-we2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west3
+            project: carto-un-eu-we3
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west4
+            project: carto-un-eu-we4
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-west6
+            project: carto-un-eu-we6
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-north1
+            project: carto-un-eu-no1
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+          - region: europe-central2
+            project: carto-un-eu-ce2
+            bucket: gs://spatialextension_un/
+            group: spatialextension_users_un@cartodb.com
+
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
@@ -135,18 +239,18 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
         with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
+          PATTERNS: "**/*.+(js|sql)"
+          FILES: "Makefile"
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
-            version: ${{ env.GCLOUD_VERSION }}
-            project_id: ${{ env.BQ_PROJECT }}
+          version: ${{ env.GCLOUD_VERSION }}
+          project_id: ${{ env.BQ_PROJECT }}
       - name: Deploy to production
         run: make deploy CLOUD=bigquery
 
@@ -157,6 +261,7 @@ jobs:
     if: |
       ( github.event_name == 'push' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
+      && false
     strategy:
       matrix:
         include:
@@ -186,8 +291,8 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
         with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
+          PATTERNS: "**/*.+(js|sql)"
+          FILES: "Makefile"
       - name: Setup snowsql
         run: |
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
@@ -202,6 +307,7 @@ jobs:
     if: |
       ( github.event_name == 'push' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
+      && false
     strategy:
       matrix:
         include:
@@ -246,3 +352,18 @@ jobs:
         run: pip install virtualenv
       - name: Deploy to production
         run: make deploy CLOUD=redshift
+
+  deploy-pg:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: false
+    env:
+      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
+      PG_DATABASE: pgcarto
+      PG_USER: ${{ secrets.PG_USER }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Deploy to production
+        run: make deploy CLOUD=postgres

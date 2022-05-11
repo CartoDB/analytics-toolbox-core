@@ -12,12 +12,29 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_CONTENT@@
+    @@SF_LIBRARY_CONCAVE@@
+
+    const multiPoints = transformationsLib.multiPoint(GEOJSONS.map(x => JSON.parse(x).coordinates));
+    const nonDuplicates = transformationsLib.cleanCoords(multiPoints).geometry;
+    const arrayCoordinates = nonDuplicates.coordinates;
+
+    // Point
+    if (arrayCoordinates.length == 1) {
+        return JSON.stringify(transformationsLib.point(arrayCoordinates[0]).geometry);
+    }
+
+    // Segment
+    if (arrayCoordinates.length == 2) {
+        const start = arrayCoordinates[0];
+        const end = arrayCoordinates[1];
+        const lineString = transformationsLib.lineString([start, end]);
+        return JSON.stringify(lineString.geometry);
+    }
 
     const options = {};
     options.maxEdge = MAXEDGE;
     options.units = UNITS;
-    const featuresCollection = transformationsLib.featureCollection(GEOJSONS.map(x => transformationsLib.feature(JSON.parse(x))));
+    const featuresCollection = transformationsLib.featureCollection(arrayCoordinates.map(x => transformationsLib.point(x)));
     const hull = transformationsLib.concave(featuresCollection, options);
     return JSON.stringify(hull.geometry);
 $$;

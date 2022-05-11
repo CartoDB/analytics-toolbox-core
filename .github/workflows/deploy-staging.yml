@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift, all)'
+        description: 'Cloud warehouse (bigquery, snowflake, redshift, postgres, all)'
         required: true
         default: 'all'
       pr_number:
@@ -16,11 +16,11 @@ on:
 jobs:
 
   deploy-bq:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
     if: |
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
       ( github.event_name == 'workflow_dispatch' && contains(fromJson('["bigquery", "all"]'), github.event.inputs.cloud) )
-    runs-on: ubuntu-20.04
-    timeout-minutes: 15
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
@@ -35,7 +35,7 @@ jobs:
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
@@ -54,11 +54,9 @@ jobs:
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECT }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECT}}' });
 
   deploy-sf:
-    if: |
-      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["snowflake", "all"]'), github.event.inputs.cloud) )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
+    if: false
     env:
       SNOWSQL_VERSION: 1.2.13
       SNOWSQL_BIN: ~/snowflake/snowsql
@@ -89,11 +87,9 @@ jobs:
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto`' });
 
   deploy-rs:
-    if: |
-      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["redshift", "all"]'), github.event.inputs.cloud) )
     runs-on: ubuntu-20.04
     timeout-minutes: 15
+    if: false
     env:
       RS_REGION: us-east-2
       RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
@@ -126,3 +122,27 @@ jobs:
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.RS_DATABASE }}.${{ env.RS_SCHEMA_PREFIX }}carto`' });
+
+  deploy-pg:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    if: false
+    env:
+      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
+      PG_DATABASE: pgcartost
+      PG_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
+      PG_USER: ${{ secrets.PG_USER }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Deploy to staging
+        run: make deploy CLOUD=postgres
+      - name: Comment PR
+        uses: actions/github-script@0.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }  } = context;
+            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
+            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.PG_DATABASE }}.${{ env.PG_SCHEMA_PREFIX }}carto`' });

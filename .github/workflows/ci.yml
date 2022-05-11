@@ -78,7 +78,7 @@ jobs:
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
@@ -130,9 +130,9 @@ jobs:
       SNOWSQL_BIN: ~/snowflake/snowsql
       SNOWSQL_DEST: ~/snowflake
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SF_USER: ${{ secrets.SF_USERNAME }}
+      SF_USER: ${{ secrets.SF_USER }}
       SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASE: SFCARTOCI
+      SF_DATABASE: ${{ secrets.SF_DATABASE }}
       SF_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
     steps:
       - name: Checkout repo
@@ -146,8 +146,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup snowsql                          
-        run: | 
+      - name: Setup snowsql
+        run: |
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Run integration tests
@@ -204,16 +204,16 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      RS_REGION: us-east-2
-      RS_HOST: redshift-cluster-1.c2gsqdockj5a.us-east-2.redshift.amazonaws.com
-      RS_CLUSTER_ID: redshift-cluster-1
-      RS_DATABASE: rscartoci
+      RS_REGION: ${{ secrets.RS_REGION }}
+      RS_HOST: ${{ secrets.RS_HOST }}
+      RS_CLUSTER_ID: ${{ secrets.RS_CLUSTER_ID }}
+      RS_DATABASE: ${{ secrets.RS_DATABASE }}
       RS_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
       RS_USER: ${{ secrets.RS_USER }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-      RS_BUCKET: s3://rscartoci/
+      RS_BUCKET: ${{ secrets.RS_BUCKET }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -236,3 +236,52 @@ jobs:
         run: pip install virtualenv
       - name: Run integration tests
         run: make test-integration-full CLOUD=redshift
+
+  lint-pg:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|sql)'
+          FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Check linter
+        run: make lint CLOUD=postgres
+
+  test-integration-pg:
+    needs: lint-pg
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    env:
+      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
+      PG_DATABASE: pgcartoci
+      PG_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+      PG_USER: ${{ secrets.PG_USER }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|sql)'
+          FILES: 'Makefile'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Setup postgres
+        run: sudo apt-get install -y postgresql-client
+      - name: Run integration tests
+        run: make test-integration-full CLOUD=postgres

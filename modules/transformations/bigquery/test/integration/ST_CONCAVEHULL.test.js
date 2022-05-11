@@ -8,6 +8,10 @@ const fijiFixturesIn = require('./concavehull_fixtures/in/fiji');
 const fijiFixturesOut = require('./concavehull_fixtures/out/fiji');
 const holeFixturesIn = require('./concavehull_fixtures/in/hole');
 const holeFixturesOut = require('./concavehull_fixtures/out/hole');
+const pointFixturesIn = require('./concavehull_fixtures/in/point');
+const pointFixturesOut = require('./concavehull_fixtures/out/point');
+const duplicatesFixturesIn = require('./concavehull_fixtures/in/duplicates');
+const duplicatesFixturesOut = require('./concavehull_fixtures/out/duplicates');
 
 function getFeatureArray (fixture) {
     let featuresArray = '[';
@@ -56,4 +60,14 @@ test('ST_CONCAVEHULL default values should work', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].nullParam1).toEqual(rows[0].defaultValue);
+});
+
+test('ST_CONCAVEHULL with a single point and line should work', async () => {
+    const query = `SELECT \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(duplicatesFixturesIn)}, CAST('Infinity' AS FLOAT64), "kilometers") as line,
+    \`@@BQ_PREFIX@@carto.ST_CONCAVEHULL\`(${getFeatureArray(pointFixturesIn)}, NULL, NULL) as point`;
+    const rows = await runQuery(query);
+
+    expect(rows.length).toEqual(1);
+    expect(rows[0].line.value).toEqual(duplicatesFixturesOut.value);
+    expect(rows[0].point.value).toEqual(pointFixturesOut.value);
 });

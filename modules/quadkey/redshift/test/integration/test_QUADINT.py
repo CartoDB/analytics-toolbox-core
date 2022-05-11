@@ -4,17 +4,17 @@ import pytest
 
 def test_quadkey_conversion_success():
     result = run_query(
-        """SELECT @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+        """SELECT @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
         @@RS_PREFIX@@carto.QUADINT_FROMZXY(2, 1, 1)) as quadkey1,
-        @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+        @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
         @@RS_PREFIX@@carto.QUADINT_FROMZXY(6, 40, 55)) as quadkey2,
-        @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+        @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
         @@RS_PREFIX@@carto.QUADINT_FROMZXY(12, 1960, 3612)) as quadkey3,
-        @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+        @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
         @@RS_PREFIX@@carto.QUADINT_FROMZXY(18, 131621, 65120)) as quadkey4,
-        @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+        @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
         @@RS_PREFIX@@carto.QUADINT_FROMZXY(24, 9123432, 159830174)) as quadkey5,
-        @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+        @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
         @@RS_PREFIX@@carto.QUADINT_FROMZXY(29, 389462872, 207468912)) as quadkey6"""
     )
 
@@ -60,9 +60,9 @@ def test_quadint_decoding_success():
             SELECT 28, 640, 327680 UNION ALL
             SELECT 29, 327680, 327680
         )
-        SELECT @@RS_PREFIX@@carto.QUADINT_ASZXY(
+        SELECT @@RS_PREFIX@@carto.QUADINT_TOZXY(
             @@RS_PREFIX@@carto.QUADINT_FROMQUADKEY(
-                @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(
+                @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(
                     @@RS_PREFIX@@carto.QUADINT_FROMZXY(
                         zoom, tileX, tileY)))) AS decodedQuadkey
         FROM tileContext;"""
@@ -78,5 +78,5 @@ def test_quadint_decoding_success():
 
 def test_quadint_null_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
-        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_ASQUADKEY(NULL)')
+        run_query('SELECT @@RS_PREFIX@@carto.QUADINT_TOQUADKEY(NULL)')
     assert 'NULL argument passed to UDF' in str(excinfo.value)
