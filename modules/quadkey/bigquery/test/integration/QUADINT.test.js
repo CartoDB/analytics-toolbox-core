@@ -1,12 +1,17 @@
 const { runQuery } = require('../../../../../common/bigquery/test-utils');
 
+// FIXME: we were testing for Z=24 X=9123432 Y=159830174 which is invalid (Y is too large)
+// expecting that the excess most significant bits of Y were ignored in QUADINT_TOQUADKEY
+// but not in QUADINT_FROMZXY
+// Was that intentional? In that case it makes more sense to alter QUADINT_FROMZXY, not QUADINT_TOQUADKEY,
+// ANDing x & y with ((1 << z)-1) in QUADINT_FROMZXY
 test('QUADKEY conversion should work', async () => {
     const query = `SELECT
         \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(2, 1, 1)) AS quadkey1,
         \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(6, 40, 55)) AS quadkey2,
         \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(12, 1960, 3612)) AS quadkey3,
         \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(18, 131621, 65120)) AS quadkey4,
-        \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(24, 9123432, 159830174)) AS quadkey5,
+        \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(24, 9123432, 8835230)) AS quadkey5,
         \`@@BQ_PREFIX@@carto.QUADINT_TOQUADKEY\`(\`@@BQ_PREFIX@@carto.QUADINT_FROMZXY\`(29, 389462872, 207468912)) AS quadkey6`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
