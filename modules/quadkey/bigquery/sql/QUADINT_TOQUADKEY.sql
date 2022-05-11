@@ -64,9 +64,9 @@ AS((
     SELECT FORMAT('%X', x | (y << 1)) AS hq, z FROM __interleaved5
   )
   SELECT
-    LPAD(
+    LPAD(LTRIM(
       REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
       LTRIM(hq, '0'), '0', '00'), '1', '01'), '2', '02'), '3', '03'), '4', '10'), '5', '11'), '6', '12'), '7', '13'), '8', '20'), '9', '21'), 'A', '22'), 'B', '23'), 'C', '30'), 'D', '31'), 'E', '32'), 'F', '33'),
-      z, '0')
+      '0'), z, '0')
   FROM __hex
 ));
