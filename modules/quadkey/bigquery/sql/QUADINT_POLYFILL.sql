@@ -2,34 +2,37 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADINT_POLYFILL`
-(geojson STRING, resolution INT64)
-RETURNS ARRAY<INT64>
-DETERMINISTIC
-LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
-AS """
-    if (!geojson || resolution == null) {
-        throw new Error('NULL argument passed to UDF');
-    }
-    const pol = JSON.parse(geojson);
-    let quadints = [];
-    if (pol.type == 'GeometryCollection') {
-        pol.geometries.forEach(function (geom) {
-            quadints = quadints.concat(quadkeyLib.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
-        });
-        quadints = Array.from(new Set(quadints));
-    }
-    else
-    {
-        quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
-    }
-    return quadints.map(String);
-""";
-
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
-AS (
-    `@@BQ_PREFIX@@carto.__QUADINT_POLYFILL`(ST_ASGEOJSON(geog), resolution)
-);
+AS ((
+  WITH bbox AS (
+    SELECT ST_BOUNDINGBOX(geog) AS box
+  ),
+  params AS (
+    SELECT resolution AS z,
+      box.xmin AS minlon, box.ymin AS minlat,
+      box.xmax AS maxlon, box.ymax AS maxlat,
+      ACOS(-1) AS PI
+    FROM bbox
+  ),
+  tile_coords_range AS (
+    SELECT
+      z,
+      CAST(FLOOR((1 << z) * ((minlon / 360.0) + 0.5)) AS INT64) AS xmin,
+      CAST(FLOOR((1 << z) * (0.5 - (LN(TAN(PI/4.0 + maxlat/2.0 * PI/180.0)) / (2*PI)))) AS INT64) AS ymin,
+      CAST(FLOOR((1 << z) * ((maxlon / 360.0) + 0.5)) AS INT64) AS xmax,
+      CAST(FLOOR((1 << z) * (0.5 - (LN(TAN(PI/4.0 + minlat/2.0 * PI/180.0)) / (2*PI)))) AS INT64) AS ymax
+    FROM params
+  ),
+  cells AS (
+    SELECT z, x, y
+    FROM tile_coords_range, UNNEST(GENERATE_ARRAY(xmin, xmax)) AS x,
+    UNNEST(GENERATE_ARRAY(ymin, ymax)) AS y
+  )
+  SELECT
+     ARRAY_AGG((((y << z) | x) << 5) | z)
+  FROM cells
+  WHERE
+    ST_INTERSECTS(`@@BQ_PREFIX@@carto.QUADINT_BOUNDARY`((z & 0x1F) | (x << 5) | (y << (z + 5))), geog)
+));
