@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_TOCHILDREN`
 RETURNS ARRAY<INT64>
 AS ((
   WITH __parts AS (
-    SELECT (quadint >> 5) AS xy, (quadint & 0x1F) AS z
+
+    SELECT (quadint >> 5) AS xy, (quadint & 0x1F) AS z,
+      COALESCE(quadint, resolution, ERROR('NULL argument passed to QUADINT_TOCHILDREN')) AS check
   ),
   __zxy AS (
     SELECT

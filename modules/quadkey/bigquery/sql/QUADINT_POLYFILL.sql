@@ -7,9 +7,6 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_POLYFILL`
 RETURNS ARRAY<INT64>
 AS ((
   WITH
-  __check AS (
-    SELECT COALESCE(z, x, y, ERROR('NULL argument(s) passed to QUADBIN_FROMZXY')) AS _checked
-  ),
   bbox AS (
     SELECT ST_BOUNDINGBOX(COALESCE(
       geog, ERROR('NULL argument(s) passed to QUADINT_POLYFILL')

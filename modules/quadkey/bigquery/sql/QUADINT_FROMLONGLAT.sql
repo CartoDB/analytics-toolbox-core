@@ -7,9 +7,12 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`
 RETURNS INT64
 AS ((
   WITH __params AS (
-  SELECT
-    resolution AS z,
-    ACOS(-1) AS PI
+    SELECT
+      COALESCE(longitude, latitude, resolution, ERROR('NULL argument passed to QUADINT_FROMLONGLAT')) AS check1,
+      IF(resolution < 0 OR resolution > 29, ERROR('Invalid resolution; should be between 0 and 29'), 0) AS check2,
+      resolution AS z,
+      ACOS(-1) AS PI,
+      GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
   ),
   __zxy AS (
     SELECT

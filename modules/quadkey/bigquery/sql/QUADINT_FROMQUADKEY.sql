@@ -17,8 +17,8 @@ AS ((
         z,
         (
           SELECT AS STRUCT
-            SUM( (CAST(_digit AS INT64) & 1) << (__zdigits.z - _pos - 1) ) AS x,
-            SUM( ((CAST(_digit AS INT64) >> 1) & 1) << (__zdigits.z - _pos - 1) ) AS y
+            SUM( IF(_digit='', 0, (CAST(_digit AS INT64) & 1) << (__zdigits.z - _pos - 1)) ) AS x,
+            SUM( IF(_digit='', 0, ((CAST(_digit AS INT64) >> 1) & 1) << (__zdigits.z - _pos - 1)) ) AS y
           FROM UNNEST(_digits) AS _digit WITH OFFSET AS _pos
         ) AS xy
       FROM __zdigits
