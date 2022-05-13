@@ -6,20 +6,24 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADINT_FROMLONGLAT`
 (longitude FLOAT64, latitude FLOAT64, resolution INT64)
 RETURNS INT64
 AS ((
-  WITH __params AS (
-    SELECT
-      COALESCE(longitude, latitude, resolution, ERROR('NULL argument passed to QUADINT_FROMLONGLAT')) AS check1,
-      IF(resolution < 0 OR resolution > 29, ERROR('Invalid resolution; should be between 0 and 29'), 0) AS check2,
-      resolution AS z,
-      ACOS(-1) AS PI,
-      GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
-  ),
-  __zxy AS (
-    SELECT
-      z,
-      CAST(FLOOR((1 << z) * ((longitude / 360.0) + 0.5)) AS INT64) AS x,
-      CAST(FLOOR((1 << z) * (0.5 - (LN(TAN(PI/4.0 + latitude/2.0 * PI/180.0)) / (2*PI)))) AS INT64) AS y
-    FROM __params
+  IF(longitude IS NULL OR latitude IS NULL OR resolution IS NULL,
+    ERROR('NULL argument passed to QUADINT_FROMLONGLAT'),
+    IF (resolution < 0 OR resolution > 29,
+      ERROR('Invalid resolution; should be between 0 and 29'), (
+        WITH __params AS (
+        SELECT
+          resolution AS z,
+          ACOS(-1) AS PI,
+          GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
+        ),
+        __zxy AS (
+          SELECT
+            z,
+            CAST(FLOOR((1 << z) * ((longitude / 360.0) + 0.5)) AS INT64) & ((1 << z) - 1) AS x,
+            CAST(FLOOR((1 << z) * (0.5 - (LN(TAN(PI/4.0 + latitude/2.0 * PI/180.0)) / (2*PI)))) AS INT64) & ((1 << z) - 1) AS y
+          FROM __params
+        )
+        SELECT (((y << z) | x) << 5) | z FROM __zxy
+    ))
   )
-  SELECT (((y << z) | x) << 5) | z FROM __zxy
 ));

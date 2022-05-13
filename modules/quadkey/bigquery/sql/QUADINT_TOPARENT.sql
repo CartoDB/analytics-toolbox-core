@@ -15,7 +15,9 @@ AS ((
           ),
           __zxy AS (
             SELECT
-              z,
+              IF(z >= resolution, z,
+                ERROR('QUADINT_TOPARENT quadint resolution less than parent')
+              ) AS z,
               xy & ((1 << z) - 1) AS x,
               xy >> z AS y
             FROM __parts
