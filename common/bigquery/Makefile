@@ -22,7 +22,7 @@ GSUTIL = gsutil
 BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 
 BQ_MODULE_LABEL ?= spatial_extension_module:core
-BQ_DEPLOY_DATASET = $(BQ_DATASET_PREFIX)carto
+BQ_DEPLOY_DATASET ?= $(BQ_DATASET_PREFIX)carto
 BQ_PREFIX = $(BQ_PROJECT).$(BQ_DATASET_PREFIX)
 
 PACKAGE_TYPE ?= CORE
