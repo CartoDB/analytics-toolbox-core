@@ -155,7 +155,7 @@ endif
 
 storage-upload:
 	$(MAKE) build
-	$(GSUTIL) cp -r $(BQ_LIBRARY) $(BQ_LIBRARY_BUCKET)
+	$(GSUTIL) alpha storage cp -r $(BQ_LIBRARY) $(BQ_LIBRARY_BUCKET)
 
 storage-remove:
 	if [ `$(GSUTIL) ls $(BQ_LIBRARY_BUCKET) 2>&1 | grep "$(BQ_LIBRARY_BUCKET)"` ]; then \
