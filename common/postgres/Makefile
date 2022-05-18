@@ -16,6 +16,7 @@ VENV3_DIR = $(COMMON_DIR)/venv3
 VENV3_ACTIVATE = $(VENV3_DIR)/bin/activate
 ENV_DIR ?= $(ROOT_DIR)/../../..
 PACKAGE_TYPE ?= CORE
+PACKAGE_VERSION ?= dev
 VERSION_FUNCTION = VERSION_$(PACKAGE_TYPE)
 
 
@@ -104,6 +105,7 @@ schema-deploy: pgpass
 	for n in `CLOUD=$(CLOUD) node $(SCRIPTS_DIR)/sqlsort.js`; do \
 		$(SED) $(REPLACEMENTS) $$n | PGOPTIONS="--search_path=$(PG_SCHEMA),public,postgres" $(PG_RUN_STATEMENT_SQL) -f -; \
 	done
+	$(SED) $(REPLACEMENTS) $(COMMON_DIR)/VERSION.sql | PGOPTIONS="--search_path=$(PG_SCHEMA),public,postgres" $(PG_RUN_STATEMENT_SQL) -f -;
 
 serialize-module:
 	rm -f $(DIST_DIR)/module.sql
