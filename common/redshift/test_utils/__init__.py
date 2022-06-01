@@ -23,6 +23,9 @@ def run_queries(queries):
         user=os.environ['RS_USER'],
         password=os.environ['RS_PASSWORD'],
     )
+    # conn.autocommit is False by default. Set to True to avoid the following error:
+    # -- COMMIT cannot be invoked from a procedure that is executing in an atomic context.
+    conn.autocommit = True
     cursor = conn.cursor()
     for query in queries:
         cursor.execute(query.replace('@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']))
