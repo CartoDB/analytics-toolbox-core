@@ -4,6 +4,41 @@ The *CARTO Analytics Toolbox* is a set of UDFs and Stored Procedures to unlock S
 
 This repo contains the core open-source modules of the toolbox. CARTO offers a set of premium modules that are available for CARTO users.
 
+## Getting started
+
+Using the functions on this project depends on the Datawarehouse you are using. In BigQuery and Snowflake you can access them directly as a shared resoueces without having to install them, for the rest you will have to install them locally on your database.
+
+### BigQuery
+
+You can use directly the functions as they are globally shared in the US region.
+
+```sql
+SELECT `carto-os.carto.H3_CENTER`('847b59dffffffff')
+```
+
+If you need to use them from the Europe region use:
+
+```sql
+SELECT `carto-os-eu.carto.H3_CENTER`('847b59dffffffff')
+```
+
+If you need to install them on your own VPC or in a different region, follow the instructions later on.
+
+### Snowflake
+
+The easiest way to start using these functions is to add them to your Datawarehouse through the [Snowflake Marketplace](https://www.snowflake.com/datasets/carto-analytics-toolbox/). Go there and install it using theregular methods. After that you should be able to use them on the location you have installed them. For example try:
+
+```sql
+SELECT carto.H3_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4)
+```
+
+If you need to install them directly, not through the data share process, follow the instructions later on.
+
+### Redshift
+
+Right now the only way to get access the Analytics toolbox is by installing it directly on your database. Follow the instructions later on.
+
+
 ## Documentation
 
 | Cloud | Documentation |
