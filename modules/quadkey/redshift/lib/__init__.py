@@ -153,6 +153,14 @@ def quadkey_from_quadint(quadint):
     return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
 
 
+def bbox_quadkey(quadkey):
+    import mercantile
+
+    tile = mercantile.quadkey_to_tile(quadkey)
+    bounds = mercantile.bounds(tile.x, tile.y, tile.z)
+    return [bounds.west, bounds.south, bounds.east, bounds.north]
+
+
 def bbox(quadint):
     import mercantile
 
