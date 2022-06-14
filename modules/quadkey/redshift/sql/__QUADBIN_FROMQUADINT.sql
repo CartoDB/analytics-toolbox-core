@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_FROMZXY
 RETURNS BIGINT
 STABLE
 AS $$
-    from @@RS_PREFIX@@tilerLib import quadbin_from_zxy
+    from @@RS_PREFIX@@quadkeyLib import quadbin_from_zxy
     import json
 
     zxy = json.loads(zxy)
