@@ -53,7 +53,7 @@ $BODY$
       4611686018427387904
       | (1::BIGINT << 59) -- | (mode << 59) | (extra << 57)
       | (z::BIGINT << 52)
-      | ((x | (y << 1)) >> 12)
+      | (x >> 12) | (y  >> 11)
       | ((1::BIGINT << (52 - (z << 1))) - 1)
     FROM __interleaved5
 $BODY$
