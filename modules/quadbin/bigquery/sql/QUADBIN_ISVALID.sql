@@ -17,7 +17,7 @@ AS (
             )
             SELECT
                 quadbin >= 0 AND (quadbin & 0x4000000000000000 = 0x4000000000000000)
-                AND ((quadbin >> 59) & 7) IN (0,1,2,3,4,5,6) -- modes; note mode=0 is not valid
+                AND ((quadbin >> 59) & 7) IN (0,1,2,3,4,5,6) -- modes
                 AND tile.z >= 0 AND tile.z <= 26
                 -- TODO: check unused trailing bits are 1s
             FROM __zxy

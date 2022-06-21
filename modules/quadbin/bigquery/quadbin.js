@@ -1,4 +1,4 @@
-function tileToQuadbin(tile) {
+function tileToQuadbin (tile) {
     if (tile.z < 0 || tile.z > 29) {
         throw new Error('Wrong zoom');
     }
@@ -29,7 +29,7 @@ function tileToQuadbin(tile) {
     return quadbin.toString(16);
 }
 
-function quadbinToTile(index) {
+function quadbinToTile (index) {
     const B = [
         0x5555555555555555n, 0x3333333333333333n, 0x0F0F0F0F0F0F0F0Fn,
         0x00FF00FF00FF00FFn, 0x0000FFFF0000FFFFn, 0x00000000FFFFFFFFn]
