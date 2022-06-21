@@ -9,7 +9,7 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 PG_PREFIX = $(PG_SCHEMA_PREFIX)
 
 CLOUD = postgres
-COMMON_DIR ?= $(ROOT_DIR)/../../../common
+COMMON_DIR ?= $(ROOT_DIR)/../../../common/postgres
 SCRIPTS_DIR ?= $(ROOT_DIR)/../../../scripts
 DIST_DIR = $(ROOT_DIR)/dist
 VENV3_DIR = $(COMMON_DIR)/venv3
