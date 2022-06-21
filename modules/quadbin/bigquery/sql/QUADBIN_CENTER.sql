@@ -12,13 +12,13 @@ AS (
         WHEN quadbin=5188146770730811392 THEN
             ST_GEOGPOINT(0,0)
         -- Deal with level 1. Prevent error from antipodal vertices.
-        WHEN quadbin=5192650370358181888 THEN
+        WHEN quadbin=5193776270265024511 THEN -- Z=1 X=0 Y=0
             ST_GEOGPOINT(-90,45)
-        WHEN quadbin=5193776270265024512 THEN
+        WHEN quadbin=5194902170171867135 THEN -- Z=1 X=1 Y=0
             ST_GEOGPOINT(90,45)
-        WHEN quadbin=5194902170171867136 THEN
+        WHEN quadbin=5196028070078709759 THEN -- Z=1 X=0 Y=1
             ST_GEOGPOINT(-90,-45)
-        WHEN quadbin=5196028070078709760 THEN
+        WHEN quadbin=5197153969985552383 THEN -- Z=1 X=1 Y=1
             ST_GEOGPOINT(90,-45)
         ELSE (
             WITH
