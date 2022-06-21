@@ -16,8 +16,10 @@ AS (
                     `@@BQ_PREFIX@@carto.QUADBIN_TOZXY`(quadbin) AS tile
             )
             SELECT
-                tile.z >= 0 AND tile.z <= 29 AND
-                (quadbin & ((1 << (59 - 2 * tile.z)) - 1)) = 0
+                quadbin >= 0 AND (quadbin & 0x4000000000000000 = 0x4000000000000000)
+                AND ((quadbin >> 59) & 7) IN (0,1,2,3,4,5,6) -- modes
+                AND tile.z >= 0 AND tile.z <= 26
+                -- TODO: check unused trailing bits are 1s
             FROM __zxy
         )
     END
