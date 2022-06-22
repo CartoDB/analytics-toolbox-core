@@ -11,7 +11,10 @@ AS $$
     import json
 
     if geojson is None or resolution is None:
-        raise Exception('NULL argument passed to UDF')
+        return None
+
+    if resolution < 0 or resolution > 26:
+        raise Exception('Invalid resolution, should be between 0 and 26')
 
     pol = json.loads(geojson)
     quadbins = []

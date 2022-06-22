@@ -10,7 +10,7 @@ AS $$
     from @@RS_PREFIX@@quadbinLib import sibling
     
     if quadbin is None or direction is None:
-        raise Exception('NULL argument passed to UDF')
+        return None
 
     return sibling(quadbin, direction)
 $$ LANGUAGE plpythonu;
