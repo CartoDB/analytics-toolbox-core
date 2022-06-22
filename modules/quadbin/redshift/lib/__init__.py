@@ -79,6 +79,21 @@ def quadbin_to_zxy(quadbin):
     return {'z': z, 'x': x, 'y': y}
 
 
+def quadbin_is_valid(quadbin):
+    mode = (quadbin >> 59) & 7
+    z = quadbin >> 52 & 31
+    header = 0x4000000000000000
+    unused = 0xFFFFFFFFFFFFF >> (((quadbin >> 52) & 0x1F) * 2)
+    return (
+        quadbin >= 0
+        and (quadbin & header == header)
+        and mode in [0, 1, 2, 3, 4, 5, 6]
+        and z >= 0
+        and z <= 26
+        and (quadbin & unused == unused)
+    )
+
+
 def sibling(quadbin, direction):
     direction = direction.lower()
     if direction not in ['left', 'right', 'up', 'down']:
