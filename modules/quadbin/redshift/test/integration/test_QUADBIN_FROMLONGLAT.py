@@ -11,3 +11,4 @@ def test_quadbin_fromlonglat():
 
     assert len(result[0]) == 1
     assert result[0][0] == 5209574053332910079
+

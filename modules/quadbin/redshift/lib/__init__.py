@@ -108,11 +108,8 @@ def sibling(quadbin, direction):
 
 def to_children(quadbin, resolution):
     zxy = quadbin_to_zxy(quadbin)
-    if zxy['z'] < 0 or zxy['z'] > 28:
-        raise Exception('Wrong quadbin zoom')
-
-    if resolution < 0 or resolution <= zxy['z']:
-        raise Exception('Wrong resolution')
+    if resolution < 0 or resolution > 26 or resolution <= zxy['z']:
+        raise Exception('Invalid resolution')
 
     diff_z = resolution - zxy['z']
     mask = (1 << diff_z) - 1
@@ -129,11 +126,8 @@ def to_children(quadbin, resolution):
 
 def to_parent(quadbin, resolution):
     zxy = quadbin_to_zxy(quadbin)
-    if zxy['z'] < 1 or zxy['z'] > 29:
-        raise Exception('Wrong quadbin zoom')
-
     if resolution < 0 or resolution >= zxy['z']:
-        raise Exception('Wrong resolution')
+        raise Exception('Invalid resolution')
 
     return quadbin_from_zxy(
         resolution,

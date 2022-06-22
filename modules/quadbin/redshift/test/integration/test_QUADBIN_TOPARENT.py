@@ -20,7 +20,7 @@ def test_quadbin_toparent_negative_resolution_failure():
                 5209574053332910079,
                 -1) AS OUTPUT"""
         )
-    assert 'Wrong quadbin zoom' in str(excinfo.value)
+    assert 'Invalid resolution' in str(excinfo.value)
 
 
 def test_quadbin_toparent_resolution_overflow_failure():
@@ -30,7 +30,7 @@ def test_quadbin_toparent_resolution_overflow_failure():
                 5209574053332910079,
                 27) AS OUTPUT"""
         )
-    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    assert 'Invalid resolution' in str(excinfo.value)
 
 
 def test_quadbin_toparent_resolution_larger_than_index_failure():
@@ -40,4 +40,4 @@ def test_quadbin_toparent_resolution_larger_than_index_failure():
                 5209574053332910079,
                 5) AS OUTPUT"""
         )
-    assert 'NULL argument passed to UDF' in str(excinfo.value)
+    assert 'Invalid resolution' in str(excinfo.value)
