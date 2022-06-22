@@ -1,5 +1,8 @@
+// Quadbin encoding/decoding in JavaScript
+// Not used in the Analytics Toolbox.
+
 function tileToQuadbin (tile) {
-    if (tile.z < 0 || tile.z > 29) {
+    if (tile.z < 0 || tile.z > 26) {
         throw new Error('Wrong zoom');
     }
     const B = [
@@ -25,20 +28,26 @@ function tileToQuadbin (tile) {
     x = (x | (x << S[0])) & B[0];
     y = (y | (y << S[0])) & B[0];
 
-    let quadbin = (z << 58n) | ((x | (y << 1n)) >> 6n);
+    let quadbin = 0x4000000000000000n
+        | (1n << 59n) // | (mode << 59) | (mode_dep << 57)
+        | (z << 52n)
+        | ((x | (y << 1n)) >> 12n)
+        | (0xFFFFFFFFFFFFFn >> (z * 2n));
     return quadbin.toString(16);
 }
 
 function quadbinToTile (index) {
     const B = [
         0x5555555555555555n, 0x3333333333333333n, 0x0F0F0F0F0F0F0F0Fn,
-        0x00FF00FF00FF00FFn, 0x0000FFFF0000FFFFn, 0x00000000FFFFFFFFn]
-    const S = [0n, 1n, 2n, 4n, 8n, 16n]
-    const quadbin = BigInt('0x' + index)
-    const z = quadbin >> 58n
-    const xy = (quadbin & 0x3FFFFFFFFFFFFFFn) << 6n
-    let x = xy;
-    let y = xy >> 1n;
+        0x00FF00FF00FF00FFn, 0x0000FFFF0000FFFFn, 0x00000000FFFFFFFFn];
+    const S = [0n, 1n, 2n, 4n, 8n, 16n];
+    const quadbin = BigInt('0x' + index);
+    const mode = (quadbin >> 59n) & 7n;
+    const modeDep = (quadbin >> 57n) & 3n;
+    const z = (quadbin >> 52n) & 0x1Fn;
+    const q = (quadbin & 0xFFFFFFFFFFFFFn) << 12n;
+    let x = q;
+    let y = q >> 1n;
 
     x = (x | (x >> S[0])) & B[0];
     y = (y | (y >> S[0])) & B[0];
@@ -64,5 +73,10 @@ function quadbinToTile (index) {
     return { z: Number(z), x: Number(x), y: Number(y) };
 }
 
-console.log(quadbinToTile('28b41a8000000000'))
-console.log(tileToQuadbin({ z: 10, x: 200, y: 391 }))
+test('tileToQuadbin should work', async () => {
+    expect(quadbinToTile('48a2d06affffffff')).toEqual({ z: 10, x: 200, y: 391 });
+});
+
+test('quadbinToTile should work', async () => {
+    expect(tileToQuadbin({ z: 10, x: 200, y: 391 })).toEqual('48a2d06affffffff');
+});

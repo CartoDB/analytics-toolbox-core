@@ -21,5 +21,5 @@ Returns the quadbin of a given point at a given level of detail.
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
--- 4388
+-- 5209574053332910079
 ```
