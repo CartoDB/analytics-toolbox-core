@@ -5,8 +5,10 @@ AS $$
 WITH
 __interleaved AS (
   SELECT
-    BITSHIFTRIGHT(quadbin, 58) AS z,
-    BITSHIFTLEFT(BITAND(quadbin, TO_NUMBER('3ffffffffffffff', 'XXXXXXXXXXXXXXXX')), 6) AS q
+    BITAND(BITSHIFTRIGHT(quadbin, 59), 7) AS mode,
+    BITAND(BITSHIFTRIGHT(quadbin, 57), 3) AS extra,
+    BITAND(BITSHIFTRIGHT(quadbin, 52), 31) AS z,
+    BITSHIFTLEFT(BITAND(quadbin, TO_NUMBER('fffffffffffffff', 'XXXXXXXXXXXXXXXX')), 12) AS q
 ),
 __deinterleaved1 AS (
   SELECT z, q AS x, BITSHIFTRIGHT(q, 1) AS y

@@ -16,9 +16,13 @@ AS $$
                     QUADBIN_TOZXY(quadbin) AS tile
             )
             SELECT
-                tile:z >= 0 AND tile:z <= 29 AND
-                BITAND(quadbin, (BITSHIFTLEFT(1, (59 - 2 * tile:z)) - 1)) = 0
+                quadbin >= 0 
+                AND BITAND(quadbin, TO_NUMBER('4000000000000000', 'xxxxxxxxxxxxxxxx')) 
+                    = TO_NUMBER('4000000000000000', 'xxxxxxxxxxxxxxxx') 
+                AND BITAND(BITSHIFTRIGHT(quadbin, 59), 7) IN (0,1,2,3,4,5,6) -- modes
+                AND tile:z >= 0 AND tile:z <= 26
             FROM __zxy
         )
     END
 $$;
+

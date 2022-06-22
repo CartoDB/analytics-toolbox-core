@@ -4,13 +4,13 @@
 
 CREATE OR REPLACE FUNCTION _GENERATE_ARRAY
 (min INT, max INT)
-RETURNS TABLE
+RETURNS TABLE(n INT)
 AS $$
-    WITH x (n) as (
+    WITH x(n) as (
         SELECT min 
         UNION ALL 
         SELECT (x.n + 1) n 
         FROM x WHERE x.n < max
     ) 
-    select * from x
+    SELECT * FROM x
 $$

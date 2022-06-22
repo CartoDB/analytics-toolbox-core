@@ -6,17 +6,19 @@ CREATE OR REPLACE FUNCTION QUADBIN_TOPARENT
 (quadbin INT, resolution INT)
 RETURNS INT
 AS $$
-    SELECT bitand(
-                bitand(
-                    quadbin, 
-                    bitor(
-                        bitnot(bitshiftleft(31, 58)), 
-                        bitshiftleft(resolution, 58)
-                    )
+    SELECT bitor(
+                bitor(
+                    bitand(
+                        quadbin, 
+                        bitnot(
+                            bitshiftleft(31, 52)
+                        )                        
+                    ),
+                    bitshiftleft(resolution, 52)
                 ), 
-                bitshiftleft(
-                    bitshiftleft(1, (5 + resolution * 2)) - 1, 
-                    (58 - resolution * 2)
+                bitshiftright(
+                    4503599627370495,
+                    resolution * 2
                 )
             )
 $$;

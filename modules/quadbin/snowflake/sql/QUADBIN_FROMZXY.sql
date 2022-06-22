@@ -45,6 +45,28 @@ AS $$
             z
             FROM __interleaved4
         )
-        SELECT BITOR(BITSHIFTLEFT(z, 58), BITSHIFTRIGHT(BITOR(x, BITSHIFTLEFT(y, 1)), 6))
+        SELECT 
+            BITOR(
+                BITOR(
+                    BITOR(
+                        BITOR(
+                            TO_NUMBER('4000000000000000', 'xxxxxxxxxxxxxxxx'),
+                            BITSHIFTLEFT(1, 59)
+                        ),
+                        BITSHIFTLEFT(z, 52)
+                    ),
+                    BITSHIFTRIGHT(
+                        BITOR(
+                            x,
+                            BITSHIFTLEFT(y, 1)
+                        ),
+                        12
+                    )
+                ),
+                BITSHIFTLEFT(
+                    1,
+                    52 - BITSHIFTLEFT(z, 1)
+                ) - 1
+            )
         FROM __interleaved5
 $$;
