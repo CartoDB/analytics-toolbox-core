@@ -33,14 +33,14 @@ AS (
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADBIN_SIBLING`
 (quadbin INT64, direction STRING)
 AS (
-    CASE
-        WHEN direction = 'left' THEN
+    CASE direction
+        WHEN 'left' THEN
             `@@BQ_PREFIX@@carto.__QUADBIN_SIBLING`(quadbin, -1, 0)
-        WHEN direction = 'right' THEN
+        WHEN 'right' THEN
             `@@BQ_PREFIX@@carto.__QUADBIN_SIBLING`(quadbin, 1, 0)
-        WHEN direction = 'up' THEN
+        WHEN 'up' THEN
             `@@BQ_PREFIX@@carto.__QUADBIN_SIBLING`(quadbin, 0, -1)
-        WHEN direction = 'down' THEN
+        WHEN 'down' THEN
             `@@BQ_PREFIX@@carto.__QUADBIN_SIBLING`(quadbin, 0, 1)
         ELSE (
             ERROR('Wrong direction argument passed to sibling')
