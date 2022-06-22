@@ -1,11 +1,10 @@
 from test_utils import run_query
 
 
-def test_quadbin_fromlonglat():
+def test_quadbin_fromgeogpoint():
     result = run_query(
-        """SELECT @@RS_PREFIX@@carto.QUADBIN_FROMLONGLAT(
-            40.4168, -3.7038
-            ,
+        """SELECT @@RS_PREFIX@@carto.QUADBIN_FROMGEOGPOINT(
+            ST_POINT(40.4168, -3.7038),
             4) AS output"""
     )
 
