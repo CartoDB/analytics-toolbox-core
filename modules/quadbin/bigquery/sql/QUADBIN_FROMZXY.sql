@@ -45,6 +45,11 @@ AS ((
         z
         FROM __interleaved4
     )
-    SELECT (z << 58) | ((x | (y << 1)) >> 6)
+    SELECT
+      0x4000000000000000
+      | (1 << 59) -- | (mode << 59) | (mode_dep << 57)
+      | (z << 52)
+      | ((x | (y << 1)) >> 12)
+      | (0xFFFFFFFFFFFFF >> (z * 2))
     FROM __interleaved5
 ));

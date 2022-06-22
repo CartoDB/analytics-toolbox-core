@@ -9,16 +9,16 @@ AS (
         WHEN quadbin IS NULL THEN
             NULL
         -- Deal with level 0 boundary issue.
-        WHEN quadbin=0 THEN
+        WHEN quadbin=5188146770730811392 THEN
             ST_GEOGPOINT(0,0)
         -- Deal with level 1. Prevent error from antipodal vertices.
-        WHEN quadbin=288230376151711744 THEN
+        WHEN quadbin=5193776270265024511 THEN -- Z=1 X=0 Y=0
             ST_GEOGPOINT(-90,45)
-        WHEN quadbin=360287970189639680 THEN
+        WHEN quadbin=5194902170171867135 THEN -- Z=1 X=1 Y=0
             ST_GEOGPOINT(90,45)
-        WHEN quadbin=432345564227567616 THEN
+        WHEN quadbin=5196028070078709759 THEN -- Z=1 X=0 Y=1
             ST_GEOGPOINT(-90,-45)
-        WHEN quadbin=504403158265495552 THEN
+        WHEN quadbin=5197153969985552383 THEN -- Z=1 X=1 Y=1
             ST_GEOGPOINT(90,-45)
         ELSE (
             WITH

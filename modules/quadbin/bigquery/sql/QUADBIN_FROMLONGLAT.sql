@@ -9,8 +9,8 @@ RETURNS INT64
 AS ((
     IF(longitude IS NULL OR latitude IS NULL OR resolution IS NULL,
         NULL,
-        IF (resolution < 0 OR resolution > 29,
-            ERROR('Invalid resolution; should be between 0 and 29'), (
+        IF (resolution < 0 OR resolution > 26,
+            ERROR('Invalid resolution; should be between 0 and 26'), (
             WITH
             __params AS (
                 SELECT

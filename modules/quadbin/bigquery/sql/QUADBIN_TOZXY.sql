@@ -9,8 +9,10 @@ AS ((
     WITH
     __interleaved AS (
         SELECT
-            quadbin >> 58 AS z,
-            (quadbin & 0x3FFFFFFFFFFFFFF) << 6 AS q
+            (quadbin >> 59) & 7 AS mode,
+            (quadbin >> 57) & 3 AS mode_dep,
+            (quadbin >> 52) & 0x1F AS z,
+            (quadbin & 0xFFFFFFFFFFFFF) << 12 AS q
     ),
     __deinterleaved1 AS (
         SELECT z, q AS x, q >> 1 AS y FROM __interleaved
