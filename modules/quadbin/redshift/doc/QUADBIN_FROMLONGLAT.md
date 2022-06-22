@@ -20,5 +20,5 @@ Returns the quadbin representation for a given level of detail and geographic co
 
 ```sql
 SELECT carto.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4);
--- 4388
+-- 5209574053332910079
 ```

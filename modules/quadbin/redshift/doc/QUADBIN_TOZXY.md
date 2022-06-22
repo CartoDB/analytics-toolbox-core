@@ -17,7 +17,7 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadbin.
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_TOZXY(4388);
+SELECT carto.QUADBIN_TOZXY(5209574053332910079);
 -- z  x  y
 -- 4  9  8
 ```

@@ -24,5 +24,5 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 
 ```sql
 SELECT carto.QUADBIN_FROMZXY(4, 9, 8);
--- 4388
+-- 5209574053332910079
 ```

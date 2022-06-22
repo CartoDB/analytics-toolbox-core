@@ -17,7 +17,7 @@ Returns an array with the boundary box of a given quadbin. This boundary box con
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_BBOX(4388);
+SELECT carto.QUADBIN_BBOX(5209574053332910079);
 -- 22.5
 -- -21.943045533438177
 -- 45.0

@@ -12,11 +12,11 @@ Returns the boundary for a given quadbin. We extract the boundary in the same wa
 
 **Return type**
 
-`GEOMETRY`
+`VARCHAR`
 
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_BOUNDARY(4388);
+SELECT carto.QUADBIN_BOUNDARY(5209574053332910079);
 -- {'type': 'Polygon', 'coordinates': [[[22.5, -21.943045533438177], [22.5, 0.0], ...
 ```

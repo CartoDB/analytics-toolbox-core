@@ -18,6 +18,6 @@ Returns the parent quadbin of a given quadbin for a specific resolution. A paren
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_TOPARENT(4388, 3);
--- 1155
+SELECT carto.QUADBIN_TOPARENT(5209574053332910079, 3);
+-- 5205105638077628415
 ```
