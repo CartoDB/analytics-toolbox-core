@@ -1,6 +1,5 @@
 import pytest
 from test_utils import run_query
-import json
 
 parents = [
     ( [0, 0, 0], 0, [0, 0, 0] ),
@@ -32,4 +31,6 @@ def test_quadbin_toparent(zxy, resolution, parent_zxy):
     z, x, y = zxy
     parent_z, parent_x, parent_y = parent_zxy
     result = run_query(f"""SELECT QUADBIN_TOZXY(QUADBIN_TOPARENT(QUADBIN_FROMZXY({z},{x},{y}),{resolution}))""")
-    assert result[0][0] == f"""({parent_z},{parent_x},{parent_y})"""
+    assert result[0][0]['z'] == parent_z
+    assert result[0][0]['x'] == parent_x
+    assert result[0][0]['y'] == parent_y

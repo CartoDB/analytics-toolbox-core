@@ -1,6 +1,5 @@
 import pytest
 from test_utils import run_query
-import json
 
 quadbins = [
     # z, x, y, quadbin
@@ -29,4 +28,6 @@ quadbins = [
 def test_quadbin_tozxy(z, x, y, quadbin):
     """Computes z, x, y for quadbin"""
     result = run_query(f"""SELECT QUADBIN_TOZXY({quadbin})""")
-    assert result[0][0] == f"""({z},{x},{y})"""
+    assert result[0][0]['z'] == z
+    assert result[0][0]['x'] == x
+    assert result[0][0]['y'] == y

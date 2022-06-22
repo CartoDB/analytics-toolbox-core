@@ -1,6 +1,5 @@
 import pytest
 from test_utils import run_query
-import json
 
 quadbins = [
     # z, x, y, quadbin

@@ -2,10 +2,12 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
+DROP FUNCTION IF EXISTS QUADBIN_TOZXY(BIGINT);
+
 CREATE OR REPLACE FUNCTION QUADBIN_TOZXY(
   quadbin BIGINT
 )
-RETURNS RECORD -- (x, y, z)
+RETURNS JSON -- {x, y, z}
  AS
 $BODY$
     WITH
@@ -62,7 +64,7 @@ $BODY$
         FROM __deinterleaved6
     )
     SELECT
-        z, (x >> (32-z)) AS x, (y >> (32-z)) AS y
+      json_build_object('z', z, 'x', (x >> (32-z)), 'y', (y >> (32-z)))
     FROM __deinterleaved7
 $BODY$
   LANGUAGE SQL;
