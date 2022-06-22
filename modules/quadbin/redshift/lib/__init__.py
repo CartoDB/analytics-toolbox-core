@@ -184,8 +184,8 @@ def kring_distances(origin, size):
 def quadbin_from_location(long, lat, zoom):
     import mercantile
 
-    if zoom < 0 or zoom > 29:
-        raise Exception('Wrong zoom')
+    if zoom < 0 or zoom > 26:
+        raise Exception('Invalid resolution; should be between 0 and 26')
 
     lat = clip_number(lat, -85.05, 85.05)
     tile = mercantile.tile(long, lat, zoom)

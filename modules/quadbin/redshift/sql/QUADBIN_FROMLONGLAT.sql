@@ -10,7 +10,7 @@ AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_from_location
     
     if longitude is None or latitude is None or resolution is None:
-        raise Exception('NULL argument passed to UDF')
+        return None
 
     return quadbin_from_location(longitude, latitude, resolution)
 $$ LANGUAGE plpythonu;
