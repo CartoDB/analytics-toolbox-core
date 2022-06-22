@@ -29,7 +29,14 @@ def quadbin_from_zxy(z, x, y):
     x = (x | (x << s[0])) & b[0]
     y = (y | (y << s[0])) & b[0]
 
-    return (z << 58) | ((x | (y << 1)) >> 6)
+    # -- | (mode << 59) | (mode_dep << 57)
+    return (
+        0x4000000000000000
+        | (1 << 59)
+        | (z << 52)
+        | ((x | (y << 1)) >> 12)
+        | (0xFFFFFFFFFFFFF >> (z * 2))
+    )
 
 
 def quadbin_to_zxy(quadbin):
@@ -43,8 +50,10 @@ def quadbin_to_zxy(quadbin):
     ]
     s = [1, 2, 4, 8, 16]
 
-    z = quadbin >> 58
-    q = (quadbin & 0x3FFFFFFFFFFFFFF) << 6
+    # mode = (quadbin >> 59) & 7
+    # extra = (quadbin >> 57) & 3
+    z = quadbin >> 52 & 31
+    q = (quadbin & 0xFFFFFFFFFFFFF) << 12
     x = q
     y = q >> 1
     x = x & b[0]
