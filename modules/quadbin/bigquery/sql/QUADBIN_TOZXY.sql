@@ -11,7 +11,7 @@ AS ((
         SELECT
             (quadbin >> 59) & 7 AS mode,
             (quadbin >> 57) & 3 AS extra,
-            (quadbin >> 52) & 31 AS z,
+            (quadbin >> 52) & 0x1F AS z,
             (quadbin & 0xFFFFFFFFFFFFF) << 12 AS q
     ),
     __deinterleaved1 AS (

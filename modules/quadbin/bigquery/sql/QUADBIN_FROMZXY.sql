@@ -50,6 +50,6 @@ AS ((
       | (1 << 59) -- | (mode << 59) | (extra << 57)
       | (z << 52)
       | ((x | (y << 1)) >> 12)
-      | ((1 << (52 - (z << 1))) - 1)
+      | (0xFFFFFFFFFFFFF >> (z * 2))
     FROM __interleaved5
 ));
