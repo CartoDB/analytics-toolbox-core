@@ -31,5 +31,5 @@ test('QUADBIN_SIBLING right should work', async () => {
 test('QUADBIN_SIBLING wrong should return null', async () => {
     const query = 'SELECT CAST(QUADBIN_SIBLING(5209574053332910079, \'wrong\') AS STRING) AS output';
     expect(rows.length).toEqual(1);
-    expect(rows[0].output).toEqual({"OUTPUT": null});
+    expect(rows[0].output).toEqual({ 'OUTPUT': null });
 });
