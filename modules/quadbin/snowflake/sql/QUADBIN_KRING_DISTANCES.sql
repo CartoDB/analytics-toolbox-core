@@ -13,15 +13,15 @@ AS $$
         SELECT
             QUADBIN_FROMZXY(
                 zxy:z,
-                MOD(zxy:x + dx.n + BITSHIFTLEFT(1, zxy:z), BITSHIFTLEFT(1, zxy:z)),
-                zxy:y + dy.n
+                MOD(zxy:x + dx.VALUE + BITSHIFTLEFT(1, zxy:z), BITSHIFTLEFT(1, zxy:z)),
+                zxy:y + dy.VALUE
             ) __index,
-            GREATEST(ABS(dx.n), ABS(dy.n)) __distance -- Chebychev distance
+            GREATEST(ABS(dx.VALUE), ABS(dy.VALUE)) __distance -- Chebychev distance
         FROM
-            TABLE(_GENERATE_RANGE(-size,size)) dx,
-            TABLE(_GENERATE_RANGE(-size,size)) dy,
+            TABLE(FLATTEN(_GENERATE_RANGE(-size,size))) dx,
+            TABLE(FLATTEN(_GENERATE_RANGE(-size,size))) dy,
             __zxy
-        WHERE zxy:y + dy.n >= 0 and zxy:y + dy.n < BITSHIFTLEFT(1, zxy:z)
+        WHERE zxy:y + dy.VALUE >= 0 and zxy:y + dy.VALUE < BITSHIFTLEFT(1, zxy:z)
     ),
     __t_agg AS (
         SELECT

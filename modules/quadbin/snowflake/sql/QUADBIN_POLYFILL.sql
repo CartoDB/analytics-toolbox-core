@@ -37,10 +37,10 @@ AS $$
             ),
             __cells AS (
                 SELECT
-                    QUADBIN_FROMZXY(z, x.n, y.n) AS quadbin
+                    QUADBIN_FROMZXY(z, x.VALUE, y.VALUE) AS quadbin
                 FROM __tile_coords_range,
-                    TABLE(_GENERATE_RANGE(xmin, xmax)) AS x,
-                    TABLE(_GENERATE_RANGE(ymin, ymax)) AS y
+                    TABLE(FLATTEN(_GENERATE_RANGE(xmin, xmax))) AS x,
+                    TABLE(FLATTEN(_GENERATE_RANGE(ymin, ymax))) AS y
             )
             SELECT ARRAY_AGG(quadbin)
             FROM __cells

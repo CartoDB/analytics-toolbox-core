@@ -12,13 +12,13 @@ AS $$
     SELECT ARRAY_AGG(
         DISTINCT (QUADBIN_FROMZXY(
             zxy:z,
-            MOD(zxy:x + dx.n + BITSHIFTLEFT(1, zxy:z), BITSHIFTLEFT(1, zxy:z)),
-            zxy:y + dy.n)
+            MOD(zxy:x + dx.VALUE + BITSHIFTLEFT(1, zxy:z), BITSHIFTLEFT(1, zxy:z)),
+            zxy:y + dy.VALUE)
         )
     )
     FROM
-        TABLE(_GENERATE_RANGE(-size, size)) dx,
-        TABLE(_GENERATE_RANGE(-size, size)) dy,
+        TABLE(FLATTEN(_GENERATE_RANGE(-size, size))) dx,
+        TABLE(FLATTEN(_GENERATE_RANGE(-size, size))) dy,
         __zxy
-    WHERE zxy:y + dy.n >= 0 AND zxy:y + dy.n < BITSHIFTLEFT(1, zxy:z)
+    WHERE zxy:y + dy.VALUE >= 0 AND zxy:y + dy.VALUE < BITSHIFTLEFT(1, zxy:z)
 $$;
