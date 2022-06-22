@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.0] - 2022-06-21
+## [1.0.0] - 2022-06-23
 
 ### Added
 - Create quadbin module.
@@ -22,3 +22,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add QUADBIN_TOCHILDREN function.
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
+- Add QUADBIN_STRING_TOINT function.
+- Add QUADBIN_INT_TOSTRING function.

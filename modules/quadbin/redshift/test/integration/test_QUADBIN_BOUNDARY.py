@@ -4,7 +4,8 @@ import json
 
 def test_quadbin_boundary():
     result = run_query(
-        """SELECT @@RS_PREFIX@@carto.QUADBIN_BOUNDARY(5209574053332910079) AS output"""
+        """SELECT @@RS_PREFIX@@carto.QUADBIN_BOUNDARY(
+                5209574053332910079) AS output"""
     )
 
     assert len(result[0]) == 1

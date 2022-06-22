@@ -3,25 +3,16 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_FROMZXY_VARCHAR
-(zxy VARCHAR(MAX))
--- (quadint)
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_FROMQUADINT
+(quadint BIGINT)
 RETURNS BIGINT
 STABLE
 AS $$
     from @@RS_PREFIX@@quadkeyLib import quadbin_from_zxy
-    import json
 
-    zxy = json.loads(zxy)
+    z = quadint & 31
+    x = (quadint >> 5) & ((1 << z) - 1)
+    y = quadint >> (z + 5)
 
-    return quadbin_from_zxy(zxy['z'], zxy['x'], zxy['y'])
+    return quadbin_from_zxy(z, x, y)
 $$ LANGUAGE plpythonu;
-
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_FROMQUADINT
-(BIGINT)
--- (quadint)
-RETURNS BIGINT
-STABLE
-AS $$
-    SELECT @@RS_PREFIX@@carto.__QUADBIN_FROMZXY_VARCHAR(JSON_SERIALIZE(@@RS_PREFIX@@carto.QUADINT_TOZXY($1)))
-$$ LANGUAGE sql;

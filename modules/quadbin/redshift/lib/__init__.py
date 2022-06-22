@@ -104,19 +104,31 @@ def sibling(quadbin, direction):
     x = tile['x']
     y = tile['y']
     if z == 0:
-        return quadbin
+        return None
     tiles_per_level = 2 << (z - 1)
     if direction == 'left':
-        x = x - 1 if x > 0 else tiles_per_level - 1
+        if x > 0:
+            x = x - 1
+        else:
+            return None
 
     if direction == 'right':
-        x = x + 1 if x < tiles_per_level - 1 else 0
+        if x < tiles_per_level - 1:
+            x = x + 1
+        else:
+            return None
 
     if direction == 'up':
-        y = y - 1 if y > 0 else tiles_per_level - 1
+        if y > 0:
+            y = y - 1
+        else:
+            return None
 
     if direction == 'down':
-        y = y + 1 if y < tiles_per_level - 1 else 0
+        if y < tiles_per_level - 1:
+            y = y + 1
+        else:
+            return None
 
     return quadbin_from_zxy(z, x, y)
 
