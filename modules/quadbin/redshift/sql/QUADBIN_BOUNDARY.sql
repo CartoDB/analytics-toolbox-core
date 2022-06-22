@@ -11,7 +11,7 @@ AS $$
     import json
 
     if quadbin is None:
-        raise Exception('NULL argument passed to UDF')
+        return None
 
     geojson = quadbin_to_geojson(quadbin)['geometry']
     return json.dumps(geojson)
@@ -20,8 +20,8 @@ $$ LANGUAGE plpythonu;
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_BOUNDARY
 (BIGINT)
 -- (quadbin)
-RETURNS VARCHAR(MAX)
+RETURNS GEOMETRY
 STABLE
 AS $$
-    SELECT @@RS_PREFIX@@carto.__QUADBIN_BOUNDARY($1)
+    SELECT ST_GEOMFROMTEXT(@@RS_PREFIX@@carto.__QUADBIN_BOUNDARY($1), 4326)
 $$ LANGUAGE sql;

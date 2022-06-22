@@ -229,6 +229,14 @@ def bbox(quadbin):
     return [bounds.west, bounds.south, bounds.east, bounds.north]
 
 
+def quadbin_center(quadbin):
+    import mercantile
+
+    tile = quadbin_to_zxy(quadbin)
+    bounds = mercantile.bounds(tile['x'], tile['y'], tile['z'])
+    return ((bounds.west + bounds.east) / 2, (bounds.south + bounds.north) / 2)
+
+
 def quadbin_to_geojson(quadbin):
     import mercantile
 

@@ -11,7 +11,7 @@ AS $$
     import json
     
     if quadbin is None:
-        raise Exception('NULL argument passed to UDF')
+        return None
 
     return json.dumps(bbox(quadbin))
 $$ LANGUAGE plpythonu;
