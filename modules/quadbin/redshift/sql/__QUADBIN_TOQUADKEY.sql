@@ -10,7 +10,7 @@ AS $$
     from @@RS_PREFIX@@quadbinLib import quadkey_from_quadbin
     
     if quadbin is None:
-        raise Exception('NULL argument passed to UDF')
+        return None
     
     return quadkey_from_quadbin(quadbin)
 $$ LANGUAGE plpythonu;
