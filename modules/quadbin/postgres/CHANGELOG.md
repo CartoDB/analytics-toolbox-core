@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add QUADBIN_KRING_DISTANCES function.
 - Add QUADBIN_POLYFILL function.
 - Add QUADBIN_RESOLUTION function.
-- Add QUADBIN_SIBLINGS function.
+- Add QUADBIN_SIBLING function.
 - Add QUADBIN_TOCHILDREN function.
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
