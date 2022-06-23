@@ -1,0 +1,10 @@
+{
+  "name": "quadbin_bigquery",
+  "version": "1.0.0",
+  "description": "Quadbin module for BigQuery",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+  }
+}
