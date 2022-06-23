@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.0.0] - 2022-06-23
 
 ### Added
-- Create quadbin module.
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
 - Add QUADBIN_CENTER function.
