@@ -57,4 +57,4 @@ $BODY$
       | ((1::BIGINT << (52 - (z << 1))) - 1)
     FROM __interleaved5
 $BODY$
-  LANGUAGE SQL;
+  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
