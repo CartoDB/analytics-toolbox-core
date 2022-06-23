@@ -35,3 +35,18 @@ def test_quadbin_toparent(zxy, resolution, parent_zxy):
     assert result[0][0]['z'] == parent_z
     assert result[0][0]['x'] == parent_x
     assert result[0][0]['y'] == parent_y
+
+def test_quadbin_toparent_neg_res():
+    """Throws error for negative resolution"""
+    with pytest.raises(Exception):
+      run_query(f"""SELECT QUADBIN_TOPARENT(5209574053332910079, -1)""")
+
+def test_quadbin_toparent_overflow_res():
+    """Throws error for resolution overflow"""
+    with pytest.raises(Exception):
+      run_query(f"""SELECT QUADBIN_TOPARENT(5209574053332910079, 27)""")
+
+def test_quadbin_toparent_large_res():
+    """Throws error for resolution larger than the index"""
+    with pytest.raises(Exception):
+      run_query(f"""SELECT QUADBIN_TOPARENT(5209574053332910079, 5)""")

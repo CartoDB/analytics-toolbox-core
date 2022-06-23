@@ -9,6 +9,11 @@ CREATE OR REPLACE FUNCTION QUADBIN_TOPARENT(
 RETURNS BIGINT
  AS
 $BODY$
-  SELECT (quadbin & ~(31::BIGINT << 52)) | (resolution::BIGINT << 52) | (4503599627370495 >> (resolution << 1));
+  SELECT CASE
+  WHEN resolution < 0 OR resolution > ((quadbin >> 52) & 31)
+  THEN @@PG_PREFIX@@carto.__CARTO_ERROR('Invalid resolution')::BIGINT
+  ELSE
+    (quadbin & ~(31::BIGINT << 52)) | (resolution::BIGINT << 52) | (4503599627370495 >> (resolution << 1))
+  END;
 $BODY$
   LANGUAGE SQL;

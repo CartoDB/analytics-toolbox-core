@@ -2,8 +2,6 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-DROP FUNCTION IF EXISTS QUADBIN_TOZXY(BIGINT);
-
 CREATE OR REPLACE FUNCTION QUADBIN_TOZXY(
   quadbin BIGINT
 )

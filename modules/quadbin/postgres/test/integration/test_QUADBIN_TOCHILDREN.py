@@ -7,7 +7,22 @@ children = [
 ]
 
 @pytest.mark.parametrize('quadbin, resolution, children', children)
-def test_quadbin_toparent(quadbin, resolution, children):
+def test_quadbin_tochildren(quadbin, resolution, children):
     """Computes children for quadbin"""
     result = run_query(f"""SELECT QUADBIN_TOCHILDREN({quadbin},{resolution})""")
     assert result[0][0] == children
+
+def test_quadbin_tochildren_neg_res():
+    """Throws error for negative resolution"""
+    with pytest.raises(Exception):
+      run_query(f"""SELECT QUADBIN_TOCHILDREN(5209574053332910079, -1)""")
+
+def test_quadbin_tochildren_overflow_res():
+    """Throws error for resolution overflow"""
+    with pytest.raises(Exception):
+      run_query(f"""SELECT QUADBIN_TOCHILDREN(5209574053332910079, 27)""")
+
+def test_quadbin_toparent_small_res():
+    """Throws error for resolution smaller than the index"""
+    with pytest.raises(Exception):
+      run_query(f"""SELECT QUADBIN_TOCHILDREN(5209574053332910079, 3)""")
