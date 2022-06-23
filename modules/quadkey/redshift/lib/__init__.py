@@ -119,7 +119,7 @@ def kring_distances(origin, size):
             neighbors.append(
                 {
                     'index': traversal_quadint,
-                    'distance': max(abs(i), abs(j)),  # Chebychev distance
+                    'distance': max(abs(i - size), abs(j - size)),  # Chebychev distance
                 }
             )
             traversal_quadint = sibling(traversal_quadint, 'right')
