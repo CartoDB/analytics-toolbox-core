@@ -156,10 +156,10 @@ def to_parent(quadbin, resolution):
     if resolution < 0 or resolution >= zxy['z']:
         raise Exception('Invalid resolution')
 
-    return quadbin_from_zxy(
-        resolution,
-        zxy['x'] >> (zxy['z'] - resolution),
-        zxy['y'] >> (zxy['z'] - resolution),
+    return (
+        (quadbin & ~(0x1F << 52))
+        | (resolution << 52)
+        | (0xFFFFFFFFFFFFF >> (resolution * 2))
     )
 
 
