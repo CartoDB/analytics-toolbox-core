@@ -5,20 +5,20 @@
 CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADBIN_CENTER`(quadbin INT64)
 RETURNS GEOGRAPHY
 AS (
-    CASE
-        WHEN quadbin IS NULL THEN
+    CASE quadbin
+        WHEN NULL THEN
             NULL
         -- Deal with level 0 boundary issue.
-        WHEN quadbin=5188146770730811392 THEN
+        WHEN 5188146770730811392 THEN
             ST_GEOGPOINT(0,0)
         -- Deal with level 1. Prevent error from antipodal vertices.
-        WHEN quadbin=5193776270265024511 THEN -- Z=1 X=0 Y=0
+        WHEN 5193776270265024511 THEN -- Z=1 X=0 Y=0
             ST_GEOGPOINT(-90,45)
-        WHEN quadbin=5194902170171867135 THEN -- Z=1 X=1 Y=0
+        WHEN 5194902170171867135 THEN -- Z=1 X=1 Y=0
             ST_GEOGPOINT(90,45)
-        WHEN quadbin=5196028070078709759 THEN -- Z=1 X=0 Y=1
+        WHEN 5196028070078709759 THEN -- Z=1 X=0 Y=1
             ST_GEOGPOINT(-90,-45)
-        WHEN quadbin=5197153969985552383 THEN -- Z=1 X=1 Y=1
+        WHEN 5197153969985552383 THEN -- Z=1 X=1 Y=1
             ST_GEOGPOINT(90,-45)
         ELSE (
             WITH

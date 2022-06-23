@@ -6,8 +6,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADBIN_ISVALID`
 (quadbin INT64)
 RETURNS BOOLEAN
 AS (
-    CASE
-        WHEN quadbin IS NULL THEN
+    CASE quadbin
+        WHEN NULL THEN
             FALSE
         ELSE (
             WITH

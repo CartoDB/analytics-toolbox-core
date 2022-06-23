@@ -6,8 +6,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.QUADBIN_BBOX`
 (quadbin INT64)
 RETURNS ARRAY<FLOAT64>
 AS (
-    CASE
-        WHEN quadbin IS NULL THEN
+    CASE quadbin
+        WHEN NULL THEN
             NULL
         ELSE (
             WITH

@@ -8,8 +8,8 @@ RETURNS ARRAY<INT64>
 AS ((
     IF(geog IS NULL OR resolution IS NULL,
         NULL,
-        IF(resolution < 0 OR resolution > 29,
-            ERROR('Invalid resolution, should be between 0 and 29'), (
+        IF(resolution < 0 OR resolution > 26,
+            ERROR('Invalid resolution, should be between 0 and 26'), (
             WITH
             __bbox AS (
                 SELECT ST_BOUNDINGBOX(geog) AS box
@@ -43,7 +43,7 @@ AS ((
             WHERE ST_INTERSECTS(
                 `@@BQ_PREFIX@@carto.QUADBIN_BOUNDARY`(quadbin),
                 geog
-            ))
-        )
+            )
+        ))
     )
 ));
