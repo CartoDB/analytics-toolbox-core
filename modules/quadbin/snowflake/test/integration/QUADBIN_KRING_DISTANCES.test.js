@@ -4,7 +4,7 @@ test('QUADBIN_KRING_DISTANCES should work', async () => {
     const query = 'SELECT QUADBIN_KRING_DISTANCES(5209574053332910079, 1) AS OUTPUT';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].OUTPUT.sort()).toEqual([
+    expect(rows[0].OUTPUT.sort((a, b) => a.index - b.index)).toEqual([
         {"distance":1,"index":5208043533147045887},
         {"distance":1,"index":5208061125333090303},
         {"distance":1,"index":5208113901891223551},
@@ -13,5 +13,5 @@ test('QUADBIN_KRING_DISTANCES should work', async () => {
         {"distance":1,"index":5209626829891043327},
         {"distance":1,"index":5209609237704998911},
         {"distance":1,"index":5209662014263132159},
-        {"distance":1,"index":5209591645518954495}].sort());
+        {"distance":1,"index":5209591645518954495}].sort((a, b) => a.index - b.index));
 });
