@@ -11,7 +11,7 @@ RETURNS BIGINT[]
 $BODY$
     SELECT CASE
     WHEN resolution < 0 OR resolution > 26 OR resolution < ((quadbin >> 52) & 31)
-    THEN __CARTO_ERROR('Invalid resolution')::BIGINT[]
+    THEN @@PG_PREFIX@@carto.__CARTO_ERROR('Invalid resolution')::BIGINT[]
     ELSE (
       WITH _zxy AS (
           SELECT @@PG_PREFIX@@carto.QUADBIN_TOZXY(quadbin) AS tile

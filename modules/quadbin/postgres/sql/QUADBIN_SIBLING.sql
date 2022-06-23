@@ -21,7 +21,7 @@ $BODY$
         WHEN 'down' THEN
             ARRAY[0, 1]
         ELSE
-            __CARTO_ERROR(FORMAT('Invalid direction "%s". Must be one of "left", "right", "up" or "down"', direction))::INT[]
+            @@PG_PREFIX@@carto.__CARTO_ERROR(FORMAT('Invalid direction "%s". Must be one of "left", "right", "up" or "down"', direction))::INT[]
         END AS dxy
     ),
     __zxy AS (

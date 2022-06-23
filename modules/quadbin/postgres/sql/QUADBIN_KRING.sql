@@ -10,7 +10,7 @@ RETURNS BIGINT[]
  AS
 $BODY$
     SELECT CASE WHEN size IS NULL OR size < 0 THEN
-      __CARTO_ERROR(FORMAT('Invalid input size "%s"', size))::BIGINT[]
+      @@PG_PREFIX@@carto.__CARTO_ERROR(FORMAT('Invalid input size "%s"', size))::BIGINT[]
     ELSE (
       WITH __zxy AS (
         SELECT @@PG_PREFIX@@carto.QUADBIN_TOZXY(origin) AS tile

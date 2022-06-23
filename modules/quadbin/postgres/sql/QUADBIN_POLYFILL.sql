@@ -10,7 +10,7 @@ RETURNS BIGINT[]
  AS
 $BODY$
   SELECT CASE
-    WHEN resolution < 0 OR resolution > 26 THEN __CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT[]
+    WHEN resolution < 0 OR resolution > 26 THEN @@PG_PREFIX@@carto.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT[]
     WHEN resolution IS NULL OR geom IS NULL THEN NULL::BIGINT[]
     ELSE (
       WITH
