@@ -14,4 +14,4 @@ $BODY$
   SELECT ST_MakeEnvelope(b[1], b[2], b[3], b[4], 4326)
   FROM __bbox;
 $BODY$
-  LANGUAGE SQL;
+  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
