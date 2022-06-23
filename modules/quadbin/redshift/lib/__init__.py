@@ -219,20 +219,6 @@ def quadbin_from_location(long, lat, zoom):
     return quadbin_from_zxy(zoom, tile.x, tile.y)
 
 
-def quadbin_from_quadkey(quadkey):
-    import mercantile
-
-    tile = mercantile.quadkey_to_tile(quadkey)
-    return quadbin_from_zxy(tile.z, tile.x, tile.y)
-
-
-def quadkey_from_quadbin(quadbin):
-    import mercantile
-
-    tile = quadbin_to_zxy(quadbin)
-    return mercantile.quadkey(tile['x'], tile['y'], tile['z'])
-
-
 def bbox(quadbin):
     import mercantile
 
