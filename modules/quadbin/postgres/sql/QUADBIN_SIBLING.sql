@@ -2,7 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION _SAFE_QUADBIN_SIBLING(
+CREATE OR REPLACE FUNCTION QUADBIN_SIBLING(
   quadbin BIGINT,
   direction TEXT
 )
@@ -21,7 +21,7 @@ $BODY$
         WHEN 'down' THEN
             ARRAY[0, 1]
         ELSE
-            ARRAY[NULL::INT, NULL::INT]
+            __CARTO_ERROR(FORMAT('Invalid direction "%s". Must be one of "left", "right", "up" or "down"', direction))::INT[]
         END AS dxy
     ),
     __zxy AS (
@@ -41,20 +41,3 @@ $BODY$
     FROM __zxy, __offsets
 $BODY$
   LANGUAGE SQL;
-
-CREATE OR REPLACE FUNCTION QUADBIN_SIBLING(
-  quadbin BIGINT,
-  direction TEXT
-)
-RETURNS BIGINT
- AS
-$BODY$
-BEGIN
-    IF direction NOT IN ('left', 'right', 'up', 'down') THEN
-      RAISE EXCEPTION 'Invalid direction "%". Must be one of "left", "right", "up" or "down"', direction;
-    END IF;
-
-    RETURN @@PG_PREFIX@@carto._SAFE_QUADBIN_SIBLING(quadbin, direction);
-END;
-$BODY$
-  LANGUAGE PLPGSQL;

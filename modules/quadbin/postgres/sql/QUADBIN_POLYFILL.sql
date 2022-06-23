@@ -2,7 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION _SAFE_QUADBIN_POLYFILL(
+CREATE OR REPLACE FUNCTION QUADBIN_POLYFILL(
   geom GEOMETRY,
   resolution INT
 )
@@ -10,8 +10,8 @@ RETURNS BIGINT[]
  AS
 $BODY$
   SELECT CASE
-    WHEN resolution IS NULL OR geom IS NULL
-    THEN NULL
+    WHEN resolution < 0 OR resolution > 26 THEN __CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT[]
+    WHEN resolution IS NULL OR geom IS NULL THEN NULL::BIGINT[]
     ELSE (
       WITH
       __geom4326 AS (
@@ -61,20 +61,3 @@ $BODY$
     END;
 $BODY$
   LANGUAGE SQL;
-
-CREATE OR REPLACE FUNCTION QUADBIN_POLYFILL(
-  geom GEOMETRY,
-  resolution INT
-)
-RETURNS BIGINT[]
- AS
-$BODY$
-BEGIN
-    IF resolution < 0 OR resolution > 26 THEN
-      RAISE EXCEPTION 'Invalid resolution %; should be between 0 and 26', resolution;
-    END IF;
-
-    RETURN @@PG_PREFIX@@carto._SAFE_QUADBIN_POLYFILL(geom, resolution);
-END;
-$BODY$
-  LANGUAGE PLPGSQL;

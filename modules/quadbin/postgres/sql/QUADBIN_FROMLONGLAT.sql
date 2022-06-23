@@ -2,7 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION _SAFE_QUADBIN_FROMLONGLAT(
+CREATE OR REPLACE FUNCTION QUADBIN_FROMLONGLAT(
   longitude DOUBLE PRECISION,
   latitude DOUBLE PRECISION,
   resolution INTEGER
@@ -11,8 +11,10 @@ RETURNS BIGINT
  AS
 $BODY$
     SELECT CASE
-    WHEN longitude IS NULL OR latitude IS NULL OR resolution IS NULL OR resolution < 0 OR resolution > 26
-    THEN NULL
+    WHEN resolution < 0 OR resolution > 26
+    THEN __CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT
+    WHEN longitude IS NULL OR latitude IS NULL OR resolution IS NULL
+    THEN NULL::BIGINT
     ELSE
         (WITH
         __params AS (
@@ -32,21 +34,3 @@ $BODY$
     END
 $BODY$
   LANGUAGE SQL;
-
-CREATE OR REPLACE FUNCTION QUADBIN_FROMLONGLAT(
-  longitude DOUBLE PRECISION,
-  latitude DOUBLE PRECISION,
-  resolution INTEGER
-)
-RETURNS BIGINT
- AS
-$BODY$
-BEGIN
-    IF resolution < 0 OR resolution > 26 THEN
-      RAISE EXCEPTION 'Invalid resolution %; should be between 0 and 26', resolution;
-    END IF;
-
-    RETURN @@PG_PREFIX@@carto._SAFE_QUADBIN_FROMLONGLAT(longitude, latitude, resolution);
-END;
-$BODY$
-  LANGUAGE PLPGSQL;
