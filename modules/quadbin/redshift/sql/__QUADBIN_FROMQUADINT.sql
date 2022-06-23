@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_FROMQUADINT
 RETURNS BIGINT
 STABLE
 AS $$
-    from @@RS_PREFIX@@quadkeyLib import quadbin_from_zxy
-
+    from @@RS_PREFIX@@quadbinLib import quadbin_from_zxy
+    
     z = quadint & 31
     x = (quadint >> 5) & ((1 << z) - 1)
     y = quadint >> (z + 5)
