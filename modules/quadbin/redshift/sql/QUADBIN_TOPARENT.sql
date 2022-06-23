@@ -3,14 +3,15 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_TOPARENT
-(quadbin BIGINT, resolution INT)
+(BIGINT, INT)
+-- (quadbin, resolution)
 RETURNS BIGINT
 STABLE
 AS $$
-    from @@RS_PREFIX@@quadbinLib import to_parent
-    
-    if quadbin is None or resolution is None:
-        raise Exception('NULL argument passed to UDF')
-
-    return to_parent(quadbin, resolution)
-$$ LANGUAGE plpythonu;
+  SELECT CASE
+  WHEN $2 < 0 OR $2 > (($1 >> 52) & 31)
+  THEN CAST(@@RS_PREFIX@@carto.__QUADBIN_RAISE_EXCEPTION('Invalid resolution') AS BIGINT)
+  ELSE
+    ($1 & ~(CAST(31 AS BIGINT) << 52)) | (CAST($2 AS BIGINT) << 52) | (4503599627370495 >> ($2 << 1))
+  END
+$$ LANGUAGE sql;

@@ -151,18 +151,6 @@ def to_children(quadbin, resolution):
     return children
 
 
-def to_parent(quadbin, resolution):
-    zxy = quadbin_to_zxy(quadbin)
-    if resolution < 0 or resolution >= zxy['z']:
-        raise Exception('Invalid resolution')
-
-    return (
-        (quadbin & ~(0x1F << 52))
-        | (resolution << 52)
-        | (0xFFFFFFFFFFFFF >> (resolution * 2))
-    )
-
-
 def kring(origin, size):
     corner_quadbin = origin
     # Traverse to top left corner

@@ -8,7 +8,6 @@ def test_init():
     assert hasattr(quadbinLib, 'quadbin_to_zxy')
     assert hasattr(quadbinLib, 'sibling')
     assert hasattr(quadbinLib, 'to_children')
-    assert hasattr(quadbinLib, 'to_parent')
     assert hasattr(quadbinLib, 'kring')
     assert hasattr(quadbinLib, 'kring_distances')
     assert hasattr(quadbinLib, 'quadbin_from_location')
