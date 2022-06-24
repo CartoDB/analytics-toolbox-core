@@ -14,9 +14,7 @@ Returns the resolution of the input quadbin.
 
 `INT`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_RESOLUTION(5209574053332910079);

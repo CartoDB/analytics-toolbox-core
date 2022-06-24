@@ -2,6 +2,8 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
+-- FIXME: slow
+
 CREATE OR REPLACE FUNCTION QUADBIN_SIBLING
 (quadbin BIGINT, direction STRING)
 RETURNS INT

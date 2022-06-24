@@ -15,9 +15,7 @@ Returns all cell indexes and their distances in a **filled square k-ring** cente
 
 `ARRAY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);

@@ -14,9 +14,7 @@ Returns the center for a given quadbin. The center is defined as the intersectio
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_CENTER(5209574053332910079);

@@ -20,9 +20,7 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 
 `BIGINT`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_FROMZXY(4, 9, 8);
