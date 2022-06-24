@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION QUADBIN_TOZXY
-(quadbin INT)
+(quadbin BIGINT)
 RETURNS OBJECT
 AS $$
 WITH __interleaved AS (

@@ -1,7 +1,7 @@
 -- This method should call QUADBIN_TOZXY, but that causes SnowFlake to crash,
 -- so we are computing the ZXY here, in-place
 CREATE OR REPLACE FUNCTION QUADBIN_BBOX
-(quadbin INT)
+(quadbin BIGINT)
 RETURNS ARRAY
 AS $$
     CASE quadbin

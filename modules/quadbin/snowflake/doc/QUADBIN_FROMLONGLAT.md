@@ -14,7 +14,7 @@ Returns the quadbin representation for a given level of detail and geographic co
 
 **Return type**
 
-`INT`
+`BIGINT`
 
 {{% customSelector %}}
 **Example**

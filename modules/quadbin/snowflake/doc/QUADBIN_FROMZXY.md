@@ -18,7 +18,7 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 
 **Return type**
 
-`INT`
+`BIGINT`
 
 {{% customSelector %}}
 **Example**

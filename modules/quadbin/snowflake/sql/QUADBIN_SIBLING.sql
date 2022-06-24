@@ -3,19 +3,19 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION QUADBIN_SIBLING
-(quadbin INT, direction STRING)
+(quadbin BIGINT, direction STRING)
 RETURNS INT
 AS $$
-    CASE
-        WHEN direction = 'left' THEN
+    CASE direction
+        WHEN 'left' THEN
             _QUADBIN_SIBLING(quadbin, -1, 0)
-        WHEN direction = 'right' THEN
+        WHEN 'right' THEN
             _QUADBIN_SIBLING(quadbin, 1, 0)
-        WHEN direction = 'up' THEN
+        WHEN 'up' THEN
             _QUADBIN_SIBLING(quadbin, 0, -1)
-        WHEN direction = 'down' THEN
+        WHEN 'down' THEN
             _QUADBIN_SIBLING(quadbin, 0, 1)
-        ELSE 
+        ELSE
             NULL
     END
 $$;

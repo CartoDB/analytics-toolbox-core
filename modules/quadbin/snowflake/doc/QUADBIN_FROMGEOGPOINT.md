@@ -13,7 +13,7 @@ Returns the quadbin of a given point at a given level of detail.
 
 **Return type**
 
-`INT`
+`BIGINT`
 
 {{% customSelector %}}
 **Example**

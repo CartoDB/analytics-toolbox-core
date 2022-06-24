@@ -13,7 +13,7 @@ Returns an array of quadbins that intersect with the given geography at a given 
 
 **Return type**
 
-`ARRAY<INT>`
+`ARRAY<BIGINT>`
 
 {{% customSelector %}}
 **Example**

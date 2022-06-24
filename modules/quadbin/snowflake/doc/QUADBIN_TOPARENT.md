@@ -8,12 +8,12 @@ carto.QUADBIN_TOPARENT(quadbin, resolution)
 
 Returns the parent quadbin of a given quadbin for a specific resolution. A parent quadbin is the smaller resolution containing quadbin.
 
-* `quadbin`: `INT` quadbin to get the parent from.
+* `quadbin`: `BIGINT` quadbin to get the parent from.
 * `resolution`: `INT` resolution of the desired parent.
 
 **Return type**
 
-`INT`
+`BIGINT`
 
 {{% customSelector %}}
 **Example**

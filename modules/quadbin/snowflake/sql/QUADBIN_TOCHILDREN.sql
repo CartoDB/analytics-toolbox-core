@@ -2,7 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 CREATE OR REPLACE FUNCTION QUADBIN_TOCHILDREN
-(quadbin INT, resolution INT)
+(quadbin BIGINT, resolution INT)
 RETURNS ARRAY
 AS $$
 WITH
