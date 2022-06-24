@@ -13,7 +13,7 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 
 **Return type**
 
-`ARRAY<INT>`
+`ARRAY`
 
 {{% customSelector %}}
 **Example**

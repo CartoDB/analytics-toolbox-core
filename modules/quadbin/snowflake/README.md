@@ -1,2 +1,3 @@
 # Quadbin module for Snowflake
-TODO: add module description.
+
+You can learn more about quadbins in the [Overview section](/analytics-toolbox-snowflake/overview/spatial-indexes/#quadbin) of the documentation.
