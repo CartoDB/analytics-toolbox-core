@@ -1,3 +1,7 @@
+----------------------------
+-- Copyright (C) 2022 CARTO
+----------------------------
+
 CREATE OR REPLACE FUNCTION QUADBIN_TOZXY
 (quadbin INT)
 RETURNS OBJECT
@@ -119,6 +123,9 @@ SELECT
 FROM
   __deinterleaved7
 $$;
+
+----------------------------
+-- Original code:
 
 -- CREATE OR REPLACE FUNCTION QUADBIN_TOZXY
 -- (quadbin INT)
