@@ -18,7 +18,7 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_KRING(4388, 1);
+SELECT carto.QUADBIN_KRING(5209574053332910079, 1);
 -- 5208043533147045887
 -- 5209556461146865663
 -- 5209591645518954495
