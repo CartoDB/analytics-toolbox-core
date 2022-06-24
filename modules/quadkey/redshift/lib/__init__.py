@@ -119,7 +119,7 @@ def kring_distances(origin, size):
             neighbors.append(
                 {
                     'index': traversal_quadint,
-                    'distance': max(abs(i), abs(j)),  # Chebychev distance
+                    'distance': max(abs(i - size), abs(j - size)),  # Chebychev distance
                 }
             )
             traversal_quadint = sibling(traversal_quadint, 'right')
@@ -187,34 +187,3 @@ def geojson_to_quadints(poly, limits):
         quadint_from_zxy(int(tile[2]), int(tile[0]), int(tile[1]))
         for tile in tilecover.get_tiles(poly, limits)
     ]
-
-
-def quadbin_from_zxy(z, x, y):
-    x = x << (32 - z)
-    y = y << (32 - z)
-
-    b = [
-        0x5555555555555555,
-        0x3333333333333333,
-        0x0F0F0F0F0F0F0F0F,
-        0x00FF00FF00FF00FF,
-        0x0000FFFF0000FFFF,
-    ]
-    s = [1, 2, 4, 8, 16]
-
-    x = (x | (x << s[4])) & b[4]
-    y = (y | (y << s[4])) & b[4]
-
-    x = (x | (x << s[3])) & b[3]
-    y = (y | (y << s[3])) & b[3]
-
-    x = (x | (x << s[2])) & b[2]
-    y = (y | (y << s[2])) & b[2]
-
-    x = (x | (x << s[1])) & b[1]
-    y = (y | (y << s[1])) & b[1]
-
-    x = (x | (x << s[0])) & b[0]
-    y = (y | (y << s[0])) & b[0]
-
-    return (z << 58) | ((x | (y << 1)) >> 6)
