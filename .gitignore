@@ -17,3 +17,4 @@ dev_env.sh
 package-lock.json
 MANIFEST
 *.ipynb
+.pgpass
