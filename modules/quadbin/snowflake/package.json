@@ -1,0 +1,10 @@
+{
+  "name": "quadbin_snowflake",
+  "version": "1.0.0",
+  "description": "Quadbin module for SnowFlake",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+  }
+}

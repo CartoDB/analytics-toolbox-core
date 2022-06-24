@@ -8,8 +8,8 @@ carto.QUADBIN_FROMGEOGPOINT(point, resolution)
 
 Returns the quadbin of a given point at a given level of detail.
 
-* `point`: `GEOMETRY` point to get the quadbin from.
-* `resolution`: `BIGINT` level of detail or zoom.
+* `point`: `GEOGRAPHY` point to get the quadbin from.
+* `resolution`: `INT` level of detail or zoom.
 
 **Return type**
 
@@ -18,6 +18,6 @@ Returns the quadbin of a given point at a given level of detail.
 **Example**
 
 ```sql
-SELECT .carto.QUADBIN_FROMGEOGPOINT(ST_MAKEPOINT(40.4168, -3.7038), 4);
+SELECT carto.QUADBIN_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
 -- 5209574053332910079
 ```

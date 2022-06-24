@@ -12,11 +12,12 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadbin.
 
 **Return type**
 
-`JSON`
+`STRUCT<INT, INT, INT>`
 
 **Example**
 
 ```sql
 SELECT carto.QUADBIN_TOZXY(5209574053332910079);
--- {"z" : 4, "x" : 9, "y" : 8}
+-- z  x  y
+-- 4  9  8
 ```

@@ -12,7 +12,7 @@ Returns the resolution of the input quadbin.
 
 **Return type**
 
-`BIGINT`
+`INT`
 
 **Example**
 

@@ -13,14 +13,14 @@ Returns an array with the children quadbins of a given quadbin for a specific re
 
 **Return type**
 
-`BIGINT[]`
+`ARRAY`
 
 **Example**
 
 ```sql
 SELECT carto.QUADBIN_TOCHILDREN(5209574053332910079, 5);
--- { 5214064458820747263,
---   5214073254913769471,
---   5214068856867258367,
---   5214077652960280575 }
+-- 5214064458820747263
+-- 5214073254913769471
+-- 5214068856867258367
+-- 5214077652960280575
 ```

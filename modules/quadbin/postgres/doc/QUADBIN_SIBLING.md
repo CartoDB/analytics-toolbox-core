@@ -15,9 +15,7 @@ Returns the quadbin directly next to the given quadbin at the same zoom level. T
 
 `BIGINT`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_SIBLING(5209574053332910079, 'up');

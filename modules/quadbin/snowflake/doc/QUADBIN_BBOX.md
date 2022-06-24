@@ -14,9 +14,14 @@ Returns an array with the boundary box of a given quadbin. This boundary box con
 
 `ARRAY<FLOAT64>`
 
+{{% customSelector %}}
 **Example**
+{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_BBOX(5209574053332910079);
--- {22.5,-21.943045533438166,45.0,0.0}
+-- 22.5
+-- -21.943045533438166
+-- 45.0
+-- 0.0
 ```

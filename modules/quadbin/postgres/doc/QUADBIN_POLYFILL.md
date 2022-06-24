@@ -15,9 +15,7 @@ Returns an array of quadbins that intersect with the given geometry at a given l
 
 `BIGINT[]`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_POLYFILL(
