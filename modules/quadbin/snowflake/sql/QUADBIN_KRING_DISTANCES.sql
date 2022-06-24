@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION QUADBIN_KRING_DISTANCES
-(origin INT, size INT)
+(origin BIGINT, size INT)
 RETURNS ARRAY
 AS $$
     WITH __zxy AS (
-       SELECT QUADBIN_TOZXY(origin) AS zxy 
+       SELECT QUADBIN_TOZXY(origin) AS zxy
     ),
     __t AS (
         SELECT

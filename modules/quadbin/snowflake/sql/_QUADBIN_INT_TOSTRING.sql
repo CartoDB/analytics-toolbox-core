@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION _QUADBIN_INT_TOSTRING
-(quadbin INT)
+(quadbin BIGINT)
 RETURNS STRING
 AS $$
     TO_VARCHAR(quadbin, 'XXXXXXXXXXXXXXXX')

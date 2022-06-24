@@ -8,7 +8,7 @@ carto.QUADBIN_RESOLUTION(quadbin)
 
 Returns the resolution of the input quadbin.
 
-* `quadbin`: `INT` quadbin from which to get resolution.
+* `quadbin`: `BIGINT` quadbin from which to get resolution.
 
 **Return type**
 

@@ -5,7 +5,7 @@
 
 CREATE OR REPLACE FUNCTION QUADBIN_FROMLONGLAT
 (longitude FLOAT, latitude FLOAT, resolution INT)
-RETURNS INT
+RETURNS BIGINT
 AS $$
     IFF(longitude IS NULL OR latitude IS NULL OR resolution IS NULL,
         NULL,
@@ -22,7 +22,7 @@ AS $$
                 SELECT
                     z,
                     bitand( CAST(FLOOR(BITSHIFTLEFT(1, z) * ((longitude / 360.0) + 0.5)) AS INT), (BITSHIFTLEFT(1, z) - 1)) AS x,
-                    bitand( CAST(FLOOR(BITSHIFTLEFT(1, z) * (0.5 - (LN(TAN(PI/4.0 + latitude/2.0 * PI/180.0)) / (2*PI)))) AS INT), 
+                    bitand( CAST(FLOOR(BITSHIFTLEFT(1, z) * (0.5 - (LN(TAN(PI/4.0 + latitude/2.0 * PI/180.0)) / (2*PI)))) AS INT),
                             (BITSHIFTLEFT(1, z) - 1)) AS y
                 FROM __params
             )

@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION QUADBIN_SIBLING
-(quadbin INT, direction STRING)
+(quadbin BIGINT, direction STRING)
 RETURNS INT
 IMMUTABLE
 AS $$
@@ -39,3 +39,15 @@ AS $$
     )
    FROM _dxy)
 $$;
+
+----------------------------
+-- Original code:
+
+-- CREATE OR REPLACE FUNCTION _QUADBIN_SIBLING
+-- (origin INT, dx INT, dy INT)
+-- RETURNS INT
+-- AS $$
+--     _ZXY_QUADBIN_SIBLING(
+--         QUADBIN_TOZXY(origin), dx, dy
+--     )
+-- $$;
