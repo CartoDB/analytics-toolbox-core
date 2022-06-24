@@ -262,8 +262,8 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
-      PG_DATABASE: pgcartoci
+      PG_HOST: ${{ secrets.PG_HOST }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE }}
       PG_SCHEMA_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
       PG_USER: ${{ secrets.PG_USER }}
       PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
