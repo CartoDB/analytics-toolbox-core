@@ -1,4 +1,4 @@
-## QUADBIN_RESOLUTION
+### QUADBIN_RESOLUTION
 
 {{% bannerNote type="code" %}}
 carto.QUADBIN_RESOLUTION(quadbin)
@@ -14,9 +14,7 @@ Returns the resolution of the input quadbin.
 
 `BIGINT`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_RESOLUTION(5209574053332910079);

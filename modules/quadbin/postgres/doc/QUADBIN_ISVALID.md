@@ -14,9 +14,7 @@ Returns `true` when the given index is valid, `false` otherwise.
 
 `BOOLEAN`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_ISVALID(5209574053332910079);

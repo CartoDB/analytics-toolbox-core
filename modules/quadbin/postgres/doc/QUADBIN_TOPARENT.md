@@ -15,9 +15,7 @@ Returns the parent quadbin of a given quadbin for a specific resolution. A paren
 
 `BIGINT`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_TOPARENT(5209574053332910079, 3);

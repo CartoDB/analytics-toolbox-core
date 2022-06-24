@@ -14,9 +14,7 @@ Returns the boundary for a given quadbin. We extract the boundary in the same wa
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_BOUNDARY(5209574053332910079);

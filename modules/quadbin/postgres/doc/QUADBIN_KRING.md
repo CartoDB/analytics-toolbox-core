@@ -15,9 +15,7 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 
 `BIGINT[]`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_KRING(5209574053332910079, 1);

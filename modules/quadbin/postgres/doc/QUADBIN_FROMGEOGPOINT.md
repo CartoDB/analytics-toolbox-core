@@ -15,9 +15,7 @@ Returns the quadbin of a given point at a given level of detail.
 
 `BIGINT`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT .carto.QUADBIN_FROMGEOGPOINT(ST_MAKEPOINT(40.4168, -3.7038), 4);

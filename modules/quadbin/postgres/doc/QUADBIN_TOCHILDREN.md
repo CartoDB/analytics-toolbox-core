@@ -15,9 +15,7 @@ Returns an array with the children quadbins of a given quadbin for a specific re
 
 `BIGINT[]`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.QUADBIN_TOCHILDREN(5209574053332910079, 5);
