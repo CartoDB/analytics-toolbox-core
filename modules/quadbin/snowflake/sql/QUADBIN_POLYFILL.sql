@@ -8,11 +8,11 @@ RETURNS ARRAY
 AS $$
     IFF(geog IS NULL OR resolution IS NULL,
         NULL,
-        IFF(resolution < 0 OR resolution > 29,
+        IFF(resolution < 0 OR resolution > 26,
             NULL, (
             WITH
             __bbox AS (
-                SELECT 
+                SELECT
                     ST_XMIN(geog) as xmin,
                     ST_YMIN(geog) as ymin,
                     ST_XMAX(geog) as xmax,
