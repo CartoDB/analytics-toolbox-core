@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2022 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_SIBLING
@@ -8,7 +8,7 @@ RETURNS BIGINT
 STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import sibling
-    
+
     if quadbin is None or direction is None:
         return None
 

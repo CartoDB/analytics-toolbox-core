@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2022 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_TOZXY
@@ -9,7 +9,7 @@ STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_to_zxy
     import json
-    
+
     if quadbin is None:
         raise Exception('NULL argument passed to UDF')
 

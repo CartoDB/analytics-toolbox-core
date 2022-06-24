@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2022 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_FROMLONGLAT
@@ -8,7 +8,7 @@ RETURNS BIGINT
 STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_from_location
-    
+
     if longitude is None or latitude is None or resolution is None:
         return None
 

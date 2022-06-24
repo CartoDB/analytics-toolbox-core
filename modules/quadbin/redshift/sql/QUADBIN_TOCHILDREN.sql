@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2022 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_TOCHILDREN
@@ -9,7 +9,7 @@ STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import to_children
     import json
-    
+
     if quadbin is None or resolution is None:
         raise Exception('NULL argument passed to UDF')
 
