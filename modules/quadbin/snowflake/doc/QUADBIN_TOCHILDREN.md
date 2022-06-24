@@ -13,7 +13,7 @@ Returns an array with the children quadbins of a given quadbin for a specific re
 
 **Return type**
 
-`ARRAY<INT>`
+`ARRAY`
 
 {{% customSelector %}}
 **Example**

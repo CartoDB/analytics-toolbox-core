@@ -12,45 +12,45 @@ AS $$
         ),
         __interleaved1 AS (
             SELECT
-            BITAND(BITOR(x, BITSHIFTLEFT(x, 16)), TO_NUMBER('0000ffff0000ffff', 'XXXXXXXXXXXXXXXX')) AS x,
-            BITAND(BITOR(y, BITSHIFTLEFT(y, 16)), TO_NUMBER('0000ffff0000ffff', 'XXXXXXXXXXXXXXXX')) AS y,
+            BITAND(BITOR(x, BITSHIFTLEFT(x, 16)), 281470681808895) AS x,
+            BITAND(BITOR(y, BITSHIFTLEFT(y, 16)), 281470681808895) AS y,
             z
             FROM __ints
         ),
         __interleaved2 AS (
             SELECT
-            BITAND(BITOR(x, BITSHIFTLEFT(x, 8)), TO_NUMBER('00ff00ff00ff00ff', 'XXXXXXXXXXXXXXXX')) AS x,
-            BITAND(BITOR(y, BITSHIFTLEFT(y, 8)), TO_NUMBER('00ff00ff00ff00ff', 'XXXXXXXXXXXXXXXX')) AS y,
+            BITAND(BITOR(x, BITSHIFTLEFT(x, 8)), 71777214294589695) AS x,
+            BITAND(BITOR(y, BITSHIFTLEFT(y, 8)), 71777214294589695) AS y,
             z
             FROM __interleaved1
         ),
         __interleaved3 AS (
             SELECT
-            BITAND(BITOR(x, BITSHIFTLEFT(x, 4)), TO_NUMBER('0f0f0f0f0f0f0f0f', 'XXXXXXXXXXXXXXXX')) AS x,
-            BITAND(BITOR(y, BITSHIFTLEFT(y, 4)), TO_NUMBER('0f0f0f0f0f0f0f0f', 'XXXXXXXXXXXXXXXX')) AS y,
+            BITAND(BITOR(x, BITSHIFTLEFT(x, 4)), 1085102592571150095) AS x,
+            BITAND(BITOR(y, BITSHIFTLEFT(y, 4)), 1085102592571150095) AS y,
             z
             FROM __interleaved2
         ),
         __interleaved4 AS (
             SELECT
-            BITAND(BITOR(x, BITSHIFTLEFT(x, 2)), TO_NUMBER('3333333333333333', 'XXXXXXXXXXXXXXXX')) AS x,
-            BITAND(BITOR(y, BITSHIFTLEFT(y, 2)), TO_NUMBER('3333333333333333', 'XXXXXXXXXXXXXXXX')) AS y,
+            BITAND(BITOR(x, BITSHIFTLEFT(x, 2)), 3689348814741910323) AS x,
+            BITAND(BITOR(y, BITSHIFTLEFT(y, 2)), 3689348814741910323) AS y,
             z
             FROM __interleaved3
         ),
         __interleaved5 AS (
             SELECT
-            BITAND(BITOR(x, BITSHIFTLEFT(x, 1)), TO_NUMBER('5555555555555555', 'XXXXXXXXXXXXXXXX')) AS x,
-            BITAND(BITOR(y, BITSHIFTLEFT(y, 1)), TO_NUMBER('5555555555555555', 'XXXXXXXXXXXXXXXX')) AS y,
+            BITAND(BITOR(x, BITSHIFTLEFT(x, 1)), 6148914691236517205) AS x,
+            BITAND(BITOR(y, BITSHIFTLEFT(y, 1)), 6148914691236517205) AS y,
             z
             FROM __interleaved4
         )
-        SELECT 
+        SELECT
             BITOR(
                 BITOR(
                     BITOR(
                         BITOR(
-                            TO_NUMBER('4000000000000000', 'xxxxxxxxxxxxxxxx'),
+                            4611686018427387904,
                             BITSHIFTLEFT(1, 59)
                         ),
                         BITSHIFTLEFT(z, 52)
