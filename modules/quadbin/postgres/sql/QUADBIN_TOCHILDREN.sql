@@ -16,7 +16,7 @@ $BODY$
       WITH _zxy AS (
           SELECT @@PG_PREFIX@@carto.QUADBIN_TOZXY(quadbin) AS tile
       )
-      SELECT ARRAY_AGG(jgoizueta_carto.QUADBIN_FROMZXY(resolution, xs, ys))
+      SELECT ARRAY_AGG(@@PG_PREFIX@@carto.QUADBIN_FROMZXY(resolution, xs, ys))
       FROM _zxy,
         generate_series((tile->>'x')::INT << (resolution - (tile->>'z')::INT), (((tile->>'x')::INT + 1) << (resolution - (tile->>'z')::INT)) - 1) as xs,
         generate_series((tile->>'y')::INT << (resolution - (tile->>'z')::INT), (((tile->>'y')::INT + 1) << (resolution - (tile->>'z')::INT)) - 1) as ys
