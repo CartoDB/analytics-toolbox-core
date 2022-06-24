@@ -2,6 +2,8 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
+-- FIXME: slow
+
 CREATE OR REPLACE FUNCTION QUADBIN_SIBLING
 (quadbin BIGINT, direction STRING)
 RETURNS INT
@@ -43,9 +45,23 @@ $$;
 ----------------------------
 -- Original code:
 
+-- CREATE OR REPLACE FUNCTION _ZXY_QUADBIN_SIBLING
+-- (origin OBJECT, dx INT, dy INT)
+-- RETURNS BIGINT
+-- AS $$
+--     IFF(origin:y + dy >= 0 AND origin:y + dy < BITSHIFTLEFT(1, origin:z),
+--         QUADBIN_FROMZXY(
+--             origin:z,
+--             MOD(origin:x + dx, BITSHIFTLEFT(1, origin:z)) + IFF(origin:x + dx < 0, BITSHIFTLEFT(1, origin:z), 0),
+--             origin:y + dy
+--         ),
+--         NULL
+--     )
+-- $$;
+
 -- CREATE OR REPLACE FUNCTION _QUADBIN_SIBLING
 -- (origin INT, dx INT, dy INT)
--- RETURNS INT
+-- RETURNS BIGINT
 -- AS $$
 --     _ZXY_QUADBIN_SIBLING(
 --         QUADBIN_TOZXY(origin), dx, dy
