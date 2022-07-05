@@ -40,7 +40,7 @@ RETURNS BIGINT
 IMMUTABLE
 AS $$
     SELECT @@RS_PREFIX@@carto.__QUADBIN_TOZXY_XY_INTERLEAVED3(
-        ($1 | ($1 >> 2)) & CAST(FROM_HEX('0f0f0f0f0f0f0f0f') AS BIGINT)
+        ($1 | ($1 >> 2)) & CAST(FROM_HEX('0F0F0F0F0F0F0F0F') AS BIGINT)
         )
 $$ language sql;
 
