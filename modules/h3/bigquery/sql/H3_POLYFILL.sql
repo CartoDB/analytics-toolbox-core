@@ -37,6 +37,13 @@ AS """
                     var clippedGeometryB = h3Lib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
                 }
+                else{
+                    var bboxGeom = h3Lib.bboxPolygon(h3Lib.bbox(geom)).geometry;
+                    var clippedGeometryA = h3Lib.bboxClip(bboxGeom, bboxA).geometry;
+                    polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
+                    var clippedGeometryB = h3Lib.bboxClip(bboxGeom, bboxB).geometry;
+                    polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
+                }
             });
         break;
         case 'MultiPolygon':
@@ -52,7 +59,11 @@ AS """
             polygonCoordinatesB = [clippedGeometryB.coordinates];
         break;
         default:
-            return null;
+            var bboxGeom = h3Lib.bboxPolygon(h3Lib.bbox(featureGeometry)).geometry;
+            var clippedGeometryA = h3Lib.bboxClip(bboxGeom, bboxA).geometry;
+            polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
+            var clippedGeometryB = h3Lib.bboxClip(bboxGeom, bboxB).geometry;
+            polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
     }
 
     if (polygonCoordinatesA.length + polygonCoordinatesB.length === 0) {

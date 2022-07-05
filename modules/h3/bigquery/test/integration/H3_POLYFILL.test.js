@@ -20,14 +20,11 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         SELECT 9 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 20 as resolution UNION ALL
         SELECT 10 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution UNION ALL
 
-        -- Other types are not supported
+        -- Other types
         SELECT 11 AS id, ST_GEOGFROMTEXT('POINT(0 0)') as geom, 15 as resolution UNION ALL
-        SELECT 12 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)') as geom, 15 as resolution UNION ALL
-        SELECT 13 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)') as geom, 15 as resolution UNION ALL
-        SELECT 14 AS id, ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 15 as resolution UNION ALL
-        -- 15 is a geometry collection containing only not supported types
-        SELECT 15 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 15 as resolution
-
+        SELECT 12 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)') as geom, 5 as resolution UNION ALL
+        SELECT 13 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)') as geom, 5 as resolution UNION ALL
+        SELECT 14 AS id, ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 5 as resolution
         )
         SELECT
         ARRAY_LENGTH(\`@@BQ_PREFIX@@carto.H3_POLYFILL\`(geom, resolution)) AS id_count
@@ -36,7 +33,7 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
     `;
 
     const rows = await runQuery(query);
-    expect(rows.length).toEqual(15);
+    expect(rows.length).toEqual(14);
     expect(rows.map((r) => r.id_count)).toEqual([
         1253,
         18,
@@ -48,11 +45,10 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         null,
         null,
         null,
-        null,
-        null,
-        null,
-        null,
-        null
+        0,
+        66,
+        66,
+        579
     ]);
 });
 
@@ -88,7 +84,7 @@ test('H3_POLYFILL returns the expected values', async () => {
             ARRAY_LENGTH(p) != 1 OR
             p[OFFSET(0)] != h3_id
     `;
-    
+
     const rows = await runQuery(query);
     expect(rows.length).toEqual(0);
 });
