@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_BBOX
 (quadbin BIGINT)
 RETURNS VARCHAR(MAX)
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import bbox
     import json
@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_BBOX
 (BIGINT)
 -- (quadbin)
 RETURNS SUPER
-STABLE
+IMMUTABLE
 AS $$
     SELECT json_parse(@@RS_PREFIX@@carto.__QUADBIN_BBOX($1))
 $$ LANGUAGE sql;
