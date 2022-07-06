@@ -81,6 +81,8 @@ AS $$
     ).filter(h => h != null);
     hexes = [...hexesA, ...hexesB];
     hexes = [...new Set(hexes)];
+
+    return hexes;
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION H3_POLYFILL
