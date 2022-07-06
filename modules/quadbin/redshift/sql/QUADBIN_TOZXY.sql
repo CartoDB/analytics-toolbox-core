@@ -86,7 +86,7 @@ AS $$
     SELECT @@RS_PREFIX@@carto.__QUADBIN_TOZXY_X($1 >> 1)
 $$ language sql;
 
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_TOZXY
+CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_TOZXY
 (BIGINT)
 -- (quadbin)
 RETURNS SUPER
@@ -98,26 +98,3 @@ AS $$
         '"y": ' || (@@RS_PREFIX@@carto.__QUADBIN_TOZXY_Y($1) >> (32 - CAST(@@RS_PREFIX@@carto.QUADBIN_RESOLUTION($1) AS INT))) || '}'
         )
 $$ language sql;
-
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_TOZXY_INTERNAL
-(quadbin BIGINT)
-RETURNS VARCHAR
-IMMUTABLE
-AS $$
-    from @@RS_PREFIX@@quadbinLib import quadbin_to_zxy
-    import json
-
-    if quadbin is None:
-        raise Exception('NULL argument passed to UDF')
-
-    return json.dumps(quadbin_to_zxy(quadbin))
-$$ LANGUAGE plpythonu;
-
-CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_TOZXY
-(BIGINT)
--- (quadbin)
-RETURNS SUPER
-IMMUTABLE
-AS $$
-    SELECT json_parse(@@RS_PREFIX@@carto.__QUADBIN_TOZXY_INTERNAL($1))
-$$ LANGUAGE sql;
