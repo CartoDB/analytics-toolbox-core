@@ -11,4 +11,4 @@ AS $$
     return null;
   }
   return Array(MAX - MIN + 1).fill().map((x,i) => i + MIN);
-$$
+$$;
