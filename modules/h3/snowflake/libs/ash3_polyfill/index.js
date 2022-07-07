@@ -1,4 +1,7 @@
 import { polyfill } from './h3core_custom';
-import { bboxClip, bbox, bboxPolygon } from '@turf/turf';
+import { bboxClip } from '@turf/turf';
 
-export default { bboxClip, bbox, bboxPolygon , polyfill };
+export default {
+    bboxClip,
+    polyfill
+};

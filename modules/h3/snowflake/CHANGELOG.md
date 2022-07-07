@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.1.1] - 2022-07-07
 
 ### Fixed
-- Correctly handle polygons that cross the antimeridian in H3_POLYFILL
+- Correctly handle large polygons in H3_POLYFILL.
 
 ## [1.1.0] - 2021-12-03
 
