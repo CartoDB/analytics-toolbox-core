@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../../../common/bigquery/test-utils');
+const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('Correctly converts H3 string to H3 int', async () => {
     const query = `
