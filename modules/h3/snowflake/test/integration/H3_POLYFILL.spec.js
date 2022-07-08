@@ -25,8 +25,15 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
             SELECT 12 AS id, TO_GEOGRAPHY('MULTIPOINT(0 0, 1 1)') as geom, 15 as resolution UNION ALL
             SELECT 13 AS id, TO_GEOGRAPHY('LINESTRING(0 0, 1 1)') as geom, 15 as resolution UNION ALL
             SELECT 14 AS id, TO_GEOGRAPHY('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 15 as resolution UNION ALL
+
             -- 15 is a geometry collection containing only not supported types
-            SELECT 15 AS id, TO_GEOGRAPHY('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 15 as resolution
+            SELECT 15 AS id, TO_GEOGRAPHY('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 15 as resolution UNION ALL
+
+            SELECT 16 AS id, TO_GEOGRAPHY('POLYGON((0 0, 0 .0001, .0001 .0001, .0001 0, 0 0))') as geom, 15 as resolution UNION ALL
+            SELECT 17 AS id, TO_GEOGRAPHY('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution UNION ALL
+
+            -- Polygon crossing the antimeridian
+            SELECT 18 AS id, TO_GEOGRAPHY('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
         )
         SELECT
             ARRAY_SIZE(H3_POLYFILL(geom, resolution)) AS id_count
@@ -35,7 +42,7 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
     `;
 
     const rows = await runQuery(query);
-    expect(rows.length).toEqual(15);
+    expect(rows.length).toEqual(18);
     expect(rows.map((r) => r.ID_COUNT)).toEqual([
         1253,
         18,
@@ -51,7 +58,10 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         0,
         0,
         0,
-        0
+        0,
+        182,
+        6,
+        16110
     ]);
 });
 

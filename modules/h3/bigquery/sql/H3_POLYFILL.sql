@@ -14,7 +14,7 @@ AS """
     }
 
     const resolution = Number(_resolution);
-    if (resolution < 0 || resolution > 16) {
+    if (resolution < 0 || resolution > 15) {
         return null;
     }
 

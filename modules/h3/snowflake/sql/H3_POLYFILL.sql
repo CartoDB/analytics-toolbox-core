@@ -15,7 +15,7 @@ AS $$
     @@SF_LIBRARY_ASH3_POLYFILL@@
 
     const resolution = Number(_RESOLUTION);
-    if (resolution < 0 || resolution > 16) {
+    if (resolution < 0 || resolution > 15) {
         return [];
     }
 
