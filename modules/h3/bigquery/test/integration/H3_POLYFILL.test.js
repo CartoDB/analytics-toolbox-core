@@ -11,23 +11,27 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         SELECT 4 AS id, ST_GEOGFROMTEXT('MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)), ((20 20, 20 30, 30 30, 30 20, 20 20)))') as geom, 2 as resolution UNION ALL
         SELECT 5 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POLYGON((20 20, 20 30, 30 30, 30 20, 20 20)), POINT(0 10), LINESTRING(0 0, 1 1),MULTIPOLYGON(((-50 -50, -50 -40, -40 -40, -40 -50, -50 -50)), ((50 50, 50 40, 40 40, 40 50, 50 50))))') as geom, 2 as resolution UNION ALL
 
+        SELECT 6 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 .0001, .0001 .0001, .0001 0, 0 0))') as geom, 15 as resolution UNION ALL
+        SELECT 7 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution UNION ALL
+
         -- NULL and empty
-        SELECT 6 AS id, NULL as geom, 2 as resolution UNION ALL
-        SELECT 7 AS id, ST_GEOGFROMTEXT('POLYGON EMPTY') as geom, 2 as resolution UNION ALL
+        SELECT 8 AS id, NULL as geom, 2 as resolution UNION ALL
+        SELECT 9 AS id, ST_GEOGFROMTEXT('POLYGON EMPTY') as geom, 2 as resolution UNION ALL
 
         -- Invalid resolution
-        SELECT 8 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, -1 as resolution UNION ALL
-        SELECT 9 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 20 as resolution UNION ALL
-        SELECT 10 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution UNION ALL
+        SELECT 10 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, -1 as resolution UNION ALL
+        SELECT 11 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 16 as resolution UNION ALL
+        SELECT 12 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution UNION ALL
 
         -- Other types are not supported
-        SELECT 11 AS id, ST_GEOGFROMTEXT('POINT(0 0)') as geom, 15 as resolution UNION ALL
-        SELECT 12 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)') as geom, 15 as resolution UNION ALL
-        SELECT 13 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)') as geom, 15 as resolution UNION ALL
-        SELECT 14 AS id, ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 15 as resolution UNION ALL
+        SELECT 13 AS id, ST_GEOGFROMTEXT('POINT(0 0)') as geom, 15 as resolution UNION ALL
+        SELECT 14 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)') as geom, 15 as resolution UNION ALL
+        SELECT 15 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)') as geom, 15 as resolution UNION ALL
+        SELECT 16 AS id, ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 15 as resolution UNION ALL
         -- 15 is a geometry collection containing only not supported types
-        SELECT 15 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 15 as resolution
-
+        SELECT 17 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 15 as resolution UNION ALL
+        -- Polygon larger than 180 degrees
+        SELECT 18 AS id, ST_GEOGFROMGEOJSON('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
         )
         SELECT
         ARRAY_LENGTH(\`@@BQ_PREFIX@@carto.H3_POLYFILL\`(geom, resolution)) AS id_count
@@ -36,13 +40,15 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
     `;
 
     const rows = await runQuery(query);
-    expect(rows.length).toEqual(15);
+    expect(rows.length).toEqual(18);
     expect(rows.map((r) => r.id_count)).toEqual([
         1253,
         18,
         12,
         30,
         34,
+        182,
+        6,
         null,
         null,
         null,
@@ -52,7 +58,8 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         null,
         null,
         null,
-        null
+        null,
+        16110
     ]);
 });
 
@@ -88,7 +95,7 @@ test('H3_POLYFILL returns the expected values', async () => {
             ARRAY_LENGTH(p) != 1 OR
             p[OFFSET(0)] != h3_id
     `;
-    
+
     const rows = await runQuery(query);
     expect(rows.length).toEqual(0);
 });
