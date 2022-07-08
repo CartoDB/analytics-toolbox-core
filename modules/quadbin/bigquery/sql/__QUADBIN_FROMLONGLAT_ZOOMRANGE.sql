@@ -12,7 +12,7 @@ AS ((
             `@@BQ_PREFIX@@carto.QUADBIN_FROMLONGLAT`(longitude, latitude, z) as qb
         FROM UNNEST(GENERATE_ARRAY(zoom_min, zoom_max, zoom_step)) AS z
     ), tiles AS (
-        SELECT qb_agg AS id, `carto-un`.carto.QUADBIN_TOZXY(qb) AS tile
+        SELECT qb_agg AS id, `@@BQ_PREFIX@@carto.QUADBIN_TOZXY`(qb) AS tile
         FROM quadbins
     )
     SELECT ARRAY_AGG(
