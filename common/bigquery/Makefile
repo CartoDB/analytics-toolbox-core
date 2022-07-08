@@ -63,14 +63,14 @@ $(NODE_MODULES_SHARED):
 	fi
 
 lint: $(NODE_MODULES_DEV)
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(LINT_DIR)/.eslintrc.js .
 ifdef MAKE_LIB
 	$(MAKE) -C $(LIB_DIR) lint
 endif
 
 lint-fix: $(NODE_MODULES_DEV)
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
 ifdef MAKE_LIB
 	$(MAKE) -C $(LIB_DIR) lint-fix
@@ -81,7 +81,7 @@ install: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 build: install
 ifndef NO_BUILD
 	NAME=$(MODULE)Lib \
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS)
 	$(POST_BUILD)
 endif
@@ -92,7 +92,7 @@ endif
 test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	jest test/unit/$(TEST) --testTimeout=30000
 ifdef MAKE_LIB
 	$(MAKE) -C test/unit-old/ test-unit
@@ -105,7 +105,7 @@ test-integration-full:
 
 test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	jest test/integration/$(TEST) --testTimeout=120000 $(TEST_INTEGRATION_EXTRA)
 endif

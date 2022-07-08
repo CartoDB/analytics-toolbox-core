@@ -9,7 +9,7 @@ AS $$
         WHEN NULL THEN
             NULL
         -- Deal with level 0 boundary issue.
-        WHEN 5188146770730811392 THEN
+        WHEN 5192650370358181887 THEN
             ST_POINT(0,0)
         -- Deal with level 1. Prevent error from antipodal vertices.
         WHEN 5193776270265024511 THEN
