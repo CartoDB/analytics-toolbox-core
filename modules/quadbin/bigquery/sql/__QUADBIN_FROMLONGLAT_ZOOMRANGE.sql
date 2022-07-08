@@ -14,12 +14,19 @@ AS ((
     ), tiles AS (
         SELECT qb_agg AS id, `@@BQ_PREFIX@@carto.QUADBIN_TOZXY`(qb) AS tile
         FROM quadbins
+    ), result AS (
+        SELECT ARRAY_AGG(
+                STRUCT(
+                    id,
+                    tile.z, tile.x, tile.y
+                )
+            ) AS agg_result
+        FROM tiles
     )
-    SELECT ARRAY_AGG(
-            STRUCT(
-                id,
-                tile.z, tile.x, tile.y
-            )
-        )
-    FROM tiles
+    SELECT
+        CASE 
+        WHEN longitude IS NULL OR latitude IS NULL THEN []
+        ELSE agg_result
+        END
+    FROM result
 ));
