@@ -32,7 +32,7 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
             SELECT 16 AS id, TO_GEOGRAPHY('POLYGON((0 0, 0 .0001, .0001 .0001, .0001 0, 0 0))') as geom, 15 as resolution UNION ALL
             SELECT 17 AS id, TO_GEOGRAPHY('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution UNION ALL
 
-            -- Polygon crossing the antimeridian
+            -- Polygon larger than 180 degrees
             SELECT 18 AS id, TO_GEOGRAPHY('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
         )
         SELECT
