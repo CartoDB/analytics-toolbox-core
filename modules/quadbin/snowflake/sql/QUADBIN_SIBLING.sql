@@ -7,6 +7,7 @@
 CREATE OR REPLACE FUNCTION QUADBIN_SIBLING
 (quadbin BIGINT, direction STRING)
 RETURNS INT
+IMMUTABLE
 AS $$
     CASE direction
         WHEN 'left' THEN
