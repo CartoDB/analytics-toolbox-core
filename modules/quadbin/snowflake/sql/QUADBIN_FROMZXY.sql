@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION QUADBIN_FROMZXY
 (_z INT, _x INT, _y INT)
 RETURNS BIGINT
 IMMUTABLE
+AS $$
     WITH
         __ints AS (
             SELECT BITSHIFTLEFT(cast(_x AS int), (32-_z)) AS x, BITSHIFTLEFT(cast(_y AS int), (32-_z)) AS y, _z AS z
