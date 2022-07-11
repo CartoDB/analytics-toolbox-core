@@ -68,11 +68,11 @@ $(NODE_MODULES_SHARED):
 	fi
 
 lint: $(NODE_MODULES_DEV)
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(LINT_DIR)/.eslintrc.js .
 
 lint-fix: $(NODE_MODULES_DEV)
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
 
 install: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
@@ -80,7 +80,7 @@ install: $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
 build: install
 	if [ -d ${LIB_DIR} ]; then \
 		NAME=$(MODULE)Lib \
-		PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		LIB_DIR=${LIB_DIR}/index.js \
 		DIST_DIR=$(DIST_DIR)/index.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
@@ -89,7 +89,7 @@ build: install
 		for f in $(notdir $(shell find ${LIBS_DIR}/* -type d 2>/dev/null)); do \
 			$(PRE_BUILD) \
 			NAME=$(MODULE)Lib \
-			PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 			LIB_DIR=${LIBS_DIR}/$${f}/index.js \
 			DIST_DIR=$(DIST_DIR)/$${f}.js \
 			rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
@@ -100,7 +100,7 @@ build: install
 test-unit:
 	UNIT_TEST=1 \
 	$(MAKE) build
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	jest test/unit/$(TEST) --testTimeout=30000
 
 test-integration-full:
@@ -110,7 +110,7 @@ test-integration-full:
 
 test-integration: check $(NODE_MODULES_DEV)
 	SF_SCHEMA=$(SF_SCHEMA) \
-	PATH=$(NODE_MODULES_DEV)/.bin/:$(PATH) \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	jest test/integration/$(TEST) --testTimeout=40000 $(TEST_INTEGRATION_EXTRA)
 
 deploy: check
