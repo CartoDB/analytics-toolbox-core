@@ -6,6 +6,7 @@
 CREATE OR REPLACE FUNCTION QUADBIN_FROMLONGLAT
 (longitude FLOAT, latitude FLOAT, resolution INT)
 RETURNS BIGINT
+IMMUTABLE
 AS $$
     IFF(longitude IS NULL OR latitude IS NULL OR resolution IS NULL,
         NULL,

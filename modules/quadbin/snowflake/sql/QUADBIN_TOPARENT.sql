@@ -5,6 +5,7 @@
 CREATE OR REPLACE FUNCTION QUADBIN_TOPARENT
 (quadbin BIGINT, resolution INT)
 RETURNS BIGINT
+IMMUTABLE
 AS $$
     SELECT bitor(
                 bitor(

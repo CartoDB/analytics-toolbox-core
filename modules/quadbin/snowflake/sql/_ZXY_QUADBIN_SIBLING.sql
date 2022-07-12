@@ -5,6 +5,7 @@
 CREATE OR REPLACE FUNCTION _ZXY_QUADBIN_SIBLING
 (origin OBJECT, dx INT, dy INT)
 RETURNS INT
+IMMUTABLE
 AS $$
     IFF(origin:y + dy >= 0 AND origin:y + dy < BITSHIFTLEFT(1, origin:z),
         QUADBIN_FROMZXY(
