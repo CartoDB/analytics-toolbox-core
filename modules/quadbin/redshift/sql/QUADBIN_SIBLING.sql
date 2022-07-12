@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_SIBLING
 (quadbin BIGINT, direction VARCHAR)
 RETURNS BIGINT
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import sibling
 
