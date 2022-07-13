@@ -1,3 +1,4 @@
+// from: https://github.com/visgl/deck.gl/blob/master/modules/carto/src/layers/quadbin-utils.ts
 import {worldToLngLat} from '@math.gl/web-mercator';
 
 const TILE_SIZE = 512;
