@@ -10,7 +10,7 @@ LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
     if (!INDEX) {
-        throw new Error('NULL argument passed to UDF');
+        return [];
     }
 
     @@SF_LIBRARY_CONTENT@@
