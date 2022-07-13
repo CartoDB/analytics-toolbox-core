@@ -71,7 +71,7 @@ def floats_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
-numbers = re.compile(r"^(?:([-+]?\d*\.?\d+)(?:[eE]([-+]?\d+))?\,?)+$")
+numbers = re.compile(r'^(?:([-+]?\d*\.?\d+)(?:[eE]([-+]?\d+))?\,?)+$')
 
 
 def split_numbers(n):
@@ -108,7 +108,9 @@ def dicts_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
                 if numbers.match(a_value) and numbers.match(b_value):
                     a_values = split_numbers(a_value)
                     b_values = split_numbers(b_value)
-                    if len(a_values) != len(b_values) or not floats_list_approx_equal(a_values, b_values, rel_tol, abs_tol):
+                    if len(a_values) != len(b_values) \
+                        or not floats_list_approx_equal(
+                            a_values, b_values, rel_tol, abs_tol):
                         return False
                 elif a_value != b_value:
                     return False
