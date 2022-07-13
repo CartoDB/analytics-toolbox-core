@@ -1,4 +1,5 @@
 import os
+import re
 
 import geopandas as gpd
 import pandas as pd
@@ -63,3 +64,52 @@ def upload_nogeom_csv_to_postgres(table):
     """Read a CSV file, convert to a DataFrame and upload to the DB"""
     df = pd.read_csv(f'test/integration/fixtures/{table}.csv')
     df.to_sql(table, engine, if_exists='replace')
+
+
+def floats_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
+    # for Python >= 3.5: math.isclose(a, b, rel_tol, abs_tol):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+
+numbers = re.compile(r"^(?:([-+]?\d*\.?\d+)(?:[eE]([-+]?\d+))?\,?)+$")
+
+
+def split_numbers(n):
+    return [float(x) for x in n.split(',')]
+
+
+def floats_list_approx_equal(alist, blist, rel_tol=1e-5, abs_tol=0.0):
+    for a, b in zip(alist, blist):
+        return floats_approx_equal(a, b, rel_tol, abs_tol)
+
+
+def dicts_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
+    if (a == b):
+        return True
+    a_keys = a.keys()
+    b_keys = b.keys()
+    if (a_keys != b_keys):
+        return False
+    for key in a_keys:
+        a_value = a.get(key)
+        b_value = b.get(key)
+        if a_value != b_value:
+            a_type = type(a_value)
+            b_type = type(b_value)
+            if a_type != b_type:
+                return False
+            if a_type == dict:
+                if not dicts_approx_equal(a_value, b_value, rel_tol, abs_tol):
+                    return False
+            elif a_type == float:
+                if not floats_approx_equal(a_value, b_value, rel_tol, abs_tol):
+                    return False
+            elif a_type == str:
+                if numbers.match(a_value) and numbers.match(b_value):
+                    a_values = split_numbers(a_value)
+                    b_values = split_numbers(b_value)
+                    if len(a_values) != len(b_values) or not floats_list_approx_equal(a_values, b_values, rel_tol, abs_tol):
+                        return False
+                elif a_value != b_value:
+                    return False
+    return True
