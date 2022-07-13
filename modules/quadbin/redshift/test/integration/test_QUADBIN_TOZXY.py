@@ -8,4 +8,4 @@ def test_quadbin_tozxy():
     )
 
     assert len(result[0]) == 1
-    assert result[0][0] == '{"y":8,"x":9,"z":4}'
+    assert result[0][0] == '{"z":4,"x":9,"y":8}'
