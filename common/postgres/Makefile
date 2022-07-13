@@ -60,7 +60,7 @@ test-unit:
 test-integration: check venv3
 	. $(VENV3_ACTIVATE) && \
 	PG_SCHEMA=$(PG_SCHEMA) pytest -rP -p no:warnings test/integration/$(TEST) && \
-	deactivate
+	deactivate || exit 1
 
 test-integration-full:
 	$(MAKE) deploy
