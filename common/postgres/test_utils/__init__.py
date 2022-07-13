@@ -57,3 +57,9 @@ def upload_csv_to_postgres(table):
     gdf = gdf.set_geometry('geom')
     gdf = gdf.set_crs(epsg=4326)
     gdf.to_postgis(table, engine, if_exists='replace')
+
+
+def upload_nogeom_csv_to_postgres(table):
+    """Read a CSV file, convert to a DataFrame and upload to the DB"""
+    df = pd.read_csv(f'test/integration/fixtures/{table}.csv')
+    df.to_sql(table, engine, if_exists='replace')
