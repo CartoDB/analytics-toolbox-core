@@ -79,8 +79,12 @@ def split_numbers(n):
 
 
 def floats_list_approx_equal(alist, blist, rel_tol=1e-5, abs_tol=0.0):
+    if len(alist) != len(blist):
+        return False
     for a, b in zip(alist, blist):
-        return floats_approx_equal(a, b, rel_tol, abs_tol)
+        if not floats_approx_equal(a, b, rel_tol, abs_tol):
+            return False
+    return True
 
 
 def dicts_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
@@ -108,9 +112,9 @@ def dicts_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
                 if numbers.match(a_value) and numbers.match(b_value):
                     a_values = split_numbers(a_value)
                     b_values = split_numbers(b_value)
-                    if len(a_values) != len(b_values) \
-                        or not floats_list_approx_equal(
-                            a_values, b_values, rel_tol, abs_tol):
+                    if not floats_list_approx_equal(
+                        a_values, b_values, rel_tol, abs_tol
+                    ):
                         return False
                 elif a_value != b_value:
                     return False
