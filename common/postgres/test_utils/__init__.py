@@ -71,7 +71,15 @@ def floats_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
-numbers = re.compile(r'^(?:[-+]?\d*\.?\d+)(?:[eE]([-+]?\d+))?(?:\s*\,\s*(?:[-+]?\d*\.?\d+)(?:[eE]([-+]?\d+))?)*$')
+numbers = re.compile(r"""
+    ^
+    (?:[-+]?\d*\.?\d+)(?:E([-+]?\d+))?     # first float
+    (?:                                    # optional sequence of:
+        \s*\,\s*                             # separator
+        (?:[-+]?\d*\.?\d+)(?:E([-+]?\d+))?   # additional float
+    )*
+    $
+    """, re.IGNORECASE | re.VERBOSE)
 
 
 def split_numbers(n):
