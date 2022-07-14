@@ -8,9 +8,9 @@ carto.QUADBIN_FROMZXY(z, x, y)
 
 Returns a quadbin from `z`, `x`, `y` coordinates.
 
-* `z`: `INT` zoom level.
-* `x`: `INT` horizontal position of a tile.
-* `y`: `INT` vertical position of a tile.
+* `z`: `BIGINT` zoom level.
+* `x`: `BIGINT` horizontal position of a tile.
+* `y`: `BIGINT` vertical position of a tile.
 
 **Constraints**
 
