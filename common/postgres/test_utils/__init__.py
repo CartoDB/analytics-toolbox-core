@@ -118,4 +118,6 @@ def dicts_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
                         return False
                 elif a_value != b_value:
                     return False
+            elif a_value != b_value:
+                return False
     return True
