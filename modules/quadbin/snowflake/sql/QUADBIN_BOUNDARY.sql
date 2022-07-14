@@ -1,6 +1,7 @@
 ----------------------------
 -- Copyright (C) 2022 CARTO
 ----------------------------
+
 CREATE
 OR REPLACE FUNCTION QUADBIN_BOUNDARY(quadbin BIGINT)
 RETURNS GEOGRAPHY
