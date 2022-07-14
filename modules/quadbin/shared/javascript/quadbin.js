@@ -85,6 +85,22 @@ export function quadbinParent(index) {
   return bigIntToIndex(parent);
 }
 
+export function quadbinCenter(quadbin) {
+//    const [topLeft, bottomRight] = quadbinToWorldBounds(quadbin);
+//    const [w, n] = worldToLngLat(topLeft);
+//    const [e, s] = worldToLngLat(bottomRight);
+//    
+//    return [(w + e) / 2.0, (n + s) / 2.0];
+
+// 180 * (2.0 * (tile:x + 0.5) / CAST(BITSHIFTLEFT(1, tile:z) AS FLOAT) - 1.0),
+// 360 * (ATAN(EXP(-(2.0 * (tile:y + 0.5) / CAST(BITSHIFTLEFT(1, tile:z) AS FLOAT) - 1) * PI)) / PI - 0.25)
+    const {x, y, z} = quadbinToTile(quadbin);
+    const lng = 180 * (2.0 * (x + 0.5) / 1 << z - 1.0)
+    const lat = 360 * (Math.atan(Math.exp(-(2.0 * (y + 0.5) / 1 << z - 1) * Math.PI)) / Math.PI - 0.25)
+
+    return [lng, lat];
+}
+
 export function quadbinToWorldBounds(quadbin) {
   const {x, y, z} = quadbinToTile(quadbin);
   const mask = 1 << z;

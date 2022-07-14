@@ -9,7 +9,7 @@ AS $$
 WITH
     __zxy AS (
         SELECT
-            QUADBIN_TOZXY(quadbin) AS tile
+            _QUADBIN_TOZXY(quadbin) AS tile
     ),
     __ranges AS (
     SELECT

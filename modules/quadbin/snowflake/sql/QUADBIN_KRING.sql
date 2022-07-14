@@ -10,7 +10,7 @@ RETURNS ARRAY
 IMMUTABLE
 AS $$
     WITH __zxy AS (
-       SELECT QUADBIN_TOZXY(origin) as zxy
+       SELECT _QUADBIN_TOZXY(origin) as zxy
     )
     SELECT ARRAY_AGG(
         DISTINCT (QUADBIN_FROMZXY(
