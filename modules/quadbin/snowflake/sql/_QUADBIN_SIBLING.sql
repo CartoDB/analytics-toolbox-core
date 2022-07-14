@@ -8,6 +8,6 @@ RETURNS INT
 IMMUTABLE
 AS $$
     _ZXY_QUADBIN_SIBLING(
-        _QUADBIN_TOZXY(origin), dx, dy
+        _QUADBIN_TOZXY(TO_VARCHAR(ORIGIN, 'xxxxxxxxxxxxxxxx')), DX, DY
     )
 $$;
