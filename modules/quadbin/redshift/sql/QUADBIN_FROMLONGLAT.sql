@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_FROMLONGLAT
 (longitude FLOAT8, latitude FLOAT8, resolution INT)
 RETURNS BIGINT
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_from_location
 

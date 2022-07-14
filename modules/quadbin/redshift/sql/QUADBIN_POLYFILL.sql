@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_POLYFILL
 (geojson VARCHAR(MAX), resolution INT)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import geojson_to_quadbins
     import json
@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_POLYFILL
 (GEOMETRY, INT)
 -- (geo, resolution)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
     SELECT CASE ST_SRID($1)
         WHEN 0 THEN json_parse(@@RS_PREFIX@@carto.__QUADBIN_POLYFILL(ST_ASGEOJSON(ST_SetSRID($1, 4326))::VARCHAR(MAX), $2))

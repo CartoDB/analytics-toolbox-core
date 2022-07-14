@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_TOCHILDREN
 (quadbin BIGINT, resolution INT)
 RETURNS VARCHAR(MAX)
-IMMUTABLE
+STABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import to_children
     import json
@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_TOCHILDREN
 (BIGINT, INT)
 -- (quadbin, resolution)
 RETURNS SUPER
-IMMUTABLE
+STABLE
 AS $$
     SELECT json_parse(@@RS_PREFIX@@carto.__QUADBIN_TOCHILDREN($1, $2))
 $$ LANGUAGE sql;
