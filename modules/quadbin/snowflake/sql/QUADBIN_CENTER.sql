@@ -25,7 +25,7 @@ AS $$
             WITH
             __zxy AS (
                 SELECT
-                    _QUADBIN_TOZXY(quadbin) AS tile,
+                    QUADBIN_TOZXY(quadbin) AS tile,
                     ACOS(-1) AS PI
             )
             SELECT ST_POINT(

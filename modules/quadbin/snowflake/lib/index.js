@@ -1,13 +1,15 @@
 import { version }  from '../package.json';
 import {
     getQuadbinPolygon,
-    quadbinCenter,
-    quadbinToTile
+    quadbinToTile,
+    tileToQuadbin,
+    geojsonToQuadbins
 } from '../../shared/javascript/quadbin';
 
 export default {
     getQuadbinPolygon,
-    quadbinCenter,
     quadbinToTile,
+    tileToQuadbin,
+    geojsonToQuadbins,
     version
 };
