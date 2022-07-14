@@ -95,37 +95,82 @@ def floats_list_approx_equal(alist, blist, rel_tol=1e-5, abs_tol=0.0):
     return True
 
 
-def dicts_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
+def values_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
+    return len(values_approx_diff(a, b, rel_tol, abs_tol, '', True)) == 0
+
+
+def values_approx_diff_message(indent, a, b, rel_tol=1e-5, abs_tol=0.0):
+    diffs = values_approx_diff(a, b, rel_tol, abs_tol)
+    return '\n'.join([indent + msg for msg in diffs])
+
+
+def lists_approx_diff(a, b, rel_tol=1e-5, abs_tol=0.0, key_prefix='', only_first=False):
+    spec =  ' ' if key_prefix == '' else f' of "{key_prefix}" '
+    diffs = []
     if (a == b):
-        return True
+        return diffs
+    if len(a) != len(b):
+        diffs.append(f'Lengths{spec}differ')
+    else:
+        for i, (a_value, b_value) in enumerate(zip(a, b)):
+            item_desc = f'{key_prefix}[{i}]' if key_prefix != '' else f'element {i}'
+            diffs += values_approx_diff(a_value, b_value, rel_tol, abs_tol, item_desc, only_first)
+        if only_first and len(diffs) > 0:
+            return diffs
+    return diffs
+
+def values_approx_diff(a_value, b_value, rel_tol=1e-5, abs_tol=0.0, key_prefix='', only_first=False):
+    spec =  ' ' if key_prefix == '' else f' of "{key_prefix}" '
+    diffs = []
+    if (a_value == b_value):
+        return diffs
+    a_type = type(a_value)
+    b_type = type(b_value)
+    if a_type != b_type:
+        diffs.append(f'Types{spec}differ')
+    if a_type == list:
+        diffs += lists_approx_diff(a_value, b_value, rel_tol, abs_tol, key_prefix)
+    elif a_type == tuple:
+        diffs += lists_approx_diff(list(a_value), list(b_value), rel_tol, abs_tol, key_prefix)
+    elif a_type == dict:
+        diffs += dicts_approx_diff(a_value, b_value, rel_tol, abs_tol, key_prefix)
+    elif a_type == float:
+        if not floats_approx_equal(a_value, b_value, rel_tol, abs_tol):
+            diffs.append(f'Values{spec}too different: {a_value} vs {b_value}')
+    elif a_type == str:
+        if floats_list.match(a_value) and floats_list.match(b_value):
+            a_values = split_floats(a_value)
+            b_values = split_floats(b_value)
+            if not floats_list_approx_equal(a_values, b_values, rel_tol, abs_tol):
+                diffs.append(f'Values{spec}too different: {a_value} vs {b_value}')
+        elif a_value != b_value:
+            diffs.append(f'Values{spec}differ: "{a_value}" vs "{b_value}"')
+    elif a_value != b_value:
+        diffs.append(f'Values{spec}differ: "{a_value}" vs "{b_value}"')
+    return diffs
+
+
+def dicts_approx_diff(a, b, rel_tol=1e-5, abs_tol=0.0, key_prefix='', only_first=False):
+    if key_prefix != '':
+        key_prefix = key_prefix + '.'
+    diffs = []
+    if (a == b):
+        return diffs
     a_keys = a.keys()
     b_keys = b.keys()
     if (a_keys != b_keys):
-        return False
+        anotb_keys = [key for key in a_keys if not key in b_keys]
+        bnota_keys = [key for key in b_keys if not key in a_keys]
+        diffs += [f'Key "{key_prefix + key}" only in first' for key in anotb_keys]
+        diffs += [f'Key "{key_prefix + key}" only in second' for key in bnota_keys]
+        if only_first:
+            return diffs
     for key in a_keys:
+        if not key in b_keys:
+            continue
         a_value = a.get(key)
         b_value = b.get(key)
-        if a_value != b_value:
-            a_type = type(a_value)
-            b_type = type(b_value)
-            if a_type != b_type:
-                return False
-            if a_type == dict:
-                if not dicts_approx_equal(a_value, b_value, rel_tol, abs_tol):
-                    return False
-            elif a_type == float:
-                if not floats_approx_equal(a_value, b_value, rel_tol, abs_tol):
-                    return False
-            elif a_type == str:
-                if floats_list.match(a_value) and floats_list.match(b_value):
-                    a_values = split_floats_list(a_value)
-                    b_values = split_floats_list(b_value)
-                    if not floats_list_approx_equal(
-                        a_values, b_values, rel_tol, abs_tol
-                    ):
-                        return False
-                elif a_value != b_value:
-                    return False
-            elif a_value != b_value:
-                return False
-    return True
+        diffs += values_approx_diff(a_value, b_value, rel_tol, abs_tol, key_prefix + key, only_first)
+        if only_first and len(diffs) > 0:
+            return diffs
+    return diffs
