@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_ISVALID
 (quadbin BIGINT)
 RETURNS BOOLEAN
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_is_valid
 

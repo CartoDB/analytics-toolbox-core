@@ -6,7 +6,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_FROMQUADINT
 (quadint BIGINT)
 RETURNS BIGINT
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_from_zxy
     

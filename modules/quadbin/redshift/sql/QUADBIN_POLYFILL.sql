@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_POLYFILL
 (geojson VARCHAR(MAX), resolution INT)
 RETURNS VARCHAR(MAX)
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import geojson_to_quadbins
     import json

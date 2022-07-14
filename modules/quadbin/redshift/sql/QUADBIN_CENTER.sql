@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_CENTER
 (quadbin BIGINT)
 RETURNS VARCHAR(MAX)
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import quadbin_center
 

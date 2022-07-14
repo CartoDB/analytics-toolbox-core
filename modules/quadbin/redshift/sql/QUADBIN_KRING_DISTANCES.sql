@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.__QUADBIN_KRING_DISTANCES
 (origin BIGINT, size INT)
 RETURNS VARCHAR(MAX)
-STABLE
+IMMUTABLE
 AS $$
     from @@RS_PREFIX@@quadbinLib import kring_distances
     import json
