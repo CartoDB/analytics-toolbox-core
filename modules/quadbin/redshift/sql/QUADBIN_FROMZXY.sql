@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_PREFIX@@carto.QUADBIN_FROMZXY
-(z INT, x INT, y INT)
+(z BIGINT, x BIGINT, y BIGINT)
 RETURNS BIGINT
 IMMUTABLE
 AS $$
