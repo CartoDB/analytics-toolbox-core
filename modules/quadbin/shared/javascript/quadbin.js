@@ -1,5 +1,6 @@
 // from: https://github.com/visgl/deck.gl/blob/master/modules/carto/src/layers/quadbin-utils.ts
 import {worldToLngLat} from '@math.gl/web-mercator';
+import tilecover from '@mapbox/tile-cover';
 
 const TILE_SIZE = 512;
 
@@ -95,9 +96,27 @@ export function quadbinToWorldBounds(quadbin) {
   ];
 }
 
+export function getQuadbinBoundingBox(quadbin) {
+  const [topLeft, bottomRight] = quadbinToWorldBounds(quadbin);
+  const [w, n] = worldToLngLat(topLeft);
+  const [e, s] = worldToLngLat(bottomRight);
+  return [w, s, e, n];
+}
+
 export function getQuadbinPolygon(quadbin) {
   const [topLeft, bottomRight] = quadbinToWorldBounds(quadbin);
   const [w, n] = worldToLngLat(topLeft);
   const [e, s] = worldToLngLat(bottomRight);
   return [e, n, e, s, w, s, w, n, e, n];
+}
+
+/**
+ * get an array of quadints containing a geography for given zooms
+ * @param  {object} poly    geography we want to extract the quadints from
+ * @param  {struct} limits  struct containing the range of zooms
+ * @return {array}          array of quadbins containing a geography
+ */
+export function geojsonToQuadbins (poly, limits) {
+  return tilecover.tiles(poly, limits).map(tile => 
+    parseInt(indexToBigInt(tileToQuadbin({z: tile[2], x: tile[0], y: tile[1]}))));
 }

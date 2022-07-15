@@ -1,7 +1,8 @@
 {
-    "license": "BSD-3-Clause",
-    "dependencies": {
-      "@math.gl/web-mercator": "^3.6.2"
-    }
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "@math.gl/web-mercator": "^3.6.2",
+    "@mapbox/tile-cover": "3.0.2"
   }
+}
   
