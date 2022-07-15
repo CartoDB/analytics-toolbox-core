@@ -96,6 +96,13 @@ export function quadbinToWorldBounds(quadbin) {
   ];
 }
 
+export function getQuadbinBoundingBox(quadbin) {
+  const [topLeft, bottomRight] = quadbinToWorldBounds(quadbin);
+  const [w, n] = worldToLngLat(topLeft);
+  const [e, s] = worldToLngLat(bottomRight);
+  return [w, s, e, n];
+}
+
 export function getQuadbinPolygon(quadbin) {
   const [topLeft, bottomRight] = quadbinToWorldBounds(quadbin);
   const [w, n] = worldToLngLat(topLeft);

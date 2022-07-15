@@ -14,7 +14,7 @@ AS $$
 
     @@SF_LIBRARY_CONTENT@@
 
-    return quadbinLib.getQuadbinPolygon(INDEX);
+    return quadbinLib.getQuadbinBoundingBox(INDEX);
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION QUADBIN_BBOX
@@ -28,10 +28,7 @@ AS $$
     SELECT 
         CASE 
             WHEN ARRAY_SIZE(p) = 0 THEN NULL
-            ELSE 
-            ARRAY_CONSTRUCT(
-                GET(p, 4), GET(p, 3), GET(p, 0), GET(p, 1)
-            )
+            ELSE p
         END
     FROM array_polygon
 $$;

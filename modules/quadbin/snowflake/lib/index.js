@@ -1,6 +1,7 @@
 import { version }  from '../package.json';
 import {
     getQuadbinPolygon,
+    getQuadbinBoundingBox,
     quadbinToTile,
     tileToQuadbin,
     geojsonToQuadbins
@@ -8,6 +9,7 @@ import {
 
 export default {
     getQuadbinPolygon,
+    getQuadbinBoundingBox,
     quadbinToTile,
     tileToQuadbin,
     geojsonToQuadbins,
