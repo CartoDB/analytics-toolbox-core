@@ -118,5 +118,5 @@ export function getQuadbinPolygon(quadbin) {
  */
 export function geojsonToQuadbins (poly, limits) {
   return tilecover.tiles(poly, limits).map(tile => 
-    parseInt(indexToBigInt(tileToQuadbin({z: tile[2], x: tile[0], y: tile[1]}))));
+    String(indexToBigInt(tileToQuadbin({z: tile[2], x: tile[0], y: tile[1]}))));
 }

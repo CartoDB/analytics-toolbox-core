@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION _QUADBIN_TOCHILDREN
 (index STRING, resolution DOUBLE)
-RETURNS ARRAY
+RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
@@ -17,19 +17,18 @@ AS $$
     const ymin = tile.y << (res - tile.z);
     const ymax = ((tile.y + 1) << (res - tile.z)) - 1;
 
-    const children = [];
+    let children = '[';
 
     for (let dx=xmin; dx<=xmax; dx+=1) {
         for (let dy=ymin; dy<=ymax; dy+=1) {
             const child = quadbinLib.tileToQuadbin(
                 {z: res, x: dx, y: dy}
             );
-
-            children.push(parseInt(BigInt(`0x${child}`)));
+            children += String(BigInt(`0x${child}`)) + ',';
         }
     }
 
-    return children;
+    return children.slice(0, -1) + ']';
 $$;
 
 
@@ -38,5 +37,5 @@ CREATE OR REPLACE FUNCTION QUADBIN_TOCHILDREN
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    _QUADBIN_TOCHILDREN(TO_VARCHAR(QUADBIN, 'xxxxxxxxxxxxxxxx'), RESOLUTION)
+    TO_ARRAY(PARSE_JSON(_QUADBIN_TOCHILDREN(TO_VARCHAR(QUADBIN, 'xxxxxxxxxxxxxxxx'), RESOLUTION)))
 $$;
