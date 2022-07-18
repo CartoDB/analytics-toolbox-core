@@ -1,7 +1,7 @@
 const { runQuery } = require('../../../../../common/snowflake/test-utils');
 
 test('QUADBIN_KRING should work', async () => {
-    const query = `SELECT ARRAY_TO_STRING(QUADBIN_KRING(5209574053332910079, 1), ',') AS OUTPUT`;
+    const query = 'SELECT ARRAY_TO_STRING(QUADBIN_KRING(5209574053332910079, 1), \',\') AS OUTPUT';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].OUTPUT).toEqual(
