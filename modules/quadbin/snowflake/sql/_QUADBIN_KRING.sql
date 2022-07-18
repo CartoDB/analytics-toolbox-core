@@ -2,9 +2,10 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
+
 CREATE OR REPLACE FUNCTION _QUADBIN_KRING
 (index STRING, size DOUBLE, distanceFlag BOOLEAN)
-RETURNS ARRAY
+RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
@@ -22,19 +23,15 @@ AS $$
                 y: inputTile.y + dy  
             };
             const quadbin = quadbinLib.tileToQuadbin(tile);
-            const quadbinIndex = parseInt(BigInt(`0x${quadbin}`));
+            const quadbinIndex = String(BigInt(`0x${quadbin}`)) ;
 
             if (DISTANCEFLAG) {
-                const kringObject = {
-                    index: quadbinIndex,
-                    distance: Math.max(Math.abs(dx), Math.abs(dy))
-                }
-                krings.push(kringObject);
+                krings.push('{index:' + quadbinIndex + ',distance:' +  Math.max(Math.abs(dx), Math.abs(dy)) + '}');
             } else {
                 krings.push(quadbinIndex);
             }
         }
     }
 
-    return krings;
+    return '[' + krings.join(',') + ']';
 $$;
