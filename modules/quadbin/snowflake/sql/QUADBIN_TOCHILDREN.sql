@@ -15,10 +15,24 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
+
     @@SF_LIBRARY_CONTENT@@
+    
+    if (INDEX == null || RESOLUTION == null) {
+        throw new Error('NULL argument passed to UDF');
+    }
+
+    if (RESOLUTION < 0 || RESOLUTION > 26) {
+        throw new Error('Invalid resolution, it must be between 0 and 26.');
+    }
+
+    const tile = quadbinLib.quadbinToTile(INDEX);
+
+    if (RESOLUTION < tile.z) {
+        throw new Error('Invalid resolution, it should be higher than the quadbin level.');
+    }
 
     const res = Number(RESOLUTION);
-    const tile = quadbinLib.quadbinToTile(INDEX);
     const xmin = tile.x << (res - tile.z);
     const xmax = ((tile.x + 1) << (res - tile.z)) - 1;
     const ymin = tile.y << (res - tile.z);
