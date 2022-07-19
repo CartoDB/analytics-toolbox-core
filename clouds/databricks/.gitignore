@@ -1,0 +1,64 @@
+# Operating System Files
+
+*.DS_Store
+Thumbs.db
+
+# Build Files
+
+bin
+target
+build/
+.gradle
+cmake-build-debug
+
+# Eclipse Project Files
+
+.classpath
+.project
+.settings
+
+# IntelliJ IDEA Files
+
+*.iml
+*.ipr
+*.iws
+*.idea
+
+# Spring Bootstrap artifacts
+
+dependency-reduced-pom.xml
+README.html
+
+# Sublime files
+
+*.sublime-workspace
+
+# VSCode files
+
+.vscode
+.history
+
+# Metals
+
+.metals
+.bloop
+metals.sbt
+
+# SBT
+
+.bsp
+
+# Test data files
+
+java/data
+
+# Compiled libs
+
+java/*.dylib
+java/*.so
+java/*dll
+
+# Spark files
+
+metastore_db
+derby.log
