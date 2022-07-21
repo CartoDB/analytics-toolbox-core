@@ -12,19 +12,11 @@ help:
 	echo "Please choose one of the following targets: lint, lint-fix, install, build, test-unit, test-integration, test-integration-full, deploy, clean, clean-deploy, serialize-module, serialize-functions"
 
 
-lint: $(NODE_MODULES_DEV)
-	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(LINT_DIR)/.eslintrc.js .
-ifdef MAKE_LIB
-	$(MAKE) -C $(LIB_DIR) lint
-endif
+lint: 
+	(cd "${ROOT_DIR}/../../clouds/databricks" && exec sbt "scalafix --check")
 
 lint-fix: $(NODE_MODULES_DEV)
-	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(LINT_DIR)/.eslintrc.js . --fix
-ifdef MAKE_LIB
-	$(MAKE) -C $(LIB_DIR) lint-fix
-endif
+	(cd "${ROOT_DIR}/../../clouds/databricks" && exec sbt scalafix)
 
 install: 
 	(cd "${ROOT_DIR}/../../clouds/databricks" && exec sbt compile)

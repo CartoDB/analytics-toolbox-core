@@ -77,12 +77,15 @@ lazy val commonSettings = Seq(
   resolvers += "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
   libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
-  libraryDependencies += "org.scalactic" %% "scalactic" % scalaTestVersion % Test,
-
-    // sonatype settings
+  // sonatype settings
   sonatypeProfileName    := "com.carto",
   sonatypeCredentialHost := "s01.oss.sonatype.org",
-  sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
+  sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
+
+  // settings for the linter (scalaFIX)
+  semanticdbEnabled := true, // enable SemanticDB
+  semanticdbVersion := scalafixSemanticdb.revision, // only required for Scala 2.x
+  scalacOptions += "-Ywarn-unused-import" // Scala 2.x only, required by `RemoveUnused`
 )
 
 lazy val root = (project in file("."))
