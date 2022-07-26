@@ -1,6 +1,6 @@
 export GIT_DIFF ?= off
 
-.SILENT:
+#.SILENT:
 
 .PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy
 
