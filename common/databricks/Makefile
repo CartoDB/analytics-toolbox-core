@@ -91,8 +91,12 @@ deploy: check upload-jars
 	echo "Libraries installed "
 	$(MAKE) upload-sql
 	$(MAKE) create-udfs
-	
-	
-# dbfs ls -l dbfs:/FileStore/jars/maven/com/carto/analyticstoolbox
 
+test-integration:
+	echo "WIP"
+	
+test-integration-full:
+	echo "WIP"
 
+clean-deploy:
+	echo "WIP"
