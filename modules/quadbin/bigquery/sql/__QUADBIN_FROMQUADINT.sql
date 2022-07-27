@@ -7,8 +7,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_PREFIX@@carto.__QUADBIN_FROMQUADINT`
 RETURNS INT64 AS ((
     WITH
     __zxy AS (
-        SELECT `@@BQ_PREFIX@@carto.QUADINT_TOZXY`(quadint) as tile
+        SELECT (quadint >> 5) AS xy, (quadint & 0x1F) AS z
     )
-    SELECT `@@BQ_PREFIX@@carto.QUADBIN_FROMZXY`(tile.z, tile.x, tile.y)
+    SELECT `@@BQ_PREFIX@@carto.QUADBIN_FROMZXY`(z, xy & ((1 << z) - 1), xy >> z)
     FROM __zxy
 ));
