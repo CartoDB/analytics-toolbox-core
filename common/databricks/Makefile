@@ -79,11 +79,10 @@ endif
 	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
 
 create-udfs:
-	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(ROOT_DIR)/create-job-template.json > $(ROOT_DIR)/create-job.json
-	$(eval export JOB_ID := $(shell databricks jobs create --json-file  $(ROOT_DIR)/create-job.json | jq .job_id;))
-	databricks jobs run-now --job-id $(JOB_ID)
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(ROOT_DIR)/submit-run-template.json > $(ROOT_DIR)/submit-run.json
+	databricks runs submit --json-file $(ROOT_DIR)/submit-run.json
 
-# TODO: replace the job with one-time run 
+# TODO: check if the job finishes ok
 
 deploy: check upload-jars
 	echo "Installing libraries"
