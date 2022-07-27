@@ -86,3 +86,5 @@ CREATE OR REPLACE FUNCTION st_geomReproject as 'com.carto.analyticstoolbox.index
 CREATE OR REPLACE FUNCTION st_makeExtent as 'com.carto.analyticstoolbox.index.ST_MakeExtent';
 CREATE OR REPLACE FUNCTION st_partitionCentroid as 'com.carto.analyticstoolbox.index.ST_PartitionCentroid';
 CREATE OR REPLACE FUNCTION st_z2LatLon as 'com.carto.analyticstoolbox.index.ST_Z2LatLon';
+-- Dummy Function
+CREATE OR REPLACE FUNCTION dummy_function as 'com.carto.analyticstoolbox.modules.dummy.DummyFunction';

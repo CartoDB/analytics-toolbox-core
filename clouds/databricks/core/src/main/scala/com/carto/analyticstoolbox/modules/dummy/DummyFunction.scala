@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Azavea
+ * Copyright 2021 Azavea
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.modules.module2
+package com.carto.analyticstoolbox.modules.dummy
 
 import com.azavea.hiveless.HUDF
-import com.azavea.hiveless.implicits.tupler._
-import com.carto.analyticstoolbox.index._
 
-class ST_Contains extends HUDF[(ST_Contains.Arg, ST_Contains.Arg), Boolean] {
-  def function = ST_Contains.function
+class DummyFunction extends HUDF[String, String] {
+  override def function: String => String = (word: String ) => "hello " + word
 }
 
-object ST_Contains {
-  type Arg = ST_Intersects.Arg
-
-  def function(left: Arg, right: Arg): Boolean = {
-    val (l, r) = (ST_Intersects.parseGeometryUnsafe(left, "first"), ST_Intersects.parseGeometryUnsafe(right, "second"))
-
-    l.contains(r)
-  }
-}

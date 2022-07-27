@@ -7,7 +7,7 @@ import com.azavea.hiveless.spatial.util.TWKBUtils
 import org.apache.spark.sql.types.{BinaryType, DataType}
 import org.locationtech.jts.geom.Geometry
 
-package object module2 extends Serializable {
+package object dummy extends Serializable {
   implicit def geometryConverter[T <: Geometry]: HConverter[T] = new HConverter[T] {
     def convert(argument: Any): T = TWKBUtils.read(argument.asInstanceOf[Array[Byte]]).asInstanceOf[T]
   }

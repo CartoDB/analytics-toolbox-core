@@ -83,6 +83,8 @@ create-udfs:
 	$(eval export JOB_ID := $(shell databricks jobs create --json-file  $(ROOT_DIR)/create-job.json | jq .job_id;))
 	databricks jobs run-now --job-id $(JOB_ID)
 
+# TODO: replace the job with one-time run 
+
 deploy: check upload-jars
 	echo "Installing libraries"
 	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
