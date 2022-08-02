@@ -117,6 +117,7 @@ endif
 endif
 
 deploy: check
+ifndef SKIP_DEPLOY
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
@@ -132,6 +133,7 @@ ifdef BQ_PERMISSIONS
 endif
 ifdef BQ_PERMISSIONS_GROUP
 	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
+endif
 endif
 
 clean:
