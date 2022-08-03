@@ -99,9 +99,11 @@ ifdef MAKE_LIB
 endif
 
 test-integration-full:
+ifndef SKIP
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
+endif
 
 test-integration: check $(NODE_MODULES_DEV)
 ifndef TEST_OLD
@@ -117,7 +119,7 @@ endif
 endif
 
 deploy: check
-ifndef SKIP_DEPLOY
+ifndef SKIP
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
