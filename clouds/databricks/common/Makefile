@@ -3,11 +3,13 @@
 CLOUD = databricks
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-CLOUD_DIR := $(ROOT_DIR)/..
+
+CLOUD_DIR := $(ROOT_DIR)
+COMMON_DIR := $(CLOUD_DIR)/common
 JAR_DIR = $(CLOUD_DIR)/libraries/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_DATASET_PREFIX)carto
 SQL_DEPLOY_PATH = /Shared/$(DB_DATASET_PREFIX)carto
-ENV_DIR ?= $(ROOT_DIR)/../../..
+ENV_DIR ?= $(ROOT_DIR)/../..
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
 
 
@@ -66,8 +68,8 @@ endif
 	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
 
 create-udfs:
-	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(ROOT_DIR)/submit-run-template.json > $(ROOT_DIR)/submit-run.json
-	databricks runs submit --json-file $(ROOT_DIR)/submit-run.json
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json
 
 # TODO: check if the job finishes ok
 
