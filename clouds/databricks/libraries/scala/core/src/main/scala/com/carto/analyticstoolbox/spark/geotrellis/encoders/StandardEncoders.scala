@@ -19,7 +19,6 @@ package com.carto.analyticstoolbox.spark.geotrellis.encoders
 import com.carto.analyticstoolbox.spark.geotrellis.Z2Index
 import geotrellis.vector.Extent
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.types.{DataType, StructType}
 
 
 import scala.reflect.runtime.universe.TypeTag

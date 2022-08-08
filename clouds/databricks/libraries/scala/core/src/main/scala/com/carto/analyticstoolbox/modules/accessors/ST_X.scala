@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.modules.dummy
+package com.carto.analyticstoolbox.modules.accessors
 
 import com.carto.analyticstoolbox.modules._
 import com.azavea.hiveless.HUDF
+import org.locationtech.geomesa.spark.jts.udf.GeometricAccessorFunctions
+import org.locationtech.jts.geom.Geometry
 
-class DummyFunction extends HUDF[String, String] {
-  override def function: String => String = (word: String ) => "hello " + word
+import java.lang
+
+class ST_X extends HUDF[Geometry, lang.Float] {
+  def function: Geometry => lang.Float = GeometricAccessorFunctions.ST_X
 }
-

@@ -1,4 +1,4 @@
-package com.carto.analyticstoolbox.modules
+package com.carto.analyticstoolbox
 
 import cats.Id
 import com.azavea.hiveless.serializers.syntax.{ArrayDeferredObjectOps, ConverterOps}
@@ -7,7 +7,7 @@ import com.azavea.hiveless.spatial.util.TWKBUtils
 import org.apache.spark.sql.types.{BinaryType, DataType}
 import org.locationtech.jts.geom.Geometry
 
-package object dummy extends Serializable {
+package object modules {
   implicit def geometryConverter[T <: Geometry]: HConverter[T] = new HConverter[T] {
     def convert(argument: Any): T = TWKBUtils.read(argument.asInstanceOf[Array[Byte]]).asInstanceOf[T]
   }
