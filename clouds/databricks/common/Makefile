@@ -7,7 +7,7 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CLOUD_DIR := $(ROOT_DIR)
 SCALA_DIR := $(ROOT_DIR)/libraries/scala
 COMMON_DIR := $(CLOUD_DIR)/common
-JAR_DIR = $(SCALA_DIR)/functions/target/scala-2.12
+JAR_DIR = $(SCALA_DIR)/core/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_DATASET_PREFIX)carto
 SQL_DEPLOY_PATH = /Shared/$(DB_DATASET_PREFIX)carto
 ENV_DIR ?= $(ROOT_DIR)/../..
@@ -55,7 +55,7 @@ endif
 upload-jars: clean build
 	echo "Uploading jars"
 	dbfs mkdirs $(JAR_DEPLOY_PATH)
-	dbfs cp --overwrite $(JAR_DIR)/functions-assembly-*-SNAPSHOT.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*-SNAPSHOT.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
 	echo "Jars uploaded"
 
 upload-sql:
