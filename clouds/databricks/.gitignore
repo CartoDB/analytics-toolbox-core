@@ -62,3 +62,6 @@ java/*dll
 
 metastore_db
 derby.log
+
+# Deploy 
+submit-run.json
