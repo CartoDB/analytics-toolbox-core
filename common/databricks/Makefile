@@ -4,7 +4,7 @@ CLOUD = databricks
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CLOUD_DIR := $(ROOT_DIR)/../../clouds/$(CLOUD)
-JAR_DIR = $(CLOUD_DIR)/core/target/scala-2.12
+JAR_DIR = $(CLOUD_DIR)/libraries/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_DATASET_PREFIX)carto
 SQL_DEPLOY_PATH = /Shared/$(DB_DATASET_PREFIX)carto
 ENV_DIR ?= $(ROOT_DIR)/../..
@@ -17,7 +17,7 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-#.SILENT:
+.SILENT:
 
 .PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy check
 
@@ -44,23 +44,10 @@ test-unit:
 clean:
 	(cd "$(CLOUD_DIR)" && exec sbt clean)
 
-clean-deploy: check
-ifdef MODULE_DEPS
-	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
-		for module_dep in $(MODULE_DEPS); do \
-			$(MAKE) -C $(MODULE_DEPS_DIR)/modules/$$module_dep/$(CLOUD) clean-deploy || exit 1; \
-		done \
-	fi;
-endif
-	$(MAKE) storage-remove
-	$(MAKE) dataset-remove || ((sleep 5 && $(MAKE) dataset-remove) || exit 1)
-
-
 check:
 ifndef DB_CLUSTER_ID
 	$(error DB_CLUSTER_ID env variable is mandatory)
 endif
-
 
 upload-jars: clean build
 	echo "Uploading jars"
@@ -88,7 +75,8 @@ deploy: check upload-jars
 	echo "Installing libraries"
 	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
 	echo "Libraries installed "
-	$(MAKE) upload-sql
+	$(MAKE) upload-sql		
+	echo "Installing functions"
 	$(MAKE) create-udfs
 
 test-integration:

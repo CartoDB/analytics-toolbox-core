@@ -20,8 +20,5 @@ MANIFEST
 *.ipynb
 .pgpass
 
+# IntelliJ 
 .idea/
-target/
-.bsp/
-create-job.json
-submit-run.json

@@ -174,7 +174,6 @@ Make sure you have installed the following tools:
 - `make`: https://www.gnu.org/software/make/
 - `jdk (8 or 11)`: https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html (v8.x)
 - `sbt`: https://www.scala-sbt.org/1.x/docs/Setup.html (v1.x)
-- `Python2.7.9 and above`: https://www.python.org/downloads/release/python-2718/ (v2.7.18)
 - `Python3.6 and above`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
 - `databricks cli`: https://docs.databricks.com/dev-tools/cli/index.html 
 - `jq`: https://stedolan.github.io/jq/ (v1.6)
