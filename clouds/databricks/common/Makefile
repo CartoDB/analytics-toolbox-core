@@ -5,8 +5,9 @@ CLOUD = databricks
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 CLOUD_DIR := $(ROOT_DIR)
+SCALA_DIR := $(ROOT_DIR)/libraries/scala
 COMMON_DIR := $(CLOUD_DIR)/common
-JAR_DIR = $(CLOUD_DIR)/libraries/target/scala-2.12
+JAR_DIR = $(SCALA_DIR)/functions/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_DATASET_PREFIX)carto
 SQL_DEPLOY_PATH = /Shared/$(DB_DATASET_PREFIX)carto
 ENV_DIR ?= $(ROOT_DIR)/../..
@@ -28,23 +29,23 @@ help:
 
 
 lint: 
-	(cd "$(CLOUD_DIR)" && exec sbt "scalafix --check")
+	(cd "$(SCALA_DIR)" && exec sbt "scalafix --check")
 
 lint-fix: 
-	(cd "$(CLOUD_DIR)" && exec sbt "scalafix")
+	(cd "$(SCALA_DIR)" && exec sbt "scalafix")
 
 install: 
-	(cd "$(CLOUD_DIR)" && exec sbt compile)
+	(cd "$(SCALA_DIR)" && exec sbt compile)
 
 build: 
 	echo "Generating assembly jar"; \
-	(cd "$(CLOUD_DIR)" && exec sbt assembly)
+	(cd "$(SCALA_DIR)" && exec sbt assembly)
 
 test-unit:
-	(cd "$(CLOUD_DIR)" && exec sbt test)
+	(cd "$(SCALA_DIR)" && exec sbt test)
 
 clean:
-	(cd "$(CLOUD_DIR)" && exec sbt clean)
+	(cd "$(SCALA_DIR)" && exec sbt clean)
 
 check:
 ifndef DB_CLUSTER_ID
@@ -54,7 +55,7 @@ endif
 upload-jars: clean build
 	echo "Uploading jars"
 	dbfs mkdirs $(JAR_DEPLOY_PATH)
-	dbfs cp --overwrite $(JAR_DIR)/libraries-assembly-*-SNAPSHOT.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	dbfs cp --overwrite $(JAR_DIR)/functions-assembly-*-SNAPSHOT.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
 	echo "Jars uploaded"
 
 upload-sql:

@@ -97,11 +97,11 @@ lazy val root = (project in file("."))
     publish            := {},
     publishLocal       := {}
   )
-  .aggregate(libraries)
+  .aggregate(functions)
 
-lazy val libraries = project
+lazy val functions = project
   .settings(commonSettings)
-  .settings(name := "libraries")
+  .settings(name := "functions")
   .settings(
     libraryDependencies ++= Seq(
       "com.azavea"               %% "hiveless-core"     % hivelessVersion,
