@@ -99,11 +99,14 @@ ifdef MAKE_LIB
 endif
 
 test-integration-full:
+ifndef SKIP
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
+endif
 
 test-integration: check $(NODE_MODULES_DEV)
+ifndef SKIP
 ifndef TEST_OLD
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
@@ -115,8 +118,10 @@ ifndef TEST
 	$(MAKE) -C test/integration-old/ test-integration TEST_OLD=$(TEST_OLD)
 endif
 endif
+endif
 
 deploy: check
+ifndef SKIP
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
@@ -133,6 +138,7 @@ endif
 ifdef BQ_PERMISSIONS_GROUP
 	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
 endif
+endif
 
 clean:
 	rm -rf $(DIST_DIR) $(NODE_MODULES) $(NODE_MODULES_SHARED) $(NODE_MODULES_DEV)
@@ -143,6 +149,7 @@ ifdef MAKE_LIB
 endif
 
 clean-deploy: check
+ifndef SKIP
 ifdef MODULE_DEPS
 	if [ "$(DEPLOY_DEPS)" = "1" ]; then \
 		for module_dep in $(MODULE_DEPS); do \
@@ -152,6 +159,7 @@ ifdef MODULE_DEPS
 endif
 	$(MAKE) storage-remove
 	$(MAKE) dataset-remove || ((sleep 5 && $(MAKE) dataset-remove) || exit 1)
+endif
 
 storage-upload:
 	$(MAKE) build
