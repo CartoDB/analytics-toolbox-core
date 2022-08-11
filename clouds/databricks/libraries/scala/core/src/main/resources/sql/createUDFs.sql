@@ -27,5 +27,25 @@ CREATE OR REPLACE FUNCTION st_castToLineString as 'com.carto.analyticstoolbox.mo
 CREATE OR REPLACE FUNCTION st_castToPoint as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPoint';
 CREATE OR REPLACE FUNCTION st_castToPoint as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPolygon';
 -- Parsers
+CREATE OR REPLACE FUNCTION st_box2DFromGeoHash as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoHash';
+CREATE OR REPLACE FUNCTION st_geomFromGeoHash as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoHash';
+CREATE OR REPLACE FUNCTION st_geomFromGeoJson as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoJson';
+CREATE OR REPLACE FUNCTION st_geomFromWKB as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromWKB';
 CREATE OR REPLACE FUNCTION st_geomFromWKT as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromWKT';
 CREATE OR REPLACE FUNCTION st_geometryFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromWKT';
+CREATE OR REPLACE FUNCTION st_lineFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_LineFromText';
+CREATE OR REPLACE FUNCTION st_mLineFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_MLineFromText';
+CREATE OR REPLACE FUNCTION st_mPointFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_MPointFromText';
+CREATE OR REPLACE FUNCTION st_mPolyFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_MPolyFromText';
+CREATE OR REPLACE FUNCTION st_pointFromGeoHash as 'com.carto.analyticstoolbox.modules.parsers.ST_PointFromGeoHash';
+CREATE OR REPLACE FUNCTION st_pointFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_PointFromText';
+CREATE OR REPLACE FUNCTION st_pointFromWKB as 'com.carto.analyticstoolbox.modules.parsers.ST_PointFromWKB';
+CREATE OR REPLACE FUNCTION st_polygonFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_PolygonFromText';
+-- Constructors
+CREATE OR REPLACE FUNCTION st_makeBBOX as 'com.carto.analyticstoolbox.core.ST_MakeBBOX';
+CREATE OR REPLACE FUNCTION st_makeBox2D as 'com.carto.analyticstoolbox.core.ST_MakeBox2D';
+CREATE OR REPLACE FUNCTION st_makeLine as 'com.carto.analyticstoolbox.core.ST_MakeLine';
+CREATE OR REPLACE FUNCTION st_makePoint as 'com.carto.analyticstoolbox.core.ST_MakePoint';
+CREATE OR REPLACE FUNCTION st_makePointM as 'com.carto.analyticstoolbox.core.ST_MakePointM';
+CREATE OR REPLACE FUNCTION st_makePolygon as 'com.carto.analyticstoolbox.core.ST_MakePolygon';
+-- ST_POINT NO EXISTE!!
