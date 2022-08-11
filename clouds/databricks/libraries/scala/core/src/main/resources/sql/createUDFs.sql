@@ -42,10 +42,17 @@ CREATE OR REPLACE FUNCTION st_pointFromText as 'com.carto.analyticstoolbox.modul
 CREATE OR REPLACE FUNCTION st_pointFromWKB as 'com.carto.analyticstoolbox.modules.parsers.ST_PointFromWKB';
 CREATE OR REPLACE FUNCTION st_polygonFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_PolygonFromText';
 -- Constructors
-CREATE OR REPLACE FUNCTION st_makeBBOX as 'com.carto.analyticstoolbox.core.ST_MakeBBOX';
-CREATE OR REPLACE FUNCTION st_makeBox2D as 'com.carto.analyticstoolbox.core.ST_MakeBox2D';
-CREATE OR REPLACE FUNCTION st_makeLine as 'com.carto.analyticstoolbox.core.ST_MakeLine';
-CREATE OR REPLACE FUNCTION st_makePoint as 'com.carto.analyticstoolbox.core.ST_MakePoint';
-CREATE OR REPLACE FUNCTION st_makePointM as 'com.carto.analyticstoolbox.core.ST_MakePointM';
-CREATE OR REPLACE FUNCTION st_makePolygon as 'com.carto.analyticstoolbox.core.ST_MakePolygon';
--- ST_POINT NO EXISTE!!
+CREATE OR REPLACE FUNCTION st_makeBBOX as 'com.carto.analyticstoolbox.modules.constructors.ST_MakeBBOX';
+CREATE OR REPLACE FUNCTION st_makeBox2D as 'com.carto.analyticstoolbox.modules.constructors.ST_MakeBox2D';
+CREATE OR REPLACE FUNCTION st_makeLine as 'com.carto.analyticstoolbox.modules.constructors.ST_MakeLine';
+CREATE OR REPLACE FUNCTION st_makePoint as 'com.carto.analyticstoolbox.modules.constructors.ST_MakePoint';
+CREATE OR REPLACE FUNCTION st_makePointM as 'com.carto.analyticstoolbox.modules.constructors.ST_MakePointM';
+CREATE OR REPLACE FUNCTION st_makePolygon as 'com.carto.analyticstoolbox.modules.constructors.ST_MakePolygon';
+-- ST_POINT DOES NOT EXISTS, ALIAS CREATED
+CREATE OR REPLACE FUNCTION st_point as 'com.carto.analyticstoolbox.modules.constructors.ST_MakePoint';
+-- Measurements
+CREATE OR REPLACE FUNCTION st_area as 'com.carto.analyticstoolbox.modules.constructors.measurements.core.ST_Area';
+CREATE OR REPLACE FUNCTION st_distance as 'com.carto.analyticstoolbox.modules.constructors.measurements.core.ST_Distance';
+CREATE OR REPLACE FUNCTION st_distanceSphere as 'com.carto.analyticstoolbox.modules.constructors.measurements.ST_DistanceSphere';
+CREATE OR REPLACE FUNCTION st_length as 'com.carto.analyticstoolbox.modules.constructors.measurements.ST_Length';
+CREATE OR REPLACE FUNCTION st_lengthSphere as 'com.carto.analyticstoolbox.modules.constructors.measurements.ST_LengthSphere';
