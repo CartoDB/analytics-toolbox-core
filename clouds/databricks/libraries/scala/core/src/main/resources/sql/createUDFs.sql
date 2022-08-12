@@ -56,3 +56,16 @@ CREATE OR REPLACE FUNCTION st_distance as 'com.carto.analyticstoolbox.modules.me
 CREATE OR REPLACE FUNCTION st_distanceSphere as 'com.carto.analyticstoolbox.modules.measurements.ST_DistanceSphere';
 CREATE OR REPLACE FUNCTION st_length as 'com.carto.analyticstoolbox.modules.measurements.ST_Length';
 CREATE OR REPLACE FUNCTION st_lengthSphere as 'com.carto.analyticstoolbox.modules.measurements.ST_LengthSphere';
+-- Predicates
+CREATE OR REPLACE FUNCTION st_contains as 'com.carto.analyticstoolbox.modules.predicates.ST_Contains';
+CREATE OR REPLACE FUNCTION st_crosses as 'com.carto.analyticstoolbox.modules.predicates.ST_Crosses';
+CREATE OR REPLACE FUNCTION st_disjoint as 'com.carto.analyticstoolbox.modules.predicates.ST_Disjoint';
+CREATE OR REPLACE FUNCTION st_equals as 'com.carto.analyticstoolbox.modules.predicates.ST_Equals';
+-- Not in the function list CREATE OR REPLACE FUNCTION st_intersection as 'com.carto.analyticstoolbox.core.ST_Intersection';
+CREATE OR REPLACE FUNCTION st_intersects as 'com.carto.analyticstoolbox.modules.predicates.ST_Intersects';
+CREATE OR REPLACE FUNCTION st_overlaps as 'com.carto.analyticstoolbox.modules.predicates.ST_Overlaps';
+CREATE OR REPLACE FUNCTION st_relate as 'com.carto.analyticstoolbox.modules.predicates.ST_Relate';
+CREATE OR REPLACE FUNCTION st_relateBool as 'com.carto.analyticstoolbox.modules.predicates.ST_RelateBool';
+CREATE OR REPLACE FUNCTION st_touches as 'com.carto.analyticstoolbox.modules.predicates.ST_Touches';
+CREATE OR REPLACE FUNCTION st_within as 'com.carto.analyticstoolbox.modules.predicates.ST_Within';
+-- Transformations
