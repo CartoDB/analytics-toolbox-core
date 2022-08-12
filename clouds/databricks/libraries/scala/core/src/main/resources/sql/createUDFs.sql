@@ -61,7 +61,6 @@ CREATE OR REPLACE FUNCTION st_contains as 'com.carto.analyticstoolbox.modules.pr
 CREATE OR REPLACE FUNCTION st_crosses as 'com.carto.analyticstoolbox.modules.predicates.ST_Crosses';
 CREATE OR REPLACE FUNCTION st_disjoint as 'com.carto.analyticstoolbox.modules.predicates.ST_Disjoint';
 CREATE OR REPLACE FUNCTION st_equals as 'com.carto.analyticstoolbox.modules.predicates.ST_Equals';
--- Not in the function list CREATE OR REPLACE FUNCTION st_intersection as 'com.carto.analyticstoolbox.core.ST_Intersection';
 CREATE OR REPLACE FUNCTION st_intersects as 'com.carto.analyticstoolbox.modules.predicates.ST_Intersects';
 CREATE OR REPLACE FUNCTION st_overlaps as 'com.carto.analyticstoolbox.modules.predicates.ST_Overlaps';
 CREATE OR REPLACE FUNCTION st_relate as 'com.carto.analyticstoolbox.modules.predicates.ST_Relate';
@@ -69,3 +68,14 @@ CREATE OR REPLACE FUNCTION st_relateBool as 'com.carto.analyticstoolbox.modules.
 CREATE OR REPLACE FUNCTION st_touches as 'com.carto.analyticstoolbox.modules.predicates.ST_Touches';
 CREATE OR REPLACE FUNCTION st_within as 'com.carto.analyticstoolbox.modules.predicates.ST_Within';
 -- Transformations
+CREATE OR REPLACE FUNCTION st_antimeridianSafeGeom as 'com.carto.analyticstoolbox.modules.transformations.ST_AntimeridianSafeGeom';
+CREATE OR REPLACE FUNCTION st_boundary as 'com.carto.analyticstoolbox.modules.transformations.ST_Boundary';
+CREATE OR REPLACE FUNCTION st_centroid as 'com.carto.analyticstoolbox.modules.transformations.ST_Centroid';
+CREATE OR REPLACE FUNCTION st_closestPoint as 'com.carto.analyticstoolbox.modules.transformations.ST_ClosestPoint';
+CREATE OR REPLACE FUNCTION st_convexHull as 'com.carto.analyticstoolbox.modules.transformations.ST_ConvexHull';
+CREATE OR REPLACE FUNCTION st_exteriorRing as 'com.carto.analyticstoolbox.modules.transformations.ST_ExteriorRing';
+CREATE OR REPLACE FUNCTION st_idlSafeGeom as 'com.carto.analyticstoolbox.modules.transformations.ST_AntimeridianSafeGeom';
+CREATE OR REPLACE FUNCTION st_interiorRingN as 'com.carto.analyticstoolbox.modules.transformations.ST_InteriorRingN';
+CREATE OR REPLACE FUNCTION st_intersection as 'com.carto.analyticstoolbox.modules.transformations.ST_Intersection';
+CREATE OR REPLACE FUNCTION st_translate as 'com.carto.analyticstoolbox.modules.transformations.ST_Translate';
+

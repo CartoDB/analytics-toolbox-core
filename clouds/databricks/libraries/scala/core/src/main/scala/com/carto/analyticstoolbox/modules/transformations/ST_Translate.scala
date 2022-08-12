@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.modules.predicates
+package com.carto.analyticstoolbox.modules.transformations
 
 import com.azavea.hiveless.HUDF
 import com.azavea.hiveless.implicits.tupler._
@@ -22,6 +22,6 @@ import com.carto.analyticstoolbox.modules._
 import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions
 import org.locationtech.jts.geom.Geometry
 
-class ST_Intersection extends HUDF[(Geometry, Geometry), Geometry] {
-  def function: ((Geometry, Geometry)) => Geometry = SpatialRelationFunctions.ST_Intersection
+class ST_Translate extends HUDF[(Geometry, Double, Double), Geometry] {
+  def function: ((Geometry, Double, Double)) => Geometry = SpatialRelationFunctions.ST_Translate
 }
