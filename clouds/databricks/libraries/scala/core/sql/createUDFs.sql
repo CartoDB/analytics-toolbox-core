@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION st_coordDim as 'com.carto.analyticstoolbox.modules.ac
 CREATE OR REPLACE FUNCTION st_dimension as 'com.carto.analyticstoolbox.modules.accessors.ST_Dimension';
 CREATE OR REPLACE FUNCTION st_envelope as 'com.carto.analyticstoolbox.modules.accessors.ST_Envelope';
 CREATE OR REPLACE FUNCTION st_geometryN as 'com.carto.analyticstoolbox.modules.accessors.ST_GeometryN';
-CREATE OR REPLACE FUNCTION st_icClosed as 'com.carto.analyticstoolbox.modules.accessors.ST_IsClosed';
+CREATE OR REPLACE FUNCTION st_isClosed as 'com.carto.analyticstoolbox.modules.accessors.ST_IsClosed';
 CREATE OR REPLACE FUNCTION st_isCollection as 'com.carto.analyticstoolbox.modules.accessors.ST_IsCollection';
 CREATE OR REPLACE FUNCTION st_isEmpty as 'com.carto.analyticstoolbox.modules.accessors.ST_IsEmpty';
 CREATE OR REPLACE FUNCTION st_isGeomField as 'com.carto.analyticstoolbox.modules.accessors.ST_IsGeomField';
@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION st_byteArray as 'com.carto.analyticstoolbox.modules.f
 CREATE OR REPLACE FUNCTION st_castToGeometry as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToGeometry';
 CREATE OR REPLACE FUNCTION st_castToLineString as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToLineString';
 CREATE OR REPLACE FUNCTION st_castToPoint as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPoint';
-CREATE OR REPLACE FUNCTION st_castToPoint as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPolygon';
+CREATE OR REPLACE FUNCTION st_castToPolygon as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPolygon';
 -- Parsers
 CREATE OR REPLACE FUNCTION st_box2DFromGeoHash as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoHash';
 CREATE OR REPLACE FUNCTION st_geomFromGeoHash as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoHash';
