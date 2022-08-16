@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_asBinary as 'com.carto.analyticstoolbox.modules.formatters.ST_AsBinary';
+CREATE OR REPLACE FUNCTION ST_ASBINARY as 'com.carto.analyticstoolbox.modules.formatters.ST_AsBinary';

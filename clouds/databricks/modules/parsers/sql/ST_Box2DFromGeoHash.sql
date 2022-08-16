@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_box2DFromGeoHash as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoHash';
+CREATE OR REPLACE FUNCTION ST_BOX2DFROMGEOHASH as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromGeoHash';

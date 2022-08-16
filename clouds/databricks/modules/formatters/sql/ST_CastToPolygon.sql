@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_castToPolygon as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPolygon';
+CREATE OR REPLACE FUNCTION ST_CASTTOPOLYGON as 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPolygon';

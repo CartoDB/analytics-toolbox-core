@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_dimension as 'com.carto.analyticstoolbox.modules.accessors.ST_Dimension';
+CREATE OR REPLACE FUNCTION ST_DIMENSION as 'com.carto.analyticstoolbox.modules.accessors.ST_Dimension';

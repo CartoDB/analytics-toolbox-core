@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_mLineFromText as 'com.carto.analyticstoolbox.modules.parsers.ST_MLineFromText';
+CREATE OR REPLACE FUNCTION ST_MLINEFROMTEXT as 'com.carto.analyticstoolbox.modules.parsers.ST_MLineFromText';

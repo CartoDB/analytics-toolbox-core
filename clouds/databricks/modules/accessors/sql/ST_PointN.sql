@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_pointN as 'com.carto.analyticstoolbox.modules.accessors.ST_PointN';
+CREATE OR REPLACE FUNCTION ST_POINTN as 'com.carto.analyticstoolbox.modules.accessors.ST_PointN';

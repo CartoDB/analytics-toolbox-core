@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_isRing as 'com.carto.analyticstoolbox.modules.accessors.ST_IsRing';
+CREATE OR REPLACE FUNCTION ST_ISRING as 'com.carto.analyticstoolbox.modules.accessors.ST_IsRing';

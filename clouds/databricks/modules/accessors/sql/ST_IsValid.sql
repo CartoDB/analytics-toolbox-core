@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_isValid as 'com.carto.analyticstoolbox.modules.accessors.ST_IsValid';
+CREATE OR REPLACE FUNCTION ST_ISVALID as 'com.carto.analyticstoolbox.modules.accessors.ST_IsValid';

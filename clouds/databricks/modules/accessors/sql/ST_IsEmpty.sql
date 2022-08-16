@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION st_isEmpty as 'com.carto.analyticstoolbox.modules.accessors.ST_IsEmpty';
+CREATE OR REPLACE FUNCTION ST_ISEMPTY as 'com.carto.analyticstoolbox.modules.accessors.ST_IsEmpty';
