@@ -186,7 +186,7 @@ def get_cell_boundary(int64_id):
     latlngs = [get_vertex_latlng(cell.get_vertex(i)) for i in range(4)]
     latlngs.append(latlngs[0])  # Repeat first point for WKT
 
-    verts_str = ', '.join([(str(lat) + ' ' + str(lng)) for lat, lng in latlngs])
+    verts_str = ', '.join([(str(lng) + ' ' + str(lat)) for lat, lng in latlngs])
     boundary_wkt = 'POLYGON (({verts_str}))'.format(verts_str=verts_str)
 
     return boundary_wkt
