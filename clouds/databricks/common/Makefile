@@ -64,7 +64,7 @@ ifndef DB_SCHEMA
 	$(eval DB_SCHEMA := default)
 	echo $(DB_SCHEMA)
 endif
-	sed -i '.bkp' '1s/^/USE ${DB_SCHEMA};\n/' $(SQL_PATH)
+	sed -i'.bkp' '1s/^/USE ${DB_SCHEMA};\n/' $(SQL_PATH)
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
 
