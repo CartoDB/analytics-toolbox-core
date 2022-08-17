@@ -1,7 +1,7 @@
 ### ST_POINTN
 
 {{% bannerNote type="code" %}}
-carto.ST_POINTN(geom)
+carto.ST_POINTN(geom, n)
 {{%/ bannerNote %}}
 
 **Description**
