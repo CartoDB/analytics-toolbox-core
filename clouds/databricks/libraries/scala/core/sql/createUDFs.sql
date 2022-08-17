@@ -79,3 +79,8 @@ CREATE OR REPLACE FUNCTION st_interiorRingN as 'com.carto.analyticstoolbox.modul
 CREATE OR REPLACE FUNCTION st_intersection as 'com.carto.analyticstoolbox.modules.transformations.ST_Intersection';
 CREATE OR REPLACE FUNCTION st_translate as 'com.carto.analyticstoolbox.modules.transformations.ST_Translate';
 
+
+-- Tests
+CREATE OR REPLACE FUNCTION st_extentFromGeom as 'com.carto.analyticstoolbox.index.ST_ExtentFromGeom';
+
+

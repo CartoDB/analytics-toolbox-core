@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Azavea
+ * Copyright 2022 Azavea
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,16 @@
 
 package com.carto.analyticstoolbox.modules.accessors
 
-import com.azavea.hiveless.HUDF
-import com.carto.analyticstoolbox.modules._
-import org.locationtech.geomesa.spark.jts.udf.GeometricAccessorFunctions
-import org.locationtech.jts.geom.Geometry
+import com.carto.analyticstoolbox.{HiveTestEnvironment, TestTables}
+import org.scalatest.funspec.AnyFunSpec
 
-class ST_CoordDim extends HUDF[Geometry, Integer] {
-  def function: Geometry => Integer = GeometricAccessorFunctions.ST_CoordDim
+class STAccessorsSpec extends AnyFunSpec with HiveTestEnvironment with TestTables {
+  describe("ST accessors functions spec") {
+    it("ST_COORDDIM test") {
+      val df = ssc.sql(
+        """SELECT ST_CoordDim(ST_Point(1,2))""".stripMargin
+      )
+      df.take(1).head.get(0) shouldEqual 2
+    }
+  }
 }

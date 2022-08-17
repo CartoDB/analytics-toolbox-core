@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Azavea
+ * Copyright 2022 Azavea
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.modules.accessors
+package com.carto.analyticstoolbox.index
 
 import com.azavea.hiveless.HUDF
 import com.carto.analyticstoolbox.modules._
-import org.locationtech.geomesa.spark.jts.udf.GeometricAccessorFunctions
-import org.locationtech.jts.geom.Geometry
+import geotrellis.vector._
 
-class ST_CoordDim extends HUDF[Geometry, Integer] {
-  def function: Geometry => Integer = GeometricAccessorFunctions.ST_CoordDim
+class ST_ExtentFromGeom extends HUDF[Geometry, Extent] {
+  def function = _.extent
 }

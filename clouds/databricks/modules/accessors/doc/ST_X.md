@@ -1,8 +1,3 @@
-### st_x
-`Float st_X(Geometry geom)`
-
-If _geom_ is a `Point`, return the X coordinate of that point.
-
 ### ST_X
 
 {{% bannerNote type="code" %}}
@@ -11,10 +6,9 @@ carto.ST_X(geom)
 
 **Description**
 
---TODO
 If _geom_ is a `Point`, return the X coordinate of that point.
 
-* `geom`: `Geometry` input LineString.
+* `geom`: `Geometry` input Point.
 
 **Return type**
 
