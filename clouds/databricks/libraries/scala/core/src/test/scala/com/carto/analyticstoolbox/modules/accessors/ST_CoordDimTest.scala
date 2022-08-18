@@ -20,12 +20,16 @@ class ST_CoordDimTest extends AnyFunSpec {
 
     it ("TWKB utils should write and read the z") {
       val geom: Geometry = GeometricConstructorFunctions.ST_MakePoint(1, 1)
+
       val bts = TWKBUtils.write(geom)
-      val bts2 = GeometricOutputFunctions.ST_AsBinary(geom)
       val geomDeserialized: Geometry = TWKBUtils.read(bts)
-      val geomDeserialized2: Geometry = GeometricConstructorFunctions.ST_GeomFromWKB(bts2)
-      geomDeserialized2.getCoordinate.z shouldEqual geom.getCoordinate.z
       geomDeserialized.getCoordinate.z shouldEqual geom.getCoordinate.z
+
+//      val bts2 = GeometricOutputFunctions.ST_AsBinary(geom)
+//      val geomDeserialized2: Geometry = GeometricConstructorFunctions.ST_GeomFromWKB(bts2)
+//      geomDeserialized2.getCoordinate.z shouldEqual geom.getCoordinate.z
+
+
     }
   }
 }
