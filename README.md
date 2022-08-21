@@ -49,7 +49,7 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 ## Development
 
 The repo contains the implementation of the toolbox for all the clouds. The functions are organized in modules. Each module has the following structure:
-- `doc`: contains the SQL reference of the functions 
+- `doc`: contains the SQL reference of the functions
 - `lib`: contains the library code (JavaScript/Python)
 - `sql`: contains the function's code (SQL)
 - `test`: contains both the unit and integration tests
@@ -70,6 +70,12 @@ These commands can be used with all the modules at once from the root folder. Fo
 
 Additionally, [this tool](./tools/setool/) has been developed to generate code templates for new modules and functions.
 
+| Cloud | Development |
+|---|---|
+| BigQuery | |
+| Snowflake |  |
+| Redshift | [README.md](./clouds/redshift/README.md) |
+
 ### BigQuery
 
 The Analytics Toolbox for BigQuery contains SQL functions and JavaScript libraries. The functions are deployed in a dataset called `carto` inside a specific project. In BigQuery, datasets are associated with a region so the functions can only be used with tables stored in datasets with the same region. The JavaScript libraries are deployed in a Google Cloud Storage bucket and referenced by the functions.
@@ -86,7 +92,7 @@ Make sure you have installed the following tools:
 
 **Environment variables**
 
-The `.env` file contains the variables required to deploy and run the toolbox. 
+The `.env` file contains the variables required to deploy and run the toolbox.
 
 ```
 # BigQuery
@@ -114,7 +120,7 @@ Make sure you have installed the following tools:
 
 **Environment variables**
 
-The `.env` file contains the variables required to deploy and run the toolbox. 
+The `.env` file contains the variables required to deploy and run the toolbox.
 
 ```
 # Snowflake
@@ -125,41 +131,6 @@ SF_USER=your-snowflake-user
 SF_PASSWORD=your-snowflake-password
 SF_SHARE_PREFIX=
 SF_SHARE_ENABLED=0
-```
-
-### Redshift
-
-The Analytics Toolbox for Redshift contains SQL functions and Python libraries. The functions are deployed in a schema called `carto` inside a specific database. The Python libraries are installed in the Redshift cluster, so they can be used by all the databases in the cluster. An S3 bucket is required as intermediate storage to create the libraries. In Redshift, the functions can be used with tables of the same database, but different schemas.
-
-Note: Redshift UDFs only support Python2 but the Python Redshift connector is only available in Python3. Therefore, both Python versions are required to develop the toolbox.
-
-**Tools**
-
-Make sure you have installed the following tools:
-
-- `make`: https://www.gnu.org/software/make/
-- `Python2`: https://www.python.org/downloads/release/python-2718/ (v2.7.18)
-- `Python3`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
-- `aws`: https://aws.amazon.com/cli/ (v2.4)
-- `jq`: https://stedolan.github.io/jq/ (v1.6)
-- `virtualenv`: https://virtualenv.pypa.io/en/latest/ (v20.11)
-
-**Environment variables**
-
-The `.env` file contains the variables required to deploy and run the toolbox. 
-
-```
-# Redshift
-RS_HOST=your-redshift-host-url.redshift.amazonaws.com
-RS_CLUSTER_ID=your-redshift-cluster
-RS_REGION=your-region
-RS_BUCKET=s3://your-s3-bucket/
-RS_DATABASE=your-redshift-database
-RS_SCHEMA_PREFIX=
-RS_USER=your-redshift-user
-RS_PASSWORD=your-redshift-password
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-access-key
 ```
 
 ## Contribute
