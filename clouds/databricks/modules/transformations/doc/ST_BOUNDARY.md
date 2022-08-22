@@ -22,5 +22,4 @@ WITH t AS (
 )
 SELECT carto.ST_ASTEXT(carto.ST_BOUNDARY(geom)) FROM t;
 -- LINESTRING (0 0, 0 2, 2 2, 2 0, 0 0)
-
 ```
