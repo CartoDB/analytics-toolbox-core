@@ -1,7 +1,7 @@
-### ST_ASGEOHASH
+### ST_GEOHASH
 
 {{% bannerNote type="code" %}}
-carto.ST_ASGEOHASH(geom, prec)
+carto.ST_GEOHASH(geom, prec)
 {{%/ bannerNote %}}
 
 **Description**
@@ -18,6 +18,6 @@ Returns the Geohash (in base-32 representation) of an interior point of `Geometr
 **Example**
 
 ```sql
-SELECT carto.ST_ASGEOHASH(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'), 8);
+SELECT carto.ST_GEOHASH(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'), 8);
 -- d4
 ```

@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION st_x as 'com.carto.analyticstoolbox.modules.accessors
 CREATE OR REPLACE FUNCTION st_y as 'com.carto.analyticstoolbox.modules.accessors.ST_Y';
 -- Formatters
 CREATE OR REPLACE FUNCTION st_asBinary as 'com.carto.analyticstoolbox.modules.formatters.ST_AsBinary';
-CREATE OR REPLACE FUNCTION st_asGeoHash as 'com.carto.analyticstoolbox.modules.formatters.ST_AsGeoHash';
+CREATE OR REPLACE FUNCTION st_GeoHash as 'com.carto.analyticstoolbox.modules.formatters.ST_AsGeoHash';
 CREATE OR REPLACE FUNCTION st_asGeoJson as 'com.carto.analyticstoolbox.modules.formatters.ST_AsGeoJson';
 CREATE OR REPLACE FUNCTION st_asLatLonText as 'com.carto.analyticstoolbox.modules.formatters.ST_AsLatLonText';
 CREATE OR REPLACE FUNCTION st_asText as 'com.carto.analyticstoolbox.modules.formatters.ST_AsText';
