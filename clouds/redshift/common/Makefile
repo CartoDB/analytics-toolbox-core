@@ -49,7 +49,7 @@ venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
 	$(VENV2_BIN)/pip install --upgrade pip -q 2>/dev/null && \
 	$(VENV2_BIN)/pip install -r $(COMMON_DIR)/python2_requirements.txt -q 2>/dev/null
-	([ ! -f requirements.txt ] || $(VENV2_BIN)/pip install -r requirements.txt -q 2>/dev/null)
+	([ ! -f $(ROOT_DIR)/requirements.txt ] || $(VENV2_BIN)/pip install -r $(ROOT_DIR)/requirements.txt -q 2>/dev/null)
 
 venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q

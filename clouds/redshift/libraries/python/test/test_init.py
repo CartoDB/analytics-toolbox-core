@@ -1,5 +1,6 @@
 import lib
 from lib import quadbin
+from lib import constructors
 
 
 def test_init():
@@ -15,3 +16,5 @@ def test_init():
     assert hasattr(quadbin, 'geometry_to_cells')
     assert hasattr(quadbin, 'cell_sibling')
     assert hasattr(quadbin, 'cell_to_children')
+    assert hasattr(constructors, 'bezier_spline')
+    assert hasattr(constructors, 'ellipse')
