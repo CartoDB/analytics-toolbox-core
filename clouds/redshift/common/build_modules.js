@@ -68,7 +68,7 @@ if (!nodeps) {
 // Filter and order functions
 const output = [];
 function add (f, include) {
-    include = include || all || diff.includes(path.join(inputDir, f.module, 'sql', f.name)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
+    include = include || all || diff.includes(path.join(f.module, 'sql', f.name)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
     for (const dependency of f.dependencies) {
         add(functions.find(f => f.name === dependency), include);
     }

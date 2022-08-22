@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.ST_TILEENVELOPE
 (INT, INT, INT)
--- (zoomLevel, xTile, yTiel)
+-- (zoomLevel, xTile, yTile)
 RETURNS GEOMETRY
 STABLE
 AS $$

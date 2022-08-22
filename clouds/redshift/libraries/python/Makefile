@@ -43,7 +43,7 @@ build-dependencies: venv2
 	mkdir -p $(BUILD_DIR)/libs
 ifneq ("$(wildcard requirements.txt)","")
 	. $(VENV2_BIN)/activate && \
-	bash $(COMMON_DIR)/serialize_libraries.sh -f requirements.txt&& \
+	bash $(COMMON_DIR)/serialize_libraries.sh -f requirements.txt && \
 	deactivate
 endif
 
@@ -58,7 +58,6 @@ endif
 		LIBRARY_NAME=$$(echo $$f | sed -e 's/-.*//g'); \
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(FROM)/$(notdir $$f)' $(CREDENTIALS);" >> $(BUILD_DIR)/libraries.sql; \
 	done
-	sort -u $(BUILD_DIR)/libraries.sql -o $(BUILD_DIR)/libraries.sql
 
 deploy: build
 	echo "Deploying libraries..."
@@ -90,4 +89,3 @@ remove: check venv3
 clean:
 	echo "Cleaning libraries..."
 	rm -rf $(BUILD_DIR) $(VENV2_DIR) $(VENV3_DIR)
-
