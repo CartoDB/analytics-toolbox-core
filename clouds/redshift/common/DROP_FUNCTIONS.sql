@@ -1,3 +1,7 @@
+----------------------------
+-- Copyright (C) 2022 CARTO
+----------------------------
+
 CREATE OR REPLACE PROCEDURE @@RS_SCHEMA@@.__CREATE_DROP_TABLE
 (schema_name VARCHAR(MAX))
 AS $$

@@ -70,8 +70,8 @@ functions.forEach(mainFunction => {
     functions.forEach(depFunction => {
         if (mainFunction.dependencies.includes(depFunction.name) &&
             depFunction.dependencies.includes(mainFunction.name)) {
-                console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
-                process.exit(1);
+            console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+            process.exit(1);
         }
     });
 });

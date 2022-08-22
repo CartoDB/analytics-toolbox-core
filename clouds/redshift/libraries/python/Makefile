@@ -81,7 +81,7 @@ remove-libraries:
 
 test: check venv2
 	echo "Testing libraries..."
-	$(VENV2_BIN)/pytest -rP -p no:warnings -vv $(TEST_DIR)/$(test)
+	$(VENV2_BIN)/pytest -rP -p no:warnings -v $(TEST_DIR)/$(test)
 
 remove: check venv3
 	echo "Removing libraries..."

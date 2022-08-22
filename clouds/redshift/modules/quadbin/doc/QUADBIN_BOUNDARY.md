@@ -12,7 +12,7 @@ Returns the boundary for a given quadbin. We extract the boundary in the same wa
 
 **Return type**
 
-`VARCHAR`
+`GEOMETRY`
 
 **Example**
 
