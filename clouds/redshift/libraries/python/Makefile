@@ -7,10 +7,11 @@ TEST_DIR ?= $(ROOT_DIR)/test
 BUILD_DIR ?= $(ROOT_DIR)/build
 ENV_DIR ?= $(ROOT_DIR)/../..
 COMMON_DIR ?= $(ROOT_DIR)/../../common
+LIB_DIRS ?= $(ROOT_DIR)/lib/
+REQUIREMENTS_DIRS ?= requirements.txt
+LIBS_URL ?= https://<URL>/libs
 
 include $(COMMON_DIR)/Makefile
-
-LIBS_URL ?= https://<URL>/libs
 
 .SILENT:
 
@@ -35,17 +36,17 @@ build:
 
 build-library: check
 	mkdir -p $(BUILD_DIR)/libs/$(RS_LIBRARY)
-	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*'  lib/ $(BUILD_DIR)/libs/$(RS_LIBRARY)/
+	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*' $(LIB_DIRS) $(BUILD_DIR)/libs/$(RS_LIBRARY)/
 	cd $(BUILD_DIR)/libs && zip -r $(RS_LIBRARY)-1.0.0.zip *
 	rm -rf $(BUILD_DIR)/libs/$(RS_LIBRARY)
 
 build-dependencies: venv2
 	mkdir -p $(BUILD_DIR)/libs
-ifneq ("$(wildcard requirements.txt)","")
 	. $(VENV2_BIN)/activate && \
-	bash $(COMMON_DIR)/serialize_libraries.sh -f requirements.txt && \
+	for r in $(REQUIREMENTS_DIRS); do \
+		bash $(COMMON_DIR)/serialize_libraries.sh -f $$r; \
+	done && \
 	deactivate
-endif
 
 build-libraries-sql:
 ifeq ($(production),1)
