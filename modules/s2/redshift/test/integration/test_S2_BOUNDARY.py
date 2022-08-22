@@ -13,8 +13,8 @@ def test_boundary_success():
     lines = fixture_file.readlines()
     fixture_file.close()
 
-    for idx, result in enumerate(results):
-        assert str(result[0]) == lines[idx].rstrip()
+    for idx, result in enumerate(results[0]):
+        assert str(result) == lines[idx].rstrip()
 
 
 def test_boundary_null_failure():
