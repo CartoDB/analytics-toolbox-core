@@ -65,6 +65,17 @@ if (!nodeps) {
     });
 }
 
+// Check circular dependencies
+functions.forEach(mainFunction => {
+    functions.forEach(depFunction => {
+        if (mainFunction.dependencies.includes(depFunction.name) &&
+            depFunction.dependencies.includes(mainFunction.name)) {
+                console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+                process.exit(1);
+        }
+    });
+});
+
 // Filter and order functions
 const output = [];
 function add (f, include) {
@@ -79,6 +90,7 @@ function add (f, include) {
         });
     }
 }
+
 functions.forEach(f => add(f));
 
 // Replace code variables
@@ -92,7 +104,7 @@ if (argv.production) {
         + footer.replace(/@@VERSION_FUNCTION@@/g, process.env.VERSION_FUNCTION || 'VERSION_CORE')
             .replace(/@@PACKAGE_VERSION@@/g, process.env.PACKAGE_VERSION || '');
 } else {
-    content = template
+    content = template;
 }
 
 content = content
