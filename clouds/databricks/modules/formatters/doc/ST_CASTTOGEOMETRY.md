@@ -19,5 +19,4 @@ Casts `Geometry` subclass _g_ to a `Geometry`. This can be necessary e.g. when s
 ```sql
 SELECT carto.ST_CASTTOGEOMETRY(carto.ST_POINT(-76.09130, 18.42750));
 -- 4QgBz/HU1QXwwN6vAQA=
-
 ```

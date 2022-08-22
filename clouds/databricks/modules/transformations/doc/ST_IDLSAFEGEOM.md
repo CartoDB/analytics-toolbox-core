@@ -21,5 +21,4 @@ WITH t AS (
 )
 SELECT carto.ST_ASTEXT(carto.ST_IDLSAFEGEOM(geom)) AS geom FROM t;
 -- MULTIPOLYGON (((-180 0, -180 5, -170 5, -170 0, -180 0)), ((180 5, 180 0, 178 0, 178 5, 180 5)))
-
 ```
