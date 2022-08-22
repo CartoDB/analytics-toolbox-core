@@ -46,6 +46,7 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 | BigQuery | https://docs.carto.com/analytics-toolbox-bigquery |
 | Snowflake | https://docs.carto.com/analytics-toolbox-snowflake |
 | Redshift | https://docs.carto.com/analytics-toolbox-redshift |
+| Databricks | https://docs.carto.com/analytics-toolbox-databricks |
 ## Development
 
 The repo contains the implementation of the toolbox for all the clouds. The functions are organized in modules. Each module has the following structure:
@@ -162,6 +163,35 @@ AWS_ACCESS_KEY_ID=your-access-key
 AWS_SECRET_ACCESS_KEY=your-secret-access-key
 ```
 
+### Databricks
+
+CARTO Analytics Toolbox for Databricks provides geospatial functionality leveraging the GeoMesa SparkSQL capabilities. It implements Spatial Hive UDFs. In order to install the toolbox the library (jar-with-dependencies) needs to be installed in the cluster you are using, and the Hive UDFs registered via createUDFs sql script
+
+**Tools**
+
+Make sure you have installed the following tools:
+
+- `make`: https://www.gnu.org/software/make/
+- `jdk (8 or 11)`: https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html (v8.x)
+- `sbt`: https://www.scala-sbt.org/1.x/docs/Setup.html (v1.x)
+- `Python3.6 and above`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
+- `databricks cli`: https://docs.databricks.com/dev-tools/cli/index.html 
+- `jq`: https://stedolan.github.io/jq/ (v1.6)
+
+In order to set up authentication you can use a databricks token and the databricks host URL
+``
+databricks configure --token
+``
+
+**Environment variables**
+The `.env` file contains the variables required to deploy and run the toolbox. Only the cluster id is mandatory. Default schema is 'default'
+
+```
+# Databricks
+DB_CLUSTER_ID=my-cluster-id
+DB_SCHEMA=
+DB_DATASET_PREFIX=
+```
 ## Contribute
 
 This project is public. We are more than happy of receiving feedback and contributions. Feel free to open a ticket with a bug, a doubt or a discussion, or open a pull request with a fix or a new feature.
