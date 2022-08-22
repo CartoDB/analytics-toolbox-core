@@ -1,6 +1,6 @@
 # Makefile for Redshift Python library
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 LIB_DIR ?= $(ROOT_DIR)/lib
 TEST_DIR ?= $(ROOT_DIR)/test

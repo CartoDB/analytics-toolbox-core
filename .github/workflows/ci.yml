@@ -281,6 +281,8 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv
+      - name: apt-get update
+        run: sudo apt-get update
       - name: Setup postgres
         run: sudo apt-get install -y postgresql-client
       - name: Run integration tests

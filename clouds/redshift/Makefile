@@ -1,9 +1,9 @@
 # Makefile for Redshift
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
-DIST_DIR = $(ROOT_DIR)/dist
-BUILD_DIR = $(ROOT_DIR)/build
+DIST_DIR ?= $(ROOT_DIR)/dist
+BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
 
 include $(COMMON_DIR)/Makefile
@@ -26,10 +26,10 @@ lint-libraries:
 lint-modules:
 	$(MAKE) -C modules lint
 
-lint-common:
+lint-common: $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR) --fix
+	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR)/*.js --fix
 	$(VENV3_BIN)/brunette $(COMMON_DIR) --line-length=88 --single-quotes --quiet
 	$(VENV3_BIN)/flake8 $(COMMON_DIR) --enable-extensions Q0 --ignore=D100,D103,D104
 
@@ -80,7 +80,7 @@ remove-modules:
 	$(MAKE) -C modules remove
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(DIST_DIR) $(BUILD_DIR)
 	$(MAKE) clean-libraries
 	$(MAKE) clean-modules
 
@@ -93,8 +93,8 @@ clean-modules:
 create-package:
 	$(MAKE) build production=1
 
-	$(eval PACKAGE_VERSION = $(shell cat $(ROOT_DIR)/version))
-	$(eval PACKAGE_FULL_NAME = carto-analytics-toolbox-core-$(PACKAGE_VERSION))
+	$(eval PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version))
+	$(eval PACKAGE_FULL_NAME = $(RS_LIBRARY_DEFAULT)-$(PACKAGE_VERSION))
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_FULL_NAME)

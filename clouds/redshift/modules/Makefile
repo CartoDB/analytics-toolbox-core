@@ -1,10 +1,13 @@
 # Makefile modules for Redshift
 
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR ?= $(ROOT_DIR)/../common
+
+VERSION_FUNCTION ?= VERSION_CORE
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
 include $(COMMON_DIR)/Makefile
 
@@ -24,7 +27,8 @@ build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
-	RS_LIBRARY=$(RS_LIBRARY) RS_SCHEMA=$(RS_SCHEMA) $(COMMON_DIR)/build_modules.js . --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	RS_LIBRARY=$(RS_LIBRARY) RS_SCHEMA=$(RS_SCHEMA) VERSION_FUNCTION=$(VERSION_FUNCTION) PACKAGE_VERSION=$(PACKAGE_VERSION) \
+	$(COMMON_DIR)/build_modules.js . --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
 
 deploy: check venv3 build
 	echo "Deploying modules..."
@@ -41,4 +45,4 @@ remove: check venv3
 
 clean:
 	echo "Cleaning modules..."
-	rm -rf $(BUILD_DIR) $(VENV2_DIR) $(VENV3_DIR) $(NODE_MODULES_DEV)
+	rm -rf $(BUILD_DIR) $(VENV3_DIR) $(NODE_MODULES_DEV)

@@ -3,10 +3,13 @@
 PYTHON2_VERSION = 2.7
 PYTHON3_VERSION = 3
 
-VENV2_DIR = $(COMMON_DIR)/../venv2
-VENV3_DIR = $(COMMON_DIR)/../venv3
+VENV2_DIR ?= $(COMMON_DIR)/../venv2
+VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV2_BIN = $(VENV2_DIR)/bin
 VENV3_BIN = $(VENV3_DIR)/bin
+
+RS_SCHEMA_DEFAULT ?= carto
+RS_LIBRARY_DEFAULT ?= carto_analytics_toolbox_core
 
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 
@@ -16,11 +19,11 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 endif
 
 ifeq ($(production),1)
-export RS_SCHEMA = carto
-export RS_LIBRARY = carto_analytics_toolbox_core
+export RS_SCHEMA = $(RS_SCHEMA_DEFAULT)
+export RS_LIBRARY = $(RS_LIBRARY_DEFAULT)
 else
-export RS_SCHEMA = $(RS_PREFIX)carto
-export RS_LIBRARY = $(RS_PREFIX)carto_analytics_toolbox_core
+export RS_SCHEMA = $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
+export RS_LIBRARY = $(RS_PREFIX)$(RS_LIBRARY_DEFAULT)
 endif
 
 .PHONY: check venv2 venv3

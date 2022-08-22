@@ -86,10 +86,9 @@ let content = '';
 if (argv.production) {
     const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString()
     const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString()
-    const version = fs.readFileSync(path.resolve(__dirname, '..', 'version')).toString()
     content = header + template
-        + footer.replace(/@@RS_VERSION_FUNCTION@@/g, process.env.RS_VERSION_FUNCTION || 'VERSION_CORE')
-            .replace(/@@RS_PACKAGE_VERSION@@/g, version.replace('\r', '').replace('\n', ''));
+        + footer.replace(/@@VERSION_FUNCTION@@/g, process.env.VERSION_FUNCTION || 'VERSION_CORE')
+            .replace(/@@PACKAGE_VERSION@@/g, process.env.PACKAGE_VERSION || '');
 } else {
     content = template
 }
