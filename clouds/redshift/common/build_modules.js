@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const inputDir = argv._[0];
+const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
@@ -32,23 +32,25 @@ if (all) {
 
 // Extract functions
 const functions = [];
-const modules = fs.readdirSync(inputDir);
-modules.forEach(module => {
-    const sqldir = path.join(inputDir, module, 'sql');
-    if (fs.existsSync(sqldir)) {
-        const files = fs.readdirSync(sqldir);
-        files.forEach(file => {
-            const name = path.parse(file).name;
-            const content = fs.readFileSync(path.join(sqldir, file)).toString().replace(/--.*\n/g, '');
-            functions.push({
-                name,
-                module,
-                content,
-                dependencies: []
+for (let inputDir of inputDirs) {
+    const modules = fs.readdirSync(inputDir);
+    modules.forEach(module => {
+        const sqldir = path.join(inputDir, module, 'sql');
+        if (fs.existsSync(sqldir)) {
+            const files = fs.readdirSync(sqldir);
+            files.forEach(file => {
+                const name = path.parse(file).name;
+                const content = fs.readFileSync(path.join(sqldir, file)).toString().replace(/--.*\n/g, '');
+                functions.push({
+                    name,
+                    module,
+                    content,
+                    dependencies: []
+                });
             });
-        });
-    }
-});
+        }
+    });
+}
 
 // Extract function dependencies
 if (!nodeps) {

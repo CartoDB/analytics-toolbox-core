@@ -6,6 +6,7 @@ ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
+MODULES_DIRS ?= .
 VERSION_FUNCTION ?= VERSION_CORE
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
@@ -28,7 +29,7 @@ build: $(NODE_MODULES_DEV)
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	RS_LIBRARY=$(RS_LIBRARY) RS_SCHEMA=$(RS_SCHEMA) VERSION_FUNCTION=$(VERSION_FUNCTION) PACKAGE_VERSION=$(PACKAGE_VERSION) \
-	$(COMMON_DIR)/build_modules.js . --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	$(COMMON_DIR)/build_modules.js ${MODULES_DIRS} --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
 
 deploy: check venv3 build
 	echo "Deploying modules..."
