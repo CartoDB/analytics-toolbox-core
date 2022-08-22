@@ -19,9 +19,9 @@ Returns `true` if the geometries spatially intersect in 2D (i.e. share any porti
 
 ```sql
 WITH t AS (
-  select ST_GEOMFROMWKT("LINESTRING (1 0, 1 2)") as lineA,
-  ST_GEOMFROMWKT("LINESTRING (0 1, 2 1)") as lineB
+  SELECT carto.ST_GEOMFROMWKT("LINESTRING (1 0, 1 2)") AS lineA,
+  carto.ST_GEOMFROMWKT("LINESTRING (0 1, 2 1)") AS lineB
 )
-SELECT ST_INTERSECTS(lineA, lineB) FROM t
+SELECT carto.ST_INTERSECTS(lineA, lineB) FROM t;
 -- true
 ```

@@ -19,9 +19,9 @@ Returns _true_ if geometry _a_ is completely inside geometry _b_.
 
 ```sql
 WITH t AS (
-  select ST_POINT(1, 1) as geomA,
-  ST_MAKEBBOX(0, 0, 2, 2) as geomB
+  SELECT carto.ST_POINT(1, 1) AS geomA,
+  carto.ST_MAKEBBOX(0, 0, 2, 2) AS geomB
 )
-SELECT ST_WITHIN(geomA, geomB) FROM t
+SELECT carto.ST_WITHIN(geomA, geomB) FROM t;
 -- true
 ```

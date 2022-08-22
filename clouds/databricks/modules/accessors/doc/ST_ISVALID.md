@@ -17,6 +17,6 @@ Returns `true` if the `Geometry` is topologically valid according to the OGC SFS
 **Example**
 
 ``` sql
-SELECT ST_ISVALID(ST_GEOMFROMWKT("POLYGON((0 0, 1 1, 1 2, 1 1, 0 0))"))
+SELECT carto.ST_ISVALID(carto.ST_GEOMFROMWKT("POLYGON((0 0, 1 1, 1 2, 1 1, 0 0))"));
 -- false
 ```

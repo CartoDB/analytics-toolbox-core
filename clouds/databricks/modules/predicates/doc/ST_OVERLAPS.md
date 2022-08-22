@@ -19,9 +19,9 @@ Returns `true` if the `Geometries` have some but not all points in common, are o
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geomA,
-  ST_MAKEBBOX(1, 1, 3, 3) as geomB
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geomA,
+  carto.ST_MAKEBBOX(1, 1, 3, 3) AS geomB
 )
-SELECT ST_OVERLAPS(geomA, geomB) FROM t
+SELECT carto.ST_OVERLAPS(geomA, geomB) FROM t;
 -- true
 ```

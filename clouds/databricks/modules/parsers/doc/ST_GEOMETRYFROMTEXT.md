@@ -16,6 +16,6 @@ Alias of st_geomFromWKT.
 **Example**
 
 ```sql
-SELECT ST_ASGEOJSON(ST_GEOMETRYFROMTEXT('POINT(-76.09130 18.42750)'))
+SELECT carto.ST_ASGEOJSON(carto.ST_GEOMETRYFROMTEXT('POINT(-76.09130 18.42750)'));
 -- {"type":"Point","coordinates":[-76.0913,18.4275,0.0]}
 ```

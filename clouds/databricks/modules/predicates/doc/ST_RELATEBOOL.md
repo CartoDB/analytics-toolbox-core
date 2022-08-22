@@ -20,9 +20,9 @@ Returns `true` if the DE-9IM interaction matrix mask matches the interaction mat
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geomA,
-  ST_MAKEBBOX(1, 1, 3, 3) as geomB
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geomA,
+  carto.ST_MAKEBBOX(1, 1, 3, 3) AS geomB
 )
-SELECT ST_RELATEBOOL(geomA, geomB, "212101212") FROM t
+SELECT carto.ST_RELATEBOOL(geomA, geomB, "212101212") FROM t;
 -- true
 ```

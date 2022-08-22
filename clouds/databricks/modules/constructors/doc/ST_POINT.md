@@ -18,6 +18,6 @@ Returns a `Point` with the given coordinate values. This is an OGC alias for st_
 **Example**
 
 ```sql
-select ST_ASTEXT(ST_POINT(-91.8554869, 29.5060349))
+SELECT carto.ST_ASTEXT(carto.ST_POINT(-91.8554869, 29.5060349));
 -- POINT (-91.8554869 29.5060349)
 ```

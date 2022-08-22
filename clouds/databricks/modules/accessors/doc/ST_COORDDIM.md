@@ -17,6 +17,6 @@ Returns the number of dimensions of the coordinates of `Geometry` _geom_.
 **Example**
 
 ``` sql
-SELECT carto.ST_COORDDIM(ST_MAKEPOINTM(1, 2, 3));;
+SELECT carto.ST_COORDDIM(carto.ST_MAKEPOINTM(1, 2, 3));
 -- 3 
 ```

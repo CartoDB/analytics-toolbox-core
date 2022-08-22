@@ -17,6 +17,6 @@ Returns `true` if _geom_ is string containing WKT or WKB representation of a geo
 **Example**
 
 ``` sql
-SELECT ST_ISGEOMFIELD("LINESTRING(1 1, 2 3)")
+SELECT carto.ST_ISGEOMFIELD("LINESTRING(1 1, 2 3)");
 -- true
 ```

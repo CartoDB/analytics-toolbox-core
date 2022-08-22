@@ -19,9 +19,9 @@ Returns the `Point` on _a_ that is closest to _b_. This is the first `Point` of 
 
 ```sql
 WITH t AS (
-  select ST_GEOMFROMWKT("LINESTRING (3 1, 1 3)") as geomA,
-  ST_POINT(0, 0) as geomb
+  SELECT carto.ST_GEOMFROMWKT("LINESTRING (3 1, 1 3)") AS geomA,
+  carto.ST_POINT(0, 0) AS geomb
 )
-SELECT ST_ASTEXT(ST_CLOSESTPOINT(geomA, geomB)) FROM t
+SELECT carto.ST_ASTEXT(carto.ST_CLOSESTPOINT(geomA, geomB)) FROM t;
 -- POINT (2 2)
 ```

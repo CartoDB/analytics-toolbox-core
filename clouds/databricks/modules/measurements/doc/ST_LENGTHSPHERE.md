@@ -17,6 +17,6 @@ Approximates the 2D path length of a `LineString` geometry using a spherical ear
 **Example**
 
 ```sql
-SELECT ST_LENGTHSPHERE(ST_GEOMFROMWKT('LINESTRING(0 0, 0 3, 5 3)')) / 1000
+SELECT carto.ST_LENGTHSPHERE(carto.ST_GEOMFROMWKT('LINESTRING(0 0, 0 3, 5 3)')) / 1000;
 -- 888.7982099954688 (distance in km)
 ```

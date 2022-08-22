@@ -17,6 +17,6 @@ Encodes string _s_ into an array of bytes using the UTF-8 charset.
 **Example**
 
 ```sql
-SELECT ST_BYTEARRAY("POINT (-76.0913 18.4275)")
+SELECT carto.ST_BYTEARRAY("POINT (-76.0913 18.4275)");
 -- UE9JTlQgKC03Ni4wOTEzIDE4LjQyNzUp
 ```

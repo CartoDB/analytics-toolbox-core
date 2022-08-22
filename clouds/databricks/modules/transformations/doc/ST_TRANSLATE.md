@@ -24,8 +24,8 @@ Returns the `Geometry` produced when _geom_ is translated by _deltaX_ and _delta
 
 ```sql
 WITH t AS (
-  select ST_POINT(0, 0) as point
+  SELECT carto.ST_POINT(0, 0) AS point
 )
-SELECT ST_ASTEXT(ST_TRANSLATE(point, 1, 2)) FROM t
+SELECT carto.ST_ASTEXT(carto.ST_TRANSLATE(point, 1, 2)) FROM t;
 -- POINT (1 2)
 ```

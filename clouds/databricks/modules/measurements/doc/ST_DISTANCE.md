@@ -18,6 +18,6 @@ Returns the 2D Cartesian distance between the two geometries in units of the coo
 **Example**
 
 ```sql
-SELECT ST_DISTANCE(ST_POINT(0, 0), ST_POINT(0, 5))
+SELECT carto.ST_DISTANCE(carto.ST_POINT(0, 0), carto.ST_POINT(0, 5));
 -- 5
 ```

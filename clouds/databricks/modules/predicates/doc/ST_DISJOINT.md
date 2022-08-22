@@ -19,9 +19,9 @@ Returns `true` if the geometries do not “spatially intersect”; i.e., they do
 
 ```sql
 WITH t AS (
-  select ST_GEOMFROMWKT("LINESTRING (1 0, 1 2)") as lineA,
-  ST_GEOMFROMWKT("LINESTRING (0 1, 2 1)") as lineB
+  SELECT carto.ST_GEOMFROMWKT("LINESTRING (1 0, 1 2)") AS lineA,
+  carto.ST_GEOMFROMWKT("LINESTRING (0 1, 2 1)") AS lineB
 )
-SELECT ST_DISJOINT(lineA, lineB) as disjoint FROM t
+SELECT carto.ST_DISJOINT(lineA, lineB) AS disjoint FROM t;
 -- false
 ```

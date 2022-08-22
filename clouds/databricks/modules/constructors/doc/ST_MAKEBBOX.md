@@ -20,6 +20,6 @@ Creates a `Geometry` representing a bounding box with the given boundaries.
 **Example**
 
 ```sql
-select ST_ASTEXT(ST_MAKEBBOX(-91.8554869, 29.5060349, -91.8382077, 29.5307334)) as bbox
+SELECT carto.ST_ASTEXT(carto.ST_MAKEBBOX(-91.8554869, 29.5060349, -91.8382077, 29.5307334)) AS bbox;
 -- POLYGON ((-91.8554869 29.5060349, -91.8554869 29.5307334, -91.8382077 29.5307334, -91.8382077 29.5060349, -91.8554869 29.5060349))
 ```

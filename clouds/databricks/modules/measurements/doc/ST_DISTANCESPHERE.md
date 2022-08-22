@@ -18,6 +18,6 @@ Approximates the minimum distance (in meters) between two longitude/latitude geo
 **Example**
 
 ```sql
-SELECT ST_DISTANCESPHERE(ST_POINT(0, 0), ST_POINT(0, 5)) / 1000
+SELECT carto.ST_DISTANCESPHERE(carto.ST_POINT(0, 0), carto.ST_POINT(0, 5)) / 1000;
 -- 555.9753986718438 (distance in km)
 ```

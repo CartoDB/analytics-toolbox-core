@@ -19,8 +19,8 @@ Returns the `Geometry` of the bounding box corresponding to the Geohash string _
 
 ```sql
 WITH t AS (
-  SELECT ST_ASGEOHASH(ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'), 8) AS geohash
+  SELECT carto.ST_ASGEOHASH(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'), 8) AS geohash
 )
-SELECT ST_ASTEXT(ST_GEOMFROMGEOHASH(geohash, 8)) FROM t;
+SELECT carto.ST_ASTEXT(carto.ST_GEOMFROMGEOHASH(geohash, 8)) FROM t;
 -- POLYGON ((-90 11.25, -90 22.5, -67.5 22.5, -67.5 11.25, -90 11.25))
 ```

@@ -16,6 +16,6 @@ Creates a `Geometry` from the given GeoJSON.
 **Example**
 
 ```sql
-SELECT ST_ASTEXT(ST_GEOMFROMGEOJSON('{"type":"Point","coordinates":[-76.0913,18.4275,0.0]}'))
+SELECT carto.ST_ASTEXT(carto.ST_GEOMFROMGEOJSON('{"type":"Point","coordinates":[-76.0913,18.4275,0.0]}'));
 -- POINT (-76.0913 18.4275)
 ```

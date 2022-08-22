@@ -17,6 +17,6 @@ If _geom_ is a `GeometryCollection`, returns the number of geometries. For singl
 **Example**
 
 ``` sql
-SELECT ST_NUMGEOMETRIES(ST_GEOMFROMWKT("GEOMETRYCOLLECTION(LINESTRING(1 1, 2 3), POINT(0 4), LINESTRING EMPTY)"))
+SELECT carto.ST_NUMGEOMETRIES(carto.ST_GEOMFROMWKT("GEOMETRYCOLLECTION(LINESTRING(1 1, 2 3), POINT(0 4), LINESTRING EMPTY)"));
 -- 3
 ```

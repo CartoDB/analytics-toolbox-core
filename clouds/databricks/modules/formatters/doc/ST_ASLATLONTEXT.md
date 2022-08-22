@@ -17,6 +17,6 @@ Returns a `String` describing the latitude and longitude of `Point` _p_ in degre
 **Example**
 
 ```sql
-SELECT ST_ASLATLONTEXT(ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'))
+SELECT carto.ST_ASLATLONTEXT(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'));
 -- 18°25'39.000"N 77°54'31.320"W
 ```

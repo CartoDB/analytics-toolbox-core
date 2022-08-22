@@ -17,6 +17,6 @@ Creates a `Polygon` formed by the given `LineString` shell, which must be closed
 **Example**
 
 ```sql
-SELECT ST_ASTEXT(ST_MAKEPOLYGON( ST_GEOMFROMWKT('LINESTRING(75 29,77 29,77 27, 75 29)')));
+SELECT carto.ST_ASTEXT(carto.ST_MAKEPOLYGON(carto.ST_GEOMFROMWKT('LINESTRING(75 29,77 29,77 27, 75 29)')));
 -- POLYGON ((75 29, 77 29, 77 27, 75 29))
 ```

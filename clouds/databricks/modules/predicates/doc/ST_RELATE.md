@@ -20,9 +20,9 @@ Returns the DE-9IM 3x3 interaction matrix pattern describing the dimensionality 
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geomA,
-  ST_MAKEBBOX(1, 1, 3, 3) as geomB
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geomA,
+  carto.ST_MAKEBBOX(1, 1, 3, 3) AS geomB
 )
-SELECT ST_RELATE(geomA, geomB) FROM t
+SELECT carto.ST_RELATE(geomA, geomB) FROM t;
 -- true
 ```

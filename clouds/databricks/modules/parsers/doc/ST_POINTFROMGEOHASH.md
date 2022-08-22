@@ -18,8 +18,8 @@ Return the `Point` at the geometric center of the bounding box defined by the Ge
 
 ```sql
 WITH t AS (
-  SELECT ST_ASGEOHASH(ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'), 8) AS geohash
+  SELECT carto.ST_ASGEOHASH(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'), 8) AS geohash
 )
-SELECT ST_ASTEXT(ST_POINTFROMGEOHASH(geohash, 5)) FROM t;
+SELECT carto.ST_ASTEXT(carto.ST_POINTFROMGEOHASH(geohash, 5)) FROM t;
 -- POINT (-67.5 22.5)
 ```

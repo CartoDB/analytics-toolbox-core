@@ -18,8 +18,8 @@ Returns the geometric center of a geometry.
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geom
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geom
 )
-SELECT ST_ASTEXT(ST_CENTROID(geom)) FROM t
+SELECT carto.ST_ASTEXT(carto.ST_CENTROID(geom)) FROM t;
 -- POINT (1 1)
 ```

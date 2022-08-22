@@ -17,6 +17,6 @@ If _geom_ is a `Point`, return the Y coordinate of that point.
 **Example**
 
 ```sql
-SELECT carto.ST_Y(ST_POINT(-76.09130, 18.42750));
+SELECT carto.ST_Y(carto.ST_POINT(-76.09130, 18.42750));
 -- 18.4275
 ```

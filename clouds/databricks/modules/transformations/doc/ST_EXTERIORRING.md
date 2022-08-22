@@ -18,8 +18,8 @@ Returns a `LineString` representing the exterior ring of the geometry; returns n
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 1, 1) as geom
+  SELECT carto.ST_MAKEBBOX(0, 0, 1, 1) AS geom
 )
-SELECT ST_ASTEXT(ST_EXTERIORRING(geom)) FROM t
+SELECT carto.ST_ASTEXT(carto.ST_EXTERIORRING(geom)) FROM t;
 -- LINESTRING (0 0, 0 1, 1 1, 1 0, 0 0)
 ```

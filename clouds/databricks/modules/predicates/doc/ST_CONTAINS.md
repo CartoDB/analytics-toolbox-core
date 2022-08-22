@@ -19,9 +19,9 @@ Returns `true` if and only if no points of _b_ lie in the exterior of _a_, and a
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geom,
-  ST_MAKEPOINT(1, 1) as Point
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geom,
+  carto.ST_MAKEPOINT(1, 1) as Point
 )
-SELECT ST_CONTAINS(geom, point) FROM t
+SELECT carto.ST_CONTAINS(geom, point) FROM t;
 -- true
 ```

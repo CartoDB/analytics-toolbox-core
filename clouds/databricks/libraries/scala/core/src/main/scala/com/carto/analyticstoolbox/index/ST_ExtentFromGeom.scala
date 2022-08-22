@@ -21,5 +21,5 @@ import com.carto.analyticstoolbox.modules._
 import geotrellis.vector._
 
 class ST_ExtentFromGeom extends HUDF[Geometry, Extent] {
-  def function = _.extent
+  def function: Geometry => Extent = _.extent
 }

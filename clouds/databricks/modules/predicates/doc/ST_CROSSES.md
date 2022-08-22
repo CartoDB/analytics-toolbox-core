@@ -19,9 +19,9 @@ Returns `true` if the supplied geometries have some, but not all, interior point
 
 ```sql
 WITH t AS (
-  select ST_GEOMFROMWKT("LINESTRING (1 0, 1 2)") as lineA,
-  ST_GEOMFROMWKT("LINESTRING (0 1, 2 1)") as lineB
+  SELECT carto.ST_GEOMFROMWKT("LINESTRING (1 0, 1 2)") AS lineA,
+  carto.ST_GEOMFROMWKT("LINESTRING (0 1, 2 1)") AS lineB
 )
-SELECT ST_CROSSES(lineA, lineB) FROM t
+SELECT carto.ST_CROSSES(lineA, lineB) FROM t;
 -- true
 ```

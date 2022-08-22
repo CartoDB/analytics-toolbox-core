@@ -16,6 +16,6 @@ Creates a `LineString` from the given WKT representation.
 **Example**
 
 ```sql
-SELECT ST_ASGEOJSON(ST_LINEFROMTEXT('LINESTRING(0 0, 0 3, 5 3)'))
+SELECT carto.ST_ASGEOJSON(carto.ST_LINEFROMTEXT('LINESTRING(0 0, 0 3, 5 3)'));
 -- {"type":"LineString","coordinates":[[0.0,0.0,0.0],[0.0,3,0.0],[5,3,0.0]]}
 ```

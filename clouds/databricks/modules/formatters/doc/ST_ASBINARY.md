@@ -17,6 +17,6 @@ Returns `Geometry` _geom_ in WKB representation.
 **Example**
 
 ```sql
-SELECT ST_ASBINARY( ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'))
+SELECT carto.ST_ASBINARY(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'));
 -- AIAAAAHAUwXX2/SH/UAybXCj1wo9AAAAAAAAAAA=
 ```

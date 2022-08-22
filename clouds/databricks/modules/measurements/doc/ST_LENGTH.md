@@ -17,6 +17,6 @@ Returns the 2D path length of linear geometries, or perimeter of areal geometrie
 **Example**
 
 ```sql
-SELECT ST_LENGTH(ST_GEOMFROMWKT('LINESTRING(0 0, 0 3, 5 3)'))
+SELECT carto.ST_LENGTH(carto.ST_GEOMFROMWKT('LINESTRING(0 0, 0 3, 5 3)'));
 -- 8
 ```

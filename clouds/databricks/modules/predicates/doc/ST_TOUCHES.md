@@ -19,9 +19,9 @@ Returns `true` if the geometries have at least one `Point` in common, but their 
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geomA,
-  ST_GEOMFROMWKT("LINESTRING (3 1, 1 3)") as geomB
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geomA,
+  carto.ST_GEOMFROMWKT("LINESTRING (3 1, 1 3)") AS geomB
 )
-SELECT ST_TOUCHES(geomA, geomB) FROM t
+SELECT carto.ST_TOUCHES(geomA, geomB) FROM t;
 -- true
 ```

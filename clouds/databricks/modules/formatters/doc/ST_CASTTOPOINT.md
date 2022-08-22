@@ -17,6 +17,6 @@ Casts `Geometry` _g_ to a `Point`.
 **Example**
 
 ```sql
-SELECT ST_CASTTOPOINT(ST_GEOMFROMWKT('POINT(75 29)'))
+SELECT carto.ST_CASTTOPOINT(carto.ST_GEOMFROMWKT('POINT(75 29)'));
 -- 4QgBgN6gywWAssiUAgA=
 ```

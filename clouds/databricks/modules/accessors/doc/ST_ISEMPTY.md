@@ -17,6 +17,6 @@ Returns `true` if _geom_ is an empty geometry.
 **Example**
 
 ``` sql
-SELECT ST_ISEMPTY(ST_GEOMFROMWKT("LINESTRING EMPTY"))
+SELECT carto.ST_ISEMPTY(carto.ST_GEOMFROMWKT("LINESTRING EMPTY"));
 -- true
 ```

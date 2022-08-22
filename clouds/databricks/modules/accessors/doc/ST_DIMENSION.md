@@ -17,6 +17,6 @@ Returns the inherent number of dimensions of this `Geometry` object, which must 
 **Example**
 
 ``` sql
-SELECT ST_DIMENSION(ST_GEOMFROMWKT("LINESTRING(0 0, 1 1)"))
+SELECT carto.ST_DIMENSION(carto.ST_GEOMFROMWKT("LINESTRING(0 0, 1 1)"));
 -- 1
 ```

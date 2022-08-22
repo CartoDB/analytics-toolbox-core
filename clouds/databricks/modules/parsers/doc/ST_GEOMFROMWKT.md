@@ -17,6 +17,6 @@ Creates a `Geometry` from the given Well-Known Text representation (WKT).
 **Example**
 
 ```sql
-SELECT ST_ASGEOJSON(ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'))
+SELECT carto.ST_ASGEOJSON(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'));
 -- {"type":"Point","coordinates":[-76.0913,18.4275,0.0]}
 ```

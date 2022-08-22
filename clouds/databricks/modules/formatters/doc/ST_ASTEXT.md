@@ -17,6 +17,6 @@ Returns `Geometry` _geom_ in WKT representation.
 **Example**
 
 ```sql
-SELECT ST_ASTEXT(ST_POINT(-76.09130, 18.42750))
+SELECT carto.ST_ASTEXT(carto.ST_POINT(-76.09130, 18.42750));
 -- POINT (-76.0913 18.4275)
 ```

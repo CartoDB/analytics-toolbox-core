@@ -17,8 +17,8 @@ Creates a `Geometry` from the given Well-Known Binary representation (WKB).
 
 ```sql
 WITH t AS (
-  SELECT ST_ASBINARY(ST_GEOMFROMWKT('POINT(-76.09130 18.42750)')) AS wkb
+  SELECT carto.ST_ASBINARY(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)')) AS wkb
 )
-SELECT ST_GEOMFROMWKB(wkb) FROM t;
+SELECT carto.ST_GEOMFROMWKB(wkb) FROM t;
 -- 4QgBz/HU1QXwwN6vAQA=
 ```

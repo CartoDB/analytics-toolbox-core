@@ -19,9 +19,9 @@ Returns `true` if the given `Geometries` represent the same logical `Geometry`. 
 
 ```sql
 WITH t AS (
-  select ST_GEOMFROMWKT("LINESTRING (0 0, 2 2)") as lineA,
-  ST_GEOMFROMWKT("LINESTRING (0 0, 1 1, 2 2)") as lineB
+  SELECT carto.ST_GEOMFROMWKT("LINESTRING (0 0, 2 2)") AS lineA,
+  carto.ST_GEOMFROMWKT("LINESTRING (0 0, 1 1, 2 2)") AS lineB
 )
-SELECT ST_EQUALS(lineA, lineB) FROM t
+SELECT carto.ST_EQUALS(lineA, lineB) FROM t;
 -- true
 ```

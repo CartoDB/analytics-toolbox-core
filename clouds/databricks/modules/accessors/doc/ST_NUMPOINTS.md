@@ -17,6 +17,6 @@ Returns the number of vertices in `Geometry` _geom_.
 **Example**
 
 ``` sql
-SELECT ST_NUMPOINTS(ST_GEOMFROMWKT("LINESTRING(1 1, 2 3, 4 4)"))
+SELECT carto.ST_NUMPOINTS(carto.ST_GEOMFROMWKT("LINESTRING(1 1, 2 3, 4 4)"));
 -- 3
 ```

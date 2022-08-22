@@ -17,6 +17,6 @@ Creates a `LineString` using the given sequence of vertices in points.
 **Example**
 
 ```sql
-select ST_MAKELINE(ST_MAKEPOINT(-93.477736, 33.642527), ST_MAKEPOINT(-93.47825, 33.642768))
+SELECT carto.ST_MAKELINE(carto.ST_MAKEPOINT(-93.477736, 33.642527), carto.ST_MAKEPOINT(-93.47825, 33.642768));
 -- NOT WORKING!
 ```

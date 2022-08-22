@@ -16,6 +16,6 @@ Creates a `MultiPoint` corresponding to the given WKT representation.
 **Example**
 
 ```sql
-SELECT ST_ASGEOJSON(ST_MPOINTFROMTEXT('MULTIPOINT (10 40, 40 30, 20 20, 30 10)'))
+SELECT carto.ST_ASGEOJSON(carto.ST_MPOINTFROMTEXT('MULTIPOINT (10 40, 40 30, 20 20, 30 10)'));
 -- {"type":"MultiPoint","coordinates":[[10,40,0.0],[40,30,0.0],[20,20,0.0],[30,10,0.0]]}
 ```

@@ -1,9 +1,5 @@
 # CARTO Analytics Toolbox
 
-[![CI](https://github.com/cartodb/analytics-toolbox-databricks/actions/workflows/ci.yml/badge.svg)](https://github.com/cartodb/analytics-toolbox-databricks/actions/workflows/ci.yml)
-[![Maven Badge](https://img.shields.io/maven-central/v/com.carto.analyticstoolbox/core_2.12?color=blue)](https://search.maven.org/search?q=g:com.carto.analyticstoolbox%20and%20core)
-[![Snapshots Badge](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.carto.analyticstoolbox/core_2.12)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/carto/analyticstoolbox/core_2.12/)
-
 CARTO Analytics Toolbox for Databricks provides geospatial functionality leveraging the GeoMesa SparkSQL capabilities. It implements Spatial Hive UDFs and consists of the following modules:
 
 * `core` with Hive GIS UDFs (depends on [GeoMesa](https://github.com/locationtech/geomesa), [GeoTrellis](https://github.com/locationtech/geotrellis), and [Hiveless](https://github.com/azavea/hiveless))
@@ -30,7 +26,7 @@ CREATE OR REPLACE FUNCTION st_simplify as 'com.carto.analyticstoolbox.core.ST_Si
  -- ...and more
 ```
 
-The full list of supported functions can be found [here](./core/sql/createUDFs.sql).
+The full list of supported functions can be found [here](./libraries/scala/core/src/main/resources/sql/createUDFs.sql).
 
 ## Spatial Query Optimizations
 
@@ -59,7 +55,7 @@ In case there is a need to have optimizations enabled on a DataBricks cluster by
 ## Table Optimization
 
 There are two functions defined to help with the raw table preparations. Both transform the input table 
-into a shape optimized for intersection queries; for more details see [OptimizeSpatial.scala](./core/src/main/scala/com/carto/analyticstoolbox/spark/spatial/OptimizeSpatial.scala):
+into a shape optimized for intersection queries; for more details see [OptimizeSpatial.scala](./libraries/scala/core/src/main/scala/com/carto/analyticstoolbox/spark/spatial/OptimizeSpatial.scala):
 
 1. **optimizeSpatial**
    * Uses heuristics to compute the optimal parquet block size

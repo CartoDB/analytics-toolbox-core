@@ -17,6 +17,6 @@ Returns `true` if _geom_ has no anomalous geometric points, such as self interse
 **Example**
 
 ``` sql
-SELECT ST_ISSIMPLE(ST_GEOMFROMWKT("LINESTRING(1 1, 2 3, 4 3, 2 3)"))
+SELECT carto.ST_ISSIMPLE(carto.ST_GEOMFROMWKT("LINESTRING(1 1, 2 3, 4 3, 2 3)"));
 -- false
 ```

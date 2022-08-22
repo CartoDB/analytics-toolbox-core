@@ -19,6 +19,6 @@ Creates a `Point` with an _x_, _y_, and _m_ coordinate.
 **Example**
 
 ```sql
-select ST_MAKEPOINTM(-91.8554869, 29.5060349, 5)
+SELECT carto.ST_MAKEPOINTM(-91.8554869, 29.5060349, 5);
 -- BINARY OUTPUT - 4QgB6aOA7Ab6jbKZAgo=
 ```

@@ -19,10 +19,10 @@ Returns the intersection of the input `Geometries`.
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(0, 0, 2, 2) as geomA,
-  ST_MAKEBBOX(1, 1, 3, 3) as geomB
+  SELECT carto.ST_MAKEBBOX(0, 0, 2, 2) AS geomA,
+  carto.ST_MAKEBBOX(1, 1, 3, 3) AS geomB
 )
-SELECT ST_ASTEXT(ST_INTERSECTION(geomA, geomB)) as intersection FROM t
+SELECT carto.ST_ASTEXT(carto.ST_INTERSECTION(geomA, geomB)) AS intersection FROM t;
 -- POLYGON ((1 2, 2 2, 2 1, 1 1, 1 2))
 
 ```

@@ -18,9 +18,9 @@ If _geom_ spans the [antimeridian](https://en.wikipedia.org/wiki/180th_meridian)
 
 ```sql
 WITH t AS (
-  select ST_MAKEBBOX(178, 0, 190, 5) as geom
+  SELECT carto.ST_MAKEBBOX(178, 0, 190, 5) AS geom
 )
-SELECT ST_ASTEXT(ST_ANTIMERIDIANSAFEGEOM(geom)) FROM t
+SELECT carto.ST_ASTEXT(carto.ST_ANTIMERIDIANSAFEGEOM(geom)) FROM t;
 -- MULTIPOLYGON (((-180 0, -180 5, -170 5, -170 0, -180 0)), ((180 5, 180 0, 178 0, 178 5, 180 5)))
 
 ```
