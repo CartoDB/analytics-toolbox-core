@@ -1,1 +1,3 @@
 quadbin==0.1.0b1
+geojson==2.5.0
+pygc==1.1.0
