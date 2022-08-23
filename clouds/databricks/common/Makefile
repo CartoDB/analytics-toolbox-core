@@ -20,7 +20,7 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-.SILENT:
+#.SILENT:
 
 .PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy check
 
@@ -50,6 +50,13 @@ clean:
 check:
 ifndef DB_CLUSTER_ID
 	$(error DB_CLUSTER_ID env variable is mandatory)
+endif
+check-extra:
+ifndef RS_HOST
+	$(error RS_HOST is undefined)
+endif
+ifndef RS_PASSWORD
+	$(error RS_PASSWORD is undefined)
 endif
 
 upload-jars: clean build
@@ -82,11 +89,36 @@ deploy: check upload-jars
 	echo "Installing functions"
 	$(MAKE) create-udfs
 
-test-integration:
-	echo "WIP"
+venv:
+	virtualenv -p python3 $(COMMON_DIR)/venv -q
+	. $(COMMON_DIR)/venv/bin/activate && \
+	python -m pip install -U pip -q && \
+	pip install -r $(COMMON_DIR)/requirements.txt -q && \
+	deactivate
+
+test-integration: check check-extra venv
+	. $(COMMON_DIR)/venv/bin/activate && \
+	pytest -rP -p no:warnings modules/$(TEST) && \
+	deactivate
 	
 test-integration-full:
 	echo "WIP"
 
 clean-deploy:
 	echo "WIP"
+
+check:
+ifndef DB_CLUSTER_ID
+	$(error DB_CLUSTER_ID env variable is mandatory)
+endif
+
+check-extra:
+ifndef DATABRICKS_SERVER_HOSTNAME
+	$(error DATABRICKS_SERVER_HOSTNAME is undefined)
+endif
+ifndef DATABRICKS_HTTP_PATH
+	$(error DATABRICKS_HTTP_PATH is undefined)
+endif
+ifndef DATABRICKS_TOKEN
+	$(error DATABRICKS_TOKEN is undefined)
+endif

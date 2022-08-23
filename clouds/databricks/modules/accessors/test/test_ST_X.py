@@ -1,20 +1,11 @@
-from databricks import sql
 import os
-
-def run_query(query):
-    query = query.replace('@@DB_SCHEMA@@', "carto_dev_data")
-    with sql.connect(server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME"),
-                    http_path       = os.getenv("DATABRICKS_HTTP_PATH"),
-                    access_token    = os.getenv("DATABRICKS_TOKEN")) as connection:
-
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            return cursor.fetchall()
+from test_utils.utils import run_query
 
 def test_st_x_success():
-    query = "SELECT @@DB_SCHEMA@@.st_x(geom) as latitude from @@DB_SCHEMA@@.points_100k limit 100;"
+    query = "SELECT @@DB_SCHEMA@@.ST_X(@@DB_SCHEMA@@.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'));"
     result = run_query(query)
-    assert result[0][0] == -91.855484
+    # The result is rounded because it adds small decimal numbers
+    assert round(result[0][0], 5) == -76.09130
 
 
 
