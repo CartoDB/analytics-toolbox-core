@@ -1,7 +1,7 @@
 from test_utils import run_query
 
 
-def test_h3_asplacekey():
+def test_placekey_fromh3():
 
     result = run_query(
         """

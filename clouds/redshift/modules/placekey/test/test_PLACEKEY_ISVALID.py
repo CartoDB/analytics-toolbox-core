@@ -1,7 +1,7 @@
 from test_utils import run_query
 
 
-def test_isvalid():
+def test_placekey_isvalid():
 
     result = run_query(
         """
