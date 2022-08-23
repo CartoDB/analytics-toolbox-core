@@ -3,6 +3,7 @@ from lib import quadbin
 from lib import constructors
 from lib import transformations
 from lib import processing
+from lib import placekey
 
 
 def test_init():
@@ -26,3 +27,7 @@ def test_init():
     assert hasattr(transformations, 'destination')
     assert hasattr(transformations, 'great_circle')
     assert hasattr(processing, 'voronoi_generic')
+    assert hasattr(placekey, 'h3_is_valid')
+    assert hasattr(placekey, 'placekey_to_h3')
+    assert hasattr(placekey, 'h3_to_placekey')
+    assert hasattr(placekey, 'placekey_is_valid')
