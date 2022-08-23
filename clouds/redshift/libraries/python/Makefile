@@ -71,7 +71,7 @@ copy-libraries:
 		aws s3 cp $$f $(RS_BUCKET) || exit 1; \
 	done
 
-deploy-libraries:
+deploy-libraries: venv3
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
 
 remove-libraries:
@@ -81,7 +81,7 @@ remove-libraries:
 
 test: check venv2
 	echo "Testing libraries..."
-	$(VENV2_BIN)/pytest -rP -p no:warnings -vv $(TEST_DIR)/$(test)
+	$(VENV2_BIN)/pytest -rP -p no:warnings -x -vv $(TEST_DIR)/$(test)
 
 remove: check venv3
 	echo "Removing libraries..."

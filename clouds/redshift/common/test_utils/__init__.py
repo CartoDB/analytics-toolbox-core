@@ -1,6 +1,10 @@
 import os
 import redshift_connector
 
+from redshift_connector.error import ProgrammingError
+
+__all__ = ['ProgrammingError']
+
 
 def run_query(query):
     conn = redshift_connector.connect(

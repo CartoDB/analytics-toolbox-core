@@ -22,7 +22,7 @@ help:
 lint: venv3
 	echo "Linting modules..."
 	$(VENV3_BIN)/brunette **/test/*.py --line-length=88 --single-quotes --quiet
-	$(VENV3_BIN)/flake8 **/test/*.py --enable-extensions Q0 --ignore=D100,D103,D104
+	$(VENV3_BIN)/flake8 **/test/*.py --enable-extensions Q0 --ignore=D100,D103,D104,W503
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
@@ -38,7 +38,7 @@ deploy: check venv3 build
 
 test: check venv3 $(NODE_MODULES_DEV)
 	echo "Testing modules..."
-	$(VENV3_BIN)/pytest -rP -p no:warnings -vv $(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
+	$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv $(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
 
 remove: check venv3
 	echo "Removing modules..."
