@@ -14,9 +14,7 @@ Calculates the Delaunay triangulation of the points provided. A MultiPolygon obj
 
 `VARCHAR(MAX)`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.ST_DELAUNAYPOLYGONS(ST_GEOMFROMTEXT('MULTIPOINT((-70.3894720672732 42.9988854818585),(-71.1048188482079 42.6986831053718),(-72.6818783178395 44.1191152795997),(-73.8221894711314 35.1057463244819))'));

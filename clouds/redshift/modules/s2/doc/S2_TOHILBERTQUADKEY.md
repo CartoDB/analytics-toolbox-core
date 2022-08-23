@@ -14,9 +14,7 @@ Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert cur
 
 `VARCHAR(MAX)`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.S2_TOHILBERTQUADKEY(1735346007979327488);

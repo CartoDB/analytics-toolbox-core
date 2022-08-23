@@ -14,9 +14,7 @@ Returns the UINT64 representation of a cell ID.
 
 `VARCHAR(MAX)`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.S2_TOUINT64REPR(-8520148382826627072);

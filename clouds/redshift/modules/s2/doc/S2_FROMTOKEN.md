@@ -14,9 +14,7 @@ Returns the conversion of an S2 cell token (hexified ID) into an unsigned, 64 bi
 
 `INT8`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.S2_FROMTOKEN('89c25a3');

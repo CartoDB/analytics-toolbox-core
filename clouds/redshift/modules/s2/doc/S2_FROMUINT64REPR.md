@@ -14,9 +14,7 @@ Returns an INT64 cell ID from its UINT64 representation.
 
 `INT8`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.S2_FROMUINT64REPR('9926595690882924544');

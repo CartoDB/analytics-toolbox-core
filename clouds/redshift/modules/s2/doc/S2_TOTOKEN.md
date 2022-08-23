@@ -14,9 +14,7 @@ Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 
 `VARCHAR(MAX)`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.S2_TOTOKEN(-8520148382826627072);
