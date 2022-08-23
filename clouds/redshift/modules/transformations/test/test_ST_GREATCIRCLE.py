@@ -1,8 +1,12 @@
-from test_utils import run_query, get_cursor
 import os
 
+from test_utils import run_query, get_cursor
 
-def test_great_circle_success():
+
+here = os.path.dirname(__file__)
+
+
+def test_greatcircle_success():
     results = run_query(
         """SELECT ST_ASTEXT(@@RS_SCHEMA@@.ST_GREATCIRCLE(
             ST_MakePoint(0,0), ST_MakePoint(0,10), 11)),
@@ -15,15 +19,14 @@ def test_great_circle_success():
             ST_MakePoint(-3.79289595262835, 37.776008883554354), 15))"""
     )
 
-    fixture_file = open('./test/integration/greatcircle_fixtures/out/wkts.txt', 'r')
-    lines = fixture_file.readlines()
-    fixture_file.close()
+    with open(f'{here}/fixtures/st_greatcircle_out.txt', 'r') as fixture_file:
+        lines = fixture_file.readlines()
 
     for idx, result in enumerate(results):
         assert str(result[0]) == lines[idx].rstrip()
 
 
-def test_great_circle_none():
+def test_greatcircle_none():
     results = run_query(
         """SELECT @@RS_SCHEMA@@.ST_GREATCIRCLE(
             NULL, ST_MakePoint(-5,-5), 5),
@@ -38,7 +41,7 @@ def test_great_circle_none():
     assert results[0][2] is None
 
 
-def test_great_circle_default():
+def test_greatcircle_default():
     results = run_query(
         """SELECT ST_ASTEXT(@@RS_SCHEMA@@.ST_GREATCIRCLE(
             ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167))),
@@ -48,16 +51,15 @@ def test_great_circle_default():
             ST_MakePoint(-1.70325, 1.4167), ST_MakePoint(1.70325, -1.4167), 10))"""
     )
 
-    fixture_file = open('./test/integration/greatcircle_fixtures/out/wkts.txt', 'r')
-    lines = fixture_file.readlines()
-    fixture_file.close()
+    with open(f'{here}/fixtures/st_greatcircle_out.txt', 'r') as fixture_file:
+        lines = fixture_file.readlines()
 
     assert str(results[0][0]) == lines[4].rstrip()
     assert str(results[0][0]) == str(results[0][1])
     assert str(results[0][0]) != str(results[0][2])
 
 
-def test_read_from_table_success():
+def test_greatcircle_read_from_table_success():
     cursor = get_cursor()
 
     cursor.execute(
@@ -81,17 +83,14 @@ def test_read_from_table_success():
             start_point, end_point, npoints))
         FROM test_data ORDER BY idx
         """.replace(
-            '@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']
+            '@@RS_SCHEMA@@', os.environ['RS_SCHEMA']
         )
     )
 
     results = cursor.fetchall()
 
-    fixture_file = open(
-        './test/integration/greatcircle_fixtures/out/wkts_table.txt', 'r'
-    )
-    lines = fixture_file.readlines()
-    fixture_file.close()
+    with open(f'{here}/fixtures/st_greatcircle_table_out.txt', 'r') as fixture_file:
+        lines = fixture_file.readlines()
 
     for idx, result in enumerate(results):
         assert str(result[0]) == lines[idx].rstrip()

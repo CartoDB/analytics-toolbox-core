@@ -1,5 +1,6 @@
-from test_utils import run_query, get_cursor
 import os
+
+from test_utils import run_query, get_cursor
 
 
 def test_destination_success():
@@ -50,7 +51,7 @@ def test_destination_default():
     assert str(results[0][1]) != str(results[0][2])
 
 
-def test_read_from_table_success():
+def test_destination_read_from_table_success():
     cursor = get_cursor()
 
     cursor.execute(
@@ -71,7 +72,7 @@ def test_read_from_table_success():
             geom, distance, bearing, units))
         FROM test_data ORDER BY idx
         """.replace(
-            '@@RS_PREFIX@@', os.environ['RS_SCHEMA_PREFIX']
+            '@@RS_SCHEMA@@', os.environ['RS_SCHEMA']
         )
     )
 
