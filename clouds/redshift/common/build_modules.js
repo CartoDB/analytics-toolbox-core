@@ -95,23 +95,30 @@ function add (f, include) {
 
 functions.forEach(f => add(f));
 
-// Replace code variables
+// Replace environment variables
 const template = output.map(f => f.content).join('\n');
 let content = '';
+
+function apply_replacements (text) {
+    const replacements = process.env.REPLACEMENTS.split(' ');
+    for (let replacement of replacements) {
+        if (replacement) {
+            const pattern = new RegExp(`@@${replacement}@@`, 'g');
+            text = text.replace(pattern, process.env[replacement]);
+        }
+    }
+    return text;
+}
 
 if (argv.production) {
     const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString()
     const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString()
-    content = header + template
-        + footer.replace(/@@VERSION_FUNCTION@@/g, process.env.VERSION_FUNCTION || 'VERSION_CORE')
-            .replace(/@@PACKAGE_VERSION@@/g, process.env.PACKAGE_VERSION || '');
+    content = header + template + apply_replacements(footer);
 } else {
     content = template;
 }
 
-content = content
-    .replace(/@@RS_SCHEMA@@/g, process.env.RS_SCHEMA || 'carto')
-    .replace(/@@RS_LIBRARY@@/g, process.env.RS_LIBRARY || 'carto');
+content = apply_replacements(content);
 
 // Write modules.sql file
 fs.writeFileSync(path.join(outputDir, 'modules.sql'), content);
