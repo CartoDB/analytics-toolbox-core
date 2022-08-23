@@ -16,7 +16,7 @@ Returns `true` if _geom_ is an empty geometry.
 
 **Example**
 
-``` sql
+```sql
 SELECT carto.ST_ISEMPTY(carto.ST_GEOMFROMWKT("LINESTRING EMPTY"));
 -- true
 ```

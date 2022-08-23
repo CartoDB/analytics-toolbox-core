@@ -2,7 +2,6 @@ import os
 from databricks import sql
 
 
-
 def run_query(query):
     query = query.replace('@@DB_SCHEMA@@', os.getenv("DB_SCHEMA"))
     with sql.connect(server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME"),

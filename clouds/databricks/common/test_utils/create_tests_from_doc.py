@@ -17,8 +17,8 @@ def create_it_from_docs():
     print(f"dirs {modules}")
     for module in modules:
         print(module)
-    create_tests_for_module(modulePath, 'measurements')
-
+        #create_tests_for_module(modulePath, module)
+    create_tests_for_module(modulePath, "accessors")
 def create_tests_for_module(path, module):
     doc_path = os.path.join(path, module, 'doc')
     test_path = os.path.join(path, module, 'test')
@@ -73,6 +73,7 @@ def get_query_and_result(path):
         query = match.group(1).strip()
         result_position = query.find('--')
         subquery = query[:result_position].strip()
+        subquery = subquery.replace("carto.", "@@DB_SCHEMA@@.").replace('"', "'")
         result = query[result_position + 2 :].strip()
         #print(f"Query {subquery}\nresult {result}")
         return subquery, result

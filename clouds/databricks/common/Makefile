@@ -98,7 +98,10 @@ venv:
 
 test-integration: check check-extra venv
 	. $(COMMON_DIR)/venv/bin/activate && \
-	pytest -rP -p no:warnings modules/$(TEST) && \
+	for module in `ls $(CLOUD_DIR)/modules`; do \
+		echo "> Module $${module}"; \
+		pytest -rP -p no:warnings modules/$${module}; \
+	done; \
 	deactivate
 	
 test-integration-full:
