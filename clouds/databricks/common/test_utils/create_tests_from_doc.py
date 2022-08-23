@@ -17,8 +17,8 @@ def create_it_from_docs():
     print(f"dirs {modules}")
     for module in modules:
         print(module)
-        #create_tests_for_module(modulePath, module)
-    create_tests_for_module(modulePath, "accessors")
+        create_tests_for_module(modulePath, module)
+
 def create_tests_for_module(path, module):
     doc_path = os.path.join(path, module, 'doc')
     test_path = os.path.join(path, module, 'test')
@@ -32,7 +32,6 @@ def create_tests_for_module(path, module):
 def create_test_for_function(test_path, doc_path, function):
     query, result = get_query_and_result(os.path.join(doc_path, function))
     if not query:
-        print("not query")
         return
     function_name =  function.replace('.md', '')
     env = Environment(
@@ -52,6 +51,7 @@ def create_test_for_function(test_path, doc_path, function):
     test_filename = "test_" + function_name + ".py"
     try:
         with open(os.path.join(test_path, test_filename), "x") as file:
+            pass
             file.write(output_from_parsed_template)
     except FileExistsError:
         print(f"The test {test_filename} already exists, will not create it")
@@ -74,8 +74,9 @@ def get_query_and_result(path):
         result_position = query.find('--')
         subquery = query[:result_position].strip()
         subquery = subquery.replace("carto.", "@@DB_SCHEMA@@.").replace('"', "'")
+        if "\n" in subquery:
+            subquery = '""' + subquery + '""'
         result = query[result_position + 2 :].strip()
-        #print(f"Query {subquery}\nresult {result}")
         return subquery, result
     print("Unable to parse doc file, will not create test for it")
     return None, None

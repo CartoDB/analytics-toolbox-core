@@ -20,7 +20,7 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-#.SILENT:
+.SILENT:
 
 .PHONY: help lint lint-fix install build test-unit test-integration test-integration-full deploy clean clean-deploy check
 
@@ -105,7 +105,9 @@ test-integration: check check-extra venv
 	deactivate
 	
 test-integration-full:
-	echo "WIP"
+	$(MAKE) deploy
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) clean-deploy
 
 clean-deploy:
 	echo "WIP"
