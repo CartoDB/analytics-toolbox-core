@@ -2,6 +2,7 @@ import lib
 from lib import quadbin
 from lib import constructors
 from lib import transformations
+from lib import processing
 
 
 def test_init():
@@ -24,3 +25,4 @@ def test_init():
     assert hasattr(transformations, 'centroid')
     assert hasattr(transformations, 'destination')
     assert hasattr(transformations, 'great_circle')
+    assert hasattr(processing, 'voronoi_generic')
