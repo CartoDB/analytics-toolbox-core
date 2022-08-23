@@ -39,14 +39,16 @@ for (let inputDir of inputDirs) {
         if (fs.existsSync(sqldir)) {
             const files = fs.readdirSync(sqldir);
             files.forEach(file => {
-                const name = path.parse(file).name;
-                const content = fs.readFileSync(path.join(sqldir, file)).toString().replace(/--.*\n/g, '');
-                functions.push({
-                    name,
-                    module,
-                    content,
-                    dependencies: []
-                });
+                if (file.endsWith('.sql')) {
+                    const name = path.parse(file).name;
+                    const content = fs.readFileSync(path.join(sqldir, file)).toString().replace(/--.*\n/g, '');
+                    functions.push({
+                        name,
+                        module,
+                        content,
+                        dependencies: []
+                    });
+                }
             });
         }
     });
