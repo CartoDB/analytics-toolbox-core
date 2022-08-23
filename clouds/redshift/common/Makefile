@@ -47,12 +47,14 @@ endif
 
 venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
+	rm -rf $(VENV2_DIR)/lib/**/site-packages/~*
 	$(VENV2_BIN)/pip install --upgrade pip -q 2>/dev/null && \
 	$(VENV2_BIN)/pip install -r $(COMMON_DIR)/python2_requirements.txt -q 2>/dev/null
 	([ ! -f $(ROOT_DIR)/requirements.txt ] || $(VENV2_BIN)/pip install -r $(ROOT_DIR)/requirements.txt -q 2>/dev/null)
 
 venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
+	rm -rf $(VENV3_DIR)/lib/**/site-packages/~*
 	$(VENV3_BIN)/pip install --upgrade pip -q && \
 	$(VENV3_BIN)/pip install -r $(COMMON_DIR)/python3_requirements.txt -q
 
