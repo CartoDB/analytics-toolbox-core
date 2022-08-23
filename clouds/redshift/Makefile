@@ -26,7 +26,7 @@ lint-libraries:
 lint-modules:
 	$(MAKE) -C modules lint
 
-lint-common: $(NODE_MODULES_DEV)
+lint-common: $(NODE_MODULES_DEV) venv3
 	echo "Linting common..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR)/*.js --fix
