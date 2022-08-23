@@ -4,6 +4,7 @@ from lib import constructors
 from lib import transformations
 from lib import processing
 from lib import placekey
+from lib import s2
 
 
 def test_init():
@@ -31,3 +32,15 @@ def test_init():
     assert hasattr(placekey, 'placekey_to_h3')
     assert hasattr(placekey, 'h3_to_placekey')
     assert hasattr(placekey, 'placekey_is_valid')
+    assert hasattr(s2, 'get_cell_boundary')
+    assert hasattr(s2, 'get_resolution')
+    assert hasattr(s2, 'hilbert_quadkey_to_id')
+    assert hasattr(s2, 'id_to_hilbert_quadkey')
+    assert hasattr(s2, 'int64_id_to_token')
+    assert hasattr(s2, 'longlat_as_int64_id')
+    assert hasattr(s2, 'polyfill_bbox')
+    assert hasattr(s2, 'token_to_int64_id')
+    assert hasattr(s2, 'to_children')
+    assert hasattr(s2, 'to_parent')
+    assert hasattr(s2, 'uint64_repr_from_id')
+    assert hasattr(s2, 'uint64_to_int64')
