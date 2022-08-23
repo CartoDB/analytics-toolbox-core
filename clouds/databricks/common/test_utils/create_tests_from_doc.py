@@ -32,7 +32,8 @@ def create_tests_for_module(path, module):
 def create_test_for_function(test_path, doc_path, function):
     query, result = get_query_and_result(os.path.join(doc_path, function))
     if not query:
-        pass
+        print("not query")
+        return
     function_name =  function.replace('.md', '')
     env = Environment(
         loader=FileSystemLoader(test_util_path + "/resources"),
@@ -61,8 +62,8 @@ def create_test_path (test_path):
         print(f"Creating test folder {test_path}")
         os.makedirs(test_path)
         src = os.path.join(test_util_path, "resources/test_modules_init.py")
-        dest = os.path.join(test_util_path, "test_path/__init__.py")
-        shutil.copy(src, test_path)
+        dest = os.path.join(test_path, "__init__.py")
+        shutil.copyfile(src, dest)
     
 def get_query_and_result(path):
     with open(path, 'r') as f:
