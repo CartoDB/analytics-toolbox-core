@@ -42,9 +42,9 @@ def drop_table(table):
     run_query_without_result(f'DROP TABLE {table}')
 
 
-def upload_csv_to_postgres(table):
+def upload_csv_to_postgres(table, filepath):
     """Read a CSV file, convert to a GeoDataFrame and upload to the DB."""
-    df = pd.read_csv(f'test/integration/fixtures/{table}.csv')
+    df = pd.read_csv(filepath)
     gdf = gpd.GeoDataFrame(df, geometry=df.geom.map(wkt.loads))
     gdf = gdf.drop(columns=['geom'])
     gdf = gdf.rename(columns={'geometry': 'geom'})
@@ -53,9 +53,9 @@ def upload_csv_to_postgres(table):
     gdf.to_postgis(table, engine, if_exists='replace')
 
 
-def upload_nogeom_csv_to_postgres(table):
+def upload_nogeom_csv_to_postgres(table, filepath):
     """Read a CSV file, convert to a DataFrame and upload to the DB."""
-    df = pd.read_csv(f'test/integration/fixtures/{table}.csv')
+    df = pd.read_csv(filepath)
     df.to_sql(table, engine, if_exists='replace')
 
 
