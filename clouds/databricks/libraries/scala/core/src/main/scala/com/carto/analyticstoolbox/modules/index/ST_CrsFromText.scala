@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.index
+package com.carto.analyticstoolbox.modules.index
 
 import com.azavea.hiveless.HUDF
-import com.carto.analyticstoolbox.modules._
-import geotrellis.vector._
+import geotrellis.proj4.CRS
 
-class ST_ExtentFromGeom extends HUDF[Geometry, Extent] {
-  def function: Geometry => Extent = _.extent
+class ST_CrsFromText extends HUDF[String, CRS] {
+  def function: String => CRS = CRS.fromString
 }

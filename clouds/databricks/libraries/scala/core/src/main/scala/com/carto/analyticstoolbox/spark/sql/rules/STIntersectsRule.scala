@@ -17,7 +17,7 @@
 package com.carto.analyticstoolbox.spark.sql.rules
 
 import com.carto.analyticstoolbox.modules._
-import com.carto.analyticstoolbox.index._
+import com.carto.analyticstoolbox.modules.index._
 import com.azavea.hiveless.spark.rules.syntax._
 import com.azavea.hiveless.serializers.HDeserializer.Errors.ProductDeserializationError
 import com.azavea.hiveless.serializers.syntax._

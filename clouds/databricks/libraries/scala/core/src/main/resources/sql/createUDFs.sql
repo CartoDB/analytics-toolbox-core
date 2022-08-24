@@ -78,4 +78,11 @@ CREATE OR REPLACE FUNCTION ST_IDLSAFEGEOM as 'com.carto.analyticstoolbox.modules
 CREATE OR REPLACE FUNCTION ST_INTERIORRING as 'com.carto.analyticstoolbox.modules.transformations.ST_InteriorRingN';
 CREATE OR REPLACE FUNCTION ST_INTERSECTION as 'com.carto.analyticstoolbox.modules.transformations.ST_Intersection';
 CREATE OR REPLACE FUNCTION ST_TRANSLATE as 'com.carto.analyticstoolbox.modules.transformations.ST_Translate';
-
+-- Index
+CREATE OR REPLACE FUNCTION ST_CRSFROMTEXT as 'com.carto.analyticstoolbox.modules.index.ST_CrsFromText';
+CREATE OR REPLACE FUNCTION ST_EXTENTFROMGEOM as 'com.carto.analyticstoolbox.modules.index.ST_ExtentFromGeom';
+CREATE OR REPLACE FUNCTION ST_EXTENTTOGEOM as 'com.carto.analyticstoolbox.modules.index.ST_ExtentToGeom';
+CREATE OR REPLACE FUNCTION ST_GEOMREPROJECT as 'com.carto.analyticstoolbox.modules.index.ST_GeomReproject';
+CREATE OR REPLACE FUNCTION ST_MAKEEXTENT as 'com.carto.analyticstoolbox.modules.index.ST_MakeExtent';
+CREATE OR REPLACE FUNCTION ST_PARTITIONCENTROID as 'com.carto.analyticstoolbox.modules.index.ST_PartitionCentroid';
+CREATE OR REPLACE FUNCTION ST_Z2LATLON as 'com.carto.analyticstoolbox.modules.index.ST_Z2LatLon';
