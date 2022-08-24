@@ -73,7 +73,7 @@ Additionally, [this tool](./tools/setool/) has been developed to generate code t
 | Cloud | Development |
 |---|---|
 | BigQuery | |
-| Snowflake |  |
+| Snowflake | [README.md](./clouds/snowflake/README.md) |
 | Redshift | [README.md](./clouds/redshift/README.md) |
 
 ### BigQuery
@@ -104,34 +104,6 @@ GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account/or/adc.json
 ```
 
 Note: you may need to run `gcloud auth login` to generate the `acd.json` file.
-
-### Snowflake
-
-The Analytics Toolbox for Snowflake contains SQL functions and JavaScript libraries. The functions are deployed in a schema called `carto` inside a specific database. The JavaScript libraries are deployed inside the SQL functions. In Snowflake, the functions can be used with tables of any database in the same account.
-
-**Tools**
-
-Make sure you have installed the following tools:
-
-- `make`: https://www.gnu.org/software/make/
-- `node`: https://www.npmjs.com/ (v14.18)
-- `yarn`: https://yarnpkg.com/ (v1.22)
-- `snowsql`: https://docs.snowflake.com/en/user-guide/snowsql.html (v1.2)
-
-**Environment variables**
-
-The `.env` file contains the variables required to deploy and run the toolbox.
-
-```
-# Snowflake
-SF_ACCOUNT=your-snowflake-account
-SF_DATABASE=your-snowflake-database
-SF_SCHEMA_PREFIX=
-SF_USER=your-snowflake-user
-SF_PASSWORD=your-snowflake-password
-SF_SHARE_PREFIX=
-SF_SHARE_ENABLED=0
-```
 
 ## Contribute
 
