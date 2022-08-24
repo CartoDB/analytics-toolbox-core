@@ -24,5 +24,4 @@ WITH t AS (
 )
 SELECT carto.ST_ASTEXT(carto.ST_INTERSECTION(geomA, geomB)) AS intersection FROM t;
 -- POLYGON ((1 2, 2 2, 2 1, 1 1, 1 2))
-
 ```

@@ -51,6 +51,7 @@ check:
 ifndef DB_CLUSTER_ID
 	$(error DB_CLUSTER_ID env variable is mandatory)
 endif
+<<<<<<< HEAD
 check-extra:
 ifndef RS_HOST
 	$(error RS_HOST is undefined)
@@ -58,6 +59,8 @@ endif
 ifndef RS_PASSWORD
 	$(error RS_PASSWORD is undefined)
 endif
+=======
+>>>>>>> origin/master
 
 upload-jars: clean build
 	echo "Uploading jars"
@@ -127,3 +130,6 @@ endif
 ifndef DATABRICKS_TOKEN
 	$(error DATABRICKS_TOKEN is undefined)
 endif
+
+clean-deploy:
+	echo "WIP"

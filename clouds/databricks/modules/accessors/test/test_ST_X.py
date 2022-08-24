@@ -6,7 +6,3 @@ def test_st_x_success():
     result = run_query(query)
     # The result is rounded because it adds small decimal numbers
     assert round(result[0][0], 5) == -76.09130
-
-
-
-
