@@ -5,16 +5,13 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR ?= $(ROOT_DIR)/../common
+LIBS_BUILD_DIR ?= $(ROOT_DIR)/../libraries/javascript/build
 
 MODULES_DIRS ?= .
 export VERSION_FUNCTION ?= VERSION_CORE
 export PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
 REPLACEMENTS = "SF_SCHEMA VERSION_FUNCTION PACKAGE_VERSION"
-
-# TODO: Autodetect
-REPLACEMENTS_LIBS = "SF_LIBRARY_QUADBIN"
-export SF_LIBRARY_QUADBIN = $(shell cat $(ROOT_DIR)/../libraries/javascript/build/quadbin.js)
 
 include $(COMMON_DIR)/Makefile
 
@@ -33,8 +30,8 @@ build:
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
-	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_LIBS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
 
 deploy: check build
 	echo "Deploying modules..."

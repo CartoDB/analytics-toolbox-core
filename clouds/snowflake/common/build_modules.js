@@ -14,6 +14,7 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
+const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
@@ -107,6 +108,12 @@ function apply_replacements (text) {
             text = text.replace(pattern, process.env[replacement]);
         }
     }
+    const libraries = [... new Set(text.match(new RegExp('@@SF_LIBRARY_.*@@', 'g')))];
+    for (let library of libraries) {
+        const libraryName = library.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
+        const libraryContent = fs.readFileSync(path.join(libsBuildDir, libraryName)).toString();
+        text = text.replaceAll(library, libraryContent);
+    } 
     return text;
 }
 

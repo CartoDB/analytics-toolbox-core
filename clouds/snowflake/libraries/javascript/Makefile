@@ -34,7 +34,7 @@ build-libs: $(NODE_MODULES) $(NODE_MODULES_DEV)
 	for f in $(notdir $(basename $(shell find $(LIBS_DIR)/* -type f 2>/dev/null))); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-		INPUT=$(SRC_DIR)/$${f}.js \
+		INPUT=$(LIBS_DIR)/$${f}.js \
 		OUTPUT=$(BUILD_DIR)/$${f}.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 	done \
