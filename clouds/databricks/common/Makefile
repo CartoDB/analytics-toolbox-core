@@ -100,7 +100,7 @@ test-integration: check check-extra venv
 	. $(COMMON_DIR)/venv/bin/activate && \
 	for module in `ls $(CLOUD_DIR)/modules`; do \
 		echo "> Module $${module}"; \
-		pytest -rP -p no:warnings modules/$${module}; \
+		pytest -rP -p no:warnings modules/$${module} || exit 1; \
 	done; \
 	deactivate
 	
