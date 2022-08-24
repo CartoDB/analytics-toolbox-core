@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@babel/runtime@^7.12.0":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.12.0":
   "integrity" "sha1-tPz85V2z0uXggNJJD2CKO59Af0o=sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw=="
   "resolved" "https://registry.npmjs.org/@babel/runtime/-/runtime-7.18.9.tgz"
   "version" "7.18.9"
@@ -28,6 +28,14 @@
   dependencies:
     "@babel/runtime" "^7.12.0"
     "gl-matrix" "^3.4.0"
+
+"@placekey/placekey@1.0.3":
+  "integrity" "sha512-zkSkhcLI80gr+uieTnRRSZfl2lGri48bZTCDQm5U6KemhUZALA7xJ2jmbFi4fQ9GDkq6CEJi6ZMpnSb4bHDGXw=="
+  "resolved" "https://registry.npmjs.org/@placekey/placekey/-/placekey-1.0.3.tgz"
+  "version" "1.0.3"
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    "h3-js" "^3.7.0"
 
 "@turf/along@^6.3.0":
   "integrity" "sha512-LLyWQ0AARqJCmMcIEAXF4GEu8usmd4Kbz3qk1Oy5HoRNpZX47+i5exQtmIWKdqJ1MMhW26fCTXgpsEs5zgJ5gw=="
@@ -1282,6 +1290,11 @@
   "integrity" "sha1-/BGR6DIACf1NIOkzlZXGBB3cIsk=sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA=="
   "resolved" "https://registry.npmjs.org/gl-matrix/-/gl-matrix-3.4.3.tgz"
   "version" "3.4.3"
+
+"h3-js@^3.7.0":
+  "integrity" "sha512-LPjlHSwB9zQZrMqKloCZmmmt3yZzIK7nqPcXqwU93zT3TtYG6jP4tZBzAPouxut7lLjdFbMQ75wRBiKfpsnY7w=="
+  "resolved" "https://registry.npmjs.org/h3-js/-/h3-js-3.7.2.tgz"
+  "version" "3.7.2"
 
 "has-property-descriptors@^1.0.0":
   "integrity" "sha512-62DVLZGoiEBDHQyqG4w9xCuZ7eJEwNmJRWw2VY84Oedb7WFcA27fiEVe8oUQx9hAUJ4ekurquucTGwsyO1XGdQ=="
