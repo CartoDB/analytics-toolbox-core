@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../../../common/snowflake/test-utils');
+const { runQuery } = require('../../../common/test-utils');
 
 test('QUADBIN_STRING_TOINT should work', async () => {
     const query = 'SELECT CAST(_QUADBIN_STRING_TOINT(\'484c1fffffffffff\') AS STRING) AS OUTPUT';

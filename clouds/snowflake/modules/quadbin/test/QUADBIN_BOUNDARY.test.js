@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../../../common/snowflake/test-utils');
+const { runQuery } = require('../../../common/test-utils');
 
 test('QUADBIN_BOUNDARY should work', async () => {
     const query = 'SELECT QUADBIN_BOUNDARY(5209574053332910079) AS OUTPUT';

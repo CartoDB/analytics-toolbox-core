@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../../../common/snowflake/test-utils');
+const { runQuery } = require('../../../common/test-utils');
 
 test('QUADBIN_FROMZXY should work', async () => {
     const query = 'SELECT CAST(QUADBIN_FROMZXY(4, 9, 8) AS STRING) AS OUTPUT';
