@@ -14,9 +14,8 @@ def create_it_from_docs():
         '..', 
         'modules')
     modules = os.listdir(modulePath)
-    print(f"dirs {modules}")
     for module in modules:
-        print(module)
+        print(f"Working on module {module}")
         create_tests_for_module(modulePath, module)
 
 def create_tests_for_module(path, module):
@@ -38,6 +37,7 @@ def create_test_for_function(test_path, doc_path, function):
         loader=FileSystemLoader(test_util_path + "/resources"),
         autoescape=select_autoescape()
         )
+    # Preparing the variables to render the template
     variables = {
         "functionname_lower": function_name.lower(),
         "query": query,
@@ -46,8 +46,7 @@ def create_test_for_function(test_path, doc_path, function):
     template = env.get_template("test_template.py")
 
     output_from_parsed_template = template.render(variables)
-    #print(output_from_parsed_template)
-    # to save the results
+    # Will save the parsed template to the test file
     test_filename = "test_" + function_name + ".py"
     try:
         with open(os.path.join(test_path, test_filename), "x") as file:
@@ -71,12 +70,16 @@ def get_query_and_result(path):
     match = re.search('\`\`\`sql(.*)\`\`\`', lines, flags = re.DOTALL)
     if match:
         query = match.group(1).strip()
+        # The text before -- will be the query and the text after it will be the expected result
         result_position = query.find('--')
         subquery = query[:result_position].strip()
         subquery = subquery.replace("carto.", "@@DB_SCHEMA@@.").replace('"', "'")
         if "\n" in subquery:
+            # if there is a multiline query, we add "" at the beggining and end of the query 
+            # in order to make it a python multiline string when rendering the template
             subquery = '""' + subquery + '""'
         result = query[result_position + 2 :].strip()
+        # TODO: add logic to check the type of result and adapt it automatically, boolean, string, int
         return subquery, result
     print("Unable to parse doc file, will not create test for it")
     return None, None

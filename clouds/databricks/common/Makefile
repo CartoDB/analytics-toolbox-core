@@ -51,16 +51,6 @@ check:
 ifndef DB_CLUSTER_ID
 	$(error DB_CLUSTER_ID env variable is mandatory)
 endif
-<<<<<<< HEAD
-check-extra:
-ifndef RS_HOST
-	$(error RS_HOST is undefined)
-endif
-ifndef RS_PASSWORD
-	$(error RS_PASSWORD is undefined)
-endif
-=======
->>>>>>> origin/master
 
 upload-jars: clean build
 	echo "Uploading jars"
@@ -111,9 +101,6 @@ test-integration-full:
 	$(MAKE) deploy
 	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
 	$(MAKE) clean-deploy
-
-clean-deploy:
-	echo "WIP"
 
 check:
 ifndef DB_CLUSTER_ID
