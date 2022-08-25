@@ -148,4 +148,4 @@ jobs:
           cd clouds/redshift
           gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
-          gsutil -h "Content-Type:application/zip" cp dist/**/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
+          gsutil -h "Content-Type:application/zip" cp build/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
