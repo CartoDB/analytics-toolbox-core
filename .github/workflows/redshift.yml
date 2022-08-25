@@ -14,7 +14,6 @@ env:
 jobs:
 
   test:
-    if: github.ref_name != 'master'
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -38,11 +37,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python
+      - name: Setup python 2
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON2_VERSION }}
-      - name: Setup python
+      - name: Setup python 3
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
@@ -51,19 +50,20 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          aws-region: ${{ secrets.RS_REGION }}
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run linter and tests
         run: |
           cd clouds/redshift
-          make lint
-          make deploy
-          make test
+          make lint && \
+          make deploy && \
+          make test && \
           make remove
 
   deploy:
     if: github.ref_name == 'master'
+    needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     steps:
@@ -72,6 +72,7 @@ jobs:
 
   publish:
     if: github.ref_name == 'master'
+    needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     steps:
