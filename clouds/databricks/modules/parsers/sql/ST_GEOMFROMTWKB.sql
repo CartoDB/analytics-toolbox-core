@@ -1,0 +1,1 @@
+CREATE OR REPLACE FUNCTION ST_GEOMFROMTWKB as 'com.carto.analyticstoolbox.core.ST_GeomFromTWKB';

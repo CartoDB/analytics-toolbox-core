@@ -1,0 +1,1 @@
+CREATE OR REPLACE FUNCTION ST_SIMPLIFY as 'com.carto.analyticstoolbox.core.ST_Simplify';
