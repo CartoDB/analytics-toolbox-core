@@ -9,6 +9,7 @@ __pycache__/
 .tmp/
 .vscode/
 
+
 *.log
 *.pyc
 snowsql_rt.*
@@ -20,3 +21,6 @@ package-lock.json
 MANIFEST
 *.ipynb
 .pgpass
+
+# IntelliJ 
+.idea/
