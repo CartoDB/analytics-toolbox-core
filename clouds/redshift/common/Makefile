@@ -26,9 +26,6 @@ endif
 .PHONY: check venv2 venv3
 
 check:
-ifndef RS_PREFIX
-	$(error RS_PREFIX is undefined)
-endif
 ifndef RS_HOST
 	$(error RS_HOST is undefined)
 endif
