@@ -35,7 +35,7 @@ build:
 	$(MAKE) build-dependencies
 	$(MAKE) build-libraries-sql
 
-build-library: check
+build-library:
 	mkdir -p $(BUILD_DIR)/libs/$(RS_LIBRARY)
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*' $(LIB_DIRS) $(BUILD_DIR)/libs/$(RS_LIBRARY)/
 	cd $(BUILD_DIR)/libs && zip -r $(LIB_NAME).zip *
