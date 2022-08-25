@@ -12,7 +12,7 @@ AS $$
         throw new Error('Invalid input size')
     }
 
-    @@SF_LIBRARY_KRING@@
+    @@SF_LIBRARY_H3_KRING@@
 
     if (!h3Lib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')

@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_TOPARENT@@
+    @@SF_LIBRARY_H3_TOPARENT@@
 
     if (!h3Lib.h3IsValid(INDEX)) {
         return null;

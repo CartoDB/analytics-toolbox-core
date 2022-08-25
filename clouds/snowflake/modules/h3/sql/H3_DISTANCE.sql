@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_DISTANCE@@
+    @@SF_LIBRARY_H3_DISTANCE@@
 
     let dist = h3Lib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {

@@ -12,7 +12,7 @@ AS $$
         return false;
     }
 
-    @@SF_LIBRARY_ISVALID@@
+    @@SF_LIBRARY_H3_ISVALID@@
 
     return h3Lib.h3IsValid(INDEX);
 $$;

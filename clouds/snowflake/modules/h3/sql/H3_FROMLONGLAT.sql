@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_LONGLAT_ASH3@@
+    @@SF_LIBRARY_H3_FROMLONGLAT@@
 
     const index = h3Lib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
     return index;

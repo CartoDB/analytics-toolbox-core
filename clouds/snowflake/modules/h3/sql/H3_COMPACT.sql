@@ -12,7 +12,7 @@ AS $$
         return [];
     }
 
-    @@SF_LIBRARY_COMPACT@@
+    @@SF_LIBRARY_H3_COMPACT@@
 
     return h3Lib.compact(H3ARRAY);
 $$;

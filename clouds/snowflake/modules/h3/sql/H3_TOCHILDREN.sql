@@ -12,7 +12,7 @@ AS $$
         return [];
     }
 
-    @@SF_LIBRARY_TOCHILDREN@@
+    @@SF_LIBRARY_H3_TOCHILDREN@@
 
     if (!h3Lib.h3IsValid(INDEX)) {
         return [];

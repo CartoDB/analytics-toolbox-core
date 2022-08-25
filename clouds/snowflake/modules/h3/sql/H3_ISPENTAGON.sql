@@ -12,7 +12,7 @@ AS $$
         return false;
     }
 
-    @@SF_LIBRARY_ISPENTAGON@@
+    @@SF_LIBRARY_H3_ISPENTAGON@@
 
     return h3Lib.h3IsPentagon(INDEX);
 $$;

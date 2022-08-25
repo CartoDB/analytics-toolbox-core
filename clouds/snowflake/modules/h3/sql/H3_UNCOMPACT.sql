@@ -12,7 +12,7 @@ AS $$
         return [];
     }
 
-    @@SF_LIBRARY_UNCOMPACT@@
+    @@SF_LIBRARY_H3_UNCOMPACT@@
 
     return h3Lib.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;

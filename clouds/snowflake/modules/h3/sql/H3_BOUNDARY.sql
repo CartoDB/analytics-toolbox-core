@@ -12,7 +12,7 @@ AS $$
         return null;
     }
 
-    @@SF_LIBRARY_BOUNDARY@@
+    @@SF_LIBRARY_H3_BOUNDARY@@
 
     if (!h3Lib.h3IsValid(INDEX)) {
         return null;
