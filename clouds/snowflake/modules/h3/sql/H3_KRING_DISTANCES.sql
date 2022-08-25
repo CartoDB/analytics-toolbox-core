@@ -14,11 +14,11 @@ AS $$
 
     @@SF_LIBRARY_H3_KRING_DISTANCES@@
 
-    if (!h3Lib.h3IsValid(ORIGIN)) {
+    if (!h3_kring_distancesLib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')
     }
 
-    const kringDistances = h3Lib.kRingDistances(ORIGIN, parseInt(SIZE));
+    const kringDistances = h3_kring_distancesLib.kRingDistances(ORIGIN, parseInt(SIZE));
     const output = [];
     for (let distance = 0; distance <= parseInt(SIZE); distance++) {
         const indexes = kringDistances[distance];

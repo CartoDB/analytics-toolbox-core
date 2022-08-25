@@ -14,11 +14,11 @@ AS $$
 
     @@SF_LIBRARY_H3_BOUNDARY@@
 
-    if (!h3Lib.h3IsValid(INDEX)) {
+    if (!h3_boundaryLib.h3IsValid(INDEX)) {
         return null;
     }
 
-    const coords = h3Lib.h3ToGeoBoundary(INDEX, true);
+    const coords = h3_boundaryLib.h3ToGeoBoundary(INDEX, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
         output += coords[i][0] + ` ` + coords[i][1] + `,`;

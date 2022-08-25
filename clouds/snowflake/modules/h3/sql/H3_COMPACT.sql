@@ -14,5 +14,5 @@ AS $$
 
     @@SF_LIBRARY_H3_COMPACT@@
 
-    return h3Lib.compact(H3ARRAY);
+    return h3_compactLib.compact(H3ARRAY);
 $$;

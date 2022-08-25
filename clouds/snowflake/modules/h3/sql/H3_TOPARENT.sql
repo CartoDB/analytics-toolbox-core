@@ -14,11 +14,11 @@ AS $$
 
     @@SF_LIBRARY_H3_TOPARENT@@
 
-    if (!h3Lib.h3IsValid(INDEX)) {
+    if (!h3_toparentLib.h3IsValid(INDEX)) {
         return null;
     }
 
-    return h3Lib.h3ToParent(INDEX, Number(RESOLUTION));
+    return h3_toparentLib.h3ToParent(INDEX, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_TOPARENT

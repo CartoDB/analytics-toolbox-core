@@ -14,5 +14,5 @@ AS $$
 
     @@SF_LIBRARY_H3_ISVALID@@
 
-    return h3Lib.h3IsValid(INDEX);
+    return h3_isvalidLib.h3IsValid(INDEX);
 $$;

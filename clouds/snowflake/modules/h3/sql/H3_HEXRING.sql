@@ -14,11 +14,11 @@ AS $$
 
     @@SF_LIBRARY_H3_HEXRING@@
 
-    if (!h3Lib.h3IsValid(ORIGIN)) {
+    if (!h3_hexringLib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')
     }
 
-    return h3Lib.hexRing(ORIGIN, parseInt(SIZE));
+    return h3_hexringLib.hexRing(ORIGIN, parseInt(SIZE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_HEXRING
