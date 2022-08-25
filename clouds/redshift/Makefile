@@ -99,6 +99,7 @@ create-package:
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_FULL_NAME)
-	cp -r $(BUILD_DIR)/* $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
+	cp $(BUILD_DIR)/libraries.sql $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
+	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
 
 	cd $(DIST_DIR) && zip -r $(PACKAGE_FULL_NAME).zip . && cd ..
