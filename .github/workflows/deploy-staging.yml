@@ -85,27 +85,3 @@ jobs:
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto`' });
-
-  deploy-pg:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 15
-    if: false
-    env:
-      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
-      PG_DATABASE: pgcartost
-      PG_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
-      PG_USER: ${{ secrets.PG_USER }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Deploy to staging
-        run: make deploy CLOUD=postgres
-      - name: Comment PR
-        uses: actions/github-script@0.3.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.PG_DATABASE }}.${{ env.PG_SCHEMA_PREFIX }}carto`' });

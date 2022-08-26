@@ -1,4 +1,4 @@
-# Makefile modules for Redshift
+# Makefile modules for Postgres
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -10,7 +10,7 @@ MODULES_DIRS ?= .
 export VERSION_FUNCTION ?= VERSION_CORE
 export PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
-REPLACEMENTS = "RS_SCHEMA RS_LIBRARY VERSION_FUNCTION PACKAGE_VERSION"
+REPLACEMENTS = "PG_SCHEMA PG_LIBRARY VERSION_FUNCTION PACKAGE_VERSION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -31,11 +31,11 @@ build: $(NODE_MODULES_DEV)
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	$(COMMON_DIR)/build_modules.js ${MODULES_DIRS} --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
 
 deploy: check venv3 build
 	echo "Deploying modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA);"
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "CREATE SCHEMA IF NOT EXISTS $(PG_SCHEMA);"
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/modules.sql
 
 test: check venv3 $(NODE_MODULES_DEV)
@@ -44,7 +44,7 @@ test: check venv3 $(NODE_MODULES_DEV)
 
 remove: venv3
 	echo "Removing modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE;"
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(PG_SCHEMA) CASCADE;"
 
 clean:
 	echo "Cleaning modules..."
