@@ -4,7 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
-COMMON_DIR ?= $(ROOT_DIR)/../common
+COMMON_DIR = $(ROOT_DIR)/../common
 LIBS_BUILD_DIR ?= $(ROOT_DIR)/../libraries/javascript/build
 
 MODULES_DIRS ?= .
@@ -40,14 +40,13 @@ deploy: check build
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
-	SF_SCHEMA=$(SF_SCHEMA) \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	jest --testTimeout=40000 $(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
 
-remove: check venv3
+remove:
 	echo "Removing modules..."
 	$(COMMON_DIR)/run-query.js "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE;"
 
 clean:
 	echo "Cleaning modules..."
-	rm -rf $(BUILD_DIR) $(VENV3_DIR) $(NODE_MODULES_DEV)
+	rm -rf $(BUILD_DIR) $(NODE_MODULES_DEV)

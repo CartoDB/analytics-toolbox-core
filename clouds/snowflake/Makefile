@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
+ESLINTRC_DIR ?= $(ROOT_DIR)/../..
 COMMON_DIR = $(ROOT_DIR)/common
 
 include $(COMMON_DIR)/Makefile
@@ -29,7 +30,7 @@ lint-modules:
 lint-common: $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR)/*.js --fix
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(COMMON_DIR)/*.js --fix
 
 build:
 	rm -rf $(BUILD_DIR)

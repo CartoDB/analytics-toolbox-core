@@ -19,9 +19,6 @@ endif
 .PHONY: check
 
 check:
-ifndef SF_PREFIX
-	$(error SF_PREFIX is undefined)
-endif
 ifndef SF_DATABASE
 	$(error SF_DATABASE is undefined)
 endif
