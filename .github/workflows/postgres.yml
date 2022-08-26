@@ -1,14 +1,13 @@
-name: Redshift CI/CD
+name: Postgres CI/CD
 
 on:
   push:
     paths:
-      - "clouds/redshift"
-      - ".github/workflows/redshift.yml"
+      - "clouds/postgres"
+      - ".github/workflows/postgres.yml"
 
 env:
   NODE_VERSION: 14
-  PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.8.10
 
 jobs:
@@ -17,14 +16,11 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      RS_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
-      RS_HOST: ${{ secrets.RS_HOST_CI }}
-      RS_DATABASE: ${{ secrets.RS_DATABASE_CI }}
-      RS_USER: ${{ secrets.RS_USER_CI }}
-      RS_PASSWORD: ${{ secrets.RS_PASSWORD_CI }}
-      RS_BUCKET: ${{ secrets.RS_BUCKET_CI }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
+      PG_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      PG_HOST: ${{ secrets.PG_HOST_CI }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE_CI }}
+      PG_USER: ${{ secrets.PG_USER_CI }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -37,25 +33,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 2
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON2_VERSION }}
       - name: Setup python 3
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
-          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
-          aws-region: ${{ secrets.RS_REGION_CI }}
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run linter and tests
         run: |
-          cd clouds/redshift
+          cd clouds/postgres
           make lint && \
           make deploy && \
           make test && \
@@ -67,13 +53,10 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      RS_HOST: ${{ secrets.RS_HOST_CD }}
-      RS_DATABASE: ${{ secrets.RS_DATABASE_CD }}
-      RS_USER: ${{ secrets.RS_USER_CD }}
-      RS_PASSWORD: ${{ secrets.RS_PASSWORD_CD }}
-      RS_BUCKET: ${{ secrets.RS_BUCKET_CD }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CD }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
+      PG_HOST: ${{ secrets.PG_HOST_CD }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE_CD }}
+      PG_USER: ${{ secrets.PG_USER_CD }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -86,25 +69,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 2
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON2_VERSION }}
       - name: Setup python 3
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CD }}
-          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
-          aws-region: ${{ secrets.RS_REGION_CD }}
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run deploy
         run: |
-          cd clouds/redshift
+          cd clouds/postgres
           make deploy
 
   publish:
@@ -113,9 +86,8 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      PACKAGE_NAME: carto-analytics-toolbox-core-redshift
-      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
-      LIBS_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/redshift/latest/libs
+      PACKAGE_NAME: carto-analytics-toolbox-core-postgres
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/postgres
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -123,10 +95,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 2
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON2_VERSION }}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
@@ -141,11 +109,10 @@ jobs:
         run: pip install virtualenv
       - name: Create package
         run: |
-          cd clouds/redshift
+          cd clouds/postgres
           make create-package
       - name: Publish package
         run: |
-          cd clouds/redshift
+          cd clouds/postgres
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
-          gsutil -h "Content-Type:application/zip" -m cp build/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/

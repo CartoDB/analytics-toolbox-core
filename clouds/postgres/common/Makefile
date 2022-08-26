@@ -23,9 +23,6 @@ endif
 .PHONY: check venv3
 
 check:
-ifndef PG_PREFIX
-	$(error PG_PREFIX is undefined)
-endif
 ifndef PG_HOST
 	$(error PG_HOST is undefined)
 endif

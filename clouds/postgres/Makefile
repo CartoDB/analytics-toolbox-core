@@ -5,6 +5,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
+PACKAGE_NAME ?= carto-analytics-toolbox-core-postgres-$(shell cat $(ROOT_DIR)/version)
 
 include $(COMMON_DIR)/Makefile
 
@@ -66,11 +67,12 @@ clean-modules:
 create-package:
 	$(MAKE) build production=1
 
-	$(eval PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version))
-	$(eval PACKAGE_FULL_NAME = $(PG_LIBRARY_DEFAULT)-$(PACKAGE_VERSION))
-
 	rm -rf $(DIST_DIR)
-	mkdir -p $(DIST_DIR)/$(PACKAGE_FULL_NAME)
-	cp -r $(BUILD_DIR)/* $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
+	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
+	cp -r $(BUILD_DIR)/* $(DIST_DIR)/$(PACKAGE_NAME)/
 
-	cd $(DIST_DIR) && zip -r $(PACKAGE_FULL_NAME).zip . && cd ..
+	$(MAKE) extra-package
+
+	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
+
+extra-package::
