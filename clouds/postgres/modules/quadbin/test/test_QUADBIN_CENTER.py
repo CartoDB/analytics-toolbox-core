@@ -6,4 +6,4 @@ def test_quadbin_center():
     result = run_query(
         'SELECT ST_ASTEXT(@@PG_SCHEMA@@.QUADBIN_CENTER(5209574053332910079))'
     )
-    assert result[0][0] == 'POINT(33.75 -11.1784018737118)'
+    assert result[0][0] == 'POINT(33.75 -11.178401873711776)'

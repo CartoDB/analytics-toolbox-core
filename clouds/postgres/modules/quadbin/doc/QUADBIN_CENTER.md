@@ -18,5 +18,5 @@ Returns the center for a given quadbin. The center is defined as the intersectio
 
 ```sql
 SELECT carto.QUADBIN_CENTER(5209574053332910079);
--- POINT(33.75 -11.1784018737118)
+-- POINT(33.75 -11.178401873711776)
 ```

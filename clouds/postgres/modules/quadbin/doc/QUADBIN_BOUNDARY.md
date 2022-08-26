@@ -18,5 +18,5 @@ Returns the boundary for a given quadbin. We extract the boundary in the same wa
 
 ```sql
 SELECT carto.QUADBIN_BOUNDARY(5209574053332910079);
--- POLYGON((22.5 0, 22.5 -21.9430455334382, 45 -21.9430455334382, 45 0, 22.5 0))
+-- POLYGON((22.5 0, 22.5 -21.943045533438166, 45 -21.943045533438166, 45 0, 22.5 0))
 ```
