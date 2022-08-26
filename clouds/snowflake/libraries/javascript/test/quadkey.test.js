@@ -30,8 +30,8 @@ it('bbox should work', async () => {
 test('toParent should work at any level of zoom', () => {
     let z, lat, lng;
     for (z = 1; z < 30; ++z) {
-        for (lat = -90; lat <= 90; lat = lat + 15) {
-            for (lng = -180; lng <= 180; lng = lng + 15) {
+        for (lat = -90; lat <= 90; lat = lat + 45) {
+            for (lng = -180; lng <= 180; lng = lng + 45) {
                 const quadint = quadkeyLib.quadintFromLocation(lng, lat, z);
                 const currentParent = quadkeyLib.quadintFromLocation(lng, lat, z - 1);
                 expect(currentParent).toEqual(quadkeyLib.toParent(quadint, z - 1));
@@ -39,8 +39,8 @@ test('toParent should work at any level of zoom', () => {
         }
     }
     for (z = 5; z < 30; ++z) {
-        for (lat = -90; lat <= 90; lat = lat + 15) {
-            for (lng = -180; lng <= 180; lng = lng + 15) {
+        for (lat = -90; lat <= 90; lat = lat + 45) {
+            for (lng = -180; lng <= 180; lng = lng + 45) {
                 const quadint = quadkeyLib.quadintFromLocation(lng, lat, z);
                 const currentParent = quadkeyLib.quadintFromLocation(lng, lat, z - 5);
                 expect(currentParent).toEqual(quadkeyLib.toParent(quadint, z - 5));
@@ -48,8 +48,8 @@ test('toParent should work at any level of zoom', () => {
         }
     }
     for (z = 10; z < 30; ++z) {
-        for (lat = -90; lat <= 90; lat = lat + 15) {
-            for (lng = -180; lng <= 180; lng = lng + 15) {
+        for (lat = -90; lat <= 90; lat = lat + 45) {
+            for (lng = -180; lng <= 180; lng = lng + 45) {
                 const quadint = quadkeyLib.quadintFromLocation(lng, lat, z);
                 const currentParent = quadkeyLib.quadintFromLocation(lng, lat, z - 10);
                 expect(currentParent).toEqual(quadkeyLib.toParent(quadint, z - 10));
@@ -61,8 +61,8 @@ test('toParent should work at any level of zoom', () => {
 test('toChildren should work at any level of zoom', () => {
     let z, lat, lng;
     for (z = 0; z < 29; ++z) {
-        for (lat = 90; lat <= 90; lat = lat + 15) {
-            for (lng = -180; lng <= 180; lng = lng + 15) {
+        for (lat = 90; lat <= 90; lat = lat + 45) {
+            for (lng = -180; lng <= 180; lng = lng + 45) {
                 const quadint = quadkeyLib.quadintFromLocation(lng, lat, z);
                 const childs = quadkeyLib.toChildren(quadint, z + 1);
                 childs.forEach((element) => {
@@ -73,8 +73,8 @@ test('toChildren should work at any level of zoom', () => {
     }
 
     for (z = 0; z < 25; ++z) {
-        for (lat = 90; lat <= 90; lat = lat + 15) {
-            for (lng = -180; lng <= 180; lng = lng + 15) {
+        for (lat = 90; lat <= 90; lat = lat + 45) {
+            for (lng = -180; lng <= 180; lng = lng + 45) {
                 const quadint = quadkeyLib.quadintFromLocation(lng, lat, z);
                 const childs = quadkeyLib.toChildren(quadint, z + 5);
                 childs.forEach((element) => {
@@ -88,8 +88,8 @@ test('toChildren should work at any level of zoom', () => {
 test('Sibling should work at any level of zoom', async () => {
     let z, lat, lng;
     for (z = 0; z < 29; ++z) {
-        for (lat = -90; lat <= 90; lat = lat + 15) {
-            for (lng = -180; lng <= 180; lng = lng + 15) {
+        for (lat = -90; lat <= 90; lat = lat + 45) {
+            for (lng = -180; lng <= 180; lng = lng + 45) {
                 const quadint = quadkeyLib.quadintFromLocation(lng, lat, z);
                 let siblingQuadint = quadkeyLib.sibling(quadint, 'right');
                 siblingQuadint = quadkeyLib.sibling(siblingQuadint, 'up');
