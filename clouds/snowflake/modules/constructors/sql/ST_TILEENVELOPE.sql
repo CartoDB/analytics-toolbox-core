@@ -1,0 +1,11 @@
+----------------------------
+-- Copyright (C) 2021 CARTO
+----------------------------
+
+CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.ST_TILEENVELOPE
+(zoomLevel INT, xTile INT, yTile INT)
+RETURNS GEOGRAPHY
+IMMUTABLE
+AS $$
+    @@SF_SCHEMA@@.QUADINT_BOUNDARY(@@SF_SCHEMA@@.QUADINT_FROMZXY(ZOOMLEVEL, XTILE, YTILE))
+$$;
