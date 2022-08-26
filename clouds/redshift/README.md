@@ -59,7 +59,7 @@ Make commands can be run also inside `libraries/python` and `modules` folders, o
 
 **Filtering**
 
-Commands `build`, `deploy`, `test` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter
@@ -67,7 +67,9 @@ Commands `build`, `deploy`, `test` and `create-package` can be filtered by the f
 For example:
 
 ```
-make lint diff=modules/quadbin/test/test_QUADBIN_RESOLUTION.py
+make build diff=modules/quadbin/test/test_QUADBIN_RESOLUTION.py
 make deploy modules=quadbin,constructors
 make test functions=ST_MAKEENVELOPE
 ```
+
+Additionally, `deploy-libraries` can be filtered with `library=carto` to deploy only the carto Python library and skip the dependencies, which don't change as often.

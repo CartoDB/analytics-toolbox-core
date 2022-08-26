@@ -5,6 +5,9 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
+PACKAGE_NAME ?= carto-analytics-toolbox-core-redshift
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
+
 
 include $(COMMON_DIR)/Makefile
 
@@ -26,7 +29,7 @@ lint-libraries:
 lint-modules:
 	$(MAKE) -C modules lint
 
-lint-common: $(NODE_MODULES_DEV)
+lint-common: $(NODE_MODULES_DEV) venv3
 	echo "Linting common..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR)/*.js --fix
@@ -93,11 +96,15 @@ clean-modules:
 create-package:
 	$(MAKE) build production=1
 
-	$(eval PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version))
-	$(eval PACKAGE_FULL_NAME = $(RS_LIBRARY_DEFAULT)-$(PACKAGE_VERSION))
+	$(eval export PACKAGE_FULL_NAME = $(PACKAGE_NAME)-$(PACKAGE_VERSION))
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_FULL_NAME)
-	cp -r $(BUILD_DIR)/* $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
+	cp $(BUILD_DIR)/libraries.sql $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
+	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_FULL_NAME)/
+
+	$(MAKE) extra-package
 
 	cd $(DIST_DIR) && zip -r $(PACKAGE_FULL_NAME).zip . && cd ..
+
+extra-package::

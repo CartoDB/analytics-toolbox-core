@@ -19,14 +19,16 @@ def run_queries(queries):
         password=os.environ['RS_PASSWORD'],
     ) as conn:
         conn.autocommit = True
+        filter = os.environ.get('FILTER')
         with conn.cursor() as cursor:
-            for i in trange(len(queries)):
+            for i in trange(len(queries) if not filter else 1):
                 query = queries[i]
-                pattern = os.environ['RS_SCHEMA'] + '.(.*?)\n'
-                result = re.search(pattern, str(query))
-                if result:
-                    function = result.group(1)
-                cursor.execute(query)
+                if (not filter) or (filter in query):
+                    pattern = os.environ['RS_SCHEMA'] + '.(.*?)\n'
+                    result = re.search(pattern, str(query))
+                    if result:
+                        function = result.group(1)
+                    cursor.execute(query)
 
 
 if __name__ == '__main__':

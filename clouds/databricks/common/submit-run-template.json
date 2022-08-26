@@ -1,0 +1,7 @@
+{
+    "name": "createUDFs",
+    "existing_cluster_id": "@@DB_CLUSTER_ID@@",
+    "notebook_task": {
+      "notebook_path": "@@SQLPath@@"
+    }
+}

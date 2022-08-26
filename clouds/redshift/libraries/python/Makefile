@@ -10,6 +10,7 @@ COMMON_DIR ?= $(ROOT_DIR)/../../common
 LIB_DIRS ?= $(ROOT_DIR)/lib/
 REQUIREMENTS_DIRS ?= requirements.txt
 LIBS_URL ?= https://<URL>/libs
+LIB_NAME = $(RS_LIBRARY)-1.0.0
 
 include $(COMMON_DIR)/Makefile
 
@@ -23,8 +24,8 @@ help:
 lint: venv3
 	echo "Linting libraries..."
 	$(VENV3_BIN)/brunette $(LIB_DIR) $(TEST_DIR) --line-length=88 --single-quotes --quiet
-	$(VENV3_BIN)/flake8 $(LIB_DIR) --enable-extensions Q0 --docstring-convention numpy --ignore=D100,D103,D104,F401,F403
-	$(VENV3_BIN)/flake8 $(TEST_DIR) --ignore=D100,D103,D104
+	$(VENV3_BIN)/flake8 $(LIB_DIR) --enable-extensions Q0 --docstring-convention numpy --ignore=D100,D103,D104,D205,D400,D407,F401,D411,F403,W503
+	$(VENV3_BIN)/flake8 $(TEST_DIR) --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
 
 build:
 	echo "Building libraries..."
@@ -34,10 +35,10 @@ build:
 	$(MAKE) build-dependencies
 	$(MAKE) build-libraries-sql
 
-build-library: check
+build-library:
 	mkdir -p $(BUILD_DIR)/libs/$(RS_LIBRARY)
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*' $(LIB_DIRS) $(BUILD_DIR)/libs/$(RS_LIBRARY)/
-	cd $(BUILD_DIR)/libs && zip -r $(RS_LIBRARY)-1.0.0.zip *
+	cd $(BUILD_DIR)/libs && zip -r $(LIB_NAME).zip *
 	rm -rf $(BUILD_DIR)/libs/$(RS_LIBRARY)
 
 build-dependencies: venv2
@@ -67,17 +68,37 @@ deploy: build
 	$(MAKE) remove-libraries
 
 copy-libraries:
+ifeq ("$(library)","carto")
+	for f in $(wildcard $(BUILD_DIR)/libs/*.zip); do \
+		if [ `echo $$f | grep $(RS_LIBRARY)` ]; then \
+			aws s3 cp $$f $(RS_BUCKET) || exit 1; \
+		fi \
+	done
+else
 	for f in $(wildcard $(BUILD_DIR)/libs/*.zip); do \
 		aws s3 cp $$f $(RS_BUCKET) || exit 1; \
 	done
+endif
 
 deploy-libraries: venv3
+ifeq ("$(library)","carto")
+	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
+else
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
+endif
 
 remove-libraries:
+ifeq ("$(library)","carto")
+	for f in $(notdir $(wildcard $(BUILD_DIR)/libs/*.zip)); do \
+		if [ `echo $$f | grep $(RS_LIBRARY)` ]; then \
+			aws s3 rm $(RS_BUCKET)/$(basename $$f) || exit 1; \
+		fi \
+	done
+else
 	for f in $(notdir $(wildcard $(BUILD_DIR)/libs/*.zip)); do \
 		aws s3 rm $(RS_BUCKET)/$(basename $$f) || exit 1; \
 	done
+endif
 
 test: check venv2
 	echo "Testing libraries..."
