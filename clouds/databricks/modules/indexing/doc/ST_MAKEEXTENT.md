@@ -20,6 +20,6 @@ Creates a [Extent](https://geotrellis.readthedocs.io/en/latest/guide/core-concep
 **Example**
 
 ```sql
-SELECT carto.ST_MAKEEXTENT(0, 0, 1, 1):
+SELECT carto.ST_MAKEEXTENT(0, 0, 1, 1);
 -- {"xmin": 0, "ymin": 0, "xmax": 1, "ymax": 1}
 ```

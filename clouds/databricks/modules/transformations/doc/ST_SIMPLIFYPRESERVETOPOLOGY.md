@@ -25,6 +25,6 @@ WITH t AS (
 )
 SELECT carto.ST_ASTEXT(carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1)) AS simplifiedGeom, 
     carto.ST_NUMPOINTS(carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1)) AS simplifiedNumpoints, 
-    cartoST_NUMPOINTS(geom) AS numPoints FROM t;
+    carto.ST_NUMPOINTS(geom) AS numPoints FROM t;
 -- POLYGON ((0.0000899 0, 0 0.0000899, -0.0000899 0, 0 -0.0000899, 0.0000899 0)) | 5 | 101
 ```

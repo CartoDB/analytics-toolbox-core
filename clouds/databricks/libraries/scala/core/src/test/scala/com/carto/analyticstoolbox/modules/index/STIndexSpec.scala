@@ -21,19 +21,13 @@ import org.scalatest.funspec.AnyFunSpec
 
 class STIndexSpec extends AnyFunSpec with HiveTestEnvironment with TestTables {
   describe("ST index functions spec") {
-    it("ST_COORDDIM test") {
-//      val df = ssc.sql(
-//        """SELECT ST_CRSFROMTEXT('+proj=merc +lat_ts=56.5 +ellps=GRS80')""".stripMargin
-//      )
-//      print(df.take(1).head.get(0))
+    it("ST_GEOMREPROJECT test") {
       val df2 = ssc.sql(
         """SELECT ST_GEOMREPROJECT(ST_POINT(3, 5),
           |ST_CRSFROMTEXT('+proj=merc +lat_ts=56.5 +ellps=GRS80'),
           |ST_CRSFROMTEXT('+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs'))""".stripMargin
       )
       print(df2.take(1).head.get(0))
-
-
     }
   }
 }

@@ -17,6 +17,6 @@ Creates a `Z2Index` with the given coordinate Geometry.
 **Example**
 
 ```sql
-SELECT ST_Z2LATLON(ST_GEOMFROMWKT("LINESTRING (0 0, 1 2)"))
--- SELECT ST_Z2LATLON(ST_GEOMFROMWKT("LINESTRING (0 0, 1 2)"))
+SELECT carto.ST_Z2LATLON(carto.ST_GEOMFROMWKT("LINESTRING (0 0, 1 2)"));
+-- {"min": "864691128455135232", "max": "864847779880401216"}
 ```

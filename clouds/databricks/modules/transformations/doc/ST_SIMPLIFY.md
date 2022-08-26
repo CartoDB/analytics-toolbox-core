@@ -24,6 +24,6 @@ WITH t AS (
 )
 SELECT carto.ST_ASTEXT(carto.ST_SIMPLIFY(geom, 0.00001)) AS simplifiedGeom, 
     carto.ST_NUMPOINTS(carto.ST_SIMPLIFY(geom, 0.00001)) AS simplifiedNumpoints, 
-    cartoST_NUMPOINTS(geom) AS numPoints FROM t;
+    carto.ST_NUMPOINTS(geom) AS numPoints FROM t;
 -- POLYGON ((0.0000899 0, 0.0000656 0.0000616, 0 0.0000899, -0.0000616 0.0000656, -0.0000899 0, -0.0000656 -0.0000616, 0 -0.0000899, 0.0000616 -0.0000656, 0.0000899 0)) | 9 | 101
 ```

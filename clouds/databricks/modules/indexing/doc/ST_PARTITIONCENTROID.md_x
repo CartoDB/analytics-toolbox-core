@@ -1,0 +1,27 @@
+### ST_PARTITIONCENTROID
+
+{{% bannerNote type="code" %}}
+carto.ST_PARTITIONCENTROID(geom, zoom, tileSize, bits, crs, resolution)
+{{%/ bannerNote %}}
+
+**Description**
+
+
+
+* `geom`: `Geometry` input geom.
+* `zoom`: `Int` input zoom.
+* `tileSize`(optional): `Int` input tileSize.
+* `bits`(optional): `Int` input bits.
+* `crs`(optional): `CRS` input crs.
+* `resolution`(optional): `Long` input resolution.
+
+**Return type**
+
+`Long`
+
+**Example**
+
+```sql
+
+-- 
+```
