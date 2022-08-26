@@ -33,7 +33,7 @@ ifndef SF_PASSWORD
 endif
 
 $(NODE_MODULES):
-	yarn -s --update-checksums
+	yarn -s --update-checksums --cwd $(ROOT_DIR)
 
 $(NODE_MODULES_DEV):
 	yarn -s --update-checksums --cwd $(COMMON_DIR)
