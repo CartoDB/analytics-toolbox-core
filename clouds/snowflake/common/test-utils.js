@@ -1,8 +1,6 @@
 const fs = require('fs');
 const snowflake = require('snowflake-sdk');
 
-const SF_PREFIX = `${process.env.SF_DATABASE}.${process.env.SF_PREFIX}`;
-
 snowflake.configure({ insecureConnect: true })
 const connection = snowflake.createConnection({
     account: process.env.SF_ACCOUNT,
@@ -37,7 +35,7 @@ function execAsync (query) {
 }
 
 async function runQuery (query) {
-    query = query.replace(/@@SF_PREFIX@@/g, SF_PREFIX);
+    query = query.replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA);
     const rows = await execAsync(query);
     return rows;
 }

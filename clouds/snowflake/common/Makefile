@@ -19,9 +19,6 @@ endif
 .PHONY: check
 
 check:
-ifndef SF_PREFIX
-	$(error SF_PREFIX is undefined)
-endif
 ifndef SF_DATABASE
 	$(error SF_DATABASE is undefined)
 endif
@@ -36,7 +33,7 @@ ifndef SF_PASSWORD
 endif
 
 $(NODE_MODULES):
-	yarn -s --update-checksums
+	yarn -s --update-checksums --cwd $(ROOT_DIR)
 
 $(NODE_MODULES_DEV):
 	yarn -s --update-checksums --cwd $(COMMON_DIR)

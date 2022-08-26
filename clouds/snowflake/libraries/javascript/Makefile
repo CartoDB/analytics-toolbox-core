@@ -7,7 +7,7 @@ SRC_DIR ?= $(ROOT_DIR)/src
 TEST_DIR ?= $(ROOT_DIR)/test
 BUILD_DIR ?= $(ROOT_DIR)/build
 ENV_DIR ?= $(ROOT_DIR)/../..
-LINT_DIR ?= $(ROOT_DIR)/../../../..
+ESLINTRC_DIR ?= $(ROOT_DIR)/../../../..
 COMMON_DIR ?= $(ROOT_DIR)/../../common
 
 include $(COMMON_DIR)/Makefile
@@ -22,7 +22,7 @@ help:
 lint: $(NODE_MODULES_DEV)
 	echo "Linting libraries..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(LINT_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
 
 build:
 	echo "Building libraries..."
