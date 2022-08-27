@@ -33,15 +33,16 @@ if (all) {
 // Extract functions
 const functions = [];
 for (let inputDir of inputDirs) {
-    const modules = fs.readdirSync(inputDir);
+    const sqldir = path.join(inputDir, 'sql');
+    const modules = fs.readdirSync(sqldir);
     modules.forEach(module => {
-        const sqldir = path.join(inputDir, module, 'sql');
-        if (fs.existsSync(sqldir)) {
-            const files = fs.readdirSync(sqldir);
+        const moduledir = path.join(sqldir, module);
+        if (fs.statSync(moduledir).isDirectory()) {
+            const files = fs.readdirSync(moduledir);
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    const content = fs.readFileSync(path.join(sqldir, file)).toString().replace(/--.*\n/g, '');
+                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
                     functions.push({
                         name,
                         module,
@@ -81,7 +82,7 @@ functions.forEach(mainFunction => {
 // Filter and order functions
 const output = [];
 function add (f, include) {
-    include = include || all || diff.includes(path.join(f.module, 'sql', f.name)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
+    include = include || all || diff.includes(path.join(f.module, f.name)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
     for (const dependency of f.dependencies) {
         add(functions.find(f => f.name === dependency), include);
     }

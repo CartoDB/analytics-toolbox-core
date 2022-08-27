@@ -23,8 +23,8 @@ help:
 
 lint: venv3
 	echo "Linting modules..."
-	$(VENV3_BIN)/brunette **/test/*.py --line-length=88 --single-quotes --quiet
-	$(VENV3_BIN)/flake8 **/test/*.py --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
+	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --quiet
+	$(VENV3_BIN)/flake8 test --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."

@@ -28,10 +28,9 @@ PG_PASSWORD=your-postgres-password
 
 - `common`
 - `modules`
-    - `<module-name>`: SQL module functions (UDFs, procedures)
-        - `doc`: contains the functions' documentation
-        - `sql`: contains the functions' SQL code
-        - `test`: contains the functions' tests
+    - `doc`: contains the functions' documentation
+    - `sql`: contains the functions' SQL code
+    - `test`: contains the functions' tests
 
 ## Make commands
 
