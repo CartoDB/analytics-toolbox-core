@@ -25,7 +25,7 @@ lint: venv3
 	echo "Linting libraries..."
 	$(VENV3_BIN)/brunette $(LIB_DIR) $(TEST_DIR) --line-length=88 --single-quotes --quiet
 	$(VENV3_BIN)/flake8 $(LIB_DIR) --enable-extensions Q0 --docstring-convention numpy --ignore=D100,D103,D104,D205,D400,D407,F401,D411,F403,W503
-	$(VENV3_BIN)/flake8 $(TEST_DIR) --ignore=D100,D103,D104,W503
+	$(VENV3_BIN)/flake8 $(TEST_DIR) --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
 
 build:
 	echo "Building libraries..."
@@ -35,7 +35,7 @@ build:
 	$(MAKE) build-dependencies
 	$(MAKE) build-libraries-sql
 
-build-library: check
+build-library:
 	mkdir -p $(BUILD_DIR)/libs/$(RS_LIBRARY)
 	rsync -a --prune-empty-dirs --include '*/' --include '*.py' --exclude '*' $(LIB_DIRS) $(BUILD_DIR)/libs/$(RS_LIBRARY)/
 	cd $(BUILD_DIR)/libs && zip -r $(LIB_NAME).zip *
@@ -104,7 +104,7 @@ test: check venv2
 	echo "Testing libraries..."
 	$(VENV2_BIN)/pytest -rP -p no:warnings -x -vv $(TEST_DIR)/$(test)
 
-remove: check venv3
+remove: venv3
 	echo "Removing libraries..."
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP LIBRARY $(RS_LIBRARY);"
 

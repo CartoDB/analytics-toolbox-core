@@ -13,6 +13,9 @@ lint lint-fix install build test-unit test-integration deploy clean clean-deploy
 			echo "> Module $${module}/$(CLOUD)"; \
 			$(MAKE) -C modules/$${module}/$(CLOUD) $@ || exit 1; \
 		done; \
+	elif [ "$(CLOUD)" = "databricks" ]; then \
+		echo "> Cloud $(CLOUD)"; \
+		$(MAKE) -C clouds/$(CLOUD) $@ || exit 1; \
 	else \
 		echo "CLOUD is undefined. Please set one of the following values: bigquery, snowflake, redshift, postgres"; \
 	fi
