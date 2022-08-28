@@ -31,7 +31,7 @@ build:
 	$(MAKE) build-libs
 
 build-libs: $(NODE_MODULES) $(NODE_MODULES_DEV)
-	for f in $(notdir $(basename $(shell find $(LIBS_DIR)/* -type f 2>/dev/null))); do \
+	for f in $(shell $(COMMON_DIR)/list_libraries.js --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions)); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		INPUT=$(LIBS_DIR)/$${f}.js \
@@ -41,9 +41,9 @@ build-libs: $(NODE_MODULES) $(NODE_MODULES_DEV)
 
 test:
 	echo "Testing libraries..."
-	UNIT_TEST=1 $(MAKE) build
+	UNIT_TEST=1 $(MAKE) build all=1
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	jest $(TEST_DIR)/$(test) --testTimeout=30000
+	jest --testTimeout=30000 --bail --verbose $(TEST_DIR)/$(test)
 
 clean:
 	echo "Cleaning libraries..."

@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
+ESLINTRC_DIR ?= $(ROOT_DIR)/../../..
 COMMON_DIR = $(ROOT_DIR)/../common
 LIBS_BUILD_DIR ?= $(ROOT_DIR)/../libraries/javascript/build
 
@@ -22,16 +23,20 @@ include $(COMMON_DIR)/Makefile
 help:
 	echo "Available targets: lint build deploy test remove clean"
 
-lint:
+lint: $(NODE_MODULES_DEV)
 	echo "Linting modules..."
-	echo "No action"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js test --fix
 
-build:
+build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+
+build-libraries:
+	$(MAKE) -C ../libraries/javascript build
 
 deploy: check build
 	echo "Deploying modules..."
@@ -41,7 +46,7 @@ deploy: check build
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	jest --testTimeout=40000 $(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
+	jest --testTimeout=40000 --bail --verbose $(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
 
 remove:
 	echo "Removing modules..."

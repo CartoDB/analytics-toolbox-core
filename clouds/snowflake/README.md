@@ -35,10 +35,9 @@ SF_SHARE_ENABLED=0
         - `src`: contains the JavaScript source code
         - `test`: contains the library tests
 - `modules`
-    - `<module-name>`: SQL module functions (UDFs, procedures)
-        - `doc`: contains the functions' documentation
-        - `sql`: contains the functions' SQL code
-        - `test`: contains the functions' tests
+    - `doc`: contains the functions' documentation
+    - `sql`: contains the functions' SQL code
+    - `test`: contains the functions' tests
 
 ## Make commands
 
@@ -55,7 +54,7 @@ Make commands can be run also inside `libraries/javascript` and `modules` folder
 
 **Filtering**
 
-Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-modules`, `build-libraries`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter

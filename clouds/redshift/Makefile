@@ -7,7 +7,6 @@ BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
 PACKAGE_NAME ?= carto-analytics-toolbox-core-redshift-$(shell cat $(ROOT_DIR)/version)
 
-
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
@@ -94,6 +93,7 @@ clean-modules:
 
 create-package:
 	$(MAKE) build production=1
+
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
 	cp $(BUILD_DIR)/libraries.sql $(DIST_DIR)/$(PACKAGE_NAME)/

@@ -18,11 +18,12 @@ const all = !(diff.length || modulesFilter.length || functionsFilter.length);
 
 // Extract functions
 const functions = [];
-const modules = fs.readdirSync(inputDir);
+const testdir = path.join(inputDir, 'test');
+const modules = fs.readdirSync(testdir);
 modules.forEach(module => {
-    const testdir = path.join(inputDir, module, 'test');
-    if (fs.existsSync(testdir)) {
-        const files = fs.readdirSync(testdir);
+    const moduledir = path.join(testdir, module);
+    if (fs.statSync(moduledir).isDirectory()) {
+        const files = fs.readdirSync(moduledir);
         files.forEach(file => {
             pfile = path.parse(file);
             if (file.endsWith('.test.js')) {
@@ -30,7 +31,7 @@ modules.forEach(module => {
                 functions.push({
                     name,
                     module,
-                    fullPath: path.join(testdir, file)
+                    fullPath: path.join(moduledir, file)
                 });
             }
         });

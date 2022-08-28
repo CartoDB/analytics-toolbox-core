@@ -1,14 +1,13 @@
-name: Postgres CI/CD
+name: Snowflake CI/CD
 
 on:
   push:
     paths:
-      - "clouds/postgres"
-      - ".github/workflows/postgres.yml"
+      - "clouds/snowflake"
+      - ".github/workflows/snowflake.yml"
 
 env:
   NODE_VERSION: 14
-  PYTHON3_VERSION: 3.8.10
 
 jobs:
 
@@ -16,32 +15,27 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      PG_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
-      PG_HOST: ${{ secrets.PG_HOST_CI }}
-      PG_DATABASE: ${{ secrets.PG_DATABASE_CI }}
-      PG_USER: ${{ secrets.PG_USER_CI }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CI }}
+      SF_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CI }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_CI }}
+      SF_USER: ${{ secrets.SF_USER_CI }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CI }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
         with:
-          PATTERNS: '**/*.+(py|sql)'
+          PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 3
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Setup virtualenv
-        run: pip install virtualenv
       - name: Run linter and tests
         run: |
-          cd clouds/postgres
+          cd clouds/redshift
           make lint && \
           make deploy && \
           make test && \
@@ -52,32 +46,28 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
+    # TODO: shared CARTO_OS
     env:
-      PG_HOST: ${{ secrets.PG_HOST_CD }}
-      PG_DATABASE: ${{ secrets.PG_DATABASE_CD }}
-      PG_USER: ${{ secrets.PG_USER_CD }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CD }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
+      SF_USER: ${{ secrets.SF_USER_CD }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
         with:
-          PATTERNS: '**/*.+(py|sql)'
+          PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 3
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Setup virtualenv
-        run: pip install virtualenv
       - name: Run deploy
         run: |
-          cd clouds/postgres
+          cd clouds/snowflake
           make deploy production=1
 
   publish:
@@ -86,8 +76,9 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      PACKAGE_NAME: carto-analytics-toolbox-core-postgres
-      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/postgres
+      PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
+      LIBS_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/snowflake/latest/libs
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -105,15 +96,12 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-      - name: Setup virtualenv
-        run: pip install virtualenv
       - name: Create package
         run: |
-          cd clouds/postgres
+          cd clouds/snowflake
           make create-package
       - name: Publish package
         run: |
-          cd clouds/postgres
+          cd clouds/snowflake
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
-
