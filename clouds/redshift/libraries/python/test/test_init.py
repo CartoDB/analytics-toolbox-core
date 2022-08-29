@@ -1,5 +1,6 @@
 import lib
 from lib import quadbin
+from lib import quadkey
 from lib import constructors
 from lib import transformations
 from lib import processing
@@ -20,6 +21,20 @@ def test_init():
     assert hasattr(quadbin, 'geometry_to_cells')
     assert hasattr(quadbin, 'cell_sibling')
     assert hasattr(quadbin, 'cell_to_children')
+    assert hasattr(quadkey, 'quadint_from_zxy')
+    assert hasattr(quadkey, 'zxy_from_quadint')
+    assert hasattr(quadkey, 'sibling')
+    assert hasattr(quadkey, 'to_children')
+    assert hasattr(quadkey, 'to_parent')
+    assert hasattr(quadkey, 'kring')
+    assert hasattr(quadkey, 'kring_distances')
+    assert hasattr(quadkey, 'quadint_from_location')
+    assert hasattr(quadkey, 'quadint_from_quadkey')
+    assert hasattr(quadkey, 'quadkey_from_quadint')
+    assert hasattr(quadkey, 'bbox')
+    assert hasattr(quadkey, 'quadint_to_geojson')
+    assert hasattr(quadkey, 'clip_number')
+    assert hasattr(quadkey, 'geojson_to_quadints')
     assert hasattr(constructors, 'bezier_spline')
     assert hasattr(constructors, 'ellipse')
     assert hasattr(transformations, 'center_mean')

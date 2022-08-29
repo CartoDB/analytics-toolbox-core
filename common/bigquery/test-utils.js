@@ -76,6 +76,12 @@ function writeJSONFixture (name, json) {
     fs.writeFileSync(filepath, data);
 }
 
+function writeNDJSONFixture (name, json) {
+    const filepath = path.join('.', 'test', 'integration', 'fixtures', `${name}.ndjson`);
+    const data = json.map(JSON.stringify).join('\n');
+    fs.writeFileSync(filepath, data);
+}
+
 async function cancelJob (jobId) {
     const job = bigquery.job(jobId);
     // Attempt to cancel job
@@ -107,6 +113,7 @@ module.exports = {
     deleteTable,
     readJSONFixture,
     writeJSONFixture,
+    writeNDJSONFixture,
     cancelJob,
     sortByKey,
     sortByKeyAndRound

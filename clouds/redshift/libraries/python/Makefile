@@ -104,7 +104,7 @@ test: check venv2
 	echo "Testing libraries..."
 	$(VENV2_BIN)/pytest -rP -p no:warnings -x -vv $(TEST_DIR)/$(test)
 
-remove: check venv3
+remove: venv3
 	echo "Removing libraries..."
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP LIBRARY $(RS_LIBRARY);"
 

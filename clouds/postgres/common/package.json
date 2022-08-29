@@ -1,0 +1,7 @@
+{
+    "license": "BSD-3-Clause",
+    "devDependencies": {
+        "minimist": "1.2.6",
+        "eslint": "^8.22.0"
+    }
+}

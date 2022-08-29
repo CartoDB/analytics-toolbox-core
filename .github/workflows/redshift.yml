@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      RS_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+      RS_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       RS_HOST: ${{ secrets.RS_HOST_CI }}
       RS_DATABASE: ${{ secrets.RS_DATABASE_CI }}
       RS_USER: ${{ secrets.RS_USER_CI }}
@@ -102,7 +102,7 @@ jobs:
           aws-region: ${{ secrets.RS_REGION_CD }}
       - name: Setup virtualenv
         run: pip install virtualenv
-      - name: Run linter and tests
+      - name: Run deploy
         run: |
           cd clouds/redshift
           make deploy
@@ -146,6 +146,6 @@ jobs:
       - name: Publish package
         run: |
           cd clouds/redshift
-          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
-          gsutil -h "Content-Type:application/zip" cp build/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/zip" -m cp build/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/

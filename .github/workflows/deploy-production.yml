@@ -251,18 +251,3 @@ jobs:
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
       - name: Deploy to production
         run: make deploy CLOUD=snowflake
-
-  deploy-pg:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 15
-    if: false
-    env:
-      PG_HOST: aurora-cluster-instance-1.ct98rsozsg3g.us-east-2.rds.amazonaws.com
-      PG_DATABASE: pgcarto
-      PG_USER: ${{ secrets.PG_USER }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Deploy to production
-        run: make deploy CLOUD=postgres
