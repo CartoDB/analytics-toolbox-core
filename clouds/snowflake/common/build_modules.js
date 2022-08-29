@@ -120,7 +120,7 @@ function apply_replacements (text) {
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryContent = fs.readFileSync(libraryPath).toString();
-            text = text.replaceAll(library, libraryContent);
+            text = text.replace(new RegExp(library, 'g'), libraryContent);
         }
         else {
             console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
