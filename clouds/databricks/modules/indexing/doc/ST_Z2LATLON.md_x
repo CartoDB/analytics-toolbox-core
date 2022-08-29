@@ -7,6 +7,7 @@ carto.ST_Z2LATLON(geom, z2Index)
 **Description**
 
 Creates a `Z2Index` with the given coordinate Geometry.
+Function used in the table optimization to generate a field to order the output table
 
 * `geom`: `Geometry` input geom.
 
