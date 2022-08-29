@@ -3,7 +3,7 @@ name: Snowflake CI/CD
 on:
   push:
     paths:
-      - "clouds/snowflake"
+      - "clouds/snowflake/**"
       - ".github/workflows/snowflake.yml"
 
 env:
@@ -78,7 +78,6 @@ jobs:
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
-      LIBS_URL: https://storage.googleapis.com/carto-analytics-toolbox-core/snowflake/latest/libs
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

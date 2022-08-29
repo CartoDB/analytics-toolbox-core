@@ -3,7 +3,7 @@ name: Redshift CI/CD
 on:
   push:
     paths:
-      - "clouds/redshift"
+      - "clouds/redshift/**"
       - ".github/workflows/redshift.yml"
 
 env:

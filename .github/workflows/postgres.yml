@@ -3,7 +3,7 @@ name: Postgres CI/CD
 on:
   push:
     paths:
-      - "clouds/postgres"
+      - "clouds/postgres/**"
       - ".github/workflows/postgres.yml"
 
 env:
