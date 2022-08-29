@@ -1,11 +1,7 @@
-Geometry st_bufferPoint(Point p, Double buffer)
-
-Returns a Geometry covering all points within a given radius of Point p, where radius is given in meters.
-
 ### ST_BUFFERPOINT
 
 {{% bannerNote type="code" %}}
-carto.ST_BUFFERPOINT(point, radiys)
+carto.ST_BUFFERPOINT(point, radius)
 {{%/ bannerNote %}}
 
 **Description**

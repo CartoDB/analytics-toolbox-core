@@ -1,7 +1,3 @@
-### st_covers
-`Boolean st_covers(Geometry a, Geometry b)`
-
-Returns `true` if no `Point` in `Geometry` _b_ is outside `Geometry` _a_.
 ### ST_COVERS
 
 {{% bannerNote type="code" %}}
