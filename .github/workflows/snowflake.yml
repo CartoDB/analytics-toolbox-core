@@ -35,7 +35,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run linter and tests
         run: |
-          cd clouds/redshift
+          cd clouds/snowflake
           make lint && \
           make deploy && \
           make test && \
