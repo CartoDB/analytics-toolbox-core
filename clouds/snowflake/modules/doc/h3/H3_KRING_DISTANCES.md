@@ -15,9 +15,7 @@ Returns all cell indexes and their distances in a **filled hexagonal k-ring** ce
 
 `ARRAY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT carto.H3_KRING_DISTANCES('837b59fffffffff', 1);
