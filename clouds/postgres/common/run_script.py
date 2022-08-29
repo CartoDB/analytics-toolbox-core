@@ -8,7 +8,6 @@ from psycopg2 import connect
 
 function = ''
 
-
 def run_queries(queries):
     global function
     with connect(
@@ -19,7 +18,7 @@ def run_queries(queries):
     ) as conn:
         conn.autocommit = True
         with conn.cursor() as cursor:
-            for i in trange(len(queries)):
+            for i in trange(len(queries), ncols=97):
                 query = queries[i]
                 pattern = os.environ['PG_SCHEMA'] + '.(.*?)[(|\n]'
                 result = re.search(pattern, query)
