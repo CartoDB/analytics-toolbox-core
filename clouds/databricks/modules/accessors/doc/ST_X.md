@@ -17,6 +17,6 @@ If _geom_ is a `Point`, return the X coordinate of that point.
 **Example**
 
 ```sql
-SELECT carto.ST_ASBINARY(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'));
--- AIAAAAHAUwXX2/SH/UAybXCj1wo9AAAAAAAAAAA=
+SELECT carto.ST_X(carto.ST_GEOMFROMWKT('POINT(-76.09130 18.42750)'));
+-- -76.09131
 ```
