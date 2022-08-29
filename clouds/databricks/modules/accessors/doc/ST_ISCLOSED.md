@@ -16,7 +16,7 @@ Returns `true` if geom is a `LineString` or `MultiLineString` and its start and 
 
 **Example**
 
-``` sql
+```sql
 SELECT carto.ST_ISCLOSED(carto.ST_GEOMFROMWKT("LINESTRING(1 1, 2 3, 4 3, 1 1)"));
 -- true
 ```

@@ -82,11 +82,41 @@ deploy: check upload-jars
 	echo "Installing functions"
 	$(MAKE) create-udfs
 
-test-integration:
-	echo "WIP"
+venv:
+	virtualenv -p python3 $(COMMON_DIR)/venv -q
+	. $(COMMON_DIR)/venv/bin/activate && \
+	python -m pip install -U pip -q && \
+	pip install -r $(COMMON_DIR)/requirements.txt -q && \
+	deactivate
+
+test-integration: check check-extra venv
+	. $(COMMON_DIR)/venv/bin/activate && \
+	for module in `ls $(CLOUD_DIR)/modules`; do \
+		echo "> Module $${module}"; \
+		pytest -rP -p no:warnings modules/$${module} || exit 1; \
+	done; \
+	deactivate
 	
 test-integration-full:
-	echo "WIP"
+	$(MAKE) deploy
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) clean-deploy
+
+check:
+ifndef DB_CLUSTER_ID
+	$(error DB_CLUSTER_ID env variable is mandatory)
+endif
+
+check-extra:
+ifndef DATABRICKS_SERVER_HOSTNAME
+	$(error DATABRICKS_SERVER_HOSTNAME is undefined)
+endif
+ifndef DATABRICKS_HTTP_PATH
+	$(error DATABRICKS_HTTP_PATH is undefined)
+endif
+ifndef DATABRICKS_TOKEN
+	$(error DATABRICKS_TOKEN is undefined)
+endif
 
 clean-deploy:
 	echo "WIP"
