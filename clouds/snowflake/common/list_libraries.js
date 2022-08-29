@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const inputDir = '../../modules';
+const inputDirs = argv._[0] && argv._[0].split(',');
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
@@ -19,26 +19,28 @@ const all = argv.all || !(diff.length || modulesFilter.length || functionsFilter
 
 // Extract functions
 const functions = [];
-const sqldir = path.join(inputDir, 'sql');
-const modules = fs.readdirSync(sqldir);
-modules.forEach(module => {
-    const moduledir = path.join(sqldir, module);
-    if (fs.statSync(moduledir).isDirectory()) {
-        const files = fs.readdirSync(moduledir);
-        files.forEach(file => {
-            if (file.endsWith('.sql')) {
-                const name = path.parse(file).name;
-                const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
-                functions.push({
-                    name,
-                    module,
-                    content,
-                    dependencies: []
-                });
-            }
-        });
-    }
-});
+for (let inputDir of inputDirs) {
+    const sqldir = path.join(inputDir, 'sql');
+    const modules = fs.readdirSync(sqldir);
+    modules.forEach(module => {
+        const moduledir = path.join(sqldir, module);
+        if (fs.statSync(moduledir).isDirectory()) {
+            const files = fs.readdirSync(moduledir);
+            files.forEach(file => {
+                if (file.endsWith('.sql')) {
+                    const name = path.parse(file).name;
+                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
+                    functions.push({
+                        name,
+                        module,
+                        content,
+                        dependencies: []
+                    });
+                }
+            });
+        }
+    });
+}
 
 // Extract function dependencies
 if (!nodeps) {

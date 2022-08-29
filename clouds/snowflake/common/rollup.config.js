@@ -1,11 +1,25 @@
+import fs from 'fs';
+import path from 'path';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 import bundleSize from 'rollup-plugin-bundle-size';
 
+// Find final input path from dirs array
+let input;
+const dirs = process.env.DIRS.split(',');
+const filename = process.env.FILENAME;
+for (let dir of dirs) {
+    const filepath = path.join(dir, filename);
+    if (fs.existsSync(filepath)) {
+        input = filepath;
+        break;
+    }
+}
+
 export default {
-    input: process.env.INPUT,
+    input,
     output: {
         file: process.env.OUTPUT,
         format: process.env.UNIT_TEST ? 'umd': 'iife',

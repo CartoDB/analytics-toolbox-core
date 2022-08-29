@@ -7,8 +7,11 @@ SRC_DIR ?= $(ROOT_DIR)/src
 TEST_DIR ?= $(ROOT_DIR)/test
 BUILD_DIR ?= $(ROOT_DIR)/build
 ENV_DIR ?= $(ROOT_DIR)/../..
+LIBS_DIRS ?= $(ROOT_DIR)/libs
+MODULES_DIR ?= $(ROOT_DIR)/../../modules
+MODULES_DIRS ?= $(ROOT_DIR)/../../modules
 ESLINTRC_DIR ?= $(ROOT_DIR)/../../../..
-COMMON_DIR ?= $(ROOT_DIR)/../../common
+COMMON_DIR = $(ROOT_DIR)/../../common
 
 include $(COMMON_DIR)/Makefile
 
@@ -31,13 +34,25 @@ build:
 	$(MAKE) build-libs
 
 build-libs: $(NODE_MODULES) $(NODE_MODULES_DEV)
-	for f in $(shell $(COMMON_DIR)/list_libraries.js --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions)); do \
+ifdef UNIT_TEST
+	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions)); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-		INPUT=$(LIBS_DIR)/$${f}.js \
+		DIRS=$(LIBS_DIR) \
+		FILENAME=$${f}.js \
 		OUTPUT=$(BUILD_DIR)/$${f}.js \
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
-	done \
+	done
+else
+	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions)); do \
+		NAME=$${f}Lib \
+		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+		DIRS=$(LIBS_DIRS) \
+		FILENAME=$${f}.js \
+		OUTPUT=$(BUILD_DIR)/$${f}.js \
+		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+	done
+endif
 
 test:
 	echo "Testing libraries..."
