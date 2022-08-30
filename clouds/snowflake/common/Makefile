@@ -1,8 +1,6 @@
 # Makefile common for Snowflake
 
 SF_SCHEMA_DEFAULT ?= carto
-SF_LIBRARY_DEFAULT ?= carto_analytics_toolbox_core
-NODE_MODULES = $(ROOT_DIR)/node_modules
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
@@ -31,9 +29,6 @@ endif
 ifndef SF_PASSWORD
 	$(error SF_PASSWORD is undefined)
 endif
-
-$(NODE_MODULES):
-	yarn -s --update-checksums --cwd $(ROOT_DIR)
 
 $(NODE_MODULES_DEV):
 	yarn -s --update-checksums --cwd $(COMMON_DIR)

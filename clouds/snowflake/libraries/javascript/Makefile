@@ -3,11 +3,11 @@
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 LIBS_DIR ?= $(ROOT_DIR)/libs
+LIBS_DIRS ?= $(ROOT_DIR)/libs
 SRC_DIR ?= $(ROOT_DIR)/src
 TEST_DIR ?= $(ROOT_DIR)/test
 BUILD_DIR ?= $(ROOT_DIR)/build
 ENV_DIR ?= $(ROOT_DIR)/../..
-LIBS_DIRS ?= $(ROOT_DIR)/libs
 MODULES_DIR ?= $(ROOT_DIR)/../../modules
 MODULES_DIRS ?= $(ROOT_DIR)/../../modules
 ESLINTRC_DIR ?= $(ROOT_DIR)/../../../..
@@ -33,7 +33,7 @@ build:
 	mkdir $(BUILD_DIR)
 	$(MAKE) build-libs
 
-build-libs: $(NODE_MODULES) $(NODE_MODULES_DEV)
+build-libs: build-install $(NODE_MODULES_DEV)
 ifdef UNIT_TEST
 	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions)); do \
 		NAME=$${f}Lib \
@@ -54,6 +54,11 @@ else
 	done
 endif
 
+build-install:
+	for d in $(shell echo $(LIBS_DIRS) | tr "," "\n"); do \
+		yarn -s --update-checksums --cwd $$d/..; \
+	done;
+
 test:
 	echo "Testing libraries..."
 	UNIT_TEST=1 $(MAKE) build all=1
@@ -62,5 +67,8 @@ test:
 
 clean:
 	echo "Cleaning libraries..."
-	rm -rf $(BUILD_DIR) $(NODE_MODULES) $(NODE_MODULES_DEV)
+	rm -rf $(BUILD_DIR) $(NODE_MODULES_DEV)
+	for d in $(shell echo $(LIBS_DIRS) | tr "," "\n"); do \
+		rm -rf $$d/../node_modules; \
+	done;
 	yarn -s cache clean
