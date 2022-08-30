@@ -1,4 +1,4 @@
-const { runQuery, sortByKey } = require('../../../../../common/snowflake/test-utils');
+const { runQuery, sortByKey } = require('../../../common/test-utils');
 
 test('QUADINT_KRING_DISTANCES should work', async () => {
     const query = `
