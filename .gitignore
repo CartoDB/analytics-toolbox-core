@@ -17,10 +17,11 @@ snowsql_rt.*
 .env*
 !.env.template
 dev_env.sh
+yarn.lock
 package-lock.json
 MANIFEST
 *.ipynb
 .pgpass
 
-# IntelliJ 
+# IntelliJ
 .idea/

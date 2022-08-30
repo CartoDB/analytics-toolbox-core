@@ -113,7 +113,7 @@ function apply_replacements (text) {
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryContent = fs.readFileSync(libraryPath).toString();
-            text = text.replaceAll(new RegExp(library, 'g'), libraryContent);
+            text = text.replace(new RegExp(library, 'g'), libraryContent);
         }
         else {
             console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
@@ -124,7 +124,7 @@ function apply_replacements (text) {
     for (let replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
-            text = text.replaceAll(pattern, process.env[replacement]);
+            text = text.replace(pattern, process.env[replacement]);
         }
     }
     return text;
