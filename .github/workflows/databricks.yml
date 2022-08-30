@@ -60,7 +60,7 @@ jobs:
           cd clouds/databricks
           make lint && \
           make deploy && \
-          make integration-test && \
+          make test-integration && \
           make clean-deploy
 
 
