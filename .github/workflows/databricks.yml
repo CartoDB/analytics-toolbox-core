@@ -17,10 +17,10 @@ jobs:
     env:
       DB_CLUSTER_ID: 0620-141834-ancfy7fu
       DB_SCHEMA: carto_dev_data
-      DB_DATASET_PREFIX: aarroyo_
+      DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       DATABRICKS_SERVER_HOSTNAME: dbc-fbcbc113-2a61.cloud.databricks.com
       DATABRICKS_HTTP_PATH: sql/protocolv1/o/2608452846018641/0620-141834-ancfy7fu
-      DATABRICKS_TOKEN: dapid169e0c58da79f00a1e4dde84cfdf841
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
     strategy:
       matrix:
         java: [8, 11]
@@ -39,12 +39,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
-          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
-          aws-region: ${{ secrets.RS_REGION_CI }}
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: install-databricks-cli
@@ -57,7 +51,7 @@ jobs:
           contents: |
             [DEFAULT]
             host = https://dbc-fbcbc113-2a61.cloud.databricks.com
-            token = dapid169e0c58da79f00a1e4dde84cfdf841
+            token = ${{ env.DATABRICKS_TOKEN }}
             jobs-api-version = 2.1
       - name: Run linter and tests
         run: |
