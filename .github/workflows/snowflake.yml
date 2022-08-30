@@ -53,6 +53,7 @@ jobs:
       SF_USER: ${{ secrets.SF_USER_CD }}
       SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
       SF_ROLE: ${{ secrets.SF_ROLE_CD }}
+      SF_SHARE: carto_os_temp
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
