@@ -55,6 +55,7 @@ jobs:
             jobs-api-version = 2.1
       - name: Run linter and tests
         run: |
+          echo ~/.databrickscfg
           export DATABRICKS_CONFIG_FILE=~/.databrickscfg
           cd clouds/databricks
           make lint && \
