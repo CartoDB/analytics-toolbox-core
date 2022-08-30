@@ -46,7 +46,7 @@ jobs:
       - name: Create databricks cfg file
         uses: "DamianReeves/write-file-action@v1.0"
         with:
-          path: $HOME/.databrickscfg
+          path: ${{ HOME }}/.databrickscfg
           write-mode: overwrite
           contents: |
             [DEFAULT]
