@@ -14,11 +14,11 @@ AS $$
 
     @@SF_LIBRARY_H3_TOCHILDREN@@
 
-    if (!h3_tochildrenLib.h3IsValid(INDEX)) {
+    if (!h3TochildrenLib.h3IsValid(INDEX)) {
         return [];
     }
 
-    return h3_tochildrenLib.h3ToChildren(INDEX, Number(RESOLUTION));
+    return h3TochildrenLib.h3ToChildren(INDEX, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_TOCHILDREN

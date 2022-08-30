@@ -14,7 +14,7 @@ AS $$
 
     @@SF_LIBRARY_H3_FROMLONGLAT@@
 
-    const index = h3_fromlonglatLib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
+    const index = h3FromlonglatLib.geoToH3(Number(LATITUDE), Number(LONGITUDE), Number(RESOLUTION));
     return index;
 $$;
 

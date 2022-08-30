@@ -16,7 +16,7 @@ AS $$
 
     const options = {};
     options.npoints = Number(NPOINTS);
-    const greatCircle = transformations_greatcircleLib.greatCircle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND), options);
+    const greatCircle = transformationsGreatcircleLib.greatCircle(JSON.parse(GEOJSONSTART), JSON.parse(GEOJSONEND), options);
     return JSON.stringify(greatCircle.geometry);
 $$;
 

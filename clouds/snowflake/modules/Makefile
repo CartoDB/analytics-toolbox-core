@@ -20,7 +20,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy deploy-share test remove remove-share clean
+.PHONY: help lint build build-share deploy deploy-share test remove remove-share clean
 
 help:
 	echo "Available targets: lint build deploy test remove clean"

@@ -16,7 +16,7 @@ AS $$
 
     const options = {};
     options.units = UNITS;
-    const destination = transformations_destinationLib.destination(JSON.parse(GEOJSONSTART), Number(DISTANCE), Number(BEARING), options);
+    const destination = transformationsDestinationLib.destination(JSON.parse(GEOJSONSTART), Number(DISTANCE), Number(BEARING), options);
     return JSON.stringify(destination.geometry);
 $$;
 

@@ -14,7 +14,7 @@ AS $$
 
     @@SF_LIBRARY_H3_UNCOMPACT@@
 
-    return h3_uncompactLib.uncompact(H3ARRAY, Number(RESOLUTION));
+    return h3UncompactLib.uncompact(H3ARRAY, Number(RESOLUTION));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_UNCOMPACT

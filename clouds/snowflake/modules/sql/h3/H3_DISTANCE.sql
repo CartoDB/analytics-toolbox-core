@@ -14,7 +14,7 @@ AS $$
 
     @@SF_LIBRARY_H3_DISTANCE@@
 
-    let dist = h3_distanceLib.h3Distance(INDEX1, INDEX2);
+    let dist = h3DistanceLib.h3Distance(INDEX1, INDEX2);
     if (dist < 0) {
         dist = null;
     }

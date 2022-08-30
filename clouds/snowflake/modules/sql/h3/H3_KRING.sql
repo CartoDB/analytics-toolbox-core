@@ -14,11 +14,11 @@ AS $$
 
     @@SF_LIBRARY_H3_KRING@@
 
-    if (!h3_kringLib.h3IsValid(ORIGIN)) {
+    if (!h3KringLib.h3IsValid(ORIGIN)) {
         throw new Error('Invalid input origin')
     }
 
-    return h3_kringLib.kRing(ORIGIN, parseInt(SIZE));
+    return h3KringLib.kRing(ORIGIN, parseInt(SIZE));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_KRING

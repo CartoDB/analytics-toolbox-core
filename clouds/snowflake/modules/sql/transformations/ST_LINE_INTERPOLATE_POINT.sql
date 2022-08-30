@@ -16,7 +16,7 @@ AS $$
 
     const options = {};
     options.units = UNITS;
-    const along = transformations_alongLib.along(JSON.parse(GEOJSON), DISTANCE, options);
+    const along = transformationsAlongLib.along(JSON.parse(GEOJSON), DISTANCE, options);
     return JSON.stringify(along.geometry);
 $$;
 

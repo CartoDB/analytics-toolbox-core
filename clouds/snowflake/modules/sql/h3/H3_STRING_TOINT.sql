@@ -4,5 +4,5 @@ CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.H3_STRING_TOINT
 )
 RETURNS INT
 AS $$
-  to_number(h3, 'xxxxxxxxxxxxxxx')
+  TO_NUMBER(h3, 'xxxxxxxxxxxxxxx')
 $$;

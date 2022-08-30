@@ -14,7 +14,7 @@ AS $$
 
     @@SF_LIBRARY_TRANSFORMATIONS_CENTER@@
 
-    const medianCenter = transformations_centerLib.centerMedian(transformations_centerLib.feature(JSON.parse(GEOJSON)));
+    const medianCenter = transformationsCenterLib.centerMedian(transformationsCenterLib.feature(JSON.parse(GEOJSON)));
     return JSON.stringify(medianCenter.geometry);
 $$;
 

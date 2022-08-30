@@ -18,14 +18,17 @@ for (let dir of dirs) {
     }
 }
 
+// Format library name to camel case
+const name = process.env.NAME.replace(/(_\w)/g, k => k[1].toUpperCase());
+
 export default {
     input,
     output: {
         file: process.env.OUTPUT,
         format: process.env.UNIT_TEST ? 'umd': 'iife',
-        name: process.env.UNIT_TEST ? process.env.NAME : '_' + process.env.NAME,
-        banner: process.env.UNIT_TEST ? '' : 'if (typeof(' + process.env.NAME +') === "undefined") {',
-        footer: process.env.UNIT_TEST ? '' : process.env.NAME +' = _' + process.env.NAME + ';}'
+        name: process.env.UNIT_TEST ? name : '_' + name,
+        banner: process.env.UNIT_TEST ? '' : 'if (typeof(' +name +') === "undefined") {',
+        footer: process.env.UNIT_TEST ? '' : name +' = _' + name + ';}'
     },
     plugins: [
         resolve(),

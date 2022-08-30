@@ -18,7 +18,7 @@ AS $$
         units: 'meters',
         steps: Number(SEGMENTS)
     };
-    const buffer = transformations_bufferLib.buffer(JSON.parse(GEOJSON), Number(DISTANCE), options);
+    const buffer = transformationsBufferLib.buffer(JSON.parse(GEOJSON), Number(DISTANCE), options);
     if (buffer) {
         return JSON.stringify(buffer.geometry);
     }

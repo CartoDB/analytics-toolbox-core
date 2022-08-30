@@ -28,28 +28,28 @@ AS $$
         case 'GeometryCollection':
             featureGeometry.geometries.forEach(function (geom) {
                 if (geom.type === 'MultiPolygon') {
-                    var clippedGeometryA = h3_polyfillLib.bboxClip(geom, bboxA).geometry;
+                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates);
-                    var clippedGeometryB = h3_polyfillLib.bboxClip(geom, bboxB).geometry;
+                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates);
                 } else if (geom.type === 'Polygon') {
-                    var clippedGeometryA = h3_polyfillLib.bboxClip(geom, bboxA).geometry;
+                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
-                    var clippedGeometryB = h3_polyfillLib.bboxClip(geom, bboxB).geometry;
+                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
                 }
             });
         break;
         case 'MultiPolygon':
-            var clippedGeometryA = h3_polyfillLib.bboxClip(featureGeometry, bboxA).geometry;
+            var clippedGeometryA = h3PolyfillLib.bboxClip(featureGeometry, bboxA).geometry;
             polygonCoordinatesA = clippedGeometryA.coordinates;
-            var clippedGeometryB = h3_polyfillLib.bboxClip(featureGeometry, bboxB).geometry;
+            var clippedGeometryB = h3PolyfillLib.bboxClip(featureGeometry, bboxB).geometry;
             polygonCoordinatesB = clippedGeometryB.coordinates;
         break;
         case 'Polygon':
-            var clippedGeometryA = h3_polyfillLib.bboxClip(featureGeometry, bboxA).geometry;
+            var clippedGeometryA = h3PolyfillLib.bboxClip(featureGeometry, bboxA).geometry;
             polygonCoordinatesA = [clippedGeometryA.coordinates];
-            var clippedGeometryB = h3_polyfillLib.bboxClip(featureGeometry, bboxB).geometry;
+            var clippedGeometryB = h3PolyfillLib.bboxClip(featureGeometry, bboxB).geometry;
             polygonCoordinatesB = [clippedGeometryB.coordinates];
         break;
         default:
@@ -61,11 +61,11 @@ AS $$
     }
 
     let hexesA = polygonCoordinatesA.reduce(
-        (acc, coordinates) => acc.concat(h3_polyfillLib.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3PolyfillLib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     let hexesB = polygonCoordinatesB.reduce(
-        (acc, coordinates) => acc.concat(h3_polyfillLib.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3PolyfillLib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     hexes = [...hexesA, ...hexesB];

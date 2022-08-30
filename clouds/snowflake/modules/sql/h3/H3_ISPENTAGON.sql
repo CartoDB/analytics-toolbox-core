@@ -14,5 +14,5 @@ AS $$
 
     @@SF_LIBRARY_H3_ISPENTAGON@@
 
-    return h3_ispentagonLib.h3IsPentagon(INDEX);
+    return h3IspentagonLib.h3IsPentagon(INDEX);
 $$;
