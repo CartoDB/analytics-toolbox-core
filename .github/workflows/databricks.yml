@@ -46,7 +46,7 @@ jobs:
       - name: Create databricks cfg file
         uses: "DamianReeves/write-file-action@v1.0"
         with:
-          path: ${{ env.home }}/.databrickscfg
+          path: ~/.databrickscfg
           write-mode: overwrite
           contents: |
             [DEFAULT]
@@ -55,7 +55,7 @@ jobs:
             jobs-api-version = 2.1
       - name: Run linter and tests
         run: |
-          export DATABRICKS_CONFIG_FILE=${{ env.home }}/.databrickscfg
+          export DATABRICKS_CONFIG_FILE=~/.databrickscfg
           cd clouds/databricks
           make lint && \
           make deploy && \
