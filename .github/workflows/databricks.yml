@@ -54,9 +54,9 @@ jobs:
             token = ${{ env.DATABRICKS_TOKEN }}
             jobs-api-version = 2.1
       - name: Run linter and tests
+        env:
+          DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
         run: |
-          cat /home/runner/.databrickscfg 
-          export DATABRICKS_CONFIG_FILE=/home/runner/.databrickscfg
           cd clouds/databricks
           make lint && \
           make deploy && \
