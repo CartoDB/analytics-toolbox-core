@@ -2,13 +2,14 @@
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
+TEST_DIR ?= $(ROOT_DIR)/test
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 ESLINTRC_DIR ?= $(ROOT_DIR)/../../..
 COMMON_DIR = $(ROOT_DIR)/../common
 LIBS_BUILD_DIR ?= $(ROOT_DIR)/../libraries/javascript/build
 
-MODULES_DIRS ?= .
+MODULES_DIRS ?= $(ROOT_DIR)
 export VERSION_FUNCTION ?= VERSION_CORE
 export PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 export SF_SHARE ?= $(SF_PREFIX)ANALYTICS_TOOLBOX
@@ -27,7 +28,7 @@ help:
 lint: $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js test --fix
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) --fix
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
@@ -48,9 +49,13 @@ deploy: check build
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
-	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	jest --testTimeout=40000 --bail --verbose \
-		$(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
+	for m in $(shell ls $(TEST_DIR)); do \
+		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
+		if [ ! -z "$$TESTS" ]; then \
+			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+			jest --testTimeout=40000 --bail --verbose $$TESTS; \
+		fi; \
+	done;
 
 remove:
 	echo "Removing modules..."
