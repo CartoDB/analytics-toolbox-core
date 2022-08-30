@@ -1,7 +1,7 @@
 ### ST_CLOSESTPOINT
 
 {{% bannerNote type="code" %}}
-carto.ST_CLOSESTPOINT(geoA, geomB)
+carto.ST_CLOSESTPOINT(geomA, geomB)
 {{%/ bannerNote %}}
 
 **Description**

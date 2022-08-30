@@ -1,7 +1,7 @@
 package com.carto.analyticstoolbox.modules.predicates
 
 import com.azavea.hiveless.HUDF
-import com.carto.analyticstoolbox.index._
+import com.carto.analyticstoolbox.modules.index._
 import com.carto.analyticstoolbox.modules._
 import com.azavea.hiveless.implicits.tupler._
 import com.carto.analyticstoolbox.modules.predicates.ST_Contains.Arg

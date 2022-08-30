@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Azavea
+ * Copyright 2021 Azavea
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.index
+package com.carto.analyticstoolbox.modules.transformations
 
 import com.azavea.hiveless.HUDF
+import com.azavea.hiveless.implicits.tupler._
 import com.carto.analyticstoolbox.modules._
-import geotrellis.vector._
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier
 
-class ST_ExtentFromGeom extends HUDF[Geometry, Extent] {
-  def function: Geometry => Extent = _.extent
+class ST_Simplify extends HUDF[(Geometry, Double), Geometry] {
+  def function: ((Geometry, Double)) => Geometry = { (g: Geometry, p: Double) => DouglasPeuckerSimplifier.simplify(g, p) }
 }

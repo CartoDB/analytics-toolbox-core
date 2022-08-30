@@ -1,4 +1,5 @@
 ### ST_MPOINTFROMTEXT
+
 {{% bannerNote type="code" %}}
 carto.ST_MPOINTFROMTEXT(wkt)
 {{%/ bannerNote %}}

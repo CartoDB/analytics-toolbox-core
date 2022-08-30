@@ -1,4 +1,5 @@
 ### ST_GEOMFROMGEOJSON
+
 {{% bannerNote type="code" %}}
 carto.ST_GEOMFROMGEOJSON(geojson)
 {{%/ bannerNote %}}
