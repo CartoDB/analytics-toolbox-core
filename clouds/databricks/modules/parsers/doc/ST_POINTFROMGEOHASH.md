@@ -1,4 +1,5 @@
 ### ST_POINTFROMGEOHASH
+
 {{% bannerNote type="code" %}}
 carto.ST_POINTFROMGEOHASH(geohash, prec)
 {{%/ bannerNote %}}

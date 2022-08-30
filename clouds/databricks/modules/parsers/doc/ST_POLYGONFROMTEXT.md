@@ -1,4 +1,5 @@
 ### ST_POLYGONFROMTEXT
+
 {{% bannerNote type="code" %}}
 carto.ST_POLYGONFROMTEXT(wkt)
 {{%/ bannerNote %}}

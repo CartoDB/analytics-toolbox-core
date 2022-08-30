@@ -1,4 +1,5 @@
 ### ST_POINTFROMWKB
+
 {{% bannerNote type="code" %}}
 carto.ST_POINTFROMWKB(wkb)
 {{%/ bannerNote %}}

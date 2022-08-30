@@ -17,12 +17,12 @@
 package com.carto.analyticstoolbox.spark.sql.rules
 
 import com.carto.analyticstoolbox.modules._
-import com.carto.analyticstoolbox.index._
 import com.azavea.hiveless.spark.rules.syntax._
 import com.azavea.hiveless.serializers.HDeserializer.Errors.ProductDeserializationError
 import com.azavea.hiveless.serializers.syntax._
 import geotrellis.vector._
 import cats.syntax.option._
+import com.carto.analyticstoolbox.modules.index._
 import com.carto.analyticstoolbox.modules.predicates.ST_Contains
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.spark.sql.hive.HivelessInternals.HiveGenericUDF

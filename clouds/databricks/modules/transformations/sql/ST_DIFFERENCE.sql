@@ -1,0 +1,1 @@
+CREATE OR REPLACE FUNCTION ST_DIFFERENCE as 'com.carto.analyticstoolbox.core.ST_Difference';

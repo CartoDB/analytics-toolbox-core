@@ -1,4 +1,5 @@
 ### ST_MPOLYFROMTEXT
+
 {{% bannerNote type="code" %}}
 carto.ST_MPOLYFROMTEXT(wkt)
 {{%/ bannerNote %}}

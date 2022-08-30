@@ -1,7 +1,7 @@
 ### ST_POINT
 
 {{% bannerNote type="code" %}}
-carto.ST_POINT(x. y)
+carto.ST_POINT(x, y)
 {{%/ bannerNote %}}
 
 **Description**

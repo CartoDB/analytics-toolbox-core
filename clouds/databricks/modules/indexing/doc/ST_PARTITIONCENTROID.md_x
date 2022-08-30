@@ -1,0 +1,27 @@
+### ST_PARTITIONCENTROID
+
+{{% bannerNote type="code" %}}
+carto.ST_PARTITIONCENTROID(geom, zoom, tileSize, bits, crs, resolution)
+{{%/ bannerNote %}}
+
+**Description**
+
+Function used in the table optimization to generate a field to partition the intermediate temporary table
+
+* `geom`: `Geometry` input geom.
+* `zoom`: `Int` input zoom.
+* `tileSize`(optional): `Int` input tileSize.
+* `bits`(optional): `Int` input bits.
+* `crs`(optional): `CRS` input crs.
+* `resolution`(optional): `Long` input resolution.
+
+**Return type**
+
+`Long`
+
+**Example**
+
+```sql
+SELECT ST_PARTITIONCENTROID(ST_POINT(5, 10), 8)
+-- 106
+```

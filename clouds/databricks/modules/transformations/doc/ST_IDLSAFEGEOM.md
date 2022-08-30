@@ -1,4 +1,5 @@
 ### ST_IDLSAFEGEOM
+
 {{% bannerNote type="code" %}}
 carto.ST_IDLSAFEGEOM(geom)
 {{%/ bannerNote %}}

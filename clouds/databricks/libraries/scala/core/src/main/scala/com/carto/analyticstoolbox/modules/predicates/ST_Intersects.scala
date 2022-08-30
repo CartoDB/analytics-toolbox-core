@@ -3,7 +3,7 @@ package com.carto.analyticstoolbox.modules.predicates
 import com.azavea.hiveless.HUDF
 import com.azavea.hiveless.implicits.tupler._
 import com.azavea.hiveless.serializers.HDeserializer.Errors.ProductDeserializationError
-import com.carto.analyticstoolbox.index._
+import com.carto.analyticstoolbox.modules.index._
 import com.carto.analyticstoolbox.modules._
 import com.carto.analyticstoolbox.modules.predicates.ST_Intersects.Arg
 import geotrellis.vector.{Extent, Geometry}

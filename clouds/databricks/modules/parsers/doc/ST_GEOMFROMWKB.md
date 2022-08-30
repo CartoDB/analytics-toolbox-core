@@ -1,4 +1,5 @@
 ### ST_GEOMFROMWKB
+
 {{% bannerNote type="code" %}}
 carto.ST_GEOMFROMWKB(wkb)
 {{%/ bannerNote %}}
