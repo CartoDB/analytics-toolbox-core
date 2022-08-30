@@ -10,7 +10,6 @@ env:
   PYTHON3_VERSION: 3.8.11
 
 jobs:
-
   test:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
@@ -21,10 +20,6 @@ jobs:
       DATABRICKS_SERVER_HOSTNAME: dbc-fbcbc113-2a61.cloud.databricks.com
       DATABRICKS_HTTP_PATH: sql/protocolv1/o/2608452846018641/0620-141834-ancfy7fu
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
-    strategy:
-      matrix:
-        java: [8, 11]
-        distribution: [temurin]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -63,4 +58,42 @@ jobs:
           make test-integration && \
           make clean-deploy
 
+  deploy:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      RS_HOST: ${{ secrets.RS_HOST_CD }}
+      DB_CLUSTER_ID: 0620-141834-ancfy7fu
+      DB_SCHEMA: carto_dev_data
+      DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|scala)'
+          FILES: 'Makefile'
+      - name: Setup scala
+        uses: olafurpg/setup-scala@v11
+      - name: install-databricks-cli
+        uses: microsoft/install-databricks-cli@v1.0.0
+      - name: Create databricks cfg file
+        uses: "DamianReeves/write-file-action@v1.0"
+        with:
+          path: /home/runner/.databrickscfg
+          write-mode: overwrite
+          contents: |
+            [DEFAULT]
+            host = https://dbc-fbcbc113-2a61.cloud.databricks.com
+            token = ${{ secrets.DATABRICKS_TOKEN_CI }}
+            jobs-api-version = 2.1
+      - name: Run deploy
+        env:
+          DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
+        run: |
+          cd clouds/databricks
+          make deploy 
 
