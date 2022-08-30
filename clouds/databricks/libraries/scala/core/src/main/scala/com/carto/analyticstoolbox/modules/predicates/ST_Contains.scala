@@ -6,7 +6,6 @@ import com.carto.analyticstoolbox.modules._
 import com.azavea.hiveless.implicits.tupler._
 import com.carto.analyticstoolbox.modules.predicates.ST_Contains.Arg
 
-
 class ST_Contains extends HUDF[(ST_Contains.Arg, ST_Contains.Arg), Boolean] {
   def function: ((Arg, Arg)) => Boolean = ST_Contains.function
 }
