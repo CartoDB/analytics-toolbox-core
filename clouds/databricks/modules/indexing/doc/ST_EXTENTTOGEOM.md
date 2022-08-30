@@ -1,7 +1,7 @@
 ### ST_EXTENTTOGEOM
 
 {{% bannerNote type="code" %}}
-carto.ST_CASTTOPOINT(extent)
+carto.ST_EXTENTTOGEOM(extent)
 {{%/ bannerNote %}}
 
 **Description**

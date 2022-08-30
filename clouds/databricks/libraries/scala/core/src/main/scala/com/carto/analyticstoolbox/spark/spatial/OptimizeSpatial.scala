@@ -38,11 +38,6 @@ object OptimizeSpatial extends Serializable {
     catalog.dropTable(TableIdentifier(s"${sourceTable}_idx_view"), ignoreIfNotExists = true, purge = false)
     catalog.dropTable(TableIdentifier(outputTable), ignoreIfNotExists = true, purge = false)
 
-    // via SQL
-    /*try ssc.sql(s"DROP TABLE ${sourceTable}_idx_view;") catch { case _: AnalysisException => // e.printStackTrace() }
-    // overwrite the output table
-    try ssc.sql(s"DROP TABLE $outputTable;") catch { case _: AnalysisException => // e.printStackTrace() }*/
-
     // Decide, based on column type of geometry, which parsing function to use
     val df = ssc.table(sourceTable)
     val parseGeom =

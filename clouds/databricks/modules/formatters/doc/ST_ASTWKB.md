@@ -1,7 +1,7 @@
 ### ST_ASTWKB
 
 {{% bannerNote type="code" %}}
-carto.(geom)
+carto.ST_ASTWKB(geom)
 {{%/ bannerNote %}}
 
 **Description**
