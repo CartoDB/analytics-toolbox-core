@@ -46,7 +46,6 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
-    # TODO: shared CARTO_OS
     env:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
