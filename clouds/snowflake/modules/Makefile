@@ -33,7 +33,9 @@ build: $(NODE_MODULES_DEV)
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps)
 
 build-libraries:
 	$(MAKE) -C ../libraries/javascript build
@@ -46,7 +48,8 @@ deploy: check build
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	jest --testTimeout=40000 --bail --verbose $(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
+	jest --testTimeout=40000 --bail --verbose \
+		$(shell $(COMMON_DIR)/list_functions.js --diff=$(diff) --modules=$(modules) --functions=$(functions))
 
 remove:
 	echo "Removing modules..."

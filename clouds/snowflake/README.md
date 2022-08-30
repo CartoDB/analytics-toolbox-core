@@ -66,3 +66,5 @@ make build diff=modules/quadbin/test/test_QUADBIN_RESOLUTION.py
 make deploy modules=quadbin,constructors
 make test functions=ST_MAKEENVELOPE
 ```
+
+Additionally, `nodeps=1` filter can be passed to skip building and including the dependencies. It can be used to speed up re-deployments during development.

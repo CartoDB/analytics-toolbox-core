@@ -70,15 +70,17 @@ if (!nodeps) {
 }
 
 // Check circular dependencies
-functions.forEach(mainFunction => {
-    functions.forEach(depFunction => {
-        if (mainFunction.dependencies.includes(depFunction.name) &&
-            depFunction.dependencies.includes(mainFunction.name)) {
-            console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
-            process.exit(1);
-        }
+if (!nodeps) {
+    functions.forEach(mainFunction => {
+        functions.forEach(depFunction => {
+            if (mainFunction.dependencies.includes(depFunction.name) &&
+                depFunction.dependencies.includes(mainFunction.name)) {
+                console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+                process.exit(1);
+            }
+        });
     });
-});
+}
 
 // Filter and order functions
 const output = [];
