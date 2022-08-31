@@ -10,8 +10,8 @@ env:
   PYTHON3_VERSION: 3.8.11
 
 jobs:
-  if: github.ref_name == 'master'
   test:
+    if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
