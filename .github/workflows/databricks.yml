@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      DB_CLUSTER_ID: 0620-141834-ancfy7fu
-      DB_SCHEMA: carto_dev_data
+      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
+      DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
       DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
-      DATABRICKS_SERVER_HOSTNAME: dbc-fbcbc113-2a61.cloud.databricks.com
-      DATABRICKS_HTTP_PATH: sql/protocolv1/o/2608452846018641/0620-141834-ancfy7fu
+      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
+      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
     steps:
       - name: Checkout repo
@@ -64,10 +64,10 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      RS_HOST: ${{ secrets.RS_HOST_CD }}
-      DB_CLUSTER_ID: 0620-141834-ancfy7fu
-      DB_SCHEMA: carto_dev_data
+      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
+      DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
       DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
