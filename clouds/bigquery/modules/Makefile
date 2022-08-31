@@ -1,4 +1,4 @@
-# Makefile modules for Snowflake
+# Makefile modules for Biguqery
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 

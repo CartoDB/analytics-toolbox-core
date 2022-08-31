@@ -1,4 +1,4 @@
-# Makefile common for Snowflake
+# Makefile common for Bigquery
 
 BQ_DATASET_DEFAULT ?= carto
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules

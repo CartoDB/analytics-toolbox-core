@@ -1,4 +1,4 @@
-# Makefile for Snowflake
+# Makefile for Bigquery
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 

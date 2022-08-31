@@ -1,4 +1,4 @@
-# Makefile for Snowflake JavaScript library
+# Makefile for Bigquery JavaScript library
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
