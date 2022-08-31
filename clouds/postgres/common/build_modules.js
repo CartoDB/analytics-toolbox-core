@@ -6,7 +6,7 @@
 // ./build_modules.js modules --output=build --diff=modules/quadbin/sql/QUADBIN_TOZXY.sql
 // ./build_modules.js modules --output=build --functions=ST_TILEENVELOPE
 // ./build_modules.js modules --output=build --modules=quadbin
-// ./build_modules.js modules --output=build --production
+// ./build_modules.js modules --output=build --production --dropfirst
 
 const fs = require('fs');
 const path = require('path');
@@ -109,7 +109,7 @@ function apply_replacements (text) {
     return text;
 }
 
-if (argv.production) {
+if (argv.dropfirst) {
     const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
     content = header + content;
 }

@@ -35,7 +35,8 @@ build: $(NODE_MODULES_DEV)
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) \
+		--diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production) --dropfirst=$(dropfirst)
 
 deploy: check venv3 build
 	echo "Deploying modules..."

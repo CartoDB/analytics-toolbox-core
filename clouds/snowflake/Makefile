@@ -81,7 +81,7 @@ clean-modules:
 	$(MAKE) -C modules clean
 
 create-package:
-	$(MAKE) build production=1
+	$(MAKE) build production=1 dropfirst=1
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)

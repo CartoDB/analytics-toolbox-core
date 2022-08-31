@@ -12,7 +12,6 @@ env:
 jobs:
 
   test:
-    if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -42,9 +41,9 @@ jobs:
           make test && \
           make remove
 
-  deploy:
-    # if: github.ref_name == 'master'
-    # needs: test
+  deploy-internal:
+    if: github.ref_name == 'master'
+    needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
@@ -68,11 +67,11 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/snowflake
-          make deploy
+          make deploy production=1
 
   deploy-share:
-    # if: github.ref_name == 'master'
-    needs: deploy
+    if: github.ref_name == 'master'
+    needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
@@ -97,13 +96,12 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/snowflake
-          make deploy
+          make deploy production=1
           cd modules
           make deploy-share
 
   publish:
-    if: false
-    # if: github.ref_name == 'master'
+    if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 10
