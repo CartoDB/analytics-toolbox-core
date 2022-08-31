@@ -21,10 +21,10 @@ def run_queries(queries):
         conn.autocommit = True
         filter = os.environ.get('FILTER')
         with conn.cursor() as cursor:
-            for i in trange(len(queries) if not filter else 1):
+            for i in trange(len(queries) if not filter else 1, ncols=97):
                 query = queries[i]
                 if (not filter) or (filter in query):
-                    pattern = os.environ['RS_SCHEMA'] + '.(.*?)\n'
+                    pattern = os.environ['RS_SCHEMA'] + '.(.*?)[(|\n]'
                     result = re.search(pattern, str(query))
                     if result:
                         function = result.group(1)

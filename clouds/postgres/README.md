@@ -43,19 +43,20 @@ PG_PASSWORD=your-postgres-password
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates the installation package in the dist folder (zip)
 
-Make commands can be run also inside `modules` folders, or be called like `make deploy-modules`.
+Make commands can be run also inside `modules` folders, or be called like `make ***-modules`.
 
 **Filtering**
 
-Commands `build`, `deploy`, `test` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter
 
-For example:
+Example:
 
 ```
-make lint diff=modules/quadbin/test/test_QUADBIN_RESOLUTION.py
-make deploy modules=quadbin
-make test functions=QUADBIN_RESOLUTION
+make build-modules diff=modules/sql/quadbin/QUADBIN_RESOLUTION.sql
+make deploy-modules modules=quadbin
+make test-modules functions=QUADBIN_RESOLUTION
+make create-package modules=quadbin
 ```

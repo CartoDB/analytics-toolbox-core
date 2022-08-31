@@ -3,7 +3,7 @@ name: Redshift CI/CD
 on:
   push:
     paths:
-      - "clouds/redshift"
+      - "clouds/redshift/**"
       - ".github/workflows/redshift.yml"
 
 env:
@@ -61,7 +61,7 @@ jobs:
           make test && \
           make remove
 
-  deploy:
+  deploy-internal:
     if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04
@@ -105,7 +105,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/redshift
-          make deploy
+          make deploy production=1
 
   publish:
     if: github.ref_name == 'master'

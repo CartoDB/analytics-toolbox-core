@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift, postgres, all)'
+        description: 'Cloud warehouse (bigquery, all)'
         required: true
         default: 'all'
       pr_number:
@@ -52,36 +52,3 @@ jobs:
             const { repo: { owner, repo }  } = context;
             const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
             github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in project `${{ env.BQ_PROJECT }}`: https://console.cloud.google.com/bigquery?project=${{env.BQ_PROJECT}}' });
-
-  deploy-sf:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 15
-    if: false
-    env:
-      SNOWSQL_VERSION: 1.2.13
-      SNOWSQL_BIN: ~/snowflake/snowsql
-      SNOWSQL_DEST: ~/snowflake
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SF_USER: ${{ secrets.SF_USERNAME }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASE: SFCARTOST
-      SF_SCHEMA_PREFIX: core_${{ github.event.inputs.pr_number || github.event.pull_request.number }}_
-      SF_SHARE_ENABLED: 0
-      SF_SHARE_PREFIX: SFCARTOST_
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Setup snowsql
-        run: |
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-      - name: Deploy to staging
-        run: make deploy CLOUD=snowflake
-      - name: Comment PR
-        uses: actions/github-script@0.3.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { repo: { owner, repo }  } = context;
-            const issue_number = ${{ github.event.inputs.pr_number || github.event.pull_request.number }};
-            github.issues.createComment({ issue_number, owner, repo, body: 'Deployed in schema `${{ env.SF_DATABASE }}.${{ env.SF_SCHEMA_PREFIX }}carto`' });

@@ -54,7 +54,7 @@ AWS_SECRET_ACCESS_KEY=your-secret-access-key
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates the installation package in the dist folder (zip)
 
-Make commands can be run also inside `libraries/python` and `modules` folders, or be called like `make lint-libraries`, `make deploy-modules`.
+Make commands can be run also inside `libraries/python` and `modules` folders, or be called like `make ***-libraries` and `make ***-modules`, respectively.
 
 **Filtering**
 
@@ -63,12 +63,28 @@ Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` 
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter
 
-For example:
+Example:
 
 ```
-make build diff=modules/quadbin/test/test_QUADBIN_RESOLUTION.py
-make deploy modules=quadbin,constructors
-make test functions=ST_MAKEENVELOPE
+make build-modules diff=modules/sql/quadbin/QUADBIN_RESOLUTION.sql
+make deploy-modules modules=quadbin,constructors
+make test-modules functions=ST_MAKEENVELOPE
+make create-package modules=quadbin
 ```
 
-Additionally, `deploy-libraries` can be filtered with `library=carto` to deploy only the carto Python library and skip the dependencies, which don't change as often.
+Command `deploy-libraries` can be filtered with `library=carto` to deploy only the carto Python library and skip the dependencies, which don't change as often.
+
+Example:
+
+```
+make deploy-libraries library=carto
+```
+
+Command `test-libraries` can be filtered by setting the `test` variable with a path of the test file. It supports passing the name of the test.
+
+Example:
+
+```
+make test-libraries test=test_constructors.py
+make test-libraries test=test_processing.py::test_check_polygon_intersection
+```

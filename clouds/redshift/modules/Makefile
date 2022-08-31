@@ -7,10 +7,14 @@ BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
-export VERSION_FUNCTION ?= VERSION_CORE
-export PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+export RS_VERSION_FUNCTION ?= VERSION_CORE
+ifeq ($(production),1)
+export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+else
+export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
+endif
 
-REPLACEMENTS = "RS_SCHEMA RS_LIBRARY VERSION_FUNCTION PACKAGE_VERSION"
+REPLACEMENTS = "RS_SCHEMA RS_LIBRARY RS_VERSION_FUNCTION RS_PACKAGE_VERSION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -31,7 +35,8 @@ build: $(NODE_MODULES_DEV)
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production)
+	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) --output=$(BUILD_DIR) \
+		--diff=$(diff) --modules=$(modules) --functions=$(functions) --production=$(production) --dropfirst=$(dropfirst)
 
 deploy: check venv3 build
 	echo "Deploying modules..."

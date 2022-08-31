@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       cloud:
-        description: 'Cloud warehouse (bigquery, snowflake, redshift, postgres, all)'
+        description: 'Cloud warehouse (bigquery, all)'
         required: true
         default: 'all'
       force_deploy:
@@ -222,32 +222,3 @@ jobs:
             project_id: ${{ env.BQ_PROJECT }}
       - name: Deploy to production
         run: make deploy CLOUD=bigquery
-
-  deploy-sf:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 15
-    if: false
-    env:
-      SNOWSQL_VERSION: 1.2.13
-      SNOWSQL_BIN: ~/snowflake/snowsql
-      SNOWSQL_DEST: ~/snowflake
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SF_USER: ${{ secrets.SF_USERNAME }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-      SF_DATABASE: CARTO_OS
-      SF_SHARE_ENABLED: 1
-      SF_SHARES: carto_os_temp
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Check diff
-        uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
-      - name: Setup snowsql
-        run: |
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-${{env.SNOWSQL_VERSION}}-linux_x86_64.bash
-      - name: Deploy to production
-        run: make deploy CLOUD=snowflake
