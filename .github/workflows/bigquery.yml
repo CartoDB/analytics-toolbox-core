@@ -1,31 +1,60 @@
-name: Deploy Production
+name: Bigquery CI/CD
 
 on:
   push:
-    branches:
-      - master
-  workflow_dispatch:
-    inputs:
-      cloud:
-        description: 'Cloud warehouse (bigquery, all)'
-        required: true
-        default: 'all'
-      force_deploy:
-        description: 'Force deployment of all modules'
-        required: true
-        default: 'false'
+    paths:
+      - "clouds/bigquery/**"
+      - ".github/workflows/bigquery.yml"
 
 env:
-  INPUT_FORCE_DEPLOY: ${{ github.event.inputs.force_deploy }}
+  NODE_VERSION: 14
 
 jobs:
 
-  deploy-bq:
+  test:
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
-    if: |
-      ( github.event_name == 'push' ) ||
-      ( github.event_name == 'workflow_dispatch' && contains(fromJson('["bigquery", "all"]'), github.event.inputs.cloud) )
+    timeout-minutes: 30
+    env:
+      GCLOUD_VERSION: 290.0.1
+      BQ_REGION: us
+      BQ_PROJECT: bqcartoci
+      BQ_BUCKET: gs://bqcartoci/
+      BQ_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
+          project_id: ${{ env.BQ_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ env.BQ_PROJECT }}
+      - name: Run linter and tests
+        run: |
+          cd clouds/bigquery
+          make lint && \
+          make deploy && \
+          make test && \
+          make remove
+
+  deploy-internal:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
     strategy:
       matrix:
         include:
@@ -220,5 +249,39 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
-      - name: Deploy to production
-        run: make deploy CLOUD=bigquery
+      - name: Run deploy
+        run: |
+          cd clouds/bigquery
+          make deploy production=1
+
+  publish:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-bigquery
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+      - name: Create package
+        run: |
+          cd clouds/bigquery
+          make create-package
+      - name: Publish package
+        run: |
+          cd clouds/bigquery
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+
