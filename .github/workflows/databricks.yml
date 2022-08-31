@@ -10,6 +10,7 @@ env:
   PYTHON3_VERSION: 3.8.11
 
 jobs:
+  if: github.ref_name == 'master'
   test:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
@@ -99,7 +100,6 @@ jobs:
 
   publish:
     name: Publish Artifacts
-    needs: test
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
