@@ -15,7 +15,7 @@ const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 const functionsFilter = (argv.functions && argv.functions.split(',')) || [];
-const all = argv.all || !(diff.length || modulesFilter.length || functionsFilter.length);
+const all = !(diff.length || modulesFilter.length || functionsFilter.length);
 
 // Extract functions
 const functions = [];
@@ -85,4 +85,5 @@ functions.forEach(f => add(f));
 const content = output.map(f => f.content).join('\n');
 const libraries = [... new Set(content.match(new RegExp('@@SF_LIBRARY_.*@@', 'g')))]
     .map(l => l.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase());
+
 process.stdout.write(libraries.join(' '));

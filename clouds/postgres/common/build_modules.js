@@ -93,12 +93,10 @@ function add (f, include) {
         });
     }
 }
-
 functions.forEach(f => add(f));
 
 // Replace environment variables
-const template = output.map(f => f.content).join('\n');
-let content = '';
+let content = output.map(f => f.content).join('\n');
 
 function apply_replacements (text) {
     const replacements = process.env.REPLACEMENTS.split(' ');
@@ -112,12 +110,12 @@ function apply_replacements (text) {
 }
 
 if (argv.production) {
-    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString()
-    const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString()
-    content = header + template + apply_replacements(footer);
-} else {
-    content = template;
+    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
+    content = header + content;
 }
+
+const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
+content += footer;
 
 content = apply_replacements(content);
 

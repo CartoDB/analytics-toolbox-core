@@ -99,7 +99,7 @@ functions.forEach(f => add(f));
 const template = output.map(f => f.content).join('\n');
 
 //Extract functions declaration
-const udfs = [] 
+const udfs = [];
 //For the moment procedures cannot be shared
 const functionMatches = template.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=(?<!TEMP )SECURE FUNCTION)(.*?)(?=RETURNS)','g'));
 for (const functionMatch of functionMatches) {
@@ -126,7 +126,7 @@ for (const functionMatch of functionMatches) {
     udfs.push(functSignature)
 }
 
-let content = ''
+let content = '';
 udfs.forEach(udf => content += `GRANT USAGE ON FUNCTION ${udf} TO SHARE @@SF_SHARE@@;\n`);
 
 // Replace environment variables

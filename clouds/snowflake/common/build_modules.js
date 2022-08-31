@@ -105,8 +105,7 @@ if (argv.production) {
 } else {
     separator = '\n-->\n';  // marker to future SQL split
 }
-const template = output.map(f => f.content).join(separator);
-let content = '';
+let content = output.map(f => f.content).join(separator);
 
 function apply_replacements (text) {
     const libraries = [... new Set(text.match(new RegExp('@@SF_LIBRARY_.*@@', 'g')))];
@@ -133,12 +132,12 @@ function apply_replacements (text) {
 }
 
 if (argv.production) {
-    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString()
-    const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString()
-    content = header + template + apply_replacements(footer);
-} else {
-    content = template;
+    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
+    content = header + separator + content
 }
+
+const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
+content += separator + footer;
 
 content = apply_replacements(content);
 

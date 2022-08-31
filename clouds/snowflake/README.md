@@ -54,17 +54,28 @@ Make commands can be run also inside `libraries/javascript` and `modules` folder
 
 **Filtering**
 
-Commands `build-modules`, `build-libraries`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-libraries`, `build-modules`, `deploy-modules`, `test-libraries`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter
 
-For example:
+Example:
 
 ```
-make build diff=modules/quadbin/test/test_QUADBIN_RESOLUTION.py
-make deploy modules=quadbin,constructors
-make test functions=ST_MAKEENVELOPE
+make build-libraries diff=modules/sql/quadbin/QUADBIN_BBOX.sql
+make build-modules diff=modules/sql/quadbin/QUADBIN_RESOLUTION.sql
+make deploy-modules modules=quadbin,constructors
+make test-modules functions=ST_MAKEENVELOPE
+make create-package modules=quadbin
+```
+
+Command `test-libraries` can be also filtered by setting the `test` variable with a path of the test file. It supports passing the name of the test. Note that `build-libraries` will rebuild the libraries to make them suitable for testing.
+
+Example:
+
+```
+make test-libraries modules=constructors test=constructors.test.js
+make test-libraries functions=ST_BUFFER test="transformations_buffer.test.js -t buffer"
 ```
 
 Additionally, `nodeps=1` filter can be passed to skip building and including the dependencies. It can be used to speed up re-deployments during development.

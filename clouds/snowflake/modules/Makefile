@@ -10,11 +10,15 @@ COMMON_DIR = $(ROOT_DIR)/../common
 LIBS_BUILD_DIR ?= $(ROOT_DIR)/../libraries/javascript/build
 
 MODULES_DIRS ?= $(ROOT_DIR)
-export VERSION_FUNCTION ?= VERSION_CORE
-export PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+export SF_VERSION_FUNCTION ?= VERSION_CORE
+ifeq ($(production),1)
+export SF_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+else
+export SF_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
+endif
 export SF_SHARE ?= $(SF_PREFIX)ANALYTICS_TOOLBOX
 
-REPLACEMENTS = "SF_SCHEMA VERSION_FUNCTION PACKAGE_VERSION SF_SHARE"
+REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE"
 
 include $(COMMON_DIR)/Makefile
 

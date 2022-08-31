@@ -7,10 +7,14 @@ BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
-export VERSION_FUNCTION ?= VERSION_CORE
-export PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+export PG_VERSION_FUNCTION ?= VERSION_CORE
+ifeq ($(production),1)
+export PG_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+else
+export PG_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
+endif
 
-REPLACEMENTS = "PG_SCHEMA PG_LIBRARY VERSION_FUNCTION PACKAGE_VERSION"
+REPLACEMENTS = "PG_SCHEMA PG_LIBRARY PG_VERSION_FUNCTION PG_PACKAGE_VERSION"
 
 include $(COMMON_DIR)/Makefile
 

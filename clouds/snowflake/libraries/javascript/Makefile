@@ -35,7 +35,7 @@ build:
 
 build-libs: build-install $(NODE_MODULES_DEV)
 ifdef UNIT_TEST
-	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
+	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIR) \
@@ -44,7 +44,7 @@ ifdef UNIT_TEST
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 	done
 else
-	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --all=$(all) --diff=$(diff) --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
+	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff=$(diff) --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIRS) \
@@ -61,7 +61,7 @@ build-install:
 
 test:
 	echo "Testing libraries..."
-	UNIT_TEST=1 $(MAKE) build all=1
+	UNIT_TEST=1 $(MAKE) build
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	jest --testTimeout=30000 --bail --verbose $(TEST_DIR)/$(test)
 

@@ -8,6 +8,7 @@ from psycopg2 import connect
 
 function = ''
 
+
 def run_queries(queries):
     global function
     with connect(
