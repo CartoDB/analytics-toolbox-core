@@ -22,7 +22,7 @@ SF_DATABASE=your-snowflake-database
 SF_USER=your-snowflake-user
 SF_PASSWORD=your-snowflake-password
 SF_ROLE=your-snowflake-role
-SF_SHARE=
+SF_SHARE=your-snowflake-share  # only for marketplace
 ```
 
 ## Structure

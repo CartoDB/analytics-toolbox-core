@@ -12,6 +12,7 @@ env:
 jobs:
 
   test:
+    if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -43,7 +44,7 @@ jobs:
 
   deploy:
     # if: github.ref_name == 'master'
-    needs: test
+    # needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
@@ -71,7 +72,7 @@ jobs:
 
   deploy-share:
     # if: github.ref_name == 'master'
-    needs: test
+    needs: deploy
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
@@ -95,10 +96,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
         run: |
-          cd clouds/snowflake/modules
+          cd clouds/snowflake
+          make deploy
+          cd modules
           make deploy-share
 
   publish:
+    if: false
     # if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04
