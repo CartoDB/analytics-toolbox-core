@@ -46,10 +46,26 @@ build: $(NODE_MODULES_DEV)
 build-libraries:
 	$(MAKE) -C ../libraries/javascript build
 
+build-share: $(NODE_MODULES_DEV)
+	echo "Building share..."
+	rm -rf $(BUILD_DIR)
+	mkdir $(BUILD_DIR)
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	$(COMMON_DIR)/build_share.js $(MODULES_DIRS) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps)
+
 deploy: check build
 	echo "Deploying modules..."
 	$(COMMON_DIR)/run-query.js "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);"
 	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/modules.sql
+
+deploy-share: check build-share
+	echo "Deploying share..."
+	$(COMMON_DIR)/run-query.js "CREATE SHARE IF NOT EXISTS $(SF_SHARE);"
+	$(COMMON_DIR)/run-query.js "GRANT USAGE ON DATABASE $(SF_DATABASE) TO SHARE $(SF_SHARE);"
+	$(COMMON_DIR)/run-query.js "GRANT USAGE ON SCHEMA $(SF_DATABASE).$(SF_SCHEMA) TO SHARE $(SF_SHARE);"
+	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/share.sql
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
@@ -61,28 +77,14 @@ test: check $(NODE_MODULES_DEV)
 		fi; \
 	done;
 
-remove:
+remove: $(NODE_MODULES_DEV)
 	echo "Removing modules..."
 	$(COMMON_DIR)/run-query.js "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE;"
+
+remove-share: $(NODE_MODULES_DEV)
+	echo "Removing share..."
+	$(COMMON_DIR)/run-query.js "DROP SHARE $(SF_SHARE);"
 
 clean:
 	echo "Cleaning modules..."
 	rm -rf $(BUILD_DIR) $(NODE_MODULES_DEV)
-
-build-share:
-	echo "Building share..."
-	rm -rf $(BUILD_DIR)
-	mkdir $(BUILD_DIR)
-	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_share.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps)
-
-deploy-share: check build-share
-	$(COMMON_DIR)/run-query.js "CREATE SHARE IF NOT EXISTS $(SF_SHARE);"
-	$(COMMON_DIR)/run-query.js "GRANT USAGE ON DATABASE $(SF_DATABASE) TO SHARE $(SF_SHARE);"
-	$(COMMON_DIR)/run-query.js "GRANT USAGE ON SCHEMA $(SF_DATABASE).$(SF_SCHEMA) TO SHARE $(SF_SHARE);"
-	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/share.sql
-
-remove-share:
-	$(COMMON_DIR)/run-query.js "DROP SHARE $(SF_SHARE);"

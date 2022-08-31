@@ -42,7 +42,7 @@ jobs:
           make remove
 
   deploy:
-    if: github.ref_name == 'master'
+    # if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -52,7 +52,6 @@ jobs:
       SF_USER: ${{ secrets.SF_USER_CD }}
       SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
       SF_ROLE: ${{ secrets.SF_ROLE_CD }}
-      SF_SHARE: carto_os_temp
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -68,12 +67,39 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/snowflake
-          make deploy production=1
-          cd modules
+          make deploy
+
+  deploy-share:
+    # if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_SHARE }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_SHARE }}
+      SF_USER: ${{ secrets.SF_USER_SHARE }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_SHARE }}
+      SF_ROLE: ${{ secrets.SF_ROLE_SHARE }}
+      SF_SHARE: ${{ secrets.SF_SHARE }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run deploy
+        run: |
+          cd clouds/snowflake/modules
           make deploy-share
 
   publish:
-    if: github.ref_name == 'master'
+    # if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 10

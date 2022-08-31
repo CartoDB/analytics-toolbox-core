@@ -22,8 +22,7 @@ SF_DATABASE=your-snowflake-database
 SF_USER=your-snowflake-user
 SF_PASSWORD=your-snowflake-password
 SF_ROLE=your-snowflake-role
-SF_SHARE_PREFIX=
-SF_SHARE_ENABLED=0
+SF_SHARE=
 ```
 
 ## Structure

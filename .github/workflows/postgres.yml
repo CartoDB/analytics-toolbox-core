@@ -78,7 +78,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/postgres
-          make deploy production=1
+          make deploy
 
   publish:
     if: github.ref_name == 'master'
