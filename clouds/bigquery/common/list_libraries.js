@@ -47,7 +47,7 @@ if (!nodeps) {
     functions.forEach(mainFunction => {
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (mainFunction.content.includes(`DATASET@@.${depFunction.name}\`(`)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

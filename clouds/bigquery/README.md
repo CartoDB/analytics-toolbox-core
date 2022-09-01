@@ -1,6 +1,6 @@
 # CARTO Analytics Toolbox for Bigquery
 
-The Analytics Toolbox for Bigquery contains SQL functions and JavaScript libraries. The functions are deployed in a schema called `carto` inside a specific database. The JavaScript libraries are deployed inside the SQL functions. In Bigquery, the functions can be used with tables of any database in the same account.
+The Analytics Toolbox for Bigquery contains SQL functions and JavaScript libraries. The functions are deployed in a dataset called `carto` inside a specific project. The JavaScript libraries are deployed inside the SQL functions. In Bigquery, the functions can be used with tables of any project in the same account.
 
 ## Tools
 

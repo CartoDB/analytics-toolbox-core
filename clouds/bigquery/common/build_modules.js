@@ -61,7 +61,7 @@ if (!nodeps) {
     functions.forEach(mainFunction => {
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (mainFunction.content.includes(`DATASET@@.${depFunction.name}\``)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }
@@ -108,19 +108,6 @@ if (argv.production) {
 let content = output.map(f => f.content).join(separator);
 
 function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@SF_LIBRARY_.*@@', 'g')))];
-    for (let library of libraries) {
-        const libraryName = library.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
-        const libraryPath = path.join(libsBuildDir, libraryName);
-        if (fs.existsSync(libraryPath)) {
-            const libraryContent = fs.readFileSync(libraryPath).toString();
-            text = text.replace(new RegExp(library, 'g'), libraryContent);
-        }
-        else {
-            console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
-            process.exit(1);
-        }
-    }
     const replacements = process.env.REPLACEMENTS.split(' ');
     for (let replacement of replacements) {
         if (replacement) {
