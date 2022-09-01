@@ -3,7 +3,7 @@ name: Databricks CI/CD
 on:
   push:
     paths:
-      - "clouds/databricks"
+      - "clouds/databricks/**"
       - ".github/workflows/databricks.yml"
 
 env:
