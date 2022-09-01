@@ -11,7 +11,7 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-#.SILENT:
+.SILENT:
 
 .PHONY: check venv
 
