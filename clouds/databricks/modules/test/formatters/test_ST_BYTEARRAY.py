@@ -1,5 +1,5 @@
 import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_bytearray_success():
     query = "SELECT @@DB_SCHEMA@@.ST_BYTEARRAY('POINT (-76.0913 18.4275)');"

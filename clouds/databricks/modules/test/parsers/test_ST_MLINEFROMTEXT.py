@@ -1,5 +1,5 @@
 import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_mlinefromtext_success():
     query = "SELECT @@DB_SCHEMA@@.ST_ASGEOJSON(@@DB_SCHEMA@@.ST_MLINEFROMTEXT('MULTILINESTRING((1 1, 3 5), (-5 3, -8 -2))'));"

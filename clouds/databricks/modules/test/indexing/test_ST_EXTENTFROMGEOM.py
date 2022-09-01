@@ -1,5 +1,5 @@
 import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_extentfromgeom_success():
     query = "SELECT @@DB_SCHEMA@@.ST_EXTENTFROMGEOM(@@DB_SCHEMA@@.ST_MAKEBBOX(0, 0, 1, 1))"

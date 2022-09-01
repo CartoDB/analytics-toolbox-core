@@ -55,8 +55,8 @@ jobs:
           cd clouds/databricks
           make lint && \
           make deploy && \
-          make test-integration && \
-          make clean-deploy
+          make test && \
+          make remove
 
   deploy:
     if: github.ref_name == 'master'

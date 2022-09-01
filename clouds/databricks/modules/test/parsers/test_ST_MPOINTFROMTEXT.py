@@ -1,5 +1,5 @@
 import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_mpointfromtext_success():
     query = "SELECT @@DB_SCHEMA@@.ST_ASGEOJSON(@@DB_SCHEMA@@.ST_MPOINTFROMTEXT('MULTIPOINT (10 40, 40 30, 20 20, 30 10)'));"

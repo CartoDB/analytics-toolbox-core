@@ -1,5 +1,5 @@
 import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_polygonfromtext_success():
     query = "SELECT @@DB_SCHEMA@@.ST_ASGEOJSON(@@DB_SCHEMA@@.ST_POLYGONFROMTEXT('POLYGON((-73.98955 40.71278, -73.98958 40.71299, -73.98955 40.71278))'));"

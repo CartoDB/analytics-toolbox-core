@@ -1,5 +1,5 @@
 import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_isempty_success():
     query = "SELECT @@DB_SCHEMA@@.ST_ISEMPTY(@@DB_SCHEMA@@.ST_GEOMFROMWKT('LINESTRING EMPTY'));"

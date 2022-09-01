@@ -7,9 +7,9 @@ ENV_DIR ?= $(ROOT_DIR)/../..
 
 include common/Makefile
 
-SILENT:
+#.SILENT:
 
-.PHONY: help lint build deploy test remove clean create-package
+.PHONY: help lint build deploy test remove clean 
 
 help:
 	echo "Please choose one of the following targets: lint build deploy test remove clean"
@@ -44,26 +44,26 @@ test:
 	$(MAKE) test-modules
 
 test-libraries:
-	$(MAKE) -C libraries/python test
+	$(MAKE) -C libraries/scala test
 
 test-modules:
-	echo "WIP"
+	$(MAKE) -C modules test
 
 remove:
 	$(MAKE) remove-libraries
 	$(MAKE) remove-modules
 
 remove-libraries:
-	$(MAKE) -C libraries/python remove
+	echo "libraries"
 
 remove-modules:
-	echo "WIP"
+	$(MAKE) -C modules remove
 
 clean:
 	$(MAKE) clean-libraries
 
 clean-libraries:
-	$(MAKE) -C libraries/python clean
+	$(MAKE) -C libraries/scala clean
 
 clean-modules:
 	echo "WIP"

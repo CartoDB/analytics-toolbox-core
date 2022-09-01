@@ -40,7 +40,7 @@ clean:
 upload-jars: clean build
 	echo "Uploading jars"
 	dbfs mkdirs $(JAR_DEPLOY_PATH)
-	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*-SNAPSHOT.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
 	echo "Jars uploaded"
 
 upload-sql:
@@ -55,7 +55,9 @@ endif
 
 create-udfs:
 	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
-	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
+	echo "Removing install script from the workspace"
+	databricks workspace rm -r $(SQL_DEPLOY_PATH)
 
 deploy: check
 	$(MAKE) upload-jars
@@ -66,5 +68,6 @@ deploy: check
 	echo "Installing functions"
 	$(MAKE) create-udfs
 
-remove:
-	echo "WIP"
+remove: check
+	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	dbfs rm $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
