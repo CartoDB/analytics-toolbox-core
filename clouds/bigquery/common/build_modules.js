@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { query_timeout } = require('pg/lib/defaults');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
@@ -61,7 +62,16 @@ if (!nodeps) {
     functions.forEach(mainFunction => {
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`DATASET@@.${depFunction.name}\``)) {
+                const depFunctionMatches = [];
+                depFunctionMatches.push(...depFunction.content.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=(?<!TEMP )FUNCTION)(.*?)(?=AS )','g')));
+                depFunctionMatches.push(...depFunction.content.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g')));
+                const depFunctionNames = [];
+                depFunctionMatches.forEach((depFunctionMatch) => {
+                    let qualifiedDepFunctName = depFunctionMatch[0].replace(/[ \p{Diacritic}]/gu, '').split('(')[0];
+                    qualifiedDepFunctName = qualifiedDepFunctName.split('.');
+                    depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
+                })
+                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\``))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }
