@@ -4,6 +4,7 @@ import measurements from './measurements';
 import quadkey from './quadkey';
 import s2 from './s2';
 import processing from './processing';
+import transformations from './transformations';
 
 export default {
     accessors,
@@ -11,5 +12,6 @@ export default {
     measurements,
     quadkey,
     s2,
-    processing
+    processing,
+    transformations
 };
