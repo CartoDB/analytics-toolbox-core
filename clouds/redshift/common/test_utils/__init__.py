@@ -21,6 +21,11 @@ def run_query(query):
         return 'No results returned'
 
 
+def floats_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
+    # for Python >= 3.5: math.isclose(a, b, rel_tol, abs_tol):
+    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+
 def run_queries(queries):
     conn = redshift_connector.connect(
         host=os.environ['RS_HOST'],
