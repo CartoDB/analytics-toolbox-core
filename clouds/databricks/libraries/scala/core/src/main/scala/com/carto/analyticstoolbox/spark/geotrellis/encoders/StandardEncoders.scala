@@ -20,7 +20,6 @@ import com.carto.analyticstoolbox.spark.geotrellis.Z2Index
 import geotrellis.vector.Extent
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
-
 import scala.reflect.runtime.universe.TypeTag
 
 trait StandardEncoders extends Serializable {

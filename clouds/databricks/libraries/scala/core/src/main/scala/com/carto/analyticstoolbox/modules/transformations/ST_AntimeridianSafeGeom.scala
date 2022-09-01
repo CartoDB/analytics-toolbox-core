@@ -21,7 +21,6 @@ import com.carto.analyticstoolbox.modules._
 import org.locationtech.geomesa.spark.jts.udf.GeometricProcessingFunctions
 import org.locationtech.jts.geom.Geometry
 
-class
-ST_AntimeridianSafeGeom extends HUDF[Geometry, Geometry] {
+class ST_AntimeridianSafeGeom extends HUDF[Geometry, Geometry] {
   def function: Geometry => Geometry = GeometricProcessingFunctions.ST_antimeridianSafeGeom
 }
