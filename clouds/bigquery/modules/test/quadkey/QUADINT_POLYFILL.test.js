@@ -1,6 +1,6 @@
 const { runQuery } = require('../../../common/test-utils');
 
-const polyfillFixturesOut = require('./st_asquadint_polyfill_fixtures/out/polyfill');
+const polyfillFixturesOut = require('./fixtures/quadint_polyfill_out');
 
 test('QUADINT_POLYFILL should work', async () => {
     const feature = {

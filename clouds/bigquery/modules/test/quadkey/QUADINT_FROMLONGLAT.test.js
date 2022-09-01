@@ -1,6 +1,6 @@
 const { runQuery } = require('../../../common/test-utils');
 
-const quadintsFixturesOut = require('./longlat_asquadint_fixtures/out/quadints');
+const quadintsFixturesOut = require('./fixtures/quadint_fromlonglat_out');
 
 test('QUADINT_FROMLONGLAT should not fail at any level of zoom', async () => {
     const query = `WITH zoomContext AS (
