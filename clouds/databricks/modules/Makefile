@@ -1,0 +1,58 @@
+# Makefile modules for Redshift
+
+ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+
+ENV_DIR ?= $(ROOT_DIR)/..
+BUILD_DIR ?= $(ROOT_DIR)/build
+COMMON_DIR ?= $(ROOT_DIR)/../common
+
+MODULES_DIRS ?= .
+export RS_VERSION_FUNCTION ?= VERSION_CORE
+ifeq ($(production),1)
+export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+else
+export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
+endif
+
+REPLACEMENTS = "RS_SCHEMA RS_LIBRARY RS_VERSION_FUNCTION RS_PACKAGE_VERSION"
+
+include $(COMMON_DIR)/Makefile
+
+.SILENT:
+
+.PHONY: help lint build deploy test remove clean
+
+help:
+	echo "Available targets: lint build deploy test remove clean"
+
+test-integration: check check-extra venv
+	. $(COMMON_DIR)/venv/bin/activate && \
+	for module in `ls $(CLOUD_DIR)/modules`; do \
+		echo "> Module $${module}"; \
+		pytest -rP -p no:warnings modules/$${module} || exit 1; \
+	done; \
+	deactivate
+	
+test-integration-full:
+	$(MAKE) deploy
+	$(MAKE) test-integration || ($(MAKE) clean-deploy && exit 1)
+	$(MAKE) clean-deploy
+
+upload-sql:
+ifndef DB_SCHEMA
+	echo "Databricks schema not defined, using default"
+	$(eval DB_SCHEMA := default)
+	echo $(DB_SCHEMA)
+endif
+	sed -i'.bkp' '1s/^/USE ${DB_SCHEMA};\n/' $(SQL_PATH)
+	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
+	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
+
+create-udfs:
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json
+
+deploy: 
+	$(MAKE) upload-sql		
+	echo "Installing functions"
+	$(MAKE) create-udfs
