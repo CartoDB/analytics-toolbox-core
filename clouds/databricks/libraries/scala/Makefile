@@ -2,10 +2,12 @@
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
-COMMON_DIR ?= $(ROOT_DIR)/../../common
+COMMON_DIR := $(ROOT_DIR)/../../common
 SCALA_DIR := $(ROOT_DIR)
 JAR_DIR = $(SCALA_DIR)/core/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_DATASET_PREFIX)carto
+SQL_DEPLOY_PATH = /Shared/$(DB_DATASET_PREFIX)carto
+SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
 
 include $(COMMON_DIR)/Makefile
 
@@ -63,7 +65,6 @@ deploy: check
 	$(MAKE) upload-sql		
 	echo "Installing functions"
 	$(MAKE) create-udfs
-
 
 remove:
 	echo "WIP"

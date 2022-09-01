@@ -1,6 +1,8 @@
 # Makefile for Databricks
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+ENV_DIR ?= $(ROOT_DIR)/../..
+
 
 
 include common/Makefile
