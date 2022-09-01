@@ -10,5 +10,4 @@ def run_query(query):
 
         with connection.cursor() as cursor:
             cursor.execute(query)
-            print(f"executing query '{query}'")
             return cursor.fetchall()
