@@ -2,10 +2,10 @@ const { runQuery } = require('../../../common/test-utils');
 
 // Points and featureCollection got from the turfjs tests
 // Convert the points to a way BigQuery can ingest them
-const pointsFixturesIn = require('./envelope_fixtures/in/points');
-const pointsFixturesOut = require('./envelope_fixtures/out/points');
-const featureColFixturesIn = require('./envelope_fixtures/in/featureCollection');
-const featureColFixturesOut = require('./envelope_fixtures/out/featureCollection');
+const pointsFixturesIn = require('./fixtures/st_envelope_points_in');
+const pointsFixturesOut = require('./fixtures/st_envelope_points_out');
+const featureColFixturesIn = require('./fixtures/st_envelope_featureCollection_in');
+const featureColFixturesOut = require('./fixtures/st_envelope_featureCollection_out');
 
 function getFeatureArray (fixture) {
     let featuresArray = '[';
