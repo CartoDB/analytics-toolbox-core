@@ -47,8 +47,11 @@ build-modules:
 	cp modules/build/modules.sql $(BUILD_DIR)
 
 deploy:
-	$(MAKE) build-libraries
+	$(MAKE) deploy-libraries
 	$(MAKE) deploy-modules
+
+deploy-libraries:
+	$(MAKE) -C libraries/javascript deploy
 
 deploy-modules:
 	$(MAKE) -C modules deploy
