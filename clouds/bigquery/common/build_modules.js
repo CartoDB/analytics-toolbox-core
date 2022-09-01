@@ -10,12 +10,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const { query_timeout } = require('pg/lib/defaults');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
-const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
