@@ -9,7 +9,7 @@ JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_DATASET_PREFIX)carto
 
 include $(COMMON_DIR)/Makefile
 
-#.SILENT:
+.SILENT:
 
 .PHONY: lint lint-fix build deploy test remove clean
 
@@ -41,14 +41,29 @@ upload-jars: clean build
 	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*-SNAPSHOT.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
 	echo "Jars uploaded"
 
+upload-sql:
+ifndef DB_SCHEMA
+	echo "Databricks schema not defined, using default"
+	$(eval DB_SCHEMA := default)
+	echo $(DB_SCHEMA)
+endif
+	sed -i'.bkp' '1s/^/USE ${DB_SCHEMA};\n/' $(SQL_PATH)
+	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
+	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
+
+create-udfs:
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json
+
 deploy: check
 	$(MAKE) upload-jars
 	echo "Installing libraries"
 	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
 	echo "Libraries installed "
-	
-	$(MAKE) deploy-libraries
-	$(MAKE) remove-libraries
+	$(MAKE) upload-sql		
+	echo "Installing functions"
+	$(MAKE) create-udfs
+
 
 remove:
 	echo "WIP"

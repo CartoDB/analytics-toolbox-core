@@ -23,7 +23,6 @@ build:
 	$(MAKE) build-modules
 
 build-libraries:
-	mkdir -p $(BUILD_DIR)/libs
 	$(MAKE) -C libraries/scala build
 	
 build-modules:
