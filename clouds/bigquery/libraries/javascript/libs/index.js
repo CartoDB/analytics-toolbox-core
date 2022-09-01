@@ -5,6 +5,8 @@ import quadkey from './quadkey';
 import s2 from './s2';
 import processing from './processing';
 import transformations from './transformations';
+import h3 from './h3';
+import placekey from './placekey';
 
 export default {
     accessors,
@@ -13,5 +15,7 @@ export default {
     quadkey,
     s2,
     processing,
-    transformations
+    transformations,
+    h3,
+    placekey
 };
