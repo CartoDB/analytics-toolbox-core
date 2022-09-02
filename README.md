@@ -51,35 +51,13 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 
 ## Development
 
-The repo contains the implementation of the toolbox for all the clouds. The functions are organized in modules. Each module has the following structure:
-- `doc`: contains the SQL reference of the functions
-- `lib`: contains the library code (JavaScript/Python)
-- `sql`: contains the function's code (SQL)
-- `test`: contains both the unit and integration tests
-
-Inside a module, you can run the following commands. These commands are available for any {module}/{cloud}. For example, you can enter the module `cd modules/accessors/bigquery` and then run the command:
-- `make help`: shows the commands available in the Makefile.
-- `make lint`: runs a linter (using eslint or flake8).
-- `make lint-fix`: runs a linter (using eslint or flake8) and fixes the trivial issues.
-- `make build`: builds the bundles (using rollup or zip).
-- `make deploy`: builds the bundles and deploys and SQL functions to the data warehouse using the env variables.
-- `make test-unit`: builds the bundles and runs the unit tests for these bundles (using jest or pytest).
-- `make test-integration`: runs just the integration tests (using jest or pytest). It performs requests to real data warehouses.
-- `make test-integration-full`: runs the full-path integration tests (using jest or pytest). It is equivalent to `deploy` + `test-integration` + `clean-deploy`.
-- `make clean`: removes the installed dependencies and generated files.
-- `make clean-deploy`: removes all the assets, functions, procedures, tables uploaded in the `deploy`.
-
-These commands can be used with all the modules at once from the root folder. For example, `make deploy CLOUD=bigquery`.
-
-Additionally, [this tool](./tools/setool/) has been developed to generate code templates for new modules and functions.
-
 | Cloud | Development |
 |---|---|
 | BigQuery | |
 | Snowflake | [README.md](./clouds/snowflake/README.md) |
 | Redshift | [README.md](./clouds/redshift/README.md) |
 | Postgres | [README.md](./clouds/postgres/README.md) |
-| Databricks | |
+| Databricks | [README.md](./clouds/databricks/README.md) |
 
 ### BigQuery
 

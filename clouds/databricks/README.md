@@ -1,4 +1,4 @@
-# CARTO Analytics Toolbox for Redshift
+# CARTO Analytics Toolbox for Databricks
 
 CARTO Analytics Toolbox for Databricks provides geospatial functionality leveraging the GeoMesa SparkSQL capabilities. It implements Spatial Hive UDFs. In order to install the toolbox the library (jar-with-dependencies) needs to be installed in the cluster you are using, and the Hive UDFs registered via createUDFs sql script
 
@@ -13,23 +13,25 @@ Make sure you have installed the following tools:
 - `databricks cli`: https://docs.databricks.com/dev-tools/cli/index.html
 - `jq`: https://stedolan.github.io/jq/ (v1.6)
 
-In order to set up authentication you can use a databricks token and the databricks host URL
-``
+In order to set up authentication you can use a databricks token and the databricks host URL.
+
+```
 databricks configure --token
-``
+```
 
 ## Environment variables
-The `.env` file contains the variables required to deploy and run the toolbox. Only the cluster id is mandatory. Default schema is 'default'
+
+The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values. Only the cluster id is mandatory. Default schema is 'default'.
 
 ```
 # Databricks
-DB_CLUSTER_ID=my-cluster-id
-DB_SCHEMA=schema
-DB_DATASET_PREFIX=prefix_
+DB_DATASET_PREFIX=
+DB_CLUSTER_ID=<cluster-id>
+DB_SCHEMA=<schema>
 # For Databricks integration tests
-DATABRICKS_SERVER_HOSTNAME=hostname
-DATABRICKS_HTTP_PATH=http_path
-DATABRICKS_TOKEN=token
+DATABRICKS_SERVER_HOSTNAME=<hostname>
+DATABRICKS_HTTP_PATH=<http_path>
+DATABRICKS_TOKEN=<token>
 ```
 
 ## Structure

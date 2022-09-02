@@ -3,13 +3,11 @@
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 ENV_DIR ?= $(ROOT_DIR)/../..
 
-
-
 include common/Makefile
 
-#.SILENT:
+.SILENT:
 
-.PHONY: help lint build deploy test remove clean 
+.PHONY: help lint build deploy test remove clean
 
 help:
 	echo "Please choose one of the following targets: lint build deploy test remove clean"
@@ -26,9 +24,9 @@ build:
 
 build-libraries:
 	$(MAKE) -C libraries/scala build
-	
+
 build-modules:
-	echo "WIP"
+	echo "No action"
 
 deploy:
 	$(MAKE) deploy-libraries
@@ -38,7 +36,7 @@ deploy-libraries:
 	$(MAKE) -C libraries/scala deploy
 
 deploy-modules:
-	echo "WIP"
+	echo "No action"
 
 test:
 	$(MAKE) test-modules
@@ -66,5 +64,4 @@ clean-libraries:
 	$(MAKE) -C libraries/scala clean
 
 clean-modules:
-	echo "WIP"
-
+	echo "No action"
