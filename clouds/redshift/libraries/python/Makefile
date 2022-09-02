@@ -61,7 +61,7 @@ endif
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(FROM)/$(notdir $$f)' $(CREDENTIALS);" >> $(BUILD_DIR)/libraries.sql; \
 	done
 
-deploy: build
+deploy: check build
 	echo "Deploying libraries..."
 	$(MAKE) copy-libraries
 	$(MAKE) deploy-libraries
