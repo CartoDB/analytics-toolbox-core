@@ -51,7 +51,7 @@ DATABRICKS_TOKEN=<token>
 - `make help`: shows the commands available in the Makefile
 - `make lint`: runs a linter (scalafix)
 - `make build`: Builds the jar to deploy
-- `make deploy`: builds and deploys the libraries in the Redshift cluster, and SQL scripts in the Redshift database
+- `make deploy`: builds and deploys the libraries in the Databricks cluster, and SQL scripts in the Databricks database
 - `make test`: runs the the modules tests with the Databricks cluster (pytest)
 - `make remove`: removes all the libraries and SQL functions from the Databricks cluster and database
 - `make clean`: cleans the installed dependencies and generated files locally
