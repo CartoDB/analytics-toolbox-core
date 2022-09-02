@@ -11,10 +11,10 @@ include $(COMMON_DIR)/Makefile
 
 #.SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help test remove
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: test remove"
 
 test: check check-extra venv
 	. $(COMMON_DIR)/venv/bin/activate && \
