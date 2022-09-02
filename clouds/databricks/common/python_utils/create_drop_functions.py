@@ -1,5 +1,4 @@
 import os
-from databricks import sql
 
 
 python_util_path = os.path.dirname(os.path.realpath(__file__))
