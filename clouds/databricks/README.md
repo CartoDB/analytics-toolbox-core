@@ -25,7 +25,7 @@ The `.env` file contains the variables required to deploy and run the toolbox. R
 
 ```
 # Databricks
-DB_DATASET_PREFIX=
+DB_PREFIX=
 DB_CLUSTER_ID=<cluster-id>
 DB_SCHEMA=<schema>
 # For Databricks integration tests

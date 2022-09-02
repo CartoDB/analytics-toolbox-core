@@ -1,6 +1,6 @@
 # Makefile for Databricks modules
 
-SQL_DEPLOY_PATH = /Shared/$(DB_DATASET_PREFIX)carto
+SQL_DEPLOY_PATH = /Shared/$(DB_PREFIX)carto
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
