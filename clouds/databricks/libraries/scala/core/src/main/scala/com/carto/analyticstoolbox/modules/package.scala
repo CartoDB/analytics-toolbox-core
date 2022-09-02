@@ -12,7 +12,7 @@ package object modules {
     def convert(argument: Any): T = TWKBUtils.read(argument.asInstanceOf[Array[Byte]]).asInstanceOf[T]
   }
 
-  implicit def geometryUnaryDeserializer[T <: Geometry : HConverter]: HDeserializer[Id, T] =
+  implicit def geometryUnaryDeserializer[T <: Geometry: HConverter]: HDeserializer[Id, T] =
     (arguments, inspectors) => arguments.deserialize[Array[Byte]](inspectors).convert[T]
 
   implicit def geometrySerializer[T <: Geometry]: HSerializer[T] = new HSerializer[T] {

@@ -12,17 +12,17 @@ Make sure you have installed the following tools:
 
 ## Environment variables
 
-The `.env` file contains the variables required to deploy and run the toolbox.
+The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values.
 
 ```
 # Snowflake
 SF_PREFIX=
-SF_ACCOUNT=your-snowflake-account
-SF_DATABASE=your-snowflake-database
-SF_USER=your-snowflake-user
-SF_PASSWORD=your-snowflake-password
-SF_ROLE=your-snowflake-role
-SF_SHARE=your-snowflake-share  # only for marketplace
+SF_ACCOUNT=<account>.<region>
+SF_DATABASE=<database>
+SF_USER=<user>
+SF_PASSWORD=<password>
+SF_ROLE=<role>  # optional
+SF_SHARE=<share>  # optional
 ```
 
 ## Structure

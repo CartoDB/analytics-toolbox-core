@@ -1,0 +1,121 @@
+name: Databricks CI/CD
+
+on:
+  push:
+    paths:
+      - "clouds/databricks/**"
+      - ".github/workflows/databricks.yml"
+
+env:
+  PYTHON3_VERSION: 3.8.11
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    env:
+      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
+      DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
+      DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
+      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|scala)'
+          FILES: 'Makefile'
+      - name: Setup scala
+        uses: olafurpg/setup-scala@v11
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: install-databricks-cli
+        uses: microsoft/install-databricks-cli@v1.0.0
+      - name: Create databricks cfg file
+        uses: "DamianReeves/write-file-action@v1.0"
+        with:
+          path: /home/runner/.databrickscfg
+          write-mode: overwrite
+          contents: |
+            [DEFAULT]
+            host = https://dbc-fbcbc113-2a61.cloud.databricks.com
+            token = ${{ env.DATABRICKS_TOKEN }}
+            jobs-api-version = 2.1
+      - name: Run linter and tests
+        env:
+          DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
+        run: |
+          cd clouds/databricks
+          make lint && \
+          make deploy && \
+          make test-integration && \
+          make clean-deploy
+
+  deploy:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
+      DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
+      DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|scala)'
+          FILES: 'Makefile'
+      - name: Setup scala
+        uses: olafurpg/setup-scala@v11
+      - name: install-databricks-cli
+        uses: microsoft/install-databricks-cli@v1.0.0
+      - name: Create databricks cfg file
+        uses: "DamianReeves/write-file-action@v1.0"
+        with:
+          path: /home/runner/.databrickscfg
+          write-mode: overwrite
+          contents: |
+            [DEFAULT]
+            host = https://dbc-fbcbc113-2a61.cloud.databricks.com
+            token = ${{ secrets.DATABRICKS_TOKEN_CI }}
+            jobs-api-version = 2.1
+      - name: Run deploy
+        env:
+          DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
+        run: |
+          cd clouds/databricks
+          make deploy 
+
+  publish:
+    name: Publish Artifacts
+    needs: test
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup scala
+        uses: olafurpg/setup-scala@v11
+      - name: Release
+        run: |
+          cd clouds/databricks/libraries/scala
+          sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        if: ${{ env.SONATYPE_PASSWORD != '' && env.SONATYPE_USERNAME != '' }}
+
