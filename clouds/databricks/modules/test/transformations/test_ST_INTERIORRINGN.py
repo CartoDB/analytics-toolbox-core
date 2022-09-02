@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_interiorringn_success():
     query = """WITH t AS (
@@ -7,4 +7,4 @@ def test_st_interiorringn_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_INTERIORRINGN(geom, 1)) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "LINESTRING (20 20, 20 30, 30 30, 30 20, 20 20)"
+    assert result[0][0] == 'LINESTRING (20 20, 20 30, 30 30, 30 20, 20 20)'

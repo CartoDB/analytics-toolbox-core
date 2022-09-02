@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_crosses_success():
     query = """WITH t AS (
@@ -8,4 +8,4 @@ def test_st_crosses_success():
 )
 SELECT @@DB_SCHEMA@@.ST_CROSSES(lineA, lineB) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == True
+    assert result[0][0] is True

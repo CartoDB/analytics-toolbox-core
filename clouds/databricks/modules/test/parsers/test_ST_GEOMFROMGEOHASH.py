@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_geomfromgeohash_success():
     query = """WITH t AS (
@@ -7,4 +7,7 @@ def test_st_geomfromgeohash_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_GEOMFROMGEOHASH(geohash, 8)) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "POLYGON ((-90 11.25, -90 22.5, -67.5 22.5, -67.5 11.25, -90 11.25))"
+    assert (
+        result[0][0]
+        == 'POLYGON ((-90 11.25, -90 22.5, -67.5 22.5, -67.5 11.25, -90 11.25))'
+    )

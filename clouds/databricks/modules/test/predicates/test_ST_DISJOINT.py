@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_disjoint_success():
     query = """WITH t AS (
@@ -8,4 +8,4 @@ def test_st_disjoint_success():
 )
 SELECT @@DB_SCHEMA@@.ST_DISJOINT(lineA, lineB) AS disjoint FROM t;"""
     result = run_query(query)
-    assert result[0][0] == False
+    assert result[0][0] is False

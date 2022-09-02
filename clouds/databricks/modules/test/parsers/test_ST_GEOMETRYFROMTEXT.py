@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_geometryfromtext_success():
     query = "SELECT @@DB_SCHEMA@@.ST_ASGEOJSON(@@DB_SCHEMA@@.ST_GEOMETRYFROMTEXT('POINT(-76.09130 18.42750)'));"

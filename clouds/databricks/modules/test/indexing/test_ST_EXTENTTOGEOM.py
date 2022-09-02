@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_extenttogeom_success():
     query = """WITH t AS (
@@ -7,4 +7,4 @@ def test_st_extenttogeom_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_EXTENTTOGEOM(extent)) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))"
+    assert result[0][0] == 'POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))'

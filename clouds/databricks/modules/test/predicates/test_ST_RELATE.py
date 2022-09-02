@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_relate_success():
     query = """WITH t AS (
@@ -8,4 +8,4 @@ def test_st_relate_success():
 )
 SELECT @@DB_SCHEMA@@.ST_RELATE(geomA, geomB) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "212101212"
+    assert result[0][0] == '212101212'

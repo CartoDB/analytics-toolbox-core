@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_difference_success():
     query = """WITH t AS (
@@ -8,4 +8,4 @@ def test_st_difference_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_DIFFERENCE(geomA, geomB)) AS difference FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "POLYGON ((0 0, 0 2, 1 2, 1 1, 2 1, 2 0, 0 0))"
+    assert result[0][0] == 'POLYGON ((0 0, 0 2, 1 2, 1 1, 2 1, 2 0, 0 0))'

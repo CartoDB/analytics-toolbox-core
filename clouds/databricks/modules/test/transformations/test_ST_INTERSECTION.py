@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_intersection_success():
     query = """WITH t AS (
@@ -8,4 +8,4 @@ def test_st_intersection_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_INTERSECTION(geomA, geomB)) AS intersection FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "POLYGON ((1 2, 2 2, 2 1, 1 1, 1 2))"
+    assert result[0][0] == 'POLYGON ((1 2, 2 2, 2 1, 1 1, 1 2))'

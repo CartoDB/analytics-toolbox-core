@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_box2dfromgeohash_success():
     query = """WITH t AS (
@@ -7,4 +7,4 @@ def test_st_box2dfromgeohash_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_BOX2DFROMGEOHASH(geohash, 5)) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "POLYGON ((-90 0, -90 45, -45 45, -45 0, -90 0))"
+    assert result[0][0] == 'POLYGON ((-90 0, -90 45, -45 45, -45 0, -90 0))'

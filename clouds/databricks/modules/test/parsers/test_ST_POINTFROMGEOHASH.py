@@ -1,5 +1,5 @@
-import os
 from python_utils.test_utils import run_query
+
 
 def test_st_pointfromgeohash_success():
     query = """WITH t AS (
@@ -7,4 +7,4 @@ def test_st_pointfromgeohash_success():
 )
 SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_POINTFROMGEOHASH(geohash, 5)) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == "POINT (-67.5 22.5)"
+    assert result[0][0] == 'POINT (-67.5 22.5)'
