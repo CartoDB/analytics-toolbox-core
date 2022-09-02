@@ -27,7 +27,7 @@ lint: venv3
 	$(VENV3_BIN)/flake8 $(LIB_DIR) --enable-extensions Q0 --docstring-convention numpy --ignore=D100,D103,D104,D205,D400,D407,F401,D411,F403,W503
 	$(VENV3_BIN)/flake8 $(TEST_DIR) --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
 
-build: check
+build:
 	echo "Building libraries..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
@@ -61,7 +61,7 @@ endif
 		echo "CREATE OR REPLACE LIBRARY $$LIBRARY_NAME LANGUAGE plpythonu FROM '$(FROM)/$(notdir $$f)' $(CREDENTIALS);" >> $(BUILD_DIR)/libraries.sql; \
 	done
 
-deploy: build
+deploy: check build
 	echo "Deploying libraries..."
 	$(MAKE) copy-libraries
 	$(MAKE) deploy-libraries
