@@ -12,14 +12,13 @@ Make sure you have installed the following tools:
 
 ## Environment variables
 
-The `.env` file contains the variables required to deploy and run the toolbox.
-
+The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values.
 ```
 # Bigquery
 BQ_PREFIX=
-BQ_PROJECT=your-bigquery-project
-BQ_BUCKET=gs://your-gcs-bucket/
-BQ_REGION=your-region
+BQ_PROJECT=<project>
+BQ_BUCKET=gs://<bucket>/ or gs://<bucket>/<folder>/
+BQ_REGION=<region>
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account/or/adc.json
 ```
 

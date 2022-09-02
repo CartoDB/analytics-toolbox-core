@@ -33,6 +33,9 @@ endif
 ifndef BQ_BUCKET
 	$(error BQ_BUCKET is undefined)
 endif
+ifeq ($(shell echo "$(BQ_BUCKET)" | grep -E "^gs://(.+)[/]$$"),)
+	$(error BQ_BUCKET is not valid. Must be: gs://<bucket>/ or gs://<bucket>/<folder>/)
+endif
 
 $(NODE_MODULES_DEV):
 	yarn -s --update-checksums --cwd $(COMMON_DIR)
