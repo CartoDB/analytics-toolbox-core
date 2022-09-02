@@ -64,19 +64,19 @@ async function deleteTable (tablename) {
     }
 }
 
-function readJSONFixture (name) {
-    const filepath = path.join('.', 'test', 'integration', 'fixtures', `${name}.json`);
+function readJSONFixture (name, lib) {
+    const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.json`);
     return JSON.parse(fs.readFileSync(filepath));
 }
 
-function writeJSONFixture (name, json) {
-    const filepath = path.join('.', 'test', 'integration', 'fixtures', `${name}.json`);
+function writeJSONFixture (name, lib, json) {
+    const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.json`);
     const data = JSON.stringify(json, null, 2);
     fs.writeFileSync(filepath, data);
 }
 
-function writeNDJSONFixture (name, json) {
-    const filepath = path.join('.', 'test', 'integration', 'fixtures', `${name}.ndjson`);
+function writeNDJSONFixture (name, lib, json) {
+    const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.ndjson`);
     const data = json.map(JSON.stringify).join('\n');
     fs.writeFileSync(filepath, data);
 }
