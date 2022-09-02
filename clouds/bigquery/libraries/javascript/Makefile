@@ -34,7 +34,7 @@ build:
 	$(MAKE) build-libs
 
 build-libs: build-install $(NODE_MODULES_DEV)
-	NAME=coreLib \
+	NAME=$(BQ_LIBRARY_NAME) \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	DIRS=$(LIBS_DIR) \
 	FILENAME=index.js \
