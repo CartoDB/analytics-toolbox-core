@@ -54,7 +54,7 @@ remove:
 	$(MAKE) remove-modules
 
 remove-libraries:
-	echo "libraries"
+	$(MAKE) -C libraries/scala remove
 
 remove-modules:
 	$(MAKE) -C modules remove

@@ -4,6 +4,8 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 CLOUD_DIR ?= $(ROOT_DIR)/..
 COMMON_DIR ?= $(CLOUD_DIR)/common
+SQL_PATH = $(COMMON_DIR)/dropUDF.sql
+
 
 include $(COMMON_DIR)/Makefile
 
@@ -22,7 +24,14 @@ test: check check-extra venv
 	done; \
 	deactivate
 
-remove: venv
-	. $(COMMON_DIR)/venv/bin/activate && \
-	python $(COMMON_DIR)/python_utils/uninstall_functions.py
-	deactivate
+remove: check
+	echo "Removing modules"
+	python3 $(COMMON_DIR)/python_utils/create_drop_functions.py
+	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
+	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/dropUDF
+	$(MAKE) drop-udfs
+
+drop-udfs:
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/dropUDF!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json 
+	echo "Modules removed"

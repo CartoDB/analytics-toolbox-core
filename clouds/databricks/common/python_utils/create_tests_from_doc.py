@@ -50,7 +50,6 @@ def create_test_for_function(test_path, doc_path, function):
     test_filename = "test_" + function_name + ".py"
     try:
         with open(os.path.join(test_path, test_filename), "x") as file:
-            pass
             file.write(output_from_parsed_template)
     except FileExistsError:
         print(f"The test {test_filename} already exists, will not create it")
