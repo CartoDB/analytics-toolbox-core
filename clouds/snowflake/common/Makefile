@@ -17,17 +17,20 @@ endif
 .PHONY: check
 
 check:
-ifndef SF_DATABASE
-	$(error SF_DATABASE is undefined)
-endif
 ifndef SF_ACCOUNT
 	$(error SF_ACCOUNT is undefined)
+endif
+ifndef SF_DATABASE
+	$(error SF_DATABASE is undefined)
 endif
 ifndef SF_USER
 	$(error SF_USER is undefined)
 endif
 ifndef SF_PASSWORD
 	$(error SF_PASSWORD is undefined)
+endif
+ifeq ($(shell echo "$(SF_ACCOUNT)" | grep -E "^([^.]+)\.([^.]+)$$"),)
+	$(error SF_ACCOUNT is not valid. Must be: <account>.<region>)
 endif
 
 $(NODE_MODULES_DEV):
