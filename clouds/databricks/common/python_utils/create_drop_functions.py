@@ -13,15 +13,6 @@ def get_uninstall_for_module(module_path, queries_list):
         function_name = function[:-4]
         queries_list.append(f"DROP FUNCTION IF EXISTS {database}.{function_name};")
 
-def run_queries(queries):
-    with sql.connect(server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME"),
-                    http_path       = os.getenv("DATABRICKS_HTTP_PATH"),
-                    access_token    = os.getenv("DATABRICKS_TOKEN")) as connection:
-        with connection.cursor() as cursor:
-            for query in queries:
-                print(query)
-                cursor.execute(query)
-
 def write_queries(final_query):
     file_path = os.path.join(
         python_util_path,
@@ -32,7 +23,6 @@ def write_queries(final_query):
         file.write(final_query)
 
 if __name__ == '__main__':
-    print("start")
     sql_path = os.path.join(
         python_util_path, 
         '..', 

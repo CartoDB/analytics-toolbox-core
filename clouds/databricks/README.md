@@ -24,12 +24,12 @@ The `.env` file contains the variables required to deploy and run the toolbox. O
 ```
 # Databricks
 DB_CLUSTER_ID=my-cluster-id
-DB_SCHEMA=
-DB_DATASET_PREFIX=
+DB_SCHEMA=schema
+DB_DATASET_PREFIX=prefix_
 # For Databricks integration tests
-DATABRICKS_SERVER_HOSTNAME=dbc-fbcbc113-2a61.cloud.databricks.com
-DATABRICKS_HTTP_PATH=sql/protocolv1/o/2608452846018641/0620-141834-ancfy7fu
-DATABRICKS_TOKEN=dapid169e0c58da79f00a1e4dde84cfdf841
+DATABRICKS_SERVER_HOSTNAME=hostname
+DATABRICKS_HTTP_PATH=http_path
+DATABRICKS_TOKEN=token
 ```
 
 ## Structure
@@ -47,10 +47,9 @@ DATABRICKS_TOKEN=dapid169e0c58da79f00a1e4dde84cfdf841
 ## Make commands
 
 - `make help`: shows the commands available in the Makefile
-- `make lint`: runs a linter (flake8) and fixes the trivial issues (brunette)
-- `make build`: builds the final SQL scripts and libraries (zip)
+- `make lint`: runs a linter (scalafix)
+- `make build`: Builds the jar to deploy
 - `make deploy`: builds and deploys the libraries in the Redshift cluster, and SQL scripts in the Redshift database
-- `make test`: runs the library tests locally and the modules tests with the Redshift database (pytest)
-- `make remove`: removes all the libraries and SQL scripts from the Redshift cluster and database
+- `make test`: runs the the modules tests with the Databricks cluster (pytest)
+- `make remove`: removes all the libraries and SQL functions from the Databricks cluster and database
 - `make clean`: cleans the installed dependencies and generated files locally
-- `make create-package`: creates the installation package in the dist folder (zip)
