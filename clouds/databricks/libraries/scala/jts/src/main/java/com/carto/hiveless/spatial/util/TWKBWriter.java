@@ -11,14 +11,10 @@
  */
 package com.carto.hiveless.spatial.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Objects;
-
 import org.locationtech.jts.geom.*;
+
+import java.io.*;
+import java.util.Objects;
 
 import static java.lang.Double.NaN;
 
@@ -417,7 +413,7 @@ public class TWKBWriter {
             return hasZ; // unknown, assume default
         }
         for (Coordinate coordinate : pts) {
-            if (! Double.isNaN(coordinate.z)) {
+            if (!Double.isNaN(coordinate.z)) {
                 return hasZ;
             }
         }

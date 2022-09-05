@@ -2,7 +2,7 @@
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
-ENV_DIR ?= $(ROOT_DIR)/../..
+ENV_DIR ?= $(ROOT_DIR)/..
 CLOUD_DIR = $(ROOT_DIR)/..
 COMMON_DIR = $(CLOUD_DIR)/common
 SQL_PATH = $(COMMON_DIR)/dropUDF.sql

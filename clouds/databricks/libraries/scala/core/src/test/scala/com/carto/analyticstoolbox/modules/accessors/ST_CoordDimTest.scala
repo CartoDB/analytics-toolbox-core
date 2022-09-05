@@ -7,7 +7,6 @@ import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
 import java.lang
-import scala.Double.NaN
 
 class ST_CoordDimTest extends AnyFunSpec {
   describe("ST_CoordDim") {
@@ -20,7 +19,7 @@ class ST_CoordDimTest extends AnyFunSpec {
     }
 
     it ("Should get 3 for 3D lines") {
-      new ST_CoordDim().function(GeometricConstructorFunctions.ST_GeomFromWKT("LINESTRING (0 0, 1 2, 2 3 1)")) shouldEqual 3
+      new ST_CoordDim().function(GeometricConstructorFunctions.ST_GeomFromWKT("LINESTRING (0 0 2, 1 2 3, 2 3 1)")) shouldEqual 3
     }
 
     it ("Should get 2 for 2D points") {
