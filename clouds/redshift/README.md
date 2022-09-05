@@ -17,18 +17,18 @@ Make sure you have installed the following tools:
 
 ## Environment variables
 
-The `.env` file contains the variables required to deploy and run the toolbox.
+The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values.
 
 ```
 # Redshift
 RS_PREFIX=
-RS_HOST=your-redshift-host-url.redshift.amazonaws.com
-RS_DATABASE=your-redshift-database
-RS_USER=your-redshift-user
-RS_PASSWORD=your-redshift-password
-RS_BUCKET=s3://your-s3-bucket/
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-access-key
+RS_HOST=<cluster>.<account>.<region>.redshift.amazonaws.com
+RS_DATABASE=<database>
+RS_USER=<user>
+RS_PASSWORD=<password>
+RS_BUCKET=s3://<bucket> or s3://<bucket>/<folder>
+AWS_ACCESS_KEY_ID=<access-key-id>
+AWS_SECRET_ACCESS_KEY=<secret-access-key>
 ```
 
 ## Structure

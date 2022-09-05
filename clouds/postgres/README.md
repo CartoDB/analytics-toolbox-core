@@ -13,15 +13,15 @@ Make sure you have installed the following tools:
 
 ## Environment variables
 
-The `.env` file contains the variables required to deploy and run the toolbox.
+The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values.
 
 ```
 # Postgres
 PG_PREFIX=
-PG_HOST=your-postgres-host.com
-PG_DATABASE=your-postgres-database
-PG_USER=your-postgres-user
-PG_PASSWORD=your-postgres-password
+PG_HOST=<host>
+PG_DATABASE=<database>
+PG_USER=<user>
+PG_PASSWORD=<password>
 ```
 
 ## Structure

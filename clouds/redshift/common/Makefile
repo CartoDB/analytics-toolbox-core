@@ -41,6 +41,18 @@ endif
 ifndef RS_BUCKET
 	$(error RS_BUCKET is undefined)
 endif
+ifndef AWS_ACCESS_KEY_ID
+	$(error AWS_ACCESS_KEY_ID is undefined)
+endif
+ifndef AWS_SECRET_ACCESS_KEY
+	$(error AWS_SECRET_ACCESS_KEY is undefined)
+endif
+ifeq ($(shell echo "$(RS_HOST)" | grep -E "^([^.]+)\.([^.]+)\.([^.]+)\.redshift\.amazonaws\.com$$"),)
+	$(error RS_HOST is not valid. Must be: <cluster>.<account>.<region>.redshift.amazonaws.com)
+endif
+ifeq ($(shell echo "$(RS_BUCKET)" | grep -E "^s3://(.+)[^/]$$"),)
+	$(error RS_BUCKET is not valid. Must be: s3://<bucket> or s3://<bucket>/<folder>)
+endif
 
 venv2:
 	virtualenv -p python$(PYTHON2_VERSION) $(VENV2_DIR) -q
