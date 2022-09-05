@@ -1,5 +1,4 @@
-import os
-from test_utils.utils import run_query
+from python_utils.test_utils import run_query
 
 def test_st_coorddim3_success():
     query = "SELECT @@DB_SCHEMA@@.ST_COORDDIM(@@DB_SCHEMA@@.ST_MAKEPOINTM(1, 2, 3));"
