@@ -406,6 +406,9 @@ public class TWKBWriter {
         return header.setHasZ(hasZ).setHasM(hasM);
     }
 
+    /**
+     * Method to check if the coordinate sequence has z component
+     */
     private static boolean hasZ(CoordinateSequence seq) {
         boolean hasZ = true;
         Coordinate[] pts = seq.toCoordinateArray();

@@ -25,12 +25,5 @@ class ST_CoordDimTest extends AnyFunSpec {
     it ("Should get 2 for 2D points") {
       new ST_CoordDim().function(GeometricConstructorFunctions.ST_MakePoint(1, 2)) shouldEqual 2
     }
-
-    it ("TWKB utils should write and read the z") {
-      val geom: Geometry = GeometricConstructorFunctions.ST_MakePoint(1, 1)
-      val bts = TWKBUtils.write(geom)
-      val geomDeserialized: Geometry = TWKBUtils.read(bts)
-      assert(lang.Double.isNaN(geomDeserialized.getCoordinate.z))
-    }
   }
 }
