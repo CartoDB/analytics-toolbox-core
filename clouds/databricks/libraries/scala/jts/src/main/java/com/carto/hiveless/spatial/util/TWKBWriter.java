@@ -285,9 +285,6 @@ public class TWKBWriter {
     }
 
     private long makePrecise(double value, int precision) {
-        if (Double.isNaN(value)) {
-            return (long) NaN;
-        }
         return Math.round(value * Math.pow(10, precision));
     }
 
