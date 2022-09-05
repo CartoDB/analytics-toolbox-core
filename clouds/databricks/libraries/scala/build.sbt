@@ -75,7 +75,6 @@ lazy val commonSettings = Seq(
   ),
   // resolver for hiveless SNAPSHOT dependencies
   resolvers += "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-  resolvers += "osgeo" at "https://repo.osgeo.org/repository/release/",
   addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
   libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
   // sonatype settings
@@ -130,6 +129,7 @@ lazy val core = project
       case _                                                => MergeStrategy.first
     }
   )
+
 lazy val jts = project
   .settings(commonSettings)
   .settings(name := "hiveless-jts")
