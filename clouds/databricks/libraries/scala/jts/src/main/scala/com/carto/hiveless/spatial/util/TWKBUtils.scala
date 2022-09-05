@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package com.carto.analyticstoolbox.modules.formatters
+package com.carto.hiveless.spatial.util
 
-import com.azavea.hiveless.HUDF
-import com.carto.analyticstoolbox.modules._
-import com.carto.hiveless.spatial.util.TWKBUtils
 import org.locationtech.jts.geom.Geometry
 
-class ST_AsTWKB extends HUDF[Geometry, Array[Byte]] {
-  def function: Geometry => Array[Byte] = TWKBUtils.write
+trait TWKBUtils {
+
+  private[this] val readerPool = new ThreadLocal[TWKBReader] {
+    override def initialValue = new TWKBReader
+  }
+
+  private[this] val writerPool = new ThreadLocal[TWKBWriter] {
+    override def initialValue = new TWKBWriter
+  }
+
+  def read(s: String): Geometry      = read(s.getBytes)
+  def read(b: Array[Byte]): Geometry = readerPool.get.read(b)
+
+  def write(g: Geometry): Array[Byte] = writerPool.get.write(g)
 }
+
+object TWKBUtils extends TWKBUtils

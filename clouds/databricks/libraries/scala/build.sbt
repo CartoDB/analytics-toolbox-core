@@ -75,6 +75,7 @@ lazy val commonSettings = Seq(
   ),
   // resolver for hiveless SNAPSHOT dependencies
   resolvers += "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+  resolvers += "osgeo" at "https://repo.osgeo.org/repository/release/",
   addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
   libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
   // sonatype settings
@@ -100,15 +101,15 @@ lazy val root = (project in file("."))
   .aggregate(core)
 
 lazy val core = project
+  .dependsOn(jts)
   .settings(commonSettings)
   .settings(name := "core")
   .settings(
     libraryDependencies ++= Seq(
       "com.azavea"               %% "hiveless-core"     % hivelessVersion,
-      "com.azavea"               %% "hiveless-jts"      % hivelessVersion,
       "org.locationtech.geomesa" %% "geomesa-spark-jts" % geomesaVersion,
       "com.uber"                  % "h3"                % h3Version,
-      spark("hive").value         % Provided
+        spark("hive").value         % Provided
     ) ++ Seq(
       "org.locationtech.geotrellis" %% "geotrellis-store"         % geotrellisVersion,
       "org.locationtech.geotrellis" %% "geotrellis-spark-testkit" % geotrellisVersion % Test
@@ -129,3 +130,7 @@ lazy val core = project
       case _                                                => MergeStrategy.first
     }
   )
+lazy val jts = project
+  .settings(commonSettings)
+  .settings(name := "hiveless-jts")
+  .settings(libraryDependencies += "org.locationtech.jts" % "jts-core" % jtsVersion)
