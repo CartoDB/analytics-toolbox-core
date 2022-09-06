@@ -22,7 +22,7 @@ AS """
     if (steps != null) {
         options.steps = Number(steps);
     }
-    const ellipse = coreLib.constructors.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
+    const ellipse = lib.constructors.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
     return JSON.stringify(ellipse.geometry);
 """;
 

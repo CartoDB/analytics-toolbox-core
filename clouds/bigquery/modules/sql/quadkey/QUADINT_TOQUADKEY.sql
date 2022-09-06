@@ -12,5 +12,5 @@ AS """
     if (quadint == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return coreLib.quadkey.quadkeyFromQuadint(quadint);
+    return lib.quadkey.quadkeyFromQuadint(quadint);
 """;

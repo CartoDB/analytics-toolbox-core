@@ -12,5 +12,5 @@ AS """
     if (h3Array === null) {
         return null;
     }
-    return coreLib.h3.compact(h3Array);
+    return lib.h3.compact(h3Array);
 """;

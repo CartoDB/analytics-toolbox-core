@@ -1,7 +1,7 @@
-const coreLib = require('../build/index');
+const lib = require('../build/index');
 
 test('accessors library defined', () => {
-    expect(coreLib.accessors.featureCollection).toBeDefined();
-    expect(coreLib.accessors.feature).toBeDefined();
-    expect(coreLib.accessors.envelope).toBeDefined();
+    expect(lib.accessors.featureCollection).toBeDefined();
+    expect(lib.accessors.feature).toBeDefined();
+    expect(lib.accessors.envelope).toBeDefined();
 });

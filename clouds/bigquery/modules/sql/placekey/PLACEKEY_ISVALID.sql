@@ -9,5 +9,5 @@ DETERMINISTIC
 LANGUAGE js
 OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
 AS """
-    return coreLib.placekey.placekeyIsValid(placekey);
+    return lib.placekey.placekeyIsValid(placekey);
 """;

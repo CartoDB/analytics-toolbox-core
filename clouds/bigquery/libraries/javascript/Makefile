@@ -38,7 +38,7 @@ endif
 	$(MAKE) build-libs
 
 build-libs: build-install $(NODE_MODULES_DEV)
-	NAME=$(BQ_LIBRARY_NAME) \
+	NAME=lib \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	DIRS=$(LIBS_DIR) \
 	FILENAME=index.js \

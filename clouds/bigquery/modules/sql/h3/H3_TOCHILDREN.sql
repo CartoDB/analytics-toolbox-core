@@ -12,8 +12,8 @@ AS """
     if (!index) {
         return null;
     }
-    if (!coreLib.h3.h3IsValid(index)) {
+    if (!lib.h3.h3IsValid(index)) {
         return null;
     }
-    return coreLib.h3.h3ToChildren(index, Number(resolution));
+    return lib.h3.h3ToChildren(index, Number(resolution));
 """;

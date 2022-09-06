@@ -12,5 +12,5 @@ AS """
     if (id == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return coreLib.s2.idToKey(id);
+    return lib.s2.idToKey(id);
 """;

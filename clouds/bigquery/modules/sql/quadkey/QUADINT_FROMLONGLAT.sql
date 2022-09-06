@@ -12,5 +12,5 @@ AS """
     if (longitude == null || latitude == null || resolution == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return coreLib.quadkey.quadintFromLocation(Number(longitude), Number(latitude), Number(resolution)).toString();
+    return lib.quadkey.quadintFromLocation(Number(longitude), Number(latitude), Number(resolution)).toString();
 """;

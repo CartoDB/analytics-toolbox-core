@@ -12,7 +12,7 @@ AS """
     if (!index1 || !index2) {
         return null;
     }
-    let dist = coreLib.h3.h3Distance(index1, index2);
+    let dist = lib.h3.h3Distance(index1, index2);
     if (dist < 0) {
         dist = null;
     }

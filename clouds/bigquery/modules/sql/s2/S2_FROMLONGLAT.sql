@@ -12,6 +12,6 @@ AS """
     if (latitude == null || longitude == null || resolution == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const key = coreLib.s2.latLngToKey(Number(latitude), Number(longitude), Number(resolution));
-    return coreLib.s2.keyToId(key);
+    const key = lib.s2.latLngToKey(Number(latitude), Number(longitude), Number(resolution));
+    return lib.s2.keyToId(key);
 """;

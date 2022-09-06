@@ -12,5 +12,5 @@ AS """
     if (h3Array === null || resolution === null || resolution < 0 || resolution > 15) {
         return null;
     }
-    return coreLib.h3.uncompact(h3Array, Number(resolution));
+    return lib.h3.uncompact(h3Array, Number(resolution));
 """;
