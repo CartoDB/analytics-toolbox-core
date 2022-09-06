@@ -7,40 +7,37 @@ on:
 jobs:
   deploy-bq:
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     if: github.event.label.name == 'dedicated_bigquery'
+   timeout-minutes: 20
+    env:
+      GCLOUD_VERSION: 290.0.1
+      BQ_REGION: 'us'
+      BQ_PROJECT: 'carto-dev-data'
+      BQ_DATASET_PREFIX: dedicated_${{ github.sha }}_${{ github.run_id }}_
+      BQ_BUCKET: gs://bqcartodev/
     steps:
-      # - name: Checkout repo
-      #   uses: actions/checkout@v2
-      #   with:
-      #     submodules: recursive
-      # - name: Setup cache
-      #   id: cache-system-libraries
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ${{ env.EM_CACHE_FOLDER }}
-      #     key: ${{ runner.os }}_${{ env.EM_VERSION }}
-      # - name: Setup emscripten
-      #   uses: mymindstorm/setup-emsdk@master
-      #   with:
-      #     version: ${{ env.EM_VERSION }}
-      #     actions-cache-folder: ${{ env.EM_CACHE_FOLDER }}
-      # - name: Setup gcloud
-      #   uses: google-github-actions/setup-gcloud@master
-      #   with:
-      #       version: 290.0.1
-      #       project_id: carto-${{ github.event.inputs.price_plan }}
-      #       service_account_key: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
-      #       export_default_credentials: true
-      - name: Check label
-        # env:
-        #   PACKAGE_NAME: carto-${{ env.INPUT_PRICE_PLAN }}
-        #   PACKAGE_TYPE: ${{ env.PACKAGE_TYPE || 'advanced' }}
-        #   PACKAGE_BUCKET: gs://spatialextension_${{ env.INPUT_PRICE_PLAN }}/installation_packages
-        #   BQ_MAX_ROWS_TILER: ${{ env.MAX_ROWS_TILER }}
-        shell: bash
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
+          project_id: ${{ env.BQ_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ env.BQ_PROJECT }}
+      - name: Run deploy
         run: |
-          echo "Dedicated for Bigquery"
+          cd clouds/bigquery
+          make deploy production=1
 
   deploy-sf:
     runs-on: ubuntu-20.04
@@ -50,4 +47,4 @@ jobs:
       - name: Check label
         shell: bash
         run: |
-          echo "Dedicated for Snowflake"
+          echo "dedicated_${{ github.sha }}_${{ github.run_id }}_${{ github.event.number }}"
