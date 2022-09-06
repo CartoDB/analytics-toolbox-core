@@ -6,5 +6,5 @@ def test_st_linefromtext_success():
     result = run_query(query)
     assert (
         result[0][0]
-        == '{"type":"LineString","coordinates":[[0.0,0.0,0.0],[0.0,3,0.0],[5,3,0.0]]}'
+        == '{"type":"LineString","coordinates":[[0.0,0.0],[0.0,3],[5,3]]}'
     )

@@ -40,12 +40,12 @@ deploy: check
 upload-jars: clean build
 	echo "- Uploading jars"
 	dbfs mkdirs $(JAR_DEPLOY_PATH)
-	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-core-assembly.jar
 	echo "- Jars uploaded"
 
 install-jars:
 	echo "- Installing jars"
-	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-core-assembly.jar
 	echo "- Libraries installed"
 
 upload-sql:
@@ -71,7 +71,7 @@ test:
 remove: check
 	echo "Removing libraries..."
 	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
-	dbfs rm $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
+	dbfs rm $(JAR_DEPLOY_PATH)/analyticstoolbox-core-assembly.jar
 
 clean:
 	echo "Cleaning libraries..."
