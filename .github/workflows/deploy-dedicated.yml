@@ -6,10 +6,9 @@ on:
 
 jobs:
   deploy-bq:
+    if: github.event.label.name == 'dedicated_bigquery'
     runs-on: ubuntu-20.04
     timeout-minutes: 20
-    if: github.event.label.name == 'dedicated_bigquery'
-   timeout-minutes: 20
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: 'us'
@@ -40,9 +39,9 @@ jobs:
           make deploy production=1
 
   deploy-sf:
+    if: github.event.label.name == 'dedicated_snowflake'
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-    if: github.event.label.name == 'dedicated_snowflake'
     steps:
       - name: Check label
         shell: bash
