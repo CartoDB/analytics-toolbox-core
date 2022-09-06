@@ -11,9 +11,10 @@ jobs:
     timeout-minutes: 20
     env:
       GCLOUD_VERSION: 290.0.1
+      SHORT_SHA: $(git rev-parse --short HEAD)
       BQ_REGION: 'us'
       BQ_PROJECT: 'carto-dev-data'
-      BQ_DATASET_PREFIX: dedicated_${{ github.sha }}_${{ github.run_id }}_
+      BQ_DATASET_PREFIX: dedicated_${{ env.SHORT_SHA }}_${{ github.event.number }}_
       BQ_BUCKET: gs://bqcartodev/
     steps:
       - name: Checkout repo
@@ -36,7 +37,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/bigquery
-          make deploy production=1
+          make deploy
 
   deploy-sf:
     if: github.event.label.name == 'dedicated_snowflake'
@@ -46,4 +47,4 @@ jobs:
       - name: Check label
         shell: bash
         run: |
-          echo "dedicated_${{ github.sha }}_${{ github.run_id }}_${{ github.event.number }}"
+          echo "dedicated_${{ env.SHORT_SHA }}_${{ github.run_id }}_${{ github.event.number }}"
