@@ -13,7 +13,7 @@ jobs:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: 'us'
       BQ_PROJECT: 'carto-dev-data'
-      BQ_DATASET_PREFIX: dedicated_${{ github.event.number }}_
+      BQ_PREFIX: dedicated_${{ github.event.number }}_
       BQ_BUCKET: gs://bqcartodev/
     steps:
       - name: Checkout repo
