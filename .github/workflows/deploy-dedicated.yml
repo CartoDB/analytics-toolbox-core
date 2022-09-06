@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "Dedicated for Bigquery"
 
-  deploy-bq:
+  deploy-sf:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     if: github.event.label.name == 'dedicated_snowflake'
