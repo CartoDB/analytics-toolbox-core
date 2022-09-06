@@ -1,8 +1,7 @@
 name: Dedicated env - Deploy
 on:
   pull_request:
-    types:
-      - [closed, unlabeled, labeled]
+    types: [closed, unlabeled, labeled]
 
 jobs:
   deploy-bq:
