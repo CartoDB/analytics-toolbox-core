@@ -2,7 +2,7 @@ name: Dedicated env - Deploy
 on:
   pull_request:
     types:
-      - labeled
+      - [closed, unlabeled, labeled]
 
 jobs:
   deploy-bq:
@@ -38,9 +38,15 @@ jobs:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
       - name: Run deploy
+        if: github.event.action == 'labeled'
         run: |
           cd clouds/bigquery
           make deploy
+      - name: Run release
+        if: github.event.action != 'labeled'
+        run: |
+          cd clouds/bigquery
+          make remove
 
   deploy-sf:
     if: github.event.label.name == 'dedicated_snowflake'
