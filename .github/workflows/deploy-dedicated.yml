@@ -5,6 +5,9 @@ on:
 
 env:
   NODE_VERSION: 14
+  PYTHON2_VERSION: 2.7.18
+  PYTHON3_VERSION: 3.8.10
+  DEDICATED_PREFIX: dedicated_${{ github.event.pull_request.number }}_
 
 jobs:
   dedicated-bq:
@@ -15,7 +18,7 @@ jobs:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
       BQ_PROJECT: cartodb-gcp-backend-data-team
-      BQ_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      BQ_PREFIX: ${{ env.DEDICATED_PREFIX }}
       BQ_BUCKET: gs://bqcartodev/
     steps:
       - name: Checkout repo
@@ -45,17 +48,32 @@ jobs:
           cd clouds/bigquery
           make deploy
       - name: Run release
+        id: release
         if: github.event.action != 'labeled'
         run: |
           cd clouds/bigquery
           make remove
+      - name: Run release
+        id: deploy
+        if: github.event.action != 'labeled'
+        run: |
+          cd clouds/bigquery
+          make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success'
+        run: |
+          echo "Deploy for BigQuery"
+      - name: Comment release PR
+        if: steps.release.outcome == 'success'
+        run: |
+          echo "Release for BigQuery"
 
   dedicated-sf:
     if: github.event.label.name == 'dedicated_snowflake'
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      SF_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      SF_PREFIX: ${{ env.DEDICATED_PREFIX }}
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_DEDICATED }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_DEDICATED }}
       SF_USER: ${{ secrets.SF_USER_DEDICATED }}
@@ -83,3 +101,86 @@ jobs:
         run: |
           cd clouds/snowflake
           make remove
+
+  dedicated-rs:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      RS_PREFIX: ${{ env.DEDICATED_PREFIX }}
+      RS_HOST: ${{ secrets.RS_HOST_DEDICATED }}
+      RS_DATABASE: ${{ secrets.RS_DATABASE_DEDICATED }}
+      RS_USER: ${{ secrets.RS_USER_DEDICATED }}
+      RS_PASSWORD: ${{ secrets.RS_PASSWORD_DEDICATED }}
+      RS_BUCKET: ${{ secrets.RS_BUCKET_DEDICATED }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_DEDICATED }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_DEDICATED }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python 2
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON2_VERSION }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_DEDICATED }}
+          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_DEDICATED }}
+          aws-region: ${{ secrets.RS_REGION_DEDICATED }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Run deploy
+        if: github.event.action == 'labeled'
+        run: |
+          cd clouds/redshift
+          make deploy
+      - name: Run release
+        if: github.event.action != 'labeled'
+        run: |
+          cd clouds/redshift
+          make remove
+
+  dedicated-pg:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    env:
+      PG_PREFIX: ${{ env.DEDICATED_PREFIX }}
+      PG_HOST: ${{ secrets.PG_HOST_DEDICATED }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
+      PG_USER: ${{ secrets.PG_USER_DEDICATED }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Run linter and tests
+        run: |
+          cd clouds/postgres
+          make deploy
