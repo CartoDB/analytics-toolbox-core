@@ -1,8 +1,6 @@
 package com.carto.analyticstoolbox.modules.accessors
 
-import com.carto.hiveless.spatial.util.TWKBUtils
-import org.locationtech.geomesa.spark.jts.udf.{GeometricConstructorFunctions, GeometricOutputFunctions}
-import org.locationtech.jts.geom.{Coordinate, CoordinateXY, Geometry, GeometryFactory, Point}
+import org.locationtech.geomesa.spark.jts.udf.GeometricConstructorFunctions
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 

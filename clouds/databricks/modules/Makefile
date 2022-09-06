@@ -34,5 +34,7 @@ remove: check
 
 drop-udfs:
 	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/dropUDF!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
-	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
+	echo "- Removing drop script from the workspace"
+	databricks workspace rm -r $(SQL_DEPLOY_PATH)
 	echo "- Modules removed"
