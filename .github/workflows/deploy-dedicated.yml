@@ -42,18 +42,13 @@ jobs:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ env.BQ_PROJECT }}
       - name: Run deploy
+        id: deploy
         if: github.event.action == 'labeled'
         run: |
           cd clouds/bigquery
           make deploy
       - name: Run release
         id: release
-        if: github.event.action != 'labeled'
-        run: |
-          cd clouds/bigquery
-          make remove
-      - name: Run release
-        id: deploy
         if: github.event.action != 'labeled'
         run: |
           cd clouds/bigquery
@@ -102,6 +97,7 @@ jobs:
           make remove
 
   dedicated-rs:
+    if: github.event.label.name == 'dedicated_redshift'
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
@@ -153,6 +149,7 @@ jobs:
           make remove
 
   dedicated-pg:
+    if: github.event.label.name == 'dedicated_postgres'
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
