@@ -7,6 +7,7 @@ BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 BQ_DEPLOY_DATASET = $(BQ_PREFIX)carto
 BQ_LIBRARY_DEFAULT ?= carto_analytics_toolbox_core
 export BQ_LIBRARY_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/$(BQ_LIBRARY_DEFAULT).js
+export BQ_LIBRARY_TILER_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/$(BQ_LIBRARY_DEFAULT)_tiler.js
 
 BQ_MODULE_LABEL ?= spatial_extension_module:core
 
