@@ -12,7 +12,7 @@ jobs:
     env:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
-      BQ_PROJECT: carto-dev-data
+      BQ_PROJECT: cartodb-gcp-backend-data-team
       BQ_PREFIX: dedicated_${{ github.event.number }}_
       BQ_BUCKET: gs://bqcartodev/
     steps:
