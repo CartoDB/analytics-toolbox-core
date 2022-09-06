@@ -1,6 +1,5 @@
 package com.carto.analyticstoolbox.modules.index
 
-import org.apache.spark.unsafe.types.UTF8String
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 

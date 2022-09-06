@@ -1,7 +1,7 @@
 from python_utils.test_utils import run_query
 
 
-def test_st_makeextent_success():
+def test_st_geomreproject_success():
     query = """WITH t AS (
   SELECT @@DB_SCHEMA@@.ST_POINT(3, 5) AS point, 
   @@DB_SCHEMA@@.ST_CRSFROMTEXT('+proj=merc +lat_ts=56.5 +ellps=GRS80') AS crsa,
