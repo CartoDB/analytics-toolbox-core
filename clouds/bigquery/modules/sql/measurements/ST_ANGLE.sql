@@ -16,7 +16,7 @@ AS """
     if(mercator != null) {
         options.mercator = mercator;
     }
-    return coreLib.measurements.angle(JSON.parse(geojsonStart), JSON.parse(geojsonMid), JSON.parse(geojsonEnd), options);
+    return lib.measurements.angle(JSON.parse(geojsonStart), JSON.parse(geojsonMid), JSON.parse(geojsonEnd), options);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_ANGLE`

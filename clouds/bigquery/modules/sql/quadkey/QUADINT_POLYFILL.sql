@@ -16,13 +16,13 @@ AS """
     let quadints = [];
     if (pol.type == 'GeometryCollection') {
         pol.geometries.forEach(function (geom) {
-            quadints = quadints.concat(coreLib.quadkey.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
+            quadints = quadints.concat(lib.quadkey.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
         });
         quadints = Array.from(new Set(quadints));
     }
     else
     {
-        quadints = coreLib.quadkey.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+        quadints = lib.quadkey.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
     }
     return quadints.map(String);
 """;

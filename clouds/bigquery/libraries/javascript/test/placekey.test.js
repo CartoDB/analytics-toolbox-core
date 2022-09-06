@@ -1,7 +1,7 @@
-const coreLib = require('../build/index');
+const lib = require('../build/index');
 
 test('placekey library defined', () => {
-    expect(coreLib.placekey.placekeyIsValid).toBeDefined();
-    expect(coreLib.placekey.h3ToPlacekey).toBeDefined();
-    expect(coreLib.placekey.placekeyToH3).toBeDefined();
+    expect(lib.placekey.placekeyIsValid).toBeDefined();
+    expect(lib.placekey.h3ToPlacekey).toBeDefined();
+    expect(lib.placekey.placekeyToH3).toBeDefined();
 });

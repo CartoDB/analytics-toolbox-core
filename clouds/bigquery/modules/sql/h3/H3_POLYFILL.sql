@@ -27,28 +27,28 @@ AS """
         case 'GeometryCollection':
             featureGeometry.geometries.forEach(function (geom) {
                 if (geom.type === 'MultiPolygon') {
-                    var clippedGeometryA = coreLib.h3.bboxClip(geom, bboxA).geometry;
+                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates);
-                    var clippedGeometryB = coreLib.h3.bboxClip(geom, bboxB).geometry;
+                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates);
                 } else if (geom.type === 'Polygon') {
-                    var clippedGeometryA = coreLib.h3.bboxClip(geom, bboxA).geometry;
+                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
-                    var clippedGeometryB = coreLib.h3.bboxClip(geom, bboxB).geometry;
+                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
                 }
             });
         break;
         case 'MultiPolygon':
-            var clippedGeometryA = coreLib.h3.bboxClip(featureGeometry, bboxA).geometry;
+            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry;
             polygonCoordinatesA = clippedGeometryA.coordinates;
-            var clippedGeometryB = coreLib.h3.bboxClip(featureGeometry, bboxB).geometry;
+            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry;
             polygonCoordinatesB = clippedGeometryB.coordinates;
         break;
         case 'Polygon':
-            var clippedGeometryA = coreLib.h3.bboxClip(featureGeometry, bboxA).geometry;
+            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry;
             polygonCoordinatesA = [clippedGeometryA.coordinates];
-            var clippedGeometryB = coreLib.h3.bboxClip(featureGeometry, bboxB).geometry;
+            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry;
             polygonCoordinatesB = [clippedGeometryB.coordinates];
         break;
         default:
@@ -60,11 +60,11 @@ AS """
     }
 
     let hexesA = polygonCoordinatesA.reduce(
-        (acc, coordinates) => acc.concat(coreLib.h3.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(lib.h3.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     let hexesB = polygonCoordinatesB.reduce(
-        (acc, coordinates) => acc.concat(coreLib.h3.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(lib.h3.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     hexes = [...hexesA, ...hexesB];

@@ -12,7 +12,7 @@ AS """
     if (!geojson) {
         return null;
     }
-    const medianCenter = coreLib.transformations.centerMedian(coreLib.transformations.feature(JSON.parse(geojson)));
+    const medianCenter = lib.transformations.centerMedian(lib.transformations.feature(JSON.parse(geojson)));
     return JSON.stringify(medianCenter.geometry);
 """;
 

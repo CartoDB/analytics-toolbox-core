@@ -1,6 +1,6 @@
-const coreLib = require('../build/index');
+const lib = require('../build/index');
 
 test('constructors library defined', () => {
-    expect(coreLib.constructors.bezierSpline).toBeDefined();
-    expect(coreLib.constructors.ellipse).toBeDefined();
+    expect(lib.constructors.bezierSpline).toBeDefined();
+    expect(lib.constructors.ellipse).toBeDefined();
 });

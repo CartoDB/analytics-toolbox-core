@@ -13,7 +13,7 @@ AS """
         throw new Error('NULL argument passed to UDF');
     }
     
-    const cornerLongLat = coreLib.s2.FromHilbertQuadKey(coreLib.s2.idToKey(id)).getCornerLatLngs();
+    const cornerLongLat = lib.s2.FromHilbertQuadKey(lib.s2.idToKey(id)).getCornerLatLngs();
 
     const wkt = `POLYGON((` +
         cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
