@@ -1,8 +1,8 @@
-const coreLib = require('../build/index');
+const lib = require('../build/index');
 
 test('processing library defined', () => {
-    expect(coreLib.processing.featureCollection).toBeDefined();
-    expect(coreLib.processing.feature).toBeDefined();
-    expect(coreLib.processing.voronoi).toBeDefined();
-    expect(coreLib.processing.polygonToLine).toBeDefined();
+    expect(lib.processing.featureCollection).toBeDefined();
+    expect(lib.processing.feature).toBeDefined();
+    expect(lib.processing.voronoi).toBeDefined();
+    expect(lib.processing.polygonToLine).toBeDefined();
 });

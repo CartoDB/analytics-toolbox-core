@@ -13,11 +13,11 @@ AS """
         return null;
     }
 
-    if (!coreLib.h3.h3IsValid(index)) {
+    if (!lib.h3.h3IsValid(index)) {
         return null;
     }
 
-    const center = coreLib.h3.h3ToGeo(index);
+    const center = lib.h3.h3ToGeo(index);
     return `POINT(`+center[1] + ` ` + center[0] + `)`;
 """;
 

@@ -12,7 +12,7 @@ AS """
     if (!geojson) {
         return null;
     }
-    const center = coreLib.transformations.centerOfMass(JSON.parse(geojson));
+    const center = lib.transformations.centerOfMass(JSON.parse(geojson));
     return JSON.stringify(center.geometry);
 """;
 

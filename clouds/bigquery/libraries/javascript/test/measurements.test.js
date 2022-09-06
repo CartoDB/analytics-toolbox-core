@@ -1,9 +1,9 @@
-const coreLib = require('../build/index');
+const lib = require('../build/index');
 
 test('measurements library defined', () => {
-    expect(coreLib.measurements.angle).toBeDefined();
-    expect(coreLib.measurements.bearing).toBeDefined();
-    expect(coreLib.measurements.featureCollection).toBeDefined();
-    expect(coreLib.measurements.feature).toBeDefined();
-    expect(coreLib.measurements.distanceWeight).toBeDefined();
+    expect(lib.measurements.angle).toBeDefined();
+    expect(lib.measurements.bearing).toBeDefined();
+    expect(lib.measurements.featureCollection).toBeDefined();
+    expect(lib.measurements.feature).toBeDefined();
+    expect(lib.measurements.distanceWeight).toBeDefined();
 });

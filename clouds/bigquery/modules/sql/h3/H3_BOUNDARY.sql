@@ -13,11 +13,11 @@ AS """
         return null;
     }
 
-    if (!coreLib.h3.h3IsValid(index)) {
+    if (!lib.h3.h3IsValid(index)) {
         return null;
     }
 
-    const coords = coreLib.h3.h3ToGeoBoundary(index, true);
+    const coords = lib.h3.h3ToGeoBoundary(index, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
         output += coords[i][0] + ` ` + coords[i][1] + `,`;

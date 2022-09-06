@@ -13,9 +13,9 @@ AS """
         return null;
     }
 
-    if (!coreLib.h3.h3IsValid(index)) {
+    if (!lib.h3.h3IsValid(index)) {
         return null;
     }
 
-    return coreLib.h3.h3GetResolution(index);
+    return lib.h3.h3GetResolution(index);
 """;

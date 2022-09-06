@@ -19,7 +19,7 @@ AS """
     if (steps != null) {
         options.steps = Number(steps);
     }
-    const buffer = coreLib.transformations.buffer(JSON.parse(geojson), Number(radius), options);
+    const buffer = lib.transformations.buffer(JSON.parse(geojson), Number(radius), options);
     return JSON.stringify(buffer.geometry);
 """;
 

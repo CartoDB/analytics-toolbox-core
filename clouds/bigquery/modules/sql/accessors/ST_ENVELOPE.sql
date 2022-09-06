@@ -13,8 +13,8 @@ AS """
         return null;
     }
 
-    const featuresCollection = coreLib.accessors.featureCollection(geojson.map(x => coreLib.accessors.feature(JSON.parse(x))));
-    const enveloped = coreLib.accessors.envelope(featuresCollection);
+    const featuresCollection = lib.accessors.featureCollection(geojson.map(x => lib.accessors.feature(JSON.parse(x))));
+    const enveloped = lib.accessors.envelope(featuresCollection);
     return JSON.stringify(enveloped.geometry);
 """;
 

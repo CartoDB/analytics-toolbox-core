@@ -16,7 +16,7 @@ AS """
     if (units) {
         options.units = units;
     }
-    const destination = coreLib.transformations.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
+    const destination = lib.transformations.destination(JSON.parse(geojsonStart), Number(distance), Number(bearing), options);
     return JSON.stringify(destination.geometry);
 """;
 

@@ -12,5 +12,5 @@ AS """
     if (!quadkey) {
         throw new Error('NULL argument passed to UDF');
     }
-    return coreLib.s2.keyToId(quadkey);
+    return lib.s2.keyToId(quadkey);
 """;

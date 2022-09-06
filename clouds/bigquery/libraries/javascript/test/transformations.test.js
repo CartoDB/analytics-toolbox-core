@@ -1,15 +1,15 @@
-const coreLib = require('../build/index');
+const lib = require('../build/index');
 
 
 test('transformations library defined', () => {
-    expect(coreLib.transformations.featureCollection).toBeDefined();
-    expect(coreLib.transformations.feature).toBeDefined();
-    expect(coreLib.transformations.buffer).toBeDefined();
-    expect(coreLib.transformations.centerMean).toBeDefined();
-    expect(coreLib.transformations.centerMedian).toBeDefined();
-    expect(coreLib.transformations.centerOfMass).toBeDefined();
-    expect(coreLib.transformations.concave).toBeDefined();
-    expect(coreLib.transformations.destination).toBeDefined();
-    expect(coreLib.transformations.greatCircle).toBeDefined();
-    expect(coreLib.transformations.along).toBeDefined();
+    expect(lib.transformations.featureCollection).toBeDefined();
+    expect(lib.transformations.feature).toBeDefined();
+    expect(lib.transformations.buffer).toBeDefined();
+    expect(lib.transformations.centerMean).toBeDefined();
+    expect(lib.transformations.centerMedian).toBeDefined();
+    expect(lib.transformations.centerOfMass).toBeDefined();
+    expect(lib.transformations.concave).toBeDefined();
+    expect(lib.transformations.destination).toBeDefined();
+    expect(lib.transformations.greatCircle).toBeDefined();
+    expect(lib.transformations.along).toBeDefined();
 });
