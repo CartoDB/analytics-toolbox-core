@@ -104,6 +104,10 @@ function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
     return list;
 }
 
+function normSql (txt) {
+    return txt.replace(/\s+/g,' ').replace(/\s?,\s?/g, ',').replace(/\( /g, '(').replace(/ \)/g, ')').trim();
+}
+
 module.exports = {
     runQuery,
     loadTable,
@@ -115,5 +119,6 @@ module.exports = {
     writeNDJSONFixture,
     cancelJob,
     sortByKey,
-    sortByKeyAndRound
+    sortByKeyAndRound,
+    normSql
 };

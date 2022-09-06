@@ -55,6 +55,9 @@ deploy: check build
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
 		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_LABEL) $(BQ_DEPLOY_DATASET)
+	$(MAKE) post-dataset-create
+
+post-dataset-create:
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
