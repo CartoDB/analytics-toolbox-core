@@ -39,6 +39,7 @@ deploy-modules:
 
 test:
 	$(MAKE) test-modules
+	$(MAKE) test-libraries
 
 test-libraries:
 	$(MAKE) -C libraries/scala test
