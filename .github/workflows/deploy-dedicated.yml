@@ -23,6 +23,10 @@ jobs:
         with:
           PATTERNS: '**/*.+(js|sql)'
           FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_DEDICATED_SA_BASE64 }}
