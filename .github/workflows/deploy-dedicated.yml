@@ -58,7 +58,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment deployed 
+            Dedicated ${{ env.BQ_PREFIX }} environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'
@@ -101,6 +101,20 @@ jobs:
         run: |
           cd clouds/snowflake
           make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.SF_PREFIX }} environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment release PR
+        if: steps.release.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment released
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   dedicated-rs:
     if: github.event.label.name == 'dedicated_redshift'
@@ -153,6 +167,21 @@ jobs:
         run: |
           cd clouds/redshift
           make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.RS_PREFIX }} environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment release PR
+        if: steps.release.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment released
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   dedicated-pg:
     if: github.event.label.name == 'dedicated_postgres'
@@ -186,3 +215,17 @@ jobs:
         run: |
           cd clouds/postgres
           make deploy
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.PG_PREFIX }} environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment release PR
+        if: steps.release.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment released
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
