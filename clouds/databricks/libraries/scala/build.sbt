@@ -97,7 +97,7 @@ lazy val root = (project in file("."))
     publish            := {},
     publishLocal       := {}
   )
-  .aggregate(core)
+  .aggregate(core, jts)
 
 lazy val core = project
   .dependsOn(jts)
