@@ -3,8 +3,11 @@ on:
   pull_request:
     types: [closed, unlabeled, labeled]
 
+env:
+  NODE_VERSION: 14
+
 jobs:
-  deploy-bq:
+  dedicated-bq:
     if: github.event.label.name == 'dedicated_bigquery'
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -47,12 +50,36 @@ jobs:
           cd clouds/bigquery
           make remove
 
-  deploy-sf:
+  dedicated-sf:
     if: github.event.label.name == 'dedicated_snowflake'
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
+    timeout-minutes: 20
+    env:
+      SF_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_DEDICATED }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_DEDICATED }}
+      SF_USER: ${{ secrets.SF_USER_DEDICATED }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_DEDICATED }}
+      SF_ROLE: ${{ secrets.SF_ROLE_DEDICATED }}
     steps:
-      - name: Check label
-        shell: bash
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run deploy
+        if: github.event.action == 'labeled'
         run: |
-          echo "${{ env.BQ_DATASET_PREFIX }}"
+          cd clouds/snowflake
+          make deploy
+      - name: Run release
+        if: github.event.action != 'labeled'
+        run: |
+          cd clouds/snowflake
+          make remove
