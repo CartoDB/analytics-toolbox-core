@@ -58,7 +58,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.BQ_PREFIX }} environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
+            Dedicated ${{ env.BQ_PREFIX }}_carto environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'
@@ -92,11 +92,13 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
+        id: deploy
         if: github.event.action == 'labeled'
         run: |
           cd clouds/snowflake
           make deploy
       - name: Run release
+        id: release
         if: github.event.action != 'labeled'
         run: |
           cd clouds/snowflake
@@ -106,7 +108,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.SF_PREFIX }} environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
+            Dedicated ${{ env.SF_PREFIX }}_carto environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'
@@ -158,11 +160,13 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run deploy
+        id: deploy
         if: github.event.action == 'labeled'
         run: |
           cd clouds/redshift
           make deploy
       - name: Run release
+        id: release
         if: github.event.action != 'labeled'
         run: |
           cd clouds/redshift
@@ -172,7 +176,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.RS_PREFIX }} environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
+            Dedicated ${{ env.RS_PREFIX }}_carto environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'
@@ -211,16 +215,24 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv
-      - name: Run linter and tests
+      - name: Run deploy
+        if: github.event.action == 'labeled'
+        id: deploy
         run: |
           cd clouds/postgres
           make deploy
+      - name: Run release
+        if: github.event.action != 'labeled'
+        id: release
+        run: |
+          cd clouds/postgres
+          make remove
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success'
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.PG_PREFIX }} environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
+            Dedicated ${{ env.PG_PREFIX }}_carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'
