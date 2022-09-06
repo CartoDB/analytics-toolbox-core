@@ -7,7 +7,6 @@ env:
   NODE_VERSION: 14
   PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.8.10
-  DEDICATED_PREFIX: dedicated_${{ github.event.pull_request.number }}_
 
 jobs:
   dedicated-bq:
@@ -18,7 +17,7 @@ jobs:
       GCLOUD_VERSION: 290.0.1
       BQ_REGION: us
       BQ_PROJECT: cartodb-gcp-backend-data-team
-      BQ_PREFIX: ${{ env.DEDICATED_PREFIX }}
+      BQ_PREFIX: dedicated_${{ github.event.pull_request.number }}_
       BQ_BUCKET: gs://bqcartodev/
     steps:
       - name: Checkout repo
@@ -73,7 +72,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      SF_PREFIX: ${{ env.DEDICATED_PREFIX }}
+      SF_PREFIX: dedicated_${{ github.event.pull_request.number }}_
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_DEDICATED }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_DEDICATED }}
       SF_USER: ${{ secrets.SF_USER_DEDICATED }}
@@ -106,7 +105,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      RS_PREFIX: ${{ env.DEDICATED_PREFIX }}
+      RS_PREFIX: dedicated_${{ github.event.pull_request.number }}_
       RS_HOST: ${{ secrets.RS_HOST_DEDICATED }}
       RS_DATABASE: ${{ secrets.RS_DATABASE_DEDICATED }}
       RS_USER: ${{ secrets.RS_USER_DEDICATED }}
@@ -157,7 +156,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      PG_PREFIX: ${{ env.DEDICATED_PREFIX }}
+      PG_PREFIX: dedicated_${{ github.event.pull_request.number }}_
       PG_HOST: ${{ secrets.PG_HOST_DEDICATED }}
       PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
