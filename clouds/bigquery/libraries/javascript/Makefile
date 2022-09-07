@@ -13,6 +13,13 @@ MODULES_DIRS ?= $(ROOT_DIR)/../../modules
 ESLINTRC_DIR ?= $(ROOT_DIR)/../../../..
 COMMON_DIR = $(ROOT_DIR)/../../common
 
+ifeq ($(production),1)
+export BQ_PACKAGE_VERSION = $(shell cat $(ROOT_DIR)/../../version)
+else
+export BQ_PACKAGE_VERSION = $(shell cat $(ROOT_DIR)/../../version)-dev
+endif
+REPLACEMENTS ?= ''
+
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
@@ -56,6 +63,7 @@ deploy: build
 	# Provisional for WASM version of tiler
 ifdef MAKE_LIB
 	echo "Deploying tiler library..."
+	sed -i '' $(REPLACEMENTS) $(BUILD_DIR)/indexTiler.js
 	$(GSUTIL) cp -r $(BUILD_DIR)/indexTiler.js $(BQ_LIBRARY_TILER_BUCKET)
 endif
 
