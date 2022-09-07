@@ -17,9 +17,9 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 endif
 
 ifeq ($(production),1)
-export BQ_DATASET = $(BQ_DATASET_DEFAULT)
+export BQ_DATASET = $(BQ_PROJECT).$(BQ_DATASET_DEFAULT)
 else
-export BQ_DATASET = $(BQ_PREFIX)$(BQ_DATASET_DEFAULT)
+export BQ_DATASET = $(BQ_PROJECT).$(BQ_PREFIX)$(BQ_DATASET_DEFAULT)
 endif
 
 .PHONY: check
