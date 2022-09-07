@@ -31,11 +31,11 @@ build: check
 	echo "Building libraries..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
+	$(MAKE) build-libs
 ifdef MAKE_LIB
 	echo "Building extra libraries $(SRC_DIR)/$(MAKE_LIB)..."
 	$(MAKE) -C $(SRC_DIR)/$(MAKE_LIB)
 endif
-	$(MAKE) build-libs
 
 build-libs: build-install $(NODE_MODULES_DEV)
 	NAME=lib \
@@ -54,7 +54,7 @@ deploy: build
 	echo "Deploying libraries..."
 	$(GSUTIL) cp -r $(BUILD_DIR)/index.js $(BQ_LIBRARY_BUCKET)
 	# Provisional for WASM version of tiler
-ifneq ($(wildcard $(BUILD_DIR)/indexTiler.js),)
+ifdef MAKE_LIB
 	echo "Deploying tiler library..."
 	$(GSUTIL) cp -r $(BUILD_DIR)/indexTiler.js $(BQ_LIBRARY_TILER_BUCKET)
 endif
