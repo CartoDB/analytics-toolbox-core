@@ -66,7 +66,7 @@ test: check $(NODE_MODULES_DEV)
 		if [ ! -z "$$TESTS" ]; then \
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=40000 --bail --verbose $$TESTS; \
+			jest --testTimeout=120000 --bail --verbose $$TESTS; \
 		fi; \
 	done;
 
