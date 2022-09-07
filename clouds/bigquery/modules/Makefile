@@ -17,6 +17,9 @@ else
 export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
 endif
 
+BQ_MODULE_LABEL ?= spatial_extension_module:core
+MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
+
 REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_LIBRARY_BUCKET BQ_PROJECT BQ_REGION"
 
 include $(COMMON_DIR)/Makefile
@@ -51,6 +54,12 @@ deploy: check build
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	BQ_LIBRARY_BUCKET=$(BQ_LIBRARY_BUCKET) \
 	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/modules.sql
+ifdef BQ_PERMISSIONS
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/$(MODULE_PERMISSIONS_BASH)
+endif
+ifdef BQ_PERMISSIONS_GROUP
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
+endif
 
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \

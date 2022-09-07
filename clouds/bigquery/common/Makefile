@@ -9,8 +9,6 @@ BQ_LIBRARY_DEFAULT ?= carto_analytics_toolbox_core
 export BQ_LIBRARY_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/$(BQ_LIBRARY_DEFAULT).js
 export BQ_LIBRARY_TILER_BUCKET = $(BQ_BUCKET)$(BQ_DEPLOY_DATASET)/$(BQ_LIBRARY_DEFAULT)_tiler.js
 
-BQ_MODULE_LABEL ?= spatial_extension_module:core
-
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
