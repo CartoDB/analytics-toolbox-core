@@ -17,7 +17,7 @@ else
 export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
 endif
 
-REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_LIBRARY_BUCKET BQ_LIBRARY_TILER_BUCKET BQ_PROJECT BQ_REGION"
+REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_LIBRARY_BUCKET BQ_PROJECT BQ_REGION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -55,9 +55,6 @@ deploy: check build
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
 		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_LABEL) $(BQ_DEPLOY_DATASET)
-	$(MAKE) post-dataset-create
-
-post-dataset-create:
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
