@@ -71,6 +71,12 @@ test: check $(NODE_MODULES_DEV)
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 			jest --testTimeout=120000 --bail --verbose $$TESTS; \
 		fi; \
+		if [ -d "$(TEST_DIR)/$$m/old-test" ]; then \
+			echo "Old tests with custon Makefile"; \
+			TESTS=`$(COMMON_DIR)/list_functions.js $$m/old-test --fileExtension='.js' --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
+			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+			$(MAKE) -C $(TEST_DIR)/$$m/old-test/ test TESTS_FILES="$$TESTS"; \
+		fi; \
 	done;
 
 remove: check
