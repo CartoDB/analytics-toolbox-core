@@ -55,6 +55,9 @@ deploy: check build
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
 		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_LABEL) $(BQ_DEPLOY_DATASET)
+	$(MAKE) post-dataset-create
+
+post-dataset-create:
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
@@ -64,6 +67,12 @@ test: check $(NODE_MODULES_DEV)
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 			jest --testTimeout=40000 --bail --verbose $$TESTS; \
+		fi; \
+		if [ -d "$(TEST_DIR)/$$m/old-test" ]; then \
+			echo "Old tests with custon Makefile"; \
+			TESTS=`$(COMMON_DIR)/list_functions.js $$m/old-test --extension='.js' --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
+			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+			$(MAKE) -C $(TEST_DIR)/$$m/old-test/ test TESTS_FILES="$$TESTS"; \
 		fi; \
 	done;
 
