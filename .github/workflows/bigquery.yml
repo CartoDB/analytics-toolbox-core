@@ -16,10 +16,10 @@ jobs:
     timeout-minutes: 30
     env:
       GCLOUD_VERSION: 290.0.1
-      BQ_REGION: us
-      BQ_PROJECT: bqcartoci
-      BQ_BUCKET: gs://bqcartoci/
-      BQ_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_
+      BQ_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      BQ_PROJECT: ${{ secrets.BQ_PROJECT_CI }}
+      BQ_BUCKET: ${{ secrets.BQ_BUCKET_CI }}
+      BQ_REGION: ${{ secrets.BQ_REGION_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -50,7 +50,7 @@ jobs:
           make test && \
           make remove
 
-  deploy-internal:
+  deploy:
     if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04

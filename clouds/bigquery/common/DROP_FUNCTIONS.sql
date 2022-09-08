@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+---------------------------------
+-- Copyright (C) 2021-2022 CARTO
+---------------------------------
 
 CREATE OR REPLACE PROCEDURE `@@BQ_DATASET@@.DROP_FUNCTIONS`()
 BEGIN

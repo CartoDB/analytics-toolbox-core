@@ -45,9 +45,6 @@ build: $(NODE_MODULES_DEV)
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
-build-libraries:
-	$(MAKE) -C ../libraries/javascript build
-
 deploy: check build
 	echo "Deploying modules..."
 	$(MAKE) dataset-create
@@ -76,7 +73,7 @@ test: check $(NODE_MODULES_DEV)
 		fi; \
 	done;
 
-remove: $(NODE_MODULES_DEV)
+remove: check
 	echo "Removing modules..."
 	$(BQ) rm -r -f -d $(BQ_DEPLOY_DATASET)
 
