@@ -1,0 +1,67 @@
+name: Bigquery dedicated env
+on:
+  pull_request:
+    types: [closed, unlabeled, labeled]
+  push:
+    paths:
+      - "clouds/bigquery/**"
+      - ".github/workflows/bigquery.yml"
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  dedicated-bq:
+    if: github.event.label.name == 'dedicated_bigquery'
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      GCLOUD_VERSION: 290.0.1
+      BQ_REGION: us
+      BQ_PROJECT: cartodb-gcp-backend-data-team
+      BQ_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      BQ_BUCKET: gs://bqcartodev/
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_DEDICATED_SA_BASE64 }}
+          project_id: ${{ env.BQ_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ env.BQ_PROJECT }}
+      - name: Run deploy
+        id: deploy
+        if: github.event.action == 'labeled'
+        run: |
+          cd clouds/bigquery
+          make deploy
+      - name: Run release
+        id: release
+        if: github.event.action != 'labeled'
+        run: |
+          cd clouds/bigquery
+          make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.BQ_PREFIX }}_carto environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment release PR
+        if: steps.release.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment released
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

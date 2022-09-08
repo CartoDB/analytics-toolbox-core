@@ -1,0 +1,68 @@
+name: Postgres dedicated env
+on:
+  pull_request:
+    types: [closed, unlabeled, labeled]
+  push:
+    paths:
+      - "clouds/postgres/**"
+      - ".github/workflows/postgres.yml"
+
+env:
+  NODE_VERSION: 14
+  PYTHON3_VERSION: 3.8.10
+
+jobs:
+  dedicated-pg:
+    if: github.event.label.name == 'dedicated_postgres'
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    env:
+      PG_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      PG_HOST: ${{ secrets.PG_HOST_DEDICATED }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
+      PG_USER: ${{ secrets.PG_USER_DEDICATED }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(py|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Run deploy
+        if: github.event.action == 'labeled'
+        id: deploy
+        run: |
+          cd clouds/postgres
+          make deploy
+      - name: Run release
+        if: github.event.action != 'labeled'
+        id: release
+        run: |
+          cd clouds/postgres
+          make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.PG_PREFIX }}_carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment release PR
+        if: steps.release.outcome == 'success'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment released
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
