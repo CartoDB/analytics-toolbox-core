@@ -31,10 +31,6 @@ build: check
 	echo "Building libraries..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
-ifdef MAKE_LIB
-	echo "Building extra libraries $(SRC_DIR)/$(MAKE_LIB)..."
-	$(MAKE) -C $(SRC_DIR)/$(MAKE_LIB)
-endif
 	$(MAKE) build-libs
 ifdef MAKE_LIB
 	echo "Building extra libraries $(SRC_DIR)/$(MAKE_LIB)..."
