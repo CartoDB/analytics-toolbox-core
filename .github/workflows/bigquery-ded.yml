@@ -40,7 +40,9 @@ jobs:
             project_id: ${{ env.BQ_PROJECT }}
       - name: Run deploy
         id: deploy
-        if: github.event.action == 'labeled'
+        if: |
+          github.event.action == 'labeled' ||
+          github.event_name == 'push'
         run: |
           cd clouds/bigquery
           make deploy
