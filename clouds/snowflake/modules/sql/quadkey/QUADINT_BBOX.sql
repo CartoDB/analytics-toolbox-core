@@ -9,7 +9,7 @@ LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
     if (!QUADINT) {
-        throw new Error('NULL argument passed to UDF');
+        throw new Error('NULL argument passed to UDF.');
     }
 
     @@SF_LIBRARY_QUADKEY@@
