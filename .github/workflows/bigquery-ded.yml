@@ -57,7 +57,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.BQ_PREFIX }}_carto environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
+            Dedicated ${{ env.BQ_PREFIX }}carto environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'

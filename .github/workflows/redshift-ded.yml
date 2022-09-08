@@ -68,7 +68,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.RS_PREFIX }}_carto environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
+            Dedicated ${{ env.RS_PREFIX }}carto environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'

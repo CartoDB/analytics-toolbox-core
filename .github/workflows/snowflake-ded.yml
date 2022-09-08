@@ -48,7 +48,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.SF_PREFIX }}_carto environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
+            Dedicated ${{ env.SF_PREFIX }}carto environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
         if: steps.release.outcome == 'success'

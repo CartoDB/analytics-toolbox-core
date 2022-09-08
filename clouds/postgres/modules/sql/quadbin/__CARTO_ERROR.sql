@@ -9,7 +9,7 @@ RETURNS TEXT
  AS
 $BODY$
 BEGIN
-    RAISE EXCEPTION 'CARTO Error: %', message;
+    RAISE EXCEPTION 'CARTO Error: %.', message;
 END;
 $BODY$
   LANGUAGE PLPGSQL;
