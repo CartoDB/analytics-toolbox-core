@@ -65,3 +65,4 @@ derby.log
 
 # Deploy 
 submit-run.json
+dropUDF.sql

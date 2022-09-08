@@ -38,7 +38,6 @@ If you need to install them directly, not through the data share process, follow
 
 Right now the only way to get access the Analytics toolbox is by installing it directly on your database. Follow the instructions later on.
 
-
 ## Documentation
 
 | Cloud | Documentation |

@@ -13,7 +13,7 @@ import org.apache.spark.sql.types.{DataType, StringType}
 
 package object index extends StandardEncoders {
   implicit def crsConverter: HConverter[CRS] = new HConverter[CRS] {
-    def convert(argument: Any): CRS = CRS.fromString(argument.convert[String])
+    def convert(argument: Any): CRS = CRS.fromString(argument.toString)
   }
 
   implicit def extentConverter: HConverter[Extent] = new HConverter[Extent] {

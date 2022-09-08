@@ -17,8 +17,8 @@
 package com.carto.analyticstoolbox.modules.formatters
 
 import com.azavea.hiveless.HUDF
-import com.azavea.hiveless.spatial.util.TWKBUtils
 import com.carto.analyticstoolbox.modules._
+import com.carto.hiveless.spatial.util.TWKBUtils
 import org.locationtech.jts.geom.Geometry
 
 class ST_AsTWKB extends HUDF[Geometry, Array[Byte]] {
