@@ -19,13 +19,6 @@ jobs:
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
       PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
     steps:
-      - name: Check labels and events
-        shell: bash
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Event action: ${{github.event.action}}"
-          echo "Dedicated: ${{env.PG_PREFIX}}"
-          echo "Label is there: ${{contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')}}"
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup node
@@ -43,11 +36,16 @@ jobs:
         id: deploy
         run: |
           cd clouds/postgres
+          make clean && \
+          make remove && \
+          make deploy
       - name: Run release
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         id: release
         run: |
           cd clouds/postgres
+          make clean && \
+          make remove
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
         uses: thollander/actions-comment-pull-request@v1
