@@ -55,7 +55,7 @@ jobs:
         run: |
           cd clouds/postgres
       - name: Comment deploy PR
-        if: steps.deploy.outcome == 'success'
+        if: steps.deploy.outcome == 'success' && (github.event.label.name == 'dedicated_postgres' && github.event.action == 'labeled')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
