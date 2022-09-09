@@ -13,10 +13,10 @@ jobs:
     timeout-minutes: 20
     env:
       GCLOUD_VERSION: 290.0.1
-      BQ_REGION: us
-      BQ_PROJECT: cartodb-gcp-backend-data-team
+      BQ_REGION: ${{ secrets.BQ_REGION_DEDICATED }}
+      BQ_PROJECT: ${{ secrets.BQ_PROJECT_DEDICATED }}
       BQ_PREFIX: dedicated_${{ github.event.pull_request.number }}_
-      BQ_BUCKET: gs://bqcartodev/
+      BQ_BUCKET: ${{ secrets.BQ_BUCKET_DEDICATED }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -26,7 +26,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - uses: google-github-actions/auth@v0
         with:
-          credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_DEDICATED_SA_BASE64 }}
+          credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
           project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
