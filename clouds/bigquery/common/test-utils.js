@@ -4,7 +4,7 @@ const path = require('path');
 const { BigQuery } = require('@google-cloud/bigquery');
 
 const BQ_PROJECT = process.env.BQ_PROJECT;
-const BQ_PREFIX = `${BQ_PROJECT}.${process.env.BQ_PREFIX}`;
+const BQ_PREFIX = process.env.BQ_PREFIX;
 const BQ_DATASET = process.env.BQ_DATASET;
 
 const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
@@ -17,9 +17,7 @@ async function runQuery (query, options) {
 }
 
 function replaceBQPrefix (text) {
-    return text.replace(/@@BQ_PREFIX@@/g, BQ_PREFIX)
-        .replace(/@@BQ_PROJECT@@/g, BQ_PROJECT)
-        .replace(/@@BQ_DATASET@@/g, BQ_DATASET);
+    return text.replace(/@@BQ_DATASET@@/g, BQ_DATASET);
 }
 
 async function loadTable (tablename, filepath, columns, viewName) {
@@ -30,7 +28,7 @@ async function loadTable (tablename, filepath, columns, viewName) {
         writeDisposition: 'WRITE_TRUNCATE'
     };
 
-    await client.dataset(BQ_DATASET).table(tablename).load(filepath, metadata);
+    await client.dataset(`${BQ_PREFIX}carto`).table(tablename).load(filepath, metadata);
     if (viewName) {
         await createView(viewName, `SELECT * FROM \`${BQ_DATASET}.${tablename}\``);
     }
@@ -43,7 +41,7 @@ async function loadTableJSON (tablename, filepath, columns, viewName) {
         writeDisposition: 'WRITE_TRUNCATE'
     };
 
-    await client.dataset(BQ_DATASET).table(tablename).load(filepath, metadata);
+    await client.dataset(`${BQ_PREFIX}carto`).table(tablename).load(filepath, metadata);
     if (viewName) {
         await createView(viewName, `SELECT * FROM \`${BQ_DATASET}.${tablename}\``);
     }
@@ -53,11 +51,11 @@ async function createView (viewName, query) {
     const options = {
         view: query
     };
-    await client.dataset(BQ_DATASET).createTable(viewName, options);
+    await client.dataset(`${BQ_PREFIX}carto`).createTable(viewName, options);
 }
 
 async function deleteTable (tablename) {
-    const table = client.dataset(BQ_DATASET).table(tablename);
+    const table = client.dataset(`${BQ_PREFIX}carto`).table(tablename);
     const exists = await table.exists();
     if (exists[0]) {
         await table.delete();
@@ -104,6 +102,10 @@ function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
     return list;
 }
 
+function normSql (txt) {
+    return txt.replace(/\s+/g,' ').replace(/\s?,\s?/g, ',').replace(/\( /g, '(').replace(/ \)/g, ')').trim();
+}
+
 module.exports = {
     runQuery,
     loadTable,
@@ -115,5 +117,6 @@ module.exports = {
     writeNDJSONFixture,
     cancelJob,
     sortByKey,
-    sortByKeyAndRound
+    sortByKeyAndRound,
+    normSql
 };

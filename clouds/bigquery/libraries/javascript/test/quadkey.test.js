@@ -2,17 +2,6 @@ const lib = require('../build/index');
 
 // TODO: refactor tests
 
-test('quadkey library defined', () => {
-    expect(lib.quadkey.bbox).toBeDefined();
-    expect(lib.quadkey.toChildren).toBeDefined();
-    expect(lib.quadkey.quadkeyFromQuadint).toBeDefined();
-    expect(lib.quadkey.quadintFromQuadkey).toBeDefined();
-    expect(lib.quadkey.quadintFromLocation).toBeDefined();
-    expect(lib.quadkey.quadintToGeoJSON).toBeDefined();
-    expect(lib.quadkey.geojsonToQuadints).toBeDefined();
-    expect(lib.quadkey.ZXYFromQuadint).toBeDefined();
-});
-
 test('bbox should work', () => {
     expect(lib.quadkey.bbox(162)).toEqual([-90, 0, 0, 66.51326044311186]);
     expect(lib.quadkey.bbox(12070922)).toEqual([-45, 44.840290651397986, -44.6484375, 45.08903556483103]);

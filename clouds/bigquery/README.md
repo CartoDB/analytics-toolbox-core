@@ -9,6 +9,8 @@ Make sure you have installed the following tools:
 - `make`: https://www.gnu.org/software/make/
 - `node`: https://www.npmjs.com/ (v14.18)
 - `yarn`: https://yarnpkg.com/ (v1.22)
+- `bq`: https://cloud.google.com/bigquery/docs/bq-command-line-tool
+- `gsutil`: https://cloud.google.com/storage/docs/gsutil (v5.5)
 
 ## Environment variables
 
@@ -21,6 +23,8 @@ BQ_BUCKET=gs://<bucket>/ or gs://<bucket>/<folder>/
 BQ_REGION=<region>
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account/or/adc.json
 ```
+
+Note: you may need to run `gcloud auth login` to generate the `acd.json` file.
 
 ## Structure
 

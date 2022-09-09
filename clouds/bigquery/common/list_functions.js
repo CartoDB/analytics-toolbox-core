@@ -13,6 +13,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const modulename = argv._[0];
 const moduledir = path.resolve('test', modulename);
 const diff = argv.diff || [];
+const fileExtension = argv.fileExtension || '.test.js';
 const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 const functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 const all = !(diff.length || modulesFilter.length || functionsFilter.length);
@@ -23,7 +24,7 @@ if (fs.statSync(moduledir).isDirectory()) {
     const files = fs.readdirSync(moduledir);
     files.forEach(file => {
         pfile = path.parse(file);
-        if (file.endsWith('.test.js')) {
+        if (file.endsWith(fileExtension)) {
             const name = pfile.name.replace('.test', '');
             functions.push({
                 name,
