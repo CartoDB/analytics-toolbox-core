@@ -45,13 +45,13 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run deploy
-        if: github.event.action == 'labeled' || steps.check_pr_labels.outputs.result == 'true'
+        if: (github.event.label.name == 'dedicated_postgres' && github.event.action == 'labeled') || steps.check_pr_labels.outputs.result == 'true'
         id: deploy
         run: |
           cd clouds/postgres
           make deploy
       - name: Run release
-        if: github.event.action != 'labeled'
+        if: github.event.name == 'pull_request' && github.event.action != 'labeled'
         id: release
         run: |
           cd clouds/postgres
