@@ -45,7 +45,7 @@ jobs:
         id: release
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
-          cd clouds/postgres
+          cd clouds/bigquery
           make remove
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
