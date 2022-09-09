@@ -13,7 +13,9 @@ env:
 
 jobs:
   dedicated-pg:
-    if: github.event.label.name == 'dedicated_postgres'
+    if: |
+      github.event.label.name == 'dedicated_postgres' ||
+      (contains(github.event.pull_request.labels.*.name, 'dedicated_postgres') && github.event_name == 'push')
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -36,9 +38,7 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run deploy
-        if: |
-          github.event.action == 'labeled' ||
-          github.event_name == 'push'
+        if: github.event.action == 'labeled'
         id: deploy
         run: |
           cd clouds/postgres
