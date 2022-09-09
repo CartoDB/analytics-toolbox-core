@@ -48,14 +48,14 @@ jobs:
         run: |
           cd clouds/postgres
       - name: Comment deploy PR
-        if: steps.deploy.outcome == 'success'
+        if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
             Dedicated ${{ env.PG_PREFIX }}carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment release PR
-        if: steps.release.outcome == 'success'
+        if: steps.release.outcome == 'success' && (github.event.action == 'unlabeled' || && github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
