@@ -24,17 +24,17 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test clean
 
 help:
-	echo "Please choose one of the following targets: lint build deploy test remove clean"
+	echo "Please choose one of the following targets: lint build deploy test clean"
 
 lint: $(NODE_MODULES_DEV)
 	echo "Linting libraries..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
 
-build: check
+build:
 	echo "Building libraries..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
@@ -57,7 +57,7 @@ build-install:
 		yarn -s --update-checksums --cwd $$d/..; \
 	done;
 
-deploy: build
+deploy: check build
 	echo "Deploying libraries..."
 	$(GSUTIL) cp -r $(BUILD_DIR)/index.js $(BQ_LIBRARY_BUCKET)
 	# Provisional for WASM version of tiler

@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
+      DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
       DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
-      DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
       DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
@@ -55,10 +55,10 @@ jobs:
           cd clouds/databricks
           make lint && \
           make deploy && \
-          make test-integration && \
-          make clean-deploy
+          make test && \
+          make remove
 
-  deploy:
+  deploy-internal:
     if: github.ref_name == 'master'
     needs: test
     runs-on: ubuntu-20.04
@@ -66,8 +66,6 @@ jobs:
     env:
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
       DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
-      DB_DATASET_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -95,7 +93,7 @@ jobs:
           DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
         run: |
           cd clouds/databricks
-          make deploy 
+          make deploy
 
   publish:
     name: Publish Artifacts

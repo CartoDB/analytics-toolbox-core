@@ -39,7 +39,9 @@ build:
 	$(MAKE) build-modules
 
 build-libraries:
+	mkdir -p $(BUILD_DIR)/libs
 	$(MAKE) -C libraries/javascript build
+	cp libraries/javascript/build/index.js $(BUILD_DIR)/libs/carto_analytics_toolbox_core.js
 
 build-modules:
 	mkdir -p $(BUILD_DIR)
@@ -89,6 +91,7 @@ create-package:
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_NAME)/
+	cp -r $(BUILD_DIR)/libs $(DIST_DIR)/$(PACKAGE_NAME)/libs
 
 	$(MAKE) extra-package
 

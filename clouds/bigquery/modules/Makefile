@@ -17,7 +17,10 @@ else
 export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
 endif
 
-REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_LIBRARY_BUCKET BQ_LIBRARY_TILER_BUCKET BQ_PROJECT BQ_REGION"
+BQ_MODULE_LABEL ?= spatial_extension_module:core
+MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
+
+REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_LIBRARY_BUCKET BQ_PROJECT BQ_REGION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -42,22 +45,22 @@ build: $(NODE_MODULES_DEV)
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
-build-libraries:
-	$(MAKE) -C ../libraries/javascript build
-
 deploy: check build
 	echo "Deploying modules..."
 	$(MAKE) dataset-create
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	BQ_LIBRARY_BUCKET=$(BQ_LIBRARY_BUCKET) \
 	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/modules.sql
+ifdef BQ_PERMISSIONS
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/$(MODULE_PERMISSIONS_BASH)
+endif
+ifdef BQ_PERMISSIONS_GROUP
+	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
+endif
 
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
 		$(BQ) mk -d --description "$(BQ_DEPLOY_DATASET) module" -label $(BQ_MODULE_LABEL) $(BQ_DEPLOY_DATASET)
-	$(MAKE) post-dataset-create
-
-post-dataset-create:
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
@@ -66,11 +69,17 @@ test: check $(NODE_MODULES_DEV)
 		if [ ! -z "$$TESTS" ]; then \
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=40000 --bail --verbose $$TESTS; \
+			jest --testTimeout=120000 --bail --verbose $$TESTS; \
+		fi; \
+		if [ -d "$(TEST_DIR)/$$m/old-test" ]; then \
+			echo "Old tests with custon Makefile"; \
+			TESTS=`$(COMMON_DIR)/list_functions.js $$m/old-test --fileExtension='.js' --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
+			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+			$(MAKE) -C $(TEST_DIR)/$$m/old-test/ test TESTS_FILES="$$TESTS"; \
 		fi; \
 	done;
 
-remove: $(NODE_MODULES_DEV)
+remove: check
 	echo "Removing modules..."
 	$(BQ) rm -r -f -d $(BQ_DEPLOY_DATASET)
 

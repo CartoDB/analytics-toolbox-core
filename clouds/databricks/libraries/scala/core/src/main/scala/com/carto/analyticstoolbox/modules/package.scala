@@ -3,7 +3,7 @@ package com.carto.analyticstoolbox
 import cats.Id
 import com.azavea.hiveless.serializers.syntax.{ArrayDeferredObjectOps, ConverterOps}
 import com.azavea.hiveless.serializers.{HConverter, HDeserializer, HSerializer}
-import com.azavea.hiveless.spatial.util.TWKBUtils
+import com.carto.hiveless.spatial.util.TWKBUtils
 import org.apache.spark.sql.types.{BinaryType, DataType}
 import org.locationtech.jts.geom.Geometry
 
