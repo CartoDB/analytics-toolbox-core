@@ -18,18 +18,11 @@ jobs:
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
       PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
     steps:
-      - name: Check PR labels action step
-        id: check_pr_labels
-        uses: shioyang/check-pr-labels-on-push-action@v1.0.6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          labels: '["dedicated_postgres"]'
       - name: Check labels and events
         shell: bash
         run: |
           echo "Event name: ${{ github.event_name }}"
           echo "Event action: ${{github.event.action}}"
-          echo "Push event and label: ${{ steps.check_pr_labels.outputs.result }}"
           echo "Dedicated: ${{env.PG_PREFIX}}"
           echo "Label is there: ${{contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')}}"
       - name: Checkout repo
@@ -45,17 +38,17 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run deploy
-        if: (github.event.label.name == 'dedicated_postgres' && github.event.action == 'labeled') || steps.check_pr_labels.outputs.result == 'true'
+        if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
         id: deploy
         run: |
           cd clouds/postgres
       - name: Run release
-        if: github.event.name == 'pull_request' && github.event.action != 'labeled'
+        if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         id: release
         run: |
           cd clouds/postgres
       - name: Comment deploy PR
-        if: steps.deploy.outcome == 'success' && (github.event.label.name == 'dedicated_postgres' && github.event.action == 'labeled')
+        if: steps.deploy.outcome == 'success'
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
