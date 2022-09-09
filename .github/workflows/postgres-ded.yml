@@ -26,7 +26,7 @@ jobs:
       - name: Check label
         shell: bash
         run: |
-          echo "Labels found: ${{github.event.pull_request.labels.*.name}}"
+          echo "Labels found: ${{contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')}}"
     # steps:
     #   - name: Checkout repo
     #     uses: actions/checkout@v2
