@@ -22,11 +22,11 @@ jobs:
       PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
       PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
-      steps:
-        - name: Check label
-          shell: bash
-          run: |
-            echo "Labels found: ${{github.event.pull_request.labels.*.name}}"
+    steps:
+      - name: Check label
+        shell: bash
+        run: |
+          echo "Labels found: ${{github.event.pull_request.labels.*.name}}"
     # steps:
     #   - name: Checkout repo
     #     uses: actions/checkout@v2
