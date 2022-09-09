@@ -13,7 +13,7 @@ env:
 
 jobs:
   dedicated-pg:
-    # if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
+    if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -26,7 +26,7 @@ jobs:
       - name: Check label
         shell: bash
         run: |
-          echo "Labels found: ${{contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')}}"
+          echo "Event found: ${{github.event_name}}"
     # steps:
     #   - name: Checkout repo
     #     uses: actions/checkout@v2
