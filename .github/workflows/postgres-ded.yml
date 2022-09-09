@@ -31,7 +31,7 @@ jobs:
       - name: Check labels and events
         shell: bash
         run: |
-          echo "Event name: ${{ github.event.name }}"
+          echo "Event name: ${{ github.event_name }}"
           echo "Event action: ${{github.event.action}}"
           echo "Push event and label: ${{ steps.check_pr_labels.outputs.result }}"
       - name: Checkout repo
