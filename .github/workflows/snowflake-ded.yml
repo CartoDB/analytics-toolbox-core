@@ -30,7 +30,6 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake')
         run: |
           cd clouds/snowflake
-          make clean && \
           make remove && \
           make deploy
       - name: Run release
@@ -38,7 +37,6 @@ jobs:
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
           cd clouds/snowflake
-          make clean && \
           make remove
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'

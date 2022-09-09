@@ -36,7 +36,6 @@ jobs:
         id: deploy
         run: |
           cd clouds/postgres
-          make clean && \
           make remove && \
           make deploy
       - name: Run release
@@ -44,7 +43,6 @@ jobs:
         id: release
         run: |
           cd clouds/postgres
-          make clean && \
           make remove
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
