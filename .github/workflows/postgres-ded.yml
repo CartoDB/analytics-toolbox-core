@@ -36,7 +36,7 @@ jobs:
         id: deploy
         run: |
           cd clouds/postgres
-          make remove && \
+          make remove-modules && \
           make deploy
       - name: Run release
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'

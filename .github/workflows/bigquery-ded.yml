@@ -39,7 +39,7 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'dedicated_bigquery')
         run: |
           cd clouds/bigquery
-          make remove && \
+          make remove-modules && \
           make deploy
       - name: Run release
         id: release
