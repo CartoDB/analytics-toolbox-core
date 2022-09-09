@@ -23,10 +23,16 @@ jobs:
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
       PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
     steps:
+      - name: Check PR labels action step
+        id: check_pr_labels
+        uses: shioyang/check-pr-labels-on-push-action@v1.0.6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labels: '["dedicated_postgres"]'
       - name: Check label
         shell: bash
         run: |
-          echo "Event found: ${{contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')}}"
+          echo "Found: ${{ steps.check_pr_labels.outputs.result }}"
     # steps:
     #   - name: Checkout repo
     #     uses: actions/checkout@v2
