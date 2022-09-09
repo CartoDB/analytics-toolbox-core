@@ -13,7 +13,7 @@ env:
 
 jobs:
   dedicated-pg:
-    if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
+    # if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -22,42 +22,47 @@ jobs:
       PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
       PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 3
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Setup virtualenv
-        run: pip install virtualenv
-      - name: Run deploy
-        if: github.event.action == 'labeled'
-        id: deploy
-        run: |
-          cd clouds/postgres
-          make deploy
-      - name: Run release
-        if: github.event.action != 'labeled'
-        id: release
-        run: |
-          cd clouds/postgres
-          make remove
-      - name: Comment deploy PR
-        if: steps.deploy.outcome == 'success'
-        uses: thollander/actions-comment-pull-request@v1
-        with:
-          message: |
-            Dedicated ${{ env.PG_PREFIX }}carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Comment release PR
-        if: steps.release.outcome == 'success'
-        uses: thollander/actions-comment-pull-request@v1
-        with:
-          message: |
-            Dedicated environment released
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      steps:
+        - name: Check label
+          shell: bash
+          run: |
+            echo "Labels found: ${{github.event.pull_request.labels.*.name}}"
+    # steps:
+    #   - name: Checkout repo
+    #     uses: actions/checkout@v2
+    #   - name: Setup node
+    #     uses: actions/setup-node@v1
+    #     with:
+    #       node-version: ${{ env.NODE_VERSION }}
+    #   - name: Setup python 3
+    #     uses: actions/setup-python@v2
+    #     with:
+    #       python-version: ${{ env.PYTHON3_VERSION }}
+    #   - name: Setup virtualenv
+    #     run: pip install virtualenv
+    #   - name: Run deploy
+    #     if: github.event.action == 'labeled'
+    #     id: deploy
+    #     run: |
+    #       cd clouds/postgres
+    #       make deploy
+    #   - name: Run release
+    #     if: github.event.action != 'labeled'
+    #     id: release
+    #     run: |
+    #       cd clouds/postgres
+    #       make remove
+    #   - name: Comment deploy PR
+    #     if: steps.deploy.outcome == 'success'
+    #     uses: thollander/actions-comment-pull-request@v1
+    #     with:
+    #       message: |
+    #         Dedicated ${{ env.PG_PREFIX }}carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   - name: Comment release PR
+    #     if: steps.release.outcome == 'success'
+    #     uses: thollander/actions-comment-pull-request@v1
+    #     with:
+    #       message: |
+    #         Dedicated environment released
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
