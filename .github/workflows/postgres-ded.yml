@@ -31,7 +31,7 @@ jobs:
           echo "Event action: ${{github.event.action}}"
           echo "Push event and label: ${{ steps.check_pr_labels.outputs.result }}"
           echo "Dedicated: ${{env.PG_PREFIX}}"
-          echo "Label name: ${{github.event.label.name}}"
+          echo "Label is there: ${{contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')}}"
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup node
