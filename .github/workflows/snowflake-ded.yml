@@ -1,11 +1,7 @@
 name: Snowflake dedicated env
 on:
   pull_request:
-    types: [closed, unlabeled, labeled]
-  push:
-    paths:
-      - "clouds/snowflake/**"
-      - ".github/workflows/snowflake.yml"
+    types: [closed, unlabeled, labeled, synchronize]
 
 env:
   NODE_VERSION: 14
