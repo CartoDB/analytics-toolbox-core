@@ -12,7 +12,7 @@ RETURNS BIGINT
 $BODY$
     SELECT CASE
     WHEN resolution < 0 OR resolution > 26
-    THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT
+    THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26.', resolution))::BIGINT
     WHEN longitude IS NULL OR latitude IS NULL OR resolution IS NULL
     THEN NULL::BIGINT
     ELSE
