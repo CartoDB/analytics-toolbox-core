@@ -13,9 +13,7 @@ env:
 
 jobs:
   dedicated-pg:
-    if: |
-      github.event.label.name == 'dedicated_postgres' ||
-      (contains(github.event.pull_request.labels.*.name, 'dedicated_postgres') && github.event_name == 'push')
+    if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
