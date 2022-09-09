@@ -28,10 +28,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           labels: '["dedicated_postgres"]'
-      - name: Check label
+      - name: Check labels and events
         shell: bash
         run: |
-          echo "Found: ${{ steps.check_pr_labels.outputs.result }}"
+          echo "Event name: ${{ github.event.name }}"
+          echo "Event action: ${{github.event.action}}"
+          echo "Push event and label: ${{ steps.check_pr_labels.outputs.result }}"
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup node
