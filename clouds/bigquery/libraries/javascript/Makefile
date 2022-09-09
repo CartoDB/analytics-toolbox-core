@@ -17,25 +17,25 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test clean
 
 help:
-	echo "Please choose one of the following targets: lint build deploy test remove clean"
+	echo "Please choose one of the following targets: lint build deploy test clean"
 
 lint: $(NODE_MODULES_DEV)
 	echo "Linting libraries..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
 
-build: check
+build:
 	echo "Building libraries..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
+	$(MAKE) build-libs
 ifdef MAKE_LIB
 	echo "Building extra libraries $(SRC_DIR)/$(MAKE_LIB)..."
 	$(MAKE) -C $(SRC_DIR)/$(MAKE_LIB)
 endif
-	$(MAKE) build-libs
 
 build-libs: build-install $(NODE_MODULES_DEV)
 	NAME=lib \
@@ -50,11 +50,11 @@ build-install:
 		yarn -s --update-checksums --cwd $$d/..; \
 	done;
 
-deploy: build
+deploy: check build
 	echo "Deploying libraries..."
 	$(GSUTIL) cp -r $(BUILD_DIR)/index.js $(BQ_LIBRARY_BUCKET)
 	# Provisional for WASM version of tiler
-ifneq ($(wildcard $(BUILD_DIR)/indexTiler.js),)
+ifdef MAKE_LIB
 	echo "Deploying tiler library..."
 	$(GSUTIL) cp -r $(BUILD_DIR)/indexTiler.js $(BQ_LIBRARY_TILER_BUCKET)
 endif

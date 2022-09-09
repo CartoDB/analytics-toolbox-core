@@ -1,12 +1,12 @@
-import accessors from './accessors';
-import constructors from './constructors';
-import measurements from './measurements';
-import quadkey from './quadkey';
-import s2 from './s2';
-import processing from './processing';
-import transformations from './transformations';
-import h3 from './h3';
-import placekey from './placekey';
+import accessors from '../src/accessors';
+import constructors from '../src/constructors';
+import measurements from '../src/measurements';
+import quadkey from '../src/quadkey';
+import s2 from '../src/s2';
+import processing from '../src/processing';
+import transformations from '../src/transformations';
+import h3 from '../src/h3';
+import placekey from '../src/placekey';
 
 export default {
     accessors,

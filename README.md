@@ -38,7 +38,6 @@ If you need to install them directly, not through the data share process, follow
 
 Right now the only way to get access the Analytics toolbox is by installing it directly on your database. Follow the instructions later on.
 
-
 ## Documentation
 
 | Cloud | Documentation |
@@ -51,94 +50,13 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 
 ## Development
 
-The repo contains the implementation of the toolbox for all the clouds. The functions are organized in modules. Each module has the following structure:
-- `doc`: contains the SQL reference of the functions
-- `lib`: contains the library code (JavaScript/Python)
-- `sql`: contains the function's code (SQL)
-- `test`: contains both the unit and integration tests
-
-Inside a module, you can run the following commands. These commands are available for any {module}/{cloud}. For example, you can enter the module `cd modules/accessors/bigquery` and then run the command:
-- `make help`: shows the commands available in the Makefile.
-- `make lint`: runs a linter (using eslint or flake8).
-- `make lint-fix`: runs a linter (using eslint or flake8) and fixes the trivial issues.
-- `make build`: builds the bundles (using rollup or zip).
-- `make deploy`: builds the bundles and deploys and SQL functions to the data warehouse using the env variables.
-- `make test-unit`: builds the bundles and runs the unit tests for these bundles (using jest or pytest).
-- `make test-integration`: runs just the integration tests (using jest or pytest). It performs requests to real data warehouses.
-- `make test-integration-full`: runs the full-path integration tests (using jest or pytest). It is equivalent to `deploy` + `test-integration` + `clean-deploy`.
-- `make clean`: removes the installed dependencies and generated files.
-- `make clean-deploy`: removes all the assets, functions, procedures, tables uploaded in the `deploy`.
-
-These commands can be used with all the modules at once from the root folder. For example, `make deploy CLOUD=bigquery`.
-
-Additionally, [this tool](./tools/setool/) has been developed to generate code templates for new modules and functions.
-
 | Cloud | Development |
 |---|---|
-| BigQuery | |
+| BigQuery | [README.md](./clouds/bigquery/README.md) |
 | Snowflake | [README.md](./clouds/snowflake/README.md) |
 | Redshift | [README.md](./clouds/redshift/README.md) |
 | Postgres | [README.md](./clouds/postgres/README.md) |
-| Databricks | |
-
-### BigQuery
-
-The Analytics Toolbox for BigQuery contains SQL functions and JavaScript libraries. The functions are deployed in a dataset called `carto` inside a specific project. In BigQuery, datasets are associated with a region so the functions can only be used with tables stored in datasets with the same region. The JavaScript libraries are deployed in a Google Cloud Storage bucket and referenced by the functions.
-
-**Tools**
-
-Make sure you have installed the following tools:
-
-- `make`: https://www.gnu.org/software/make/
-- `node`: https://www.npmjs.com/ (v14.18)
-- `yarn`: https://yarnpkg.com/ (v1.22)
-- `bq`: https://cloud.google.com/bigquery/docs/bq-command-line-tool
-- `gsutil`: https://cloud.google.com/storage/docs/gsutil (v5.5)
-
-**Environment variables**
-
-The `.env` file contains the variables required to deploy and run the toolbox.
-
-```
-# BigQuery
-BQ_PROJECT=your-bigquery-project
-BQ_BUCKET=gs://your-gcs-bucket/
-BQ_REGION=your-region
-BQ_DATASET_PREFIX=
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account/or/adc.json
-```
-
-Note: you may need to run `gcloud auth login` to generate the `acd.json` file.
-
-### Databricks
-
-CARTO Analytics Toolbox for Databricks provides geospatial functionality leveraging the GeoMesa SparkSQL capabilities. It implements Spatial Hive UDFs. In order to install the toolbox the library (jar-with-dependencies) needs to be installed in the cluster you are using, and the Hive UDFs registered via createUDFs sql script
-
-**Tools**
-
-Make sure you have installed the following tools:
-
-- `make`: https://www.gnu.org/software/make/
-- `jdk (8 or 11)`: https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html (v8.x)
-- `sbt`: https://www.scala-sbt.org/1.x/docs/Setup.html (v1.x)
-- `Python3.6 and above`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
-- `databricks cli`: https://docs.databricks.com/dev-tools/cli/index.html
-- `jq`: https://stedolan.github.io/jq/ (v1.6)
-
-In order to set up authentication you can use a databricks token and the databricks host URL
-``
-databricks configure --token
-``
-
-**Environment variables**
-The `.env` file contains the variables required to deploy and run the toolbox. Only the cluster id is mandatory. Default schema is 'default'
-
-```
-# Databricks
-DB_CLUSTER_ID=my-cluster-id
-DB_SCHEMA=
-DB_DATASET_PREFIX=
-```
+| Databricks | [README.md](./clouds/databricks/README.md) |
 
 ## Contribute
 
