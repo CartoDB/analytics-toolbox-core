@@ -49,13 +49,11 @@ jobs:
         id: deploy
         run: |
           cd clouds/postgres
-          make deploy
       - name: Run release
         if: github.event.name == 'pull_request' && github.event.action != 'labeled'
         id: release
         run: |
           cd clouds/postgres
-          make remove
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success'
         uses: thollander/actions-comment-pull-request@v1
