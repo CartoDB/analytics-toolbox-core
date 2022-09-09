@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      PG_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      PG_PREFIX: dedicated_${{ github.event.number }}_
       PG_HOST: ${{ secrets.PG_HOST_DEDICATED }}
       PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
       PG_USER: ${{ secrets.PG_USER_DEDICATED }}
