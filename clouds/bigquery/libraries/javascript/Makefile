@@ -56,7 +56,7 @@ deploy: check build
 	# Provisional for WASM version of tiler
 ifdef MAKE_LIB
 	echo "Deploying tiler library..."
-	$(GSUTIL) cp -r $(BUILD_DIR)/indexTiler.js $(BQ_LIBRARY_TILER_BUCKET)
+	$(GSUTIL) cp -r $(BUILD_DIR)/index_$(MAKE_LIB).js $(BQ_LIBRARY_TILER_BUCKET)
 endif
 
 test:
