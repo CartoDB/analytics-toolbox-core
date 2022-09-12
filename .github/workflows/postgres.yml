@@ -13,6 +13,7 @@ env:
 jobs:
 
   test:
+    if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
@@ -48,7 +49,8 @@ jobs:
           make remove
 
   deploy-internal:
-    if: github.ref_name == 'master'
+    # if: github.ref_name == 'master'
+    if: false
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -81,7 +83,8 @@ jobs:
           make deploy production=1
 
   publish:
-    if: github.ref_name == 'master'
+    # if: github.ref_name == 'master'
+    if: false
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 10
