@@ -8,12 +8,12 @@ Note: Redshift UDFs only support Python2 but the Python Redshift connector is on
 
 Make sure you have installed the following tools:
 
-- `make`: https://www.gnu.org/software/make/
-- `Python2`: https://www.python.org/downloads/release/python-2718/ (v2.7.18)
-- `Python3`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
-- `aws`: https://aws.amazon.com/cli/ (v2.4)
-- `jq`: https://stedolan.github.io/jq/ (v1.6)
-- `virtualenv`: https://virtualenv.pypa.io/en/latest/ (v20.11)
+- `make`: <https://www.gnu.org/software/make/>
+- `Python2`: <https://www.python.org/downloads/release/python-2718/> (v2.7.18)
+- `Python3`: <https://www.python.org/downloads/release/python-3811> (v3.8.11)
+- `aws`: <https://aws.amazon.com/cli/> (v2.4)
+- `jq`: <https://stedolan.github.io/jq/> (v1.6)
+- `virtualenv`: <https://virtualenv.pypa.io/en/latest/> (v20.11)
 
 ## Environment variables
 
@@ -35,13 +35,13 @@ AWS_SECRET_ACCESS_KEY=<secret-access-key>
 
 - `common`
 - `libraries`
-    - `python`: Python library
-        - `lib`: contains the Python code
-        - `test`: contains the library tests
+  - `python`: Python library
+    - `lib`: contains the Python code
+    - `test`: contains the library tests
 - `modules`
-    - `doc`: contains the functions' documentation
-    - `sql`: contains the functions' SQL code
-    - `test`: contains the functions' tests
+  - `doc`: contains the functions' documentation
+  - `sql`: contains the functions' SQL code
+  - `test`: contains the functions' tests
 
 ## Make commands
 
@@ -59,6 +59,7 @@ Make commands can be run also inside `libraries/python` and `modules` folders, o
 **Filtering**
 
 Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter

@@ -10,7 +10,6 @@ Takes a Feature or FeatureCollection as input and returns the mean center.
 
 * `geom`: `GEOMETRY` for which to compute the mean center.
 
-
 **Return type**
 
 `GEOMETRY`

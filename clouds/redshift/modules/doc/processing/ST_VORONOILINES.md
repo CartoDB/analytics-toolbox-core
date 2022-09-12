@@ -10,7 +10,6 @@ Calculates the Voronoi diagram of the points provided. A MultiLineString object 
 
 * `points`: `GEOMETRY` MultiPoint input to the Voronoi diagram.
 
-
 **Return type**
 
 `VARCHAR(MAX)`
