@@ -41,7 +41,10 @@ build:
 build-libraries:
 	mkdir -p $(BUILD_DIR)/libs
 	$(MAKE) -C libraries/javascript build
-	cp libraries/javascript/build/index.js $(BUILD_DIR)/libs/carto_analytics_toolbox_core.js
+	cp libraries/javascript/build/index.js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT).js
+ifdef MAKE_LIB
+	cp libraries/javascript/build/indexTiler.js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT)_tiler.js
+endif
 
 build-modules:
 	mkdir -p $(BUILD_DIR)
