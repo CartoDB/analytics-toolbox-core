@@ -1,4 +1,5 @@
 name: Bigquery dedicated env
+
 on:
   pull_request:
     types: [closed, unlabeled, labeled, synchronize]
@@ -7,15 +8,16 @@ env:
   NODE_VERSION: 14
 
 jobs:
-  dedicated-bq:
+
+  dedicated:
     if: github.event.label.name == 'dedicated_bigquery' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_bigquery'))
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
       GCLOUD_VERSION: 290.0.1
-      BQ_REGION: ${{ secrets.BQ_REGION_DEDICATED }}
-      BQ_PROJECT: ${{ secrets.BQ_PROJECT_DEDICATED }}
       BQ_PREFIX: dedicated_${{ github.event.pull_request.number }}_
+      BQ_PROJECT: ${{ secrets.BQ_PROJECT_DEDICATED }}
+      BQ_REGION: ${{ secrets.BQ_REGION_DEDICATED }}
       BQ_BUCKET: ${{ secrets.BQ_BUCKET_DEDICATED }}
     steps:
       - name: Checkout repo
@@ -39,10 +41,9 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'dedicated_bigquery')
         run: |
           cd clouds/bigquery
-          make remove-modules && \
           make deploy
-      - name: Run release
-        id: release
+      - name: Run remove
+        id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
           cd clouds/bigquery
@@ -54,11 +55,10 @@ jobs:
           message: |
             Dedicated ${{ env.BQ_PREFIX }}carto environment deployed in Bigquery project ${{ env.BQ_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Comment release PR
-        if: steps.release.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment released
+            Dedicated environment removed
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

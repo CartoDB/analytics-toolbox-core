@@ -1,4 +1,5 @@
 name: Postgres dedicated env
+
 on:
   pull_request:
     types: [closed, unlabeled, labeled, synchronize]
@@ -8,7 +9,8 @@ env:
   PYTHON3_VERSION: 3.8.10
 
 jobs:
-  dedicated-pg:
+
+  dedicated:
     # if: github.event.label.name == 'dedicated_postgres' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres'))
     if: false
     runs-on: ubuntu-20.04
@@ -37,11 +39,10 @@ jobs:
         id: deploy
         run: |
           cd clouds/postgres
-          make remove-modules && \
           make deploy
-      - name: Run release
+      - name: Run remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
-        id: release
+        id: remove
         run: |
           cd clouds/postgres
           make remove
@@ -52,10 +53,10 @@ jobs:
           message: |
             Dedicated ${{ env.PG_PREFIX }}carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Comment release PR
-        if: steps.release.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment released
+            Dedicated environment removed
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

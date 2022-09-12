@@ -1,4 +1,5 @@
 name: Redshift dedicated env
+
 on:
   pull_request:
     types: [closed, unlabeled, labeled, synchronize]
@@ -9,7 +10,8 @@ env:
   PYTHON3_VERSION: 3.8.10
 
 jobs:
-  dedicated-rs:
+
+  dedicated:
     if: github.event.label.name == 'dedicated_redshift' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift'))
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -50,10 +52,9 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'dedicated_redshift')
         run: |
           cd clouds/redshift
-          make remove-modules && \
           make deploy
-      - name: Run release
-        id: release
+      - name: Run remove
+        id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
           cd clouds/redshift
@@ -65,10 +66,10 @@ jobs:
           message: |
             Dedicated ${{ env.RS_PREFIX }}carto environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Comment release PR
-        if: steps.release.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment released
+            Dedicated environment removed
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

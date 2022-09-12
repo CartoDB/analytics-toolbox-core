@@ -1,4 +1,5 @@
 name: Snowflake dedicated env
+
 on:
   pull_request:
     types: [closed, unlabeled, labeled, synchronize]
@@ -7,7 +8,8 @@ env:
   NODE_VERSION: 14
 
 jobs:
-  dedicated-sf:
+
+  dedicated:
     if: github.event.label.name == 'dedicated_snowflake' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake'))
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -30,10 +32,9 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake')
         run: |
           cd clouds/snowflake
-          make remove-modules && \
           make deploy
-      - name: Run release
-        id: release
+      - name: Run remove
+        id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
           cd clouds/snowflake
@@ -45,10 +46,10 @@ jobs:
           message: |
             Dedicated ${{ env.SF_PREFIX }}carto environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Comment release PR
-        if: steps.release.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment released
+            Dedicated environment removed
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
