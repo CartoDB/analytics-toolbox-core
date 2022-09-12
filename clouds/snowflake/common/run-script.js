@@ -5,8 +5,6 @@ const fs = require('fs');
 const snowflake = require('snowflake-sdk');
 const cliProgress = require('cli-progress');
 
-const SF_PREFIX = `${process.env.SF_DATABASE}.${process.env.SF_PREFIX}`;
-
 const options = {
     barsize: 60,
     barIncompleteChar: ' ',
@@ -20,8 +18,6 @@ const connection = snowflake.createConnection({
     account: process.env.SF_ACCOUNT,
     username: process.env.SF_USER,
     password: process.env.SF_PASSWORD,
-    database: process.env.SF_DATABASE,
-    schema: process.env.SF_SCHEMA,
     role: process.env.SF_ROLE
 });
 
@@ -50,10 +46,9 @@ async function runQueries (queries) {
     const n = queries.length;
     bar.start(n, 0);
     for (let i = 0; i < n; i++) {
-        let query = `BEGIN\n${queries[i]}\nEND;`
-            .replace(/@@SF_PREFIX@@/g, SF_PREFIX);
+        let query = `BEGIN\n${queries[i]}\nEND;`;
 
-        const pattern = new RegExp(`${process.env.SF_SCHEMA}._*(.*?)[(|\n]`);
+        const pattern = new RegExp(`${process.env.SF_SCHEMA}.([^_]*?)[(|\n]`);
         const result = query.match(pattern);
         sqlFunction = result && result[1]
 
