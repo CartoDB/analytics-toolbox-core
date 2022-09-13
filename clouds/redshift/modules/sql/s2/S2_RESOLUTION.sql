@@ -14,4 +14,4 @@ AS $$
     
     return get_resolution(id)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

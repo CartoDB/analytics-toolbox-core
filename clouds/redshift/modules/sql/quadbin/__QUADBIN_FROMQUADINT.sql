@@ -14,4 +14,4 @@ AS $$
     y = quadint >> (z + 5)
 
     return tile_to_cell((x, y, z))
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

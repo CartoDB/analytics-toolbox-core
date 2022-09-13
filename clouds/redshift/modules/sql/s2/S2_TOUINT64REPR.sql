@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_TOUINT64REPR
-(id INT8) 
+(id INT8)
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
@@ -14,4 +14,4 @@ AS $$
     
     return str(uint64_repr_from_id(id))
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

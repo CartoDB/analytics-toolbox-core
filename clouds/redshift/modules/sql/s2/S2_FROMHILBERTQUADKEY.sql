@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_FROMHILBERTQUADKEY
-(hquadkey VARCHAR(MAX)) 
+(hquadkey VARCHAR(MAX))
 RETURNS INT8
 STABLE
 AS $$
@@ -14,4 +14,4 @@ AS $$
     
     return hilbert_quadkey_to_id(hquadkey)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_BOUNDARY
-(id INT8) 
+(id INT8)
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
@@ -14,4 +14,4 @@ AS $$
     
     return get_cell_boundary(id)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

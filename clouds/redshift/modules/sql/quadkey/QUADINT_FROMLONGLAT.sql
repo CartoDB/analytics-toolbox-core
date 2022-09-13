@@ -13,4 +13,4 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     return quadint_from_location(longitude, latitude, resolution)
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

@@ -9,4 +9,4 @@ RETURNS BIGINT
 STABLE
 AS $$
     SELECT ($1::BIGINT & 31) | ($2::BIGINT << 5) | ($3::BIGINT << ($1 + 5))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;

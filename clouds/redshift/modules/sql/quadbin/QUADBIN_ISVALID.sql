@@ -13,4 +13,4 @@ AS $$
         return False
 
     return is_valid_cell(quadbin)
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

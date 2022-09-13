@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_FROMUINT64REPR
-(uid VARCHAR(MAX)) 
+(uid VARCHAR(MAX))
 RETURNS INT8
 STABLE
 AS $$
@@ -14,4 +14,4 @@ AS $$
     
     return uint64_to_int64(int(uid))
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

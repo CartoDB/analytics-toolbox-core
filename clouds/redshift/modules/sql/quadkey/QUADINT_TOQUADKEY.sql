@@ -13,4 +13,4 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     return quadkey_from_quadint(quadint)
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

@@ -14,7 +14,7 @@ AS $$
 
     (x,y) = cell_to_point(quadbin)
     return 'POINT ({} {})'.format(x,y)
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_CENTER
 (BIGINT)
@@ -23,4 +23,4 @@ RETURNS GEOMETRY
 STABLE
 AS $$
     SELECT ST_GEOMFROMTEXT(@@RS_SCHEMA@@.__QUADBIN_CENTER($1), 4326)
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;

@@ -21,7 +21,7 @@ AS $$
     geojson_str = str(center_median(geojson_geom, n_iter))
     
     return wkt_from_geojson(geojson_str)
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.ST_CENTERMEDIAN
 (GEOMETRY)
@@ -30,4 +30,4 @@ RETURNS GEOMETRY
 STABLE
 AS $$
     SELECT ST_GEOMFROMTEXT(@@RS_SCHEMA@@.__CENTERMEDIAN(ST_ASGEOJSON($1)::VARCHAR(MAX), 100))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;

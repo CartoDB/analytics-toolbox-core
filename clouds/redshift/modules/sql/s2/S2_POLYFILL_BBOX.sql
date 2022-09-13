@@ -19,7 +19,7 @@ AS $$
     return polyfill_bbox(min_longitude, max_longitude, min_latitude,
                          max_latitude, min_resolution, max_resolution)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__S2_POLYFILL_BBOX
 (min_longitude FLOAT8, max_longitude FLOAT8, min_latitude FLOAT8,
@@ -37,7 +37,7 @@ AS $$
     
     return polyfill_bbox(min_longitude, max_longitude, min_latitude, max_latitude)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_POLYFILL_BBOX
@@ -47,7 +47,7 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__S2_POLYFILL_BBOX($1, $2, $3, $4, $5, $6))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_POLYFILL_BBOX
 (min_longitude FLOAT8, max_longitude FLOAT8, min_latitude FLOAT8,
@@ -56,4 +56,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__S2_POLYFILL_BBOX($1, $2, $3, $4))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;

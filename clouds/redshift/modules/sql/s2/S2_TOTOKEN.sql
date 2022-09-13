@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_TOTOKEN
-(id INT8) 
+(id INT8)
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$
@@ -14,4 +14,4 @@ AS $$
     
     return int64_id_to_token(id)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

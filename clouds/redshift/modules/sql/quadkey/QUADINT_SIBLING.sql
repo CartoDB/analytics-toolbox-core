@@ -13,4 +13,4 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     return sibling(quadint, direction)
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;

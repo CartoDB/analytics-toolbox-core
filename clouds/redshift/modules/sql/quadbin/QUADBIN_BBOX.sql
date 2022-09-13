@@ -14,7 +14,7 @@ AS $$
         return None
 
     return json.dumps(cell_to_bounding_box(quadbin))
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_BBOX
 (BIGINT)
@@ -23,4 +23,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT JSON_PARSE(@@RS_SCHEMA@@.__QUADBIN_BBOX($1))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;

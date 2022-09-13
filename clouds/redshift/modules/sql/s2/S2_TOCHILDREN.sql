@@ -14,7 +14,7 @@ AS $$
     
     return to_children(id, resolution)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__S2_TOCHILDREN
 (id INT8)
@@ -28,7 +28,7 @@ AS $$
     
     return to_children(id)
     
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_TOCHILDREN
 (INT8, INT4)
@@ -36,7 +36,7 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__S2_TOCHILDREN($1, $2))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_TOCHILDREN
 (INT8)
@@ -44,4 +44,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__S2_TOCHILDREN($1))
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;

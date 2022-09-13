@@ -22,7 +22,7 @@ AS $$
     
     return wkt_from_geojson(geojson_str)
 
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE PLPYTHONU;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.ST_CENTERMEAN
 (GEOMETRY)
@@ -33,4 +33,4 @@ AS $$
 
     SELECT ST_GEOMFROMTEXT(@@RS_SCHEMA@@.__CENTERMEAN(ST_ASGEOJSON($1)::VARCHAR(MAX)))
     
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;
