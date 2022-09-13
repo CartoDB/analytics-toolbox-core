@@ -214,11 +214,3 @@ force_enable = False
 [sqlfluff:rules:L066]
 min_alias_length = None
 max_alias_length = None
-
-; [sqlfluff:templater:jinja:macros]
-; a_macro_def = {% macro @@RS_SCHEMA@@ %}{RS_SCHEMA}{% endmacro %}
-[sqlfluff:templater:jinja:macros]
-a_macro_def = { replace("@@", "") }
-
-; [sqlfluff:templater:jinja:context]
-; @@RS_SCHEMA@@ = RS_SCHEMA
