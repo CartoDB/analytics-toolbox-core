@@ -2,16 +2,12 @@
 
 const snowflake = require('snowflake-sdk');
 
-const SF_PREFIX = `${process.env.SF_DATABASE}.${process.env.SF_PREFIX}`;
-
 snowflake.configure({ insecureConnect: true });
 
 const connection = snowflake.createConnection({
     account: process.env.SF_ACCOUNT,
     username: process.env.SF_USER,
     password: process.env.SF_PASSWORD,
-    database: process.env.SF_DATABASE,
-    schema: process.env.SF_SCHEMA,
     role: process.env.SF_ROLE
 });
 
@@ -22,7 +18,6 @@ connection.connect((err) => {
 });
 
 function runQuery (query) {
-    query = query.replace(/@@SF_PREFIX@@/g, SF_PREFIX);
     connection.execute({
         sqlText: query,
         complete: (err, stmt, rows) => {

@@ -38,7 +38,6 @@ If you need to install them directly, not through the data share process, follow
 
 Right now the only way to get access the Analytics toolbox is by installing it directly on your database. Follow the instructions later on.
 
-
 ## Documentation
 
 | Cloud | Documentation |
@@ -53,40 +52,11 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 
 | Cloud | Development |
 |---|---|
-| BigQuery | |
+| BigQuery | [README.md](./clouds/bigquery/README.md) |
 | Snowflake | [README.md](./clouds/snowflake/README.md) |
 | Redshift | [README.md](./clouds/redshift/README.md) |
 | Postgres | [README.md](./clouds/postgres/README.md) |
 | Databricks | [README.md](./clouds/databricks/README.md) |
-
-### BigQuery
-
-The Analytics Toolbox for BigQuery contains SQL functions and JavaScript libraries. The functions are deployed in a dataset called `carto` inside a specific project. In BigQuery, datasets are associated with a region so the functions can only be used with tables stored in datasets with the same region. The JavaScript libraries are deployed in a Google Cloud Storage bucket and referenced by the functions.
-
-**Tools**
-
-Make sure you have installed the following tools:
-
-- `make`: https://www.gnu.org/software/make/
-- `node`: https://www.npmjs.com/ (v14.18)
-- `yarn`: https://yarnpkg.com/ (v1.22)
-- `bq`: https://cloud.google.com/bigquery/docs/bq-command-line-tool
-- `gsutil`: https://cloud.google.com/storage/docs/gsutil (v5.5)
-
-**Environment variables**
-
-The `.env` file contains the variables required to deploy and run the toolbox.
-
-```
-# BigQuery
-BQ_PROJECT=your-bigquery-project
-BQ_BUCKET=gs://your-gcs-bucket/
-BQ_REGION=your-region
-BQ_DATASET_PREFIX=
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account/or/adc.json
-```
-
-Note: you may need to run `gcloud auth login` to generate the `acd.json` file.
 
 ## Contribute
 

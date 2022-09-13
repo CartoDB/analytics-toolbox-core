@@ -17,10 +17,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build test remove clean
 
 help:
-	echo "Please choose one of the following targets: lint build deploy test remove clean"
+	echo "Please choose one of the following targets: lint build test remove clean"
 
 lint: $(NODE_MODULES_DEV)
 	echo "Linting libraries..."
