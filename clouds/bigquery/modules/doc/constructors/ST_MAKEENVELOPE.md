@@ -7,7 +7,6 @@ carto.ST_MAKEENVELOPE(xmin, ymin, xma, ymax)
 **Description**
 Creates a rectangular Polygon from the minimum and maximum values for X and Y.
 
-
 * `xmin`: `FLOAT64` minimum value for X.
 * `ymin`: `FLOAT64` minimum value for Y.
 * `xmax`: `FLOAT64` maximum value for X.

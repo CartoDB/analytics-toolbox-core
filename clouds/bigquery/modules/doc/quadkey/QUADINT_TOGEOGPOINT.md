@@ -20,5 +20,5 @@ Returns the centroid for a given quadint.
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOGEOGPOINT(4388);
--- 	POINT(33.75 22.2982994295938)
+--  POINT(33.75 22.2982994295938)
 ```

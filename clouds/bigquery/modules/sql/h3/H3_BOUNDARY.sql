@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_BOUNDARY`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!index) {
         return null;
@@ -30,5 +32,10 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_BOUNDARY`
 (index STRING)
 RETURNS GEOGRAPHY
 AS (
-    SAFE.ST_GEOGFROMTEXT(`@@BQ_DATASET@@.__H3_BOUNDARY`(index), make_valid => TRUE)
+    SAFE.ST_GEOGFROMTEXT(
+        `@@BQ_DATASET@@.__H3_BOUNDARY`(
+            index
+        ),
+        make_valid => TRUE
+    )
 );

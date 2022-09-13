@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__BEZIERSPLINE`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojson) {
         return null;
@@ -27,5 +29,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_BEZIERSPLINE`
 (geog GEOGRAPHY, resolution INT64, sharpness FLOAT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__BEZIERSPLINE`(ST_ASGEOJSON(geog), resolution, sharpness))
+    ST_GEOGFROMGEOJSON(
+        `@@BQ_DATASET@@.__BEZIERSPLINE`(
+            ST_ASGEOJSON(geog), resolution, sharpness
+        )
+    )
 );

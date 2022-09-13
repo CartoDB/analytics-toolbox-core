@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__LINE_INTERPOLATE_POINT`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojson || distance == null) {
         return null;
@@ -25,5 +27,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_LINE_INTERPOLATE_POINT`
 (geog GEOGRAPHY, distance FLOAT64, units STRING)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__LINE_INTERPOLATE_POINT`(ST_ASGEOJSON(geog), distance, units))
+    ST_GEOGFROMGEOJSON(
+        `@@BQ_DATASET@@.__LINE_INTERPOLATE_POINT`(
+            ST_ASGEOJSON(geog), distance, units
+        )
+    )
 );

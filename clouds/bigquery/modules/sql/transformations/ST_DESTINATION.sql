@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DESTINATION`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojsonStart || distance == null || bearing == null) {
         return null;
@@ -24,5 +26,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_DESTINATION`
 (startPoint GEOGRAPHY, distance FLOAT64, bearing FLOAT64, units STRING)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__DESTINATION`(ST_ASGEOJSON(startPoint), distance, bearing, units))
+    ST_GEOGFROMGEOJSON(
+        `@@BQ_DATASET@@.__DESTINATION`(
+            ST_ASGEOJSON(startpoint), distance, bearing, units
+        )
+    )
 );

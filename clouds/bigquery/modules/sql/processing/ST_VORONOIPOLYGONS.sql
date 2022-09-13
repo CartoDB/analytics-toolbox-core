@@ -6,5 +6,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_VORONOIPOLYGONS`
 (points ARRAY<GEOGRAPHY>, bbox ARRAY<FLOAT64>)
 RETURNS ARRAY<GEOGRAPHY>
 AS (
-    `@@BQ_DATASET@@.__VORONOIGENERIC`(points, bbox, 'poly')   
+    `@@BQ_DATASET@@.__VORONOIGENERIC`(
+        points, bbox, 'poly'
+    )
 );

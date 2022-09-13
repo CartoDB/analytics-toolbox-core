@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL`
 RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojson || _resolution == null) {
         return null;
@@ -77,5 +79,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS (
-    `@@BQ_DATASET@@.__H3_POLYFILL`(ST_ASGEOJSON(geog), resolution)
+    `@@BQ_DATASET@@.__H3_POLYFILL`(
+        ST_ASGEOJSON(geog), resolution
+    )
 );

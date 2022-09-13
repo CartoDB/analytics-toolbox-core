@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__GREATCIRCLE`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojsonStart || !geojsonEnd) {
         return null;
@@ -24,5 +26,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_GREATCIRCLE`
 (startPoint GEOGRAPHY, endPoint GEOGRAPHY, npoints INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__GREATCIRCLE`(ST_ASGEOJSON(startPoint), ST_ASGEOJSON(endPoint), npoints))
+    ST_GEOGFROMGEOJSON(
+        `@@BQ_DATASET@@.__GREATCIRCLE`(
+            ST_ASGEOJSON(startpoint), ST_ASGEOJSON(endpoint), npoints
+        )
+    )
 );

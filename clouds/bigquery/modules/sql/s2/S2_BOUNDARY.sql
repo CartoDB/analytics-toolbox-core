@@ -4,10 +4,12 @@
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__S2_BOUNDARY`
 (id INT64)
-RETURNS STRING 
+RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (id == null) {
         throw new Error('NULL argument passed to UDF');
@@ -30,5 +32,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_BOUNDARY`
 (id INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMTEXT(`@@BQ_DATASET@@.__S2_BOUNDARY`(id))
+    ST_GEOGFROMTEXT(
+        `@@BQ_DATASET@@.__S2_BOUNDARY`(id)
+    )
 );

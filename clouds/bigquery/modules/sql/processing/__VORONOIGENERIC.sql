@@ -6,16 +6,20 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__VORONOIGENERIC`
 (points ARRAY<GEOGRAPHY>, bbox ARRAY<FLOAT64>, typeOfVoronoi STRING)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
-   WITH geojsonPoints AS (
-        SELECT ARRAY_AGG(ST_ASGEOJSON(p)) AS arrayPoints
-        FROM UNNEST(points) AS p
-    ),
-    geojsonResult AS (
-        SELECT `@@BQ_DATASET@@.__VORONOIHELPER`(arrayPoints, bbox, typeOfVoronoi) AS features
-        FROM geojsonPoints
-    )
-    SELECT ARRAY(
-        SELECT ST_GEOGFROMGEOJSON(unnestedFeatures)
-        FROM geojsonResult, UNNEST(features) as unnestedFeatures
-    )
+        WITH GEOJSONPOINTS AS (
+            SELECT ARRAY_AGG(ST_ASGEOJSON(P)) AS ARRAYPOINTS
+            FROM UNNEST(POINTS) AS P
+        ),
+
+        GEOJSONRESULT AS (
+            SELECT `@@BQ_DATASET@@.__VORONOIHELPER`(
+                    ARRAYPOINTS, BBOX, TYPEOFVORONOI
+                ) AS FEATURES
+            FROM GEOJSONPOINTS
+        )
+
+        SELECT ARRAY(
+            SELECT ST_GEOGFROMGEOJSON(UNNESTEDFEATURES)
+            FROM GEOJSONRESULT, UNNEST(FEATURES) AS UNNESTEDFEATURES
+        )
 ));

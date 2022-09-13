@@ -3,11 +3,20 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__MAKEELLIPSE`
-(geojson STRING, xSemiAxis FLOAT64, ySemiAxis FLOAT64, angle FLOAT64, units STRING, steps INT64)
+(
+    geojson STRING,
+    xSemiAxis FLOAT64,
+    ySemiAxis FLOAT64,
+    angle FLOAT64,
+    units STRING,
+    steps INT64
+)
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojson || xSemiAxis == null || ySemiAxis == null) {
         return null;
@@ -27,8 +36,19 @@ AS """
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_MAKEELLIPSE`
-(geog GEOGRAPHY, xSemiAxis FLOAT64, ySemiAxis FLOAT64, angle FLOAT64, units STRING, steps INT64)
+(
+    geog GEOGRAPHY,
+    xSemiAxis FLOAT64,
+    ySemiAxis FLOAT64,
+    angle FLOAT64,
+    units STRING,
+    steps INT64
+)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__MAKEELLIPSE`(ST_ASGEOJSON(geog), xSemiAxis, ySemiAxis, angle, units, steps))
+    ST_GEOGFROMGEOJSON(
+        `@@BQ_DATASET@@.__MAKEELLIPSE`(
+            ST_ASGEOJSON(geog), xsemiaxis, ysemiaxis, angle, units, steps
+        )
+    )
 );
