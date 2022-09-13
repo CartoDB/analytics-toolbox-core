@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_TOCHILDREN(
-  quadbin BIGINT,
-  resolution INT
+    quadbin BIGINT,
+    resolution INT
 )
 RETURNS BIGINT[]
- AS
+AS
 $BODY$
     SELECT CASE
     WHEN resolution < 0 OR resolution > 26 OR resolution < ((quadbin >> 52) & 31)
@@ -23,4 +23,4 @@ $BODY$
     )
     END
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE SQL IMMUTABLE PARALLEL SAFE;

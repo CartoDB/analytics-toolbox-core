@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_KRING_DISTANCES(
-  origin BIGINT,
-  size INT
+    origin BIGINT,
+    size INT
 )
 RETURNS JSON[]
- AS
+AS
 $BODY$
     SELECT CASE WHEN size IS NULL OR size < 0 THEN
       @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid input size "%s"', size))::JSON[]
@@ -42,4 +42,4 @@ $BODY$
     )
     END;
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE SQL IMMUTABLE PARALLEL SAFE;

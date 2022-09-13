@@ -3,10 +3,10 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_TOZXY(
-  quadbin BIGINT
+    quadbin BIGINT
 )
 RETURNS JSON -- {z, x, y}
- AS
+AS
 $BODY$
     WITH
     __interleaved AS (
@@ -65,4 +65,4 @@ $BODY$
       json_build_object('z', z, 'x', (x >> (32-z)), 'y', (y >> (32-z)))
     FROM __deinterleaved7
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE SQL IMMUTABLE PARALLEL SAFE;

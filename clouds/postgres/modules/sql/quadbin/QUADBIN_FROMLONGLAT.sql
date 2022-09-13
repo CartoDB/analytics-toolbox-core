@@ -3,12 +3,12 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(
-  longitude DOUBLE PRECISION,
-  latitude DOUBLE PRECISION,
-  resolution INTEGER
+    longitude DOUBLE PRECISION,
+    latitude DOUBLE PRECISION,
+    resolution INTEGER
 )
 RETURNS BIGINT
- AS
+AS
 $BODY$
     SELECT CASE
     WHEN resolution < 0 OR resolution > 26
@@ -33,4 +33,4 @@ $BODY$
         FROM __zxy)
     END
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE SQL IMMUTABLE PARALLEL SAFE;

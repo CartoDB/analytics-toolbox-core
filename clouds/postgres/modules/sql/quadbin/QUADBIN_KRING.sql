@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_KRING(
-  origin BIGINT,
-  size INT
+    origin BIGINT,
+    size INT
 )
 RETURNS BIGINT[]
- AS
+AS
 $BODY$
     SELECT CASE WHEN size IS NULL OR size < 0 THEN
       @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid input size "%s"', size))::BIGINT[]
@@ -30,4 +30,4 @@ $BODY$
     )
     END;
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE SQL IMMUTABLE PARALLEL SAFE;

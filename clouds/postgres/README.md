@@ -6,10 +6,10 @@ The Analytics Toolbox for Postgres contains SQL functions. The functions are dep
 
 Make sure you have installed the following tools:
 
-- `make`: https://www.gnu.org/software/make/
-- `Python3`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
-- `jq`: https://stedolan.github.io/jq/ (v1.6)
-- `virtualenv`: https://virtualenv.pypa.io/en/latest/ (v20.11)
+- `make`: <https://www.gnu.org/software/make/>
+- `Python3`: <https://www.python.org/downloads/release/python-3811> (v3.8.11)
+- `jq`: <https://stedolan.github.io/jq/> (v1.6)
+- `virtualenv`: <https://virtualenv.pypa.io/en/latest/> (v20.11)
 
 ## Environment variables
 
@@ -28,9 +28,9 @@ PG_PASSWORD=<password>
 
 - `common`
 - `modules`
-    - `doc`: contains the functions' documentation
-    - `sql`: contains the functions' SQL code
-    - `test`: contains the functions' tests
+  - `doc`: contains the functions' documentation
+  - `sql`: contains the functions' SQL code
+  - `test`: contains the functions' tests
 
 ## Make commands
 
@@ -48,6 +48,7 @@ Make commands can be run also inside `modules` folders, or be called like `make 
 **Filtering**
 
 Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter
