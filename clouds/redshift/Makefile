@@ -34,7 +34,7 @@ lint-common: $(NODE_MODULES_DEV) venv3
 	$(VENV3_BIN)/brunette $(COMMON_DIR) --line-length=88 --single-quotes --quiet
 	$(VENV3_BIN)/flake8 $(COMMON_DIR) --enable-extensions Q0 --ignore=D100,D103,D104
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	markdownlint -f '*.md'
+	markdownlint -f '*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
 
 build:
 	rm -rf $(BUILD_DIR)
