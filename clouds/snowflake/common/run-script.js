@@ -48,9 +48,10 @@ async function runQueries (queries) {
     for (let i = 0; i < n; i++) {
         let query = `BEGIN\n${queries[i]}\nEND;`;
 
-        const pattern = new RegExp(`${process.env.SF_SCHEMA}.([^_]*?)[(|\n]`);
-        const result = query.match(pattern);
-        sqlFunction = result && result[1]
+        const pattern = /(FUNCTION|PROCEDURE)\s+(.*?)[(\n]/g;
+        const results = pattern.exec(query);
+        const result = results && results.reverse()[0]
+        sqlFunction = result && result.split('.').reverse()[0]
 
         await runQuery(query);
         bar.increment();

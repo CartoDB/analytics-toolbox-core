@@ -69,7 +69,7 @@ test: check $(NODE_MODULES_DEV)
 		if [ ! -z "$$TESTS" ]; then \
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=120000 --bail --verbose $$TESTS || exit 1; \
+			jest --testTimeout=120000 --bail --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS || exit 1; \
 		fi; \
 		if [ -d "$(TEST_DIR)/$$m/old-test" ]; then \
 			echo "Old tests with custon Makefile"; \

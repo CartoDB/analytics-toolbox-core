@@ -73,7 +73,7 @@ test: check $(NODE_MODULES_DEV)
 		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
 		if [ ! -z "$$TESTS" ]; then \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=40000 --bail --verbose $$TESTS || exit 1; \
+			jest --testTimeout=40000 --bail --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS || exit 1; \
 		fi; \
 	done;
 

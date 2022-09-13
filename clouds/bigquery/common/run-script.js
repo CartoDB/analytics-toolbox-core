@@ -25,9 +25,10 @@ async function runQueries (queries) {
     for (let i = 0; i < n; i++) {
         let query = queries[i].replace(/@@BQ_PREFIX@@/g, BQ_PREFIX).replace(/@@BQ_LIBRARY_BUCKET@@/g, BQ_LIBRARY_BUCKET);
 
-        const pattern = new RegExp(`${process.env.BQ_DATASET}._*(.*?)[(|\n]`);
-        const result = query.match(pattern);
-        sqlFunction = result && result[1]
+        const pattern = /(FUNCTION|PROCEDURE)\s+(.*?)[(\n]/g;
+        const results = pattern.exec(query);
+        const result = results && results.reverse()[0]
+        sqlFunction = result && result.split('.').reverse()[0]
 
         await client.query(query, query_options);
         bar.increment();
