@@ -32,6 +32,8 @@ lint-common: $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(COMMON_DIR)/*.js --fix
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
 
 build:
 	rm -rf $(BUILD_DIR)

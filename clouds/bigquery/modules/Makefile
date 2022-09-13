@@ -32,10 +32,13 @@ include $(COMMON_DIR)/Makefile
 help:
 	echo "Available targets: lint build deploy test remove clean"
 
-lint: $(NODE_MODULES_DEV)
+lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) --fix
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(ROOT_DIR)/sql/*/*.sql)"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
