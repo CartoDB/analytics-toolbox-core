@@ -108,6 +108,7 @@ jobs:
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
+      SF_DATABASE: '@@DATABASE@@'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

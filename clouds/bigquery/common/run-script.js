@@ -6,8 +6,6 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const cliProgress = require('cli-progress');
 
 const BQ_PROJECT = process.env.BQ_PROJECT;
-const BQ_PREFIX = `${BQ_PROJECT}.${process.env.BQ_PREFIX}`;
-const BQ_LIBRARY_BUCKET = process.env.BQ_LIBRARY_BUCKET;
 
 const options = {
     barsize: 60,
@@ -23,7 +21,7 @@ async function runQueries (queries) {
     const n = queries.length;
     bar.start(n, 0);
     for (let i = 0; i < n; i++) {
-        let query = queries[i].replace(/@@BQ_PREFIX@@/g, BQ_PREFIX).replace(/@@BQ_LIBRARY_BUCKET@@/g, BQ_LIBRARY_BUCKET);
+        let query = queries[i];
 
         const pattern = /(FUNCTION|PROCEDURE)\s+(.*?)[(\n]/g;
         const results = pattern.exec(query);

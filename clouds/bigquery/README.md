@@ -19,7 +19,7 @@ The `.env` file contains the variables required to deploy and run the toolbox. R
 # Bigquery
 BQ_PREFIX=
 BQ_PROJECT=<project>
-BQ_BUCKET=gs://<bucket>/ or gs://<bucket>/<folder>/
+BQ_BUCKET=gs://<bucket> or gs://<bucket>/<folder>
 BQ_REGION=<region>
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account/or/adc.json
 ```
