@@ -64,7 +64,7 @@ deploy-share: check build-share
 	echo "Deploying share..."
 	$(COMMON_DIR)/run-query.js "CREATE SHARE IF NOT EXISTS $(SF_SHARE);"
 	$(COMMON_DIR)/run-query.js "GRANT USAGE ON DATABASE $(SF_DATABASE) TO SHARE $(SF_SHARE);"
-	$(COMMON_DIR)/run-query.js "GRANT USAGE ON SCHEMA $(SF_DATABASE).$(SF_SCHEMA) TO SHARE $(SF_SHARE);"
+	$(COMMON_DIR)/run-query.js "GRANT USAGE ON SCHEMA $(SF_SCHEMA) TO SHARE $(SF_SHARE);"
 	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/share.sql
 
 test: check $(NODE_MODULES_DEV)
@@ -73,7 +73,7 @@ test: check $(NODE_MODULES_DEV)
 		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
 		if [ ! -z "$$TESTS" ]; then \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=40000 --bail --verbose $$TESTS; \
+			jest --testTimeout=40000 --bail --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS || exit 1; \
 		fi; \
 	done;
 
