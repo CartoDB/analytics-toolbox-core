@@ -70,12 +70,11 @@ test: check $(NODE_MODULES_DEV)
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 			jest --testTimeout=120000 --bail --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS || exit 1; \
-		fi; \
-		if [ -d "$(TEST_DIR)/$$m/old-test" ]; then \
-			echo "Old tests with custon Makefile"; \
-			TESTS=`$(COMMON_DIR)/list_functions.js $$m/old-test --fileExtension='.js' --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
-			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
-			$(MAKE) -C $(TEST_DIR)/$$m/old-test/ test TESTS_FILES="$$TESTS" || exit 1; \
+			OLD_TEST=$(TEST_DIR)/$$m/old-test; \
+			if [ -d $$OLD_TEST ]; then \
+				echo "Old tests with custon Makefile"; \
+				$(MAKE) -C $(TEST_DIR)/$$m/old-test test || exit 1; \
+			fi; \
 		fi; \
 	done;
 
