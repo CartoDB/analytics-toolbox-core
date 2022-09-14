@@ -1,0 +1,16 @@
+{
+  "name": "carto_analytics_toolbox_core_bigquery",
+  "version": "1.0.0",
+  "description": "CARTO Analytics Toolbox Core for Bigquery",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+    "@turf/turf": "6.3.0",
+    "@mapbox/tile-cover": "3.0.2",
+    "@mapbox/tilebelt": "1.0.2",
+    "long": "4.0.0",
+    "@placekey/placekey": "1.0.3",
+    "h3-js": "3.7.2"
+  }
+}
