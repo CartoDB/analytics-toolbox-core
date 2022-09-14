@@ -65,3 +65,6 @@ clean-libraries:
 
 clean-modules:
 	echo "No action"
+
+publish-local-core:
+	$(MAKE) -C libraries/scala publish-local-core

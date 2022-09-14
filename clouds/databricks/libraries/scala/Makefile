@@ -14,10 +14,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test remove clean publish-local-core
 
 help:
-	echo "Please choose one of the following targets: help lint build deploy test remove clean"
+	echo "Please choose one of the following targets: help lint build deploy test remove clean publish-local-core"
 
 lint:
 	echo "Linting libraries..."
@@ -27,9 +27,12 @@ install:
 	(cd "$(SCALA_DIR)" && exec sbt compile)
 
 build:
-	echo "Building libraries..."
 	echo "- Generating assembly jar"
 	(cd "$(SCALA_DIR)" && exec sbt assembly)
+
+publish-local-core:
+	echo "- Publishing libraries in local repository"
+	(cd "$(ROOT_DIR)" && exec sbt publishLocal)
 
 deploy: check
 	echo "Deploying libraries..."
