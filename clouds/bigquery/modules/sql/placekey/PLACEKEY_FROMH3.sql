@@ -26,6 +26,6 @@ AS (
         `@@BQ_DATASET@@.__PLACEKEY_FROMH3`(
             h3index
         ),
-        null
+        NULL
     )
 );
