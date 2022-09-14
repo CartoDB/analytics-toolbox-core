@@ -48,7 +48,7 @@ AS (
                         ST_GEOGPOINT(b[OFFSET(2)], b[OFFSET(3)]),
                         ST_GEOGPOINT(b[OFFSET(0)], b[OFFSET(3)])
                     ])
-                )
+            )
             FROM __bbox
         )
     END
