@@ -39,6 +39,10 @@ AS ((
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_KRING_DISTANCES`
 (origin INT64, size INT64)
 AS (
-    `@@BQ_DATASET@@.__QUADINT_ZXY_KRING_DISTANCES`(`@@BQ_DATASET@@.QUADINT_TOZXY`(
-            COALESCE(IF(origin < 0, NULL, origin), ERROR('Invalid input origin'))),
+    `@@BQ_DATASET@@.__QUADINT_ZXY_KRING_DISTANCES`(
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            COALESCE(
+                IF(origin < 0, NULL, origin), ERROR('Invalid input origin')
+            )
+        ),
         COALESCE(IF(size >= 0, size, NULL), ERROR('Invalid input size'))));
