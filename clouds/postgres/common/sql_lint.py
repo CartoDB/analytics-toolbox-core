@@ -7,7 +7,7 @@ for script in scripts:
     with open(script, 'r') as file:
         content = file.read().replace('@', '_sqlfluff_')
     fixed_content = (
-        sqlfluff.fix(content, dialect='postgres')
+        sqlfluff.fix(content, dialect='postgres', config_path = sys.argv[2])
         .replace('_sqlfluff_', '@')
         .replace('_SQLFLUFF_', '@')
     )
