@@ -1,0 +1,6 @@
+{
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "markdownlint-cli": "^0.32.2"
+  }
+}

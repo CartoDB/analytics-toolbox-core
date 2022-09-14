@@ -11,10 +11,16 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help test remove
+.PHONY: help lint test remove
 
 help:
 	echo "Available targets: help test remove"
+
+lint: venv3 $(NODE_MODULES_DEV)
+	echo "Linting modules..."
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(ROOT_DIR)/sql/*/*.sql)"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
 
 test: check check-extra venv
 	echo "Testing modules..."

@@ -2,7 +2,9 @@
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
-include common/Makefile
+COMMON_DIR = $(ROOT_DIR)/common
+
+include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
@@ -13,9 +15,18 @@ help:
 
 lint:
 	$(MAKE) lint-libraries
+	$(MAKE) lint-modules
+	$(MAKE) lint-common
 
 lint-libraries:
 	$(MAKE) -C libraries/scala lint
+
+lint-modules:
+	$(MAKE) -C modules lint
+
+lint-common: $(NODE_MODULES_DEV)
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '*.md' --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
 
 build:
 	$(MAKE) build-libraries
