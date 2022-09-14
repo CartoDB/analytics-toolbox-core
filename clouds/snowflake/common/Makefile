@@ -1,5 +1,8 @@
 # Makefile common for Snowflake
 
+PYTHON3_VERSION = 3
+VENV3_DIR ?= $(COMMON_DIR)/../venv3
+VENV3_BIN = $(VENV3_DIR)/bin
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 export SF_SCHEMA_DEFAULT = carto
 
@@ -32,6 +35,11 @@ endif
 ifeq ($(shell echo "$(SF_ACCOUNT)" | grep -E "^([^.]+)\.([^.]+)$$"),)
 	$(error SF_ACCOUNT is not valid. Must be: <account>.<region>)
 endif
+
+venv3:
+	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
+	$(VENV3_BIN)/pip install --upgrade pip -q && \
+	$(VENV3_BIN)/pip install -r $(COMMON_DIR)/python3_requirements.txt -q
 
 $(NODE_MODULES_DEV):
 	yarn -s --update-checksums --cwd $(COMMON_DIR)
