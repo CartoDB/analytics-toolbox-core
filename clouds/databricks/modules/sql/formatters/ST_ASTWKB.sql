@@ -1,0 +1,1 @@
+CREATE OR REPLACE FUNCTION ST_ASTWKB as 'com.carto.analyticstoolbox.core.ST_AsTWKB';

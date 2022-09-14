@@ -1,0 +1,138 @@
+name: Snowflake CI/CD
+
+on:
+  push:
+    paths:
+      - "clouds/snowflake/**"
+      - ".github/workflows/snowflake.yml"
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+
+  test:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    env:
+      SF_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CI }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_CI }}
+      SF_USER: ${{ secrets.SF_USER_CI }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CI }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CI }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run linter and tests
+        run: |
+          cd clouds/snowflake
+          make lint && \
+          make deploy && \
+          make test && \
+          make remove
+
+  deploy-internal:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
+      SF_USER: ${{ secrets.SF_USER_CD }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run deploy
+        run: |
+          cd clouds/snowflake
+          make deploy production=1
+
+  deploy-share:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_SHARE }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_SHARE }}
+      SF_USER: ${{ secrets.SF_USER_SHARE }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_SHARE }}
+      SF_ROLE: ${{ secrets.SF_ROLE_SHARE }}
+      SF_SHARE: ${{ secrets.SF_SHARE }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: '**/*.+(js|sql)'
+          FILES: 'Makefile'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run deploy
+        run: |
+          cd clouds/snowflake
+          make deploy production=1
+          cd modules
+          make deploy-share
+
+  publish:
+    if: github.ref_name == 'master'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-snowflake
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
+      SF_DATABASE: '@@DATABASE@@'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+      - name: Create package
+        run: |
+          cd clouds/snowflake
+          make create-package
+      - name: Publish package
+        run: |
+          cd clouds/snowflake
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/

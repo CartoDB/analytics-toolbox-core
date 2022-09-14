@@ -1,0 +1,16 @@
+flake8==3.9.2
+flake8-quotes==3.2.0
+flake8-docstrings==1.6.0
+pep8-naming==0.12.1
+brunette==0.2.0
+pytest==6.2.4
+psycopg2-binary==2.9.1
+sqlparse==0.4.2
+wheel==0.37.0
+tqdm==4.64.0
+GeoAlchemy2==0.9.3
+geopandas==0.9.0
+pandas==1.3.2
+SQLAlchemy==1.4.23
+mapbox-vector-tile==1.2.1
+

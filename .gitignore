@@ -1,11 +1,14 @@
 dist/
+build/
 *venv*/
 node_modules/
 __pycache__/
+**/common/yarn.lock
 .pytest_cache/
 .ipynb_checkpoints/
 .tmp/
 .vscode/
+
 
 *.log
 *.pyc
@@ -14,7 +17,11 @@ snowsql_rt.*
 .env*
 !.env.template
 dev_env.sh
+yarn.lock
 package-lock.json
 MANIFEST
 *.ipynb
 .pgpass
+
+# IntelliJ
+.idea/

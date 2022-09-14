@@ -1,0 +1,1 @@
+CREATE OR REPLACE FUNCTION ST_BUFFERPOINT as 'com.carto.analyticstoolbox.core.ST_BufferPoint';
