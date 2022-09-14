@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
 CLOUD_DIR = $(ROOT_DIR)/..
+SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR = $(CLOUD_DIR)/common
 SQL_PATH = $(COMMON_DIR)/dropUDF.sql
 
@@ -18,7 +19,7 @@ help:
 
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(ROOT_DIR)/sql/*/*.sql)"
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/*/*.sql)"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '**/*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
 
