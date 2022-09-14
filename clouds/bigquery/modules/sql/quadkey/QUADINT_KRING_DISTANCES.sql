@@ -5,44 +5,40 @@
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_ZXY_KRING_DISTANCES`
 (origin STRUCT<z INT64, x INT64, y INT64>, size INT64)
 AS ((
-    WITH T AS (
+    WITH t AS (
         SELECT
             `@@BQ_DATASET@@.QUADINT_FROMZXY`(
-                ORIGIN.Z,
+                origin.z,
                 MOD(
-                    ORIGIN.X + DX + (1 << ORIGIN.Z),
-                    (1 << ORIGIN.Z)
+                    origin.x + dx + (1 << origin.z),
+                    (1 << origin.z)
                 ),
-                ORIGIN.Y + DY
-            ) AS MYINDEX,
-            GREATEST(ABS(DX), ABS(DY)) AS DISTANCE -- Chebychev distance
+                origin.y + dy
+            ) AS myindex,
+            GREATEST(ABS(dx), ABS(dy)) AS distance -- Chebychev distance
         FROM
-            UNNEST(GENERATE_ARRAY(-SIZE, SIZE)) AS DX,
-            UNNEST(GENERATE_ARRAY(-SIZE, SIZE)) AS DY
-        WHERE ORIGIN.Y + DY >= 0 AND ORIGIN.Y + DY < (1 << ORIGIN.Z)
+            UNNEST(GENERATE_ARRAY(-size, size)) AS dx,
+            UNNEST(GENERATE_ARRAY(-size, size)) AS dy
+        WHERE origin.y + dy >= 0 AND origin.y + dy < (1 << origin.z)
     ),
 
-    T_AGG AS (
+    t_agg AS (
         SELECT
-            MYINDEX,
-            MIN(DISTANCE) AS DISTANCE
+            myindex,
+            MIN(distance) AS distance
         FROM
-            T
+            t
         GROUP BY
-            MYINDEX
+            myindex
     )
 
-    SELECT ARRAY_AGG(STRUCT(MYINDEX AS INDEX, DISTANCE))
-    FROM T_AGG
+    SELECT ARRAY_AGG(STRUCT(myindex AS index, distance))
+    FROM t_agg
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_KRING_DISTANCES`
 (origin INT64, size INT64)
 AS (
-    `@@BQ_DATASET@@.__QUADINT_ZXY_KRING_DISTANCES`(
-        `@@BQ_DATASET@@.QUADINT_TOZXY`(
-            COALESCE(
-                IF(ORIGIN < 0, NULL, ORIGIN), ERROR('Invalid input origin')
-            )
-        ),
-        COALESCE(IF(SIZE >= 0, SIZE, NULL), ERROR('Invalid input size'))));
+    `@@BQ_DATASET@@.__QUADINT_ZXY_KRING_DISTANCES`(`@@BQ_DATASET@@.QUADINT_TOZXY`(
+            COALESCE(IF(origin < 0, NULL, origin), ERROR('Invalid input origin'))),
+        COALESCE(IF(size >= 0, size, NULL), ERROR('Invalid input size'))));
