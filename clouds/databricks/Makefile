@@ -2,7 +2,7 @@
 
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
-include common/Makefile
+include $(ROOT_DIR)/common/Makefile
 
 .SILENT:
 

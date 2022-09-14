@@ -1,7 +1,7 @@
-### ST_ASGEOJSON
+### ST_ASLATLONTEXT
 
 {{% bannerNote type="code" %}}
-carto.ST_ASGEOJSON(p)
+carto.ST_ASLATLONTEXT(p)
 {{%/ bannerNote %}}
 
 **Description**

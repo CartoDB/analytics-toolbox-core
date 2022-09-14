@@ -16,5 +16,13 @@ class ST_XTest extends AnyFunSpec {
     it ("Should get 0 from an empty point") {
       new ST_X().function(createPoint(new Coordinate())) shouldEqual 0
     }
+
+    it ("Should get the x from a point with negative coordinates") {
+      new ST_X().function(createPoint(new Coordinate(-100, 50))) shouldEqual -100
+    }
+
+    it ("Should get the x from a point with negative coordinates 2") {
+      new ST_X().function(createPoint(new Coordinate(-110, 50))) shouldEqual -110
+    }
   }
 }

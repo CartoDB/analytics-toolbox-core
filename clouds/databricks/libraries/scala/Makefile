@@ -3,9 +3,10 @@
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/../..
+PRODUCT ?= core
 COMMON_DIR = $(ROOT_DIR)/../../common
-SCALA_DIR = $(ROOT_DIR)
-JAR_DIR = $(SCALA_DIR)/core/target/scala-2.12
+SCALA_DIR ?= $(ROOT_DIR)
+JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_PREFIX)carto
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
 
@@ -40,12 +41,12 @@ deploy: check
 upload-jars: clean build
 	echo "- Uploading jars"
 	dbfs mkdirs $(JAR_DEPLOY_PATH)
-	dbfs cp --overwrite $(JAR_DIR)/core-assembly-*.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-core-assembly.jar
+	dbfs cp --overwrite $(JAR_DIR)/$(PRODUCT)-assembly-*.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
 	echo "- Jars uploaded"
 
 install-jars:
 	echo "- Installing jars"
-	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-core-assembly.jar
+	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
 	echo "- Libraries installed"
 
 upload-sql:
@@ -70,8 +71,8 @@ test:
 
 remove: check
 	echo "Removing libraries..."
-	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-assembly-SNAPSHOT.jar
-	dbfs rm $(JAR_DEPLOY_PATH)/analyticstoolbox-core-assembly.jar
+	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly-SNAPSHOT.jar
+	dbfs rm $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
 
 clean:
 	echo "Cleaning libraries..."
