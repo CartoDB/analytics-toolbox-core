@@ -8,6 +8,7 @@ on:
 
 env:
   NODE_VERSION: 14
+  PYTHON3_VERSION: 3.8.10
 
 jobs:
 
@@ -33,6 +34,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Run linter and tests
         run: |
           cd clouds/snowflake
