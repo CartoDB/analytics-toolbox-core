@@ -14,7 +14,7 @@ AS ((
                     (1 << origin.z)
                 ),
                 origin.y + dy
-            ) AS myindex,
+            ) AS index,
             GREATEST(ABS(dx), ABS(dy)) AS distance -- Chebychev distance
         FROM
             UNNEST(GENERATE_ARRAY(-size, size)) AS dx,
@@ -24,15 +24,15 @@ AS ((
 
     t_agg AS (
         SELECT
-            myindex,
+            index,
             MIN(distance) AS distance
         FROM
             t
         GROUP BY
-            myindex
+            index
     )
 
-    SELECT ARRAY_AGG(STRUCT(myindex AS index, distance))
+    SELECT ARRAY_AGG(STRUCT(index, distance))
     FROM t_agg
 ));
 
