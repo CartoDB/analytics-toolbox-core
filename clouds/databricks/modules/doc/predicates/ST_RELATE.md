@@ -8,7 +8,6 @@ carto.### ST_RELATE(geomA, geomB)
 
 Returns the DE-9IM 3x3 interaction matrix pattern describing the dimensionality of the intersections between the interior, boundary and exterior of the two geometries.
 
-
 * `geomA`: `Geometry` input geom A.
 * `geomB`: `Geometry` input geom B.
 

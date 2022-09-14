@@ -6,12 +6,12 @@ CARTO Analytics Toolbox for Databricks provides geospatial functionality leverag
 
 Make sure you have installed the following tools:
 
-- `make`: https://www.gnu.org/software/make/
-- `jdk (8 or 11)`: https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html (v8.x)
-- `sbt`: https://www.scala-sbt.org/1.x/docs/Setup.html (v1.x)
-- `Python3.6 and above`: https://www.python.org/downloads/release/python-3811 (v3.8.11)
-- `databricks cli`: https://docs.databricks.com/dev-tools/cli/index.html
-- `jq`: https://stedolan.github.io/jq/ (v1.6)
+- `make`: <https://www.gnu.org/software/make/>
+- `jdk (8 or 11)`: <https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html> (v8.x)
+- `sbt`: <https://www.scala-sbt.org/1.x/docs/Setup.html> (v1.x)
+- `Python3.6 and above`: <https://www.python.org/downloads/release/python-3811> (v3.8.11)
+- `databricks cli`: <https://docs.databricks.com/dev-tools/cli/index.html>
+- `jq`: <https://stedolan.github.io/jq/> (v1.6)
 
 In order to set up authentication you can use a databricks token and the databricks host URL.
 
@@ -38,13 +38,13 @@ DATABRICKS_TOKEN=<token>
 
 - `common`
 - `libraries`
-    - `scala`: Python library
-        - `core/src/main`: contains the scala code
-        - `core/src/test`: contains the library tests
+  - `scala`: Python library
+    - `core/src/main`: contains the scala code
+    - `core/src/test`: contains the library tests
 - `modules`
-    - `doc`: contains the functions' documentation
-    - `sql`: contains the functions' SQL code, in databricks this is only used to register the functions
-    - `test`: contains the functions' tests
+  - `doc`: contains the functions' documentation
+  - `sql`: contains the functions' SQL code, in databricks this is only used to register the functions
+  - `test`: contains the functions' tests
 
 ## Make commands
 

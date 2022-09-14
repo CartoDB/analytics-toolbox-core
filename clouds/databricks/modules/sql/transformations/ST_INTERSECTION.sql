@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_INTERSECTION as 'com.carto.analyticstoolbox.modules.transformations.ST_Intersection';
+CREATE OR REPLACE FUNCTION ST_INTERSECTION AS 'com.carto.analyticstoolbox.modules.transformations.ST_Intersection';

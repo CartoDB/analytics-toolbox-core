@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_LENGTH as 'com.carto.analyticstoolbox.modules.measurements.ST_Length';
+CREATE OR REPLACE FUNCTION ST_LENGTH AS 'com.carto.analyticstoolbox.modules.measurements.ST_Length';

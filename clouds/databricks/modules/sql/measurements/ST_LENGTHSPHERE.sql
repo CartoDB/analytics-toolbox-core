@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_LENGTHSPHERE as 'com.carto.analyticstoolbox.modules.measurements.ST_LengthSphere';
+CREATE OR REPLACE FUNCTION ST_LENGTHSPHERE AS 'com.carto.analyticstoolbox.modules.measurements.ST_LengthSphere';

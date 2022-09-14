@@ -8,10 +8,9 @@ carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, tolerance)
 
 Simplifies a `Geometry` and ensures that the result is a valid geometry having the same dimension and number of components as the input, and with the components having the same topological relationship.
 
-
 * `geom`: `Geometry` input geom.
 * `tolerance`: `Double` input distance tolerance.
-double 
+double
 
 **Return type**
 

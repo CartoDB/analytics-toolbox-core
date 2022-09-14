@@ -1,4 +1,5 @@
 ### ST_LINEFROMTEXT
+
 {{% bannerNote type="code" %}}
 carto.ST_LINEFROMTEXT(wkt)
 {{%/ bannerNote %}}

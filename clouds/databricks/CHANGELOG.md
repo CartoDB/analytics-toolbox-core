@@ -1,4 +1,5 @@
 # Changelog
+
 Changelog for databricks cloud. All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
@@ -6,17 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.0.3] - 2022-09-06
 
 ### Fixed
+
 - [accessors] Fix the bug in ST_COORDDIM that was adding z coordinate to geometries.
 - [indexing] Fix the cast ClassCastException in ST_GEOMREPROJECT.
 
 ## [1.0.2] - 2022-09-01
 
 ### Changed
+
 - Refactor databricks cloud to adapt it to the new cloud structure
 
 ## [1.0.1] - 2022-08-29
 
 ### Added
+
 - [formatters] Add ST_ASTWKB function.
 - [indexing] Add ST_CRSFROMTEXT function.
 - [indexing] Add ST_EXTENTFROMGEOM function.
@@ -35,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.0.0] - 2022-08-19
 
 ### Added
+
 - [accessors] Add ST_COORDDIM function.
 - [accessors] Add ST_DIMENSION function.
 - [accessors] Add ST_ENVELOPE function.

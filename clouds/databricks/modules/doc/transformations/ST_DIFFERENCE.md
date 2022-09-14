@@ -6,7 +6,7 @@ carto.ST_DIFFERENCE(geomA, geomB)
 
 **Description**
 
-Return the part of geomA that does not intersect with geomB. 
+Return the part of geomA that does not intersect with geomB.
 
 * `geomA`: `Geometry` input geom A.
 * `geomB`: `Geometry` input geom B.

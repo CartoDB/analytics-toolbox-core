@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_GEOMFROMWKT as 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromWKT';
+CREATE OR REPLACE FUNCTION ST_GEOMFROMWKT AS 'com.carto.analyticstoolbox.modules.parsers.ST_GeomFromWKT';
