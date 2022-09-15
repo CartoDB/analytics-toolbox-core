@@ -64,6 +64,7 @@ test('s2 library defined', () => {
     expect(lib.s2.idToKey).toBeDefined();
     expect(lib.s2.latLngToKey).toBeDefined();
     expect(lib.s2.FromHilbertQuadKey).toBeDefined();
+    expect(lib.s2.idToLatLng).toBeDefined();
 });
 
 test('transformations library defined', () => {

@@ -6,5 +6,6 @@ export default {
     idToKey: S2.idToKey,
     latLngToKey: S2.latLngToKey,
     FromHilbertQuadKey: S2.S2Cell.FromHilbertQuadKey,
+    idToLatLng: S2.idToLatLng,
     version
 };
