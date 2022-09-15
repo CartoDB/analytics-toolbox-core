@@ -1,4 +1,4 @@
-### ST_ASGEOJSON
+### ST_ASTEXT
 
 {{% bannerNote type="code" %}}
 carto.ST_ASTEXT(geom)

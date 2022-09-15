@@ -11,7 +11,7 @@ SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1
     result = run_query(query)
     assert (
         result[0][0]
-        == 'POLYGON ((0.0000899 0, 0 0.0000899, -0.0000899 0, 0 -0.0000899, 0.0000899 0))'
+        == 'POLYGON ((0.00009 0, 0.00003 0.00009, -0.00009 0.00003, -0.00003 -0.00009, 0.00009 0))'
     )
     assert result[0][1] == 5
-    assert result[0][2] == 101
+    assert result[0][2] == 69

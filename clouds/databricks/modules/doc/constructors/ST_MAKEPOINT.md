@@ -18,6 +18,6 @@ Creates a `Point` with an _x_ and _y_ coordinate.
 **Example**
 
 ```sql
-SELECT carto.ST_ASTEXT(carto.ST_MAKEPOINT(-91.8554869, 29.5060349));
--- POINT (-91.8554869 29.5060349)
+SELECT carto.ST_ASTEXT(carto.ST_MAKEPOINT(-91.85548, 29.50603));
+-- POINT (-91.85548 29.50603)
 ```
