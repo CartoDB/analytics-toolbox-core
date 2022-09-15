@@ -6,14 +6,14 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2022.07-07] - 2022-07-07
+## [2022.07.07] - 2022-07-07
 
 ### Module h3
 #### Fixed
 - Correctly handle large polygons in H3_POLYFILL.
 - Fixed wrong uppercase for quadbin and h3 tile ids
 
-## [2022.06-24] - 2022-06-24
+## [2022.06.24] - 2022-06-24
 
 ### Module quadbin
 #### Added
@@ -33,19 +33,19 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
 
-## [2022.04-07] - 2022-04-07
+## [2022.04.07] - 2022-04-07
 
 ### Module transformations
 #### Added
 - Add ST_BUFFER function.
 
-## [2022.03-21] - 2022-03-21
+## [2022.03.21] - 2022-03-21
 
 ### Module transformations
 #### Changed
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
-## [2021.12-03] - 2021-12-03
+## [2021.12.03] - 2021-12-03
 
 ### Module accessors
 #### Changed
@@ -120,7 +120,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Remove
 - Remove VERSION function.
 
-## [2021.09-22] - 2021-09-22
+## [2021.09.22] - 2021-09-22
 
 ### Module h3
 #### Added
@@ -128,25 +128,25 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 #### Changed
 - Review HEXRING, KRING functions.
 
-## [2021.09-14] - 2021-09-14
+## [2021.09.14] - 2021-09-14
 
 ### Module s2
 #### Changes
 - Compute ST_BOUNDARY from WKT.
 
-## [2021.08-24] - 2021-08-24
+## [2021.08.24] - 2021-08-24
 
 ### Module h3
 #### Fixed
 - Support GEOMETRYCOLLECTION from ST_ASH3_POLYFILL.
 
-## [2021.06-02] - 2021-06-02
+## [2021.06.02] - 2021-06-02
 
 ### Module h3
 #### Changed
 - Reduce bundle size for every function.
 
-## [2021.05-26] - 2021-05-26
+## [2021.05.26] - 2021-05-26
 
 ### Module processing
 #### Added
@@ -158,7 +158,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_POLYGONIZE function.
 - Add VERSION function.
 
-## [2021.05-21] - 2021-05-21
+## [2021.05.21] - 2021-05-21
 
 ### Module accessors
 #### Added
@@ -166,7 +166,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_ENVELOPE function.
 - Add VERSION function.
 
-## [2021.05-20] - 2021-05-20
+## [2021.05.20] - 2021-05-20
 
 ### Module constructors
 #### Added
@@ -197,7 +197,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_LINE_INTERPOLATE_POINT function.
 - Add VERSION function.
 
-## [2021.04-16] - 2021-04-16
+## [2021.04.16] - 2021-04-16
 
 ### Module placekey
 #### Added
@@ -207,7 +207,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ISVALID function.
 - Add VERSION function.
 
-## [2021.04-12] - 2021-04-12
+## [2021.04.12] - 2021-04-12
 
 ### Module s2
 #### Added
@@ -219,7 +219,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_BOUNDARY function.
 - Add VERSION function.
 
-## [2021.04-07] - 2021-04-07
+## [2021.04.07] - 2021-04-07
 
 ### Module h3
 #### Added

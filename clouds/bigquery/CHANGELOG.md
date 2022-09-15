@@ -6,20 +6,20 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2022.08-09] - 2022-08-09
+## [2022.08.09] - 2022-08-09
 
 ### Module h3
 #### Fixed
 - Apply make_valid in H3_BOUNDARY.
 
-## [2022.07-07] - 2022-07-07
+## [2022.07.07] - 2022-07-07
 
 ### Module h3
 #### Fixed
 - Correctly handle large polygons in H3_POLYFILL.
 - Fixed wrong uppercase for quadbin and h3 tile ids
 
-## [2022.06-23] - 2022-06-23
+## [2022.06.23] - 2022-06-23
 
 ### Module quadbin
 #### Added
@@ -39,20 +39,20 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
 
-## [2022.03-21] - 2022-03-21
+## [2022.03.21] - 2022-03-21
 
 ### Module transformations
 #### Changed
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
-## [2022.02-15] - 2022-02-15
+## [2022.02.15] - 2022-02-15
 
 ### Module h3
 #### Added
 - Add H3_CENTER function.
 - Add H3_RESOLUTION function.
 
-## [2021.12-16] - 2021-12-16
+## [2021.12.16] - 2021-12-16
 
 ### Module accessors
 #### Changed
@@ -135,38 +135,38 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 #### Removed
 - Remove VERSION function.
 
-## [2021.09-23] - 2021-09-23
+## [2021.09.23] - 2021-09-23
 
 ### Module s2
 #### Changed
 - Rename functions ID_FROMUINT64REPR, UINT64REPR_FROMID to follow convention.
 
-## [2021.09-22] - 2021-09-22
+## [2021.09.22] - 2021-09-22
 
 ### Module h3
 #### Changed
 - Review HEXRING, KRING functions.
 - Change KRING_INDEXED to KRING_DISTANCES.
 
-## [2021.09-14] - 2021-09-14
+## [2021.09.14] - 2021-09-14
 
 ### Module s2
 #### Fixed
 - Avoid keeping planar shape in spherical coordinates in ST_BOUNDARY.
 
-## [2021.08-24] - 2021-08-24
+## [2021.08.24] - 2021-08-24
 
 ### Module h3
 #### Fixed
 - Support GEOMETRYCOLLECTION from ST_ASH3_POLYFILL.
 
-## [2021.08-04] - 2021-08-04
+## [2021.08.04] - 2021-08-04
 
 ### Module h3
 #### Added
 - Add KRING_INDEXED function.
 
-## [2021.07-30] - 2021-07-30
+## [2021.07.30] - 2021-07-30
 
 ### Module geohash
 #### Added
@@ -174,7 +174,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add VERSION function.
 - Add ST_BOUNDARY function.
 
-## [2021.06-01] - 2021-06-01
+## [2021.06.01] - 2021-06-01
 
 ### Module s2
 #### Added
@@ -183,7 +183,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ID_FROM_UINT64REPR function.
 - Add UINT64REPR_FROM_ID function.
 
-## [2021.05-04] - 2021-05-04
+## [2021.05.04] - 2021-05-04
 
 ### Module accessors
 #### Added
@@ -205,7 +205,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 #### Added
 - Add ST_CONCAVEHULL function.
 
-## [2021.04-29] - 2021-04-29
+## [2021.04.29] - 2021-04-29
 
 ### Module constructors
 #### Added
@@ -229,7 +229,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_GREATCIRCLE function.
 - Add ST_LINE_INTERPOLATE_POINT function.
 
-## [2021.04-28] - 2021-04-28
+## [2021.04.28] - 2021-04-28
 
 ### Module constructors
 #### Added
@@ -238,7 +238,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_TILEENVELOPE function.
 - Add VERSION function.
 
-## [2021.04-16] - 2021-04-16
+## [2021.04.16] - 2021-04-16
 
 ### Module transformations
 #### Added
@@ -246,7 +246,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_BUFFER function.
 - Add VERSION function.
 
-## [2021.04-09] - 2021-04-09
+## [2021.04.09] - 2021-04-09
 
 ### Module h3
 #### Changed
@@ -258,7 +258,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 #### Changed
 - Placekey conversions works with hexadecimal h3 indexes instead of int.
 
-## [2021.03-31] - 2021-03-31
+## [2021.03.31] - 2021-03-31
 
 ### Module h3
 #### Added
