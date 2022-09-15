@@ -2,6 +2,6 @@ from python_utils.test_utils import run_query
 
 
 def test_st_makepoint_success():
-    query = 'SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_MAKEPOINT(-91.8554869, 29.5060349));'
+    query = 'SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_MAKEPOINT(-91.85548, 29.50603));'
     result = run_query(query)
-    assert result[0][0] == 'POINT (-91.8554869 29.5060349)'
+    assert result[0][0] == 'POINT (-91.85548 29.50603)'

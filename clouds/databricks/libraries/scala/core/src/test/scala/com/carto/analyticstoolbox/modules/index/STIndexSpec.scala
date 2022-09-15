@@ -27,7 +27,7 @@ class STIndexSpec extends AnyFunSpec with HiveTestEnvironment with TestTables {
           |ST_CRSFROMTEXT('+proj=merc +lat_ts=56.5 +ellps=GRS80'),
           |ST_CRSFROMTEXT('+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs')))""".stripMargin
       )
-      df.head.get(0) shouldEqual "POINT (0.0000269 0.0000452)"
+      df.head.get(0) shouldEqual "POINT (0.00003 0.00005)"
     }
   }
 }
