@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/redshift/**"
+      - "!clouds/redshift/**/*.md"
       - ".github/workflows/redshift.yml"
 
 env:

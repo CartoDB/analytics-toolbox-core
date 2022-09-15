@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/postgres/**"
+      - "!clouds/postgres/**/*.md"
       - ".github/workflows/postgres.yml"
 
 env:

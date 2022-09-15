@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/bigquery/**"
+      - "!clouds/bigquery/**/*.md"
       - ".github/workflows/bigquery.yml"
 
 env:

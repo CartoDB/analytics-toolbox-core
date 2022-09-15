@@ -1,25 +1,29 @@
 # CARTO Analytics Toolbox Core
 
-The *CARTO Analytics Toolbox* is a set of UDFs and Stored Procedures to unlock Spatial Analytics. It is organized into modules based on the functionality they offer. This toolbox is cloud-native, which means it is available for different data warehouses: BigQuery, Snowflake, and Redshift. It is built on top of the data warehouse's GIS features, extending and complementing this functionality.
+The *CARTO Analytics Toolbox* is a set of UDFs and Stored Procedures to unlock Spatial Analytics. It is organized into modules based on the functionality they offer. This toolbox is cloud-native, which means it is available for different data warehouses: BigQuery, Snowflake, Redshift, Postgres, and Databricks. It is built on top of the data warehouse's GIS features, extending and complementing this functionality.
+
+| BigQuery | Snowflake | Redshift | Postgres | Databricks |
+|:--------:|:---------:|:--------:|:--------:|:----------:|
+|<img src="https://docs.carto.com/img/icons/bigquery-analytics-toolbox.png" width=80 height=80>|<img src="https://docs.carto.com/img/icons/snowflake-analytics-toolbox.png" width=80 height=80>|<img src="https://docs.carto.com/img/icons/redshift-analytics-toolbox.png" width=80 height=80>|<img src="https://docs.carto.com/img/icons/postgres-analytics-toolbox.png" width=80 height=80>|<img src="https://docs.carto.com/img/icons/databricks-analytics-toolbox.png" width=80 height=80>|
 
 This repo contains the core open-source modules of the toolbox. CARTO offers a set of premium modules that are available for CARTO users.
 
 ## Getting started
 
-Using the functions on this project depends on the Datawarehouse you are using. In BigQuery and Snowflake you can access them directly as a shared resoueces without having to install them, for the rest you will have to install them locally on your database.
+Using the functions on this project depends on the Datawarehouse you are using. In BigQuery and Snowflake you can access them directly as a shared resources without having to install them, for the rest you will have to install them locally on your database.
 
 ### BigQuery
 
 You can use directly the functions as they are globally shared in the US region.
 
 ```sql
-SELECT `carto-os.carto.H3_CENTER`('847b59dffffffff')
+SELECT `carto-os.carto.H3_CENTER`('84390cbffffffff')
 ```
 
 If you need to use them from the Europe region use:
 
 ```sql
-SELECT `carto-os-eu.carto.H3_CENTER`('847b59dffffffff')
+SELECT `carto-os-eu.carto.H3_CENTER`('84390cbffffffff')
 ```
 
 If you need to install them on your own VPC or in a different region, follow the instructions later on.
@@ -29,7 +33,7 @@ If you need to install them on your own VPC or in a different region, follow the
 The easiest way to start using these functions is to add them to your Datawarehouse through the [Snowflake Marketplace](https://www.snowflake.com/datasets/carto-analytics-toolbox/). Go there and install it using theregular methods. After that you should be able to use them on the location you have installed them. For example try:
 
 ```sql
-SELECT carto.H3_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4)
+SELECT carto_os.carto.H3_FROMGEOGPOINT(ST_POINT(-3.7038, 40.4168), 4)
 ```
 
 If you need to install them directly, not through the data share process, follow the instructions later on.

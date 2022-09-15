@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/snowflake/**"
+      - "!clouds/snowflake/**/*.md"
       - ".github/workflows/snowflake.yml"
 
 env:
