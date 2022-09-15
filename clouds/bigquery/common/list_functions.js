@@ -53,7 +53,7 @@ if (output.length) {
     }
     // Check global teardown
     const teardownfile = path.join(moduledir, 'global', 'teardown.js');
-    if (fs.existsSync(setupfile)) {
+    if (fs.existsSync(teardownfile)) {
         output.push(`--globalTeardown=${teardownfile}`)
     }
 }
