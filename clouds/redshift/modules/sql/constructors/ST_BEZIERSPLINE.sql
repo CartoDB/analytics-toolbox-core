@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__BEZIERSPLINE
+CREATE or REPLACE FUNCTION @@RS_SCHEMA@@.__BEZIERSPLINE
 (linestring VARCHAR(MAX), resolution INT, sharpness FLOAT8)
 RETURNS VARCHAR(MAX)
 STABLE

@@ -2,7 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__CARTO_ERROR(
+CREATE or REPLACE FUNCTION @@PG_SCHEMA@@.__CARTO_ERROR(
     message TEXT
 )
 RETURNS TEXT
