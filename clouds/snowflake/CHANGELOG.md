@@ -83,7 +83,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module measurements
 #### Changed
 - Deployment schema "carto" instead of "measurements".
-##### Removed
+#### Removed
 - Remove ST_ANGLE, already present in Snowflake.
 - Remove ST_AZIMUTH, already present in Snowflake.
 - Remove VERSION function.
@@ -117,7 +117,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module transformations
 #### Changed
 - Deployment schema "carto" instead of "transformations".
-### Remove
+#### Removed
 - Remove VERSION function.
 
 ## [2021.09.22] - 2021-09-22

@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.09.15] - 2022-09-15
+
+### Module s2
+#### Added
+- Add S2_CENTER function.
+
 ## [2022.08.09] - 2022-08-09
 
 ### Module h3
