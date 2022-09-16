@@ -8,6 +8,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ## [2022.09.16] - 2022-09-16
 
+### All modules
 ### Changed
 
 - change makefiles and sbt file to prepare the at advance
@@ -18,6 +19,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add make rule to publis artifact in local and sonatype
 - Add make rule to check and create headers
 
+### Module parsers
 ### Fixed
 
 - Fix the parser tests that had old user function names
