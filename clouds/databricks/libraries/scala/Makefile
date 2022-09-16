@@ -14,13 +14,13 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean publish-local-core
+.PHONY: help lint build deploy test remove clean publish-local-core ci-release-core create-headers check-headers
 
 help:
-	echo "Please choose one of the following targets: help lint build deploy test remove clean publish-local-core"
+	echo "Please choose one of the following targets: help lint build deploy test remove clean publish-local-core ci-release-core create-headers check-headers"
 
 lint:
-	echo "Linting libraries..."
+	echo "- Linting libraries..."
 	(cd "$(SCALA_DIR)" && exec sbt "scalafix")
 
 install:
@@ -33,6 +33,18 @@ build:
 publish-local-core:
 	echo "- Publishing libraries in local repository"
 	(cd "$(ROOT_DIR)" && exec sbt publishLocal)
+
+ci-release-core:
+	echo "- Publishing libraries in snapshot repository"
+	(cd "$(ROOT_DIR)" && exec sbt ci-release)
+
+create-headers:
+	echo "- Adding headers with license"
+	(cd "$(SCALA_DIR)" && exec sbt headerCreate)
+
+check-headers:
+	echo "- Adding headers with license"
+	(cd "$(SCALA_DIR)" && exec sbt headerCheck)
 
 deploy: check
 	echo "Deploying libraries..."

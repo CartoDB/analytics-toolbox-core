@@ -6,16 +6,17 @@ include $(ROOT_DIR)/common/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test remove clean publish-local-core ci-release-core create-headers
 
 help:
-	echo "Please choose one of the following targets: lint build deploy test remove clean"
+	echo "Please choose one of the following targets: lint build deploy test remove clean publish-local-core ci-release-core create-headers"
 
 lint:
 	$(MAKE) lint-libraries
 
 lint-libraries:
 	$(MAKE) -C libraries/scala lint
+	$(MAKE) -C libraries/scala check-headers
 
 build:
 	$(MAKE) build-libraries
@@ -68,3 +69,9 @@ clean-modules:
 
 publish-local-core:
 	$(MAKE) -C libraries/scala publish-local-core
+
+ci-release-core:
+	$(MAKE) -C libraries/scala ci-release-core
+
+create-headers:
+	$(MAKE) -C libraries/scala create-headers
