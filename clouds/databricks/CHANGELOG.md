@@ -9,33 +9,45 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2022.09.15] - 2022-09-15
 
 ### All modules
+
 #### Changed
+
 - The XY precission of the TWKBWriter is set to 5.
 
 ### Module formatters
+
 #### Fixed
+
 - Fix the doc of the transformers functions ST_ASLATLONTEXT and ST_ASTEXT.
 
 ## [2022.09.06] - 2022-09-06
 
 ### Module accessors
+
 #### Fixed
+
 - Fix the bug in ST_COORDDIM that was adding z coordinate to geometries.
 
 ### Module indexing
+
 #### Fixed
+
 - Fix the cast ClassCastException in ST_GEOMREPROJECT.
 
 ## [2022.09.01] - 2022-09-01
 
 ### All modules
+
 #### Changed
+
 - Refactor databricks cloud to adapt it to the new cloud structure
 
 ## [2022.08.29] - 2022-08-29
 
 ### Module indexing
+
 #### Added
+
 - Add ST_CRSFROMTEXT function.
 - Add ST_EXTENTFROMGEOM function.
 - Add ST_EXTENTTOGEOM function.
@@ -45,19 +57,27 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_Z2LATLON function.
 
 ### Module formatters
+
 #### Added
+
 - Add ST_ASTWKB function.
 
 ### Module parsers
+
 #### Added
+
 - Add ST_GEOMFROMWKT function.
 
 ### Module predicates
+
 #### Added
+
 - Add ST_COVERS function.
 
 ### Module transformations
+
 #### Added
+
 - Add ST_BUFFERPOINT function.
 - Add ST_DIFFERENCE function.
 - Add ST_SIMPLIFY function.
@@ -65,7 +85,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2022.08.19] - 2022-08-19
 
 ### Module accessors
+
 #### Added
+
 - Add ST_COORDDIM function.
 - Add ST_DIMENSION function.
 - Add ST_ENVELOPE function.
@@ -84,7 +106,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_X function.
 
 ### Module constructors
+
 #### Added
+
 - Add ST_MAKEBBOX function.
 - Add ST_MAKEBOX2D function.
 - Add ST_MAKELINE function.
@@ -94,7 +118,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_POINT function.
 
 ### Module formatters
+
 #### Added
+
 - Add ST_ASBINARY function.
 - Add ST_ASGEOHASH function.
 - Add ST_ASGEOJSON function.
@@ -107,7 +133,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_CASTTOPOLYGON function.
 
 ### Module measurements
+
 #### Added
+
 - Add ST_AREA function.
 - Add ST_DISTANCE function.
 - Add ST_DISTANCESPHERE function.
@@ -115,7 +143,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_LENGTHSPHERE function.
 
 ### Module parsers
+
 #### Added
+
 - Add ST_BOX2DFROMGEOHASH function.
 - Add ST_GEOMETRYFROMTEXT function.
 - Add ST_GEOMFROMGEOHASH function.
@@ -132,6 +162,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_POLYGONFROMTEXT function.
 
 ### Added
+
 - [formatters] Add ST_ASTWKB function.
 - [indexing] Add ST_CRSFROMTEXT function.
 - [indexing] Add ST_EXTENTFROMGEOM function.
