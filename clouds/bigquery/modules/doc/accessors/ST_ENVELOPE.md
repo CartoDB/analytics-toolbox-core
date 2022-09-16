@@ -8,7 +8,7 @@ carto.ST_ENVELOPE(geog)
 
 Takes any number of features and returns a rectangular Polygon that encompasses all vertices.
 
-* `geog`: `ARRAY<GEOGRAPHY>` input features.
+* `geog`: `ARRAY<GEOGRAPHY>` input features
 
 **Return type**
 
