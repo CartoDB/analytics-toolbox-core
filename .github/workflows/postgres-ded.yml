@@ -11,8 +11,8 @@ env:
 jobs:
 
   dedicated:
-    # if: github.event.label.name == 'dedicated_postgres' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres'))
-    if: false
+    if: github.event.label.name == 'dedicated_postgres' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres'))
+    # if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
