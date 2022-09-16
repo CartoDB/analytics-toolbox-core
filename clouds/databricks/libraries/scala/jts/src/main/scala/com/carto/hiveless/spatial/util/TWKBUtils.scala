@@ -25,7 +25,7 @@ trait TWKBUtils {
   }
 
   private[this] val writerPool = new ThreadLocal[TWKBWriter] {
-    override def initialValue = new TWKBWriter
+    override def initialValue = new TWKBWriter().setXYPrecision(5)
   }
 
   def read(s: String): Geometry      = read(s.getBytes)

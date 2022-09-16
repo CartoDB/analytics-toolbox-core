@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/snowflake/**"
+      - "!clouds/snowflake/**/*.md"
       - ".github/workflows/snowflake.yml"
 
 env:
@@ -135,4 +136,4 @@ jobs:
           cd clouds/snowflake
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
-
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/

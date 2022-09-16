@@ -17,7 +17,7 @@ async function runQuery (query, options) {
 }
 
 function replaceBQPrefix (text) {
-    return text.replace(/@@BQ_DATASET@@/g, BQ_DATASET);
+    return text.replace(/@@BQ_DATASET@@/g, BQ_DATASET).replace(/@@BQ_PREFIX@@/g, BQ_PREFIX);
 }
 
 async function loadTable (tablename, filepath, columns, viewName) {

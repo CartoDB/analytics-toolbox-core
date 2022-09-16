@@ -8,4 +8,4 @@ def test_st_geomreproject_success():
   @@DB_SCHEMA@@.ST_CRSFROMTEXT('+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs') AS crsb
 ) SELECT @@DB_SCHEMA@@.ST_ASTEXT(@@DB_SCHEMA@@.ST_GEOMREPROJECT(point, crsa, crsb)) FROM t;"""
     result = run_query(query)
-    assert result[0][0] == 'POINT (0.0000269 0.0000452)'
+    assert result[0][0] == 'POINT (0.00003 0.00005)'

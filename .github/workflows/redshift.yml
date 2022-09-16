@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/redshift/**"
+      - "!clouds/redshift/**/*.md"
       - ".github/workflows/redshift.yml"
 
 env:
@@ -149,3 +150,4 @@ jobs:
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
           gsutil -h "Content-Type:application/zip" -m cp build/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
