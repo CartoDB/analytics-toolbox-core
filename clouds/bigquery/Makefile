@@ -6,7 +6,8 @@ DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 ESLINTRC_DIR ?= $(ROOT_DIR)/../..
 COMMON_DIR = $(ROOT_DIR)/common
-PACKAGE_NAME ?= carto-analytics-toolbox-core-bigquery-$(shell cat $(ROOT_DIR)/version)
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
+PACKAGE_NAME ?= carto-analytics-toolbox-core-bigquery-$(PACKAGE_VERSION)
 
 include $(COMMON_DIR)/Makefile
 
@@ -99,6 +100,8 @@ create-package:
 	cp -r $(BUILD_DIR)/libs $(DIST_DIR)/$(PACKAGE_NAME)/libs
 
 	$(MAKE) extra-package
+
+	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
 

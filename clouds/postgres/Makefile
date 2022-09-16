@@ -5,7 +5,8 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
-PACKAGE_NAME ?= carto-analytics-toolbox-core-postgres-$(shell cat $(ROOT_DIR)/version)
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
+PACKAGE_NAME ?= carto-analytics-toolbox-core-postgres-$(PACKAGE_VERSION)
 
 include $(COMMON_DIR)/Makefile
 
@@ -74,6 +75,8 @@ create-package:
 	cp -r $(BUILD_DIR)/* $(DIST_DIR)/$(PACKAGE_NAME)/
 
 	$(MAKE) extra-package
+
+	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
 

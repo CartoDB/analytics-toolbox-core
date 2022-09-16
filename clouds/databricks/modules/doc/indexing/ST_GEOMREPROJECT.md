@@ -24,5 +24,5 @@ WITH t AS (
   carto.ST_CRSFROMTEXT('+proj=merc +lat_ts=56.5 +ellps=GRS80') AS crsa,
   carto.ST_CRSFROMTEXT('+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs') AS crsb
 ) SELECT carto.ST_ASTEXT(carto.ST_GEOMREPROJECT(point, crsa, crsb)) FROM t;
--- POINT (0.0000269 0.0000452)
+-- POINT (0.00003 0.00005)
 ```

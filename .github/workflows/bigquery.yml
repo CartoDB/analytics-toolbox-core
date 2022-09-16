@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/bigquery/**"
+      - "!clouds/bigquery/**/*.md"
       - ".github/workflows/bigquery.yml"
 
 env:
@@ -325,4 +326,4 @@ jobs:
           cd clouds/bigquery
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
-
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/

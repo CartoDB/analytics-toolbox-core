@@ -69,7 +69,7 @@ if (!nodeps) {
                     qualifiedDepFunctName = qualifiedDepFunctName.split('.');
                     depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
                 })
-                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\``))) {
+                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}`))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }
