@@ -14,7 +14,7 @@ AS $$
 
     bbox = cell_to_bounding_box(quadbin)
     return 'POLYGON(({west} {south},{west} {north},{east} {north},{east} {south},{west} {south}))'.format(west=bbox[0], south=bbox[1], east=bbox[2], north=bbox[3])
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_BOUNDARY
 (BIGINT)
@@ -23,4 +23,4 @@ RETURNS GEOMETRY
 STABLE
 AS $$
     SELECT ST_GEOMFROMTEXT(@@RS_SCHEMA@@.__QUADBIN_BOUNDARY($1), 4326)
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

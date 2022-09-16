@@ -9,14 +9,20 @@ if ignored_files:
     with open(ignored_files, 'r') as ignored_file:
         ignored_scripts = ignored_file.read().split('\n')
     for ignored_script in ignored_scripts:
-        scripts = list(filter (lambda x:not x.endswith(ignored_script) , scripts))
+        scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
 
 for script in scripts:
     content = ''
     with open(script, 'r') as file:
-        content = file.read().replace('@', '_sqlfluff_')
+        content = (
+            file.read()
+            .replace('@@PG_SCHEMA@@', '_sqlfluffschema_')
+            .replace('@', '_sqlfluff_')
+        )
     fixed_content = (
-        sqlfluff.fix(content, dialect='postgres', config_path = sys.argv[2])
+        sqlfluff.fix(content, dialect='postgres', config_path=sys.argv[2])
+        .replace('_sqlfluffschema_', '@@PG_SCHEMA@@')
+        .replace('_SQLFLUFFSCHEMA_', '@@PG_SCHEMA@@')
         .replace('_sqlfluff_', '@')
         .replace('_SQLFLUFF_', '@')
     )

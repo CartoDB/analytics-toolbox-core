@@ -11,4 +11,4 @@ AS $$
 
     return placekey_is_valid(placekey)
 
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

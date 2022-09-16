@@ -14,4 +14,4 @@ AS $$
     
     return int64_id_to_token(id)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

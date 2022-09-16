@@ -17,7 +17,7 @@ AS $$
         raise Exception('Invalid input size')
 
     return json.dumps(kring_distances(origin, size))
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADINT_KRING_DISTANCES
 (BIGINT, INT)
@@ -26,4 +26,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__QUADINT_KRING_DISTANCES($1, $2))
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

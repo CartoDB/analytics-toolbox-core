@@ -15,7 +15,7 @@ AS $$
 
     geojson = quadint_to_geojson(quadint)['geometry']
     return json.dumps(geojson)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADINT_BOUNDARY
 (BIGINT)
@@ -24,4 +24,4 @@ RETURNS VARCHAR(MAX)
 STABLE
 AS $$
     SELECT @@RS_SCHEMA@@.__QUADINT_BOUNDARY($1)
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

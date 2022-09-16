@@ -9,4 +9,4 @@ STABLE
 AS $$
     from @@RS_LIBRARY@@.quadkey import quadint_from_quadkey
     return quadint_from_quadkey(quadkey)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

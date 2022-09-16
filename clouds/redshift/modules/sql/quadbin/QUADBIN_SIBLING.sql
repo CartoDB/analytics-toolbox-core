@@ -13,4 +13,4 @@ AS $$
         return None
 
     return cell_sibling(quadbin, direction)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

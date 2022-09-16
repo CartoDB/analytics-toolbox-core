@@ -10,7 +10,7 @@ AS $$
     from @@RS_LIBRARY@@.transformations import wkt_from_geojson
 
     return wkt_from_geojson(geom)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__ST_GEOMFROMGEOJSON
 (VARCHAR(MAX))
@@ -19,4 +19,4 @@ RETURNS GEOMETRY
 STABLE
 AS $$
     SELECT ST_GEOMFROMTEXT(@@RS_SCHEMA@@.__GEOJSONTOWKT($1), 4326)
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

@@ -14,9 +14,11 @@ if ignored_files:
 for script in scripts:
     content = ''
     with open(script, 'r') as file:
-        content = file.read().replace('@', '_sqlfluff_')
+        content = file.read().replace('@@SF_SCHEMA@@', '_sqlfluffschema_').replace('@', '_sqlfluff_')
     fixed_content = (
         sqlfluff.fix(content, dialect='snowflake', config_path = sys.argv[2])
+        .replace('_sqlfluffschema_', '@@SF_SCHEMA@@')
+        .replace('_SQLFLUFFSCHEMA_', '@@SF_SCHEMA@@')
         .replace('_sqlfluff_', '@')
         .replace('_SQLFLUFF_', '@')
     )

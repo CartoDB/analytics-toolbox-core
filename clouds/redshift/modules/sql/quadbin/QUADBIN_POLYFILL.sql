@@ -19,7 +19,7 @@ AS $$
     quadbins = geometry_to_cells(geojson, resolution)
 
     return json.dumps(quadbins)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_POLYFILL
 (GEOMETRY, INT)
@@ -31,4 +31,4 @@ AS $$
         WHEN 0 THEN JSON_PARSE(@@RS_SCHEMA@@.__QUADBIN_POLYFILL(ST_ASGEOJSON(ST_SETSRID($1, 4326))::VARCHAR(MAX), $2))
         ELSE JSON_PARSE(@@RS_SCHEMA@@.__QUADBIN_POLYFILL(ST_ASGEOJSON(ST_TRANSFORM($1, 4326))::VARCHAR(MAX), $2))
     END
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

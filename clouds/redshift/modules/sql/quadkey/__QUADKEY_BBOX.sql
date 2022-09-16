@@ -13,7 +13,7 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     return str(bbox_quadkey(quadkey))
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__QUADKEY_BBOX
 (VARCHAR(MAX))
@@ -22,4 +22,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__QUADKEY_BBOX_INTERNAL($1))
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

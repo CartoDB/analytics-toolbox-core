@@ -14,4 +14,4 @@ AS $$
     
     return hilbert_quadkey_to_id(hquadkey)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

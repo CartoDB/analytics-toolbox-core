@@ -65,4 +65,4 @@ $BODY$
       json_build_object('z', z, 'x', (x >> (32-z)), 'y', (y >> (32-z)))
     FROM __deinterleaved7
 $BODY$
-LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

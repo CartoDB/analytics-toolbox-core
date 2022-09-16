@@ -14,4 +14,4 @@ AS $$
     
     return get_cell_boundary(id)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

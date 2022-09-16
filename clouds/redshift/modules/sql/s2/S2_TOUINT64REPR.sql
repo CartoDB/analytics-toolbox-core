@@ -14,4 +14,4 @@ AS $$
     
     return str(uint64_repr_from_id(id))
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

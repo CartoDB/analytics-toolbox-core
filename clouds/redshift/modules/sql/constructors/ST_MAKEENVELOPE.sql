@@ -9,4 +9,4 @@ RETURNS GEOMETRY
 STABLE
 AS $$
     SELECT ST_GEOMFROMTEXT('POLYGON((' || $1 || ' ' || $2 || ',' || $1 || ' ' || $4 || ',' || $3 || ' ' || $4 || ',' || $3 || ' ' || $2 || ',' || $1 || ' ' || $2 || '))')
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

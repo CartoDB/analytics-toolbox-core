@@ -13,4 +13,4 @@ AS $$
         return None
     return placekey_to_h3(placekey)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

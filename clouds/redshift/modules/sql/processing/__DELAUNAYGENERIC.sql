@@ -48,4 +48,4 @@ AS $$
     else:
         return str(geojson.MultiPolygon(lines, precision=PRECISION))
 
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

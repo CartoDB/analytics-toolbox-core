@@ -14,7 +14,7 @@ AS $$
     
     return to_parent(id, resolution)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_TOPARENT
 (id INT8)
@@ -28,4 +28,4 @@ AS $$
     
     return to_parent(id)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

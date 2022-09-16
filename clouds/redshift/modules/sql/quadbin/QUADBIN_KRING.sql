@@ -17,7 +17,7 @@ AS $$
         raise Exception('Invalid input size')
 
     return json.dumps(k_ring(origin, size))
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_KRING
 (BIGINT, INT)
@@ -26,4 +26,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT JSON_PARSE(@@RS_SCHEMA@@.__QUADBIN_KRING($1, $2))
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

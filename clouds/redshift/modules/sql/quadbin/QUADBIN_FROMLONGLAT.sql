@@ -16,4 +16,4 @@ AS $$
     from @@RS_LIBRARY@@.quadbin import point_to_cell
 
     return point_to_cell(longitude, latitude, resolution)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

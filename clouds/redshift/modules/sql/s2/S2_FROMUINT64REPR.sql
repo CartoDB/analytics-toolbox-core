@@ -14,4 +14,4 @@ AS $$
     
     return uint64_to_int64(int(uid))
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

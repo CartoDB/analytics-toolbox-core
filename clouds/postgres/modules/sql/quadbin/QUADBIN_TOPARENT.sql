@@ -16,4 +16,4 @@ $BODY$
     (quadbin & ~(31::BIGINT << 52)) | (resolution::BIGINT << 52) | (4503599627370495 >> (resolution << 1))
   END;
 $BODY$
-LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

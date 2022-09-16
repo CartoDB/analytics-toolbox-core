@@ -31,4 +31,4 @@ AS $$
 
     return str(voronoi_generic(geom_geojson, bbox_array, voronoi_type))
 
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

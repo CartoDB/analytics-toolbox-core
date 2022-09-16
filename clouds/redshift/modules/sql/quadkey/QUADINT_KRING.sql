@@ -16,7 +16,7 @@ AS $$
         raise Exception('Invalid input size')
 
     return str(kring(origin, size))
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADINT_KRING
 (BIGINT, INT)
@@ -25,4 +25,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__QUADINT_KRING($1, $2))
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

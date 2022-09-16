@@ -13,4 +13,4 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     return to_parent(quadint, resolution)
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

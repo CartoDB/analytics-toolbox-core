@@ -13,7 +13,7 @@ AS $$
         raise Exception('NULL argument passed to UDF')
 
     return str(to_children(quadint, resolution))
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADINT_TOCHILDREN
 (BIGINT, INT)
@@ -22,4 +22,4 @@ RETURNS SUPER
 STABLE
 AS $$
     SELECT json_parse(@@RS_SCHEMA@@.__QUADINT_TOCHILDREN($1, $2))
-$$ LANGUAGE SQL;
+$$ LANGUAGE sql;

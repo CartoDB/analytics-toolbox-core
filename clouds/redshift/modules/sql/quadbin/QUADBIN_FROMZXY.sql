@@ -13,4 +13,4 @@ AS $$
     from @@RS_LIBRARY@@.quadbin import tile_to_cell
 
     return tile_to_cell((x, y, z))
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;

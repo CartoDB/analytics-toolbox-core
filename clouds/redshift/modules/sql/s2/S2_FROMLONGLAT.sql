@@ -14,4 +14,4 @@ AS $$
     
     return longlat_as_int64_id(longitude, latitude, resolution)
     
-$$ LANGUAGE PLPYTHONU;
+$$ LANGUAGE plpythonu;
