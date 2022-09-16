@@ -34,7 +34,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) --fix
-	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/*/*.sql)" $(COMMON_DIR)/.sqlfluff
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/*/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '**/*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
 

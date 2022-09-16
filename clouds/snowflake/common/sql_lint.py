@@ -1,7 +1,16 @@
 import sqlfluff
 import sys
 
+# Lint the sql files passed as input
+
 scripts = sys.argv[1].split(' ')
+ignored_files = sys.argv[3]
+if ignored_files:
+    with open(ignored_files, 'r') as ignored_file:
+        ignored_scripts = ignored_file.read().split('\n')
+    for ignored_script in ignored_scripts:
+        scripts = list(filter (lambda x:not x.endswith(ignored_script) , scripts))
+
 for script in scripts:
     content = ''
     with open(script, 'r') as file:
