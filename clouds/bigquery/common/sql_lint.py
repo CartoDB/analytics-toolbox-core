@@ -15,8 +15,6 @@ for script in scripts:
     content = ''
     with open(script, 'r') as file:
         content = file.read().replace('@@BQ_DATASET@@', '_sqlfluffdataset_').replace('@', '_sqlfluff_')
-    # print('****')
-    # print(script)
     fixed_content = (
         sqlfluff.fix(content, dialect = 'bigquery', config_path = sys.argv[2])
         .replace('_sqlfluffdataset_', '@@BQ_DATASET@@')

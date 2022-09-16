@@ -11,7 +11,7 @@ templater = jinja
 # Comma separated list of rules to check, default to all
 rules = all
 # Comma separated list of rules to exclude, or None
-exclude_rules = L016,L031,L032
+exclude_rules = L011,L016,L031,L032
 # The depth to recursively parse to (0 for unlimited)
 recurse = 0
 # Below controls SQLFluff output, see max_line_length for SQL output
@@ -86,9 +86,6 @@ capitalisation_policy = upper
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L011]
-# Aliasing preference for tables
-aliasing = explicit
 
 [sqlfluff:rules:L012]
 # Aliasing preference for columns
@@ -101,10 +98,6 @@ extended_capitalisation_policy = lower
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L016]
-# Line length
-ignore_comment_lines = False
-ignore_comment_clauses = False
 
 [sqlfluff:rules:L027]
 # Comma separated list of words to ignore for this rule
@@ -135,11 +128,6 @@ extended_capitalisation_policy = upper
 # Comma separated list of words to ignore for this rule
 ignore_words = None
 ignore_words_regex = None
-
-[sqlfluff:rules:L031]
-# Avoid table aliases in from clauses and join conditions.
-# Disabled for some dialects (e.g. bigquery)
-force_enable = False
 
 [sqlfluff:rules:L036]
 wildcard_policy = single
