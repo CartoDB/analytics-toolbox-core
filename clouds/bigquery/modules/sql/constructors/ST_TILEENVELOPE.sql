@@ -8,7 +8,7 @@ RETURNS GEOGRAPHY
 AS (
     `@@BQ_DATASET@@.QUADINT_BOUNDARY`(
         `@@BQ_DATASET@@.QUADINT_FROMZXY`(
-            ZOOMLEVEL, XTILE, YTILE
+            zoomlevel, xtile, ytile
         )
     )
 );

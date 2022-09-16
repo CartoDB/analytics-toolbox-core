@@ -9,26 +9,34 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2022.08.19] - 2022-08-19
 
 ### Module s2
+
 #### Fixed
+
 - Fix S2_BOUNDARY inverted coordinates.
 
 ## [2022.07.14] - 2022-07-14
 
 ### Module quadbin
+
 #### Changed
+
 - Update functions volatility.
 - QUADBIN_FROMZXY accepting BIGINTs as params instead of INTs.
 
 ## [2022.07.08] - 2022-07-08
 
 ### Module quadbin
+
 #### Changed
+
 - Release SQL version of QUADBIN_TOZXY.
 
 ## [2022.06.24] - 2022-06-24
 
 ### Module quadbin
+
 #### Added
+
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
 - Add QUADBIN_CENTER function.
@@ -48,34 +56,50 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2021.12.16] - 2021-12-16
 
 ### Module transformations
+
 #### Fixed
+
 - Refactor of internal __ST_GEOMFROMGEOJSON function to avoid UDFs nestig Redshift limitations
 
 ## [2021.12.10] - 2021-12-10
 
 ### Module constructors
+
 #### Changed
+
 - Deployment schema "carto" instead of "constructors".
+
 #### Removed
+
 - Remove VERSION function.
 
 ### Module placekey
+
 #### Changed
+
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
 - Rename PLACEKEY_ASH3 function to PLACEKEY_TOH3.
 - Rename ISVALID function to PLACEKEY_ISVALID.
+
 #### Removed
+
 - Remove VERSION function.
 
 ### Module processing
+
 #### Changed
+
 - Deployment schema "carto" instead of "processing".
+
 #### Removed
+
 - Remove VERSION function.
 
 ### Module s2
+
 #### Changed
+
 - Deployment schema "carto" instead of "s2".
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
 - Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
@@ -90,19 +114,27 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Rename TOKEN_FROMID function to S2_TOTOKEN.
 - Rename TOPARENT function to S2_TOPARENT.
 - Rename UINT64REPR_FROMID function to S2_TOUINT64REPR.
+
 #### Removed
+
 - Remove VERSION function.
 
 ### Module transformations
+
 #### Changed
+
 - Deployment schema "carto" instead of "transformations".
+
 #### Removed
+
 - Remove VERSION function.
 
 ## [2021.10.06] - 2021-10-06
 
 ### Module processing
+
 #### Added
+
 - Create processing module.
 - Add VERSION function.
 - Add ST_POLYGONIZE function.
@@ -112,7 +144,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_VORONOIPOLYGONS function.
 
 ### Module transformations
+
 #### Added
+
 - Create transformations module.
 - Add VERSION function.
 - Add ST_CENTERMEAN function.
@@ -125,7 +159,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2021.09.23] - 2021-09-23
 
 ### Module s2
+
 #### Added
+
 - Create s2 module.
 - Add HILBERTQUADKEY_FROMID function.
 - Add ID_FROMHILBERTQUADKEY function.
@@ -145,7 +181,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2021.09.17] - 2021-09-17
 
 ### Module constructors
+
 #### Added
+
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
 - Add ST_MAKEELLIPSE function.
@@ -156,7 +194,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2021.09.07] - 2021-09-07
 
 ### Module placekey
+
 #### Added
+
 - Create placekey module.
 - Add H3_ASPLACEKEY function.
 - Add PLACEKEY_ASH3 function.
