@@ -3,9 +3,9 @@
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
-CLOUD_DIR = $(ROOT_DIR)/..
+TEST_DIR ?= $(ROOT_DIR)/test
 SQL_DIR ?= $(ROOT_DIR)/sql
-COMMON_DIR = $(CLOUD_DIR)/common
+COMMON_DIR = $(ROOT_DIR)/../common
 SQL_PATH = $(COMMON_DIR)/dropUDF.sql
 
 include $(COMMON_DIR)/Makefile
@@ -26,9 +26,9 @@ lint: venv3 $(NODE_MODULES_DEV)
 test: check check-extra venv
 	echo "Testing modules..."
 	. $(COMMON_DIR)/venv/bin/activate && \
-	for module in `ls $(ROOT_DIR)/test`; do \
+	for module in `ls $(TEST_DIR)`; do \
 		echo "> Module $${module}"; \
-		pytest -rP -p no:warnings -vv $(ROOT_DIR)/test/$${module} || exit 1; \
+		pytest -rP -p no:warnings -vv $(TEST_DIR)/$${module} || exit 1; \
 	done; \
 	deactivate
 

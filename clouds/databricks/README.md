@@ -49,9 +49,12 @@ DATABRICKS_TOKEN=<token>
 ## Make commands
 
 - `make help`: shows the commands available in the Makefile
-- `make lint`: runs a linter (scalafix)
+- `make lint`: runs a linter (scalafix) and check if all the classes have headers (sbt-headers)
 - `make build`: Builds the jar to deploy
 - `make deploy`: builds and deploys the libraries in the Databricks cluster, and SQL scripts in the Databricks database
 - `make test`: runs the the modules tests with the Databricks cluster (pytest)
 - `make remove`: removes all the libraries and SQL functions from the Databricks cluster and database
 - `make clean`: cleans the installed dependencies and generated files locally
+- `publish-local-core:`: publish the core libraries in a local repository (ivy) in order to make it available for AT advanced
+- `ci-release-core`: publish the core libraries from local to a sonatype repository. It can be used as a make rule in CI or to share your developments with your team mates
+- `create-headers`: add headers with license to al the java and scala classes that doesn't have them
