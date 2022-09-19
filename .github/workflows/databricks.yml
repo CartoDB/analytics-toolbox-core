@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "clouds/databricks/**"
+      - "!clouds/databricks/**/*.md"
       - ".github/workflows/databricks.yml"
 
 env:
