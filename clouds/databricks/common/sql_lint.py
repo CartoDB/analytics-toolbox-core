@@ -5,9 +5,11 @@ import sqlfluff
 # Lint the sql files passed as input
 
 current_script = ''
+
+
 def _logging_handle(self, record):
-    print(current_script)
-    raise Exception('ERROR: ' + record.msg + '\nPlease check '+ current_script)
+    raise Exception('ERROR: ' + record.msg + '\nPlease check ' + current_script)
+
 
 stream_handler = logging.StreamHandler
 stream_handler.handle = _logging_handle
@@ -26,7 +28,7 @@ for script in scripts:
     with open(script, 'r') as file:
         content = file.read().replace('@', '_sqlfluff_')
     fixed_content = (
-        sqlfluff.fix(content, dialect='databricks', config_path = sys.argv[2])
+        sqlfluff.fix(content, dialect='databricks', config_path=sys.argv[2])
         .replace('_sqlfluff_', '@')
         .replace('_SQLFLUFF_', '@')
     )
