@@ -26,7 +26,7 @@ lint-modules:
 
 lint-common: $(NODE_MODULES_DEV)
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	markdownlint -f '*.md' --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	markdownlint -f '*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
 
 build:
 	$(MAKE) build-libraries

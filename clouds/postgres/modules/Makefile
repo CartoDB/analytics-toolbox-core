@@ -32,7 +32,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 	$(VENV3_BIN)/flake8 test --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/*/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	markdownlint -f '**/*.md' --disable MD013 MD033 MD036 MD040 MD041 MD051 --
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
