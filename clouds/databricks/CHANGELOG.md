@@ -161,21 +161,32 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_POINTFROMWKB function.
 - Add ST_POLYGONFROMTEXT function.
 
-### Added
+### Module predicates
 
-- [formatters] Add ST_ASTWKB function.
-- [indexing] Add ST_CRSFROMTEXT function.
-- [indexing] Add ST_EXTENTFROMGEOM function.
-- [indexing] Add ST_EXTENTTOGEOM function.
-- [indexing] Add ST_GEOMREPROJECT function.
-- [indexing] Add ST_MAKEEXTENT function.
-- [indexing] Add ST_PARTITIONCENTROID function.
-- [indexing] Add ST_Z2LATLON function.
-- [parsers] Add ST_GEOMFROMWKT function.
-- [predicates] Add ST_COVERS function.
-- [transformations] Add ST_BUFFERPOINT function.
-- [transformations] Add ST_DIFFERENCE function.
-- [transformations] Add ST_SIMPLIFY function.
-- [transformations] Add ST_SIMPLYFYPRESERVETOPOLOGY function.
+#### Added
 
-## [1.0.0] - 2022-08-19
+- Add ST_CONTAINS function.
+- Add ST_CROSSES function.
+- Add ST_DISJOINT function.
+- Add ST_EQUALS function.
+- Add ST_INTERSECTS function.
+- Add ST_OVERLAPS function.
+- Add ST_RELATE function.
+- Add ST_RELATEBOOL function.
+- Add ST_TOUCHES function.
+- Add ST_WITHIN function.
+
+### Module transformations
+
+#### Added
+
+- Add ST_ANTIMERIDIANSAFEGEOM function.
+- Add ST_BOUNDARY function.
+- Add ST_CENTROID function.
+- Add ST_CLOSESTPOINT function.
+- Add ST_CONVEXHULL function.
+- Add ST_EXTERIORRING function.
+- Add ST_IDLSAFEGEOM function.
+- Add ST_INTERIORRINGN function.
+- Add ST_INTERSECTION function.
+- Add ST_TRANSLATE function.
