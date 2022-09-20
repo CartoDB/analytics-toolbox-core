@@ -17,7 +17,7 @@ else
 export SF_SCHEMA = $(SF_DATABASE).$(SF_PREFIX)$(SF_SCHEMA_DEFAULT)
 endif
 
-.PHONY: check
+.PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef SF_ACCOUNT
@@ -38,6 +38,7 @@ endif
 
 venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
+	rm -rf $(VENV3_DIR)/lib/**/site-packages/~*
 	$(VENV3_BIN)/pip install --upgrade pip -q && \
 	$(VENV3_BIN)/pip install -r $(COMMON_DIR)/python3_requirements.txt -q
 

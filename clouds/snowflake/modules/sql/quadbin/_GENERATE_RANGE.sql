@@ -8,8 +8,8 @@ RETURNS VARIANT
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-  if (MAX < MIN) {
-    return null;
-  }
-  return Array(MAX - MIN + 1).fill().map((x,i) => i + MIN);
+    if (MAX < MIN) {
+        return null;
+    }
+    return Array(MAX - MIN + 1).fill().map((x,i) => i + MIN);
 $$;
