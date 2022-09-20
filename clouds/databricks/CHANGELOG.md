@@ -9,15 +9,21 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2022.09.16] - 2022-09-16
 
 ### All modules
+
 #### Added
+
 - Add headers to functions that didn't have
 - Add make rule to publis artifact in local and sonatype
 - Add make rule to check and create headers
+
 #### Changed
+
 - change makefiles and sbt file to prepare the at advance
 
 ### Module parsers
+
 ### Fixed
+
 - Fix the parser tests that had old user function names
 
 ## [2022.09.15] - 2022-09-15

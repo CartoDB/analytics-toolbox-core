@@ -5,10 +5,12 @@ import sys
 import sqlfluff
 import multiprocessing as mp
 
+DIALECT = 'snowflake'
+
 
 def replace_variables(content):
     return (
-        content.replace('@@SF_SCHEMA@@._', '_SQLFLUFFSCHEMA_LD_.')
+        content.replace('@@SF_SCHEMA@@._', '_SQLFLUFFSCHEMALD_.')
         .replace('@@SF_SCHEMA@@', '_SQLFLUFFSCHEMA_')
         .replace('@', '_SQLFLUFF_')
     )
@@ -16,7 +18,7 @@ def replace_variables(content):
 
 def restore_variables(content):
     return (
-        content.replace('_SQLFLUFFSCHEMA_LD_.', '@@SF_SCHEMA@@._')
+        content.replace('_SQLFLUFFSCHEMALD_.', '@@SF_SCHEMA@@._')
         .replace('_SQLFLUFFSCHEMA_', '@@SF_SCHEMA@@')
         .replace('_SQLFLUFF_', '@')
     )
@@ -38,7 +40,7 @@ def fix_and_lint(script):
         content = replace_variables(file.read())
 
     fix = restore_variables(
-        sqlfluff.fix(content, dialect='snowflake', config_path=sys.argv[2])
+        sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
     )
     if content != fix:
         with open(script, 'w') as file:
@@ -46,7 +48,7 @@ def fix_and_lint(script):
 
     fix = replace_variables(fix)
 
-    lint = sqlfluff.lint(fix, dialect='snowflake', config_path=sys.argv[2])
+    lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
     if lint:
         has_error = True
         for error in lint:

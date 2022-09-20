@@ -1,42 +1,69 @@
-import logging
+"""List and fix Postgres SQL files."""
+
+import os
 import sys
 import sqlfluff
+import multiprocessing as mp
 
-# Lint the sql files passed as input
-
-current_script = ''
-
-
-def _logging_handle(self, record):
-    raise Exception('ERROR: ' + record.msg + '\nPlease check ' + current_script)
+DIALECT = 'postgres'
 
 
-stream_handler = logging.StreamHandler
-stream_handler.handle = _logging_handle
+def replace_variables(content):
+    return content.replace('@@PG_SCHEMA@@', '_sqlfluffschema_').replace(
+        '@', '_sqlfluff_'
+    )
 
-scripts = sys.argv[1].split(' ')
-ignored_files = sys.argv[3]
-if ignored_files:
-    with open(ignored_files, 'r') as ignored_file:
-        ignored_scripts = ignored_file.read().split('\n')
-    for ignored_script in ignored_scripts:
-        scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
 
-for script in scripts:
-    current_script = script
+def restore_variables(content):
+    return content.replace('_sqlfluffschema_', '@@PG_SCHEMA@@').replace(
+        '_sqlfluff_', '@'
+    )
+
+
+def lint_error(name, error):
+    code = error['code']
+    line_no = error['line_no']
+    line_pos = error['line_pos']
+    description = error['description']
+    print(f'{name}:{line_no}:{line_pos}: {code} {description}')
+
+
+def fix_and_lint(script):
+    name = ''
     content = ''
     with open(script, 'r') as file:
-        content = (
-            file.read()
-            .replace('@@PG_SCHEMA@@', '_sqlfluffschema_')
-            .replace('@', '_sqlfluff_')
-        )
-    fixed_content = (
-        sqlfluff.fix(content, dialect='postgres', config_path=sys.argv[2])
-        .replace('_sqlfluffschema_', '@@PG_SCHEMA@@')
-        .replace('_SQLFLUFFSCHEMA_', '@@PG_SCHEMA@@')
-        .replace('_sqlfluff_', '@')
-        .replace('_SQLFLUFF_', '@')
+        name = os.path.basename(file.name)
+        content = replace_variables(file.read())
+
+    fix = restore_variables(
+        sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
     )
-    with open(script, 'w') as file:
-        file.write(fixed_content)
+    if content != fix:
+        with open(script, 'w') as file:
+            file.write(fix)
+
+    fix = replace_variables(fix)
+
+    lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
+    if lint:
+        has_error = True
+        for error in lint:
+            lint_error(name, error)
+
+        return has_error
+
+
+if __name__ == '__main__':
+    scripts = sys.argv[1].split(' ')
+    ignored_files = sys.argv[3]
+    if ignored_files:
+        with open(ignored_files, 'r') as ignored_file:
+            ignored_scripts = ignored_file.read().split('\n')
+        for ignored_script in ignored_scripts:
+            scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
+
+    pool = mp.Pool(processes=int(mp.cpu_count() / 2))
+    output = pool.map(fix_and_lint, scripts)
+
+    if any(output):
+        sys.exit(1)

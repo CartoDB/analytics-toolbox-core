@@ -1,9 +1,23 @@
-"""List and fix SQL files."""
+"""List and fix Redshift SQL files."""
 
 import os
 import sys
 import sqlfluff
 import multiprocessing as mp
+
+DIALECT = 'redshift'
+
+
+def replace_variables(content):
+    return content.replace('@@RS_SCHEMA@@', '_sqlfluffschema_').replace(
+        '@', '_sqlfluff_'
+    )
+
+
+def restore_variables(content):
+    return content.replace('_sqlfluffschema_', '@@RS_SCHEMA@@').replace(
+        '_sqlfluff_', '@'
+    )
 
 
 def lint_error(name, error):
@@ -19,36 +33,28 @@ def fix_and_lint(script):
     content = ''
     with open(script, 'r') as file:
         name = os.path.basename(file.name)
-        content = (
-            file.read()
-            .replace('@@RS_SCHEMA@@', '_SQLFLUFFSCHEMA_')
-            .replace('@', '_SQLFLUFF_')
-        )
+        content = replace_variables(file.read())
 
-    fix = (
-        sqlfluff.fix(content, dialect='redshift', config_path=sys.argv[2])
-        .replace('_sqlfluffschema_', '@@RS_SCHEMA@@')
-        .replace('_SQLFLUFFSCHEMA_', '@@RS_SCHEMA@@')
-        .replace('_sqlfluff_', '@')
-        .replace('_SQLFLUFF_', '@')
+    fix = restore_variables(
+        sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
     )
-    # if content != fix:
-    with open(script, 'w') as file:
-        file.write(fix)
+    if content != fix:
+        with open(script, 'w') as file:
+            file.write(fix)
 
-    lint = sqlfluff.lint(fix, dialect='redshift', config_path=config_file)
+    fix = replace_variables(fix)
+
+    lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
     if lint:
-        has_error = False
+        has_error = True
         for error in lint:
-            if 'Found unparsable section' not in error['description']:
-                has_error = True
-                lint_error(name, error)
+            lint_error(name, error)
+
         return has_error
 
 
 if __name__ == '__main__':
     scripts = sys.argv[1].split(' ')
-    config_file = sys.argv[2]
     ignored_files = sys.argv[3]
     if ignored_files:
         with open(ignored_files, 'r') as ignored_file:

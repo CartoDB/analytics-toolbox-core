@@ -65,7 +65,7 @@ apply_dbt_builtins = True
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
 tab_space_size = 4
-max_line_length = 80
+max_line_length = 200
 indent_unit = space
 comma_style = trailing
 allow_scalar = True
