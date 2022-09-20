@@ -25,17 +25,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Setup cache
-        id: cache-system-libraries
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.EM_CACHE_FOLDER }}
-          key: ${{ runner.os }}_${{ env.EM_VERSION }}
-      - name: Setup emscripten
-        uses: mymindstorm/setup-emsdk@master
-        with:
-          version: ${{ env.EM_VERSION }}
-          actions-cache-folder: ${{ env.EM_CACHE_FOLDER }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
