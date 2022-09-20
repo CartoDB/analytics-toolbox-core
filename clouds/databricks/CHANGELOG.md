@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.09.20] - 2022-09-20
+
+### All modules
+#### Changed
+- Set default compression codec to snappy
+
 ## [2022.09.15] - 2022-09-15
 
 ### All modules
