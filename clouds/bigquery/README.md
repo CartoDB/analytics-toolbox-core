@@ -7,6 +7,7 @@ The Analytics Toolbox for Bigquery contains SQL functions and JavaScript librari
 Make sure you have installed the following tools:
 
 - `make`: <https://www.gnu.org/software/make/>
+- `Python3`: <https://www.python.org/downloads/release/python-3811> (v3.8.11)
 - `node`: <https://www.npmjs.com/> (v14.18)
 - `yarn`: <https://yarnpkg.com/> (v1.22)
 - `bq`: <https://cloud.google.com/bigquery/docs/bq-command-line-tool>
