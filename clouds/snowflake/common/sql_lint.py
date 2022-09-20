@@ -64,7 +64,10 @@ if __name__ == '__main__':
         with open(ignored_files, 'r') as ignored_file:
             ignored_scripts = ignored_file.read().split('\n')
         for ignored_script in ignored_scripts:
-            scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
+            if ignored_script:
+                scripts = list(
+                    filter(lambda x: not x.endswith(ignored_script), scripts)
+                )
 
     pool = mp.Pool(processes=int(mp.cpu_count() / 2))
     output = pool.map(fix_and_lint, scripts)
