@@ -20,7 +20,7 @@ export PG_SCHEMA = $(PG_PREFIX)$(PG_SCHEMA_DEFAULT)
 export PG_LIBRARY = $(PG_PREFIX)$(PG_LIBRARY_DEFAULT)
 endif
 
-.PHONY: check venv3
+.PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef PG_HOST

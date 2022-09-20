@@ -17,7 +17,7 @@ else
 export SF_SCHEMA = $(SF_DATABASE).$(SF_PREFIX)$(SF_SCHEMA_DEFAULT)
 endif
 
-.PHONY: check
+.PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef SF_ACCOUNT
