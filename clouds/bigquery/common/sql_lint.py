@@ -38,10 +38,12 @@ def fix_and_lint(script):
 
     lint = sqlfluff.lint(fix, dialect='bigquery', config_path=config_file)
     if lint:
-        error = True
+        has_error = False
         for error in lint:
-            print(error)
-            lint_error(name, error)
+            if 'Found unparsable section' not in error['description']:
+                has_error = True
+                lint_error(name, error)
+        return has_error
 
 
 if __name__ == '__main__':
@@ -55,4 +57,7 @@ if __name__ == '__main__':
             scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
 
     pool = mp.Pool(processes=int(mp.cpu_count() / 2))
-    pool.map(fix_and_lint, scripts)
+    output = pool.map(fix_and_lint, scripts)
+
+    if any(output):
+        sys.exit(1)

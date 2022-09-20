@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_TOPARENT`
 RETURNS INT64
 AS ((
     IF(resolution < 0 OR resolution > ((quadbin >> 52) & 0x1F),
-        ERROR('Invalid resolution'), (
-        SELECT (quadbin & ~(0x1F << 52)) | (resolution << 52) | (0xFFFFFFFFFFFFF >> (resolution * 2))
-    ))
+        ERROR('Invalid resolution'),
+        (SELECT (quadbin & ~(0x1F << 52)) | (resolution << 52) | (0xFFFFFFFFFFFFF >> (resolution * 2)))
+    )
 ));

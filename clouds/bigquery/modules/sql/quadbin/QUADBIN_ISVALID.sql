@@ -21,7 +21,7 @@ AS (
             SELECT
                 quadbin >= 0
                 AND (quadbin & header = header)
-                AND mode IN (0,1,2,3,4,5,6)
+                AND mode IN (0, 1, 2, 3, 4, 5, 6)
                 AND z >= 0
                 AND z <= 26
                 AND (quadbin & unused = unused)
