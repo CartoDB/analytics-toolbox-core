@@ -11,16 +11,15 @@ env:
 jobs:
 
   dedicated:
-    if: github.event.label.name == 'dedicated_postgres' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres'))
-    # if: false
+    if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
       PG_PREFIX: dedicated_${{ github.event.number }}_
-      PG_HOST: ${{ secrets.PG_HOST_DEDICATED }}
-      PG_DATABASE: ${{ secrets.PG_DATABASE_DEDICATED }}
-      PG_USER: ${{ secrets.PG_USER_DEDICATED }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD_DEDICATED }}
+      PG_HOST: ${{ secrets.PG_HOST_CD }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE_CD }}
+      PG_USER: ${{ secrets.PG_USER_CD }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -35,7 +34,7 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Run deploy
-        if: contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')
+        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
         id: deploy
         run: |
           cd clouds/postgres
