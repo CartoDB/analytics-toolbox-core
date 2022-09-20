@@ -1,9 +1,25 @@
-"""List and fix SQL files."""
+"""List and fix Snowflake SQL files."""
 
 import os
 import sys
 import sqlfluff
 import multiprocessing as mp
+
+
+def replace_variables(content):
+    return (
+        content.replace('@@SF_SCHEMA@@._', '_SQLFLUFFSCHEMA_LD_.')
+        .replace('@@SF_SCHEMA@@', '_SQLFLUFFSCHEMA_')
+        .replace('@', '_SQLFLUFF_')
+    )
+
+
+def restore_variables(content):
+    return (
+        content.replace('_SQLFLUFFSCHEMA_LD_.', '@@SF_SCHEMA@@._')
+        .replace('_SQLFLUFFSCHEMA_', '@@SF_SCHEMA@@')
+        .replace('_SQLFLUFF_', '@')
+    )
 
 
 def lint_error(name, error):
@@ -19,34 +35,23 @@ def fix_and_lint(script):
     content = ''
     with open(script, 'r') as file:
         name = os.path.basename(file.name)
-        content = (
-            file.read()
-            .replace('@@SF_SCHEMA@@', '_sqlfluffschema_')
-            .replace('@', '_sqlfluff_')
-        )
+        content = replace_variables(file.read())
 
-    fix = (
+    fix = restore_variables(
         sqlfluff.fix(content, dialect='snowflake', config_path=sys.argv[2])
-        .replace('_sqlfluffschema_', '@@SF_SCHEMA@@')
-        .replace('_SQLFLUFFSCHEMA_', '@@SF_SCHEMA@@')
-        .replace('_sqlfluff_', '@')
-        .replace('_SQLFLUFF_', '@')
     )
     if content != fix:
         with open(script, 'w') as file:
             file.write(fix)
-    fix = (
-        fix
-        .replace('@@SF_SCHEMA@@', '_sqlfluffschema_')
-        .replace('@', '_sqlfluff_')
-    )
+
+    fix = replace_variables(fix)
+
     lint = sqlfluff.lint(fix, dialect='snowflake', config_path=sys.argv[2])
     if lint:
-        has_error = False
+        has_error = True
         for error in lint:
-            if 'Found unparsable section' not in error['description']:
-                has_error = True
-                lint_error(name, error)
+            lint_error(name, error)
+
         return has_error
 
 

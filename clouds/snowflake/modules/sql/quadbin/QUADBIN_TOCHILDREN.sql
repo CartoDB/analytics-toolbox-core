@@ -10,7 +10,7 @@ IMMUTABLE
 AS $$
 
     @@SF_LIBRARY_QUADBIN@@
-    
+
     const res = Number(RESOLUTION);
 
     if (INDEX == null || res == null) {

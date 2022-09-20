@@ -3,18 +3,18 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL
-(geojson STRING, _resolution DOUBLE)
+(geojson STRING, input_resolution DOUBLE)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    if (!GEOJSON || _RESOLUTION == null) {
+    if (!GEOJSON || INPUT_RESOLUTION == null) {
         return [];
     }
 
     @@SF_LIBRARY_H3_POLYFILL@@
 
-    const resolution = Number(_RESOLUTION);
+    const resolution = Number(INPUT_RESOLUTION);
     if (resolution < 0 || resolution > 15) {
         return [];
     }
