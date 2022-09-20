@@ -123,6 +123,6 @@ object OptimizeSpatial extends Serializable {
   val DEFAULT_GEOM_COLUMN: String       = "geom"
   val DEFAULT_ZOOM: Int                 = 8
   val DEFAULT_BLOCK_SIZE: Long          = 2097000
-  val DEFAULT_COMPRESSION: String       = "lz4"
+  val DEFAULT_COMPRESSION: String       = "snappy"
   val DEFAULT_MAX_RECORDS_PER_FILE: Int = 0
 }
