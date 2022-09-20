@@ -1,7 +1,8 @@
 import de.heikoseeberger.sbtheader._
+
 import java.time.Year
 
-val scalaVersions = Seq("2.12.15")
+val scalaVersions = Seq("2.12.16")
 
 val catsVersion       = "2.7.0"
 val shapelessVersion  = "2.3.3" // to be compatible with Spark 3.1.x
@@ -28,7 +29,7 @@ def ver(for212: String, for213: String) = Def.setting {
 }
 
 def spark(module: String) = Def.setting {
-  "org.apache.spark" %% s"spark-$module" % ver("3.1.3", "3.2.1").value
+  "org.apache.spark" %% s"spark-$module" % ver("3.3.0", "3.3.0").value
 }
 
 // https://github.com/xerial/sbt-sonatype/issues/276
@@ -81,16 +82,25 @@ lazy val commonSettings = Seq(
   sonatypeProfileName    := "com.carto",
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
-
+  version := {
+    val orig = version.value
+    if (orig.endsWith("-SNAPSHOT")) version.value.split("\\+").head + "-SNAPSHOT"
+    else orig
+  },
+  dynver := {
+    val orig = version.value
+    if (orig.endsWith("-SNAPSHOT")) version.value.split("\\+").head
+    else orig
+  },
   // settings for the linter (scalaFIX)
-  semanticdbEnabled := true, // enable SemanticDB
+  semanticdbEnabled := true,                        // enable SemanticDB
   semanticdbVersion := scalafixSemanticdb.revision, // only required for Scala 2.x
   scalacOptions += "-Ywarn-unused-import" // Scala 2.x only, required by `RemoveUnused`
 )
 
 lazy val root = (project in file("."))
   .settings(commonSettings)
-  .settings(name := "analyticstoolbox")
+  .settings(name := "analyticstoolbox-core")
   .settings(
     scalaVersion       := scalaVersions.head,
     crossScalaVersions := Nil,
@@ -107,8 +117,7 @@ lazy val core = project
     libraryDependencies ++= Seq(
       "com.azavea"               %% "hiveless-core"     % hivelessVersion,
       "org.locationtech.geomesa" %% "geomesa-spark-jts" % geomesaVersion,
-      "com.uber"                  % "h3"                % h3Version,
-        spark("hive").value         % Provided
+      spark("hive").value         % Provided
     ) ++ Seq(
       "org.locationtech.geotrellis" %% "geotrellis-store"         % geotrellisVersion,
       "org.locationtech.geotrellis" %% "geotrellis-spark-testkit" % geotrellisVersion % Test
