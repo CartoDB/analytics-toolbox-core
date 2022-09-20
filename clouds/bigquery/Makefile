@@ -29,7 +29,7 @@ lint-libraries:
 lint-modules:
 	$(MAKE) -C modules lint
 
-lint-common: $(NODE_MODULES_DEV) venv3
+lint-common: venv3 $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \

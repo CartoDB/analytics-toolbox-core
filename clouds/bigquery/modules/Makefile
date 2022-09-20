@@ -33,7 +33,7 @@ include $(COMMON_DIR)/Makefile
 help:
 	echo "Available targets: lint build deploy test remove clean"
 
-lint: $(NODE_MODULES_DEV) venv3
+lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
