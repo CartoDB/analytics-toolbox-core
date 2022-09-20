@@ -29,7 +29,7 @@ else
 export BQ_DATASET = $(BQ_PROJECT).$(BQ_PREFIX)$(BQ_DATASET_DEFAULT)
 endif
 
-.PHONY: check venv3
+.PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef BQ_PROJECT
@@ -47,6 +47,7 @@ endif
 
 venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
+	rm -rf $(VENV3_DIR)/lib/**/site-packages/~*
 	$(VENV3_BIN)/pip install --upgrade pip -q && \
 	$(VENV3_BIN)/pip install -r $(COMMON_DIR)/python3_requirements.txt -q
 

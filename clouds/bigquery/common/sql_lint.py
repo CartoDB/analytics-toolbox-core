@@ -1,42 +1,58 @@
-import logging
+"""List and fix SQL files."""
+
+import os
 import sys
 import sqlfluff
-
-# Lint the sql files passed as input
-
-current_script = ''
+import multiprocessing as mp
 
 
-def _logging_handle(self, record):
-    raise Exception('ERROR: ' + record.msg + '\nPlease check ' + current_script)
+def lint_error(name, error):
+    code = error['code']
+    line_no = error['line_no']
+    line_pos = error['line_pos']
+    description = error['description']
+    print(f'{name}:{line_no}:{line_pos}: {code} {description}')
 
 
-stream_handler = logging.StreamHandler
-stream_handler.handle = _logging_handle
-
-scripts = sys.argv[1].split(' ')
-ignored_files = sys.argv[3]
-if ignored_files:
-    with open(ignored_files, 'r') as ignored_file:
-        ignored_scripts = ignored_file.read().split('\n')
-    for ignored_script in ignored_scripts:
-        scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
-
-for script in scripts:
-    current_script = script
+def fix_and_lint(script):
+    name = ''
     content = ''
     with open(script, 'r') as file:
+        name = os.path.basename(file.name)
         content = (
             file.read()
-            .replace('@@BQ_DATASET@@', '_sqlfluffdataset_')
-            .replace('@', '_sqlfluff_')
+            .replace('@@BQ_DATASET@@', '_SQLFLUFFDATASET_')
+            .replace('@', '_SQLFLUFF_')
         )
-    fixed_content = (
+
+    fix = (
         sqlfluff.fix(content, dialect='bigquery', config_path=sys.argv[2])
         .replace('_sqlfluffdataset_', '@@BQ_DATASET@@')
         .replace('_SQLFLUFFDATASET_', '@@BQ_DATASET@@')
         .replace('_sqlfluff_', '@')
         .replace('_SQLFLUFF_', '@')
     )
-    with open(script, 'w') as file:
-        file.write(fixed_content)
+    if content != fix:
+        with open(script, 'w') as file:
+            file.write(fix)
+
+    lint = sqlfluff.lint(fix, dialect='bigquery', config_path=config_file)
+    if lint:
+        error = True
+        for error in lint:
+            print(error)
+            lint_error(name, error)
+
+
+if __name__ == '__main__':
+    scripts = sys.argv[1].split(' ')
+    config_file = sys.argv[2]
+    ignored_files = sys.argv[3]
+    if ignored_files:
+        with open(ignored_files, 'r') as ignored_file:
+            ignored_scripts = ignored_file.read().split('\n')
+        for ignored_script in ignored_scripts:
+            scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
+
+    pool = mp.Pool(processes=int(mp.cpu_count() / 2))
+    pool.map(fix_and_lint, scripts)
