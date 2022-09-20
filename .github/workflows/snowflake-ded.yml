@@ -10,16 +10,19 @@ env:
 jobs:
 
   dedicated:
-    if: github.event.label.name == 'dedicated_snowflake' || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake'))
+    if: |
+      github.event.label.name == 'dedicated_snowflake' ||
+      (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake')) ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake'))
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
       SF_PREFIX: dedicated_${{ github.event.pull_request.number }}_
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_DEDICATED }}
-      SF_DATABASE: ${{ secrets.SF_DATABASE_DEDICATED }}
-      SF_USER: ${{ secrets.SF_USER_DEDICATED }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_DEDICATED }}
-      SF_ROLE: ${{ secrets.SF_ROLE_DEDICATED }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
+      SF_USER: ${{ secrets.SF_USER_CD }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -29,7 +32,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
         id: deploy
-        if: contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake')
+        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
         run: |
           cd clouds/snowflake
           make deploy
