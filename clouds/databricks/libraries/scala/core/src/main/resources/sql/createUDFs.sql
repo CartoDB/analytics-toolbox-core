@@ -92,3 +92,7 @@ CREATE OR REPLACE FUNCTION ST_GEOMREPROJECT as 'com.carto.analyticstoolbox.modul
 CREATE OR REPLACE FUNCTION ST_MAKEEXTENT as 'com.carto.analyticstoolbox.modules.index.ST_MakeExtent';
 CREATE OR REPLACE FUNCTION ST_PARTITIONCENTROID as 'com.carto.analyticstoolbox.modules.index.ST_PartitionCentroid';
 CREATE OR REPLACE FUNCTION ST_Z2LATLON as 'com.carto.analyticstoolbox.modules.index.ST_Z2LatLon';
+-- Product
+CREATE OR REPLACE FUNCTION VERSION_CORE()
+    RETURNS STRING
+    RETURN '2022.09.21';

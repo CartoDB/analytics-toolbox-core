@@ -113,6 +113,10 @@ lazy val core = project
   .dependsOn(jts)
   .settings(commonSettings)
   .settings(name := "core")
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+  )
   .settings(
     libraryDependencies ++= Seq(
       "com.azavea"               %% "hiveless-core"     % hivelessVersion,
