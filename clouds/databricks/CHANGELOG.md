@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.09.20] - 2022-09-21
+
+### Accessors
+#### Changed
+- Change type returned by ST_X and ST_Y to Double
+
 ## [2022.09.20] - 2022-09-20
 
 ### All modules
