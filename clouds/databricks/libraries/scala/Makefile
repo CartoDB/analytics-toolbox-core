@@ -7,7 +7,7 @@ PRODUCT ?= core
 COMMON_DIR = $(ROOT_DIR)/../../common
 SCALA_DIR ?= $(ROOT_DIR)
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
-JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_PREFIX)carto
+JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_PREFIX)carto-$(PRODUCT)
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
 
 include $(COMMON_DIR)/Makefile
@@ -86,8 +86,8 @@ test:
 
 remove: check
 	echo "Removing libraries..."
-	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly-SNAPSHOT.jar
-	dbfs rm $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
+	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
+	dbfs rm -r $(JAR_DEPLOY_PATH)/
 
 clean:
 	echo "Cleaning libraries..."
