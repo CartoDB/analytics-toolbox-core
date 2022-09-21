@@ -9,14 +9,10 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2022.09.21] - 2022-09-21
 
 ### All modules
+
 #### Added
+
 - Add VERSION_CORE function
-
-### All modules
-
-#### Added
-
-- Add GET_VERSION function
 
 ### Accessors
 
