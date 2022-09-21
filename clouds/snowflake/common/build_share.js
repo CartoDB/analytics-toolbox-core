@@ -109,7 +109,7 @@ for (const functionMatch of functionMatches) {
     let functArgs = functionMatch[0].replace(/[\p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value;
     if (functArgs)
     {
-        functArgs = functArgs[0];
+        functArgs = functArgs[0].replace(/^\s+|\s+$|\s+(?=\s)/g, '');
     }
     else
     {
