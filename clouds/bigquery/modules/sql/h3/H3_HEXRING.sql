@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_HEXRING`
 RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!lib.h3.h3IsValid(origin)) {
         throw new Error('Invalid input origin')

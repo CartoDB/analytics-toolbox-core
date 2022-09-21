@@ -6,7 +6,7 @@ carto.QUADINT_CENTER(quadint)
 
 **Description**
 
-Returns the center for a given quadint. The center is defined as the intersection point of the four immediate children quadint. 
+Returns the center for a given quadint. The center is defined as the intersection point of the four immediate children quadint.
 
 * `quadint`: `INT64` quadint to get the center from.
 

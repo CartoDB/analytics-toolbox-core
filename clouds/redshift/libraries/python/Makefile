@@ -23,9 +23,10 @@ help:
 
 lint: venv3
 	echo "Linting libraries..."
+	echo "- Lint Python files"
 	$(VENV3_BIN)/brunette $(LIB_DIR) $(TEST_DIR) --line-length=88 --single-quotes --quiet
-	$(VENV3_BIN)/flake8 $(LIB_DIR) --enable-extensions Q0 --docstring-convention numpy --ignore=D100,D103,D104,D205,D400,D407,F401,D411,F403,W503
-	$(VENV3_BIN)/flake8 $(TEST_DIR) --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
+	$(VENV3_BIN)/flake8 $(LIB_DIR) --enable-extensions Q0 --docstring-convention numpy --max-line-length 160 --ignore=D100,D103,D104,D205,D400,D407,F401,D411,F403,W503,E203
+	$(VENV3_BIN)/flake8 $(TEST_DIR) --max-line-length 160  --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 
 build:
 	echo "Building libraries..."

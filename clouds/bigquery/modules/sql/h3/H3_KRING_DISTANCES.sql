@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_KRING_DISTANCES`
 RETURNS ARRAY<STRUCT<index STRING, distance INT64>>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!lib.h3.h3IsValid(origin)) {
         throw new Error('Invalid input origin')

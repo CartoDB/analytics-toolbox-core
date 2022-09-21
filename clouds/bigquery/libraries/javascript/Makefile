@@ -24,6 +24,7 @@ help:
 
 lint: $(NODE_MODULES_DEV)
 	echo "Linting libraries..."
+	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
 

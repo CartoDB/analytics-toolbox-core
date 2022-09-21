@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_FROMLONGLAT
-(longitude FLOAT8, latitude FLOAT8, resolution INT4) 
+(longitude FLOAT8, latitude FLOAT8, resolution INT4)
 RETURNS INT8
 STABLE
 AS $$

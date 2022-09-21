@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_TOHILBERTQUADKEY`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (id == null) {
         throw new Error('NULL argument passed to UDF');

@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_BOUNDARY
-(id INT8) 
+(id INT8)
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$

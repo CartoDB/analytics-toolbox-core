@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_POINTFROMTEXT as 'com.carto.analyticstoolbox.modules.parsers.ST_PointFromText';
+CREATE OR REPLACE FUNCTION ST_POINTFROMTEXT AS 'com.carto.analyticstoolbox.modules.parsers.ST_PointFromText';

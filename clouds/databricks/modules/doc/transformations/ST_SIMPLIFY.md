@@ -6,11 +6,11 @@ carto.ST_SIMPLIFY(geom, tolerance)
 
 **Description**
 
-Returns a simplified version of the given `Geometry` using the Douglas-Peucker algorithm. This function does not preserve topology - e.g. polygons can be split, collapse to lines or disappear holes can be created or disappear, and lines can cross. To simplify geometry while preserving topology use ST_SIMPLIFYPRESERVETOPOLOGY. 
+Returns a simplified version of the given `Geometry` using the Douglas-Peucker algorithm. This function does not preserve topology - e.g. polygons can be split, collapse to lines or disappear holes can be created or disappear, and lines can cross. To simplify geometry while preserving topology use ST_SIMPLIFYPRESERVETOPOLOGY.
 
 * `geom`: `Geometry` input geom.
 * `tolerance`: `Double` input distance tolerance.
-double 
+double
 
 **Return type**
 

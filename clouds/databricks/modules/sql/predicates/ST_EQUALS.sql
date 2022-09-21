@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_EQUALS as 'com.carto.analyticstoolbox.modules.predicates.ST_Equals';
+CREATE OR REPLACE FUNCTION ST_EQUALS AS 'com.carto.analyticstoolbox.modules.predicates.ST_Equals';

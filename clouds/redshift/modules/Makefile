@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
+SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
@@ -25,10 +26,16 @@ include $(COMMON_DIR)/Makefile
 help:
 	echo "Available targets: lint build deploy test remove clean"
 
-lint: venv3
+lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
+	echo "- Lint Python files"
 	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --quiet
-	$(VENV3_BIN)/flake8 test --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503
+	$(VENV3_BIN)/flake8 test --enable-extensions Q0 --max-line-length 160  --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
+	echo "- Lint Markdown files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	echo "- Lint SQL files"
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."

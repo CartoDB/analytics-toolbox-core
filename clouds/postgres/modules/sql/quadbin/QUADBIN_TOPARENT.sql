@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_TOPARENT(
-  quadbin BIGINT,
-  resolution INT
+    quadbin BIGINT,
+    resolution INT
 )
 RETURNS BIGINT
- AS
+AS
 $BODY$
   SELECT CASE
   WHEN resolution < 0 OR resolution > ((quadbin >> 52) & 31)
@@ -16,4 +16,4 @@ $BODY$
     (quadbin & ~(31::BIGINT << 52)) | (resolution::BIGINT << 52) | (4503599627370495 >> (resolution << 1))
   END;
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_FROMTOKEN
-(token VARCHAR(MAX)) 
+(token VARCHAR(MAX))
 RETURNS INT8
 STABLE
 AS $$

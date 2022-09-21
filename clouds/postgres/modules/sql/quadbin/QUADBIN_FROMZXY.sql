@@ -3,12 +3,12 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_FROMZXY(
-  z INTEGER,
-  x INTEGER,
-  y INTEGER
+    z INTEGER,
+    x INTEGER,
+    y INTEGER
 )
 RETURNS BIGINT
- AS
+AS
 $BODY$
     WITH
     __ints AS (
@@ -57,4 +57,4 @@ $BODY$
       | ((1::BIGINT << (52 - (z << 1))) - 1)
     FROM __interleaved5
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

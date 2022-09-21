@@ -23,7 +23,7 @@ export RS_SCHEMA = $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
 export RS_LIBRARY = $(RS_PREFIX)$(RS_LIBRARY_DEFAULT)
 endif
 
-.PHONY: check venv2 venv3
+.PHONY: check venv2 venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef RS_HOST

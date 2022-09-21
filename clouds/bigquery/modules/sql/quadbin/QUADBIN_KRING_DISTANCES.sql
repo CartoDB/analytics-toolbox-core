@@ -6,28 +6,30 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_ZXY_KRING_DISTANCES`
 (origin STRUCT<z INT64, x INT64, y INT64>, size INT64)
 AS ((
     WITH
-    __t AS (
+    t AS (
         SELECT
             `@@BQ_DATASET@@.QUADBIN_FROMZXY`(
                 origin.z,
                 MOD(origin.x + dx + (1 << origin.z), (1 << origin.z)),
                 origin.y + dy
-            ) __index,
-            GREATEST(ABS(dx), ABS(dy)) __distance -- Chebychev distance
+            ) AS index,
+            GREATEST(ABS(dx), ABS(dy)) AS distance -- Chebychev distance
         FROM
-            UNNEST(GENERATE_ARRAY(-size,size)) dx,
-            UNNEST(GENERATE_ARRAY(-size,size)) dy
-        WHERE origin.y + dy >= 0 and origin.y + dy < (1 << origin.z)
+            UNNEST(GENERATE_ARRAY(-size, size)) AS dx,
+            UNNEST(GENERATE_ARRAY(-size, size)) AS dy
+        WHERE origin.y + dy >= 0 AND origin.y + dy < (1 << origin.z)
     ),
-    __t_agg AS (
+
+    t_agg AS (
         SELECT
-            __index,
-            MIN(__distance) AS __distance
-        FROM __t
-        GROUP BY __index
+            index,
+            MIN(distance) AS distance
+        FROM t
+        GROUP BY index
     )
-    SELECT ARRAY_AGG(STRUCT(__index AS index, __distance AS distance))
-    FROM __t_agg
+
+    SELECT ARRAY_AGG(STRUCT(index, distance))
+    FROM t_agg
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_KRING_DISTANCES`
@@ -35,7 +37,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_KRING_DISTANCES`
 AS (
     `@@BQ_DATASET@@.__QUADBIN_ZXY_KRING_DISTANCES`(
         `@@BQ_DATASET@@.QUADBIN_TOZXY`(
-            IFNULL(IF(origin < 0, NULL, origin), ERROR('Invalid input origin'))
+            COALESCE(IF(origin < 0, NULL, origin), ERROR('Invalid input origin'))
         ),
-        IFNULL(IF(size >= 0, size, NULL), ERROR('Invalid input size')))
+        COALESCE(IF(size >= 0, size, NULL), ERROR('Invalid input size')))
 );

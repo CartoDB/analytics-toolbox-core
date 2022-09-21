@@ -8,7 +8,9 @@ AS (
     IF(origin.y + dy >= 0 AND origin.y + dy < (1 << origin.z),
         `@@BQ_DATASET@@.QUADBIN_FROMZXY`(
             origin.z,
-            MOD(origin.x + dx, (1 << origin.z)) + IF(origin.x + dx < 0, (1 << origin.z), 0),
+            MOD(
+                origin.x + dx, (1 << origin.z)
+            ) + IF(origin.x + dx < 0, (1 << origin.z), 0),
             origin.y + dy
         ),
         NULL
@@ -20,13 +22,13 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_SIBLING`
 AS (
     `@@BQ_DATASET@@.__ZXY_QUADBIN_SIBLING`(
         `@@BQ_DATASET@@.QUADBIN_TOZXY`(
-            IFNULL(
+            COALESCE(
                 IF(origin < 0, ERROR('QUADBIN cannot be negative'), origin),
                 ERROR('NULL argument passed to UDF')
             )
         ),
-        IFNULL(dx, ERROR('Invalid input dx')),
-        IFNULL(dy, ERROR('Invalid input dy'))
+        COALESCE(dx, ERROR('Invalid input dx')),
+        COALESCE(dy, ERROR('Invalid input dy'))
     )
 );
 
@@ -35,13 +37,21 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_SIBLING`
 AS (
     CASE direction
         WHEN 'left' THEN
-            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(quadbin, -1, 0)
+            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(
+                quadbin, -1, 0
+            )
         WHEN 'right' THEN
-            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(quadbin, 1, 0)
+            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(
+                quadbin, 1, 0
+            )
         WHEN 'up' THEN
-            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(quadbin, 0, -1)
+            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(
+                quadbin, 0, -1
+            )
         WHEN 'down' THEN
-            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(quadbin, 0, 1)
+            `@@BQ_DATASET@@.__QUADBIN_SIBLING`(
+                quadbin, 0, 1
+            )
         ELSE (
             ERROR('Wrong direction argument passed to sibling')
         )

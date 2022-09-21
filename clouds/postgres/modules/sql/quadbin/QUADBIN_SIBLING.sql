@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_SIBLING(
-  quadbin BIGINT,
-  direction TEXT
+    quadbin BIGINT,
+    direction TEXT
 )
 RETURNS BIGINT
- AS
+AS
 $BODY$
     WITH
     __offsets AS (
@@ -40,4 +40,4 @@ $BODY$
     END
     FROM __zxy, __offsets
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

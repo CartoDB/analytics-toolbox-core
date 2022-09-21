@@ -3,22 +3,24 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__N`
-(y FLOAT64,z FLOAT64)
+(y FLOAT64, z FLOAT64)
 RETURNS FLOAT64
 AS (
-    ACOS(-1)*(1-2*y/POW(2,z))
+    ACOS(-1) * (1 - 2 * y / POW(2, z))
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__TILE_TOLAT`
-(y FLOAT64,z FLOAT64)
+(y FLOAT64, z FLOAT64)
 RETURNS FLOAT64
 AS (
     COALESCE(
-        180/ACOS(-1)*ATAN(0.5*(
-        EXP(`@@BQ_DATASET@@.__N`(y,z))
-        -EXP(-`@@BQ_DATASET@@.__N`(y,z))
+        180 / ACOS(-1) * ATAN(0.5 * (
+            EXP(`@@BQ_DATASET@@.__N`(y, z))
+            - EXP(
+                -`@@BQ_DATASET@@.__N`(y, z)
+            )
         )),
-    ERROR('NULL argument passed to UDF')
+        ERROR('NULL argument passed to UDF')
     )
 );
 
@@ -27,8 +29,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__TILE_TOLONG`
 RETURNS FLOAT64
 AS (
     COALESCE(
-    (x)/POW(2,z)*360-180,
-    ERROR('NULL argument passed to UDF')
+        (x) / POW(2, z) * 360 - 180,
+        ERROR('NULL argument passed to UDF')
     )
 );
 
@@ -36,28 +38,56 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_BBOX_E`
 (quadint INT64)
 RETURNS FLOAT64
 AS (
-    `@@BQ_DATASET@@.__TILE_TOLONG`(`@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).x+1, `@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).z)
+    `@@BQ_DATASET@@.__TILE_TOLONG`(
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).x + 1,
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).z
+    )
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_BBOX_W`
 (quadint INT64)
 RETURNS FLOAT64
 AS (
-    `@@BQ_DATASET@@.__TILE_TOLONG`(`@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).x, `@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).z)
+    `@@BQ_DATASET@@.__TILE_TOLONG`(
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).x,
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).z
+    )
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_BBOX_N`
 (quadint INT64)
 RETURNS FLOAT64
 AS (
-    `@@BQ_DATASET@@.__TILE_TOLAT`(`@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).y, `@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).z)
+    `@@BQ_DATASET@@.__TILE_TOLAT`(
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).y,
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).z
+    )
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_BBOX_S`
 (quadint INT64)
 RETURNS FLOAT64
 AS (
-    `@@BQ_DATASET@@.__TILE_TOLAT`(`@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).y+1, `@@BQ_DATASET@@.QUADINT_TOZXY`(quadint).z)
+    `@@BQ_DATASET@@.__TILE_TOLAT`(
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).y + 1,
+        `@@BQ_DATASET@@.QUADINT_TOZXY`(
+            quadint
+        ).z
+    )
 );
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_BBOX`
@@ -65,9 +95,17 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_BBOX`
 RETURNS ARRAY<FLOAT64>
 AS (
     [
-        `@@BQ_DATASET@@.__QUADINT_BBOX_W`(quadint),
-        `@@BQ_DATASET@@.__QUADINT_BBOX_S`(quadint),
-        `@@BQ_DATASET@@.__QUADINT_BBOX_E`(quadint),
-        `@@BQ_DATASET@@.__QUADINT_BBOX_N`(quadint)
+        `@@BQ_DATASET@@.__QUADINT_BBOX_W`(
+            quadint
+        ),
+        `@@BQ_DATASET@@.__QUADINT_BBOX_S`(
+            quadint
+        ),
+        `@@BQ_DATASET@@.__QUADINT_BBOX_E`(
+            quadint
+        ),
+        `@@BQ_DATASET@@.__QUADINT_BBOX_N`(
+            quadint
+        )
     ]
 );

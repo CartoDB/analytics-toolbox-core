@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_POLYFILL`
 RETURNS ARRAY<INT64>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojson || resolution == null) {
         throw new Error('NULL argument passed to UDF');
@@ -31,5 +33,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS (
-    `@@BQ_DATASET@@.__QUADINT_POLYFILL`(ST_ASGEOJSON(geog), resolution)
+    `@@BQ_DATASET@@.__QUADINT_POLYFILL`(
+        ST_ASGEOJSON(geog), resolution
+    )
 );

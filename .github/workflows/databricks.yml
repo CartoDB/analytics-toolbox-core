@@ -8,6 +8,7 @@ on:
       - ".github/workflows/databricks.yml"
 
 env:
+  NODE_VERSION: 14
   PYTHON3_VERSION: 3.8.11
 
 jobs:
@@ -31,6 +32,10 @@ jobs:
           FILES: 'Makefile'
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Setup python 3
         uses: actions/setup-python@v2
         with:

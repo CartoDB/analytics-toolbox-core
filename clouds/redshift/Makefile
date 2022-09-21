@@ -28,12 +28,17 @@ lint-libraries:
 lint-modules:
 	$(MAKE) -C modules lint
 
-lint-common: $(NODE_MODULES_DEV) venv3
+lint-common: venv3 $(NODE_MODULES_DEV)
 	echo "Linting common..."
+	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR)/*.js --fix
+	echo "- Lint Markdown files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	echo "- Lint Python files"
 	$(VENV3_BIN)/brunette $(COMMON_DIR) --line-length=88 --single-quotes --quiet
-	$(VENV3_BIN)/flake8 $(COMMON_DIR) --enable-extensions Q0 --ignore=D100,D103,D104
+	$(VENV3_BIN)/flake8 $(COMMON_DIR) --enable-extensions Q0 --max-line-length 160 --ignore=D100,D103,D104,E203
 
 build:
 	rm -rf $(BUILD_DIR)

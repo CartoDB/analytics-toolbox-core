@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_FROMGEOGPOINT(
-  point GEOMETRY,
-  resolution INT
+    point GEOMETRY,
+    resolution INT
 )
 RETURNS BIGINT
- AS
+AS
 $BODY$
     WITH
     __geom4326 AS (
@@ -19,4 +19,4 @@ $BODY$
     SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(ST_X(geom), ST_Y(geom), resolution)
     FROM __geom4326;
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

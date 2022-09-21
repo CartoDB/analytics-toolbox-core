@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_CENTROID as 'com.carto.analyticstoolbox.modules.transformations.ST_Centroid';
+CREATE OR REPLACE FUNCTION ST_CENTROID AS 'com.carto.analyticstoolbox.modules.transformations.ST_Centroid';

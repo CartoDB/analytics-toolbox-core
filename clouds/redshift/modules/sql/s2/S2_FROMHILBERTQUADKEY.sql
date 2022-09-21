@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_FROMHILBERTQUADKEY
-(hquadkey VARCHAR(MAX)) 
+(hquadkey VARCHAR(MAX))
 RETURNS INT8
 STABLE
 AS $$

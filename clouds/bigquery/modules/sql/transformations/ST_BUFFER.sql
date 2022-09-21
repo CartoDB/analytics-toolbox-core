@@ -7,7 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__BUFFER`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (!geojson || radius == null) {
         return null;
@@ -27,5 +29,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_BUFFER`
 (geog GEOGRAPHY, radius FLOAT64, units STRING, steps INT64)
 RETURNS GEOGRAPHY
 AS (
-    ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__BUFFER`(ST_ASGEOJSON(geog),radius, units, steps))
+    ST_GEOGFROMGEOJSON(
+        `@@BQ_DATASET@@.__BUFFER`(
+            ST_ASGEOJSON(geog), radius, units, steps
+        )
+    )
 );

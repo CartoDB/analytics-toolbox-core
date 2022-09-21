@@ -8,6 +8,13 @@ RETURNS ARRAY<GEOGRAPHY>
 AS ((
     SELECT ARRAY(
         SELECT ST_MAKEPOLYGON(unnested)
-        FROM UNNEST((SELECT `@@BQ_DATASET@@.__DELAUNAYGENERIC`(points))) AS unnested
+        FROM
+            UNNEST(
+                (
+                    SELECT `@@BQ_DATASET@@.__DELAUNAYGENERIC`(
+                            points
+                        )
+                )
+            ) AS unnested
     )
 ));

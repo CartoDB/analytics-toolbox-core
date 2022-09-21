@@ -3,11 +3,11 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_POLYFILL(
-  geom GEOMETRY,
-  resolution INT
+    geom GEOMETRY,
+    resolution INT
 )
 RETURNS BIGINT[]
- AS
+AS
 $BODY$
   SELECT CASE
     WHEN resolution < 0 OR resolution > 26 THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT[]
@@ -60,4 +60,4 @@ $BODY$
     )
     END;
 $BODY$
-  LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

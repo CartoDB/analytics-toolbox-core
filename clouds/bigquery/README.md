@@ -6,15 +6,17 @@ The Analytics Toolbox for Bigquery contains SQL functions and JavaScript librari
 
 Make sure you have installed the following tools:
 
-- `make`: https://www.gnu.org/software/make/
-- `node`: https://www.npmjs.com/ (v14.18)
-- `yarn`: https://yarnpkg.com/ (v1.22)
-- `bq`: https://cloud.google.com/bigquery/docs/bq-command-line-tool
-- `gsutil`: https://cloud.google.com/storage/docs/gsutil (v5.5)
+- `make`: <https://www.gnu.org/software/make/>
+- `Python3`: <https://www.python.org/downloads/release/python-3811> (v3.8.11)
+- `node`: <https://www.npmjs.com/> (v14.18)
+- `yarn`: <https://yarnpkg.com/> (v1.22)
+- `bq`: <https://cloud.google.com/bigquery/docs/bq-command-line-tool>
+- `gsutil`: <https://cloud.google.com/storage/docs/gsutil> (v5.5)
 
 ## Environment variables
 
 The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values.
+
 ```
 # Bigquery
 BQ_PREFIX=
@@ -30,14 +32,14 @@ Note: you may need to run `gcloud auth login` to generate the `acd.json` file.
 
 - `common`
 - `libraries`
-    - `javascript`: JavaScript library
-        - `libs`: contains the JavaScript module-specific code
-        - `src`: contains the JavaScript source code
-        - `test`: contains the library tests
+  - `javascript`: JavaScript library
+    - `libs`: contains the JavaScript module-specific code
+    - `src`: contains the JavaScript source code
+    - `test`: contains the library tests
 - `modules`
-    - `doc`: contains the functions' documentation
-    - `sql`: contains the functions' SQL code
-    - `test`: contains the functions' tests
+  - `doc`: contains the functions' documentation
+  - `sql`: contains the functions' SQL code
+  - `test`: contains the functions' tests
 
 ## Make commands
 
@@ -55,6 +57,7 @@ Make commands can be run also inside `libraries/javascript` and `modules` folder
 **Filtering**
 
 Commands `build-libraries`, `build-modules`, `deploy-modules`, `test-libraries`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+
 - `diff`: list of changed files
 - `modules`: list of modules to filter
 - `functions`: list of functions to filter

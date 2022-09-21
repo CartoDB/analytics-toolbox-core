@@ -3,7 +3,14 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__MAKEELLIPSE
-(center VARCHAR(MAX), xSemiAxis FLOAT8, ySemiAxis FLOAT8, angle FLOAT8, units VARCHAR(10), steps INT)
+(
+    center VARCHAR(MAX),
+    xSemiAxis FLOAT8,
+    ySemiAxis FLOAT8,
+    angle FLOAT8,
+    units VARCHAR(10),
+    steps INT
+)
 RETURNS VARCHAR(MAX)
 STABLE
 AS $$

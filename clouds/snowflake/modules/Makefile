@@ -5,6 +5,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 TEST_DIR ?= $(ROOT_DIR)/test
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
+SQL_DIR ?= $(ROOT_DIR)/sql
 ESLINTRC_DIR ?= $(ROOT_DIR)/../../..
 COMMON_DIR = $(ROOT_DIR)/../common
 LIBS_BUILD_DIR ?= $(ROOT_DIR)/../libraries/javascript/build
@@ -29,10 +30,17 @@ include $(COMMON_DIR)/Makefile
 help:
 	echo "Available targets: lint build deploy test remove clean"
 
-lint: $(NODE_MODULES_DEV)
+lint: $(NODE_MODULES_DEV) venv3
 	echo "Linting modules..."
+	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) --fix
+	echo "- Lint Markdown files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	echo "- Lint SQL files"
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
+
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."

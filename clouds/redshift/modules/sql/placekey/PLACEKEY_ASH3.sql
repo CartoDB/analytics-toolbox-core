@@ -3,8 +3,8 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.PLACEKEY_ASH3
-(placekey VARCHAR(19)) 
-RETURNS VARCHAR 
+(placekey VARCHAR(19))
+RETURNS VARCHAR
 STABLE
 AS $$
     from @@RS_LIBRARY@@.placekey import placekey_to_h3, placekey_is_valid

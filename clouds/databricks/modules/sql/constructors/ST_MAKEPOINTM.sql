@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_MAKEPOINTM as 'com.carto.analyticstoolbox.modules.constructors.ST_MakePointM';
+CREATE OR REPLACE FUNCTION ST_MAKEPOINTM AS 'com.carto.analyticstoolbox.modules.constructors.ST_MakePointM';

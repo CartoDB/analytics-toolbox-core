@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_GEOMREPROJECT as 'com.carto.analyticstoolbox.modules.index.ST_GeomReproject';
+CREATE OR REPLACE FUNCTION ST_GEOMREPROJECT AS 'com.carto.analyticstoolbox.modules.index.ST_GeomReproject';

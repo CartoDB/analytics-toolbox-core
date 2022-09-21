@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ENV_DIR ?= $(ROOT_DIR)/..
 TEST_DIR ?= $(ROOT_DIR)/test
+SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR = $(ROOT_DIR)/../common
 SQL_PATH = $(COMMON_DIR)/dropUDF.sql
 
@@ -11,10 +12,18 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help test remove
+.PHONY: help lint test remove
 
 help:
 	echo "Available targets: help test remove"
+
+lint: venv3 $(NODE_MODULES_DEV)
+	echo "Linting modules..."
+	echo "- Lint Markdown files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	echo "- Lint SQL files"
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
 
 test: check check-extra venv
 	echo "Testing modules..."

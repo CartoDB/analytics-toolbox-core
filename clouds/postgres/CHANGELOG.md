@@ -9,7 +9,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ## [2022.06.24] - 2022-06-24
 
 ### Module quadbin
+
 #### Added
+
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
 - Add QUADBIN_CENTER function.

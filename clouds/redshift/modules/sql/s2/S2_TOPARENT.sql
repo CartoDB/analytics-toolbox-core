@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.S2_TOPARENT
-(id INT8, resolution INT4) 
+(id INT8, resolution INT4)
 RETURNS INT8
 STABLE
 AS $$

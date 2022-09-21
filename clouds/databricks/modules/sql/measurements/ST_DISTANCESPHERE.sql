@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_DISTANCESPHERE as 'com.carto.analyticstoolbox.modules.measurements.ST_DistanceSphere';
+CREATE OR REPLACE FUNCTION ST_DISTANCESPHERE AS 'com.carto.analyticstoolbox.modules.measurements.ST_DistanceSphere';

@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_FROMZXY
-(_z DOUBLE, _x DOUBLE, _y DOUBLE)
+(z DOUBLE, x DOUBLE, y DOUBLE)
 RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
@@ -12,20 +12,20 @@ AS $$
     @@SF_LIBRARY_QUADBIN@@
 
     const tile = {
-        z: Number(_Z),
-        x: Number(_X),
-        y: Number(_Y)
+        z: Number(Z),
+        x: Number(X),
+        y: Number(Y)
     };
 
     return quadbinLib.tileToQuadbin(tile);
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_FROMZXY
-(_z INT, _x INT, _y INT)
+(z INT, x INT, y INT)
 RETURNS BIGINT
 IMMUTABLE
 AS $$
     @@SF_SCHEMA@@._QUADBIN_STRING_TOINT(
-       @@SF_SCHEMA@@._QUADBIN_FROMZXY(_Z, _X, _Y)
+       @@SF_SCHEMA@@._QUADBIN_FROMZXY(Z, X, Y)
     )
 $$;

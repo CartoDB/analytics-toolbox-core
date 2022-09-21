@@ -7,7 +7,7 @@ carto.S2_POLYFILL_BBOX(min_longitude, max_longitude, min_latitude, max_latitude 
 **Description**
 
 Returns a SUPER containing an array of S2 cell IDs that cover a planar bounding box. Note that this is
-a compact coverage (polyfill), so the bounding box is covered with the least amount of cells 
+a compact coverage (polyfill), so the bounding box is covered with the least amount of cells
 by using the largest cells possible.
 
 Two optional arguments can be passed with the minimum and maximum resolution for coverage. If you desire a

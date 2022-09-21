@@ -60,6 +60,6 @@ AS ((
         FROM __deinterleaved6
     )
     SELECT AS STRUCT
-        z, (x >> (32-z)) AS x, (y >> (32-z)) AS y
+        z, (x >> (32 - z)) AS x, (y >> (32 - z)) AS y
     FROM __deinterleaved7
 ));

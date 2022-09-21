@@ -3,11 +3,20 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_FROMLONGLAT_ZOOMRANGE`
-(longitude FLOAT64, latitude FLOAT64, zoom_min INT64, zoom_max INT64, zoom_step INT64, resolution INT64)
+(
+    longitude FLOAT64,
+    latitude FLOAT64,
+    zoom_min INT64,
+    zoom_max INT64,
+    zoom_step INT64,
+    resolution INT64
+)
 RETURNS ARRAY<STRUCT<id INT64, z INT64, x INT64, y INT64>>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library=["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (
+    library = ["@@BQ_LIBRARY_BUCKET@@"]
+)
 AS """
     if (longitude === undefined || longitude === null || latitude === undefined || latitude === null) {
         return null;

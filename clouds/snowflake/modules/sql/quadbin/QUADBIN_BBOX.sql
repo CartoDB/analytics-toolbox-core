@@ -25,8 +25,8 @@ AS $$
     WITH array_polygon AS (
         SELECT @@SF_SCHEMA@@._QUADBIN_BBOX(TO_VARCHAR(QUADBIN, 'xxxxxxxxxxxxxxxx')) p
     )
-    SELECT 
-        CASE 
+    SELECT
+        CASE
             WHEN ARRAY_SIZE(p) = 0 THEN NULL
             ELSE p
         END
