@@ -3,7 +3,14 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._MAKEELLIPSE
-(geojson STRING, xSemiAxis DOUBLE, ySemiAxis DOUBLE, angle DOUBLE, units STRING, steps DOUBLE)
+(
+    geojson STRING,
+    xSemiAxis DOUBLE,
+    ySemiAxis DOUBLE,
+    angle DOUBLE,
+    units STRING,
+    steps DOUBLE
+)
 RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
@@ -47,7 +54,14 @@ AS $$
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.ST_MAKEELLIPSE
-(geog GEOGRAPHY, xSemiAxis DOUBLE, ySemiAxis DOUBLE, angle DOUBLE, units STRING, steps INT)
+(
+    geog GEOGRAPHY,
+    xSemiAxis DOUBLE,
+    ySemiAxis DOUBLE,
+    angle DOUBLE,
+    units STRING,
+    steps INT
+)
 RETURNS GEOGRAPHY
 IMMUTABLE
 AS $$
