@@ -16,13 +16,15 @@
 
 package com.carto.analyticstoolbox.modules.accessors
 
-import com.carto.analyticstoolbox.modules._
 import com.azavea.hiveless.HUDF
-import org.locationtech.geomesa.spark.jts.udf.GeometricAccessorFunctions
-import org.locationtech.jts.geom.Geometry
+import com.carto.analyticstoolbox.modules._
+import org.locationtech.jts.geom.{Geometry, Point}
 
-import java.lang
+import java.{lang => jl}
 
-class ST_X extends HUDF[Geometry, lang.Float] {
-  def function: Geometry => lang.Float = GeometricAccessorFunctions.ST_X
+class ST_X extends HUDF[Geometry, jl.Double] {
+  def function: Geometry => jl.Double = {
+    case geom: Point => geom.getX
+    case _           => null
+  }
 }

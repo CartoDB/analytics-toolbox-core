@@ -12,7 +12,7 @@ If _geom_ is a `Point`, return the X coordinate of that point.
 
 **Return type**
 
-`Float`
+`Double`
 
 **Example**
 
