@@ -24,6 +24,8 @@ def write_queries(final_query):
 if __name__ == '__main__':
     sql_path = os.path.join(python_util_path, '..', '..', 'modules', 'sql')
     modules = os.listdir(sql_path)
+    # We filter paths that aren't a directory
+    modules = list(filter(lambda x: os.path.isdir(os.path.join(sql_path, x)), modules))
     queries_list = []
     for module in modules:
         module_path = os.path.join(sql_path, module)
