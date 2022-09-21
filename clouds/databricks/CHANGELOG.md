@@ -8,14 +8,24 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ## [2022.09.20] - 2022-09-21
 
+### All modules
+
+#### Added
+
+- Add GET_VERSION function
+
 ### Accessors
+
 #### Changed
+
 - Change type returned by ST_X and ST_Y to Double
 
 ## [2022.09.20] - 2022-09-20
 
 ### All modules
+
 #### Changed
+
 - Set default compression codec to snappy
 
 ## [2022.09.16] - 2022-09-16
