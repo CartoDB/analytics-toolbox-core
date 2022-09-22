@@ -35,7 +35,7 @@ function execAsync (query) {
 }
 
 async function runQuery (query) {
-    query = query.replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA);
+    query = query.replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA).replace(/@@SF_ROLE@@/g, process.env.SF_ROLE);
     const rows = await execAsync(query);
     return rows;
 }
