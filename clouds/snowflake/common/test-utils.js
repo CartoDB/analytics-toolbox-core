@@ -35,7 +35,7 @@ function execAsync (query) {
 }
 
 async function runQuery (query) {
-    query = query.replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA);
+    query = query.replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA).replace(/@@SF_ROLE@@/g, process.env.SF_ROLE);
     const rows = await execAsync(query);
     return rows;
 }
@@ -45,14 +45,14 @@ async function createTable (tablename, filepath) {
     const query = `
       CREATE TABLE IF NOT EXISTS ${tablename} AS ${sql}
     `;
-    await execAsync(query);
+    await runQuery(query);
 }
 
 async function deleteTable (tablename) {
     const query = `
       DROP TABLE IF EXISTS ${tablename}
     `;
-    await execAsync(query);
+    await runQuery(query);
 }
 
 function sortByKey (list, key) {
