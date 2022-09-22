@@ -51,7 +51,7 @@ build-dependencies: venv2
 	deactivate
 
 build-libraries-sql:
-ifeq ($(production),1)
+ifeq ($(libsurl),1)
 	$(eval FROM = $(shell echo "$(LIBS_URL)"))
 else
 	$(eval FROM = $(shell echo "$(RS_BUCKET)"))
@@ -83,9 +83,9 @@ endif
 
 deploy-libraries: venv3
 ifeq ("$(library)","carto")
-	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
+	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql || exit 1
 else
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql || exit 1
 endif
 
 remove-libraries:
