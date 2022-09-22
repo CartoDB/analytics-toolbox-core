@@ -45,14 +45,14 @@ async function createTable (tablename, filepath) {
     const query = `
       CREATE TABLE IF NOT EXISTS ${tablename} AS ${sql}
     `;
-    await execAsync(query);
+    runQuery(query);
 }
 
 async function deleteTable (tablename) {
     const query = `
       DROP TABLE IF EXISTS ${tablename}
     `;
-    await execAsync(query);
+    runQuery(query);
 }
 
 function sortByKey (list, key) {
