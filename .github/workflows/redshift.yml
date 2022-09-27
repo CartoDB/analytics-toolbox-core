@@ -63,8 +63,8 @@ jobs:
           make remove
 
   deploy-internal:
-    # if: github.ref_name == 'master'
-    # needs: test
+    if: github.ref_name == 'master'
+    needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
