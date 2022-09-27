@@ -41,7 +41,7 @@ for m in "${modules_to_serialize[@]}"; do
 
 	if [[ $redshift_default_libraries == *${m%%==*}* ]]; then
 		echo "Skipping ${m%%==*}"
-		echo "- Library already available in RedShift"
+		echo "- Library already available in Redshift"
 		continue
 	fi
 
@@ -68,7 +68,7 @@ for m in "${modules_to_serialize[@]}"; do
 		depname=$(echo "$depname" | tr '[:upper:]' '[:lower:]')
 		if [[ $redshift_default_libraries == *${depname%%-*}* ]]; then
 			echo "Skipping ${depname%%-*}"
-			echo "- Library already available in RedShift"
+			echo "- Library already available in Redshift"
 			continue
 		fi
 
