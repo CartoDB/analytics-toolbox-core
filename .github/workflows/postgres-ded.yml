@@ -11,8 +11,12 @@ env:
 jobs:
 
   dedicated:
+    if: |
+      github.event.label.name == 'dedicated_postgres' ||
+      (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')) ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres'))
     runs-on: ubuntu-20.04
-    timeout-minutes: 30
+    timeout-minutes: 20
     env:
       PG_PREFIX: dedicated_${{ github.event.number }}_
       PG_HOST: ${{ secrets.PG_HOST_CD }}
