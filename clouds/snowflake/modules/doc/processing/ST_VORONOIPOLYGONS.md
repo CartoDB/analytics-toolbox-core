@@ -32,3 +32,7 @@ SELECT carto.ST_VORONOIPOLYGONS(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-75.833, 3
 --  "{\"type\":\"Polygon\",\"coordinates\":[[[-76,37.38389622641511],[-75.6178875502008,38.854668674698786],[-75.04333534909291,39.716496976360624],[-70,41.941670547147794],[-70,35],[-76,35],[-76,37.38389622641511]]]}",
 --  "{\"type\":\"Polygon\",\"coordinates\":[[[-75.72047348298037,39.63532260219203],[-75.04333534909291,39.716496976360624],[-75.6178875502008,38.854668674698786],[-75.72047348298037,39.63532260219203]]]}"
 ```
+
+{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+* [Analyzing store location coverage using a Voronoi diagram](/analytics-toolbox-snowflake/examples/analyzing-store-location-coverage-using-a-voronoi-diagram/)
+{{%/ bannerNote %}}

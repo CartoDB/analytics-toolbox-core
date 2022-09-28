@@ -22,5 +22,9 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 
 ``` sql
 SELECT `carto-os`.carto.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 20);
--- LINESTRING(-3.70325 40.4167 ... 
+-- LINESTRING(-3.70325 40.4167 ...
 ```
+
+{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+* [Computing US airport connections and route interpolations](/analytics-toolbox-bigquery/examples/computing-us-airport-connections-and-route-interpolations/)
+{{%/ bannerNote %}}
