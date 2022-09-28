@@ -39,7 +39,7 @@ def run_query(query):
 
 
 def drop_table(table):
-    run_query_without_result(f'DROP TABLE {table}')
+    run_query_without_result(f'DROP TABLE IF EXISTS @@PG_SCHEMA@@.{table}')
 
 
 def upload_csv_to_postgres(table, filepath):
@@ -50,13 +50,13 @@ def upload_csv_to_postgres(table, filepath):
     gdf = gdf.rename(columns={'geometry': 'geom'})
     gdf = gdf.set_geometry('geom')
     gdf = gdf.set_crs(epsg=4326)
-    gdf.to_postgis(table, engine, if_exists='replace')
+    gdf.to_postgis(table, engine, schema=os.environ['PG_SCHEMA'], if_exists='replace')
 
 
 def upload_nogeom_csv_to_postgres(table, filepath):
     """Read a CSV file, convert to a DataFrame and upload to the DB."""
     df = pd.read_csv(filepath)
-    df.to_sql(table, engine, if_exists='replace')
+    df.to_sql(table, engine, schema=os.environ['PG_SCHEMA'], if_exists='replace')
 
 
 def floats_approx_equal(a, b, rel_tol=1e-5, abs_tol=0.0):
