@@ -22,5 +22,9 @@ Creates a rectangular Polygon from the minimum and maximum values for X and Y.
 
 ```sql
 SELECT `carto-os`.carto.ST_MAKEENVELOPE(0,0,1,1);
--- POLYGON((1 0, 1 1, 0 1, 0 0, 1 0)) 
+-- POLYGON((1 0, 1 1, 0 1, 0 0, 1 0))
 ```
+
+{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+* [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
+{{%/ bannerNote %}}
