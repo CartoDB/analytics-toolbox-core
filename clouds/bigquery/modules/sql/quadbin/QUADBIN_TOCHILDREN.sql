@@ -12,11 +12,11 @@ AS ((
             WITH __zxy AS (
                 SELECT `@@BQ_DATASET@@.QUADBIN_TOZXY`(quadbin) AS tile
             )
-            SELECT ARRAY_AGG(`@@BQ_DATASET@@.QUADBIN_FROMZXY`(resolution, xs, ys))
+            SELECT ARRAY_AGG(`@@BQ_DATASET@@.QUADBIN_FROMZXY`(resolution, xs, ys) ORDER BY myoffset_y, myoffset_x)
             FROM
                 __zxy,
-                UNNEST(GENERATE_ARRAY(tile.x << (resolution - tile.z), ((tile.x + 1) << (resolution - tile.z)) - 1)) AS xs,
-                UNNEST(GENERATE_ARRAY(tile.y << (resolution - tile.z), ((tile.y + 1) << (resolution - tile.z)) - 1)) AS ys
+                UNNEST(GENERATE_ARRAY(tile.x << (resolution - tile.z), ((tile.x + 1) << (resolution - tile.z)) - 1)) AS xs WITH OFFSET myoffset_x,
+                UNNEST(GENERATE_ARRAY(tile.y << (resolution - tile.z), ((tile.y + 1) << (resolution - tile.z)) - 1)) AS ys WITH OFFSET myoffset_y
         )
     )
 ));
