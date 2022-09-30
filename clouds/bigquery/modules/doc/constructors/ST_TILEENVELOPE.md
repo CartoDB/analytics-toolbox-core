@@ -5,7 +5,7 @@ carto.ST_TILEENVELOPE(zoomLevel, xTile, yTile)
 {{%/ bannerNote %}}
 
 **Description**
-Returns the boundary polygon of a tile given its zoom level and its X and Y indices.
+Returns the boundary polygon of a [tile](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) given its zoom level and its X and Y indices.
 
 * `zoomLevel`: `INT64` zoom level of the tile.
 * `xTile`: `INT64` X index of the tile.

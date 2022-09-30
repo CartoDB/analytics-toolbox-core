@@ -6,10 +6,10 @@ carto.ST_BEZIERSPLINE(geog, resolution, sharpness)
 
 **Description**
 
-Takes a line and returns a curved version by applying a Bezier spline algorithm.
+Takes a line and returns a curved version of it by applying a Bezier spline algorithm. Note that the resulting geography will be a LineString with additional points inserted.
 
 * `geog`: `GEOGRAPHY` input LineString.
-* `resolution`: `INT64`|`NULL` time in milliseconds between points. If `NULL` the default value `10000` is used.
+* `resolution`: `INT64`|`NULL` total time in milliseconds assigned to the line. If `NULL` the default value `10000` is used. Internal curve vertices are generated in 10 ms increments, so the maximum number of resulting points will be `resolution/10` (close points may be merged resulting in less points). A higher number will increase the accuracy of the result but will increase the computation time and number of points.
 * `sharpness`: `FLOAT64`|`NULL` a measure of how curvy the path should be between splines. If `NULL` the default value `0.85` is used.
 
 {{% customSelector %}}

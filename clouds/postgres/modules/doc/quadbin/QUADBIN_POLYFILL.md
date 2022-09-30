@@ -6,9 +6,9 @@ carto.QUADBIN_POLYFILL(geography, resolution)
 
 **Description**
 
-Returns an array of quadbins that intersect with the given geometry at a given level of detail.
+Returns an array of Quadbins that intersect with the given geometry at a given level of detail.
 
-* `geography`: `GEOMETRY` geometry to extract the quadbins from.
+* `geography`: `GEOMETRY` geometry to extract the Quadbins from.
 * `resolution`: `INT` level of detail or zoom.
 
 **Return type**

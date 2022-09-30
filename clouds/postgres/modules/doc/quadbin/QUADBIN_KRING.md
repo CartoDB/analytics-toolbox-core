@@ -8,7 +8,7 @@ carto.QUADBIN_KRING(origin, size)
 
 Returns all cell indexes in a **filled square k-ring** centered at the origin in no particular order.
 
-* `origin`: `BIGINT` quadbin index of the origin.
+* `origin`: `BIGINT` Quadbin index of the origin.
 * `size`: `INT` size of the ring (distance from the origin).
 
 **Return type**

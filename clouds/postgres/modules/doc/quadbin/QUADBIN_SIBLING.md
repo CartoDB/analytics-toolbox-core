@@ -6,9 +6,9 @@ carto.QUADBIN_SIBLING(quadbin, direction)
 
 **Description**
 
-Returns the quadbin directly next to the given quadbin at the same zoom level. The direction must be sent as argument and currently only horizontal/vertical movements are allowed. It will return `NULL` if the sibling does not exist.
+Returns the Quadbin directly next to the given Quadbin at the same zoom level. The direction must be sent as argument and currently only horizontal/vertical movements are allowed. It will return `NULL` if the sibling does not exist.
 
-* `quadbin`: `BIGINT` quadbin to get the sibling from.
+* `quadbin`: `BIGINT` Quadbin to get the sibling from.
 * `direction`: `TEXT` <code>'right'|'left'|'up'|'down'</code> direction to move in to extract the next sibling.
 
 **Return type**

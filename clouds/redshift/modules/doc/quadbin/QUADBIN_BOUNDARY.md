@@ -6,9 +6,9 @@ carto.QUADBIN_BOUNDARY(quadbin)
 
 **Description**
 
-Returns the boundary for a given quadbin. We extract the boundary in the same way as when we calculate its [QUADBIN_BBOX](#quadbin_bbox), then enclose it in a GeoJSON and finally transform it into a geography.
+Returns the boundary for a given Quadbin. We extract the boundary in the same way as when we calculate its [QUADBIN_BBOX](#quadbin_bbox), then enclose it in a GeoJSON and finally transform it into a geography.
 
-* `quadbin`: `BIGINT` quadbin to get the boundary geography from.
+* `quadbin`: `BIGINT` Quadbin to get the boundary geography from.
 
 **Return type**
 

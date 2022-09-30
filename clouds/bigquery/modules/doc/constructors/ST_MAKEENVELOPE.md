@@ -1,7 +1,7 @@
 ### ST_MAKEENVELOPE
 
 {{% bannerNote type="code" %}}
-carto.ST_MAKEENVELOPE(xmin, ymin, xma, ymax)
+carto.ST_MAKEENVELOPE(xmin, ymin, xmax, ymax)
 {{%/ bannerNote %}}
 
 **Description**

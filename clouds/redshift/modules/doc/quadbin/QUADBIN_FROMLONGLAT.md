@@ -6,7 +6,7 @@ carto.QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
 
 **Description**
 
-Returns the quadbin representation for a given level of detail and geographic coordinates.
+Returns the Quadbin representation for a given level of detail and geographic coordinates.
 
 * `longitude`: `FLOAT8` horizontal coordinate of the map.
 * `latitude`: `FLOAT8` vertical coordinate of the map.

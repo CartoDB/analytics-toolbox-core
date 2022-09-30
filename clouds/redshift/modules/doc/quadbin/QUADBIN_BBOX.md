@@ -6,9 +6,9 @@ carto.QUADBIN_BBOX(quadbin)
 
 **Description**
 
-Returns an array with the boundary box of a given quadbin. This boundary box contains the minimum and maximum longitude and latitude. The output format is [West-South, East-North] or [min long, min lat, max long, max lat].
+Returns an array with the boundary box of a given Quadbin. This boundary box contains the minimum and maximum longitude and latitude. The output format is [West-South, East-North] or [min long, min lat, max long, max lat].
 
-* `quadbin`: `BIGINT` quadbin to get the boundary box from.
+* `quadbin`: `BIGINT` Quadbin to get the boundary box from.
 
 **Return type**
 
