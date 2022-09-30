@@ -6,7 +6,7 @@ carto.ST_CENTEROFMASS(geog)
 
 **Description**
 
-Takes any Feature or a FeatureCollection and returns its center of mass using this formula: Centroid of Polygon.
+Takes any Feature or a FeatureCollection and returns its center of mass (also known as centroid).
 
 * `geog`: `GEOGRAPHY` feature to be centered.
 

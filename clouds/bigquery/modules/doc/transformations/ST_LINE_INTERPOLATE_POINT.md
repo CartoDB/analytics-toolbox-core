@@ -10,7 +10,7 @@ Takes a LineString and returns a Point at a specified distance along the line.
 
 * `geog`: `GEOGRAPHY` input line.
 * `distance`: `FLOAT64` distance along the line.
-* `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, degrees and radians. If `NULL`the default value `kilometers` is used.
+* `units`: `STRING`|`NULL` units of length, the supported options are: `miles`, `kilometers`, `degrees` and `radians`. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 

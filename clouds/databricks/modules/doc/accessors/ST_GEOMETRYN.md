@@ -18,6 +18,13 @@ Returns the _n_-th `Geometry` (1-based index) of _geom_ if the `Geometry` is a `
 **Example**
 
 ```sql
-SELECT carto.ST_ASTEXT(carto.ST_GEOMETRYN(carto.ST_GEOMFROMWKT("GEOMETRYCOLLECTION(LINESTRING(1 1, 2 3), POINT(0 4), LINESTRING EMPTY)"), 2));
+SELECT carto.ST_ASTEXT(
+  carto.ST_GEOMETRYN(
+    carto.ST_GEOMFROMWKT(
+      "GEOMETRYCOLLECTION(LINESTRING(1 1, 2 3), POINT(0 4), LINESTRING EMPTY)"
+    ),
+    2
+  )
+);
 -- POINT (0 4)
 ```

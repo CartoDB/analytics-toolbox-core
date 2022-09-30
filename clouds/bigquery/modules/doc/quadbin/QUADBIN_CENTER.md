@@ -6,7 +6,7 @@ carto.QUADBIN_CENTER(quadbin)
 
 **Description**
 
-Returns the center for a given Quadbin. The center is defined as the intersection point of the four immediate children Quadbins.
+Returns the center of a given Quadbin. The center is the intersection point of the four immediate children Quadbins.
 
 * `quadbin`: `INT64` Quadbin to get the center from.
 

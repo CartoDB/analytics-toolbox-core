@@ -8,7 +8,7 @@ carto.QUADBIN_TOZXY(quadbin)
 
 Returns the zoom level `z` and coordinates `x`, `y` for a given Quadbin.
 
-* `quadbin`: `BIGINT` Quadbin we want to extract tile information from.
+* `quadbin`: `BIGINT` Quadbin from which to obtain the coordinates.
 
 **Return type**
 

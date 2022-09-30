@@ -6,7 +6,7 @@ carto.QUADBIN_FROMZXY(z, x, y)
 
 **Description**
 
-Returns a Quadbin from `z`, `x`, `y` coordinates.
+Returns a Quadbin from `z`, `x`, `y` [tile coordinates](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames).
 
 * `z`: `BIGINT` zoom level.
 * `x`: `BIGINT` horizontal position of a tile.

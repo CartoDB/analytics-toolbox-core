@@ -6,7 +6,7 @@ carto.ST_BUFFER(geog, radius, units, steps)
 
 **Description**
 
-Calculates a Geography buffer for input features for a given radius. Units supported are miles, kilometers, and degrees.
+Calculates a Geography buffer for input features for a given radius, i.e. the area within the given distance of the input. Units supported are miles, kilometers, and degrees.
 
 * `geog`: `GEOGRAPHY` input to be buffered.
 * `radius`: `FLOAT64` distance to draw the buffer (negative values are allowed).
@@ -22,7 +22,12 @@ Calculates a Geography buffer for input features for a given radius. Units suppo
 {{%/ customSelector %}}
 
 ``` sql
-SELECT `carto-os`.carto.ST_BUFFER(ST_GEOGPOINT(-74.00, 40.7128), 1, "kilometers", 10);
+SELECT `carto-os`.carto.ST_BUFFER(
+  ST_GEOGPOINT(-74.00, 40.7128),
+  1,
+  "kilometers",
+  10
+);
 -- POLYGON((-73.9881354374691 40.7127993926494 ...
 ```
 

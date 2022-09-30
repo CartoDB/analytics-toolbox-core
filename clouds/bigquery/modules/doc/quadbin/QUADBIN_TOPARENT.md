@@ -6,7 +6,7 @@ carto.QUADBIN_TOPARENT(quadbin, resolution)
 
 **Description**
 
-Returns the parent Quadbin of a given Quadbin for a specific resolution. A parent Quadbin is the smaller resolution containing Quadbin.
+Returns the parent (ancestor) Quadbin of a given Quadbin for a specific resolution. An ancestor of a given Quadbin is a Quadbin of smaller resolution that spatially contains it.
 
 * `quadbin`: `INT64` Quadbin to get the parent from.
 * `resolution`: `INT64` resolution of the desired parent.

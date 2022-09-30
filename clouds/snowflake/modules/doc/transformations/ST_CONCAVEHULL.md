@@ -6,7 +6,7 @@ carto.ST_CONCAVEHULL(geojsons [, maxEdge] [, units])
 
 **Description**
 
-Takes a set of points and returns a concave hull Polygon or MultiPolygon. In case of a single or a couple of points are passed as input, the function will return that point or a segment respectively.
+Takes a set of points and returns a concave hull Polygon or MultiPolygon. In case that a single or a couple of points are passed as input, the function will return that point or a segment respectively.
 
 * `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 * `maxEdge` (optional): `DOUBLE` the length (in 'units') of an edge necessary for part of the hull to become concave. By default `maxEdge` is `infinity`.
@@ -19,21 +19,51 @@ Takes a set of points and returns a concave hull Polygon or MultiPolygon. In cas
 **Examples**
 
 ``` sql
-SELECT carto.ST_CONCAVEHULL(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING, ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING, ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING, ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING));
+SELECT carto.ST_CONCAVEHULL(
+  ARRAY_CONSTRUCT(
+    ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING
+  )
+);
 -- { "coordinates": [ [ [ -75.221, 39.125 ], [ -75.833, 39.284 ], [ -75.6, 39.984 ], [ -75.221, 39.125 ] ] ], "type": "Polygon" }
 ```
 
 ``` sql
-SELECT carto.ST_CONCAVEHULL(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING, ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING, ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING, ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING), 100);
+SELECT carto.ST_CONCAVEHULL(
+  ARRAY_CONSTRUCT(
+    ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING
+  ),
+  100
+);
 -- { "coordinates": [ [ [ -75.833, 39.284 ], [ -75.6, 39.984 ], ...
 ```
 
 ``` sql
-SELECT carto.ST_CONCAVEHULL(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING, ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING, ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING, ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING), 100, 'kilometers');
+SELECT carto.ST_CONCAVEHULL(
+  ARRAY_CONSTRUCT(
+    ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.221, 39.125))::STRING,
+    ST_ASGEOJSON(ST_POINT(-75.521, 39.325))::STRING
+  ),
+  100,
+  'kilometers'
+);
 -- { "coordinates": [ [ [ -75.833, 39.284 ], [ -75.6, 39.984 ], ...
 ```
 
 ``` sql
-SELECT carto.ST_CONCAVEHULL(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING, ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING));
+SELECT carto.ST_CONCAVEHULL(
+  ARRAY_CONSTRUCT(
+    ST_ASGEOJSON(
+      ST_POINT(-75.833, 39.284))::STRING,
+      ST_ASGEOJSON(ST_POINT(-75.6, 39.984))::STRING
+    )
+  );
 --  { "coordinates": [ -75.833, 39.284 ], "type": "Point" }
 ```
