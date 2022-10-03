@@ -9,6 +9,7 @@ SCALA_DIR ?= $(ROOT_DIR)
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_PREFIX)carto-$(PRODUCT)
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
+NEWLINE = ${'\n'} # some versions of sed don't support \n for a newline
 
 include $(COMMON_DIR)/Makefile
 
@@ -70,7 +71,7 @@ ifndef DB_SCHEMA
 	echo "- Databricks schema not defined, using default"
 	$(eval DB_SCHEMA := default)
 endif
-	sed -i'.bkp' '1s/^/USE ${DB_SCHEMA};\n/' $(SQL_PATH)
+	sed -i'.bkp' '1s/^/USE ${DB_SCHEMA};'"\\${NEWLINE}"'/' $(SQL_PATH)
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
 
