@@ -6,7 +6,6 @@ carto.ST_BEZIERSPLINE(geog [, resolution] [, sharpness])
 
 **Description**
 
-
 Takes a line and returns a curved version of it by applying a Bezier spline algorithm. Note that the resulting geography will be a LineString with additional points inserted.
 
 * `geog`: `GEOGRAPHY` input LineString.

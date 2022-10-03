@@ -22,5 +22,6 @@ SELECT carto.ST_CENTEROFMASS(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20,
 ```
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [Computing US airport connections and route interpolations](/analytics-toolbox-snowflake/examples/computing-us-airport-connections-and-route-interpolations/)
 {{%/ bannerNote %}}

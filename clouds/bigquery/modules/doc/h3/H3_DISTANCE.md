@@ -29,5 +29,6 @@ If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bi
 {{%/ bannerNote %}}
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
 {{%/ bannerNote %}}

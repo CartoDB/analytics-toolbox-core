@@ -25,5 +25,6 @@ SELECT `carto-os`.carto.ST_TILEENVELOPE(10,384,368);
 ```
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [Census areas in the UK within tiles of multiple resolutions](/analytics-toolbox-bigquery/examples/census-areas-in-the-uk-within-tiles-of-multiple-resolutions/)
 {{%/ bannerNote %}}

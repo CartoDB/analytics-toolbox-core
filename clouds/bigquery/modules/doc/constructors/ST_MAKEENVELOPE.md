@@ -26,5 +26,6 @@ SELECT `carto-os`.carto.ST_MAKEENVELOPE(0,0,1,1);
 ```
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
 {{%/ bannerNote %}}

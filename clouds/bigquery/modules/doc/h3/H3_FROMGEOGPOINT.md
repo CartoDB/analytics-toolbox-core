@@ -29,6 +29,7 @@ If you want the cells covered by a POLYGON see [H3_POLYFILL](#h3_polyfill).
 {{%/ bannerNote %}}
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [An H3 grid of Starbucks locations and simple cannibalization analysis](/analytics-toolbox-bigquery/examples/an-h3-grid-of-starbucks-locations-and-simple-cannibalization-analysis/)
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
 * [Computing the spatial autocorrelation of POIs locations in Berlin](/analytics-toolbox-bigquery/examples/computing-the-spatial-autocorrelation-of-pois-locations-in-berlin/)

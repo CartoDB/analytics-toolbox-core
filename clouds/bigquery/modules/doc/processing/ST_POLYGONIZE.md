@@ -30,5 +30,6 @@ SELECT `carto-os`.carto.ST_POLYGONIZE(
 ```
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
 {{%/ bannerNote %}}

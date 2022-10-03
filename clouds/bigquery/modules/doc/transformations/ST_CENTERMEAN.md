@@ -26,5 +26,6 @@ SELECT `carto-os`.carto.ST_CENTERMEAN(
 ```
 
 {{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
 * [New police stations based on Chicago crime location clusters](/analytics-toolbox-bigquery/examples/new-police-stations-based-on-chicago-crime-location-clusters/)
 {{%/ bannerNote %}}
