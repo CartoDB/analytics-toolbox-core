@@ -6,9 +6,9 @@ carto.QUADBIN_ISVALID(quadbin)
 
 **Description**
 
-Returns `true` when the given index is valid, `false` otherwise.
+Returns `true` when the given index is a valid Quadbin, `false` otherwise.
 
-* `quadbin`: `BIGINT` quadbin index.
+* `quadbin`: `BIGINT` Quadbin index.
 
 **Return type**
 

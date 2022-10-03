@@ -6,9 +6,9 @@ carto.ST_CENTERMEAN(geog)
 
 **Description**
 
-Takes a Feature or FeatureCollection and returns the mean center.
+Takes a Feature or FeatureCollection and returns the mean center (average of its vertices).
 
-* `geog`: `GEOGRAPHY` feature to be centered.
+* `geom`: `GEOGRAPHY` for which to compute the mean center.
 
 **Return type**
 

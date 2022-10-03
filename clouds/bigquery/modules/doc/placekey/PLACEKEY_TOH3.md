@@ -6,7 +6,7 @@ carto.PLACEKEY_TOH3(placekey)
 
 **Description**
 
-Returns the H3 index equivalent to the given placekey.
+Returns the H3 index equivalent of the given placekey.
 
 * `placekey`: `STRING` Placekey identifier.
 

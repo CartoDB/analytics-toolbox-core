@@ -18,6 +18,12 @@ If _geom_ is a `LineString`, returns the _n_-th vertex of _geom_ as a `Point`. N
 **Example**
 
 ```sql
-SELECT carto.ST_ASTEXT(carto.ST_POINTN(carto.ST_GEOMFROMWKT("LINESTRING(1 1, 2 3, 4 4, 3 4)"), 3));
+SELECT carto.ST_ASTEXT(
+  carto.ST_POINTN(
+    carto.ST_GEOMFROMWKT(
+      "LINESTRING(1 1, 2 3, 4 4, 3 4)"),
+      3
+    )
+  );
 -- POINT (4 4)
 ```

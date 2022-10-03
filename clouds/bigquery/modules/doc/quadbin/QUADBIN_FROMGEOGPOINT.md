@@ -6,9 +6,9 @@ carto.QUADBIN_FROMGEOGPOINT(point, resolution)
 
 **Description**
 
-Returns the quadbin of a given point at a given level of detail.
+Returns the Quadbin of a given point at a given level of detail.
 
-* `point`: `GEOGRAPHY` point to get the quadbin from.
+* `point`: `GEOGRAPHY` point to get the Quadbin from.
 * `resolution`: `INT64` level of detail or zoom.
 
 **Return type**

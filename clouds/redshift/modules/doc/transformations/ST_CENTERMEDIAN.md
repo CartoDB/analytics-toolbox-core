@@ -6,9 +6,9 @@ carto.ST_CENTERMEDIAN(geom)
 
 **Description**
 
-Takes a FeatureCollection of points as input and calculates the median center, algorithmically. The median center is understood as the point that requires the least total travel from all other points.
+Takes a FeatureCollection of points and computes the median center. The median center is understood as the point that requires the least total travel from all other points.
 
-* `geom`: `GEOMETRY` for which to compute the median center.
+* `geog`: `GEOMETRY` for which to compute the center.
 
 **Return type**
 

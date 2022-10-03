@@ -6,12 +6,12 @@ carto.ST_DESTINATION(startPoint, distance, bearing [, units])
 
 **Description**
 
-Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and bearing in degrees. This uses the Haversine formula to account for global curvature.
+Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and a bearing in degrees. This uses the Haversine formula to account for global curvature.
 
 * `origin`: `GEOGRAPHY` starting point.
-* `distance`: `DOUBLE` distance from the origin point.
-* `bearing`: `DOUBLE` ranging from -180 to 180.
-* `units` (optional): `STRING` units of length, the supported options are: miles, kilometers, degrees or radians. By default `units` is `kilometers`.
+* `distance`: `DOUBLE` distance from the origin point in the units specified.
+* `bearing`: `DOUBLE` counter-clockwise angle from East, ranging from -180 to 180 (e.g. 0 is East, 90 is North, 180 is West, -90 is South).
+* `units` (optional): `STRING` units of length, the supported options are: `miles`, `kilometers`, `degrees` or `radians`. If `NULL`the default value `kilometers` is used.
 
 **Return type**
 

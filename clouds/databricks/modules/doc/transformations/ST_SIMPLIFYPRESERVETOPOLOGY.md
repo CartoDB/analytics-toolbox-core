@@ -22,8 +22,10 @@ double
 WITH t AS (
   SELECT carto.ST_BUFFERPOINT(carto.ST_POINT(0, 0), 10) AS geom
 )
-SELECT carto.ST_ASTEXT(carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1)) AS simplifiedGeom, 
-    carto.ST_NUMPOINTS(carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1)) AS simplifiedNumpoints, 
-    carto.ST_NUMPOINTS(geom) AS numPoints FROM t;
+SELECT
+  carto.ST_ASTEXT(carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1)) AS simplifiedGeom,
+  carto.ST_NUMPOINTS(carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, 1)) AS simplifiedNumpoints,
+  carto.ST_NUMPOINTS(geom) AS numPoints
+FROM t;
 -- POLYGON ((0.0000899 0, 0 0.0000899, -0.0000899 0, 0 -0.0000899, 0.0000899 0)) | 5 | 101
 ```

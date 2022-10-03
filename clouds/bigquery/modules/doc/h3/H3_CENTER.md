@@ -6,7 +6,7 @@ carto.H3_CENTER(index)
 
 **Description**
 
-Returns the center of the H3 cell as a geogpoint. It will return `null` on error (invalid input).
+Returns the center of the H3 cell as a GEOGRAPHY point. It will return `null` on error (invalid input).
 
 * `index`: `STRING` The H3 cell index.
 

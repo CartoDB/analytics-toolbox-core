@@ -18,11 +18,27 @@ Calculate the Minkowski p-norm distance between two features.
 **Examples**
 
 ``` sql
-SELECT carto.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(10,10))::STRING, ST_ASGEOJSON(ST_POINT(13,10))::STRING));
+SELECT carto.ST_MINKOWSKIDISTANCE(
+  ARRAY_CONSTRUCT(
+    ST_ASGEOJSON(ST_POINT(10,10))::STRING,
+    ST_ASGEOJSON(ST_POINT(13,10))::STRING
+  )
+);
 -- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
 ```
 
 ``` sql
-SELECT carto.ST_MINKOWSKIDISTANCE(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(10,10))::STRING, ST_ASGEOJSON(ST_POINT(13,10))::STRING), 2);
+SELECT carto.ST_MINKOWSKIDISTANCE(
+  ARRAY_CONSTRUCT(
+    ST_ASGEOJSON(ST_POINT(10,10))::STRING,
+    ST_ASGEOJSON(ST_POINT(13,10))::STRING
+  ),
+  2
+);
 -- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
 ```
+
+{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
+* [Minkowski distance to perform cannibalization analysis](/analytics-toolbox-snowflake/examples/minkowski-distance-to-perform-cannibalization-analysis/)
+{{%/ bannerNote %}}

@@ -6,7 +6,7 @@ carto.ST_CENTERMEAN(geom)
 
 **Description**
 
-Takes a Feature or FeatureCollection as input and returns the mean center.
+Takes a Feature or FeatureCollection and returns the mean center (average of its vertices).
 
 * `geom`: `GEOMETRY` for which to compute the mean center.
 

@@ -6,7 +6,7 @@ carto.ST_GREATCIRCLE(startPoint, endPoint [, npoints])
 
 **Description**
 
-Calculate great circles routes as LineString or MultiLineString. If the start and end points span the antimeridian, the resulting feature will be split into a MultiLineString.
+Calculate great circle routes as LineString or MultiLineString. If the start and end points span the antimeridian, the resulting feature will be split into a MultiLineString.
 
 * `startPoint`: `GEOGRAPHY` source point feature.
 * `endPoint`: `GEOGRAPHY` destination point feature.
@@ -20,10 +20,15 @@ Calculate great circles routes as LineString or MultiLineString. If the start an
 
 ``` sql
 SELECT carto.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643));
--- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ... 
+-- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ...
 ```
 
 ``` sql
 SELECT carto.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643), 20);
--- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ... 
+-- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ...
 ```
+
+{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+
+* [Computing US airport connections and route interpolations](/analytics-toolbox-snowflake/examples/computing-us-airport-connections-and-route-interpolations/)
+{{%/ bannerNote %}}

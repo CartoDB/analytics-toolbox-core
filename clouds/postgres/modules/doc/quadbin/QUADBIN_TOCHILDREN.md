@@ -6,9 +6,9 @@ carto.QUADBIN_TOCHILDREN(quadbin, resolution)
 
 **Description**
 
-Returns an array with the children quadbins of a given quadbin for a specific resolution. A children quadbin is a quadbin of higher level of detail that is contained by the current quadbin. Each quadbin has four children by definition.
+Returns an array with the children Quadbins of a given Quadbin for a specific resolution. A children Quadbin is a Quadbin of higher level of detail that is contained by the current Quadbin. Each Quadbin has four direct children (at the next higher resolution).
 
-* `quadbin`: `BIGINT` quadbin to get the children from.
+* `quadbin`: `BIGINT` Quadbin to get the children from.
 * `resolution`: `INT` resolution of the desired children.
 
 **Return type**
