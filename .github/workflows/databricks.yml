@@ -8,8 +8,8 @@ on:
       - ".github/workflows/databricks.yml"
 
 env:
-  NODE_VERSION: 14
   PYTHON3_VERSION: 3.8.11
+  GOOGLE_SECRET_MANAGER_PROJECT: cartodb-on-gcp-terraform-ci-cd
 
 jobs:
   test:
@@ -21,10 +21,19 @@ jobs:
       DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
       DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
       DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: ${{ secrets.CARTODB_ON_GCP_TERRAFORM_CI_CD_SERVICE_ACCOUNT_KEY }}
+
+      - id: 'secrets'
+        uses: 'google-github-actions/get-secretmanager-secrets@v0'
+        with:
+          secrets: |-
+            databricks-ci-token:projects/cartodb-on-gcp-terraform-ci-cd/secrets/terraform-databricks-aws-ciuser-token
       - name: Check diff
         uses: technote-space/get-diff-action@v4
         with:
@@ -46,6 +55,8 @@ jobs:
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Create databricks cfg file
         uses: "DamianReeves/write-file-action@v1.0"
+        env: 
+          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         with:
           path: /home/runner/.databrickscfg
           write-mode: overwrite
@@ -57,6 +68,7 @@ jobs:
       - name: Run linter and tests
         env:
           DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
+          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         run: |
           cd clouds/databricks
           make lint && \
@@ -75,6 +87,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: ${{ secrets.CARTODB_ON_GCP_TERRAFORM_CI_CD_SERVICE_ACCOUNT_KEY }}
+      - id: 'secrets'
+        uses: 'google-github-actions/get-secretmanager-secrets@v0'
+        with:
+          secrets: |-
+            databricks-ci-token:projects/cartodb-on-gcp-terraform-ci-cd/secrets/terraform-databricks-aws-ciuser-token
       - name: Check diff
         uses: technote-space/get-diff-action@v4
         with:
@@ -85,6 +106,8 @@ jobs:
       - name: install-databricks-cli
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Create databricks cfg file
+        env: 
+            DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         uses: "DamianReeves/write-file-action@v1.0"
         with:
           path: /home/runner/.databrickscfg
@@ -92,7 +115,7 @@ jobs:
           contents: |
             [DEFAULT]
             host = https://dbc-fbcbc113-2a61.cloud.databricks.com
-            token = ${{ secrets.DATABRICKS_TOKEN_CI }}
+            token = ${{ env.DATABRICKS_TOKEN }}
             jobs-api-version = 2.1
       - name: Run deploy
         env:
