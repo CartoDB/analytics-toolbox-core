@@ -50,7 +50,7 @@ build: $(NODE_MODULES_DEV)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
 deploy: check build
@@ -72,7 +72,7 @@ dataset-create:
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
 	for m in $(shell ls $(TEST_DIR)); do \
-		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
+		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 		if [ ! -z "$$TESTS" ]; then \
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
