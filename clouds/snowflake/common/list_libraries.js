@@ -13,9 +13,32 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
-const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
-const functionsFilter = (argv.functions && argv.functions.split(',')) || [];
-const all = !(diff.length || modulesFilter.length || functionsFilter.length);
+let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
+let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
+let all = !(diff.length || modulesFilter.length || functionsFilter.length);
+
+// Convert diff to modules/functions
+if (diff.length) {
+    const patternsAll = [
+        /\.github/,
+        /common\/.*/,
+        /\/libraries\/.*/,
+        /\/Makefile/
+    ];
+    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const diffAll = patternsAll.some(p => diff.match(p));
+    if (diffAll) {
+        all = diffAll;
+    } else {
+        const modulesSql = [...diff.matchAll(patternModulesSql)].map(m => m[1]);
+        const modulesTest = [...diff.matchAll(patternModulesTest)].map(m => m[1]);
+        const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
+        if (diffModulesFilter) {
+            modulesFilter = diffModulesFilter;
+        }
+    }
+}
 
 // Extract functions
 const functions = [];
@@ -41,6 +64,20 @@ for (let inputDir of inputDirs) {
         }
     });
 }
+
+// Check filters
+modulesFilter.forEach(m => {
+    if (!functions.map(fn => fn.module).includes(m)) {
+        console.log(`ERROR: Module not found ${m}`);
+        process.exit(1);
+    }
+});
+functionsFilter.forEach(f => {
+    if (!functions.map(fn => fn.name).includes(f)) {
+        console.log(`ERROR: Function not found ${f}`);
+        process.exit(1);
+    }
+});
 
 // Extract function dependencies
 if (!nodeps) {
@@ -69,7 +106,7 @@ functions.forEach(mainFunction => {
 // Filter functions
 const output = [];
 function add (f, include) {
-    include = include || all || diff.includes(path.join(f.module, f.name)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
+    include = include || all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
     for (const dependency of f.dependencies) {
         add(functions.find(f => f.name === dependency), include);
     }

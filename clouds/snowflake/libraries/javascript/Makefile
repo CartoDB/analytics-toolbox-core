@@ -36,7 +36,7 @@ build:
 
 build-libs: build-install $(NODE_MODULES_DEV)
 ifdef UNIT_TEST
-	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --diff=$(diff) --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
+	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIR) \
@@ -45,7 +45,7 @@ ifdef UNIT_TEST
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 	done
 else
-	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff=$(diff) --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
+	for f in $(shell $(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)); do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIRS) \

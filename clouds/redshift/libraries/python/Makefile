@@ -76,9 +76,7 @@ ifeq ("$(library)","carto")
 		fi \
 	done
 else
-	for f in $(wildcard $(BUILD_DIR)/libs/*.zip); do \
-		aws s3 cp $$f $(RS_BUCKET) || exit 1; \
-	done
+	aws s3 cp $(BUILD_DIR)/libs $(RS_BUCKET) --recursive --include ".zip" || exit 1;
 endif
 
 deploy-libraries: venv3
@@ -96,9 +94,7 @@ ifeq ("$(library)","carto")
 		fi \
 	done
 else
-	for f in $(notdir $(wildcard $(BUILD_DIR)/libs/*.zip)); do \
-		aws s3 rm $(RS_BUCKET)/$(basename $$f) || exit 1; \
-	done
+	aws s3 rm $(RS_BUCKET) --recursive --include ".zip" || exit 1;
 endif
 
 test: check venv2

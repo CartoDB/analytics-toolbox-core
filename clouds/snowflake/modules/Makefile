@@ -41,14 +41,13 @@ lint: $(NODE_MODULES_DEV) venv3
 	echo "- Lint SQL files"
 	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
 
-
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
 build-libraries:
@@ -60,7 +59,7 @@ build-share: $(NODE_MODULES_DEV)
 	mkdir $(BUILD_DIR)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_share.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff=$(diff) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
 deploy: check build
@@ -78,7 +77,7 @@ deploy-share: check build-share
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
 	for m in $(shell ls $(TEST_DIR)); do \
-		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff=$(diff) --modules=$(modules) --functions=$(functions)`; \
+		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 		if [ ! -z "$$TESTS" ]; then \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 			jest --testTimeout=40000 --bail --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS || exit 1; \

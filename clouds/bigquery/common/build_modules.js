@@ -30,7 +30,7 @@ if (all) {
     console.log(`- Build functions: ${argv.functions}`);
 }
 
-// Convert diff to modules/functions
+// Convert diff to modules
 if (diff.length) {
     const patternsAll = [
         /\.github/,
@@ -132,7 +132,7 @@ if (!nodeps) {
 // Filter and order functions
 const output = [];
 function add (f, include) {
-    include = include || all || diff.includes(path.join(f.module, f.name)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
+    include = include || all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
     for (const dependency of f.dependencies) {
         add(functions.find(f => f.name === dependency), include);
     }
