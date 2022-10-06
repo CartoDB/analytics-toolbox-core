@@ -106,12 +106,26 @@ jobs:
     needs: test
     if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-20.04
+    env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-databricks
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks
+      SF_DATABASE: '@@DATABASE@@'
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
       - name: Release
         run: |
           cd clouds/databricks
@@ -122,4 +136,15 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         if: ${{ env.SONATYPE_PASSWORD != '' && env.SONATYPE_USERNAME != '' }}
-
+      - name: Create package
+        run: |
+          cd clouds/databricks
+          make create-package
+      - name: Publish package
+        run: |
+          cd clouds/databricks
+          gsutil -h "Content-Type:application/zip" -m cp dist/modules*.sql ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/modules*.sql ${{ env.PACKAGE_BUCKET }}/modules-latest.sql
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/

@@ -16,7 +16,10 @@ def get_uninstall_for_module(module_path, queries_list):
 
 
 def write_queries(final_query):
-    file_path = os.path.join(python_util_path, '..', 'dropUDF.sql')
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+       file_path = os.path.join(python_util_path, '..', 'dropUDF.sql')
     with open(file_path, 'w') as file:
         file.write(final_query)
 

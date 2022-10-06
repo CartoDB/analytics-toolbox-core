@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION st_simplify as 'com.carto.analyticstoolbox.core.ST_Si
  -- ...and more
 ```
 
-The full list of supported functions can be found [here](./libraries/scala/core/src/main/resources/sql/createUDFs.sql).
+The full list of supported functions can be found [here](https://storage.googleapis.com/carto-analytics-toolbox-core/databricks/modules-latest.sql).
 
 ## Spatial Query Optimizations
 
@@ -54,7 +54,7 @@ In case there is a need to have optimizations enabled on a DataBricks cluster by
 
 ## Table Optimization
 
-There are two functions defined to help with the raw table preparations. Both transform the input table 
+There are two functions defined to help with the raw table preparations. Both transform the input table
 into a shape optimized for intersection queries; for more details see [OptimizeSpatial.scala](./libraries/scala/core/src/main/scala/com/carto/analyticstoolbox/spark/spatial/OptimizeSpatial.scala):
 
 1. **optimizeSpatial**
@@ -69,7 +69,7 @@ val sourceTable: String = ???
 val outputTable: String = ???
 val outputLocation: String = ???
 
-// optimize with the block size computation 
+// optimize with the block size computation
 spark.optimizeSpatial(sourceTable, outputTable, outputLocation, geomColumn = "bbox")
 // optimize with the user defined block size
 spark.optimizeSpatialManual(sourceTable, outputTable, outputLocation, geomColumn = "bbox", blockSize = 20097000)
@@ -90,7 +90,7 @@ cluster directory on master.
 These scripts can be written using notebook cells:
 
 ```bash
-%sh 
+%sh
 rm -rf /dbfs/FileStore/jars-carto
 
 # Create JAR directory for CARTO Analytics Toolbox
@@ -101,7 +101,7 @@ curl -L -o /dbfs/FileStore/jars-carto/core-assembly-{version}.jar "https://githu
 ```
 
 ```bash
-%sh 
+%sh
 rm -rf /dbfs/FileStore/carto/
 
 # Create JAR directory for CARTO
@@ -111,7 +111,7 @@ mkdir -p /dbfs/FileStore/carto/
 cat > /dbfs/FileStore/carto/carto-init.sh <<'EOF'
 #!/bin/bash
 #
-# 
+#
 # On cluster startup, this script will copy the CARTO jars to the cluster's default jar directory.
 # In order to activate CARTO Spatial optimizations: "com.carto.analyticstoolbox.spark.sql.rules.SpatialFilterPushdownRules"
 

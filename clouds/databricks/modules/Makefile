@@ -6,7 +6,7 @@ ENV_DIR ?= $(ROOT_DIR)/..
 TEST_DIR ?= $(ROOT_DIR)/test
 SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR = $(ROOT_DIR)/../common
-SQL_PATH = $(COMMON_DIR)/dropUDF.sql
+BUILD_DIR = $(ROOT_DIR)/build
 
 include $(COMMON_DIR)/Makefile
 
@@ -36,14 +36,42 @@ test: check check-extra venv
 
 remove: check
 	echo "Removing modules..."
-	python3 $(COMMON_DIR)/python_utils/create_drop_functions.py
+	python3 $(COMMON_DIR)/python_utils/create_drop_functions.py $(BUILD_DIR)/drop.sql
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
-	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/dropUDF
+	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(BUILD_DIR)/drop.sql
 	$(MAKE) drop-udfs
 
 drop-udfs:
-	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/dropUDF!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(BUILD_DIR)/drop.sql!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
 	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
 	echo "- Removing drop script from the workspace"
 	databricks workspace rm -r $(SQL_DEPLOY_PATH)
 	echo "- Modules removed"
+
+build: # modules/sql/*.sql -> modules/build/modules.sql
+	echo "Building modules..."
+ifndef DB_SCHEMA
+	echo "- Databricks schema not defined, using default"
+	$(eval DB_SCHEMA := default)
+endif
+	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql
+
+upload-sql:
+	echo "- Installing functions"
+	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
+	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/modules.sql $(SQL_DEPLOY_PATH)/modules.sql
+
+create-udfs:
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/modules.sql!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
+	echo "- Removing install script from the workspace"
+	databricks workspace rm -r $(SQL_DEPLOY_PATH)
+
+deploy: check build
+	echo "Deploying modules..."
+	$(MAKE) upload-sql
+	$(MAKE) create-udfs
+
+clean:
+	echo "Cleaning modules..."
+	rm -rf $(BUILD_DIR)

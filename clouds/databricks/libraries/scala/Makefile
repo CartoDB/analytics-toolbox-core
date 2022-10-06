@@ -51,8 +51,6 @@ deploy: check
 	echo "Deploying libraries..."
 	$(MAKE) upload-jars
 	$(MAKE) install-jars
-	$(MAKE) upload-sql
-	$(MAKE) create-udfs
 
 upload-jars: clean build
 	echo "- Uploading jars"
@@ -65,24 +63,9 @@ install-jars:
 	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
 	echo "- Libraries installed"
 
-upload-sql:
-	echo "- Installing functions"
-ifndef DB_SCHEMA
-	echo "- Databricks schema not defined, using default"
-	$(eval DB_SCHEMA := default)
-endif
-	sed -i'.bkp' '1s/^/USE ${DB_SCHEMA};'"\\${NEWLINE}"'/' $(SQL_PATH)
-	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
-	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(SQL_DEPLOY_PATH)/createUDFs
-
-create-udfs:
-	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/createUDFs!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
-	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
-	echo "- Removing install script from the workspace"
-	databricks workspace rm -r $(SQL_DEPLOY_PATH)
-
 test:
 	echo "Testing libraries..."
+	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
 	(cd "$(SCALA_DIR)" && exec sbt test)
 
 remove: check
