@@ -2,7 +2,7 @@
 
 // List the functions based on the input filters
 
-// ./list_functions.js --diff=quadbin/test/QUADBIN_TOZXY.test.js
+// ./list_functions.js --diff="clouds/snowflake/modules/test/quadbin/QUADBIN_TOZXY.test.js"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
 

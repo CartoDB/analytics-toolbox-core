@@ -2,7 +2,7 @@
 
 // List the functions based on the input filters
 
-// ./list_functions.js --diff="/modules/test/quadbin/test_QUADBIN_TOZXY.py"
+// ./list_functions.js --diff="clouds/postgres/modules/test/quadbin/test_QUADBIN_TOZXY.py"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
 

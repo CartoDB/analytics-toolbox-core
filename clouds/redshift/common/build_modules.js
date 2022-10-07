@@ -3,7 +3,7 @@
 // Build the modules file based on the input filters
 // and ordered to solve the dependencies
 
-// ./build_modules.js modules --output=build --diff="/modules/sql/quadbin/QUADBIN_TOZXY.sql"
+// ./build_modules.js modules --output=build --diff="clouds/redshift/modules/sql/quadbin/QUADBIN_TOZXY.sql"
 // ./build_modules.js modules --output=build --functions=ST_TILEENVELOPE
 // ./build_modules.js modules --output=build --modules=quadbin
 // ./build_modules.js modules --output=build --production --dropfirst
