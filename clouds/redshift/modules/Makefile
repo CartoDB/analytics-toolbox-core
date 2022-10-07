@@ -52,8 +52,9 @@ deploy: check venv3 build
 
 test: check venv3 $(NODE_MODULES_DEV)
 	echo "Testing modules..."
-	$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions) 1>/dev/null # Check errors
-	$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv `$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`
+	if [ ! -z "`$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`" ]; then \
+		$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv `$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
+	fi;
 
 remove: venv3
 	echo "Removing modules..."

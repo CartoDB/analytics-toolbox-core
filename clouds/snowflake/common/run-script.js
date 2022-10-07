@@ -62,7 +62,7 @@ async function runQueries (queries) {
 const script = process.argv[2];
 const content = fs.readFileSync(script).toString();
 const separator = '\n-->\n';
-const queries = content.split(separator);
+const queries = content.split(separator).filter(q => !!q);
 let sqlFunction = '';
 
 runQueries(queries).catch(error => {
