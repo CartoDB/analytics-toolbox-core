@@ -6,6 +6,8 @@ from lib import transformations
 from lib import processing
 from lib import placekey
 from lib import s2
+from lib import clustering
+from lib import random
 
 
 def test_init():
@@ -59,3 +61,6 @@ def test_init():
     assert hasattr(s2, 'to_parent')
     assert hasattr(s2, 'uint64_repr_from_id')
     assert hasattr(s2, 'uint64_to_int64')
+    assert hasattr(clustering, 'clusterkmeans')
+    assert hasattr(clustering, 'clusterkmeanstable')
+    assert hasattr(random, 'generatepoints')
