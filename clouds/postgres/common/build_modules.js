@@ -33,13 +33,13 @@ if (all) {
 // Convert diff to modules/functions
 if (diff.length) {
     const patternsAll = [
-        /\.github/,
-        /common\/.*/,
-        /\/libraries\/.*/,
-        /\/Makefile/
+        /\.github\/workflows\/postgres\.yml/,
+        /clouds\/postgres\/common\/.+/,
+        /clouds\/postgres\/libraries\/.+/,
+        /clouds\/postgres\/.*Makefile/
     ];
-    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
-    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const patternModulesSql = /clouds\/postgres\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /clouds\/postgres\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
     if (diffAll) {
         console.log('-- all');

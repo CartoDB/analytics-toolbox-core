@@ -21,13 +21,13 @@ let all = !(diff.length || modulesFilter.length || functionsFilter.length);
 // Convert diff to modules
 if (diff.length) {
     const patternsAll = [
-        /\.github/,
-        /common\/.*/,
-        /\/libraries\/.*/,
-        /\/Makefile/
+        /\.github\/workflows\/bigquery\.yml/,
+        /clouds\/bigquery\/common\/.+/,
+        /clouds\/bigquery\/libraries\/.+/,
+        /clouds\/bigquery\/.*Makefile/
     ];
-    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
-    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const patternModulesSql = /clouds\/bigquery\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /clouds\/bigquery\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
     if (diffAll) {
         all = diffAll;

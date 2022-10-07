@@ -33,13 +33,13 @@ if (all) {
 // Convert diff to modules/functions
 if (diff.length) {
     const patternsAll = [
-        /\.github/,
-        /common\/.*/,
-        /\/libraries\/.*/,
-        /\/Makefile/
+        /\.github\/workflows\/redshift\.yml/,
+        /clouds\/redshift\/common\/.+/,
+        /clouds\/redshift\/libraries\/.+/,
+        /clouds\/redshift\/.*Makefile/
     ];
-    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
-    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const patternModulesSql = /clouds\/redshift\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /clouds\/redshift\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
     if (diffAll) {
         console.log('-- all');
