@@ -7,6 +7,8 @@ import processing from '../src/processing';
 import transformations from '../src/transformations';
 import h3 from '../src/h3';
 import placekey from '../src/placekey';
+import clustering from '../src/clustering';
+import random from '../src/random';
 
 export default {
     accessors,
@@ -17,5 +19,7 @@ export default {
     processing,
     transformations,
     h3,
-    placekey
+    placekey,
+    clustering,
+    random
 };
