@@ -2,7 +2,7 @@
 
 // List the JavaScript libraries based on the input filters to the SQL functions
 
-// ./list_libraries.js --diff="modules/test/quadbin/QUADBIN_TOZXY.test.js"
+// ./list_libraries.js --diff="clouds/snowflake/modules/test/quadbin/QUADBIN_TOZXY.test.js"
 // ./list_libraries.js --functions=ST_TILEENVELOPE
 // ./list_libraries.js --modules=quadbin
 

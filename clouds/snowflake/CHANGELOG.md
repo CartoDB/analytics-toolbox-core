@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.10.07] - 2022-10-07
+
+### Module clustering
+
+#### Added
+
+- Move ST_CLUSTERKMEANS function to core.
+
+### Module random
+
+#### Added
+
+- Move ST_GENERATEPOINTS function to core.
+
 ## [2022.07.07] - 2022-07-07
 
 ### Module h3
