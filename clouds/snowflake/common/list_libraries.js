@@ -20,13 +20,13 @@ let all = !(diff.length || modulesFilter.length || functionsFilter.length);
 // Convert diff to modules/functions
 if (diff.length) {
     const patternsAll = [
-        /\.github/,
-        /common\/.*/,
-        /\/libraries\/.*/,
-        /\/Makefile/
+        /\.github\/workflows\/snowflake\.yml/,
+        /clouds\/snowflake\/common\/.+/,
+        /clouds\/snowflake\/libraries\/.+/,
+        /clouds\/snowflake\/.*Makefile/
     ];
-    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
-    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const patternModulesSql = /clouds\/snowflake\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /clouds\/snowflake\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
     if (diffAll) {
         all = diffAll;
