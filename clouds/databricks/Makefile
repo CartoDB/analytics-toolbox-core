@@ -103,6 +103,6 @@ create-package: clean build
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_NAME)/
-	# cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules-$(PACKAGE_VERSION).sql
+	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules-$(PACKAGE_VERSION).sql
 	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
