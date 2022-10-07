@@ -2,7 +2,7 @@
 
 // List the JavaScript libraries based on the input filters to the SQL functions
 
-// ./list_libraries.js --diff=quadbin/test/QUADBIN_TOZXY.test.js
+// ./list_libraries.js --diff="modules/test/quadbin/QUADBIN_TOZXY.test.js"
 // ./list_libraries.js --functions=ST_TILEENVELOPE
 // ./list_libraries.js --modules=quadbin
 
@@ -68,13 +68,13 @@ for (let inputDir of inputDirs) {
 // Check filters
 modulesFilter.forEach(m => {
     if (!functions.map(fn => fn.module).includes(m)) {
-        console.log(`ERROR: Module not found ${m}`);
+        process.stderr.write(`ERROR: Module not found ${m}\n`);
         process.exit(1);
     }
 });
 functionsFilter.forEach(f => {
     if (!functions.map(fn => fn.name).includes(f)) {
-        console.log(`ERROR: Function not found ${f}`);
+        process.stderr.write(`ERROR: Function not found ${f}\n`);
         process.exit(1);
     }
 });
@@ -97,7 +97,7 @@ functions.forEach(mainFunction => {
     functions.forEach(depFunction => {
         if (mainFunction.dependencies.includes(depFunction.name) &&
             depFunction.dependencies.includes(mainFunction.name)) {
-            console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+            process.stderr.write(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}\n`);
             process.exit(1);
         }
     });

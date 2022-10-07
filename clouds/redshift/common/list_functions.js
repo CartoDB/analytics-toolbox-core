@@ -2,7 +2,7 @@
 
 // List the functions based on the input filters
 
-// ./list_functions.js --diff=quadbin/test/test_QUADBIN_TOZXY.py
+// ./list_functions.js --diff="/modules/test/quadbin/test_QUADBIN_TOZXY.py"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
 
@@ -41,7 +41,7 @@ if (diff.length) {
 
 // Extract functions
 const functions = [];
-const testdir = path.join(inputDir, 'test');
+const testdir = path.resolve(inputDir, 'test');
 const modules = fs.readdirSync(testdir);
 modules.forEach(module => {
     const moduledir = path.join(testdir, module);
@@ -58,6 +58,20 @@ modules.forEach(module => {
                 });
             }
         });
+    }
+});
+
+// Check filters
+modulesFilter.forEach(m => {
+    if (!functions.map(fn => fn.module).includes(m)) {
+        process.stderr.write(`ERROR: Module not found ${m}\n`);
+        process.exit(1);
+    }
+});
+functionsFilter.forEach(f => {
+    if (!functions.map(fn => fn.name).includes(f)) {
+        process.stderr.write(`ERROR: Function not found ${f}\n`);
+        process.exit(1);
     }
 });
 
