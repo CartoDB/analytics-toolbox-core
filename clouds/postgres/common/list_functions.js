@@ -2,7 +2,7 @@
 
 // List the functions based on the input filters
 
-// ./list_functions.js --diff=quadbin/test/test_QUADBIN_TOZXY.py
+// ./list_functions.js --diff="/modules/test/quadbin/test_QUADBIN_TOZXY.py"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
 
@@ -12,9 +12,32 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const inputDir = '.';
 const diff = argv.diff || [];
-const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
-const functionsFilter = (argv.functions && argv.functions.split(',')) || [];
-const all = !(diff.length || modulesFilter.length || functionsFilter.length);
+let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
+let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
+let all = !(diff.length || modulesFilter.length || functionsFilter.length);
+
+// Convert diff to modules/functions
+if (diff.length) {
+    const patternsAll = [
+        /\.github/,
+        /common\/.*/,
+        /\/libraries\/.*/,
+        /\/Makefile/
+    ];
+    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const diffAll = patternsAll.some(p => diff.match(p));
+    if (diffAll) {
+        all = diffAll;
+    } else {
+        const modulesSql = [...diff.matchAll(patternModulesSql)].map(m => m[1]);
+        const modulesTest = [...diff.matchAll(patternModulesTest)].map(m => m[1]);
+        const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
+        if (diffModulesFilter) {
+            modulesFilter = diffModulesFilter;
+        }
+    }
+}
 
 // Extract functions
 const functions = [];
@@ -38,10 +61,24 @@ modules.forEach(module => {
     }
 });
 
+// Check filters
+modulesFilter.forEach(m => {
+    if (!functions.map(fn => fn.module).includes(m)) {
+        process.stderr.write(`ERROR: Module not found ${m}\n`);
+        process.exit(1);
+    }
+});
+functionsFilter.forEach(f => {
+    if (!functions.map(fn => fn.name).includes(f)) {
+        process.stderr.write(`ERROR: Function not found ${f}\n`);
+        process.exit(1);
+    }
+});
+
 // Filter functions
 const output = [];
 function filter (f) {
-    const include = all || diff.includes(path.join(f.fullPath)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
+    const include = all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
     if (include) {
         output.push(f.fullPath);
     }

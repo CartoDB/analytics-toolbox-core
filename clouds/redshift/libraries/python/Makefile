@@ -10,7 +10,13 @@ COMMON_DIR ?= $(ROOT_DIR)/../../common
 LIB_DIRS ?= $(ROOT_DIR)/lib/
 REQUIREMENTS_DIRS ?= requirements.txt
 LIBS_URL ?= https://<URL>/libs
-LIB_NAME = $(RS_LIBRARY)-1.0.0
+ifeq ($(production),1)
+RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../../version)
+else
+RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../../version)-dev
+endif
+LIB_NAME = $(RS_LIBRARY)-$(RS_PACKAGE_VERSION)
+RS_BUCKET_UUID = $(RS_BUCKET)/$(RS_SCHEMA)/libs
 
 include $(COMMON_DIR)/Makefile
 
@@ -54,7 +60,7 @@ build-libraries-sql:
 ifeq ($(libsurl),1)
 	$(eval FROM = $(shell echo "$(LIBS_URL)"))
 else
-	$(eval FROM = $(shell echo "$(RS_BUCKET)"))
+	$(eval FROM = $(shell echo "$(RS_BUCKET_UUID)"))
 	$(eval CREDENTIALS = $(shell echo "CREDENTIALS 'aws_access_key_id=$(AWS_ACCESS_KEY_ID);aws_secret_access_key=$(AWS_SECRET_ACCESS_KEY)'"))
 endif
 	for f in $(notdir $(wildcard $(BUILD_DIR)/libs/*.zip)); do \
@@ -72,13 +78,11 @@ copy-libraries:
 ifeq ("$(library)","carto")
 	for f in $(wildcard $(BUILD_DIR)/libs/*.zip); do \
 		if [ `echo $$f | grep $(RS_LIBRARY)` ]; then \
-			aws s3 cp $$f $(RS_BUCKET) || exit 1; \
+			aws s3 cp $$f $(RS_BUCKET_UUID) || exit 1; \
 		fi \
 	done
 else
-	for f in $(wildcard $(BUILD_DIR)/libs/*.zip); do \
-		aws s3 cp $$f $(RS_BUCKET) || exit 1; \
-	done
+	aws s3 cp $(BUILD_DIR)/libs $(RS_BUCKET_UUID) --recursive --include ".zip" || exit 1;
 endif
 
 deploy-libraries: venv3
@@ -92,13 +96,11 @@ remove-libraries:
 ifeq ("$(library)","carto")
 	for f in $(notdir $(wildcard $(BUILD_DIR)/libs/*.zip)); do \
 		if [ `echo $$f | grep $(RS_LIBRARY)` ]; then \
-			aws s3 rm $(RS_BUCKET)/$(basename $$f) || exit 1; \
+			aws s3 rm $(RS_BUCKET_UUID)/$(basename $$f) || exit 1; \
 		fi \
 	done
 else
-	for f in $(notdir $(wildcard $(BUILD_DIR)/libs/*.zip)); do \
-		aws s3 rm $(RS_BUCKET)/$(basename $$f) || exit 1; \
-	done
+	aws s3 rm $(RS_BUCKET_UUID) --recursive --include ".zip" || exit 1;
 endif
 
 test: check venv2

@@ -14,9 +14,32 @@ const modulename = argv._[0];
 const moduledir = path.resolve('test', modulename);
 const diff = argv.diff || [];
 const fileExtension = argv.fileExtension || '.test.js';
-const modulesFilter = (argv.modules && argv.modules.split(',')) || [];
-const functionsFilter = (argv.functions && argv.functions.split(',')) || [];
-const all = !(diff.length || modulesFilter.length || functionsFilter.length);
+let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
+let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
+let all = !(diff.length || modulesFilter.length || functionsFilter.length);
+
+// Convert diff to modules
+if (diff.length) {
+    const patternsAll = [
+        /\.github/,
+        /common\/.*/,
+        /\/libraries\/.*/,
+        /\/Makefile/
+    ];
+    const patternModulesSql = /\/modules\/sql\/([^\s]*?)\//g;
+    const patternModulesTest = /\/modules\/test\/([^\s]*?)\//g;
+    const diffAll = patternsAll.some(p => diff.match(p));
+    if (diffAll) {
+        all = diffAll;
+    } else {
+        const modulesSql = [...diff.matchAll(patternModulesSql)].map(m => m[1]);
+        const modulesTest = [...diff.matchAll(patternModulesTest)].map(m => m[1]);
+        const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
+        if (diffModulesFilter) {
+            modulesFilter = diffModulesFilter;
+        }
+    }
+}
 
 // Extract functions
 const functions = [];
@@ -38,7 +61,7 @@ if (fs.statSync(moduledir).isDirectory()) {
 // Filter functions
 const output = [];
 function add (f) {
-    const include = all || diff.includes(path.join(f.fullPath)) || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
+    const include = all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
     if (include) {
         output.push(f.fullPath);
     }

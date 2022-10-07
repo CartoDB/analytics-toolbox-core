@@ -2,9 +2,14 @@ name: Bigquery CI/CD
 
 on:
   push:
+    branches:
+      - master
     paths:
       - "clouds/bigquery/**"
-      - "!clouds/bigquery/**/*.md"
+      - ".github/workflows/bigquery.yml"
+  pull_request:
+    paths:
+      - "clouds/bigquery/**"
       - ".github/workflows/bigquery.yml"
   workflow_dispatch:
 
@@ -28,14 +33,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: google-github-actions/auth@v0
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.BQCARTOCI_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
           project_id: ${{ env.BQ_PROJECT_CI }}
@@ -55,8 +58,8 @@ jobs:
         run: |
           cd clouds/bigquery
           make lint && \
-          make deploy && \
-          make test && \
+          make deploy diff="$GIT_DIFF" && \
+          make test diff="$GIT_DIFF" && \
           make remove
 
   deploy-internal:
@@ -74,10 +77,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
-      - uses: google-github-actions/auth@v0
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.BQCARTOCD_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
           project_id: ${{ env.BQ_PROJECT_CD }}
@@ -90,7 +91,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/bigquery
-          make deploy production=1
+          make deploy diff="$GIT_DIFF" production=1
 
   deploy:
     if: github.ref_name == 'master'
@@ -121,10 +122,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(js|sql)'
-          FILES: 'Makefile'
-      - uses: google-github-actions/auth@v0
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.BQCARTO_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
           project_id: ${{ matrix.project }}
@@ -137,7 +136,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/bigquery
-          make deploy production=1
+          make deploy diff="$GIT_DIFF" production=1
 
   publish:
     if: github.ref_name == 'master'
@@ -151,7 +150,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - uses: google-github-actions/auth@v0
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
           project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
