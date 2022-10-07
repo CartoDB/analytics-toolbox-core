@@ -10,13 +10,13 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module clustering
 
-#### Changed
+#### Added
 
 - Move ST_CLUSTERKMEANS function to core.
 
 ### Module random
 
-#### Changed
+#### Added
 
 - Move ST_GENERATEPOINTS function to core.
 
