@@ -57,15 +57,18 @@ endif
 	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql
 
 upload-sql:
-	echo "- Installing functions"
+	echo "- Installing create functions"
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/modules.sql $(SQL_DEPLOY_PATH)/modules.sql
+	echo "- Create functions installed"
 
 create-udfs:
+	echo "- Running create functions"
 	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/modules.sql!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
 	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
 	echo "- Removing install script from the workspace"
 	databricks workspace rm -r $(SQL_DEPLOY_PATH)
+	echo "- Create functions ran"
 
 deploy: check build
 	echo "Deploying modules..."
