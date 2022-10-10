@@ -35,7 +35,7 @@ trait HiveTestEnvironment extends TestEnvironment { self: Suite with BeforeAndAf
       .fromFile(new File(path).toURI)
       .using(_.mkString.split(";").toList.map(_.trim).filter(_.nonEmpty))
 
-  def spatialFunctions: List[String] = loadSQL("../core/scr/main/resources/sql/modules.sql")
+  def spatialFunctions: List[String] = loadSQL("../core/src/main/resources/sql/modules.sql")
 
   // function to override Hive SQL functions registration
   def registerHiveUDFs(ssc: SparkSession): Unit =
