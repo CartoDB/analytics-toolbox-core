@@ -76,3 +76,4 @@ remove: check
 clean:
 	echo "Cleaning libraries..."
 	(cd "$(SCALA_DIR)" && exec sbt clean)
+	rm $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
