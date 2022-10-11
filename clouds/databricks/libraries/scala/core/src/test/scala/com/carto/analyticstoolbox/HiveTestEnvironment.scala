@@ -30,10 +30,14 @@ import scala.util.Properties
 trait HiveTestEnvironment extends TestEnvironment { self: Suite with BeforeAndAfterAll =>
   import HiveTestEnvironment._
 
-  def loadSQL(path: String): List[String] =
+  def loadSQL(path: String): List[String] = {
+    // Functions with SQL definitions (such as VERSION_CORE) cannot be defined in Spark SQL
+    // so we will filter them out.
+    val sparkFunction = """(?i)\ACREATE OR REPLACE FUNCTION [^\)]+ AS \'"""
     Source
       .fromFile(new File(path).toURI)
-      .using(_.mkString.split(";").toList.map(_.trim).filter(_.nonEmpty))
+      .using(_.mkString.split(";").toList.map(_.trim).filter(_.nonEmpty).filter(_ matches sparkFunction))
+  }
 
   def spatialFunctions: List[String] = loadSQL("../core/src/main/resources/sql/modules.sql")
 
