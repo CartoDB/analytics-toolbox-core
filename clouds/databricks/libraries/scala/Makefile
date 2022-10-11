@@ -65,7 +65,7 @@ install-jars:
 
 test:
 	echo "Testing libraries..."
-	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql $(DB_SCHEMA)
+	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
 	(cd "$(SCALA_DIR)" && exec sbt test)
 
 remove: check

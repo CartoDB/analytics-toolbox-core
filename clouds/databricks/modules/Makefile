@@ -54,7 +54,7 @@ ifndef DB_SCHEMA
 	echo "- Databricks schema not defined, using default"
 	$(eval DB_SCHEMA := default)
 endif
-	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql
+	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
 
 upload-sql:
 	echo "- Installing create functions"
