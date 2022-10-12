@@ -38,11 +38,11 @@ remove: check
 	echo "Removing modules..."
 	python3 $(COMMON_DIR)/python_utils/create_drop_functions.py $(BUILD_DIR)/drop.sql
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
-	databricks workspace import --overwrite --language SQL $(SQL_PATH) $(BUILD_DIR)/drop.sql
+	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/drop.sql $(SQL_DEPLOY_PATH)/drop.sql
 	$(MAKE) drop-udfs
 
 drop-udfs:
-	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(BUILD_DIR)/drop.sql!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
+	sed -e 's/@@DB_CLUSTER_ID@@/${DB_CLUSTER_ID}/g' -e 's!@@SQLPath@@!$(SQL_DEPLOY_PATH)/drop.sql!g' $(COMMON_DIR)/submit-run-template.json > $(COMMON_DIR)/submit-run.json
 	databricks runs submit --json-file $(COMMON_DIR)/submit-run.json --wait
 	echo "- Removing drop script from the workspace"
 	databricks workspace rm -r $(SQL_DEPLOY_PATH)
