@@ -17,9 +17,8 @@
 package com.carto.analyticstoolbox.modules.product
 
 import AT_core.BuildInfo
-import com.azavea.hiveless.HUDF
 import com.azavea.hiveless.HGenericUDF
-import com.azavea.hiveless.serializers.{HDeserializer, HSerializer}
+import com.azavea.hiveless.serializers.HSerializer
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDF
 import org.apache.spark.sql.types.DataType
 
