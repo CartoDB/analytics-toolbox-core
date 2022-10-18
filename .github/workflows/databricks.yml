@@ -31,6 +31,8 @@ jobs:
           FILES: 'Makefile'
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
++       with:
++         java-version: adopt@1.8
       - name: Setup node
         uses: actions/setup-node@v1
         with:
