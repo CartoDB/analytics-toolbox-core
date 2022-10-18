@@ -115,7 +115,8 @@ lazy val core = project
   .settings(name := "core")
   .enablePlugins(BuildInfoPlugin)
   .settings(
-    buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+    buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "AT_core"
   )
   .settings(
     libraryDependencies ++= Seq(

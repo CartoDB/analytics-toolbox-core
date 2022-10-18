@@ -3,13 +3,22 @@
 PYTHON3_VERSION = 3
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
-SQL_DEPLOY_PATH = /Shared/$(DB_PREFIX)carto
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
+DB_SCHEMA_DEFAULT = carto
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
+
+ifeq ($(production),1)
+export DB_SCHEMA = $(DB_SCHEMA_DEFAULT)
+else
+export DB_SCHEMA = $(DB_PREFIX)$(DB_SCHEMA_DEFAULT)
+endif
+
+SQL_DEPLOY_PATH = /Shared/$(DB_SCHEMA)
+
 
 .SILENT:
 

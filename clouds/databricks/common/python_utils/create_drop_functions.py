@@ -1,13 +1,24 @@
 import os
 import sys
 
+
 python_util_path = os.path.dirname(os.path.realpath(__file__))
+output_file = os.path.join(python_util_path, '..', '..', 'modules', 'build', 'sql', 'drop.sql')
+schema = None
+
+
+if len(sys.argv) > 1:
+    output_file = sys.argv[1]
+    if len(sys.argv) > 2:
+        schema = sys.argv[2]
 
 
 def get_uninstall_for_module(module_path, queries_list):
-    database = os.getenv('DB_SCHEMA')
+    database = schema
     database = 'default' if database is None else database
     _, _, functions = next(os.walk(module_path))
+    # FIXME: should we read the SQL file, extract the @@DB_SCHEMA@@.function_name
+    # frrom the definition and substitute the schema?
     for function in functions:
         if not function.endswith('.sql'):
             continue
@@ -16,11 +27,7 @@ def get_uninstall_for_module(module_path, queries_list):
 
 
 def write_queries(final_query):
-    if len(sys.argv) > 1:
-        file_path = sys.argv[1]
-    else:
-       file_path = os.path.join(python_util_path, '..', 'dropUDF.sql')
-    with open(file_path, 'w') as file:
+    with open(output_file, 'w') as file:
         file.write(final_query)
 
 

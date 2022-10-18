@@ -9,7 +9,6 @@ SCALA_DIR ?= $(ROOT_DIR)
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_PREFIX)carto-$(PRODUCT)
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
-NEWLINE = ${'\n'} # some versions of sed don't support \n for a newline
 
 include $(COMMON_DIR)/Makefile
 
@@ -63,9 +62,9 @@ install-jars:
 	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
 	echo "- Libraries installed"
 
-test:
+test: venv3
 	echo "Testing libraries..."
-	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
+	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
 	(cd "$(SCALA_DIR)" && exec sbt test)
 
 remove: check

@@ -34,9 +34,9 @@ test: check check-extra venv
 	done; \
 	deactivate
 
-remove: check
+remove: venv3 check
 	echo "Removing modules..."
-	python3 $(COMMON_DIR)/python_utils/create_drop_functions.py $(BUILD_DIR)/drop.sql
+	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_drop_functions.py $(BUILD_DIR)/drop.sql $(DB_SCHEMA)
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/drop.sql $(SQL_DEPLOY_PATH)/drop.sql
 	$(MAKE) drop-udfs
@@ -48,13 +48,13 @@ drop-udfs:
 	databricks workspace rm -r $(SQL_DEPLOY_PATH)
 	echo "- Modules removed"
 
-build: # modules/sql/*.sql -> modules/build/modules.sql
+build: venv3 clean
 	echo "Building modules..."
 ifndef DB_SCHEMA
 	echo "- Databricks schema not defined, using default"
 	$(eval DB_SCHEMA := default)
 endif
-	python3 $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
+	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
 
 upload-sql:
 	echo "- Installing create functions"

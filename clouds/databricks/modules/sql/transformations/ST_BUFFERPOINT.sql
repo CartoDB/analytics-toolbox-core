@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_BUFFERPOINT AS 'com.carto.analyticstoolbox.modules.transformations.ST_BufferPoint';
+CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.ST_BUFFERPOINT AS 'com.carto.analyticstoolbox.modules.transformations.ST_BufferPoint';
