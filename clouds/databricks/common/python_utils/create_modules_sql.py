@@ -10,7 +10,8 @@ def sql_file(file_name):
         sql = file.read()
     if not schema:
         sql = sql.replace('@@DB_SCHEMA@@.', '')
-    return sql.replace('@@DB_SCHEMA@@', schema)
+    else:
+      return sql.replace('@@DB_SCHEMA@@', schema)
 
 if len(sys.argv) > 1:
     output_file = sys.argv[1]
