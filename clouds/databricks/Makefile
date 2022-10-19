@@ -46,7 +46,7 @@ build-libraries:
 build-modules:
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build
-	cp modules/build/modules.sql $(BUILD_DIR)
+	cp modules/build/modules.sql $(BUILD_DIR)/
 
 deploy:
 	$(MAKE) deploy-libraries

@@ -143,8 +143,7 @@ jobs:
       - name: Publish package
         run: |
           cd clouds/databricks
-          gsutil -h "Content-Type:application/zip" -m cp dist/modules*.sql ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/modules*.sql ${{ env.PACKAGE_BUCKET }}/modules-latest.sql
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
           gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:text/plain" -m cp dist/modules*.sql ${{ env.PACKAGE_BUCKET }}/
