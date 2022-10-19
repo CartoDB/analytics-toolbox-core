@@ -36,6 +36,7 @@ def spark(module: String) = Def.setting {
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
 lazy val commonSettings = Seq(
+  version            := "2022.10.19",
   scalaVersion       := scalaVersions.head,
   crossScalaVersions := scalaVersions,
   organization       := "com.carto.analyticstoolbox",

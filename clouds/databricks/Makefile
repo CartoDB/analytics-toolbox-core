@@ -5,7 +5,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
-PACKAGE_VERSION ?= $(lastword $(shell (cd $(ROOT_DIR)/libraries/scala && sbt "show version")))
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
 PACKAGE_NAME ?= carto-analytics-toolbox-core-databricks-$(PACKAGE_VERSION)
 
 include $(COMMON_DIR)/Makefile
