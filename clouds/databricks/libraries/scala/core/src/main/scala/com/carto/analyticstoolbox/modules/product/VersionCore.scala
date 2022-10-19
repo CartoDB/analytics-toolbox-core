@@ -32,6 +32,5 @@ abstract class HUDFNOARGS[R](implicit s: HSerializer[R]) extends HGenericUDF[R] 
 }
 
 class VersionCore extends HUDFNOARGS[String] {
-  // FIXME: use a date version as in other clouds.
   def function: () => String = () => BuildInfo.version
 }

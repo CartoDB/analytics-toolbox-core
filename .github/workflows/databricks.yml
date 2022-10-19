@@ -104,7 +104,7 @@ jobs:
   publish:
     name: Publish Artifacts
     needs: test
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-databricks
