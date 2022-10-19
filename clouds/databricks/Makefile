@@ -5,10 +5,10 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 COMMON_DIR = $(ROOT_DIR)/common
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
+PACKAGE_NAME ?= carto-analytics-toolbox-core-databricks-$(PACKAGE_VERSION)
 
 include $(COMMON_DIR)/Makefile
-
-PACKAGE_NAME ?= carto-analytics-toolbox-core-databricks-$(DB_PACKAGE_VERSION)
 
 .SILENT:
 
@@ -101,12 +101,15 @@ create-headers:
 	$(MAKE) -C libraries/scala create-headers
 
 create-package:
-	echo "- Creating package"
+	echo "- Creating package..."
+	$(MAKE) build production=1
+
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
-	$(MAKE) build production=1
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_NAME)/
 	cp $(BUILD_DIR)/*.jar $(DIST_DIR)/$(PACKAGE_NAME)/
-	echo '{"latest_version": "$(DB_PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
+
+	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
+
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules.sql
