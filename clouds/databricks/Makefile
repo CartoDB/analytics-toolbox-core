@@ -101,7 +101,7 @@ create-headers:
 	$(MAKE) -C libraries/scala create-headers
 
 create-package:
-	echo "- Creating package..."
+	echo "Creating package..."
 	$(MAKE) build production=1
 
 	rm -rf $(DIST_DIR)

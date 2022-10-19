@@ -21,16 +21,18 @@ help:
 	echo "Please choose one of the following targets: help lint build deploy test remove clean publish-local-core ci-release-core create-headers check-headers"
 
 lint:
-	echo "- Linting libraries..."
+	echo "Linting libraries..."
 	(cd "$(SCALA_DIR)" && exec sbt "scalafix")
 
 install:
 	(cd "$(SCALA_DIR)" && exec sbt compile)
 
 build:
+	echo "Building libraries..."
 	echo "- Generating assembly jar $(DB_PACKAGE_VERSION)"
-	(cd "$(SCALA_DIR)" && exec sbt assembly)
+	rm -rf $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)
+	(cd "$(SCALA_DIR)" && exec sbt assembly)
 	cp $(JAR_DIR)/$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar $(BUILD_DIR)/analyticstoolbox-$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar
 
 publish-local-core:

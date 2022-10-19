@@ -8,11 +8,10 @@ DB_SCHEMA_DEFAULT = carto
 COMMON_ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 ifeq ($(production),1)
-export DB_PACKAGE_VERSION ?= $(shell cat $(COMMON_ROOT_DIR)/../version)
+export DB_PACKAGE_VERSION = $(shell cat $(COMMON_ROOT_DIR)/../version)
 else
-export DB_PACKAGE_VERSION ?= $(shell cat $(COMMON_ROOT_DIR)/../version)-dev-SNAPSHOT
+export DB_PACKAGE_VERSION = $(shell cat $(COMMON_ROOT_DIR)/../version)-dev-SNAPSHOT
 endif
-
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
