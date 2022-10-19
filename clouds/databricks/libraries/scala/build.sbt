@@ -36,7 +36,7 @@ def spark(module: String) = Def.setting {
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
 lazy val commonSettings = Seq(
-  version            := "2022.10.19",
+  version            := sys.env("DB_PACKAGE_VERSION"),
   scalaVersion       := scalaVersions.head,
   crossScalaVersions := scalaVersions,
   organization       := "com.carto.analyticstoolbox",
@@ -83,16 +83,8 @@ lazy val commonSettings = Seq(
   sonatypeProfileName    := "com.carto",
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
-  version := {
-    val orig = version.value
-    if (orig.endsWith("-SNAPSHOT")) version.value.split("\\+").head + "-SNAPSHOT"
-    else orig
-  },
-  dynver := {
-    val orig = version.value
-    if (orig.endsWith("-SNAPSHOT")) version.value.split("\\+").head
-    else orig
-  },
+  version := version.value,
+  dynver := version.value,
   // settings for the linter (scalaFIX)
   semanticdbEnabled := true,                        // enable SemanticDB
   semanticdbVersion := scalafixSemanticdb.revision, // only required for Scala 2.x

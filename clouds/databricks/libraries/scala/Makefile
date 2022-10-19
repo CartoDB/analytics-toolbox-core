@@ -9,7 +9,7 @@ SCALA_DIR ?= $(ROOT_DIR)
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_SCHEMA)-$(PRODUCT)
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
-BUILD_DIR = $(ROOT_DIR)/../build
+BUILD_DIR = $(ROOT_DIR)/build
 
 include $(COMMON_DIR)/Makefile
 
@@ -28,10 +28,10 @@ install:
 	(cd "$(SCALA_DIR)" && exec sbt compile)
 
 build:
-	echo "- Generating assembly jar"
+	echo "- Generating assembly jar $(DB_PACKAGE_VERSION)"
 	(cd "$(SCALA_DIR)" && exec sbt assembly)
 	mkdir -p $(BUILD_DIR)
-	cp $(JAR_DIR)/$(PRODUCT)-assembly-*.jar $(BUILD_DIR)/analyticstoolbox-$(PRODUCT)-assembly.jar
+	cp $(JAR_DIR)/$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar $(BUILD_DIR)/analyticstoolbox-$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar
 
 publish-local-core:
 	echo "- Publishing libraries in local repository"
@@ -57,12 +57,12 @@ deploy: check
 upload-jars: clean build
 	echo "- Uploading jars"
 	dbfs mkdirs $(JAR_DEPLOY_PATH)
-	dbfs cp --overwrite $(JAR_DIR)/$(PRODUCT)-assembly-*.jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
+	dbfs cp --overwrite $(JAR_DIR)/$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar
 	echo "- Jars uploaded"
 
 install-jars:
 	echo "- Installing jars"
-	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
+	databricks libraries install --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar
 	echo "- Libraries installed"
 
 test: venv3
@@ -72,7 +72,7 @@ test: venv3
 
 remove: check
 	echo "Removing libraries..."
-	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly.jar
+	databricks libraries uninstall --cluster-id $(DB_CLUSTER_ID) --jar $(JAR_DEPLOY_PATH)/analyticstoolbox-$(PRODUCT)-assembly-$(DB_PACKAGE_VERSION).jar
 	dbfs rm -r $(JAR_DEPLOY_PATH)/
 
 clean:
