@@ -11,12 +11,6 @@ output_file = sys.argv[2]
 schema = sys.argv[3] if len(sys.argv) > 3 else None
 
 
-if len(sys.argv) > 1:
-    output_file = sys.argv[1]
-    if len(sys.argv) > 2:
-        schema = sys.argv[2]
-
-
 def get_uninstall_for_module(module_path, queries_list):
     database = schema
     database = 'default' if database is None else database
