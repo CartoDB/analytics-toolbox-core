@@ -6,10 +6,10 @@ ENV_DIR ?= $(ROOT_DIR)/../..
 PRODUCT ?= core
 COMMON_DIR = $(ROOT_DIR)/../../common
 SCALA_DIR ?= $(ROOT_DIR)
+SQL_DIR ?= $(ROOT_DIR)/../../modules/sql
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_SCHEMA)-$(PRODUCT)
-SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
-BUILD_DIR = $(ROOT_DIR)/build
+BUILD_DIR ?= $(ROOT_DIR)/build
 
 include $(COMMON_DIR)/Makefile
 
@@ -69,7 +69,7 @@ install-jars:
 
 test: venv3
 	echo "Testing libraries..."
-	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
+	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(SQL_DIR) $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
 	(cd "$(SCALA_DIR)" && exec sbt test)
 
 remove: check

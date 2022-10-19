@@ -6,7 +6,7 @@ ENV_DIR ?= $(ROOT_DIR)/..
 TEST_DIR ?= $(ROOT_DIR)/test
 SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR = $(ROOT_DIR)/../common
-BUILD_DIR = $(ROOT_DIR)/build
+BUILD_DIR ?= $(ROOT_DIR)/build
 
 include $(COMMON_DIR)/Makefile
 
@@ -31,7 +31,7 @@ ifndef DB_SCHEMA
 	echo "- Databricks schema not defined, using default"
 	$(eval DB_SCHEMA := default)
 endif
-	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
+	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(SQL_DIR) $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
 
 deploy: check build
 	echo "Deploying modules..."
@@ -63,7 +63,7 @@ test: check check-extra venv
 
 remove: venv3 check
 	echo "Removing modules..."
-	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_drop_functions.py $(BUILD_DIR)/drop.sql $(DB_SCHEMA)
+	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_drop_functions.py $(SQL_DIR) $(BUILD_DIR)/drop.sql $(DB_SCHEMA)
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/drop.sql $(SQL_DEPLOY_PATH)/drop.sql
 	$(MAKE) drop-udfs

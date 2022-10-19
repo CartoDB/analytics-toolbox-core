@@ -6,11 +6,12 @@ VENV3_BIN = $(VENV3_DIR)/bin
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 DB_SCHEMA_DEFAULT = carto
 COMMON_ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+VERSION_FILE ?= $(COMMON_ROOT_DIR)/../version
 
 ifeq ($(production),1)
-export DB_PACKAGE_VERSION = $(shell cat $(COMMON_ROOT_DIR)/../version)
+export DB_PACKAGE_VERSION = $(shell cat $(VERSION_FILE))
 else
-export DB_PACKAGE_VERSION = $(shell cat $(COMMON_ROOT_DIR)/../version)-dev-SNAPSHOT
+export DB_PACKAGE_VERSION = $(shell cat $(VERSION_FILE))-dev-SNAPSHOT
 endif
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))

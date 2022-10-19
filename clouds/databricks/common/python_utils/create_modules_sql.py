@@ -1,9 +1,15 @@
 import os
 import sys
 
-python_util_path = os.path.dirname(os.path.realpath(__file__))
-output_file = os.path.join(python_util_path, '..', '..', 'modules', 'build', 'sql', 'modules.sql')
-schema = None
+
+if len(sys.argv) < 3 or len(sys.argv) > 4:
+    raise Exception('Parameters: sql-directory, output-file[, schema]')
+
+
+sql_path = sys.argv[1]
+output_file = sys.argv[2]
+schema = sys.argv[3] if len(sys.argv) > 3 else None
+
 
 def sql_file(file_name):
     with open(file_name, 'r') as file:
@@ -14,13 +20,8 @@ def sql_file(file_name):
         sql = sql.replace('@@DB_SCHEMA@@', schema)
     return sql
 
-if len(sys.argv) > 1:
-    output_file = sys.argv[1]
-    if len(sys.argv) > 2:
-        schema = sys.argv[2]
 
 if __name__ == '__main__':
-    sql_path = os.path.join(python_util_path, '..', '..', 'modules', 'sql')
     modules = os.listdir(sql_path)
     # TODO: apply filters (modules, functions, diff)
     sql = ''
