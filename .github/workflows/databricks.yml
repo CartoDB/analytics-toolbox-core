@@ -109,7 +109,6 @@ jobs:
     env:
       PACKAGE_NAME: carto-analytics-toolbox-core-databricks
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks
-      DB_PREFIX: ''
     steps:
       - uses: actions/checkout@v2
         with:
@@ -146,4 +145,4 @@ jobs:
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
           gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:text/plain" -m cp dist/modules*.sql ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:text/plain" -m cp dist/modules-version.sql ${{ env.PACKAGE_BUCKET }}/

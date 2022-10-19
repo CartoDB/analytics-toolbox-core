@@ -7,8 +7,9 @@ PRODUCT ?= core
 COMMON_DIR = $(ROOT_DIR)/../../common
 SCALA_DIR ?= $(ROOT_DIR)
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
-JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_PREFIX)carto-$(PRODUCT)
+JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_SCHEMA)-$(PRODUCT)
 SQL_PATH = $(JAR_DIR)/classes/sql/createUDFs.sql
+BUILD_DIR = $(ROOT_DIR)/../build
 
 include $(COMMON_DIR)/Makefile
 
@@ -29,6 +30,8 @@ install:
 build:
 	echo "- Generating assembly jar"
 	(cd "$(SCALA_DIR)" && exec sbt assembly)
+	mkdir -p $(BUILD_DIR)
+	cp $(JAR_DIR)/$(PRODUCT)-assembly-*.jar $(BUILD_DIR)/analyticstoolbox-$(PRODUCT)-assembly.jar
 
 publish-local-core:
 	echo "- Publishing libraries in local repository"
@@ -76,3 +79,4 @@ clean:
 	echo "Cleaning libraries..."
 	(cd "$(SCALA_DIR)" && exec sbt clean)
 	rm -f $(SCALA_DIR)/$(PRODUCT)/src/main/resources/sql/modules.sql
+	rm -rf $(BUILD_DIR)

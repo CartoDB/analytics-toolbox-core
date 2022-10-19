@@ -56,7 +56,7 @@ ifndef DB_SCHEMA
 endif
 	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
 
-upload-sql:
+upload-sql: build
 	echo "- Installing create functions"
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/modules.sql $(SQL_DEPLOY_PATH)/modules.sql

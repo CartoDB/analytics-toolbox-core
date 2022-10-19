@@ -12,10 +12,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean publish-local-core ci-release-core create-headers
+.PHONY: help lint build deploy test remove clean
 
 help:
-	echo "Please choose one of the following targets: lint build deploy test remove clean publish-local-core ci-release-core create-headers"
+	echo "Available targets: help lint build deploy test remove clean"
 
 lint:
 	$(MAKE) lint-libraries
@@ -41,7 +41,9 @@ build:
 	$(MAKE) build-modules
 
 build-libraries:
+	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C libraries/scala build
+	cp  libraries/build/*.jar $(BUILD_DIR)/
 
 build-modules:
 	mkdir -p $(BUILD_DIR)
@@ -98,12 +100,13 @@ ci-release-core:
 create-headers:
 	$(MAKE) -C libraries/scala create-headers
 
-create-package: clean build
+create-package:
 	echo "- Creating package"
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
+	$(MAKE) build production=1
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_NAME)/
+	cp $(BUILD_DIR)/*.jar $(DIST_DIR)/$(PACKAGE_NAME)/
 	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
-	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules-$(PACKAGE_VERSION).sql
-	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules-latest.sql
+	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules.sql
