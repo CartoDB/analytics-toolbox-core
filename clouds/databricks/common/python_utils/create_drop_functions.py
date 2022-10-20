@@ -17,7 +17,7 @@ def get_uninstall_for_module(module_path, queries_list):
     database = 'default' if database is None else database
     _, _, functions = next(os.walk(module_path))
     # FIXME: should we read the SQL file, extract the @@DB_SCHEMA@@.function_name
-    # frrom the definition and substitute the schema?
+    # from the definition and substitute the schema?
     for function in functions:
         if not function.endswith('.sql'):
             continue
