@@ -53,9 +53,9 @@ create-udfs:
 	databricks workspace rm -r $(SQL_DEPLOY_PATH)
 	echo "- Create functions ran"
 
-test: check check-extra venv
+test: check check-extra venv3
 	echo "Testing modules..."
-	. $(COMMON_DIR)/venv/bin/activate && \
+	. $(VENV3_DIR)/bin/activate && \
 	for module in `ls $(TEST_DIR)`; do \
 		echo "> Module $${module}"; \
 		pytest -rP -p no:warnings -vv $(TEST_DIR)/$${module} || exit 1; \

@@ -30,7 +30,7 @@ SQL_DEPLOY_PATH = /Shared/$(DB_SCHEMA)
 
 .SILENT:
 
-.PHONY: check venv venv3 $(NODE_MODULES_DEV)
+.PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef DB_CLUSTER_ID
@@ -47,13 +47,6 @@ endif
 ifndef DATABRICKS_TOKEN
 	$(error DATABRICKS_TOKEN is undefined)
 endif
-
-venv:
-	virtualenv -p python3 $(COMMON_DIR)/venv -q
-	. $(COMMON_DIR)/venv/bin/activate && \
-	python -m pip install -U pip -q && \
-	pip install -r $(COMMON_DIR)/requirements.txt -q && \
-	deactivate
 
 venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q
