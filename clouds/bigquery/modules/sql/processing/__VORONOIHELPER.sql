@@ -14,21 +14,27 @@ AS """
     if (!geojson) {
         return null;
     }
-    
+
     if (bbox != null && bbox.length != 4) {
         throw new Error('Incorrect bounding box passed to UDF. It should contain the bbox extends, i.e., [xmin, ymin, xmax, ymax]');
     }
 
     const options = {};
 
-    // If the bbox parameter is not included, turf.js will use a default [-180,-85,180,-85] bbox 
+    // If the bbox parameter is not included, turf.js will use a default [-180,-85,180,-85] bbox
     if (bbox != null) {
         options.bbox = bbox;
     }
 
     const featuresCollection = lib.processing.featureCollection(geojson.map(x => lib.processing.feature(JSON.parse(x))));
-    const voronoiPolygons = lib.processing.voronoi(featuresCollection, options);
-    
+
+    // Truncate the point coordinates to 5 decimals, because having two very close distinct points
+    // triggers a bug a in d3-voronoi ("Cannot read properties of null (reading 'circle')")
+    // TODO: consider adding `mutate: true` to the options for performance (but user input will be altered)
+    const truncatedFeatures = processingLib.truncate(featuresCollection, { precision: 5, coordinates: 2 });
+    const voronoiPolygons = lib.processing.voronoi(truncatedFeatures, options);
+
+
     const returnArray = [];
 
     if (typeOfVoronoi === 'poly') {
@@ -36,7 +42,7 @@ AS """
             returnArray.push(JSON.stringify(item.geometry));
         });
     }
-    
+
     if (typeOfVoronoi === 'lines') {
         voronoiPolygons.features.forEach( function(item) {
             let lineFeature = lib.processing.polygonToLine(item.geometry);
