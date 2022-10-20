@@ -1,4 +1,4 @@
-import os
+import os, sys
 from databricks import sql
 
 
@@ -13,3 +13,8 @@ def run_query(query):
         with connection.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchall()
+
+
+if __name__ == '__main__':
+    query = sys.argv[1]
+    run_query(query)
