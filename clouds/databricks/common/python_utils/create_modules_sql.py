@@ -6,7 +6,8 @@ if len(sys.argv) < 3 or len(sys.argv) > 4:
     raise Exception('Parameters: sql-directory, output-file[, schema]')
 
 
-sql_path = sys.argv[1]
+# Use a space rather than : to separate paths for the convenience of using Make's += operator
+sql_paths = sys.argv[1].split(' ')
 output_file = sys.argv[2]
 schema = sys.argv[3] if len(sys.argv) > 3 else None
 
@@ -22,12 +23,12 @@ def sql_file(file_name):
 
 
 if __name__ == '__main__':
-    modules = os.listdir(sql_path)
+    modules = [mod for mods in [os.walk(sql_path) for sql_path in sql_paths] for mod in mods]
     # TODO: apply filters (modules, functions, diff)
     sql = ''
     if schema:
         sql += f'CREATE SCHEMA IF NOT EXISTS {schema};\n'
-    for module_path, c_dir, module_files in os.walk(sql_path):
+    for module_path, c_dir, module_files in modules:
         for file_name in module_files:
             if file_name.endswith(".sql"):
                 file_path = os.path.join(module_path, file_name)
