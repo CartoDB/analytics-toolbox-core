@@ -31,9 +31,8 @@ AS """
     // Truncate the point coordinates to 5 decimals, because having two very close distinct points
     // triggers a bug a in d3-voronoi ("Cannot read properties of null (reading 'circle')")
     // TODO: consider adding `mutate: true` to the options for performance (but user input will be altered)
-    const truncatedFeatures = processingLib.truncate(featuresCollection, { precision: 5, coordinates: 2 });
+    const truncatedFeatures = lib.processing.truncate(featuresCollection, { precision: 5, coordinates: 2 });
     const voronoiPolygons = lib.processing.voronoi(truncatedFeatures, options);
-
 
     const returnArray = [];
 
