@@ -125,6 +125,12 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Release
         run: |
           cd clouds/databricks
