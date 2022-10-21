@@ -26,8 +26,6 @@ if __name__ == '__main__':
     modules = [mod for mods in [os.walk(sql_path) for sql_path in sql_paths] for mod in mods]
     # TODO: apply filters (modules, functions, diff)
     sql = ''
-    if schema:
-        sql += f'CREATE SCHEMA IF NOT EXISTS {schema};\n'
     for module_path, c_dir, module_files in modules:
         for file_name in module_files:
             if file_name.endswith(".sql"):

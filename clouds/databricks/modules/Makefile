@@ -36,6 +36,7 @@ endif
 
 deploy: check build
 	echo "Deploying modules..."
+	$(VENV3_BIN)/python $(COMMON_DIR)/python_utils/run_query.py "CREATE SCHEMA IF NOT EXISTS $(DB_SCHEMA);"
 	$(MAKE) upload-sql
 	$(MAKE) create-udfs
 
