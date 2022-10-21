@@ -3,17 +3,34 @@
 PYTHON3_VERSION = 3
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
-SQL_DEPLOY_PATH = /Shared/$(DB_PREFIX)carto
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
+DB_SCHEMA_DEFAULT = carto
+COMMON_ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+VERSION_FILE ?= $(COMMON_ROOT_DIR)/../version
+
+ifeq ($(production),1)
+export DB_PACKAGE_VERSION = $(shell cat $(VERSION_FILE))
+else
+export DB_PACKAGE_VERSION = $(shell cat $(VERSION_FILE))-dev-SNAPSHOT
+endif
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
+ifeq ($(production),1)
+export DB_SCHEMA = $(DB_SCHEMA_DEFAULT)
+else
+export DB_SCHEMA = $(DB_PREFIX)$(DB_SCHEMA_DEFAULT)
+endif
+
+SQL_DEPLOY_PATH = /Shared/$(DB_SCHEMA)
+
+
 .SILENT:
 
-.PHONY: check venv venv3 $(NODE_MODULES_DEV)
+.PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
 ifndef DB_CLUSTER_ID
@@ -30,13 +47,6 @@ endif
 ifndef DATABRICKS_TOKEN
 	$(error DATABRICKS_TOKEN is undefined)
 endif
-
-venv:
-	virtualenv -p python3 $(COMMON_DIR)/venv -q
-	. $(COMMON_DIR)/venv/bin/activate && \
-	python -m pip install -U pip -q && \
-	pip install -r $(COMMON_DIR)/requirements.txt -q && \
-	deactivate
 
 venv3:
 	virtualenv -p python$(PYTHON3_VERSION) $(VENV3_DIR) -q

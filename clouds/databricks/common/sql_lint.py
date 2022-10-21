@@ -9,13 +9,15 @@ DIALECT = 'databricks'
 
 
 def replace_variables(content):
-    return content.replace('@', '_sqlfluff_'
-    )
+    # FIXME: provisionally we replace database.table names by database_sqlfluffdot_table
+    # to circumvent a problem with the sqlfluff SparkSQL parser
+    # Also note that the parser requires the name not to start with an underscore.
+    # And that fix may convert names to uppercase.
+    return content.replace('@.', '@_SQLFLUFFDOT_').replace('@', 'SQLFLUFF_')
 
 
 def restore_variables(content):
-    return content.replace('_sqlfluff_', '@'
-    )
+    return content.replace('SQLFLUFF_', '@').replace('_SQLFLUFFDOT_', '.')
 
 
 def lint_error(name, error):

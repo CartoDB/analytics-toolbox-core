@@ -18,7 +18,6 @@ jobs:
     env:
       DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
-      DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
       DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
       DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
     steps:
@@ -41,6 +40,8 @@ jobs:
           FILES: 'Makefile'
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
+        with:
+          java-version: adopt@1.8
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -83,7 +84,6 @@ jobs:
     timeout-minutes: 20
     env:
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
-      DB_SCHEMA: ${{ secrets.DB_SCHEMA_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -122,19 +122,38 @@ jobs:
           DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
         run: |
           cd clouds/databricks
-          make deploy
+          make deploy production=1
 
   publish:
     name: Publish Artifacts
     needs: test
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
+    env:
+      PACKAGE_NAME: carto-analytics-toolbox-core-databricks
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Release
         run: |
           cd clouds/databricks
@@ -145,4 +164,14 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         if: ${{ env.SONATYPE_PASSWORD != '' && env.SONATYPE_USERNAME != '' }}
-
+      - name: Create package
+        run: |
+          cd clouds/databricks
+          make create-package
+      - name: Publish package
+        run: |
+          cd clouds/databricks
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/json" -m cp dist/metadata.json ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:text/plain" -m cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/

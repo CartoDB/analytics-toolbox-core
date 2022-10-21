@@ -1,5 +1,5 @@
 import os
-from python_utils.test_utils import run_query
+from python_utils.run_query import run_query
 
 def test_{{functionname_lower}}_success():
     query = "{{query}}"

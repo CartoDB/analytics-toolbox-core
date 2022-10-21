@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_RELATE AS 'com.carto.analyticstoolbox.modules.predicates.ST_Relate';
+CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.ST_RELATE AS 'com.carto.analyticstoolbox.modules.predicates.ST_Relate';
