@@ -126,6 +126,7 @@ jobs:
       - name: Run deploy
         env:
           DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
+          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         run: |
           cd clouds/databricks
           make deploy production=1
