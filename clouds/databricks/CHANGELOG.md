@@ -18,7 +18,6 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Versioning uses YYYY.MM.DD format based on date now
 
-
 ## [2022.09.21] - 2022-09-21
 
 ### All modules

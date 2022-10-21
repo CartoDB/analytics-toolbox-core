@@ -31,7 +31,7 @@ trait HiveTestEnvironment extends TestEnvironment { self: Suite with BeforeAndAf
   import HiveTestEnvironment._
 
   def loadSQL(path: String): List[String] = {
-    // Functions with SQL definitions (such as VERSION_CORE) cannot be defined in Spark SQL
+    // Functions with SQL definitions cannot be defined in Spark SQL
     // so we will filter them out.
     val sparkFunction = """(?i)\ACREATE\s+OR\s+REPLACE\s+FUNCTION\s+[^\(]+\s+AS\s+\'.+"""
     Source
