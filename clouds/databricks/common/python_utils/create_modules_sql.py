@@ -15,6 +15,9 @@ schema = sys.argv[3] if len(sys.argv) > 3 else None
 def sql_file(file_name):
     with open(file_name, 'r') as file:
         sql = file.read()
+    sql = sql.replace('@@DB_VERSION_FUNCTION@@', os.environ['DB_VERSION_FUNCTION'])
+    sql = sql.replace('@@DB_VERSION_CLASS@@', os.environ['DB_VERSION_CLASS'])
+
     if not schema:
         sql = sql.replace('@@DB_SCHEMA@@.', '')
     else:

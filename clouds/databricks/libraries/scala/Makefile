@@ -10,6 +10,8 @@ SQL_DIR ?= $(ROOT_DIR)/../../modules/sql
 JAR_DIR ?= $(SCALA_DIR)/$(PRODUCT)/target/scala-2.12
 JAR_DEPLOY_PATH = dbfs:/FileStore/jars-carto/$(DB_SCHEMA)-$(PRODUCT)
 BUILD_DIR ?= $(ROOT_DIR)/build
+export DB_VERSION_FUNCTION ?= VERSION_CORE
+export DB_VERSION_CLASS ?= VersionCore
 
 include $(COMMON_DIR)/Makefile
 

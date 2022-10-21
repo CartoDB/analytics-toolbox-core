@@ -8,6 +8,8 @@ SQL_DIR ?= $(ROOT_DIR)/sql
 SQL_DIRS += $(ROOT_DIR)/sql
 COMMON_DIR = $(ROOT_DIR)/../common
 BUILD_DIR ?= $(ROOT_DIR)/build
+export DB_VERSION_FUNCTION ?= VERSION_CORE
+export DB_VERSION_CLASS ?= VersionCore
 
 include $(COMMON_DIR)/Makefile
 
