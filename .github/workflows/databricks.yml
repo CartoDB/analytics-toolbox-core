@@ -83,6 +83,8 @@ jobs:
     timeout-minutes: 20
     env:
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
+      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
+      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -102,12 +104,14 @@ jobs:
           FILES: 'Makefile'
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
+        with:
+          java-version: adopt@1.8
       - name: install-databricks-cli
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Create databricks cfg file
-        env:
-            DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         uses: "DamianReeves/write-file-action@v1.0"
+        env:
+          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         with:
           path: /home/runner/.databrickscfg
           write-mode: overwrite
