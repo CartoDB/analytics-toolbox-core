@@ -56,7 +56,7 @@ jobs:
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Create databricks cfg file
         uses: "DamianReeves/write-file-action@v1.0"
-        env: 
+        env:
           DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         with:
           path: /home/runner/.databrickscfg
@@ -106,7 +106,7 @@ jobs:
       - name: install-databricks-cli
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Create databricks cfg file
-        env: 
+        env:
             DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         uses: "DamianReeves/write-file-action@v1.0"
         with:
@@ -117,6 +117,12 @@ jobs:
             host = https://dbc-fbcbc113-2a61.cloud.databricks.com
             token = ${{ env.DATABRICKS_TOKEN }}
             jobs-api-version = 2.1
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Run deploy
         env:
           DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
@@ -157,7 +163,7 @@ jobs:
       - name: Release
         run: |
           cd clouds/databricks
-          make ci-release-core
+          make ci-release-core production=1
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
