@@ -44,17 +44,16 @@ SELECT `carto-os`.carto.ST_DELAUNAYLINES(
 Note that if some points are very close together (about 1 meter) they may be merged and the result may have fewer lines than expected, for example these four points result in two lines:
 
 ```sql
-SELECT `cartodb-data-engineering-team`.jgoizueta_carto.ST_DELAUNAYLINES(
+SELECT `carto-os`.carto.ST_DELAUNAYLINES(
      [
-          ST_GEOGPOINT(4.1829523,43.6347910),
-          ST_GEOGPOINT(4.1829967,43.6347137),
-          ST_GEOGPOINT(4.1829955,43.6347143),
-          ST_GEOGPOINT(4.1829321,43.6347500)
+          ST_GEOGPOINT(4.1829523, 43.6347910),
+          ST_GEOGPOINT(4.1829967, 43.6347137),
+          ST_GEOGPOINT(4.1829955, 43.6347143),
+          ST_GEOGPOINT(4.1829321, 43.6347500)
      ]
 );
 -- [
---   LINESTRING(4.1829321 43.63475, 4.1829967 43.6347137, 4.1829523 43.634791, 4.1829321 43.63475),
---   LINESTRING(4.1829321 43.63475, 4.1829955 43.6347143, 4.1829523 43.634791, 4.1829321 43.63475)
+--   LINESTRING(4.18293 43.63475, 4.183 43.63471, 4.18295 43.63479, 4.18293 43.63475)
 -- ]
 ```
 
