@@ -32,3 +32,19 @@ SELECT carto.ST_DELAUNAYLINES(
 --  "{\"coordinates\":[[-75.833,39.284],[-75.521,39.325],[-75.221,39.125],[-75.833,39.284]],\"type\":\"LineString\"}",
 --  "{\"coordinates\":[[-75.521,39.325],[-75.221,39.125],[-75.6,39.984],[-75.521,39.325]],\"type\":\"LineString\"}"
 ```
+
+Note that if some points are very close together (about 1 meter) they may be merged and the result may have fewer lines than expected, for example these four points result in two lines:
+
+```sql
+SELECT carto.ST_DELAUNAYLINES(
+  ARRAY_CONSTRUCT(
+    '{"coordinates":[4.1829523,43.6347910],"type":"Point"}',
+    '{"coordinates":[4.1829967,43.6347137],"type":"Point"}',
+    '{"coordinates":[4.1829955,43.6347143],"type":"Point"}',
+    '{"coordinates":[4.1829321,43.6347500],"type":"Point"}'
+  )
+);
+-- [
+--   "{\"coordinates\":[[4.18293,43.63475],[4.183,43.63471],[4.18295,43.63479],[4.18293,43.63475]],\"type\":\"LineString\"}"
+-- ]
+```
