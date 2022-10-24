@@ -19,6 +19,7 @@ env:
   GOOGLE_SECRET_MANAGER_PROJECT: cartodb-on-gcp-terraform-ci-cd
 
 jobs:
+
   test:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
@@ -136,10 +137,10 @@ jobs:
           make deploy production=1
 
   publish:
-    name: Publish Artifacts
     needs: test
     if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
+    timeout-minutes: 10
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks
     steps:
@@ -167,15 +168,14 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv
       - name: Release
-        run: |
-          cd clouds/databricks
-          make ci-release-core production=1
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        if: ${{ env.SONATYPE_PASSWORD != '' && env.SONATYPE_USERNAME != '' }}
+        run: |
+          cd clouds/databricks
+          make ci-release-core production=1
       - name: Create package
         run: |
           cd clouds/databricks
