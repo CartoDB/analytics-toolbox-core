@@ -111,9 +111,10 @@ create-package:
 
 	$(MAKE) extra-package
 
-	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
-
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
+
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules.sql
+
+	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 
 extra-package::

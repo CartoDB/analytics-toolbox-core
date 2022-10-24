@@ -25,6 +25,13 @@ else
 export DB_SCHEMA = $(DB_PREFIX)$(DB_SCHEMA_DEFAULT)
 endif
 
+ifdef DB_HOST
+export DATABRICKS_HOST = https://$(DB_HOST)
+endif
+ifdef DB_TOKEN
+export DATABRICKS_TOKEN = $(DB_TOKEN)
+endif
+
 SQL_DEPLOY_PATH = /Shared/$(DB_SCHEMA)
 
 
@@ -38,14 +45,14 @@ ifndef DB_CLUSTER_ID
 endif
 
 check-extra:
-ifndef DATABRICKS_SERVER_HOSTNAME
-	$(error DATABRICKS_SERVER_HOSTNAME is undefined)
+ifndef DB_HTTP_PATH
+	$(error DB_HTTP_PATH is undefined)
 endif
-ifndef DATABRICKS_HTTP_PATH
-	$(error DATABRICKS_HTTP_PATH is undefined)
+ifndef DB_HOST
+	$(error DB_HOST is undefined)
 endif
-ifndef DATABRICKS_TOKEN
-	$(error DATABRICKS_TOKEN is undefined)
+ifndef DB_TOKEN
+	$(error DB_TOKEN is undefined)
 endif
 
 venv3:

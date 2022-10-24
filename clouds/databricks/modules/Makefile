@@ -30,10 +30,6 @@ lint: venv3 $(NODE_MODULES_DEV)
 
 build: venv3 clean
 	echo "Building modules..."
-ifndef DB_SCHEMA
-	echo "- Databricks schema not defined, using default"
-	$(eval DB_SCHEMA := default)
-endif
 	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py "$(SQL_DIRS)" $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
 
 deploy: check build
@@ -42,7 +38,7 @@ deploy: check build
 	$(MAKE) upload-sql
 	$(MAKE) create-udfs
 
-upload-sql: build
+upload-sql:
 	echo "- Installing create functions"
 	databricks workspace mkdirs $(SQL_DEPLOY_PATH)
 	databricks workspace import --overwrite --language SQL $(BUILD_DIR)/modules.sql $(SQL_DEPLOY_PATH)/modules.sql
