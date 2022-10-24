@@ -46,29 +46,23 @@ jobs:
         uses: olafurpg/setup-scala@v11
         with:
           java-version: adopt@1.8
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: Setup python 3
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv
-      - name: install-databricks-cli
+      - name: Setup databricks cli
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Create databricks cfg file
-        uses: "DamianReeves/write-file-action@v1.0"
-        env:
-          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
+        uses: DamianReeves/write-file-action@v1.0
         with:
           path: /home/runner/.databrickscfg
           write-mode: overwrite
           contents: |
             [DEFAULT]
-            host = https://dbc-fbcbc113-2a61.cloud.databricks.com
-            token = ${{ env.DATABRICKS_TOKEN }}
+            host = ${{ env.DATABRICKS_SERVER_HOSTNAME }}
+            token = ${{ steps.secrets.outputs.databricks-ci-token }}
             jobs-api-version = 2.1
       - name: Run linter and tests
         env:
@@ -87,9 +81,9 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
-      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
-      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
+      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CD }}
+      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CD }}
+      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -108,26 +102,24 @@ jobs:
         uses: olafurpg/setup-scala@v11
         with:
           java-version: adopt@1.8
-      - name: install-databricks-cli
-        uses: microsoft/install-databricks-cli@v1.0.0
-      - name: Create databricks cfg file
-        uses: "DamianReeves/write-file-action@v1.0"
-        env:
-          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
-        with:
-          path: /home/runner/.databrickscfg
-          write-mode: overwrite
-          contents: |
-            [DEFAULT]
-            host = https://dbc-fbcbc113-2a61.cloud.databricks.com
-            token = ${{ env.DATABRICKS_TOKEN }}
-            jobs-api-version = 2.1
       - name: Setup python 3
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv
+      - name: Setup databricks cli
+        uses: microsoft/install-databricks-cli@v1.0.0
+      - name: Create databricks cfg file
+        uses: "DamianReeves/write-file-action@v1.0"
+        with:
+          path: /home/runner/.databrickscfg
+          write-mode: overwrite
+          contents: |
+            [DEFAULT]
+            host = ${{ env.DATABRICKS_SERVER_HOSTNAME }}
+            token = ${{ steps.secrets.outputs.databricks-ci-token }}
+            jobs-api-version = 2.1
       - name: Run deploy
         env:
           DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
