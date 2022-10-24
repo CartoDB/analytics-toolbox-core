@@ -26,11 +26,10 @@ The `.env` file contains the variables required to deploy and run the toolbox. R
 ```
 # Databricks
 DB_PREFIX=
-DB_CLUSTER_ID=<cluster-id>
-DB_SCHEMA=<schema>
-DATABRICKS_SERVER_HOSTNAME=<hostname>
-DATABRICKS_HTTP_PATH=<http_path>
-DATABRICKS_TOKEN=<token>
+DB_CLUSTER_ID=<cluster_id>
+DB_HTTP_PATH=<http_path>
+DB_HOST=<hostname>
+DB_TOKEN=<token>
 ```
 
 ## Structure

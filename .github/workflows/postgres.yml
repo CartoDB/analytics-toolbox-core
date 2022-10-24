@@ -96,6 +96,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
       - name: Auth google
         uses: google-github-actions/auth@v0
         with:
@@ -107,8 +113,6 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-      - name: Setup virtualenv
-        run: pip install virtualenv
       - name: Create package
         run: |
           cd clouds/postgres

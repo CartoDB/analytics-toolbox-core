@@ -16,7 +16,7 @@ on:
 env:
   PYTHON3_VERSION: 3.8.11
   GCLOUD_VERSION: 290.0.1
-  GOOGLE_SECRET_MANAGER_PROJECT: cartodb-on-gcp-terraform-ci-cd
+  GOOGLE_SECRET_MANAGER_PROJECT: ${{ secrets.GOOGLE_SECRET_MANAGER_PROJECT }}
 
 jobs:
 
@@ -26,17 +26,18 @@ jobs:
     env:
       DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
-      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CI }}
-      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CI }}
+      DB_HTTP_PATH: ${{ secrets.DB_HTTP_PATH_CI }}
+      DB_HOST: ${{ secrets.DB_HOST_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.CARTODB_ON_GCP_TERRAFORM_CI_CD_SERVICE_ACCOUNT_KEY }}
-      - id: 'secrets'
-        uses: 'google-github-actions/get-secretmanager-secrets@v0'
+      - name: Get secrets
+        id: secrets
+        uses: google-github-actions/get-secretmanager-secrets@v0
         with:
           secrets: |-
             databricks-ci-token:projects/cartodb-on-gcp-terraform-ci-cd/secrets/terraform-databricks-aws-ciuser-token
@@ -54,20 +55,9 @@ jobs:
         run: pip install virtualenv
       - name: Setup databricks cli
         uses: microsoft/install-databricks-cli@v1.0.0
-      - name: Create databricks cfg file
-        uses: DamianReeves/write-file-action@v1.0
-        with:
-          path: /home/runner/.databrickscfg
-          write-mode: overwrite
-          contents: |
-            [DEFAULT]
-            host = ${{ env.DATABRICKS_SERVER_HOSTNAME }}
-            token = ${{ steps.secrets.outputs.databricks-ci-token }}
-            jobs-api-version = 2.1
       - name: Run linter and tests
         env:
-          DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
-          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
+          DB_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         run: |
           cd clouds/databricks
           make lint && \
@@ -82,17 +72,18 @@ jobs:
     timeout-minutes: 20
     env:
       DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CD }}
-      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME_CD }}
-      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH_CD }}
+      DB_HTTP_PATH: ${{ secrets.DB_HTTP_PATH_CD }}
+      DB_HOST: ${{ secrets.DB_HOST_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.CARTODB_ON_GCP_TERRAFORM_CI_CD_SERVICE_ACCOUNT_KEY }}
-      - id: 'secrets'
-        uses: 'google-github-actions/get-secretmanager-secrets@v0'
+      - name: Get secrets
+        id: secrets
+        uses: google-github-actions/get-secretmanager-secrets@v0
         with:
           secrets: |-
             databricks-ci-token:projects/cartodb-on-gcp-terraform-ci-cd/secrets/terraform-databricks-aws-ciuser-token
@@ -110,20 +101,9 @@ jobs:
         run: pip install virtualenv
       - name: Setup databricks cli
         uses: microsoft/install-databricks-cli@v1.0.0
-      - name: Create databricks cfg file
-        uses: "DamianReeves/write-file-action@v1.0"
-        with:
-          path: /home/runner/.databrickscfg
-          write-mode: overwrite
-          contents: |
-            [DEFAULT]
-            host = ${{ env.DATABRICKS_SERVER_HOSTNAME }}
-            token = ${{ steps.secrets.outputs.databricks-ci-token }}
-            jobs-api-version = 2.1
       - name: Run deploy
         env:
-          DATABRICKS_CONFIG_FILE: /home/runner/.databrickscfg
-          DATABRICKS_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
+          DB_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         run: |
           cd clouds/databricks
           make deploy production=1
@@ -136,14 +116,20 @@ jobs:
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Checkout repo
+        uses: actions/checkout@v3
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
         with:
           java-version: adopt@1.8
-      - uses: google-github-actions/auth@v0
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv
+      - name: Auth google
+        uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
           project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
@@ -153,12 +139,6 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-      - name: Setup python 3
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON3_VERSION }}
-      - name: Setup virtualenv
-        run: pip install virtualenv
       - name: Release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
@@ -177,5 +157,5 @@ jobs:
           cd clouds/databricks
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-databricks-latest.zip
-          gsutil -h "Content-Type:application/json" -m cp dist/metadata.json ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:text/plain" -m cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/
