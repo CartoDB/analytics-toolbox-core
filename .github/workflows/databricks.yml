@@ -2,13 +2,20 @@ name: Databricks CI/CD
 
 on:
   push:
+    branches:
+      - master
     paths:
       - "clouds/databricks/**"
-      - "!clouds/databricks/**/*.md"
       - ".github/workflows/databricks.yml"
+  pull_request:
+    paths:
+      - "clouds/databricks/**"
+      - ".github/workflows/databricks.yml"
+  workflow_dispatch:
 
 env:
   PYTHON3_VERSION: 3.8.11
+  GCLOUD_VERSION: 290.0.1
   GOOGLE_SECRET_MANAGER_PROJECT: cartodb-on-gcp-terraform-ci-cd
 
 jobs:
@@ -141,7 +148,6 @@ jobs:
     if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
     env:
-      PACKAGE_NAME: carto-analytics-toolbox-core-databricks
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks
     steps:
       - uses: actions/checkout@v2
@@ -152,7 +158,7 @@ jobs:
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
-          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
@@ -183,6 +189,6 @@ jobs:
         run: |
           cd clouds/databricks
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-databricks-latest.zip
           gsutil -h "Content-Type:application/json" -m cp dist/metadata.json ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:text/plain" -m cp dist/modules.sql ${{ env.PACKAGE_BUCKET }}/
