@@ -110,7 +110,6 @@ jobs:
 
   publish:
     needs: test
-    if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
