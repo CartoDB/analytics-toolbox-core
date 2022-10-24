@@ -42,9 +42,6 @@ jobs:
             databricks-ci-token:projects/cartodb-on-gcp-terraform-ci-cd/secrets/terraform-databricks-aws-ciuser-token
       - name: Check diff
         uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(py|scala)'
-          FILES: 'Makefile'
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
         with:
@@ -107,9 +104,6 @@ jobs:
             databricks-ci-token:projects/cartodb-on-gcp-terraform-ci-cd/secrets/terraform-databricks-aws-ciuser-token
       - name: Check diff
         uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: '**/*.+(py|scala)'
-          FILES: 'Makefile'
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
         with:
@@ -155,6 +149,8 @@ jobs:
           fetch-depth: 0
       - name: Setup scala
         uses: olafurpg/setup-scala@v11
+        with:
+          java-version: adopt@1.8
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
