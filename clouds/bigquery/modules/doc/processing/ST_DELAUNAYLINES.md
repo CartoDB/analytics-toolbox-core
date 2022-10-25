@@ -17,7 +17,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 `ARRAY<GEOGRAPHY>`
 
 {{% customSelector %}}
-**Example**
+**Examples**
 {{%/ customSelector %}}
 
 ``` sql

@@ -16,7 +16,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY`
 
-**Example**
+**Examples**
 
 ``` sql
 SELECT carto.ST_DELAUNAYLINES(
