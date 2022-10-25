@@ -53,7 +53,7 @@ def fix_and_lint(script):
         return has_error
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and sys.argv[1]:
     scripts = sys.argv[1].split(' ')
     ignored_files = sys.argv[3]
     if ignored_files:
