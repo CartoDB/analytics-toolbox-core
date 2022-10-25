@@ -14,21 +14,21 @@ AS """
     if (!geojson) {
         return null;
     }
-    
+
     if (bbox != null && bbox.length != 4) {
         throw new Error('Incorrect bounding box passed to UDF. It should contain the bbox extends, i.e., [xmin, ymin, xmax, ymax]');
     }
 
     const options = {};
 
-    // If the bbox parameter is not included, turf.js will use a default [-180,-85,180,-85] bbox 
+    // If the bbox parameter is not included, turf.js will use a default [-180,-85,180,-85] bbox
     if (bbox != null) {
         options.bbox = bbox;
     }
 
     const featuresCollection = lib.processing.featureCollection(geojson.map(x => lib.processing.feature(JSON.parse(x))));
     const voronoiPolygons = lib.processing.voronoi(featuresCollection, options);
-    
+
     const returnArray = [];
 
     if (typeOfVoronoi === 'poly') {
@@ -36,7 +36,7 @@ AS """
             returnArray.push(JSON.stringify(item.geometry));
         });
     }
-    
+
     if (typeOfVoronoi === 'lines') {
         voronoiPolygons.features.forEach( function(item) {
             let lineFeature = lib.processing.polygonToLine(item.geometry);

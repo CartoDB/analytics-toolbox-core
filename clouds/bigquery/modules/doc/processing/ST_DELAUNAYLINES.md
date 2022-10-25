@@ -10,12 +10,14 @@ Calculates the Delaunay triangulation of the points provided. An array of line s
 
 * `points`: `ARRAY<GEOGRAPHY>` input to the Delaunay triangulation.
 
+Due to technical limitations of the underlying libraries used, the input points' coordinates are truncated to 5 decimal places in order to avoid problems that happen with close but distinct input points. This limits the precision of the results and can alter slightly the position of the resulting polygons (about 1 meter). This can also result in some points being merged together, so that fewer polygons than expected may result.
+
 **Return type**
 
 `ARRAY<GEOGRAPHY>`
 
 {{% customSelector %}}
-**Example**
+**Examples**
 {{%/ customSelector %}}
 
 ``` sql
@@ -39,7 +41,22 @@ SELECT `carto-os`.carto.ST_DELAUNAYLINES(
 -- LINESTRING(-72.514071762468 36.5823995124737, -73.3262122666779 ...
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+Note that if some points are very close together (about 1 meter) they may be merged and the result may have fewer lines than expected, for example these four points result in two lines:
 
+```sql
+SELECT `carto-os`.carto.ST_DELAUNAYLINES(
+     [
+          ST_GEOGPOINT(4.1829523, 43.6347910),
+          ST_GEOGPOINT(4.1829967, 43.6347137),
+          ST_GEOGPOINT(4.1829955, 43.6347143),
+          ST_GEOGPOINT(4.1829321, 43.6347500)
+     ]
+);
+-- [
+--   LINESTRING(4.18293 43.63475, 4.183 43.63471, 4.18295 43.63479, 4.18293 43.63475)
+-- ]
+```
+
+{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
 * [A NYC subway connection graph using Delaunay triangulation](/analytics-toolbox-bigquery/examples/a-nyc-subway-connection-graph-using-delaunay-triangulation/)
 {{%/ bannerNote %}}
