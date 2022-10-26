@@ -8,7 +8,7 @@ RETURNS ARRAY<GEOGRAPHY>
 AS ((
     WITH distinct_rounded_points AS (
         SELECT ST_GEOGPOINT(x, y) AS point FROM (
-          SELECT DISTINCT ROUND(ST_X(point), 5) AS x, ROUND(ST_Y(point),5) AS y
+          SELECT DISTINCT ROUND(ST_X(point), 5) AS x, ROUND(ST_Y(point), 5) AS y
           FROM UNNEST(inputpoints) AS point
         )
     ),
