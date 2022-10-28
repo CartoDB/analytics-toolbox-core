@@ -106,8 +106,8 @@ create-package:
 
 	$(MAKE) extra-package
 
-	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
-
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
+
+	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 
 extra-package::

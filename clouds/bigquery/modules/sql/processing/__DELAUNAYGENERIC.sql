@@ -6,16 +6,22 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DELAUNAYGENERIC`
 (inputPoints ARRAY<GEOGRAPHY>)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
-    WITH points AS (
+    WITH distinct_rounded_points AS (
+        SELECT ST_GEOGPOINT(x, y) AS point FROM (
+          SELECT DISTINCT ROUND(ST_X(point), 5) AS x, ROUND(ST_Y(point), 5) AS y
+          FROM UNNEST(inputpoints) AS point
+        )
+    ),
+    points AS (
         SELECT
-            ARRAY_AGG(unnested) AS arraypoints,
-            MIN(ST_X(unnested)) AS xmin,
-            MIN(ST_Y(unnested)) AS ymin,
-            MAX(ST_X(unnested)) AS xmax,
-            MAX(ST_Y(unnested)) AS ymax,
-            ABS(MAX(ST_X(unnested)) - MIN(ST_X(unnested))) AS xextent,
-            ABS(MAX(ST_Y(unnested)) - MIN(ST_Y(unnested))) AS yextent
-        FROM UNNEST(inputpoints) AS unnested
+            ARRAY_AGG(point) AS arraypoints,
+            MIN(ST_X(point)) AS xmin,
+            MIN(ST_Y(point)) AS ymin,
+            MAX(ST_X(point)) AS xmax,
+            MAX(ST_Y(point)) AS ymax,
+            ABS(MAX(ST_X(point)) - MIN(ST_X(point))) AS xextent,
+            ABS(MAX(ST_Y(point)) - MIN(ST_Y(point))) AS yextent
+        FROM distinct_rounded_points
     ),
 
     voronoi AS (
@@ -37,7 +43,7 @@ AS ((
                 ST_GEOHASH(unnestedpoints) AS geoid
             ) AS dual
         FROM
-            UNNEST(inputpoints) AS unnestedpoints,
+            points, UNNEST(arraypoints) AS unnestedpoints,
             voronoi, UNNEST(voronoiarray) AS unnestedvoronoi
         WHERE ST_CONTAINS(unnestedvoronoi, unnestedpoints)
     )

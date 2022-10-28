@@ -32,6 +32,6 @@ AS (
     ST_GEOGFROMGEOJSON(
         `@@BQ_DATASET@@.__BUFFER`(
             ST_ASGEOJSON(geog), radius, units, steps
-        )
+        ), make_valid => TRUE
     )
 );

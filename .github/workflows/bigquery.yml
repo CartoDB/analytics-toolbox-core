@@ -16,6 +16,7 @@ on:
 env:
   NODE_VERSION: 14
   PYTHON3_VERSION: 3.8.10
+  GCLOUD_VERSION: 290.0.1
 
 jobs:
 
@@ -23,7 +24,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
-      GCLOUD_VERSION: 290.0.1
       BQ_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       BQ_PROJECT: ${{ secrets.BQ_PROJECT_CI }}
       BQ_BUCKET: ${{ secrets.BQ_BUCKET_CI }}
@@ -68,7 +68,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      GCLOUD_VERSION: 290.0.1
       BQ_PROJECT: ${{ secrets.BQ_PROJECT_CD }}
       BQ_BUCKET: ${{ secrets.BQ_BUCKET_CD }}
       BQ_REGION: ${{ secrets.BQ_REGION_CD }}
@@ -110,7 +109,6 @@ jobs:
             bucket: gs://spatialextension_os
             permissions: '[{"specialGroup":"allAuthenticatedUsers","role":"READER"}]'
     env:
-      GCLOUD_VERSION: 290.0.1
       BQ_REGION: ${{ matrix.region }}
       BQ_PROJECT: ${{ matrix.project }}
       BQ_BUCKET: ${{ matrix.bucket }}
@@ -144,7 +142,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
-      PACKAGE_NAME: carto-analytics-toolbox-core-bigquery
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/bigquery
       BQ_BUCKET: 'gs://@@BUCKET@@'
     steps:
@@ -154,7 +151,7 @@ jobs:
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
-          project_id: ${{ env.GCLOUD_PRODUCTION_PROJECT }}
+          project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
@@ -169,5 +166,5 @@ jobs:
         run: |
           cd clouds/bigquery
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/${{ env.PACKAGE_NAME }}-latest.zip
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-bigquery-latest.zip
           gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/

@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.10.24] - 2022-10-24
+
+### Module processing
+
+#### Fixed
+
+- Prevent error in ST_VORONOIPOLYGONS, ST_VORONOILINES, ST_VORONOIPOLYGONS, ST_DELAUNAYLINES when points where too close together by rounding input coordinates to 5 decimal places
+
 ## [2022.10.07] - 2022-10-07
 
 ### Module clustering

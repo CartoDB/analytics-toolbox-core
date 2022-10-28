@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_CASTTOPOINT AS 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPoint';
+CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.ST_CASTTOPOINT AS 'com.carto.analyticstoolbox.modules.formatters.ST_CastToPoint';

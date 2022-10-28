@@ -2,7 +2,7 @@ const { runQuery } = require('../../../common/test-utils');
 const fixturesIn = require('./fixtures/st_delaunay_in');
 const fixturesOut = require('./fixtures/st_delaunay_out');
 
-test.skip('ST_DELAUNAYPOLYGONS should work', async () => {
+test('ST_DELAUNAYPOLYGONS should work', async () => {
     const query = `SELECT \`@@BQ_DATASET@@.ST_DELAUNAYPOLYGONS\`(${fixturesIn.input2}) as delaunay`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);

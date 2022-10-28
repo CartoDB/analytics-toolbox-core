@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.10.19] - 2022-10-19
+
+### All modules
+
+#### Added
+
+- Tasks to build installation packages
+
+#### Changed
+
+- Versioning uses YYYY.MM.DD format based on date now
+
 ## [2022.09.21] - 2022-09-21
 
 ### All modules

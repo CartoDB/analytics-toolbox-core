@@ -47,3 +47,9 @@ test('ST_BUFFER should fail with wrong arguments', async () => {
     query = `SELECT \`@@BQ_DATASET@@.ST_BUFFER\`(ST_GEOGFROMGEOJSON('${featureJSON}'), 1, 'kilometers', -10);`;
     await expect(runQuery(query)).rejects.toThrow();
 });
+
+test('ST_BUFFER should not fail with geographies close to the poles', async () => {
+    let query = 'SELECT `@@BQ_DATASET@@.ST_BUFFER`(ST_GEOGPOINT(90, 90), 1, "kilometers", 8);';
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+});

@@ -1,1 +1,1 @@
-CREATE OR REPLACE FUNCTION ST_RELATEBOOL AS 'com.carto.analyticstoolbox.modules.predicates.ST_RelateBool';
+CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.ST_RELATEBOOL AS 'com.carto.analyticstoolbox.modules.predicates.ST_RelateBool';
