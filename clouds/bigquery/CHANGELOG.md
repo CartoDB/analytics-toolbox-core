@@ -6,7 +6,16 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2022.10.26] - 2022-10-26
+## [2022.10.28] - 2022-10-28
+
+### Module s2
+
+#### Added
+
+- Add S2_RESOLUTION function.
+- Add S2_TOCHILDREN function.
+
+## [2022.10.28] - 2022-10-26
 
 ### Module transformations
 
