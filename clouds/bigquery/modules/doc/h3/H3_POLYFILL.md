@@ -6,9 +6,9 @@ carto.H3_POLYFILL(geography, resolution)
 
 **Description**
 
-Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds).
+Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained.
 
-* `geography`: `GEOGRAPHY` **polygon** or **multipolygon** representing the area to cover.
+* `geography`: `GEOGRAPHY` representing the area to cover.
 * `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
 **Return type**
