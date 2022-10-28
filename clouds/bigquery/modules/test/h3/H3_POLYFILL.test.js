@@ -23,13 +23,13 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         SELECT 11 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 16 as resolution UNION ALL
         SELECT 12 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution UNION ALL
 
-        -- Other types are not supported
+        -- Other supported types
         SELECT 13 AS id, ST_GEOGFROMTEXT('POINT(0 0)') as geom, 15 as resolution UNION ALL
         SELECT 14 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)') as geom, 15 as resolution UNION ALL
-        SELECT 15 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)') as geom, 15 as resolution UNION ALL
-        SELECT 16 AS id, ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 15 as resolution UNION ALL
+        SELECT 15 AS id, ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)') as geom, 3 as resolution UNION ALL
+        SELECT 16 AS id, ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))') as geom, 3 as resolution UNION ALL
         -- 15 is a geometry collection containing only not supported types
-        SELECT 17 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 15 as resolution UNION ALL
+        SELECT 17 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))') as geom, 1 as resolution UNION ALL
         -- Polygon larger than 180 degrees
         SELECT 18 AS id, ST_GEOGFROMGEOJSON('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
         )
@@ -54,11 +54,11 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         null,
         null,
         null,
-        null,
-        null,
-        null,
-        null,
-        null,
+        1,
+        1,
+        2,
+        4,
+        1,
         16110
     ]);
 });
