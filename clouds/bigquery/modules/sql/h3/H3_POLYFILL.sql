@@ -22,8 +22,9 @@ AS ((
     WHEN 12 THEN 20
     WHEN 13 THEN 22
     WHEN 14 THEN 23
+    WHEN 15 THEN 24
     ELSE
-        24
+        NULL
     END
 ));
 
@@ -122,8 +123,12 @@ AS (
     WHEN 0 THEN
         [`@@BQ_DATASET@@.H3_FROMGEOGPOINT`(geog, resolution)]
     WHEN 1 THEN
-        `@@BQ_DATASET@@.__H3_LINES_POLYFILL`(
-            geog, resolution
+        IF(`@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution) IS NULL,
+               `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`(
+           ST_ASGEOJSON(geog), resolution
+            ),
+            `@@BQ_DATASET@@.__H3_LINES_POLYFILL`(
+            geog, resolution)
         )
     ELSE
        `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`(
