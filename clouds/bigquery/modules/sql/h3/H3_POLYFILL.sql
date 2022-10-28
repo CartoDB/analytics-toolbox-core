@@ -104,10 +104,11 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_LINES_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-  WITH t AS (
-  SELECT `@@BQ_DATASET@@.H3_FROMGEOGPOINT`(ST_CENTROID(`@@BQ_DATASET@@.S2_BOUNDARY`(s2_index)), resolution) AS h3_cell
-  FROM UNNEST(S2_COVERINGCELLIDS(geog, max_level => `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution), min_level => `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution), max_cells => 1000000)) AS s2_index
-  )
+    WITH t AS (
+        SELECT `@@BQ_DATASET@@.H3_FROMGEOGPOINT`(ST_CENTROID(`@@BQ_DATASET@@.S2_BOUNDARY`(s2_index)), resolution) AS h3_cell
+        FROM UNNEST(S2_COVERINGCELLIDS(geog, max_level => `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution), min_level => 0, max_cells => 1000000)) AS s2_parent,
+            UNNEST(`@@BQ_DATASET@@.__S2_TOCHILDREN`(s2_parent, `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution))) AS s2_index
+    )
     SELECT ARRAY_AGG(DISTINCT h3_cell)
     FROM t
     WHERE ST_INTERSECTS(`@@BQ_DATASET@@.H3_BOUNDARY`(h3_cell), geog)
