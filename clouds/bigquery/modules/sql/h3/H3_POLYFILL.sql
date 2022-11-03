@@ -23,8 +23,6 @@ AS ((
     WHEN 13 THEN 22
     WHEN 14 THEN 23
     WHEN 15 THEN 24
-    ELSE
-        NULL
     END
 ));
 
