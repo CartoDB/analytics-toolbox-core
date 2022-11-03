@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2022.11.03] - 2022-11-03
+
+### Module h3
+
+#### Changed
+
+- Add linestrings and points support to function H3_POLYFILL.
+
 ## [2022.10.28] - 2022-10-28
 
 ### Module s2
