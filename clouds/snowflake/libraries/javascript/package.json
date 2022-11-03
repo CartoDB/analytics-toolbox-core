@@ -6,12 +6,13 @@
   "license": "BSD-3-Clause",
   "private": true,
   "dependencies": {
-    "@math.gl/web-mercator": "^3.6.2",
     "@mapbox/tile-cover": "3.0.2",
     "@mapbox/tilebelt": "1.0.2",
-    "long": "4.0.0",
+    "@math.gl/web-mercator": "^3.6.2",
+    "@placekey/placekey": "1.0.3",
     "@turf/turf": "6.3.0",
     "h3-js": "3.7.2",
-    "@placekey/placekey": "1.0.3"
+    "long": "4.0.0",
+    "s2-cell-draw": "^1.1.4"
   }
 }
