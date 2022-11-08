@@ -9,7 +9,7 @@ carto.H3_POLYFILL(geography, resolution)
 Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained.
 
 {{% bannerNote type="note" title="warning"%}}
-Lines polyfill is calculated approximating by approximating S2 cells to H3 cells, in some cases some cells might be missing.
+Lines polyfill is calculated by approximating S2 cells to H3 cells, in some cases some cells might be missing.
 {{%/ bannerNote %}}
 
 * `geography`: `GEOGRAPHY` representing the area to cover.
