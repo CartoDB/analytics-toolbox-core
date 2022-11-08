@@ -2,7 +2,31 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`
+(resolution INT64)
+RETURNS INT64
+AS ((
+    CASE resolution
+    WHEN 0 THEN 4
+    WHEN 1 THEN 6
+    WHEN 2 THEN 7
+    WHEN 3 THEN 8
+    WHEN 4 THEN 10
+    WHEN 5 THEN 11
+    WHEN 6 THEN 13
+    WHEN 7 THEN 14
+    WHEN 8 THEN 15
+    WHEN 9 THEN 16
+    WHEN 10 THEN 18
+    WHEN 11 THEN 19
+    WHEN 12 THEN 20
+    WHEN 13 THEN 22
+    WHEN 14 THEN 23
+    WHEN 15 THEN 24
+    END
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`
 (geojson STRING, _resolution INT64)
 RETURNS ARRAY<STRING>
 DETERMINISTIC
@@ -75,11 +99,38 @@ AS """
     return hexes;
 """;
 
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_LINES_POLYFILL`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<STRING>
+AS ((
+    WITH t AS (
+        SELECT `@@BQ_DATASET@@.H3_FROMGEOGPOINT`(ST_CENTROID(`@@BQ_DATASET@@.S2_BOUNDARY`(s2_index)), resolution) AS h3_cell
+        FROM UNNEST(S2_COVERINGCELLIDS(geog, max_level => `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution), min_level => 0, max_cells => 1000000)) AS s2_parent,
+            UNNEST(`@@BQ_DATASET@@.S2_TOCHILDREN`(s2_parent, `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution))) AS s2_index
+    )
+    SELECT ARRAY_AGG(DISTINCT h3_cell)
+    FROM t
+    WHERE ST_INTERSECTS(`@@BQ_DATASET@@.H3_BOUNDARY`(h3_cell), geog)
+));
+
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS (
-    `@@BQ_DATASET@@.__H3_POLYFILL`(
-        ST_ASGEOJSON(geog), resolution
-    )
+    CASE ST_DIMENSION(geog)
+    WHEN 0 THEN
+        [`@@BQ_DATASET@@.H3_FROMGEOGPOINT`(geog, resolution)]
+    WHEN 1 THEN
+        IF(`@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution) IS NULL,
+               `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`(
+           ST_ASGEOJSON(geog), resolution
+            ),
+            `@@BQ_DATASET@@.__H3_LINES_POLYFILL`(
+            geog, resolution)
+        )
+    ELSE
+       `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`(
+           ST_ASGEOJSON(geog), resolution
+       )
+    END
 );
