@@ -3,7 +3,7 @@ name: Snowflake CI/CD
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "clouds/snowflake/**"
       - ".github/workflows/snowflake.yml"
@@ -12,6 +12,7 @@ on:
       - "clouds/snowflake/**"
       - ".github/workflows/snowflake.yml"
   workflow_dispatch:
+  workflow_call:
 
 env:
   NODE_VERSION: 14
@@ -54,7 +55,7 @@ jobs:
           make remove
 
   deploy-internal:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -107,7 +108,7 @@ jobs:
           make deploy-share
 
   publish:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'stable'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 10

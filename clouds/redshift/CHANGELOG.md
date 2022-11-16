@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### All modules
+
+#### Changed
+
+- Adapt to Semver
+
 ## [2022.10.07] - 2022-10-07
 
 ### Module clustering

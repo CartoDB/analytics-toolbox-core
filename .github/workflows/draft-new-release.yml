@@ -1,0 +1,82 @@
+name: "Draft new release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version you want to release in format yyyyy-MM, for example 2022-10'
+        required: true
+
+jobs:
+  draft-new-release:
+    name: "Draft a new release"
+    runs-on: ubuntu-20.04
+    outputs:
+      change_bq: ${{ steps.changes.outputs.bigquery }}
+      change_db: ${{ steps.changes.outputs.databricks }}
+      change_pg: ${{ steps.changes.outputs.postgres }}
+      change_rs: ${{ steps.changes.outputs.redshift }}
+      change_sf: ${{ steps.changes.outputs.snowflake }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            bigquery:
+              - 'clouds/bigquery/version'
+            databricks:
+              - 'clouds/databricks/version'
+            postgres:
+              - 'clouds/postgres/version'
+            redshift:
+              - 'clouds/redshift/version'
+            snowflake:
+              - 'clouds/snowflake/version'
+          base: stable
+      - name: Update bq changelog
+        if: steps.changes.outputs.bigquery == 'true'
+        run: |
+          BQ_VERSION=$(cat clouds/bigquery/version)
+          sed -i "s/\[Unreleased\]/\[${BQ_VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/bigquery/CHANGELOG.md
+      - name: Update databricks changelog
+        if: steps.changes.outputs.databricks == 'true'
+        run: |
+          DB_VERSION=$(cat clouds/snowflake/version)
+          sed -i "s/\[Unreleased\]/\[${DB_VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/databricks/CHANGELOG.md
+      - name: Update postgres changelog
+        if: steps.changes.outputs.postgres == 'true'
+        run: |
+          PG_VERSION=$(cat clouds/snowflake/version)
+          sed -i "s/\[Unreleased\]/\[${PG_VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/postgres/CHANGELOG.md
+      - name: Update redshift changelog
+        if: steps.changes.outputs.redshift == 'true'
+        run: |
+          RS_VERSION=$(cat clouds/snowflake/version)
+          sed -i "s/\[Unreleased\]/\[${RS_VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/redshift/CHANGELOG.md
+      - name: Update snowflake changelog
+        if: steps.changes.outputs.snowflake == 'true'
+        run: |
+          VERSION=$(cat clouds/snowflake/version)
+          echo "SF_VERSION=$VERSION" >> $GITHUB_OUTPUT         
+          sed -i "s/\[Unreleased\]/\[${VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/snowflake/CHANGELOG.md
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: edit changelog versions
+          branch: release/${{ github.event.inputs.version }}
+          create_branch: true
+      - name: Create pull request
+        uses: thomaseizinger/create-pull-request@1.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          head: release/${{ github.event.inputs.version }}
+          base: stable
+          title: Release version ${{ github.event.inputs.version }}
+          reviewers: ${{ github.actor }} # By default, we request a review from the person who triggered the workflow.
+          body: |
+            Hi @${{ github.actor }}!
+            This PR was created in response to a manual trigger of the release workflow here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}.
+            Please, check that the version files and changelogs are correct.
+            This workflow will deploy the DW whose versions have been updated in dedicated environments
+            Merging this PR will create a GitHub release and publish the AT libraries those DW. 

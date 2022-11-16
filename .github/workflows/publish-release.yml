@@ -1,0 +1,101 @@
+name: "Publish new release"
+
+on:
+  pull_request:
+    branches:
+      - stable
+    types:
+      - closed
+
+jobs:
+  release:
+    name: Publish new release
+    runs-on: ubuntu-latest
+    outputs:
+      change_bq: ${{ steps.changes.outputs.bigquery }}
+      change_db: ${{ steps.changes.outputs.databricks }}
+      change_pg: ${{ steps.changes.outputs.postgres }}
+      change_rs: ${{ steps.changes.outputs.redshift }}
+      change_sf: ${{ steps.changes.outputs.snowflake }}
+    # only merged pull requests that begin with 'release/' or 'hotfix/' must trigger this job
+    if: github.event.pull_request.merged == true &&
+      (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
+    steps:
+      - name: Extract version from branch name (for release branches)
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Extract version from branch name (for hotfix branches)
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: ${{ github.event.pull_request.merge_commit_sha }}
+          tag: ${{ env.RELEASE_VERSION }}
+          name: ${{ env.RELEASE_VERSION }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            bigquery:
+              - 'clouds/bigquery/version'
+            databricks:
+              - 'clouds/databricks/version'
+            postgres:
+              - 'clouds/postgres/version'
+            redshift:
+              - 'clouds/redshift/version'
+            snowflake:
+              - 'clouds/snowflake/version'
+          base: stable
+      - name: Create PR from stable into main branch
+        uses: thomaseizinger/create-pull-request@1.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          head: stable
+          base: main
+          title: Merge stable into main branch
+          body: |
+            This PR merges the stable branch back into main.
+            This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
+
+  publish-bq:
+    needs: release
+    if: needs.release.outputs.change_bq == 'true'
+    name: "Publish AT for BigQuery"
+    uses: CartoDB/analytics-toolbox/.github/workflows/bigquery.yml@stable
+
+  publish-db:
+    needs: release
+    if: needs.release.outputs.change_db == 'true'
+    name: "Publish AT for Databricks"
+    uses: CartoDB/analytics-toolbox/.github/workflows/databricks.yml@stable
+
+  publish-pg:
+    needs: release
+    if: needs.release.outputs.change_pg == 'true'
+    name: "Publish AT for Postgres"
+    uses: CartoDB/analytics-toolbox/.github/workflows/postgres.yml@stable
+
+  publish-rs:
+    needs: release
+    if: needs.release.outputs.change_rs == 'true'
+    name: "Publish AT for Redshift"
+    uses: CartoDB/analytics-toolbox/.github/workflows/redshift.yml@stable
+
+
+  publish-sf:
+    needs: release
+    if: needs.release.outputs.change_sf == 'true'
+    name: "Publish AT for Snowflake"
+    uses: CartoDB/analytics-toolbox/.github/workflows/snowflake.yml@stable

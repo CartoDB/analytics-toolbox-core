@@ -3,7 +3,7 @@ name: Databricks CI/CD
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "clouds/databricks/**"
       - ".github/workflows/databricks.yml"
@@ -12,6 +12,7 @@ on:
       - "clouds/databricks/**"
       - ".github/workflows/databricks.yml"
   workflow_dispatch:
+  workflow_call:
 
 env:
   PYTHON3_VERSION: 3.8.11
@@ -66,7 +67,7 @@ jobs:
           make remove
 
   deploy-internal:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -110,7 +111,7 @@ jobs:
 
   publish:
     needs: test
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'stable'
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
