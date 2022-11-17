@@ -21,6 +21,7 @@ jobs:
     if: github.event.pull_request.merged == true &&
       (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     steps:
+      - uses: actions/checkout@v3
       - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
@@ -33,15 +34,6 @@ jobs:
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION=${BRANCH_NAME#hotfix/}
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          commit: ${{ github.event.pull_request.merge_commit_sha }}
-          tag: ${{ env.RELEASE_VERSION }}
-          name: ${{ env.RELEASE_VERSION }}
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: dorny/paths-filter@v2
         id: changes
         with:
@@ -57,8 +49,46 @@ jobs:
             snowflake:
               - 'clouds/snowflake/version'
           base: stable
+      - name: Create release body
+        run: |
+          BQ_VERSION=$(cat clouds/bigquery/version)
+          DB_VERSION=$(cat clouds/databricks/version)
+          PG_VERSION=$(cat clouds/postgres/version)
+          RS_VERSION=$(cat clouds/redshift/version)
+          SF_VERSION=$(cat clouds/snowflake/version)
+          RELEASE_BODY="# Release version ${{ env.RELEASE_VERSION }}"
+          if [[ ${{ steps.changes.outputs.bigquery }} = "true" ]]; then
+            RELEASE_BODY+="\n- Bigquery release version $BQ_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/bigquery/CHANGELOG.md"
+          fi
+          if [[ ${{ steps.changes.outputs.databricks }} = "true" ]]; then
+            RELEASE_BODY+="\n- Databricks release version $DB_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/databricks/CHANGELOG.md"
+          fi
+          if [[ ${{ steps.changes.outputs.postgres }} = "true" ]]; then
+            RELEASE_BODY+="\n- Postgres release version $PG_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/postgres/CHANGELOG.md"
+          fi
+          if [[ ${{ steps.changes.outputs.redshift }} = "true" ]]; then
+            RELEASE_BODY+="\n- Redshift release version $RS_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/redshift/CHANGELOG.md"
+          fi
+          if [[ ${{ steps.changes.outputs.snowflake }} = "true" ]]; then
+            RELEASE_BODY+="\n- Snowflake release version $SF_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/snowflake/CHANGELOG.md"
+          fi
+          echo -e "body - $RELEASE_BODY"
+          echo 'RELEASE_BODY<<EOF' >> $GITHUB_ENV
+          echo -e $RELEASE_BODY >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: ${{ github.event.pull_request.merge_commit_sha }}
+          tag: ${{ env.RELEASE_VERSION }}
+          name: ${{ env.RELEASE_VERSION }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: ${{ env.RELEASE_BODY }}
       - name: Create PR from stable into main branch
         uses: thomaseizinger/create-pull-request@1.2.2
+        id: pull_request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -68,6 +98,11 @@ jobs:
           body: |
             This PR merges the stable branch back into main.
             This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
+      - name: Merge PR if possible
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ steps.pull_request.outputs.number }} --auto --merge
 
   publish-bq:
     needs: release
