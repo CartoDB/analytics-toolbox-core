@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+      - name: Check if release tag exists
+        run: |
+          if [[ $(git ls-remote --tags origin refs/tags/${{ github.event.inputs.version }}) ]]; then
+            echo "## Release ${{ github.event.inputs.version }} already exists"
+            exit 1
+          fi
       - uses: dorny/paths-filter@v2
         id: changes
         with:
