@@ -51,9 +51,8 @@ jobs:
       - name: Update snowflake changelog
         if: steps.changes.outputs.snowflake == 'true'
         run: |
-          VERSION=$(cat clouds/snowflake/version)
-          echo "SF_VERSION=$VERSION" >> $GITHUB_OUTPUT         
-          sed -i "s/\[Unreleased\]/\[${VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/snowflake/CHANGELOG.md
+          SF_VERSION=$(cat clouds/snowflake/version)
+          sed -i "s/\[Unreleased\]/\[${SF_VERSION}\] - ${{ github.event.inputs.version }}/g" clouds/snowflake/CHANGELOG.md
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: edit changelog versions
