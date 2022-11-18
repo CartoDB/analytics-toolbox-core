@@ -89,12 +89,10 @@ jobs:
       - name: Create PR from stable into main branch
         uses: repo-sync/pull-request@v2
         id: pull_request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           source_branch: stable
           destination_branch: main
-          tipr_titletle: Merge stable into main branch
+          pr_title: Merge stable into main branch
           pr_body: |
             This PR merges the stable branch back into main.
             This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
