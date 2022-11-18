@@ -58,19 +58,19 @@ jobs:
           SF_VERSION=$(cat clouds/snowflake/version)
           RELEASE_BODY="# Release version ${{ env.RELEASE_VERSION }}"
           if [[ ${{ steps.changes.outputs.bigquery }} = "true" ]]; then
-            RELEASE_BODY+="\n- Bigquery release version $BQ_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/bigquery/CHANGELOG.md"
+            RELEASE_BODY+="\n- Bigquery release version $BQ_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/bigquery/CHANGELOG.md)"
           fi
           if [[ ${{ steps.changes.outputs.databricks }} = "true" ]]; then
-            RELEASE_BODY+="\n- Databricks release version $DB_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/databricks/CHANGELOG.md"
+            RELEASE_BODY+="\n- Databricks release version $DB_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/databricks/CHANGELOG.md)"
           fi
           if [[ ${{ steps.changes.outputs.postgres }} = "true" ]]; then
-            RELEASE_BODY+="\n- Postgres release version $PG_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/postgres/CHANGELOG.md"
+            RELEASE_BODY+="\n- Postgres release version $PG_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/postgres/CHANGELOG.md)"
           fi
           if [[ ${{ steps.changes.outputs.redshift }} = "true" ]]; then
-            RELEASE_BODY+="\n- Redshift release version $RS_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/redshift/CHANGELOG.md"
+            RELEASE_BODY+="\n- Redshift release version $RS_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/redshift/CHANGELOG.md)"
           fi
           if [[ ${{ steps.changes.outputs.snowflake }} = "true" ]]; then
-            RELEASE_BODY+="\n- Snowflake release version $SF_VERSION - https://github.com/${{ github.repository }}/blob/stable/clouds/snowflake/CHANGELOG.md"
+            RELEASE_BODY+="\n- Snowflake release version $SF_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/snowflake/CHANGELOG.md)"
           fi
           echo -e "body - $RELEASE_BODY"
           echo 'RELEASE_BODY<<EOF' >> $GITHUB_ENV
@@ -87,22 +87,22 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: ${{ env.RELEASE_BODY }}
       - name: Create PR from stable into main branch
-        uses: thomaseizinger/create-pull-request@1.2.2
+        uses: repo-sync/pull-request@v2
         id: pull_request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          head: stable
-          base: main
-          title: Merge stable into main branch
-          body: |
+          source_branch: stable
+          destination_branch: main
+          tipr_titletle: Merge stable into main branch
+          pr_body: |
             This PR merges the stable branch back into main.
             This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
       - name: Merge PR if possible
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
-          gh pr merge ${{ steps.pull_request.outputs.number }} --auto --merge
+          gh pr merge ${{ steps.pull_request.outputs.pr_number }} --auto --merge
 
   publish-bq:
     needs: release

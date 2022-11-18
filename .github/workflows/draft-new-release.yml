@@ -65,15 +65,15 @@ jobs:
           branch: release/${{ github.event.inputs.version }}
           create_branch: true
       - name: Create pull request
-        uses: thomaseizinger/create-pull-request@1.2.2
+        uses: repo-sync/pull-request@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          head: release/${{ github.event.inputs.version }}
-          base: stable
-          title: Release version ${{ github.event.inputs.version }}
-          reviewers: ${{ github.actor }} # By default, we request a review from the person who triggered the workflow.
-          body: |
+          source_branch: release/${{ github.event.inputs.version }}
+          destination_branch: stable
+          pr_title: Release version ${{ github.event.inputs.version }}
+          pr_reviewer: ${{ github.actor }} # By default, we request a review from the person who triggered the workflow.
+          pr_body: |
             This PR was created in response to a manual trigger of the release workflow here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}.
             Please, check that the version files and changelogs are correct.
             This workflow will deploy the DW whose versions have been updated in dedicated environments
