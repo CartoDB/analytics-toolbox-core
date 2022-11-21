@@ -99,6 +99,7 @@ jobs:
             This PR merges the release branch back into main.
             This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
       - name: Merge PR if possible
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
         run: |
