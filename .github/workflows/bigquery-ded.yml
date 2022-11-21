@@ -18,13 +18,29 @@ jobs:
     timeout-minutes: 20
     env:
       GCLOUD_VERSION: 290.0.1
-      BQ_PREFIX: dedicated_${{ github.event.pull_request.number }}_
       BQ_PROJECT: ${{ secrets.BQ_PROJECT_CD }}
       BQ_REGION: ${{ secrets.BQ_REGION_CD }}
       BQ_BUCKET: ${{ secrets.BQ_BUCKET_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Set BQ_PREFIX for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "BQ_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+      - name: Set BQ_PREFIX for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "BQ_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+      - name: Set BQ_PREFIX for regular deploys
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "BQ_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
         uses: actions/setup-node@v1
         with:
