@@ -15,6 +15,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Make cartofante the author and comitter of the release
 
 #### Improvement
+
 - Adapt to Semver
 
 ## [2022.10.07] - 2022-10-07
@@ -45,6 +46,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module quadbin
 
 #### Improvement
+
 - Update functions volatility.
 - QUADBIN_FROMZXY accepting BIGINTs as params instead of INTs.
 
@@ -53,6 +55,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module quadbin
 
 #### Improvement
+
 - Release SQL version of QUADBIN_TOZXY.
 
 ## [2022.06.24] - 2022-06-24
@@ -90,6 +93,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module constructors
 
 #### Improvement
+
 - Deployment schema "carto" instead of "constructors".
 
 #### Removed
@@ -99,6 +103,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module placekey
 
 #### Improvement
+
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
 - Rename PLACEKEY_ASH3 function to PLACEKEY_TOH3.
@@ -111,6 +116,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module processing
 
 #### Improvement
+
 - Deployment schema "carto" instead of "processing".
 
 #### Removed
@@ -120,6 +126,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module s2
 
 #### Improvement
+
 - Deployment schema "carto" instead of "s2".
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
 - Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
@@ -142,6 +149,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Module transformations
 
 #### Improvement
+
 - Deployment schema "carto" instead of "transformations".
 
 #### Removed

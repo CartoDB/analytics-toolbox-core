@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.CARTO_GITHUB_TOKEN }}
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
       - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
@@ -86,7 +86,7 @@ jobs:
           name: ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
-          token: ${{ secrets.CARTO_GITHUB_TOKEN }}
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
           body: ${{ env.RELEASE_BODY }}
       - name: Create PR from release into main branch
         uses: repo-sync/pull-request@v2
@@ -100,7 +100,7 @@ jobs:
             This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
       - name: Merge PR if possible
         env:
-          GITHUB_TOKEN: ${{ secrets.CARTO_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
         run: |
           gh pr merge ${{ steps.pull_request.outputs.pr_number }} --merge
 
