@@ -106,7 +106,7 @@ jobs:
     needs: release
     if: needs.release.outputs.change_bq == 'true'
     name: "Publish AT for BigQuery"
-    uses: CartoDB/analytics-toolbox/.github/workflows/bigquery.yml@stable
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/bigquery.yml@stable
 
   publish-db:
     needs: release
