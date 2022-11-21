@@ -110,12 +110,6 @@ jobs:
     name: "Publish AT for BigQuery"
     uses: CartoDB/analytics-toolbox-core/.github/workflows/bigquery.yml@stable
 
-  publish-db:
-    needs: release
-    if: needs.release.outputs.change_db == 'true'
-    name: "Publish AT for Databricks"
-    uses: CartoDB/analytics-toolbox-core/.github/workflows/databricks.yml@stable
-
   publish-pg:
     needs: release
     if: needs.release.outputs.change_pg == 'true'
@@ -128,9 +122,8 @@ jobs:
     name: "Publish AT for Redshift"
     uses: CartoDB/analytics-toolbox-core/.github/workflows/redshift.yml@stable
 
-
   publish-sf:
     needs: release
     if: needs.release.outputs.change_sf == 'true'
     name: "Publish AT for Snowflake"
-    uses: CartoDB/analytics-toolbox/.github/workflows/snowflake.yml@stable
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/snowflake.yml@stable
