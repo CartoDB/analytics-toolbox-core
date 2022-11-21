@@ -10,6 +10,10 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
 #### Changed
 
 - Adapt to Semver
@@ -18,14 +22,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module clustering
 
-#### Added
+#### New
 
 - Move ST_CLUSTERKMEANS function to core.
 - Move CREATE_CLUSTERKMEANS procedure to core.
 
 ### Module random
 
-#### Added
+#### New
 
 - Move ST_GENERATEPOINTS function to core.
 
@@ -33,7 +37,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Fixed
+#### Fix
 
 - Fix S2_BOUNDARY inverted coordinates.
 
@@ -58,7 +62,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Added
+#### New
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -80,7 +84,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Fixed
+#### Fix
 
 - Refactor of internal __ST_GEOMFROMGEOJSON function to avoid UDFs nestig Redshift limitations
 
@@ -156,7 +160,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Added
+#### New
 
 - Create processing module.
 - Add VERSION function.
@@ -168,7 +172,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Create transformations module.
 - Add VERSION function.
@@ -183,7 +187,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Create s2 module.
 - Add HILBERTQUADKEY_FROMID function.
@@ -205,7 +209,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Added
+#### New
 
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
@@ -218,7 +222,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Added
+#### New
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.

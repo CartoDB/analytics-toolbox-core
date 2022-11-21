@@ -10,6 +10,10 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
 #### Changed
 
 - Adapt to Semver
@@ -18,7 +22,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Fixed
+#### Fix
 
 - Prevent error in ST_VORONOIPOLYGONS, ST_VORONOILINES, ST_VORONOIPOLYGONS, ST_DELAUNAYLINES when points where too close together by rounding input coordinates to 5 decimal places
 
@@ -26,13 +30,13 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module clustering
 
-#### Added
+#### New
 
 - Move ST_CLUSTERKMEANS function to core.
 
 ### Module random
 
-#### Added
+#### New
 
 - Move ST_GENERATEPOINTS function to core.
 
@@ -40,7 +44,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Fixed
+#### Fix
 
 - Correctly handle large polygons in H3_POLYFILL.
 - Fixed wrong uppercase for quadbin and h3 tile ids
@@ -49,7 +53,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Added
+#### New
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -71,7 +75,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Add ST_BUFFER function.
 
@@ -194,7 +198,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Added
+#### New
 
 - Add KRING_DISTANCES function.
 
@@ -214,7 +218,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Fixed
+#### Fix
 
 - Support GEOMETRYCOLLECTION from ST_ASH3_POLYFILL.
 
@@ -230,7 +234,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Added
+#### New
 
 - Create processing module.
 - Add ST_VORONOIPOLYGONS function.
@@ -244,7 +248,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module accessors
 
-#### Added
+#### New
 
 - Create accessors module.
 - Add ST_ENVELOPE function.
@@ -254,7 +258,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Added
+#### New
 
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
@@ -265,7 +269,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module measurements
 
-#### Added
+#### New
 
 - Create measurements module.
 - Add ST_ANGLE function.
@@ -275,7 +279,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Create transformations module.
 - Add ST_CENTERMEAN function.
@@ -291,7 +295,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Added
+#### New
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.
@@ -303,7 +307,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Create s2 module.
 - Add ID_FROMHILBERTQUADKEY function.
@@ -317,7 +321,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Added
+#### New
 
 - Create h3 module.
 - Add ST_ASH3 function.
