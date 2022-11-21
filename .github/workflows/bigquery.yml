@@ -3,7 +3,7 @@ name: Bigquery CI/CD
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "clouds/bigquery/**"
       - ".github/workflows/bigquery.yml"
@@ -12,6 +12,7 @@ on:
       - "clouds/bigquery/**"
       - ".github/workflows/bigquery.yml"
   workflow_dispatch:
+  workflow_call:
 
 env:
   NODE_VERSION: 14
@@ -63,7 +64,7 @@ jobs:
           make remove
 
   deploy-internal:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -90,10 +91,10 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/bigquery
-          make deploy diff="$GIT_DIFF" production=1
+          make deploy diff="$GIT_DIFF"
 
   deploy:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'stable'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -137,7 +138,7 @@ jobs:
           make deploy diff="$GIT_DIFF" production=1
 
   publish:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'stable'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 10

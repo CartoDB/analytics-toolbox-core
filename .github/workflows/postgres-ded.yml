@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      PG_PREFIX: dedicated_${{ github.event.number }}_
       PG_HOST: ${{ secrets.PG_HOST_CD }}
       PG_DATABASE: ${{ secrets.PG_DATABASE_CD }}
       PG_USER: ${{ secrets.PG_USER_CD }}
@@ -26,6 +25,23 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Set PG_PREFIX for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "PG_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+      - name: Set PG_PREFIX for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "PG_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+      - name: Set PG_PREFIX for regular deploys
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "PG_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
         uses: actions/setup-node@v1
         with:
