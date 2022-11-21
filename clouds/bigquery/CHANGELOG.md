@@ -10,7 +10,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### Changed
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
+#### Improvement
 
 - Adapt to Semver
 
@@ -18,7 +22,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
+#### Improvement
 
 - Add linestrings and points support to function H3_POLYFILL.
 
@@ -26,7 +30,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Add S2_RESOLUTION function.
 - Add S2_TOCHILDREN function.
@@ -35,7 +39,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Fixed
+#### Fix
 
 - Fix ST_BUFFER crashing with geographies close to the poles.
 
@@ -43,7 +47,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Fixed
+#### Fix
 
 - Prevent error in ST_VORONOIPOLYGONS, ST_VORONOILINES, ST_VORONOIPOLYGONS, ST_DELAUNAYLINES when points where too close together by rounding input coordinates to 5 decimal places.
 
@@ -51,13 +55,13 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module clustering
 
-#### Added
+#### New
 
 - Move ST_CLUSTERKMEANS function to core.
 
 ### Module random
 
-#### Added
+#### New
 
 - Move ST_GENERATEPOINTS function to core.
 
@@ -65,7 +69,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Add S2_CENTER function.
 
@@ -73,7 +77,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Fixed
+#### Fix
 
 - Apply make_valid in H3_BOUNDARY.
 
@@ -81,7 +85,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Fixed
+#### Fix
 
 - Correctly handle large polygons in H3_POLYFILL.
 - Fixed wrong uppercase for quadbin and h3 tile ids
@@ -90,7 +94,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Added
+#### New
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -112,7 +116,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
+#### Improvement
 
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
@@ -120,7 +124,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Added
+#### New
 
 - Add H3_CENTER function.
 - Add H3_RESOLUTION function.
@@ -129,7 +133,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module accessors
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "accessors".
 
@@ -139,7 +143,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "constructors".
 
@@ -149,7 +153,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module geohash
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "geohash".
 
@@ -159,7 +163,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "h3".
 - Rename ST_ASH3 function to H3_FROMGEOGPOINT.
@@ -183,7 +187,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module measurements
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "measurements".
 
@@ -194,7 +198,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
@@ -207,7 +211,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "processing".
 
@@ -217,7 +221,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "s2".
 - Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
@@ -236,7 +240,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "transformations".
 
@@ -248,7 +252,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Changed
+#### Improvement
 
 - Rename functions ID_FROMUINT64REPR, UINT64REPR_FROMID to follow convention.
 
@@ -256,7 +260,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
+#### Improvement
 
 - Review HEXRING, KRING functions.
 - Change KRING_INDEXED to KRING_DISTANCES.
@@ -265,7 +269,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Fixed
+#### Fix
 
 - Avoid keeping planar shape in spherical coordinates in ST_BOUNDARY.
 
@@ -273,7 +277,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Fixed
+#### Fix
 
 - Support GEOMETRYCOLLECTION from ST_ASH3_POLYFILL.
 
@@ -281,7 +285,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Added
+#### New
 
 - Add KRING_INDEXED function.
 
@@ -289,7 +293,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module geohash
 
-#### Added
+#### New
 
 - Create geohash module.
 - Add VERSION function.
@@ -299,7 +303,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Add TOKEN_FROMID function.
 - Add ID_FROMTOKEN function.
@@ -310,7 +314,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module accessors
 
-#### Added
+#### New
 
 - Create accessors module.
 - Add ST_ENVELOPE function.
@@ -318,7 +322,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Added
+#### New
 
 - Create processing module.
 - Add ST_VORONOIPOLYGONS function.
@@ -330,7 +334,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Add ST_CONCAVEHULL function.
 
@@ -338,14 +342,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Added
+#### New
 
 - Add ST_BEZIERSPLINE function.
 - Add ST_MAKEELLIPSE function.
 
 ### Module measurements
 
-#### Added
+#### New
 
 - Create measurements module.
 - Add ST_ANGLE function.
@@ -354,7 +358,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Rename module to transformations.
 - Add ST_CENTERMEAN function.
@@ -368,7 +372,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Added
+#### New
 
 - Create constructors module.
 - Add ST_MAKEENVELOPE function.
@@ -379,7 +383,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Create transformation module.
 - Add ST_BUFFER function.
@@ -389,17 +393,17 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
+#### Improvement
 
 - Use hexadecimal as default type instead of int for h3 indexes.
 
-#### Fixed
+#### Fix
 
 - Fix ST_BOUNDARY generating error when not able to parse geometry.
 
 ### Module placekey
 
-#### Changed
+#### Improvement
 
 - Placekey conversions works with hexadecimal h3 indexes instead of int.
 
@@ -407,7 +411,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Added
+#### New
 
 - Create h3 module.
 - Add ST_ASH3 function.
@@ -427,7 +431,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Added
+#### New
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.
@@ -437,7 +441,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Create s2 module.
 - Add ID_FROMHILBERTQUADKEY function.

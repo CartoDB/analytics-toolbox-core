@@ -22,6 +22,8 @@ jobs:
       (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
       - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
@@ -84,51 +86,44 @@ jobs:
           name: ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
           body: ${{ env.RELEASE_BODY }}
-      - name: Create PR from stable into main branch
+      - name: Create PR from release into main branch
         uses: repo-sync/pull-request@v2
         id: pull_request
         with:
-          source_branch: stable
+          source_branch: ${{ github.event.pull_request.head.ref }}
           destination_branch: main
-          pr_title: Merge stable into main branch
+          pr_title: Merge release into main branch
           pr_body: |
-            This PR merges the stable branch back into main.
+            This PR merges the release branch back into main.
             This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
       - name: Merge PR if possible
         env:
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
         run: |
-          gh pr merge ${{ steps.pull_request.outputs.pr_number }} --auto --merge
+          gh pr merge ${{ steps.pull_request.outputs.pr_number }} --merge
 
   publish-bq:
     needs: release
     if: needs.release.outputs.change_bq == 'true'
     name: "Publish AT for BigQuery"
-    uses: CartoDB/analytics-toolbox/.github/workflows/bigquery.yml@stable
-
-  publish-db:
-    needs: release
-    if: needs.release.outputs.change_db == 'true'
-    name: "Publish AT for Databricks"
-    uses: CartoDB/analytics-toolbox/.github/workflows/databricks.yml@stable
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/bigquery.yml@stable
 
   publish-pg:
     needs: release
     if: needs.release.outputs.change_pg == 'true'
     name: "Publish AT for Postgres"
-    uses: CartoDB/analytics-toolbox/.github/workflows/postgres.yml@stable
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/postgres.yml@stable
 
   publish-rs:
     needs: release
     if: needs.release.outputs.change_rs == 'true'
     name: "Publish AT for Redshift"
-    uses: CartoDB/analytics-toolbox/.github/workflows/redshift.yml@stable
-
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/redshift.yml@stable
 
   publish-sf:
     needs: release
     if: needs.release.outputs.change_sf == 'true'
     name: "Publish AT for Snowflake"
-    uses: CartoDB/analytics-toolbox/.github/workflows/snowflake.yml@stable
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/snowflake.yml@stable

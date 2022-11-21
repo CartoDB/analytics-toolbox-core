@@ -10,7 +10,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### Changed
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
+#### Improvement
 
 - Adapt to Semver
 
@@ -18,7 +22,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Added
+#### New
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.

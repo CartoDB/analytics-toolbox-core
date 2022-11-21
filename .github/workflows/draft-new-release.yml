@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
       - name: Check if release tag exists
         run: |
           if [[ $(git ls-remote --tags origin refs/tags/${{ github.event.inputs.version }}) ]]; then
@@ -64,6 +66,8 @@ jobs:
           commit_message: edit changelog versions
           branch: release/${{ github.event.inputs.version }}
           create_branch: true
+          commit_user_name: ${{ secrets.CARTOFANTE_USERNAME }}
+          commit_user_email: ${{ secrets.CARTOFANTE_EMAIL }}
       - name: Create pull request
         uses: repo-sync/pull-request@v2
         with:
