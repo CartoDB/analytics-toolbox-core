@@ -14,8 +14,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Make cartofante the author and comitter of the release
 
-#### Changed
-
+#### Improvement
 - Adapt to Semver
 
 ## [2022.10.19] - 2022-10-19
@@ -26,8 +25,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Tasks to build installation packages
 
-#### Changed
-
+#### Improvement
 - Versioning uses YYYY.MM.DD format based on date now
 
 ## [2022.09.21] - 2022-09-21
@@ -40,16 +38,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Accessors
 
-#### Changed
-
+#### Improvement
 - Change type returned by ST_X and ST_Y to Double
 
 ## [2022.09.20] - 2022-09-20
 
 ### All modules
 
-#### Changed
-
+#### Improvement
 - Set default compression codec to snappy
 
 ## [2022.09.16] - 2022-09-16
@@ -62,8 +58,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add make rule to publis artifact in local and sonatype
 - Add make rule to check and create headers
 
-#### Changed
-
+#### Improvement
 - change makefiles and sbt file to prepare the at advance
 
 ### Module parsers
@@ -76,8 +71,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### Changed
-
+#### Improvement
 - The XY precission of the TWKBWriter is set to 5.
 
 ### Module formatters
@@ -104,8 +98,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### Changed
-
+#### Improvement
 - Refactor databricks cloud to adapt it to the new cloud structure
 
 ## [2022.08.29] - 2022-08-29

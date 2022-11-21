@@ -14,16 +14,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Make cartofante the author and comitter of the release
 
-#### Changed
-
+#### Improvement
 - Adapt to Semver
 
 ## [2022.11.08] - 2022-11-08
 
 ### Module h3
 
-#### Changed
-
+#### Improvement
 - Add linestrings and points support to function H3_POLYFILL.
 
 ## [2022.10.28] - 2022-10-28
@@ -116,8 +114,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
-
+#### Improvement
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
 ## [2022.02.15] - 2022-02-15
@@ -133,8 +130,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module accessors
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "accessors".
 
 #### Removed
@@ -143,8 +139,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "constructors".
 
 #### Removed
@@ -153,8 +148,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module geohash
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "geohash".
 
 #### Removed
@@ -163,8 +157,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "h3".
 - Rename ST_ASH3 function to H3_FROMGEOGPOINT.
 - Rename LONGLAT_ASH3 function to H3_FROMLONGLAT.
@@ -187,8 +180,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module measurements
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "measurements".
 
 #### Removed
@@ -198,8 +190,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
 - Rename PLACEKEY_ASH3 function to PLACEKEY_TOH3.
@@ -211,8 +202,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "processing".
 
 #### Removed
@@ -221,8 +211,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "s2".
 - Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
@@ -240,8 +229,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "transformations".
 
 #### Removed
@@ -252,16 +240,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Changed
-
+#### Improvement
 - Rename functions ID_FROMUINT64REPR, UINT64REPR_FROMID to follow convention.
 
 ## [2021.09.22] - 2021-09-22
 
 ### Module h3
 
-#### Changed
-
+#### Improvement
 - Review HEXRING, KRING functions.
 - Change KRING_INDEXED to KRING_DISTANCES.
 
@@ -393,8 +379,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
-
+#### Improvement
 - Use hexadecimal as default type instead of int for h3 indexes.
 
 #### Fix
@@ -403,8 +388,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Changed
-
+#### Improvement
 - Placekey conversions works with hexadecimal h3 indexes instead of int.
 
 ## [2021.03.31] - 2021-03-31

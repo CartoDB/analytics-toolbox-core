@@ -14,8 +14,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Make cartofante the author and comitter of the release
 
-#### Changed
-
+#### Improvement
 - Adapt to Semver
 
 ## [2022.10.24] - 2022-10-24
@@ -83,16 +82,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
-
+#### Improvement
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
 ## [2021.12.03] - 2021-12-03
 
 ### Module accessors
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "accessors".
 - Rename ST_ENVELOPE function to ST_ENVELOPE_ARR.
 
@@ -102,8 +99,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "constructors".
 
 #### Removed
@@ -112,8 +108,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "h3".
 - Rename ST_ASH3 function to H3_FROMGEOGPOINT.
 - Rename LONGLAT_ASH3 function to H3_FROMLONGLAT.
@@ -136,8 +131,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module measurements
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "measurements".
 
 #### Removed
@@ -148,8 +142,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
 - Rename PLACEKEY_ASH3 function to PLACEKEY_TOH3.
@@ -161,8 +154,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "processing".
 
 #### Removed
@@ -171,8 +163,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "s2".
 - Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
@@ -186,8 +177,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
-
+#### Improvement
 - Deployment schema "carto" instead of "transformations".
 
 #### Removed
@@ -202,8 +192,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Add KRING_DISTANCES function.
 
-#### Changed
-
+#### Improvement
 - Review HEXRING, KRING functions.
 
 ## [2021.09.14] - 2021-09-14
@@ -226,8 +215,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### Changed
-
+#### Improvement
 - Reduce bundle size for every function.
 
 ## [2021.05.26] - 2021-05-26
