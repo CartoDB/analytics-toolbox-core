@@ -6,11 +6,23 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### All modules
+
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
+#### Improvement
+
+- Adapt to Semver
+
 ## [2022.06.24] - 2022-06-24
 
 ### Module quadbin
 
-#### Added
+#### New
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.

@@ -6,18 +6,30 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### All modules
+
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
+#### Improvement
+
+- Adapt to Semver
+
 ## [2022.10.07] - 2022-10-07
 
 ### Module clustering
 
-#### Added
+#### New
 
 - Move ST_CLUSTERKMEANS function to core.
 - Move CREATE_CLUSTERKMEANS procedure to core.
 
 ### Module random
 
-#### Added
+#### New
 
 - Move ST_GENERATEPOINTS function to core.
 
@@ -25,7 +37,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Fixed
+#### Fix
 
 - Fix S2_BOUNDARY inverted coordinates.
 
@@ -33,7 +45,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Changed
+#### Improvement
 
 - Update functions volatility.
 - QUADBIN_FROMZXY accepting BIGINTs as params instead of INTs.
@@ -42,7 +54,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Changed
+#### Improvement
 
 - Release SQL version of QUADBIN_TOZXY.
 
@@ -50,7 +62,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### Added
+#### New
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -72,7 +84,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Fixed
+#### Fix
 
 - Refactor of internal __ST_GEOMFROMGEOJSON function to avoid UDFs nestig Redshift limitations
 
@@ -80,7 +92,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "constructors".
 
@@ -90,7 +102,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
@@ -103,7 +115,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "processing".
 
@@ -113,7 +125,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "s2".
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
@@ -136,7 +148,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Changed
+#### Improvement
 
 - Deployment schema "carto" instead of "transformations".
 
@@ -148,7 +160,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### Added
+#### New
 
 - Create processing module.
 - Add VERSION function.
@@ -160,7 +172,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### Added
+#### New
 
 - Create transformations module.
 - Add VERSION function.
@@ -175,7 +187,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### Added
+#### New
 
 - Create s2 module.
 - Add HILBERTQUADKEY_FROMID function.
@@ -197,7 +209,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### Added
+#### New
 
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
@@ -210,7 +222,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### Added
+#### New
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.
