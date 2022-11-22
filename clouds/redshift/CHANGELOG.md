@@ -10,10 +10,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### Fix
+#### New
 
-- Make cartofante the author and comitter of the release
-- Make Job to publish libraries of each DW inherit the secrets of the parent job
+- Create release workflows
 
 #### Improvement
 
