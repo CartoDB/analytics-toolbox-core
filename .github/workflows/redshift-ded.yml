@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      RS_PREFIX: dedicated_${{ github.event.pull_request.number }}_
       RS_HOST: ${{ secrets.RS_HOST_CD }}
       RS_DATABASE: ${{ secrets.RS_DATABASE_CD }}
       RS_USER: ${{ secrets.RS_USER_CD }}
@@ -30,6 +29,23 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Set RS_PREFIX for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "RS_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+      - name: Set RS_PREFIX for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "RS_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+      - name: Set RS_PREFIX for regular deploys
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "RS_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
         uses: actions/setup-node@v1
         with:

@@ -1,0 +1,134 @@
+name: "Publish new release"
+
+on:
+  pull_request:
+    branches:
+      - stable
+    types:
+      - closed
+
+jobs:
+  release:
+    name: Publish new release
+    runs-on: ubuntu-latest
+    outputs:
+      change_bq: ${{ steps.changes.outputs.bigquery }}
+      change_db: ${{ steps.changes.outputs.databricks }}
+      change_pg: ${{ steps.changes.outputs.postgres }}
+      change_rs: ${{ steps.changes.outputs.redshift }}
+      change_sf: ${{ steps.changes.outputs.snowflake }}
+    # only merged pull requests that begin with 'release/' or 'hotfix/' must trigger this job
+    if: github.event.pull_request.merged == true &&
+      (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
+      - name: Extract version from branch name (for release branches)
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Extract version from branch name (for hotfix branches)
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            bigquery:
+              - 'clouds/bigquery/version'
+            databricks:
+              - 'clouds/databricks/version'
+            postgres:
+              - 'clouds/postgres/version'
+            redshift:
+              - 'clouds/redshift/version'
+            snowflake:
+              - 'clouds/snowflake/version'
+          base: stable
+      - name: Create release body
+        run: |
+          BQ_VERSION=$(cat clouds/bigquery/version)
+          DB_VERSION=$(cat clouds/databricks/version)
+          PG_VERSION=$(cat clouds/postgres/version)
+          RS_VERSION=$(cat clouds/redshift/version)
+          SF_VERSION=$(cat clouds/snowflake/version)
+          RELEASE_BODY="# Release version ${{ env.RELEASE_VERSION }}"
+          if [[ ${{ steps.changes.outputs.bigquery }} = "true" ]]; then
+            RELEASE_BODY+="\n- Bigquery release version $BQ_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/bigquery/CHANGELOG.md)"
+          fi
+          if [[ ${{ steps.changes.outputs.databricks }} = "true" ]]; then
+            RELEASE_BODY+="\n- Databricks release version $DB_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/databricks/CHANGELOG.md)"
+          fi
+          if [[ ${{ steps.changes.outputs.postgres }} = "true" ]]; then
+            RELEASE_BODY+="\n- Postgres release version $PG_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/postgres/CHANGELOG.md)"
+          fi
+          if [[ ${{ steps.changes.outputs.redshift }} = "true" ]]; then
+            RELEASE_BODY+="\n- Redshift release version $RS_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/redshift/CHANGELOG.md)"
+          fi
+          if [[ ${{ steps.changes.outputs.snowflake }} = "true" ]]; then
+            RELEASE_BODY+="\n- Snowflake release version $SF_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/snowflake/CHANGELOG.md)"
+          fi
+          echo -e "body - $RELEASE_BODY"
+          echo 'RELEASE_BODY<<EOF' >> $GITHUB_ENV
+          echo -e $RELEASE_BODY >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: ${{ github.event.pull_request.merge_commit_sha }}
+          tag: ${{ env.RELEASE_VERSION }}
+          name: ${{ env.RELEASE_VERSION }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
+          body: ${{ env.RELEASE_BODY }}
+      - name: Create PR from release into main branch
+        uses: repo-sync/pull-request@v2
+        id: pull_request
+        with:
+          source_branch: ${{ github.event.pull_request.head.ref }}
+          destination_branch: main
+          pr_title: Merge release into main branch
+          pr_body: |
+            This PR merges the release branch back into main.
+            This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
+      - name: Merge PR if possible
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ steps.pull_request.outputs.pr_number }} --merge
+
+  publish-bq:
+    needs: release
+    if: needs.release.outputs.change_bq == 'true'
+    name: "Publish AT for BigQuery"
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/bigquery.yml@stable
+    secrets: inherit
+
+  publish-pg:
+    needs: release
+    if: needs.release.outputs.change_pg == 'true'
+    name: "Publish AT for Postgres"
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/postgres.yml@stable
+    secrets: inherit
+
+  publish-rs:
+    needs: release
+    if: needs.release.outputs.change_rs == 'true'
+    name: "Publish AT for Redshift"
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/redshift.yml@stable
+    secrets: inherit
+
+  publish-sf:
+    needs: release
+    if: needs.release.outputs.change_sf == 'true'
+    name: "Publish AT for Snowflake"
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/snowflake.yml@stable
+    secrets: inherit
