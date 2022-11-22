@@ -12,6 +12,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 #### Fix
 
+- Make Job to publish libraries of each DW inherit the secrets of the parent job
+
+## [0.1.1] - 2022-11
+
+### All modules
+
+#### Fix
+
 - Make cartofante the author and comitter of the release
 
 #### Improvement
