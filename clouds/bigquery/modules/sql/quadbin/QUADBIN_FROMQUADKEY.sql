@@ -14,7 +14,7 @@ AS """
         (1n << 59n) |
         (z << 52n) |
         (xy << (52n - z*2n)) |
-        (0xfffffffffffffn >> (z*2n))).toString();
+        (0xFFFFFFFFFFFFFn >> (z*2n))).toString();
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_FROMQUADKEY`
