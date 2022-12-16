@@ -9,7 +9,7 @@ DETERMINISTIC
 LANGUAGE js
 AS """
     const z = BigInt(quadkey.length);
-    const xy = BigInt(parseInt(quadkey, 4));
+    const xy = BigInt(parseInt(quadkey, 4) || 0);
     return (0x4000000000000000n |
         (1n << 59n) |
         (z << 52n) |

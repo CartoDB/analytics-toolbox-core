@@ -11,5 +11,5 @@ AS """
     const q = BigInt(quadbin);
     const z = (q >> 52n) & 0x1Fn;
     const xy = (q & 0xFFFFFFFFFFFFFn) >> (52n - z*2n);
-    return xy.toString(4).padStart(Number(z), '0');
+    return (z == 0) ? '' : xy.toString(4).padStart(Number(z), '0');
 """;
