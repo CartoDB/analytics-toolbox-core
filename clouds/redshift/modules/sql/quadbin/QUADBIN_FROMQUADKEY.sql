@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_FROMQUADKEY
 (quadkey VARCHAR(MAX))
 RETURNS BIGINT
-STABLE
+IMMUTABLE
 AS $$
     z = len(quadkey)
     xy = int(quadkey or '0', 4)
