@@ -12,6 +12,6 @@ input = [
 
 @pytest.mark.parametrize('quadkey, quadbin', input)
 def test_quadbin_toquadkey(quadkey, quadbin):
-    result = run_query(f"SELECT @@PG_SCHEMA@@.QUADBIN_TOQUADKEY({quadbin})")
+    result = run_query(f'SELECT @@PG_SCHEMA@@.QUADBIN_TOQUADKEY({quadbin})')
     assert len(result[0]) == 1
     assert result[0][0] == quadkey
