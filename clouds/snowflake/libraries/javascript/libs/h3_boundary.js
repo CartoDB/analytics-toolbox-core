@@ -1,27 +1,22 @@
 import { h3IsValid, h3ToGeoBoundary } from '../src/h3/h3_boundary/h3core_custom';
 
-function removeDuplicates (coordinates) {
+function removeNextDuplicates (coordinates) {
     const precision = 0.0000000000001;
-    const uniqueCoordinates = new Set();
+    const uniqueCoordinates = [];
 
-    for (const coordinate of coordinates) {
-        let isUnique = true;
-        for (const uniqueCoordinate of uniqueCoordinates) {
-            if (Math.abs(coordinate[0] - uniqueCoordinate[0]) < precision && Math.abs(coordinate[1] - uniqueCoordinate[1]) < precision) {
-                isUnique = false;
-                break;
-            }
-        }
-        if (isUnique) {
-            uniqueCoordinates.add(coordinate);
+    for (let i = 0; i < coordinates.length; i++) {
+        if (i == coordinates.length - 1 ||
+            (Math.abs(coordinates[i][0] - coordinates[i+1][0]) > precision &&
+             Math.abs(coordinates[i][1] - coordinates[i+1][1]) > precision)) {
+            uniqueCoordinates.push(coordinates[i])
         }
     }
 
-    return [...uniqueCoordinates];
+    return uniqueCoordinates;
 }
 
 export default {
     h3IsValid,
     h3ToGeoBoundary,
-    removeDuplicates
+    removeNextDuplicates
 };
