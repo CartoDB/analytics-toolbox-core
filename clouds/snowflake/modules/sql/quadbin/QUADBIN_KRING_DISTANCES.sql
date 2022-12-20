@@ -9,7 +9,7 @@
 -- 2. If the UDF returns the hex codification of the quadbin to be parsed in a SQL
 -- higher level by using the _QUADBIN_STRING_TOINT UDF a non-correlated query can be produced.
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_KRING_DISTANCES
+CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_KRING_DISTANCES
 (origin BIGINT, size INT)
 RETURNS ARRAY
 IMMUTABLE
