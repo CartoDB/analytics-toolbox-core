@@ -19,12 +19,9 @@ AS $$
     }
 
     const coords = h3BoundaryLib.h3ToGeoBoundary(INDEX, true);
-    let output = `POLYGON((`;
-    for (let i = 0; i < coords.length - 1; i++) {
-        output += coords[i][0] + ` ` + coords[i][1] + `,`;
-    }
-    output += coords[coords.length - 1][0] + ` ` + coords[coords.length - 1][1] + `))`;
-    return output;
+    const uniqueCoords = h3BoundaryLib.removeDuplicates(coords);
+    const polygonCoords = uniqueCoords.concat([uniqueCoords[0]]);
+    return `POLYGON((${polygonCoords.map(c => `${c[0]} ${c[1]}`).join(',')}))`;
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_BOUNDARY
