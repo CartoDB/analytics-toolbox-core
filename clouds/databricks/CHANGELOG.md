@@ -6,23 +6,33 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.1.0] - 2022-11
+## [Unreleased]
+
+## [0.1.1] - 2022-11
 
 ### All modules
 
-#### New
+#### Fix
 
-- Create release workflows
+- Make cartofante the author and comitter of the release
 
 #### Improvement
 
 - Adapt to Semver
 
+## [0.1.0] - 2022-11
+
+### All modules
+
+#### Feature
+
+- Create release workflows
+
 ## [2022.10.19] - 2022-10-19
 
 ### All modules
 
-#### New
+#### Feature
 
 - Tasks to build installation packages
 
@@ -34,7 +44,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### New
+#### Feature
 
 - Add VERSION_CORE function
 
@@ -56,7 +66,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### All modules
 
-#### New
+#### Feature
 
 - Add headers to functions that didn't have
 - Add make rule to publis artifact in local and sonatype
@@ -112,7 +122,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module indexing
 
-#### New
+#### Feature
 
 - Add ST_CRSFROMTEXT function.
 - Add ST_EXTENTFROMGEOM function.
@@ -124,25 +134,25 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module formatters
 
-#### New
+#### Feature
 
 - Add ST_ASTWKB function.
 
 ### Module parsers
 
-#### New
+#### Feature
 
 - Add ST_GEOMFROMWKT function.
 
 ### Module predicates
 
-#### New
+#### Feature
 
 - Add ST_COVERS function.
 
 ### Module transformations
 
-#### New
+#### Feature
 
 - Add ST_BUFFERPOINT function.
 - Add ST_DIFFERENCE function.
@@ -152,7 +162,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module accessors
 
-#### New
+#### Feature
 
 - Add ST_COORDDIM function.
 - Add ST_DIMENSION function.
@@ -173,7 +183,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### New
+#### Feature
 
 - Add ST_MAKEBBOX function.
 - Add ST_MAKEBOX2D function.
@@ -185,7 +195,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module formatters
 
-#### New
+#### Feature
 
 - Add ST_ASBINARY function.
 - Add ST_ASGEOHASH function.
@@ -200,7 +210,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module measurements
 
-#### New
+#### Feature
 
 - Add ST_AREA function.
 - Add ST_DISTANCE function.
@@ -210,7 +220,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module parsers
 
-#### New
+#### Feature
 
 - Add ST_BOX2DFROMGEOHASH function.
 - Add ST_GEOMETRYFROMTEXT function.
@@ -229,7 +239,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module predicates
 
-#### New
+#### Feature
 
 - Add ST_CONTAINS function.
 - Add ST_CROSSES function.
@@ -244,7 +254,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### New
+#### Feature
 
 - Add ST_ANTIMERIDIANSAFEGEOM function.
 - Add ST_BOUNDARY function.
