@@ -6,30 +6,47 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.1.0] - 2022-11
+## [Unreleased]
+
+### Quadbin
+
+#### Feature
+
+- Add QUADBIN_FROMQUADKEY function
+- Add QUADBIN_TOQUADKEY function
+
+## [0.1.1] - 2022-11
 
 ### All modules
 
-#### New
+#### Fix
 
-- Create release workflows
+- Make cartofante the author and comitter of the release
 
 #### Improvement
 
 - Adapt to Semver
 
+## [0.1.0] - 2022-11
+
+### All modules
+
+#### Feature
+
+- Create release workflows
+
 ## [2022.10.07] - 2022-10-07
 
 ### Module clustering
 
-#### New
+#### Feature
 
 - Move ST_CLUSTERKMEANS function to core.
 - Move CREATE_CLUSTERKMEANS procedure to core.
 
 ### Module random
 
-#### New
+#### Feature
 
 - Move ST_GENERATEPOINTS function to core.
 
@@ -62,7 +79,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### New
+#### Feature
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -160,7 +177,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### New
+#### Feature
 
 - Create processing module.
 - Add VERSION function.
@@ -172,7 +189,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### New
+#### Feature
 
 - Create transformations module.
 - Add VERSION function.
@@ -187,7 +204,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### New
+#### Feature
 
 - Create s2 module.
 - Add HILBERTQUADKEY_FROMID function.
@@ -209,7 +226,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### New
+#### Feature
 
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
@@ -222,7 +239,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### New
+#### Feature
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.

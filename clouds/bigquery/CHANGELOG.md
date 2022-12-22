@@ -6,11 +6,28 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Quadbin
+
+#### Add
+
+- Add QUADBIN_FROMQUADKEY function
+- Add QUADBIN_TOQUADKEY function
+
+## [0.1.1] - 2022-11
+
+### All modules
+
+#### Fix
+
+- Make cartofante the author and comitter of the release
+
 ## [0.1.0] - 2022-11
 
 ### All modules
 
-#### New
+#### Feature
 
 - Create release workflows
 
@@ -30,7 +47,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### New
+#### Feature
 
 - Add S2_RESOLUTION function.
 - Add S2_TOCHILDREN function.
@@ -55,13 +72,13 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module clustering
 
-#### New
+#### Feature
 
 - Move ST_CLUSTERKMEANS function to core.
 
 ### Module random
 
-#### New
+#### Feature
 
 - Move ST_GENERATEPOINTS function to core.
 
@@ -69,7 +86,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### New
+#### Feature
 
 - Add S2_CENTER function.
 
@@ -94,7 +111,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module quadbin
 
-#### New
+#### Feature
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -124,7 +141,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### New
+#### Feature
 
 - Add H3_CENTER function.
 - Add H3_RESOLUTION function.
@@ -285,7 +302,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### New
+#### Feature
 
 - Add KRING_INDEXED function.
 
@@ -293,7 +310,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module geohash
 
-#### New
+#### Feature
 
 - Create geohash module.
 - Add VERSION function.
@@ -303,7 +320,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### New
+#### Feature
 
 - Add TOKEN_FROMID function.
 - Add ID_FROMTOKEN function.
@@ -314,7 +331,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module accessors
 
-#### New
+#### Feature
 
 - Create accessors module.
 - Add ST_ENVELOPE function.
@@ -322,7 +339,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module processing
 
-#### New
+#### Feature
 
 - Create processing module.
 - Add ST_VORONOIPOLYGONS function.
@@ -334,7 +351,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### New
+#### Feature
 
 - Add ST_CONCAVEHULL function.
 
@@ -342,14 +359,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### New
+#### Feature
 
 - Add ST_BEZIERSPLINE function.
 - Add ST_MAKEELLIPSE function.
 
 ### Module measurements
 
-#### New
+#### Feature
 
 - Create measurements module.
 - Add ST_ANGLE function.
@@ -358,7 +375,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### New
+#### Feature
 
 - Rename module to transformations.
 - Add ST_CENTERMEAN function.
@@ -372,7 +389,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module constructors
 
-#### New
+#### Feature
 
 - Create constructors module.
 - Add ST_MAKEENVELOPE function.
@@ -383,7 +400,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module transformations
 
-#### New
+#### Feature
 
 - Create transformation module.
 - Add ST_BUFFER function.
@@ -411,7 +428,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module h3
 
-#### New
+#### Feature
 
 - Create h3 module.
 - Add ST_ASH3 function.
@@ -431,7 +448,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module placekey
 
-#### New
+#### Feature
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.
@@ -441,7 +458,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Module s2
 
-#### New
+#### Feature
 
 - Create s2 module.
 - Add ID_FROMHILBERTQUADKEY function.
