@@ -80,7 +80,7 @@ jobs:
           make deploy diff="$GIT_DIFF"
 
   deploy-share:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
