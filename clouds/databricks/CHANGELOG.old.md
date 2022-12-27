@@ -1,30 +1,8 @@
-# Changelog
+# Changelog [old]
 
 CARTO Analytics Toolbox Core for Databricks.
 
-All notable changes to this project will be documented in this file.
-
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-
-## [0.1.1] - 2022-11
-
-### All modules
-
-#### Fix
-
-- Make cartofante the author and comitter of the release
-
-#### Improvement
-
-- Adapt to Semver
-
-## [0.1.0] - 2022-11
-
-### All modules
-
-#### Feature
-
-- Create release workflows
 
 ## [2022.10.19] - 2022-10-19
 

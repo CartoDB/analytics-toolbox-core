@@ -1,44 +1,33 @@
-# Changelog
+# Changelog [old]
 
-CARTO Analytics Toolbox Core for Snowflake.
-
-All notable changes to this project will be documented in this file.
+CARTO Analytics Toolbox Core for BigQuery.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.2.0] - 2022-12
+## [2022.11.08] - 2022-11-08
 
-### Quadbin
-
-#### Feature
-
-- Add QUADBIN_FROMQUADKEY function
-- Add QUADBIN_TOQUADKEY function
-
-#### Fix
-
-- Fix invalid geographies in H3_BOUNDARY
-- Add missing function in public share
-
-## [0.1.1] - 2022-11
-
-### All modules
-
-#### Fix
-
-- Make cartofante the author and comitter of the release
+### Module h3
 
 #### Improvement
 
-- Adapt to Semver
+- Add linestrings and points support to function H3_POLYFILL.
 
-## [0.1.0] - 2022-11
+## [2022.10.28] - 2022-10-28
 
-### All modules
+### Module s2
 
 #### Feature
 
-- Create release workflows
+- Add S2_RESOLUTION function.
+- Add S2_TOCHILDREN function.
+
+## [2022.10.28] - 2022-10-26
+
+### Module transformations
+
+#### Fix
+
+- Fix ST_BUFFER crashing with geographies close to the poles.
 
 ## [2022.10.24] - 2022-10-24
 
@@ -46,7 +35,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 #### Fix
 
-- Prevent error in ST_VORONOIPOLYGONS, ST_VORONOILINES, ST_VORONOIPOLYGONS, ST_DELAUNAYLINES when points where too close together by rounding input coordinates to 5 decimal places
+- Prevent error in ST_VORONOIPOLYGONS, ST_VORONOILINES, ST_VORONOIPOLYGONS, ST_DELAUNAYLINES when points where too close together by rounding input coordinates to 5 decimal places.
 
 ## [2022.10.07] - 2022-10-07
 
@@ -62,6 +51,22 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Move ST_GENERATEPOINTS function to core.
 
+## [2022.09.15] - 2022-09-15
+
+### Module s2
+
+#### Feature
+
+- Add S2_CENTER function.
+
+## [2022.08.09] - 2022-08-09
+
+### Module h3
+
+#### Fix
+
+- Apply make_valid in H3_BOUNDARY.
+
 ## [2022.07.07] - 2022-07-07
 
 ### Module h3
@@ -71,7 +76,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Correctly handle large polygons in H3_POLYFILL.
 - Fixed wrong uppercase for quadbin and h3 tile ids
 
-## [2022.06.24] - 2022-06-24
+## [2022.06.23] - 2022-06-23
 
 ### Module quadbin
 
@@ -88,18 +93,10 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add QUADBIN_KRING_DISTANCES function.
 - Add QUADBIN_POLYFILL function.
 - Add QUADBIN_RESOLUTION function.
-- Add QUADBIN_SIBLINGS function.
+- Add QUADBIN_SIBLING function.
 - Add QUADBIN_TOCHILDREN function.
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
-
-## [2022.04.07] - 2022-04-07
-
-### Module transformations
-
-#### Feature
-
-- Add ST_BUFFER function.
 
 ## [2022.03.21] - 2022-03-21
 
@@ -109,14 +106,22 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
-## [2021.12.03] - 2021-12-03
+## [2022.02.15] - 2022-02-15
+
+### Module h3
+
+#### Feature
+
+- Add H3_CENTER function.
+- Add H3_RESOLUTION function.
+
+## [2021.12.16] - 2021-12-16
 
 ### Module accessors
 
 #### Improvement
 
 - Deployment schema "carto" instead of "accessors".
-- Rename ST_ENVELOPE function to ST_ENVELOPE_ARR.
 
 #### Removed
 
@@ -127,6 +132,16 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 #### Improvement
 
 - Deployment schema "carto" instead of "constructors".
+
+#### Removed
+
+- Remove VERSION function.
+
+### Module geohash
+
+#### Improvement
+
+- Deployment schema "carto" instead of "geohash".
 
 #### Removed
 
@@ -164,8 +179,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 #### Removed
 
-- Remove ST_ANGLE, already present in Snowflake.
-- Remove ST_AZIMUTH, already present in Snowflake.
+- Remove ST_ANGLE, already present in Bigquery.
 - Remove VERSION function.
 
 ### Module placekey
@@ -200,6 +214,10 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
 - Rename LONGLAT_ASID function to S2_FROMLONGLAT.
 - Rename ST_ASID function to S2_FROMGEOGPOINT.
+- Rename ID_FROMTOKEN function to S2_FROMTOKEN.
+- Rename TOKEN_FROMID function to S2_TOTOKEN.
+- Rename ID_FROMUINT64REPR function to S2_FROMUINT64REPR.
+- Rename UINT64REPR_FROMID function to S2_TOUINT64REPR.
 - Rename ST_BOUNDARY function to S2_BOUNDARY.
 
 #### Removed
@@ -216,25 +234,30 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Remove VERSION function.
 
+## [2021.09.23] - 2021-09-23
+
+### Module s2
+
+#### Improvement
+
+- Rename functions ID_FROMUINT64REPR, UINT64REPR_FROMID to follow convention.
+
 ## [2021.09.22] - 2021-09-22
 
 ### Module h3
 
-#### Feature
-
-- Add KRING_DISTANCES function.
-
 #### Improvement
 
 - Review HEXRING, KRING functions.
+- Change KRING_INDEXED to KRING_DISTANCES.
 
 ## [2021.09.14] - 2021-09-14
 
 ### Module s2
 
-#### Changes
+#### Fix
 
-- Compute ST_BOUNDARY from WKT.
+- Avoid keeping planar shape in spherical coordinates in ST_BOUNDARY.
 
 ## [2021.08.24] - 2021-08-24
 
@@ -244,15 +267,44 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Support GEOMETRYCOLLECTION from ST_ASH3_POLYFILL.
 
-## [2021.06.02] - 2021-06-02
+## [2021.08.04] - 2021-08-04
 
 ### Module h3
 
-#### Improvement
+#### Feature
 
-- Reduce bundle size for every function.
+- Add KRING_INDEXED function.
 
-## [2021.05.26] - 2021-05-26
+## [2021.07.30] - 2021-07-30
+
+### Module geohash
+
+#### Feature
+
+- Create geohash module.
+- Add VERSION function.
+- Add ST_BOUNDARY function.
+
+## [2021.06.01] - 2021-06-01
+
+### Module s2
+
+#### Feature
+
+- Add TOKEN_FROMID function.
+- Add ID_FROMTOKEN function.
+- Add ID_FROM_UINT64REPR function.
+- Add UINT64REPR_FROM_ID function.
+
+## [2021.05.04] - 2021-05-04
+
+### Module accessors
+
+#### Feature
+
+- Create accessors module.
+- Add ST_ENVELOPE function.
+- Add VERSION function.
 
 ### Module processing
 
@@ -266,28 +318,20 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_POLYGONIZE function.
 - Add VERSION function.
 
-## [2021.05.21] - 2021-05-21
-
-### Module accessors
+### Module transformations
 
 #### Feature
 
-- Create accessors module.
-- Add ST_ENVELOPE function.
-- Add VERSION function.
+- Add ST_CONCAVEHULL function.
 
-## [2021.05.20] - 2021-05-20
+## [2021.04.29] - 2021-04-29
 
 ### Module constructors
 
 #### Feature
 
-- Create constructors module.
 - Add ST_BEZIERSPLINE function.
 - Add ST_MAKEELLIPSE function.
-- Add ST_MAKEENVELOPE function.
-- Add ST_TILEENVELOPE function.
-- Add VERSION function.
 
 ### Module measurements
 
@@ -297,49 +341,59 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_ANGLE function.
 - Add ST_AZIMUTH function.
 - Add ST_MINKOWSKIDISTANCE function.
-- Add VERSION function.
 
 ### Module transformations
 
 #### Feature
 
-- Create transformations module.
+- Rename module to transformations.
 - Add ST_CENTERMEAN function.
 - Add ST_CENTERMEDIAN function.
 - Add ST_CENTEROFMASS function.
-- Add ST_CONCAVEHULL function.
 - Add ST_DESTINATION function.
 - Add ST_GREATCIRCLE function.
 - Add ST_LINE_INTERPOLATE_POINT function.
+
+## [2021.04.28] - 2021-04-28
+
+### Module constructors
+
+#### Feature
+
+- Create constructors module.
+- Add ST_MAKEENVELOPE function.
+- Add ST_TILEENVELOPE function.
 - Add VERSION function.
 
 ## [2021.04.16] - 2021-04-16
 
+### Module transformations
+
+#### Feature
+
+- Create transformation module.
+- Add ST_BUFFER function.
+- Add VERSION function.
+
+## [2021.04.09] - 2021-04-09
+
+### Module h3
+
+#### Improvement
+
+- Use hexadecimal as default type instead of int for h3 indexes.
+
+#### Fix
+
+- Fix ST_BOUNDARY generating error when not able to parse geometry.
+
 ### Module placekey
 
-#### Feature
+#### Improvement
 
-- Create placekey module.
-- Add H3_ASPLACEKEY function.
-- Add PLACEKEY_ASH3 function.
-- Add ISVALID function.
-- Add VERSION function.
+- Placekey conversions works with hexadecimal h3 indexes instead of int.
 
-## [2021.04.12] - 2021-04-12
-
-### Module s2
-
-#### Feature
-
-- Create s2 module.
-- Add ID_FROMHILBERTQUADKEY function.
-- Add HILBERTQUADKEY_FROMID function.
-- Add LONGLAT_ASID function.
-- Add ST_ASID function.
-- Add ST_BOUNDARY function.
-- Add VERSION function.
-
-## [2021.04.07] - 2021-04-07
+## [2021.03.31] - 2021-03-31
 
 ### Module h3
 
@@ -359,4 +413,26 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add DISTANCE function.
 - Add KRING function.
 - Add HEXRING function.
+- Add VERSION function.
+
+### Module placekey
+
+#### Feature
+
+- Create placekey module.
+- Add H3_ASPLACEKEY function.
+- Add PLACEKEY_ASH3 function.
+- Add ISVALID function.
+- Add VERSION function.
+
+### Module s2
+
+#### Feature
+
+- Create s2 module.
+- Add ID_FROMHILBERTQUADKEY function.
+- Add HILBERTQUADKEY_FROMID function.
+- Add LONGLAT_ASID function.
+- Add ST_ASID function.
+- Add ST_BOUNDARY function.
 - Add VERSION function.
