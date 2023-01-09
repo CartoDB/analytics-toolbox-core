@@ -1,7 +1,5 @@
 import de.heikoseeberger.sbtheader._
 
-import java.time.Year
-
 val scalaVersions = Seq("2.12.16")
 
 val catsVersion       = "2.7.0"
@@ -65,7 +63,7 @@ lazy val commonSettings = Seq(
       url("https://github.com/pomadchin")
     )
   ),
-  headerLicense := Some(HeaderLicense.ALv2(Year.now.getValue.toString, "Azavea")),
+  headerLicense := Some(HeaderLicense.ALv2(2022.toString, "Azavea")),
   headerMappings := Map(
     FileType.scala -> CommentStyle.cStyleBlockComment.copy(
       commentCreator = { (text, existingText) =>
