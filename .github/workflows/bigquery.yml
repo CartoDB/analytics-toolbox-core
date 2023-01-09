@@ -91,7 +91,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/bigquery
-          make deploy diff="$GIT_DIFF"
+          make deploy diff="$GIT_DIFF" production=1
 
   deploy:
     if: github.ref_name == 'stable'
