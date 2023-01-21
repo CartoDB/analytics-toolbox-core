@@ -19,6 +19,12 @@ export SF_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
 endif
 export SF_SHARE ?= $(SF_PREFIX)ANALYTICS_TOOLBOX
 
+ifeq ($(testall),1)
+BAIL=
+else
+BAIL=--bail
+endif
+
 REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE"
 
 include $(COMMON_DIR)/Makefile
@@ -80,7 +86,7 @@ test: check $(NODE_MODULES_DEV)
 		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 		if [ ! -z "$$TESTS" ]; then \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=40000 --bail --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS \
+			jest --testTimeout=40000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS \
 			     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
 		fi; \
 	done;
