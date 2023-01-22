@@ -1,8 +1,8 @@
-### ST_COORDDIM
+## ST_COORDDIM
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_COORDDIM(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

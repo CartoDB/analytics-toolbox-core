@@ -1,8 +1,8 @@
-### ST_LINEFROMTEXT
+## ST_LINEFROMTEXT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_LINEFROMTEXT(wkt)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

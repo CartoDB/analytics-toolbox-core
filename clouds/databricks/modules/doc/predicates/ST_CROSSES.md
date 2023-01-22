@@ -1,8 +1,8 @@
-### ST_CROSSES
+## ST_CROSSES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CROSSES(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

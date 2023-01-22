@@ -1,8 +1,8 @@
-### ST_CENTEROFMASS
+## ST_CENTEROFMASS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTEROFMASS(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

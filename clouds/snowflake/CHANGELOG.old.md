@@ -1,45 +1,45 @@
-# Changelog [old]
+ Changelog [old]
 
 CARTO Analytics Toolbox Core for Snowflake.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2022.10.24] - 2022-10-24
+# [2022.10.24] - 2022-10-24
 
-### Module processing
+## Module processing
 
-#### Fix
+### Fix
 
 - Prevent error in ST_VORONOIPOLYGONS, ST_VORONOILINES, ST_VORONOIPOLYGONS, ST_DELAUNAYLINES when points where too close together by rounding input coordinates to 5 decimal places
 
-## [2022.10.07] - 2022-10-07
+# [2022.10.07] - 2022-10-07
 
-### Module clustering
+## Module clustering
 
-#### Feature
+### Feature
 
 - Move ST_CLUSTERKMEANS function to core.
 
-### Module random
+## Module random
 
-#### Feature
+### Feature
 
 - Move ST_GENERATEPOINTS function to core.
 
-## [2022.07.07] - 2022-07-07
+# [2022.07.07] - 2022-07-07
 
-### Module h3
+## Module h3
 
-#### Fix
+### Fix
 
 - Correctly handle large polygons in H3_POLYFILL.
 - Fixed wrong uppercase for quadbin and h3 tile ids
 
-## [2022.06.24] - 2022-06-24
+# [2022.06.24] - 2022-06-24
 
-### Module quadbin
+## Module quadbin
 
-#### Feature
+### Feature
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -57,48 +57,48 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
 
-## [2022.04.07] - 2022-04-07
+# [2022.04.07] - 2022-04-07
 
-### Module transformations
+## Module transformations
 
-#### Feature
+### Feature
 
 - Add ST_BUFFER function.
 
-## [2022.03.21] - 2022-03-21
+# [2022.03.21] - 2022-03-21
 
-### Module transformations
+## Module transformations
 
-#### Improvement
+### Improvement
 
 - ST_CONCAVEHULL now allows arrays with one/two points as input.
 
-## [2021.12.03] - 2021-12-03
+# [2021.12.03] - 2021-12-03
 
-### Module accessors
+## Module accessors
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "accessors".
 - Rename ST_ENVELOPE function to ST_ENVELOPE_ARR.
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module constructors
+## Module constructors
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "constructors".
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module h3
+## Module h3
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "h3".
 - Rename ST_ASH3 function to H3_FROMGEOGPOINT.
@@ -116,48 +116,48 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Rename KRING_DISTANCES function to H3_KRING_DISTANCES.
 - Rename HEXRING function to H3_HEXRING.
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module measurements
+## Module measurements
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "measurements".
 
-#### Removed
+### Removed
 
 - Remove ST_ANGLE, already present in Snowflake.
 - Remove ST_AZIMUTH, already present in Snowflake.
 - Remove VERSION function.
 
-### Module placekey
+## Module placekey
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
 - Rename PLACEKEY_ASH3 function to PLACEKEY_TOH3.
 - Rename ISVALID function to PLACEKEY_ISVALID.
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module processing
+## Module processing
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "processing".
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module s2
+## Module s2
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "s2".
 - Rename ID_FROMHILBERTQUADKEY function to S2_FROMHILBERTQUADKEY.
@@ -166,61 +166,61 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Rename ST_ASID function to S2_FROMGEOGPOINT.
 - Rename ST_BOUNDARY function to S2_BOUNDARY.
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module transformations
+## Module transformations
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "transformations".
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-## [2021.09.22] - 2021-09-22
+# [2021.09.22] - 2021-09-22
 
-### Module h3
+## Module h3
 
-#### Feature
+### Feature
 
 - Add KRING_DISTANCES function.
 
-#### Improvement
+### Improvement
 
 - Review HEXRING, KRING functions.
 
-## [2021.09.14] - 2021-09-14
+# [2021.09.14] - 2021-09-14
 
-### Module s2
+## Module s2
 
-#### Changes
+### Changes
 
 - Compute ST_BOUNDARY from WKT.
 
-## [2021.08.24] - 2021-08-24
+# [2021.08.24] - 2021-08-24
 
-### Module h3
+## Module h3
 
-#### Fix
+### Fix
 
 - Support GEOMETRYCOLLECTION from ST_ASH3_POLYFILL.
 
-## [2021.06.02] - 2021-06-02
+# [2021.06.02] - 2021-06-02
 
-### Module h3
+## Module h3
 
-#### Improvement
+### Improvement
 
 - Reduce bundle size for every function.
 
-## [2021.05.26] - 2021-05-26
+# [2021.05.26] - 2021-05-26
 
-### Module processing
+## Module processing
 
-#### Feature
+### Feature
 
 - Create processing module.
 - Add ST_VORONOIPOLYGONS function.
@@ -230,21 +230,21 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_POLYGONIZE function.
 - Add VERSION function.
 
-## [2021.05.21] - 2021-05-21
+# [2021.05.21] - 2021-05-21
 
-### Module accessors
+## Module accessors
 
-#### Feature
+### Feature
 
 - Create accessors module.
 - Add ST_ENVELOPE function.
 - Add VERSION function.
 
-## [2021.05.20] - 2021-05-20
+# [2021.05.20] - 2021-05-20
 
-### Module constructors
+## Module constructors
 
-#### Feature
+### Feature
 
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
@@ -253,9 +253,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_TILEENVELOPE function.
 - Add VERSION function.
 
-### Module measurements
+## Module measurements
 
-#### Feature
+### Feature
 
 - Create measurements module.
 - Add ST_ANGLE function.
@@ -263,9 +263,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_MINKOWSKIDISTANCE function.
 - Add VERSION function.
 
-### Module transformations
+## Module transformations
 
-#### Feature
+### Feature
 
 - Create transformations module.
 - Add ST_CENTERMEAN function.
@@ -277,11 +277,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_LINE_INTERPOLATE_POINT function.
 - Add VERSION function.
 
-## [2021.04.16] - 2021-04-16
+# [2021.04.16] - 2021-04-16
 
-### Module placekey
+## Module placekey
 
-#### Feature
+### Feature
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.
@@ -289,11 +289,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ISVALID function.
 - Add VERSION function.
 
-## [2021.04.12] - 2021-04-12
+# [2021.04.12] - 2021-04-12
 
-### Module s2
+## Module s2
 
-#### Feature
+### Feature
 
 - Create s2 module.
 - Add ID_FROMHILBERTQUADKEY function.
@@ -303,11 +303,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_BOUNDARY function.
 - Add VERSION function.
 
-## [2021.04.07] - 2021-04-07
+# [2021.04.07] - 2021-04-07
 
-### Module h3
+## Module h3
 
-#### Feature
+### Feature
 
 - Create h3 module.
 - Add ST_ASH3 function.

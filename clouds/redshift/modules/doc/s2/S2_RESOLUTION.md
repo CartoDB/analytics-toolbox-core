@@ -1,8 +1,8 @@
-### S2_RESOLUTION
+## S2_RESOLUTION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_RESOLUTION(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

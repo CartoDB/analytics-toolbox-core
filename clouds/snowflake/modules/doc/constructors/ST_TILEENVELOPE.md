@@ -1,8 +1,8 @@
-### ST_TILEENVELOPE
+## ST_TILEENVELOPE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_TILEENVELOPE(zoomLevel, xTile, yTile)
-{{%/ bannerNote %}}
+```
 
 **Description**
 Returns the boundary polygon of a tile given its zoom level and its X and Y indices.

@@ -1,8 +1,8 @@
-### ST_INTERSECTS
+## ST_INTERSECTS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_INTERSECTS(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

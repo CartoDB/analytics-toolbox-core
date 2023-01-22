@@ -1,8 +1,8 @@
-### H3_TOCHILDREN
+## H3_TOCHILDREN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_TOCHILDREN(index, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

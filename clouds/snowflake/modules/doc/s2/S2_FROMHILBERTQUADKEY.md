@@ -1,8 +1,8 @@
-### S2_FROMHILBERTQUADKEY
+## S2_FROMHILBERTQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMHILBERTQUADKEY(hquadkey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

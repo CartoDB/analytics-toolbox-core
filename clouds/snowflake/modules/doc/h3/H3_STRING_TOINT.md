@@ -1,8 +1,8 @@
-### H3_STRING_TOINT
+## H3_STRING_TOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_STRING_TOINT(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

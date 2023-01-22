@@ -1,8 +1,8 @@
-### QUADBIN_TOCHILDREN
+## QUADBIN_TOCHILDREN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_TOCHILDREN(quadbin, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

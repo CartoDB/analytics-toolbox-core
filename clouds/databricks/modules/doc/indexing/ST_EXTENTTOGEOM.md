@@ -1,8 +1,8 @@
-### ST_EXTENTTOGEOM
+## ST_EXTENTTOGEOM
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_EXTENTTOGEOM(extent)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_LENGTH
+## ST_LENGTH
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_LENGTH(line)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

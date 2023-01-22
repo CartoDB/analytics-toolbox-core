@@ -1,8 +1,8 @@
-### S2_FROMTOKEN
+## S2_FROMTOKEN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMTOKEN(token)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the conversion of a token into a S2 cell ID.
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMTOKEN('89c25a3000000000');

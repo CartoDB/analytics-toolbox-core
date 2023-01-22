@@ -1,8 +1,8 @@
-### ST_CASTTOLINESTRING
+## ST_CASTTOLINESTRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CASTTOLINESTRING(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

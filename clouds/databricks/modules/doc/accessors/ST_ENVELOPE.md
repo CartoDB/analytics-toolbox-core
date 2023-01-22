@@ -1,8 +1,8 @@
-### ST_ENVELOPE
+## ST_ENVELOPE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ENVELOPE(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

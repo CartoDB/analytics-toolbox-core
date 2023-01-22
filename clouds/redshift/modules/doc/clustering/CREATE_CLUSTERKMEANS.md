@@ -1,8 +1,8 @@
-### CREATE_CLUSTERKMEANS
+## CREATE_CLUSTERKMEANS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.CREATE_CLUSTERKMEANS(input, output_table, geom_column, number_of_clusters)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -13,9 +13,12 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 * `geom_column`: `VARCHAR` name of the column to be clusterd.
 * `number_of_clusters`: `INT` number of clusters that will be generated.
 
-{{% bannerNote type="warning" title="warning"%}}
+{% hint style="warning" %}
+**warning**
+
 Keep in mid that due to some restrictions in the Redshift `VARCHAR` size, the maximum number of features (points) allow to be clustered is around 2500.
-{{%/ bannerNote %}}
+
+{% endhint %}
 
 **Examples**
 

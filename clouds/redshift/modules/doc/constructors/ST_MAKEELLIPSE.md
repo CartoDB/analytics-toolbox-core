@@ -1,8 +1,8 @@
-### ST_MAKEELLIPSE
+## ST_MAKEELLIPSE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEELLIPSE(center, xSemiAxis, ySemiAxis [, angle] [, units] [, steps])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

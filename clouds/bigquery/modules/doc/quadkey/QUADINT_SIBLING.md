@@ -1,8 +1,8 @@
-### QUADINT_SIBLING
+## QUADINT_SIBLING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_SIBLING(quadint, direction)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns the quadint directly next to the given quadint at the same zoom level. T
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_SIBLING(4388, 'up');

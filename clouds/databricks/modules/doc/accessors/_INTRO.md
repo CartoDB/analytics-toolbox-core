@@ -1,5 +1,8 @@
-## accessors
+---
+badges:
+- core
+---
+# accessors
 
-<div class="badges"><div class="core"></div></div>
 
 This module contains functions that provide information about internal geometries.

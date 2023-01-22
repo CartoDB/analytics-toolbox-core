@@ -1,8 +1,8 @@
-### QUADINT_KRING
+## QUADINT_KRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_KRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 
 `ARRAY<INT64>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_KRING(4388, 1);

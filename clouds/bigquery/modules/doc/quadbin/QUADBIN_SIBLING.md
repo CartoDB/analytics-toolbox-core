@@ -1,8 +1,8 @@
-### QUADBIN_SIBLING
+## QUADBIN_SIBLING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_SIBLING(quadbin, direction)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns the Quadbin directly next to the given Quadbin at the same resolution. T
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_SIBLING(5209574053332910079, 'up');

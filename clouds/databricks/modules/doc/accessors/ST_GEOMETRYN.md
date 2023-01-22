@@ -1,8 +1,8 @@
-### ST_GEOMETRYN
+## ST_GEOMETRYN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_GEOMETRYN(geom, n)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

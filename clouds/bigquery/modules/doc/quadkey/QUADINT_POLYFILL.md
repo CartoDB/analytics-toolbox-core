@@ -1,8 +1,8 @@
-### QUADINT_POLYFILL
+## QUADINT_POLYFILL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_POLYFILL(geography, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns an array of quadints that intersect with the given geography at a given 
 
 `ARRAY<INT64>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_POLYFILL(

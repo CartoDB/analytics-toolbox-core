@@ -1,8 +1,8 @@
-### QUADBIN_FROMGEOGPOINT
+## QUADBIN_FROMGEOGPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMGEOGPOINT(point, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns the Quadbin of a given point at a given level of detail.
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);

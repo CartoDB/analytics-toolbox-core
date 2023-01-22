@@ -1,8 +1,8 @@
-### ST_MAKEBOX2D
+## ST_MAKEBOX2D
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEBOX2D(lowerleft, upperRight)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_BITEARRAY
+## ST_BITEARRAY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_BITEARRAY(s)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

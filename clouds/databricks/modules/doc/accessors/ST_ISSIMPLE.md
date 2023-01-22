@@ -1,8 +1,8 @@
-### ST_ISSIMPLE
+## ST_ISSIMPLE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ISSIMPLE(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

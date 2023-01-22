@@ -1,8 +1,8 @@
-### S2_TOPARENT
+## S2_TOPARENT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOPARENT(id, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### H3_ISVALID
+## H3_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_ISVALID(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_MAKEELLIPSE
+## ST_MAKEELLIPSE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis, angle, units, steps)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 * `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
 * `steps`: `INT64`|`NULL` number of steps. If `NULL` the default value `64` is used.
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.ST_MAKEELLIPSE(

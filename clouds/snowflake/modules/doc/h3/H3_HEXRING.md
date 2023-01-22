@@ -1,8 +1,8 @@
-### H3_HEXRING
+## H3_HEXRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_HEXRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

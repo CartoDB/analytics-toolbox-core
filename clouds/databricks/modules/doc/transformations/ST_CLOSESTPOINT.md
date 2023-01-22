@@ -1,8 +1,8 @@
-### ST_CLOSESTPOINT
+## ST_CLOSESTPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CLOSESTPOINT(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

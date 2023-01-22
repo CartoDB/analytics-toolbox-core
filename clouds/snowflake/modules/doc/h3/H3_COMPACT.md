@@ -1,8 +1,8 @@
-### H3_COMPACT
+## H3_COMPACT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_COMPACT(indexArray)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_CASTTOPOINT
+## ST_CASTTOPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CASTTOPOINT(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

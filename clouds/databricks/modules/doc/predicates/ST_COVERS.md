@@ -1,8 +1,8 @@
-### ST_COVERS
+## ST_COVERS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_COVERS(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

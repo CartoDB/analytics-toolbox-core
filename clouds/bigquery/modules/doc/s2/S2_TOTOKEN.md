@@ -1,8 +1,8 @@
-### S2_TOTOKEN
+## S2_TOTOKEN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOTOKEN(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 
 `STRING`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_TOTOKEN(-8520148382826627072);

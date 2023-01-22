@@ -1,14 +1,14 @@
-# Changelog [old]
+ Changelog [old]
 
 CARTO Analytics Toolbox Core for Postgres.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2022.06.24] - 2022-06-24
+# [2022.06.24] - 2022-06-24
 
-### Module quadbin
+## Module quadbin
 
-#### Feature
+### Feature
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.

@@ -1,8 +1,8 @@
-### S2_BOUNDARY
+## S2_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_BOUNDARY(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the boundary for a given S2 cell ID. We extract the boundary by getting 
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_BOUNDARY(1735346007979327488);

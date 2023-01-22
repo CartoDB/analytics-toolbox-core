@@ -1,8 +1,8 @@
-### QUADBIN_FROMZXY
+## QUADBIN_FROMZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMZXY(z, x, y)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

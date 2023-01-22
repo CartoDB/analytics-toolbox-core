@@ -1,8 +1,8 @@
-### QUADINT_POLYFILL
+## QUADINT_POLYFILL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_POLYFILL(geography, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

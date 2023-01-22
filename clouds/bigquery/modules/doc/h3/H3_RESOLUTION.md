@@ -1,8 +1,8 @@
-### H3_RESOLUTION
+## H3_RESOLUTION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_RESOLUTION(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the H3 cell resolution as an integer. It will return `null` on error (in
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.H3_RESOLUTION('847b59dffffffff');

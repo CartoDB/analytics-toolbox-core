@@ -1,8 +1,8 @@
-### QUADINT_TOQUADKEY
+## QUADINT_TOQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_TOQUADKEY(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

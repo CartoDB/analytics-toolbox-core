@@ -1,8 +1,8 @@
-### S2_TOCHILDREN
+## S2_TOCHILDREN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOCHILDREN(index, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns an array with the S2 indexes of the children/descendents of the given he
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_TOCHILDREN(-6432928348669739008, 12);

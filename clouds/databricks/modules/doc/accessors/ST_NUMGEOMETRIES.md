@@ -1,8 +1,8 @@
-### ST_NUMGEOMETRIES
+## ST_NUMGEOMETRIES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_NUMGEOMETRIES(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

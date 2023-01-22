@@ -1,8 +1,8 @@
-### PLACEKEY_FROMH3
+## PLACEKEY_FROMH3
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.PLACEKEY_FROMH3(h3index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

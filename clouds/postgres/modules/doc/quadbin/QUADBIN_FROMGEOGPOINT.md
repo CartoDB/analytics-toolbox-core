@@ -1,8 +1,8 @@
-### QUADBIN_FROMGEOGPOINT
+## QUADBIN_FROMGEOGPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMGEOGPOINT(point, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

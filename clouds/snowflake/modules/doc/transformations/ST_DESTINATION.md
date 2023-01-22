@@ -1,8 +1,8 @@
-### ST_DESTINATION
+## ST_DESTINATION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DESTINATION(startPoint, distance, bearing [, units])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

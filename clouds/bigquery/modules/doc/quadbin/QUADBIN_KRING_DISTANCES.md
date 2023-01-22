@@ -1,8 +1,8 @@
-### QUADBIN_KRING_DISTANCES
+## QUADBIN_KRING_DISTANCES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_KRING_DISTANCES(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns all Quadbin cell indexes and their distances in a **filled square k-ring
 
 `ARRAY<STRUCT<index INT64, distance INT64>>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
@@ -32,6 +32,9 @@ SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
 -- {"index": "5209662014263132159", "distance": "1"}
 ```
 
-{{% bannerNote type="note" title="tip"%}}
+{% hint style="info" %}
+**tip**
+
 The distance of the rings is computed as the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
-{{%/ bannerNote %}}
+
+{% endhint %}

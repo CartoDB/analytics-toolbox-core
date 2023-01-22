@@ -1,8 +1,8 @@
-### ST_TRANSLATE
+## ST_TRANSLATE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_TRANSLATE(geom, deltaX, deltaY)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

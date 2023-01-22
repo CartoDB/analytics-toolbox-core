@@ -1,8 +1,8 @@
-### ST_POLYGONIZE
+## ST_POLYGONIZE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_POLYGONIZE(lines)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

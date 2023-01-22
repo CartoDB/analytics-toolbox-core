@@ -1,8 +1,8 @@
-### QUADINT_BOUNDARY
+## QUADINT_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_BOUNDARY(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### H3_KRING_DISTANCES
+## H3_KRING_DISTANCES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_KRING_DISTANCES(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns all cell indexes and their distances in a **filled hexagonal k-ring** ce
 
 `ARRAY<STRUCT<index STRING, distance INT64>>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.H3_KRING_DISTANCES('837b59fffffffff', 1);

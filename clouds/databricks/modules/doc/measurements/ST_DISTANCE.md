@@ -1,8 +1,8 @@
-### ST_DISTANCE
+## ST_DISTANCE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DISTANCE(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

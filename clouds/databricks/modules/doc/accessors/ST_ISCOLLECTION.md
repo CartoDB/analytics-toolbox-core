@@ -1,8 +1,8 @@
-### ST_ISCOLLECTION
+## ST_ISCOLLECTION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ISCOLLECTION(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

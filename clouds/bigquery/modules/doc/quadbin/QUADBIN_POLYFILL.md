@@ -1,8 +1,8 @@
-### QUADBIN_POLYFILL
+## QUADBIN_POLYFILL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_POLYFILL(geography, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns an array of Quadbins that intersect with the given geography at a given 
 
 `ARRAY<INT64>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_POLYFILL(

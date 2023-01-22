@@ -1,8 +1,8 @@
-### ST_GREATCIRCLE
+## ST_GREATCIRCLE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_GREATCIRCLE(start_point, end_point, n_points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

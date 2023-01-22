@@ -1,54 +1,54 @@
-# Changelog [old]
+ Changelog [old]
 
 CARTO Analytics Toolbox Core for Redshift.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2022.10.07] - 2022-10-07
+# [2022.10.07] - 2022-10-07
 
-### Module clustering
+## Module clustering
 
-#### Feature
+### Feature
 
 - Move ST_CLUSTERKMEANS function to core.
 - Move CREATE_CLUSTERKMEANS procedure to core.
 
-### Module random
+## Module random
 
-#### Feature
+### Feature
 
 - Move ST_GENERATEPOINTS function to core.
 
-## [2022.08.19] - 2022-08-19
+# [2022.08.19] - 2022-08-19
 
-### Module s2
+## Module s2
 
-#### Fix
+### Fix
 
 - Fix S2_BOUNDARY inverted coordinates.
 
-## [2022.07.14] - 2022-07-14
+# [2022.07.14] - 2022-07-14
 
-### Module quadbin
+## Module quadbin
 
-#### Improvement
+### Improvement
 
 - Update functions volatility.
 - QUADBIN_FROMZXY accepting BIGINTs as params instead of INTs.
 
-## [2022.07.08] - 2022-07-08
+# [2022.07.08] - 2022-07-08
 
-### Module quadbin
+## Module quadbin
 
-#### Improvement
+### Improvement
 
 - Release SQL version of QUADBIN_TOZXY.
 
-## [2022.06.24] - 2022-06-24
+# [2022.06.24] - 2022-06-24
 
-### Module quadbin
+## Module quadbin
 
-#### Feature
+### Feature
 
 - Add QUADBIN_BBOX function.
 - Add QUADBIN_BOUNDARY function.
@@ -66,52 +66,52 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add QUADBIN_TOPARENT function.
 - Add QUADBIN_TOZXY function.
 
-## [2021.12.16] - 2021-12-16
+# [2021.12.16] - 2021-12-16
 
-### Module transformations
+## Module transformations
 
-#### Fix
+### Fix
 
 - Refactor of internal __ST_GEOMFROMGEOJSON function to avoid UDFs nestig Redshift limitations
 
-## [2021.12.10] - 2021-12-10
+# [2021.12.10] - 2021-12-10
 
-### Module constructors
+## Module constructors
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "constructors".
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module placekey
+## Module placekey
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "placekey".
 - Rename H3_ASPLACEKEY function to PLACEKEY_FROMH3.
 - Rename PLACEKEY_ASH3 function to PLACEKEY_TOH3.
 - Rename ISVALID function to PLACEKEY_ISVALID.
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module processing
+## Module processing
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "processing".
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module s2
+## Module s2
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "s2".
 - Rename HILBERTQUADKEY_FROMID function to S2_TOHILBERTQUADKEY.
@@ -128,25 +128,25 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Rename TOPARENT function to S2_TOPARENT.
 - Rename UINT64REPR_FROMID function to S2_TOUINT64REPR.
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-### Module transformations
+## Module transformations
 
-#### Improvement
+### Improvement
 
 - Deployment schema "carto" instead of "transformations".
 
-#### Removed
+### Removed
 
 - Remove VERSION function.
 
-## [2021.10.06] - 2021-10-06
+# [2021.10.06] - 2021-10-06
 
-### Module processing
+## Module processing
 
-#### Feature
+### Feature
 
 - Create processing module.
 - Add VERSION function.
@@ -156,9 +156,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_VORONOILINES function.
 - Add ST_VORONOIPOLYGONS function.
 
-### Module transformations
+## Module transformations
 
-#### Feature
+### Feature
 
 - Create transformations module.
 - Add VERSION function.
@@ -169,11 +169,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_GREATCIRCLE function
 - Add ST_DESTINATION function
 
-## [2021.09.23] - 2021-09-23
+# [2021.09.23] - 2021-09-23
 
-### Module s2
+## Module s2
 
-#### Feature
+### Feature
 
 - Create s2 module.
 - Add HILBERTQUADKEY_FROMID function.
@@ -191,11 +191,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add UINT64REPR_FROMID function.
 - Add VERSION function.
 
-## [2021.09.17] - 2021-09-17
+# [2021.09.17] - 2021-09-17
 
-### Module constructors
+## Module constructors
 
-#### Feature
+### Feature
 
 - Create constructors module.
 - Add ST_BEZIERSPLINE function.
@@ -204,11 +204,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add ST_TILEENVELOPE function.
 - Add VERSION function.
 
-## [2021.09.07] - 2021-09-07
+# [2021.09.07] - 2021-09-07
 
-### Module placekey
+## Module placekey
 
-#### Feature
+### Feature
 
 - Create placekey module.
 - Add H3_ASPLACEKEY function.

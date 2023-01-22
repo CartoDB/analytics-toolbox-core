@@ -1,8 +1,8 @@
-### ST_GEOMFROMTEXT
+## ST_GEOMFROMTEXT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_GEOMFROMTEXT(wkt)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

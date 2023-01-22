@@ -1,8 +1,8 @@
-### QUADBIN_TOQUADKEY
+## QUADBIN_TOQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_TOQUADKEY(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

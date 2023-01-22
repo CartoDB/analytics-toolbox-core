@@ -1,8 +1,8 @@
-### QUADBIN_TOZXY
+## QUADBIN_TOZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_TOZXY(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given Quadbin.
 
 `STRUCT<INT64, INT64, INT64>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_TOZXY(5209574053332910079);

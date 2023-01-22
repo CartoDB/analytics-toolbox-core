@@ -1,8 +1,8 @@
-### QUADINT_TOZXY
+## QUADINT_TOZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_TOZXY(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 
 `STRUCT<INT64, INT64, INT64>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOZXY(4388);

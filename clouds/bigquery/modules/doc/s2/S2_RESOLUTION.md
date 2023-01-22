@@ -1,8 +1,8 @@
-### S2_RESOLUTION
+## S2_RESOLUTION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_RESOLUTION(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the S2 cell resolution as an integer.
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_RESOLUTION(-6432928348669739008);

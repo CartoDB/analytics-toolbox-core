@@ -1,8 +1,8 @@
-### S2_FROMLONGLAT
+## S2_FROMLONGLAT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMLONGLAT(longitude, latitude, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

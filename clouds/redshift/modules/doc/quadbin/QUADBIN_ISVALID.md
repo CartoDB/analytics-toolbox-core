@@ -1,8 +1,8 @@
-### QUADBIN_ISVALID
+## QUADBIN_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_ISVALID(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

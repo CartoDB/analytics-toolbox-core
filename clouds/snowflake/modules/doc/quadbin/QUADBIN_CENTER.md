@@ -1,8 +1,8 @@
-### QUADBIN_CENTER
+## QUADBIN_CENTER
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_CENTER(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

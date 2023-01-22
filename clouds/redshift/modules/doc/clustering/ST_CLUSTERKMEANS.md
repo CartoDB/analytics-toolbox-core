@@ -1,8 +1,8 @@
-### ST_CLUSTERKMEANS
+## ST_CLUSTERKMEANS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CLUSTERKMEANS(geog [, numberOfClusters])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### QUADINT_BBOX
+## QUADINT_BBOX
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_BBOX(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

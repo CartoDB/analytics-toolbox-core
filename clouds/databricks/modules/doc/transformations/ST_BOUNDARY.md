@@ -1,8 +1,8 @@
-### ST_BOUNDARY
+## ST_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_BOUNDARY(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

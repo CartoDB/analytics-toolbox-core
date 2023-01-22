@@ -1,8 +1,8 @@
-### ST_MAKEPOINT
+## ST_MAKEPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEPOINT(x, y)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

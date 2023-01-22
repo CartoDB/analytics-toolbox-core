@@ -1,8 +1,8 @@
-### H3_ISPENTAGON
+## H3_ISPENTAGON
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_ISPENTAGON(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

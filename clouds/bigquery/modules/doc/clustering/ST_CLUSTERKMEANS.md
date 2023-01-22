@@ -1,8 +1,8 @@
-### ST_CLUSTERKMEANS
+## ST_CLUSTERKMEANS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CLUSTERKMEANS(geog, numberOfClusters)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 
 `ARRAY<STRUCT<cluster INT64, geom GEOGRAPHY>>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.ST_CLUSTERKMEANS([ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 1), ST_GEOGPOINT(5, 0), ST_GEOGPOINT(1, 0)], 2);
@@ -27,7 +27,10 @@ SELECT `carto-os`.carto.ST_CLUSTERKMEANS([ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 1)
 -- {cluster: 1, geom: POINT(1 0)}
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+{% hint style="info" %}
+**ADDITIONAL EXAMPLES**
+
 
 * [New police stations based on Chicago crime location clusters](/analytics-toolbox-bigquery/examples/new-police-stations-based-on-chicago-crime-location-clusters/)
-{{%/ bannerNote %}}
+
+{% endhint %}

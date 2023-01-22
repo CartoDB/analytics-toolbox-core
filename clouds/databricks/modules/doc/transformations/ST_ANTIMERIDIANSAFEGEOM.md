@@ -1,8 +1,8 @@
-### ST_ANTIMERIDIANSAFEGEOM
+## ST_ANTIMERIDIANSAFEGEOM
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ANTIMERIDIANSAFEGEOM(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

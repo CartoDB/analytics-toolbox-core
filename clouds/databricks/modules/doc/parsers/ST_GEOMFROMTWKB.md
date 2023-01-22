@@ -1,8 +1,8 @@
-### ST_GEOMFROMTWKB
+## ST_GEOMFROMTWKB
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_GEOMFROMTWKB(wkb)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

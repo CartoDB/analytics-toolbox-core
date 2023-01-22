@@ -1,8 +1,8 @@
-### ST_ISCLOSED
+## ST_ISCLOSED
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ISCLOSED(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

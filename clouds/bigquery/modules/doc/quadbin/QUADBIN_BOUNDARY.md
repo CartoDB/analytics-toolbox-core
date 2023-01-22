@@ -1,8 +1,8 @@
-### QUADBIN_BOUNDARY
+## QUADBIN_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_BOUNDARY(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the boundary for a given Quadbin as a polygon GEOGRAPHY with the same co
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_BOUNDARY(5209574053332910079);

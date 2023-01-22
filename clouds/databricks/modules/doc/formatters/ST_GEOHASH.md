@@ -1,8 +1,8 @@
-### ST_GEOHASH
+## ST_GEOHASH
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_GEOHASH(geom, prec)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

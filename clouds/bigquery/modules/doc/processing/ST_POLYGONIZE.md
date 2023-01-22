@@ -1,8 +1,8 @@
-### ST_POLYGONIZE
+## ST_POLYGONIZE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_POLYGONIZE(lines)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Creates a set of polygons from geographies which contain lines that represent th
 
 `ARRAY<GEOGRAPHY>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ``` sql
 SELECT `carto-os`.carto.ST_POLYGONIZE(
@@ -29,7 +29,10 @@ SELECT `carto-os`.carto.ST_POLYGONIZE(
 -- POLYGON((-73.9704330709753 35.3953164724094, -72.514071762468 36.5823995124737, -73.3262122666779 41.2706174323278, -73.9704330709753 35.3953164724094))
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+{% hint style="info" %}
+**ADDITIONAL EXAMPLES**
+
 
 * [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
-{{%/ bannerNote %}}
+
+{% endhint %}

@@ -1,8 +1,8 @@
-### ST_ASTWKB
+## ST_ASTWKB
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ASTWKB(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

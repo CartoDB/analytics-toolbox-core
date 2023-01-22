@@ -1,8 +1,8 @@
-### S2_TOHILBERTQUADKEY
+## S2_TOHILBERTQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOHILBERTQUADKEY(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the conversion of a S2 cell ID into a Hilbert quadkey (a.k.a Hilbert cur
 
 `STRING`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_TOHILBERTQUADKEY(1735346007979327488);

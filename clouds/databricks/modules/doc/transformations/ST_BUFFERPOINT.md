@@ -1,8 +1,8 @@
-### ST_BUFFERPOINT
+## ST_BUFFERPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_BUFFERPOINT(point, radius)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

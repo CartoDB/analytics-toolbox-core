@@ -1,8 +1,8 @@
-### ST_DELAUNAYPOLYGONS
+## ST_DELAUNAYPOLYGONS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DELAUNAYPOLYGONS(points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

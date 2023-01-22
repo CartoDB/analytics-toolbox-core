@@ -1,8 +1,8 @@
-### ST_ISRING
+## ST_ISRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ISRING(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

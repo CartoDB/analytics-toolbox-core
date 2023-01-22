@@ -1,8 +1,8 @@
-### PLACEKEY_TOH3
+## PLACEKEY_TOH3
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.PLACEKEY_TOH3(placekey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the H3 index equivalent of the given placekey.
 
 `STRING`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.PLACEKEY_TOH3('@ff7-swh-m49');

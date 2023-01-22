@@ -1,8 +1,8 @@
-### ST_BEZIERSPLINE
+## ST_BEZIERSPLINE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_BEZIERSPLINE(linestring [, resolution] [, sharpness])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

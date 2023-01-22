@@ -1,8 +1,8 @@
-### PLACEKEY_ISVALID
+## PLACEKEY_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.PLACEKEY_ISVALID(placekey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 
 `BOOLEAN`
 
-{{% customSelector %}}
+
 **Examples**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.PLACEKEY_ISVALID('@ff7-swh-m49');

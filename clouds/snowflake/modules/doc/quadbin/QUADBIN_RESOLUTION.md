@@ -1,8 +1,8 @@
-### QUADBIN_RESOLUTION
+## QUADBIN_RESOLUTION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_RESOLUTION(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### S2_BOUNDARY
+## S2_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_BOUNDARY(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### QUADINT_SIBLING
+## QUADINT_SIBLING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_SIBLING(quadint, direction)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_MPOLYFROMTEXT
+## ST_MPOLYFROMTEXT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MPOLYFROMTEXT(wkt)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_POINTN
+## ST_POINTN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_POINTN(geom, n)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

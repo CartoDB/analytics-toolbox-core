@@ -1,8 +1,8 @@
-### H3_ISPENTAGON
+## H3_ISPENTAGON
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_ISPENTAGON(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 
 `BOOLEAN`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.H3_ISPENTAGON('837b59fffffffff');

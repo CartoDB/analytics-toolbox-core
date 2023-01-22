@@ -1,8 +1,8 @@
-### S2_FROMHILBERTQUADKEY
+## S2_FROMHILBERTQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMHILBERTQUADKEY(hquadkey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 
 `INT64`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMHILBERTQUADKEY('0/30002221');

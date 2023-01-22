@@ -1,8 +1,8 @@
-### ST_IDLSAFEGEOM
+## ST_IDLSAFEGEOM
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_IDLSAFEGEOM(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

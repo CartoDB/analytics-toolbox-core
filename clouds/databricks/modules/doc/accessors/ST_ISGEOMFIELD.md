@@ -1,8 +1,8 @@
-### ST_ISGEOMFIELD
+## ST_ISGEOMFIELD
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ISGEOMFIELD(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_ASGEOJSON
+## ST_ASGEOJSON
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ASGEOJSON(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

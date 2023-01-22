@@ -1,8 +1,8 @@
-### ST_DESTINATION
+## ST_DESTINATION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DESTINATION(startPoint, distance, bearing, units)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -17,9 +17,9 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ``` sql
 SELECT `carto-os`.carto.ST_DESTINATION(

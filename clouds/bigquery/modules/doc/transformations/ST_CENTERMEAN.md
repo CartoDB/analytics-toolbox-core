@@ -1,8 +1,8 @@
-### ST_CENTERMEAN
+## ST_CENTERMEAN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTERMEAN(geog)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,9 @@ Takes a Feature or FeatureCollection and returns the mean center (average of its
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ``` sql
 SELECT `carto-os`.carto.ST_CENTERMEAN(
@@ -25,7 +25,10 @@ SELECT `carto-os`.carto.ST_CENTERMEAN(
 -- POINT(25.3890912155939 29.7916831655627)
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+{% hint style="info" %}
+**ADDITIONAL EXAMPLES**
+
 
 * [New police stations based on Chicago crime location clusters](/analytics-toolbox-bigquery/examples/new-police-stations-based-on-chicago-crime-location-clusters/)
-{{%/ bannerNote %}}
+
+{% endhint %}

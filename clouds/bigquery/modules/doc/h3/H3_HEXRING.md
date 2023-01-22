@@ -1,8 +1,8 @@
-### H3_HEXRING
+## H3_HEXRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_HEXRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,9 @@ Returns all cell indexes in a **hollow hexagonal ring** centered at the origin i
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
+
 **Example**
-{{%/ customSelector %}}
+
 
 ```sql
 SELECT `carto-os`.carto.H3_HEXRING('837b59fffffffff', 1);
