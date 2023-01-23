@@ -81,4 +81,6 @@ make test-libraries modules=constructors test=constructors.test.js
 make test-libraries functions=ST_BUFFER test="transformations_buffer.test.js -t buffer"
 ```
 
-Additionally, `nodeps=1` filter can be passed to skip building and including the dependencies. It can be used to speed up re-deployments during development.
+The parameter `nodeps=1` filter can be passed to skip building and including the dependencies. It can be used to speed up re-deployments during development.
+
+The parameter `testall=1` allows running all the tests even with fails. By default, it exits the test suite immediately upon one failing test suite.
