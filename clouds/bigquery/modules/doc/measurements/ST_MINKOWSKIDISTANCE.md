@@ -15,9 +15,7 @@ Calculate the Minkowski p-norm distance between two features.
 
 `ARRAY<STRING>`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_MINKOWSKIDISTANCE([ST_GEOGPOINT(10,10),ST_GEOGPOINT(13,10)],2);

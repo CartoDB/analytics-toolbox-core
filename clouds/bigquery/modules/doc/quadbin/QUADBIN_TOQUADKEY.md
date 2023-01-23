@@ -14,9 +14,7 @@ Compute a quadkey from a quadbin index.
 
 `STRING`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_TOQUADKEY(5233974874938015743);

@@ -14,9 +14,7 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_BOUNDARY(4388);

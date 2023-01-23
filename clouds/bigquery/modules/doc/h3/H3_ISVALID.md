@@ -14,9 +14,7 @@ Returns `true` when the given index is a valid H3 index, `false` otherwise.
 
 `BOOLEAN`
 
-
 **Examples**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_ISVALID('847b59dffffffff');

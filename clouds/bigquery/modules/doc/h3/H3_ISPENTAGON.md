@@ -14,9 +14,7 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 
 `BOOLEAN`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_ISPENTAGON('837b59fffffffff');

@@ -17,9 +17,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY<GEOGRAPHY>`
 
-
 **Examples**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
@@ -54,7 +52,6 @@ SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Analyzing weather stations coverage using a Voronoi diagram](/analytics-toolbox-bigquery/examples/analyzing-weather-stations-coverage-using-a-voronoi-diagram/)
 

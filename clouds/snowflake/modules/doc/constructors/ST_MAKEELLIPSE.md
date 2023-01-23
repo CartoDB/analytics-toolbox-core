@@ -44,7 +44,6 @@ SELECT carto.ST_MAKEELLIPSE(ST_Point(-73.9385,40.6643), 5, 3, -30, 'miles', 80);
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
 
-
 * [Enrichment of catchment areas for store characterization](/analytics-toolbox-snowflake/examples/enrichment-of-catchment-areas-for-store-characterization/)
 
 {% endhint %}

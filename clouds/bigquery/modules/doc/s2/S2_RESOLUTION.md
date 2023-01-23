@@ -14,9 +14,7 @@ Returns the S2 cell resolution as an integer.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_RESOLUTION(-6432928348669739008);

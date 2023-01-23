@@ -14,9 +14,7 @@ Returns the boundary for a given S2 cell ID. We extract the boundary by getting 
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_BOUNDARY(1735346007979327488);

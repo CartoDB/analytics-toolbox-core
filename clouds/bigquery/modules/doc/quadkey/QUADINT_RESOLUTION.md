@@ -14,9 +14,7 @@ Returns the resolution of the input quadint.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_RESOLUTION(4388);

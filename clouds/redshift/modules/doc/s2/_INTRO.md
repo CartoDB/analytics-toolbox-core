@@ -4,7 +4,6 @@ badges:
 ---
 # s2
 
-
 [S2](https://s2geometry.io/) is a library for spherical geometry that aims to have the same robustness, flexibility, and performance as the very best planar geometry libraries.
 
 You can learn more about S2 on [their website](https://s2geometry.io/about/overview).

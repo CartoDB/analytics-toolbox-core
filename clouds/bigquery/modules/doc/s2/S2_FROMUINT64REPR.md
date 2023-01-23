@@ -14,9 +14,7 @@ Returns the cell ID from a UINT64 representation.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMUINT64REPR('9926595690882924544');

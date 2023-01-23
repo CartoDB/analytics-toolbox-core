@@ -14,9 +14,7 @@ Returns a geography representing the geohash cell. It will return `null` on erro
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.GEOHASH_BOUNDARY('ezrqcjzgdr3');

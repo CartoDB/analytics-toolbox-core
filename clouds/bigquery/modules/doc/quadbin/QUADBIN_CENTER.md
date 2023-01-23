@@ -14,9 +14,7 @@ Returns the center of a given Quadbin. The center is the intersection point of t
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_CENTER(5209574053332910079);

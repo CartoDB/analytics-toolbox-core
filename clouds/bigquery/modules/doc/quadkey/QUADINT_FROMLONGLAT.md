@@ -16,9 +16,7 @@ Returns the quadint representation for a given level of detail and geographic co
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_FROMLONGLAT(40.4168, -3.7038, 4);

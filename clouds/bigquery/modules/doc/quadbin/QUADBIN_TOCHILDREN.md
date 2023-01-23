@@ -15,9 +15,7 @@ Returns an array with the children Quadbins of a given Quadbin for a specific re
 
 `ARRAY<INT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_TOCHILDREN(5209574053332910079, 5);

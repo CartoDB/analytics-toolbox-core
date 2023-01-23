@@ -20,9 +20,7 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_FROMZXY(4, 9, 8);

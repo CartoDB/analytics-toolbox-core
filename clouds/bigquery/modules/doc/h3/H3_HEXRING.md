@@ -15,9 +15,7 @@ Returns all cell indexes in a **hollow hexagonal ring** centered at the origin i
 
 `ARRAY<STRING>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_HEXRING('837b59fffffffff', 1);

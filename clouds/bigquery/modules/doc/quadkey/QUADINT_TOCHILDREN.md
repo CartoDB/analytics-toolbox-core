@@ -15,9 +15,7 @@ Returns an array with the children quadints of a given quadint for a specific re
 
 `ARRAY<INT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOCHILDREN(1155, 4);

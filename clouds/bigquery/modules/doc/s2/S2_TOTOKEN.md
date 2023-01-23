@@ -14,9 +14,7 @@ Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 
 `STRING`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_TOTOKEN(-8520148382826627072);

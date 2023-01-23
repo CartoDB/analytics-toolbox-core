@@ -14,9 +14,7 @@ Takes a FeatureCollection of points and computes the median center. The median c
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_CENTERMEDIAN(

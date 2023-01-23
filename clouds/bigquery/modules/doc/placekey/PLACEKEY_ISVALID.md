@@ -14,9 +14,7 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 
 `BOOLEAN`
 
-
 **Examples**
-
 
 ```sql
 SELECT `carto-os`.carto.PLACEKEY_ISVALID('@ff7-swh-m49');

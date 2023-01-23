@@ -16,9 +16,7 @@ Creates a rectangular Polygon from the minimum and maximum values for X and Y.
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.ST_MAKEENVELOPE(0,0,1,1);
@@ -27,7 +25,6 @@ SELECT `carto-os`.carto.ST_MAKEENVELOPE(0,0,1,1);
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
 

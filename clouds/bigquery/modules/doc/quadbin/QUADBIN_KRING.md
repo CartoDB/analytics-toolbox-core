@@ -15,9 +15,7 @@ Returns all Quadbin cell indexes in a **filled square k-ring** centered at the o
 
 `ARRAY<INT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_KRING(5209574053332910079, 1);

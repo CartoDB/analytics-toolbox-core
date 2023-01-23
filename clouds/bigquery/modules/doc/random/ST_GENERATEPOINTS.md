@@ -24,9 +24,7 @@ It never generates more than the requested number of points, but there is a smal
 
 `ARRAY<GEOGRAPHY>`
 
-
 **Example**
-
 
 ```sql
 WITH blocks AS (

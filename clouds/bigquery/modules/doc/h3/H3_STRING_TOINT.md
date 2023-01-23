@@ -14,9 +14,7 @@ Converts the string representation of the H3 index to the integer representation
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_STRING_TOINT('847b59dffffffff');

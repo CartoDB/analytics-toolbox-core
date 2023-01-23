@@ -14,9 +14,7 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given quadint.
 
 `STRUCT<INT64, INT64, INT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOZXY(4388);

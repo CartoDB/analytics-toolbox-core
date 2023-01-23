@@ -4,5 +4,4 @@ badges:
 ---
 # geohash
 
-
 [Geohash](http://geohash.org/) is a public domain spatial index.

@@ -22,9 +22,7 @@ Note that the `y` coordinate increases from North to South, and the `y` coordina
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMZXY(4, 9, 8);

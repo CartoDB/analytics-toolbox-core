@@ -14,9 +14,7 @@ Compute a quadbin index from a quadkey.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMQUADKEY('0231001222');

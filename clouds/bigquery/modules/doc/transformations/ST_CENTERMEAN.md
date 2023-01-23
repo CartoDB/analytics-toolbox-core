@@ -14,9 +14,7 @@ Takes a Feature or FeatureCollection and returns the mean center (average of its
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_CENTERMEAN(
@@ -27,7 +25,6 @@ SELECT `carto-os`.carto.ST_CENTERMEAN(
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [New police stations based on Chicago crime location clusters](/analytics-toolbox-bigquery/examples/new-police-stations-based-on-chicago-crime-location-clusters/)
 

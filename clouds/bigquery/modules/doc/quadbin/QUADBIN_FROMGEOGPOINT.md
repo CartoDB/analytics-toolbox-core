@@ -15,9 +15,7 @@ Returns the Quadbin of a given point at a given level of detail.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);

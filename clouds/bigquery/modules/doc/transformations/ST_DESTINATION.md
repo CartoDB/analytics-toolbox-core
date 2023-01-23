@@ -17,9 +17,7 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_DESTINATION(

@@ -15,9 +15,7 @@ Returns the **grid distance** between two hexagon indexes. This function may fai
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
@@ -33,7 +31,6 @@ If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bi
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
 

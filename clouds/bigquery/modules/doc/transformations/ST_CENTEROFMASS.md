@@ -14,9 +14,7 @@ Takes any Feature or a FeatureCollection and returns its center of mass (also kn
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_CENTEROFMASS(

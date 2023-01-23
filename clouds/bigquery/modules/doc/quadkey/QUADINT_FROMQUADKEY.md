@@ -14,9 +14,7 @@ Returns the quadint equivalent to the input quadkey.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_FROMQUADKEY("3001");

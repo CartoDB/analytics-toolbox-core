@@ -14,9 +14,7 @@ Returns the quadkey equivalent to the input quadint.
 
 `STRING`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOQUADKEY(4388);

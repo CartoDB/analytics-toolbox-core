@@ -15,9 +15,7 @@ Returns the parent quadint of a given quadint for a specific resolution. A paren
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOPARENT(4388, 3);

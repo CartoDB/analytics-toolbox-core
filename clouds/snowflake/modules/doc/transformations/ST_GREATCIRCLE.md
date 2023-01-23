@@ -31,7 +31,6 @@ SELECT carto.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.664
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
 
-
 * [Computing US airport connections and route interpolations](/analytics-toolbox-snowflake/examples/computing-us-airport-connections-and-route-interpolations/)
 
 {% endhint %}

@@ -14,9 +14,7 @@ Returns the centroid for a given quadint.
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOGEOGPOINT(4388);

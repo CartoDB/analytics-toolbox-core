@@ -14,9 +14,7 @@ Creates a set of polygons from geographies which contain lines that represent th
 
 `ARRAY<GEOGRAPHY>`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_POLYGONIZE(
@@ -31,7 +29,6 @@ SELECT `carto-os`.carto.ST_POLYGONIZE(
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
 

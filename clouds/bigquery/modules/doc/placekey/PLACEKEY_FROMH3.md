@@ -14,9 +14,7 @@ Returns the placekey equivalent of the given H3 index.
 
 `STRING`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.PLACEKEY_FROMH3('847b59dffffffff');

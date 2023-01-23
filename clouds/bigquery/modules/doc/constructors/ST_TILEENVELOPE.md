@@ -15,9 +15,7 @@ Returns the boundary polygon of a [tile](https://wiki.openstreetmap.org/wiki/Sli
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.ST_TILEENVELOPE(10,384,368);
@@ -26,7 +24,6 @@ SELECT `carto-os`.carto.ST_TILEENVELOPE(10,384,368);
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Census areas in the UK within tiles of multiple resolutions](/analytics-toolbox-bigquery/examples/census-areas-in-the-uk-within-tiles-of-multiple-resolutions/)
 

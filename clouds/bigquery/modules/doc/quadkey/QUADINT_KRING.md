@@ -15,9 +15,7 @@ Returns all cell indexes in a **filled square k-ring** centered at the origin in
 
 `ARRAY<INT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_KRING(4388, 1);

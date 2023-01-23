@@ -14,9 +14,7 @@ Returns a POINT corresponding to the centroid of an S2 cell, given its ID.
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_CENTER(1735346007979327488);

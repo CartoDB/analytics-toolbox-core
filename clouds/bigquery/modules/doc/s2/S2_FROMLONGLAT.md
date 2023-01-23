@@ -16,9 +16,7 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMLONGLAT(-3.7038, 40.4168, 8);

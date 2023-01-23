@@ -22,9 +22,7 @@ Lines polyfill is calculated by approximating S2 cells to H3 cells, in some case
 
 `ARRAY<STRING>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_POLYFILL(
@@ -38,7 +36,6 @@ SELECT `carto-os`.carto.H3_POLYFILL(
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
 

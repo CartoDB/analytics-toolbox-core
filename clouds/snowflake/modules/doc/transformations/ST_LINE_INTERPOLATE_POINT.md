@@ -31,7 +31,6 @@ SELECT carto.ST_LINE_INTERPOLATE_POINT(TO_GEOGRAPHY('LINESTRING (-76.091308 18.4
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
 
-
 * [Computing US airport connections and route interpolations](/analytics-toolbox-snowflake/examples/computing-us-airport-connections-and-route-interpolations/)
 
 {% endhint %}

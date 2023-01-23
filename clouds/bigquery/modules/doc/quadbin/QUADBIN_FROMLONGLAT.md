@@ -16,9 +16,7 @@ Returns the Quadbin representation of a point for a given level of detail and ge
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4);

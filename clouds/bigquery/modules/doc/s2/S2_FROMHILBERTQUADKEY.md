@@ -14,9 +14,7 @@ Returns the conversion of a Hilbert quadkey (a.k.a Hilbert curve quadtree ID) in
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMHILBERTQUADKEY('0/30002221');

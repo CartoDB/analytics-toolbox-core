@@ -15,9 +15,7 @@ Returns all cell indexes and their distances in a **filled hexagonal k-ring** ce
 
 `ARRAY<STRUCT<index STRING, distance INT64>>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_KRING_DISTANCES('837b59fffffffff', 1);

@@ -19,9 +19,7 @@ Returns the quadint index for the given point for each zoom level requested, at 
 
 `ARRAY<STRUCT<INT64, INT64, INT64>>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_FROMLONGLAT_ZOOMRANGE(40.4168, -3.7038, 3, 6, 1, 4);

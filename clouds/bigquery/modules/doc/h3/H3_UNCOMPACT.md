@@ -15,9 +15,7 @@ Returns an array with the H3 indexes of a set of hexagons of the same `resolutio
 
 `ARRAY<STRING>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_UNCOMPACT(['847b59dffffffff'], 5);

@@ -15,9 +15,7 @@ Returns all cell indexes and their distances in a **filled square k-ring** cente
 
 `ARRAY<STRUCT<index INT64, distance INT64>>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_KRING_DISTANCES(4388, 1);

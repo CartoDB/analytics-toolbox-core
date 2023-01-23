@@ -14,9 +14,7 @@ Returns the center of the H3 cell as a GEOGRAPHY point. It will return `null` on
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.H3_CENTER('847b59dffffffff');

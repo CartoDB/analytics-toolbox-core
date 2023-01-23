@@ -16,9 +16,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY<GEOGRAPHY>`
 
-
 **Examples**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_DELAUNAYPOLYGONS(

@@ -14,9 +14,7 @@ Returns the center for a given quadint. The center is defined as the intersectio
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_CENTER(4388);

@@ -15,9 +15,7 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 
 `ARRAY<STRUCT<cluster INT64, geom GEOGRAPHY>>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.ST_CLUSTERKMEANS([ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 1), ST_GEOGPOINT(5, 0), ST_GEOGPOINT(1, 0)], 2);
@@ -29,7 +27,6 @@ SELECT `carto-os`.carto.ST_CLUSTERKMEANS([ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 1)
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [New police stations based on Chicago crime location clusters](/analytics-toolbox-bigquery/examples/new-police-stations-based-on-chicago-crime-location-clusters/)
 

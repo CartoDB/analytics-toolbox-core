@@ -17,9 +17,7 @@ Calculates a Geography buffer for input features for a given radius, i.e. the ar
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_BUFFER(
@@ -33,7 +31,6 @@ SELECT `carto-os`.carto.ST_BUFFER(
 
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
-
 
 * [Bikeshare stations within a San Francisco buffer](/analytics-toolbox-bigquery/examples/bikeshare-stations-within-a-san-francisco-buffer/)
 * [Store cannibalization: quantifying the effect of opening new stores on your existing network](/analytics-toolbox-bigquery/examples/store-cannibalization/)

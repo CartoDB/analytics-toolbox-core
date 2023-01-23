@@ -41,7 +41,6 @@ SELECT carto.ST_MINKOWSKIDISTANCE(
 {% hint style="info" %}
 **ADDITIONAL EXAMPLES**
 
-
 * [Minkowski distance to perform cannibalization analysis](/analytics-toolbox-snowflake/examples/minkowski-distance-to-perform-cannibalization-analysis/)
 
 {% endhint %}

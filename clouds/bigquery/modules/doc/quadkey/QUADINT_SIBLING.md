@@ -15,9 +15,7 @@ Returns the quadint directly next to the given quadint at the same zoom level. T
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_SIBLING(4388, 'up');

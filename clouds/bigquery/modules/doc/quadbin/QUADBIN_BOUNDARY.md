@@ -14,9 +14,7 @@ Returns the boundary for a given Quadbin as a polygon GEOGRAPHY with the same co
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_BOUNDARY(5209574053332910079);

@@ -15,9 +15,7 @@ Returns all Quadbin cell indexes and their distances in a **filled square k-ring
 
 `ARRAY<STRUCT<index INT64, distance INT64>>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);

@@ -15,9 +15,7 @@ Returns an array with the S2 indexes of the children/descendents of the given he
 
 `ARRAY<STRING>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_TOCHILDREN(-6432928348669739008, 12);

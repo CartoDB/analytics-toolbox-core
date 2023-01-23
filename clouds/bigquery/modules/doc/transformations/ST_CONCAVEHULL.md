@@ -16,9 +16,7 @@ Takes a set of points and returns a concave hull Polygon or MultiPolygon. In cas
 
 `GEOGRAPHY`
 
-
 **Example**
-
 
 ``` sql
 SELECT `carto-os`.carto.ST_CONCAVEHULL(

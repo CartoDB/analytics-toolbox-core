@@ -14,9 +14,7 @@ Returns the UINT64 representation of a cell ID.
 
 `STRING`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.S2_TOUINT64REPR(-8520148382826627072);

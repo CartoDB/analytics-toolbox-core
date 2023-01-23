@@ -14,9 +14,7 @@ Returns an array with the boundary box of a given quadint. This boundary box con
 
 `ARRAY<FLOAT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_BBOX(4388);

@@ -15,9 +15,7 @@ Returns the parent (ancestor) Quadbin of a given Quadbin for a specific resoluti
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_TOPARENT(5209574053332910079, 3);

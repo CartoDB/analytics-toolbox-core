@@ -15,9 +15,7 @@ Returns the Quadbin directly next to the given Quadbin at the same resolution. T
 
 `INT64`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_SIBLING(5209574053332910079, 'up');

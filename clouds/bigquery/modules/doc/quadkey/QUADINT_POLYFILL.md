@@ -15,9 +15,7 @@ Returns an array of quadints that intersect with the given geography at a given 
 
 `ARRAY<INT64>`
 
-
 **Example**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_POLYFILL(

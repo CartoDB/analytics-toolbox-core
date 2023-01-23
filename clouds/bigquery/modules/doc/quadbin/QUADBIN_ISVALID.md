@@ -14,9 +14,7 @@ Returns `true` when the given index is a valid Quadbin, `false` otherwise.
 
 `BOOLEAN`
 
-
 **Examples**
-
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_ISVALID(5209574053332910079);
