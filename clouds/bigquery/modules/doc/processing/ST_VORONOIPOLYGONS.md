@@ -49,10 +49,3 @@ SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
 --   POLYGON((4.182 43.634, 4.183 43.634, 4.183 43.634765625, 4.182 43.634140625, 4.182 43.634))
 -- ]
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Analyzing weather stations coverage using a Voronoi diagram](/analytics-toolbox-bigquery/examples/analyzing-weather-stations-coverage-using-a-voronoi-diagram/)
-
-````

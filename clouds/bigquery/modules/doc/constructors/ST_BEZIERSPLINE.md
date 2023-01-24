@@ -24,10 +24,3 @@ SELECT `carto-os`.carto.ST_BEZIERSPLINE(
 );
 -- LINESTRING(-76.091308 18.427501, -76.0916216712943 ...
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
-
-````
