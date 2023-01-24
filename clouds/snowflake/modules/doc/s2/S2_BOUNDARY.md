@@ -21,6 +21,6 @@ SELECT carto.S2_BOUNDARY(1735346007979327488);
 -- { "coordinates": [ [ [ 40.30886257091771, -3.8626948530725476 ], [ 40.30886257091771, -3.6086596856604585 ] ...
 ```
 
-{{% bannerNote title="tip"%}}
+````hint:info
 S2 Cell edges are spherical geodesics.
-{{%/ bannerNote %}}
+````

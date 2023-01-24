@@ -1,8 +1,8 @@
-### _H3_COVERINGCELLIDS
+## _H3_COVERINGCELLIDS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto._H3_COVERINGCELLIDS(geography, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns an array with all H3 cells that intersect a given geography.
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto._H3_COVERINGCELLIDS(
