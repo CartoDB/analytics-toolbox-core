@@ -26,10 +26,3 @@ SELECT `carto-os`.carto.ST_POLYGONIZE(
 -- POLYGON((-74.5366825512491 43.6889777784079, -70.7632814028801 42.9679602005825, -70.2005131676838 43.8455720129728, -74.5366825512491 43.6889777784079))
 -- POLYGON((-73.9704330709753 35.3953164724094, -72.514071762468 36.5823995124737, -73.3262122666779 41.2706174323278, -73.9704330709753 35.3953164724094))
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Identifying earthquake-prone areas in the state of California](/analytics-toolbox-bigquery/examples/identifying-earthquake-prone-areas-in-the-state-of-california/)
-
-````

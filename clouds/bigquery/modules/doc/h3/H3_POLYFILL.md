@@ -33,10 +33,3 @@ SELECT `carto-os`.carto.H3_POLYFILL(
 -- 843ece5ffffffff
 -- ...
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
-
-````

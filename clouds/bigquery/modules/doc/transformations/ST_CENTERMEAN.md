@@ -22,10 +22,3 @@ SELECT `carto-os`.carto.ST_CENTERMEAN(
 );
 -- POINT(25.3890912155939 29.7916831655627)
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [New police stations based on Chicago crime location clusters](/analytics-toolbox-bigquery/examples/new-police-stations-based-on-chicago-crime-location-clusters/)
-
-````

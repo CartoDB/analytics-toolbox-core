@@ -66,10 +66,3 @@ SELECT carto.ST_VORONOIPOLYGONS(
 --   "{\"type\":\"Polygon\",\"coordinates\":[[[4.182,43.63414062499997],[4.183,43.634765625],[4.183,43.634],[4.182,43.634],[4.-- 182,43.63414062499997]]]}"
 -- ]
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Analyzing store location coverage using a Voronoi diagram](/analytics-toolbox-snowflake/examples/analyzing-store-location-coverage-using-a-voronoi-diagram/)
-
-````

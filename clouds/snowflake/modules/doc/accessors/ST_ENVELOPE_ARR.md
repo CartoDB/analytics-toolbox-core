@@ -26,10 +26,3 @@ SELECT carto.ST_ENVELOPE_ARR(
 );
 -- { "coordinates": [ [ [ -75.833, 39.125 ], [ -75.221, 39.125 ], [ -75.221, 39.984 ], ...
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Analyzing store location coverage using a Voronoi diagram](/analytics-toolbox-snowflake/examples/analyzing-store-location-coverage-using-a-voronoi-diagram/)
-
-````
