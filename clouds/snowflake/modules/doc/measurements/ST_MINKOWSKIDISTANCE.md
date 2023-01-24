@@ -37,10 +37,3 @@ SELECT carto.ST_MINKOWSKIDISTANCE(
 );
 -- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [Minkowski distance to perform cannibalization analysis](/analytics-toolbox-snowflake/examples/minkowski-distance-to-perform-cannibalization-analysis/)
-
-````

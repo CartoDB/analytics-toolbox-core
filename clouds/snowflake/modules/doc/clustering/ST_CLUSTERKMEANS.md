@@ -32,10 +32,3 @@ SELECT carto.ST_CLUSTERKMEANS(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(0, 0))::STRI
 -- {"cluster": 0, "geom": "{\"coordinates\":[5,0],\"type\":\"Point\"}"}
 -- {"cluster": 1, "geom": "{\"coordinates\":[1,0],\"type\":\"Point\"}"}
 ```
-
-````hint:info
-**ADDITIONAL EXAMPLES**
-
-* [New supplier offices based on store locations clusters](/analytics-toolbox-snowflake/examples/new-supplier-offices-based-on-store-locations-clusters/)
-
-````
