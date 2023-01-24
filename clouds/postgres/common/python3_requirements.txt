@@ -6,7 +6,7 @@ brunette==0.2.0
 pytest==6.2.4
 psycopg2-binary==2.9.1
 sqlparse==0.4.2
-wheel==0.37.0
+wheel==0.38.1
 tqdm==4.64.0
 GeoAlchemy2==0.9.3
 geopandas==0.9.0
