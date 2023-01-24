@@ -19,7 +19,7 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 **Example**
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_DESTINATION(
   ST_GEOGPOINT(-3.70325,40.4167),
   10,

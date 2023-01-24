@@ -18,7 +18,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 **Examples**
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_DELAUNAYLINES(
   [
     ST_GEOGPOINT(-74.5366825512491, 43.6889777784079),

@@ -19,7 +19,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 **Examples**
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
   [
     ST_GEOGPOINT(-75.833, 39.284),

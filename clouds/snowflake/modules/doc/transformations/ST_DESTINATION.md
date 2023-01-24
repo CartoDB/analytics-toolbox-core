@@ -19,12 +19,12 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45);
 -- { "coordinates": [ -3.6196461743569053, 40.48026145975517 ], "type": "Point" }
 ```
 
-``` sql
+```sql
 SELECT carto.ST_DESTINATION(ST_POINT(-3.70325,40.4167), 10, 45, 'miles');
 -- { "coordinates": [ -3.56862505487045, 40.518962677753585 ], "type": "Point" }
 ```

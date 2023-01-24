@@ -18,7 +18,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_DELAUNAYPOLYGONS(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,

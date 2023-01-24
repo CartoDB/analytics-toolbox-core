@@ -18,12 +18,12 @@ Calculate great circle routes as LineString or MultiLineString. If the start and
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643));
 -- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ...
 ```
 
-``` sql
+```sql
 SELECT carto.ST_GREATCIRCLE(ST_POINT(-3.70325,40.4167), ST_POINT(-73.9385,40.6643), 20);
 -- { "coordinates": [ [ -3.7032499999999993, 40.4167 ], ...
 ```

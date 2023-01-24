@@ -16,7 +16,7 @@ Takes a FeatureCollection of points and computes the median center. The median c
 
 **Example**
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_CENTERMEDIAN(
   ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")
 );

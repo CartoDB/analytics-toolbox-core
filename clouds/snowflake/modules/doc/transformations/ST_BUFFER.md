@@ -18,12 +18,12 @@ Calculates a buffer for the input features for a given distance.
 
 **Example**
 
-``` sql
+```sql
 SELECT carto.ST_BUFFER(ST_POINT(-74.00, 40.7128), 1000);
 -- { "coordinates": [ [ [ -73.98813543746913, 40.712799392649444 ], ...
 ```
 
-``` sql
+```sql
 SELECT carto.ST_BUFFER(ST_POINT(-74.00, 40.7128), 1000, 10);
 -- { "coordinates": [ [ [ -73.98813543746913, 40.712799392649444 ], ...
 ```

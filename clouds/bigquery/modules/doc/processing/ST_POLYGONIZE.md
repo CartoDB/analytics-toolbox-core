@@ -16,7 +16,7 @@ Creates a set of polygons from geographies which contain lines that represent th
 
 **Example**
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_POLYGONIZE(
   [
     ST_GEOGFROMTEXT('LINESTRING(-74.5366825512491 43.6889777784079, -70.7632814028801 42.9679602005825, -70.2005131676838 43.8455720129728, -74.5366825512491 43.6889777784079)'),

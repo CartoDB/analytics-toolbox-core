@@ -16,7 +16,7 @@ Creates a set of polygons from geographies which contain lines that represent th
 
 **Example**
 
-``` sql
+```sql
 SELECT carto.ST_POLYGONIZE(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(

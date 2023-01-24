@@ -19,7 +19,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_VORONOIPOLYGONS(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
@@ -34,7 +34,7 @@ SELECT carto.ST_VORONOIPOLYGONS(
 --  "{\"type\":\"Polygon\",\"coordinates\":[[[-75.72047348298037,39.63532260219203],[-75.04333534909291,39.716496976360624],[-75.6178875502008,38.854668674698786],[-75.72047348298037,39.63532260219203]]]}"
 ```
 
-``` sql
+```sql
 SELECT carto.ST_VORONOIPOLYGONS(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,

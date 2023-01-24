@@ -18,7 +18,7 @@ Takes a set of points and returns a concave hull Polygon or MultiPolygon. In cas
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_CONCAVEHULL(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
@@ -30,7 +30,7 @@ SELECT carto.ST_CONCAVEHULL(
 -- { "coordinates": [ [ [ -75.221, 39.125 ], [ -75.833, 39.284 ], [ -75.6, 39.984 ], [ -75.221, 39.125 ] ] ], "type": "Polygon" }
 ```
 
-``` sql
+```sql
 SELECT carto.ST_CONCAVEHULL(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
@@ -43,7 +43,7 @@ SELECT carto.ST_CONCAVEHULL(
 -- { "coordinates": [ [ [ -75.833, 39.284 ], [ -75.6, 39.984 ], ...
 ```
 
-``` sql
+```sql
 SELECT carto.ST_CONCAVEHULL(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
@@ -57,7 +57,7 @@ SELECT carto.ST_CONCAVEHULL(
 -- { "coordinates": [ [ [ -75.833, 39.284 ], [ -75.6, 39.984 ], ...
 ```
 
-``` sql
+```sql
 SELECT carto.ST_CONCAVEHULL(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(

@@ -17,7 +17,7 @@ Calculate the Minkowski p-norm distance between two features.
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_MINKOWSKIDISTANCE(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(10,10))::STRING,
@@ -27,7 +27,7 @@ SELECT carto.ST_MINKOWSKIDISTANCE(
 -- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
 ```
 
-``` sql
+```sql
 SELECT carto.ST_MINKOWSKIDISTANCE(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(10,10))::STRING,
