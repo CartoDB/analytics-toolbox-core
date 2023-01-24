@@ -28,9 +28,9 @@ SELECT `carto-os`.carto.H3_KRING('837b59fffffffff', 1);
 -- 837b5dfffffffff
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [An H3 grid of Starbucks locations and simple cannibalization analysis](/analytics-toolbox-bigquery/examples/an-h3-grid-of-starbucks-locations-and-simple-cannibalization-analysis/)
 
-{% endhint %}
+````

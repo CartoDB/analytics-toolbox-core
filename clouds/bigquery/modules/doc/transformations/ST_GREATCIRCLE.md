@@ -23,9 +23,9 @@ SELECT `carto-os`.carto.ST_GREATCIRCLE(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPO
 -- LINESTRING(-3.70325 40.4167 ...
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [Computing US airport connections and route interpolations](/analytics-toolbox-bigquery/examples/computing-us-airport-connections-and-route-interpolations/)
 
-{% endhint %}
+````

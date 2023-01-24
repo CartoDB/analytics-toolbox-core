@@ -29,11 +29,11 @@ SELECT `carto-os`.carto.ST_BUFFER(
 -- POLYGON((-73.9881354374691 40.7127993926494 ...
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [Bikeshare stations within a San Francisco buffer](/analytics-toolbox-bigquery/examples/bikeshare-stations-within-a-san-francisco-buffer/)
 * [Store cannibalization: quantifying the effect of opening new stores on your existing network](/analytics-toolbox-bigquery/examples/store-cannibalization/)
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
 
-{% endhint %}
+````

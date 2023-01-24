@@ -22,14 +22,14 @@ SELECT `carto-os`.carto.H3_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
 -- 847b59dffffffff
 ```
 
-{% hint style="info" %}
+````hint:info
 **tip**
 
 If you want the cells covered by a POLYGON see [H3_POLYFILL](#h3_polyfill).
 
-{% endhint %}
+````
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [An H3 grid of Starbucks locations and simple cannibalization analysis](/analytics-toolbox-bigquery/examples/an-h3-grid-of-starbucks-locations-and-simple-cannibalization-analysis/)
@@ -37,4 +37,4 @@ If you want the cells covered by a POLYGON see [H3_POLYFILL](#h3_polyfill).
 * [Computing the spatial autocorrelation of POIs locations in Berlin](/analytics-toolbox-bigquery/examples/computing-the-spatial-autocorrelation-of-pois-locations-in-berlin/)
 * [Identifying amenity hotspots in Stockholm](/analytics-toolbox-bigquery/examples/amenity-hotspots-in-stockholm/)
 
-{% endhint %}
+````

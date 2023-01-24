@@ -13,12 +13,12 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 * `geom_column`: `VARCHAR` name of the column to be clusterd.
 * `number_of_clusters`: `INT` number of clusters that will be generated.
 
-{% hint style="warning" %}
+````hint:warning
 **warning**
 
 Keep in mid that due to some restrictions in the Redshift `VARCHAR` size, the maximum number of features (points) allow to be clustered is around 2500.
 
-{% endhint %}
+````
 
 **Examples**
 

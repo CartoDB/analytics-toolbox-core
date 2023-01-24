@@ -23,9 +23,9 @@ SELECT `carto-os`.carto.ST_LINE_INTERPOLATE_POINT(ST_GEOGFROMTEXT("LINESTRING (-
 -- POINT(-74.297592068938 19.4498107103156)
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [Computing US airport connections and route interpolations](/analytics-toolbox-bigquery/examples/computing-us-airport-connections-and-route-interpolations/)
 
-{% endhint %}
+````

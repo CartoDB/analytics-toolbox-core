@@ -50,9 +50,9 @@ SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
 -- ]
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [Analyzing weather stations coverage using a Voronoi diagram](/analytics-toolbox-bigquery/examples/analyzing-weather-stations-coverage-using-a-voronoi-diagram/)
 
-{% endhint %}
+````

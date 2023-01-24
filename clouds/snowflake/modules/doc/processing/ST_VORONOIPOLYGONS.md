@@ -67,9 +67,9 @@ SELECT carto.ST_VORONOIPOLYGONS(
 -- ]
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [Analyzing store location coverage using a Voronoi diagram](/analytics-toolbox-snowflake/examples/analyzing-store-location-coverage-using-a-voronoi-diagram/)
 
-{% endhint %}
+````

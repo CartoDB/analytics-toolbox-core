@@ -55,9 +55,9 @@ SELECT `carto-os`.carto.ST_DELAUNAYLINES(
 -- ]
 ```
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [A NYC subway connection graph using Delaunay triangulation](/analytics-toolbox-bigquery/examples/a-nyc-subway-connection-graph-using-delaunay-triangulation/)
 
-{% endhint %}
+````

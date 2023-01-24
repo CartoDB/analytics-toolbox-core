@@ -30,9 +30,9 @@ SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
 -- {"index": "5209662014263132159", "distance": "1"}
 ```
 
-{% hint style="info" %}
+````hint:info
 **tip**
 
 The distance of the rings is computed as the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
 
-{% endhint %}
+````

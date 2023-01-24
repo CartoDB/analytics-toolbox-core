@@ -22,16 +22,16 @@ SELECT `carto-os`.carto.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
 -- 1
 ```
 
-{% hint style="info" %}
+````hint:info
 **tip**
 
 If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions#st_distance) between the cells ([H3_BOUNDARY](#h3_boundary)) or their centroid.
 
-{% endhint %}
+````
 
-{% hint style="info" %}
+````hint:info
 **ADDITIONAL EXAMPLES**
 
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
 
-{% endhint %}
+````
