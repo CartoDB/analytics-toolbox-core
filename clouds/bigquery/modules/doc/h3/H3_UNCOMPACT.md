@@ -1,8 +1,8 @@
-### H3_UNCOMPACT
+## H3_UNCOMPACT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_UNCOMPACT(indexArray, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns an array with the H3 indexes of a set of hexagons of the same `resolutio
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_UNCOMPACT(['847b59dffffffff'], 5);

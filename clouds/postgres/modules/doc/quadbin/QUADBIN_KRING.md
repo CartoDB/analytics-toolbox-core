@@ -1,8 +1,8 @@
-### QUADBIN_KRING
+## QUADBIN_KRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_KRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_VORONOILINES
+## ST_VORONOILINES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_VORONOILINES(points, bbox)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -17,9 +17,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY<GEOGRAPHY>`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
 ``` sql
 SELECT `carto-os`.carto.ST_VORONOILINES(

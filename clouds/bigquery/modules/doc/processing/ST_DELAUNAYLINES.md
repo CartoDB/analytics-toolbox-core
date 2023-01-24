@@ -1,8 +1,8 @@
-### ST_DELAUNAYLINES
+## ST_DELAUNAYLINES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DELAUNAYLINES(points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,9 +16,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY<GEOGRAPHY>`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
 ``` sql
 SELECT `carto-os`.carto.ST_DELAUNAYLINES(
@@ -57,7 +55,9 @@ SELECT `carto-os`.carto.ST_DELAUNAYLINES(
 -- ]
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [A NYC subway connection graph using Delaunay triangulation](/analytics-toolbox-bigquery/examples/a-nyc-subway-connection-graph-using-delaunay-triangulation/)
-{{%/ bannerNote %}}
+
+````

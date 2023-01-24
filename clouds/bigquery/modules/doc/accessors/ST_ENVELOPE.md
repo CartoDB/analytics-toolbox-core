@@ -1,8 +1,8 @@
-### ST_ENVELOPE
+## ST_ENVELOPE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ENVELOPE(geog)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Takes any number of features and returns a rectangular Polygon that encompasses 
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ``` sql
 SELECT `carto-os`.carto.ST_ENVELOPE([ST_GEOGPOINT(-75.833, 39.284), ST_GEOGPOINT(-75.6, 39.984), ST_GEOGPOINT(-75.221, 39.125)]);

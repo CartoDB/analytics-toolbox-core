@@ -1,8 +1,8 @@
-### QUADINT_FROMLONGLAT_ZOOMRANGE
+## QUADINT_FROMLONGLAT_ZOOMRANGE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_FROMLONGLAT_ZOOMRANGE(longitude, latitude, zoom_min, zoom_max, zoom_step, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -19,9 +19,7 @@ Returns the quadint index for the given point for each zoom level requested, at 
 
 `ARRAY<STRUCT<INT64, INT64, INT64>>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_FROMLONGLAT_ZOOMRANGE(40.4168, -3.7038, 3, 6, 1, 4);

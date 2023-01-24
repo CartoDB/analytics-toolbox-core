@@ -1,8 +1,8 @@
-### ST_ISVALID
+## ST_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ISVALID(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### QUADBIN_TOPARENT
+## QUADBIN_TOPARENT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_TOPARENT(quadbin, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns the parent (ancestor) Quadbin of a given Quadbin for a specific resoluti
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_TOPARENT(5209574053332910079, 3);

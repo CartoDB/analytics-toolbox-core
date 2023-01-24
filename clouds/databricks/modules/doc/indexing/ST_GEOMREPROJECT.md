@@ -1,8 +1,8 @@
-### GEOMREPROJECT
+## GEOMREPROJECT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_GEOMREPROJECT(geom, crsA, crsB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

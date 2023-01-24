@@ -1,16 +1,19 @@
-### H3_POLYFILL
+## H3_POLYFILL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_POLYFILL(geography, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
 Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained.
 
-{{% bannerNote type="note" title="warning"%}}
+````hint:info
+**warning**
+
 Lines polyfill is calculated by approximating S2 cells to H3 cells, in some cases some cells might be missing.
-{{%/ bannerNote %}}
+
+````
 
 * `geography`: `GEOGRAPHY` representing the area to cover.
 * `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
@@ -19,9 +22,7 @@ Lines polyfill is calculated by approximating S2 cells to H3 cells, in some case
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_POLYFILL(
@@ -33,7 +34,9 @@ SELECT `carto-os`.carto.H3_POLYFILL(
 -- ...
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [Opening a new Pizza Hut location in Honolulu](/analytics-toolbox-bigquery/examples/opening-a-new-pizza-hut-location-in-honolulu/)
-{{%/ bannerNote %}}
+
+````

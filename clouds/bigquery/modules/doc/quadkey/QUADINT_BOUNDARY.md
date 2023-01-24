@@ -1,8 +1,8 @@
-### QUADINT_BOUNDARY
+## QUADINT_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_BOUNDARY(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the boundary for a given quadint. We extract the boundary in the same wa
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_BOUNDARY(4388);

@@ -1,8 +1,8 @@
-### QUADBIN_FROMLONGLAT
+## QUADBIN_FROMLONGLAT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

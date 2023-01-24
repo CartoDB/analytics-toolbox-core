@@ -1,8 +1,8 @@
-### ST_MAKEENVELOPE
+## ST_MAKEENVELOPE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEENVELOPE(xmin, ymin, xmax, ymax)
-{{%/ bannerNote %}}
+```
 
 **Description**
 Creates a rectangular Polygon from the minimum and maximum values for X and Y.

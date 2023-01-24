@@ -1,8 +1,8 @@
-### PLACEKEY_ASH3
+## PLACEKEY_ASH3
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.PLACEKEY_ASH3(placekey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

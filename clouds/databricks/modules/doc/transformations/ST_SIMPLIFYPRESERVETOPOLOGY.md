@@ -1,8 +1,8 @@
-### ST_SIMPLIFYPRESERVETOPOLOGY
+## ST_SIMPLIFYPRESERVETOPOLOGY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, tolerance)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

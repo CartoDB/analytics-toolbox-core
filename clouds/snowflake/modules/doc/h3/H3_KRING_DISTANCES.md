@@ -1,8 +1,8 @@
-### H3_KRING_DISTANCES
+## H3_KRING_DISTANCES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_KRING_DISTANCES(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

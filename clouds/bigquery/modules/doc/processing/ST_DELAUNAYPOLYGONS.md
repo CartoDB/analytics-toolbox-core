@@ -1,8 +1,8 @@
-### ST_DELAUNAYPOLYGONS
+## ST_DELAUNAYPOLYGONS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DELAUNAYPOLYGONS(points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,9 +16,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY<GEOGRAPHY>`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
 ``` sql
 SELECT `carto-os`.carto.ST_DELAUNAYPOLYGONS(

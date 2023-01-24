@@ -1,8 +1,8 @@
-### S2_TOUINT64REPR
+## S2_TOUINT64REPR
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOUINT64REPR(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the UINT64 representation of a cell ID.
 
 `STRING`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.S2_TOUINT64REPR(-8520148382826627072);

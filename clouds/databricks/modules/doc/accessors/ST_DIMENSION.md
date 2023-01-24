@@ -1,8 +1,8 @@
-### ST_DIMENSION
+## ST_DIMENSION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DIMENSION(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

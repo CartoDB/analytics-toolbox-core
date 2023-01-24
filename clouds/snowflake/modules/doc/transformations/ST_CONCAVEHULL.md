@@ -1,8 +1,8 @@
-### ST_CONCAVEHULL
+## ST_CONCAVEHULL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CONCAVEHULL(geojsons [, maxEdge] [, units])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

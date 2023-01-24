@@ -1,8 +1,8 @@
-### QUADINT_KRING_DISTANCES
+## QUADINT_KRING_DISTANCES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_KRING_DISTANCES(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns all cell indexes and their distances in a **filled square k-ring** cente
 
 `ARRAY<STRUCT<index INT64, distance INT64>>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_KRING_DISTANCES(4388, 1);
@@ -32,6 +30,9 @@ SELECT `carto-os`.carto.QUADINT_KRING_DISTANCES(4388, 1);
 -- {"index": "3844", "distance": "1"}
 ```
 
-{{% bannerNote type="note" title="tip"%}}
+````hint:info
+**tip**
+
 The distance of the rings is computed as the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
-{{%/ bannerNote %}}
+
+````

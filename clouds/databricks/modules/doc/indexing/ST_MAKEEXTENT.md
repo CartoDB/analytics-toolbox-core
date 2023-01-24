@@ -1,8 +1,8 @@
-### ST_MAKEEXTENT
+## ST_MAKEEXTENT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEEXTENT(lowerX, lowerY, upperX, upperY)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

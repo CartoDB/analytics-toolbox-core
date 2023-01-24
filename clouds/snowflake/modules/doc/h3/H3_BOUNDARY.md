@@ -1,8 +1,8 @@
-### H3_BOUNDARY
+## H3_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_BOUNDARY(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

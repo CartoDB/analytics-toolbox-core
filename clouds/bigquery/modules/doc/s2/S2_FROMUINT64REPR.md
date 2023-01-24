@@ -1,8 +1,8 @@
-### S2_FROMUINT64REPR
+## S2_FROMUINT64REPR
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMUINT64REPR(uid)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the cell ID from a UINT64 representation.
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMUINT64REPR('9926595690882924544');

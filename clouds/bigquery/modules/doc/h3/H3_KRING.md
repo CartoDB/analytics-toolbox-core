@@ -1,8 +1,8 @@
-### H3_KRING
+## H3_KRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_KRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_KRING('837b59fffffffff', 1);
@@ -30,7 +28,9 @@ SELECT `carto-os`.carto.H3_KRING('837b59fffffffff', 1);
 -- 837b5dfffffffff
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [An H3 grid of Starbucks locations and simple cannibalization analysis](/analytics-toolbox-bigquery/examples/an-h3-grid-of-starbucks-locations-and-simple-cannibalization-analysis/)
-{{%/ bannerNote %}}
+
+````

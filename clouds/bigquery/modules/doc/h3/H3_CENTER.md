@@ -1,8 +1,8 @@
-### H3_CENTER
+## H3_CENTER
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_CENTER(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the center of the H3 cell as a GEOGRAPHY point. It will return `null` on
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_CENTER('847b59dffffffff');

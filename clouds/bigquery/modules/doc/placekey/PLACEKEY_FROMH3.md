@@ -1,8 +1,8 @@
-### PLACEKEY_FROMH3
+## PLACEKEY_FROMH3
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.PLACEKEY_FROMH3(h3index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the placekey equivalent of the given H3 index.
 
 `STRING`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.PLACEKEY_FROMH3('847b59dffffffff');

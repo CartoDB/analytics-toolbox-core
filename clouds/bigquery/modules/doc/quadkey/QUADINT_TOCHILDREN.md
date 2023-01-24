@@ -1,8 +1,8 @@
-### QUADINT_TOCHILDREN
+## QUADINT_TOCHILDREN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_TOCHILDREN(quadint, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns an array with the children quadints of a given quadint for a specific re
 
 `ARRAY<INT64>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOCHILDREN(1155, 4);

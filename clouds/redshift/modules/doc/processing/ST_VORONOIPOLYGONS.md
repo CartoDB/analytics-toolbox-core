@@ -1,8 +1,8 @@
-### ST_VORONOIPOLYGONS
+## ST_VORONOIPOLYGONS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_VORONOIPOLYGONS(points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

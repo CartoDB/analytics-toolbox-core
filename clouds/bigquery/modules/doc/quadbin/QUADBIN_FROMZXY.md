@@ -1,8 +1,8 @@
-### QUADBIN_FROMZXY
+## QUADBIN_FROMZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMZXY(z, x, y)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -22,9 +22,7 @@ Note that the `y` coordinate increases from North to South, and the `y` coordina
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMZXY(4, 9, 8);

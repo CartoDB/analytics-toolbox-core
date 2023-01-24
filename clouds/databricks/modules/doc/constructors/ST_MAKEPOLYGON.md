@@ -1,8 +1,8 @@
-### ST_MAKEPOLYGON
+## ST_MAKEPOLYGON
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEPOLYGON(shell)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

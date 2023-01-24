@@ -1,8 +1,8 @@
-### ST_CONTAINS
+## ST_CONTAINS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CONTAINS(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

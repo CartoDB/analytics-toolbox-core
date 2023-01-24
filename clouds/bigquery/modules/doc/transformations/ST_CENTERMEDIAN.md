@@ -1,8 +1,8 @@
-### ST_CENTERMEDIAN
+## ST_CENTERMEDIAN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTERMEDIAN(geog)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Takes a FeatureCollection of points and computes the median center. The median c
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ``` sql
 SELECT `carto-os`.carto.ST_CENTERMEDIAN(

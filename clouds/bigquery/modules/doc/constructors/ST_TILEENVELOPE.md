@@ -1,8 +1,8 @@
-### ST_TILEENVELOPE
+## ST_TILEENVELOPE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_TILEENVELOPE(zoomLevel, xTile, yTile)
-{{%/ bannerNote %}}
+```
 
 **Description**
 Returns the boundary polygon of a [tile](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) given its zoom level and its X and Y indices.
@@ -15,16 +15,16 @@ Returns the boundary polygon of a [tile](https://wiki.openstreetmap.org/wiki/Sli
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.ST_TILEENVELOPE(10,384,368);
 -- POLYGON((-45 45.089035564831, -45 44.840290651398, -44.82421875 44.840290651398, -44.6484375 44.840290651398, -44.6484375 45.089035564831, -44.82421875 45.089035564831, -45 45.089035564831))
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [Census areas in the UK within tiles of multiple resolutions](/analytics-toolbox-bigquery/examples/census-areas-in-the-uk-within-tiles-of-multiple-resolutions/)
-{{%/ bannerNote %}}
+
+````

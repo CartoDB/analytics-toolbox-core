@@ -1,8 +1,8 @@
-### ST_MINKOWSKIDISTANCE
+## ST_MINKOWSKIDISTANCE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MINKOWSKIDISTANCE(geog [, p])
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -38,7 +38,9 @@ SELECT carto.ST_MINKOWSKIDISTANCE(
 -- [ [ 0, 3.333333333333333e-01 ], [ 3.333333333333333e-01, 0 ] ]
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [Minkowski distance to perform cannibalization analysis](/analytics-toolbox-snowflake/examples/minkowski-distance-to-perform-cannibalization-analysis/)
-{{%/ bannerNote %}}
+
+````

@@ -1,8 +1,8 @@
-### H3_INT_TOSTRING
+## H3_INT_TOSTRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_INT_TOSTRING(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Converts the integer representation of the H3 index to the string representation
 
 `STRING`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_INT_TOSTRING(596645165859340287);

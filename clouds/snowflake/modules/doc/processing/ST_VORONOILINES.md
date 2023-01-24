@@ -1,8 +1,8 @@
-### ST_VORONOILINES
+## ST_VORONOILINES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_VORONOILINES(points [, bbox])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

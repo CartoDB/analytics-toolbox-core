@@ -1,8 +1,8 @@
-### ST_DISJOINT
+## ST_DISJOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DISJOINT(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

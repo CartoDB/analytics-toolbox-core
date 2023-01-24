@@ -1,8 +1,8 @@
-### ST_OVERLAPS
+## ST_OVERLAPS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_OVERLAPS(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

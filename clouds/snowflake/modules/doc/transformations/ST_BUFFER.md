@@ -1,8 +1,8 @@
-### ST_BUFFER
+## ST_BUFFER
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_BUFFER(geog, distance [, segments])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

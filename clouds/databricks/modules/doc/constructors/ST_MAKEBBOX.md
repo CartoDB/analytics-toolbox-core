@@ -1,8 +1,8 @@
-### ST_MAKEBBOX
+## ST_MAKEBBOX
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MAKEBBOX(lowerX, lowerY, upperX, upperY)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

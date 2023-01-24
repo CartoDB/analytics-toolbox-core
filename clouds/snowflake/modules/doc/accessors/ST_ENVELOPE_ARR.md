@@ -1,8 +1,8 @@
-### ST_ENVELOPE_ARR
+## ST_ENVELOPE_ARR
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ENVELOPE_ARR(geojsons)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -27,7 +27,9 @@ SELECT carto.ST_ENVELOPE_ARR(
 -- { "coordinates": [ [ [ -75.833, 39.125 ], [ -75.221, 39.125 ], [ -75.221, 39.984 ], ...
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [Analyzing store location coverage using a Voronoi diagram](/analytics-toolbox-snowflake/examples/analyzing-store-location-coverage-using-a-voronoi-diagram/)
-{{%/ bannerNote %}}
+
+````

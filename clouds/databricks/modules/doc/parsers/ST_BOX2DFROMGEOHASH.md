@@ -1,8 +1,8 @@
-### ST_BOX2DFROMGEOHASH
+## ST_BOX2DFROMGEOHASH
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_BOX2DFROMGEOHASH(geomHash, prec)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

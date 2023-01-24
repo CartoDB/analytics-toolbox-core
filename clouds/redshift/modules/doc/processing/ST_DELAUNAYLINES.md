@@ -1,8 +1,8 @@
-### ST_DELAUNAYLINES
+## ST_DELAUNAYLINES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DELAUNAYLINES(points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_LINE_INTERPOLATE_POINT
+## ST_LINE_INTERPOLATE_POINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_LINE_INTERPOLATE_POINT(geog, distance [, units])
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -28,7 +28,9 @@ SELECT carto.ST_LINE_INTERPOLATE_POINT(TO_GEOGRAPHY('LINESTRING (-76.091308 18.4
 -- { "coordinates": [ -74.297592068938, 19.449810710315635 ], "type": "Point" }
 ```
 
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
+````hint:info
+**ADDITIONAL EXAMPLES**
 
 * [Computing US airport connections and route interpolations](/analytics-toolbox-snowflake/examples/computing-us-airport-connections-and-route-interpolations/)
-{{%/ bannerNote %}}
+
+````

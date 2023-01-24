@@ -1,8 +1,8 @@
-### ST_CENTEROFMASS
+## ST_CENTEROFMASS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTEROFMASS(geog)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Takes any Feature or a FeatureCollection and returns its center of mass (also kn
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ``` sql
 SELECT `carto-os`.carto.ST_CENTEROFMASS(

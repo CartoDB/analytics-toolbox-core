@@ -1,8 +1,8 @@
-### ST_RELATEBOOL
+## ST_RELATEBOOL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_RELATEBOOL(geomA, geomB, mask)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
