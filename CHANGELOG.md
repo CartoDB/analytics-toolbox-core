@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2023-01-30
+
+- fix(bq,sf): use extended toBeCloseTo in tests (#381)
+- docs: adapted docs to gitbook (#380)
+- docs: remove additional examples from the reference (#382)
+
 ## 2022-12-27
 
 - docs(bq,sf|h3): add H3 INT/STRING functions reference (#369)
