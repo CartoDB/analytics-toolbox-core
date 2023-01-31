@@ -46,14 +46,14 @@ The language for documentation is Markdown extended with new metadata and specia
 The file *_INTRO.md* contains the introduction of the module's documentation. The template could vary for each cloud provider.
 
 It allows passing a yml-like metadata header with the following information:
-- badges: core, advanced, experimental, etc.
+- badges: core, advanced, beta, etc.
 - order (optional): list of the functions/procedures. By default, it sorts by alphabetical order.
 
 ```md
 ---
 badges:
-- experimental
 - advanced
+- beta
 order:
 - PROCEDURE_B
 - FUNCTION_A
