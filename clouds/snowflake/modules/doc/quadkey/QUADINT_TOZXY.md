@@ -1,8 +1,8 @@
-### QUADINT_TOZXY
+## QUADINT_TOZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_TOZXY(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

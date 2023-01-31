@@ -1,8 +1,8 @@
-### S2_TOHILBERTQUADKEY
+## S2_TOHILBERTQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOHILBERTQUADKEY(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

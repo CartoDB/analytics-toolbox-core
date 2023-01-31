@@ -1,8 +1,8 @@
-### ST_CENTERMEAN
+## ST_CENTERMEAN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTERMEAN(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

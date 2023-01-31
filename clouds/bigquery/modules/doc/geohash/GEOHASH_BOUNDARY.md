@@ -1,8 +1,8 @@
-### GEOHASH_BOUNDARY
+## GEOHASH_BOUNDARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.GEOHASH_BOUNDARY(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns a geography representing the geohash cell. It will return `null` on erro
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.GEOHASH_BOUNDARY('ezrqcjzgdr3');

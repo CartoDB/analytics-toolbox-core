@@ -1,8 +1,8 @@
-### ST_CASTTOPOLYGON
+## ST_CASTTOPOLYGON
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CASTTOPOLYGON(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

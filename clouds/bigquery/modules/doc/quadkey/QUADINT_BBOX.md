@@ -1,8 +1,8 @@
-### QUADINT_BBOX
+## QUADINT_BBOX
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_BBOX(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns an array with the boundary box of a given quadint. This boundary box con
 
 `ARRAY<FLOAT64>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_BBOX(4388);

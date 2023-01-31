@@ -1,8 +1,8 @@
-### QUADBIN_BBOX
+## QUADBIN_BBOX
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_BBOX(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns an array with the boundary box of a given Quadbin. This boundary box con
 
 `ARRAY<FLOAT64>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_BBOX(5209574053332910079);

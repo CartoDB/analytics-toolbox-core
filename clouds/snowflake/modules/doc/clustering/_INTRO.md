@@ -1,5 +1,7 @@
-## clustering
-
-<div class="badges"><div class="core"></div></div>
+---
+badges:
+- core
+---
+# clustering
 
 This module contains functions that perform clustering on geographies.

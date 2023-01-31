@@ -1,8 +1,8 @@
-### ST_POLYGONIZE
+## ST_POLYGONIZE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_POLYGONIZE(lines)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,7 +16,7 @@ Creates a set of polygons from geographies which contain lines that represent th
 
 **Example**
 
-``` sql
+```sql
 SELECT carto.ST_POLYGONIZE(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(

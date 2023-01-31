@@ -1,8 +1,8 @@
-### ST_WITHIN
+## ST_WITHIN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_WITHIN(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

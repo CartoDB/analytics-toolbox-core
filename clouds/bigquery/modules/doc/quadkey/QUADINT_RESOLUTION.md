@@ -1,8 +1,8 @@
-### QUADINT_RESOLUTION
+## QUADINT_RESOLUTION
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_RESOLUTION(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the resolution of the input quadint.
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_RESOLUTION(4388);

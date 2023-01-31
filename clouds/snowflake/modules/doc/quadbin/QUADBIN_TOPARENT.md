@@ -1,8 +1,8 @@
-### QUADBIN_TOPARENT
+## QUADBIN_TOPARENT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_TOPARENT(quadbin, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_CASTTOGEOMETRY
+## ST_CASTTOGEOMETRY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CASTTOGEOMETRY(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

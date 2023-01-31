@@ -1,8 +1,8 @@
-### ST_CONCAVEHULL
+## ST_CONCAVEHULL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CONCAVEHULL(geog, maxEdge, units)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,11 +16,9 @@ Takes a set of points and returns a concave hull Polygon or MultiPolygon. In cas
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_CONCAVEHULL(
   [
     ST_GEOGPOINT(-75.833, 39.284),
@@ -34,7 +32,7 @@ SELECT `carto-os`.carto.ST_CONCAVEHULL(
 -- POLYGON((-75.68 39.24425, -75.527 39.2045 ...
 ```
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_CONCAVEHULL(
   [
     ST_GEOGPOINT(-75.833, 39.284)

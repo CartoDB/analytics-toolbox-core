@@ -1,8 +1,8 @@
-### S2_FROMUINT64REPR
+## S2_FROMUINT64REPR
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMUINT64REPR(uid)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

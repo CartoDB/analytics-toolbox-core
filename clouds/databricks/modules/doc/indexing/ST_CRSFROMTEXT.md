@@ -1,8 +1,8 @@
-### ST_CRSFROMTEXT
+## ST_CRSFROMTEXT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CRSFROMTEXT(proj4)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

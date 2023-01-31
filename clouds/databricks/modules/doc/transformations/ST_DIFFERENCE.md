@@ -1,8 +1,8 @@
-### ST_DIFFERENCE
+## ST_DIFFERENCE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DIFFERENCE(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### QUADINT_CENTER
+## QUADINT_CENTER
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_CENTER(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the center for a given quadint. The center is defined as the intersectio
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_CENTER(4388);

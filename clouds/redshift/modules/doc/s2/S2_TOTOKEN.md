@@ -1,8 +1,8 @@
-### S2_TOTOKEN
+## S2_TOTOKEN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOTOKEN(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### QUADINT_FROMGEOGPOINT
+## QUADINT_FROMGEOGPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_FROMGEOGPOINT(point, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### QUADINT_FROMZXY
+## QUADINT_FROMZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_FROMZXY(z, x, y)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

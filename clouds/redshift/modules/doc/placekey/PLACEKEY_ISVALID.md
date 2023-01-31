@@ -1,8 +1,8 @@
-### PLACEKEY_ISVALID
+## PLACEKEY_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.PLACEKEY_ISVALID(placekey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

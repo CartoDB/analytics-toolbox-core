@@ -1,8 +1,8 @@
-### ST_EQUALS
+## ST_EQUALS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_EQUALS(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

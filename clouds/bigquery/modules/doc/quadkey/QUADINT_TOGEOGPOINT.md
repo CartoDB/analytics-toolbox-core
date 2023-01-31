@@ -1,8 +1,8 @@
-### QUADINT_TOGEOGPOINT
+## QUADINT_TOGEOGPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_TOGEOGPOINT(quadint)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the centroid for a given quadint.
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOGEOGPOINT(4388);

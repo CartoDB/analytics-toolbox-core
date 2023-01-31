@@ -81,7 +81,7 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/postgres
-          make deploy diff="$GIT_DIFF"
+          make deploy diff="$GIT_DIFF" production=1
 
   publish:
     if: github.ref_name == 'stable'

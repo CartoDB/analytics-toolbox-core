@@ -1,8 +1,8 @@
-### ST_EXTERIORRING
+## ST_EXTERIORRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_EXTERIORRING(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

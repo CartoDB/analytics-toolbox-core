@@ -1,8 +1,8 @@
-### ST_INTERIORRINGN
+## ST_INTERIORRINGN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_INTERIORRINGN(geom, n)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

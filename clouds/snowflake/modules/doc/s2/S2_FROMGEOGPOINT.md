@@ -1,8 +1,8 @@
-### S2_FROMGEOGPOINT
+## S2_FROMGEOGPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMGEOGPOINT(point, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

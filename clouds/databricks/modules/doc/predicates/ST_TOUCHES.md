@@ -1,8 +1,8 @@
-### ST_TOUCHES
+## ST_TOUCHES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_TOUCHES(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

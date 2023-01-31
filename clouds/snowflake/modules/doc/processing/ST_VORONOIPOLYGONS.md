@@ -1,8 +1,8 @@
-### ST_VORONOIPOLYGONS
+## ST_VORONOIPOLYGONS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_VORONOIPOLYGONS(points [, bbox])
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -19,7 +19,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_VORONOIPOLYGONS(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
@@ -34,7 +34,7 @@ SELECT carto.ST_VORONOIPOLYGONS(
 --  "{\"type\":\"Polygon\",\"coordinates\":[[[-75.72047348298037,39.63532260219203],[-75.04333534909291,39.716496976360624],[-75.6178875502008,38.854668674698786],[-75.72047348298037,39.63532260219203]]]}"
 ```
 
-``` sql
+```sql
 SELECT carto.ST_VORONOIPOLYGONS(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,
@@ -66,8 +66,3 @@ SELECT carto.ST_VORONOIPOLYGONS(
 --   "{\"type\":\"Polygon\",\"coordinates\":[[[4.182,43.63414062499997],[4.183,43.634765625],[4.183,43.634],[4.182,43.634],[4.-- 182,43.63414062499997]]]}"
 -- ]
 ```
-
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
-
-* [Analyzing store location coverage using a Voronoi diagram](/analytics-toolbox-snowflake/examples/analyzing-store-location-coverage-using-a-voronoi-diagram/)
-{{%/ bannerNote %}}

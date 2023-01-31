@@ -1,8 +1,8 @@
-### QUADBIN_KRING
+## QUADBIN_KRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_KRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns all Quadbin cell indexes in a **filled square k-ring** centered at the o
 
 `ARRAY<INT64>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_KRING(5209574053332910079, 1);

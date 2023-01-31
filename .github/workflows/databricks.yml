@@ -107,7 +107,7 @@ jobs:
           DB_TOKEN: ${{ steps.secrets.outputs.databricks-ci-token }}
         run: |
           cd clouds/databricks
-          make deploy
+          make deploy production=1
 
   publish:
     needs: test

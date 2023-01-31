@@ -1,8 +1,8 @@
-### S2_FROMLONGLAT
+## S2_FROMLONGLAT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMLONGLAT(longitude, latitude, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,9 +16,7 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMLONGLAT(-3.7038, 40.4168, 8);

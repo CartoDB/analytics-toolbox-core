@@ -1,8 +1,8 @@
-### S2_TOCHILDREN
+## S2_TOCHILDREN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_TOCHILDREN(id [, resolution])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

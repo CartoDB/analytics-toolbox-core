@@ -1,8 +1,8 @@
-### S2_FROMTOKEN
+## S2_FROMTOKEN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMTOKEN(token)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

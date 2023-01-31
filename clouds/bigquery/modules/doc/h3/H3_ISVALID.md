@@ -1,8 +1,8 @@
-### H3_ISVALID
+## H3_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_ISVALID(index)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns `true` when the given index is a valid H3 index, `false` otherwise.
 
 `BOOLEAN`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_ISVALID('847b59dffffffff');

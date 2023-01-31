@@ -6,6 +6,6 @@ brunette==0.2.0
 pytest==6.2.4
 redshift-connector==2.0.884
 sqlparse==0.4.2
-wheel==0.37.0
+wheel==0.38.1
 tqdm==4.64.0
 sqlfluff==1.3.1

@@ -1,8 +1,8 @@
-### H3_TOPARENT
+## H3_TOPARENT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_TOPARENT(index, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

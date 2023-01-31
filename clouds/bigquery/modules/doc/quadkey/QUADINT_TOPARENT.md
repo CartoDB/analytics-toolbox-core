@@ -1,8 +1,8 @@
-### QUADINT_TOPARENT
+## QUADINT_TOPARENT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_TOPARENT(quadint, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns the parent quadint of a given quadint for a specific resolution. A paren
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_TOPARENT(4388, 3);

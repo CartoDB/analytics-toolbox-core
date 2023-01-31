@@ -1,8 +1,8 @@
-### ST_DISTANCESPHERE
+## ST_DISTANCESPHERE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DISTANCESPHERE(geomA, geomB)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

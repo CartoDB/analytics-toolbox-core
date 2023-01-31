@@ -1,8 +1,8 @@
-### H3_POLYFILL
+## H3_POLYFILL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_POLYFILL(geography, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

@@ -1,8 +1,8 @@
-### ST_POINTFROMWKB
+## ST_POINTFROMWKB
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_POINTFROMWKB(wkb)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

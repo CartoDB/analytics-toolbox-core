@@ -1,8 +1,8 @@
-### H3_TOCHILDREN
+## H3_TOCHILDREN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_TOCHILDREN(index, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns an array with the H3 indexes of the children/descendents of the given he
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.H3_TOCHILDREN('837b59fffffffff', 4);

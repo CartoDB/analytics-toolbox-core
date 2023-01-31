@@ -1,8 +1,8 @@
-### ST_ASLATLONTEXT
+## ST_ASLATLONTEXT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ASLATLONTEXT(p)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

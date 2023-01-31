@@ -1,8 +1,8 @@
-### ST_CENTROID
+## ST_CENTROID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTROID(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

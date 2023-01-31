@@ -1,8 +1,8 @@
-### ST_LENGTHSPHERE
+## ST_LENGTHSPHERE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_LENGTHSPHERE(line)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

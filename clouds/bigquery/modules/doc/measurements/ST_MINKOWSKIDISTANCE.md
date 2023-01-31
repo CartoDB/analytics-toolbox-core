@@ -1,8 +1,8 @@
-### ST_MINKOWSKIDISTANCE
+## ST_MINKOWSKIDISTANCE
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_MINKOWSKIDISTANCE(geog, p)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,11 +15,9 @@ Calculate the Minkowski p-norm distance between two features.
 
 `ARRAY<STRING>`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_MINKOWSKIDISTANCE([ST_GEOGPOINT(10,10),ST_GEOGPOINT(13,10)],2);
 -- ["0,0.3333333333333333","0.3333333333333333,0"]
 ```

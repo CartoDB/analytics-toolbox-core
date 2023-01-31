@@ -1,8 +1,8 @@
-### H3_FROMLONGLAT
+## H3_FROMLONGLAT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_FROMLONGLAT(longitude, latitude, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

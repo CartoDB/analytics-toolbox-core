@@ -1,8 +1,8 @@
-### H3_UNCOMPACT
+## H3_UNCOMPACT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_UNCOMPACT(indexArray, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

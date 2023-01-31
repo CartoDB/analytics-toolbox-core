@@ -1,8 +1,8 @@
-### QUADBIN_ISVALID
+## QUADBIN_ISVALID
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_ISVALID(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns `true` when the given index is a valid Quadbin, `false` otherwise.
 
 `BOOLEAN`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_ISVALID(5209574053332910079);

@@ -1,8 +1,8 @@
-### ST_VORONOIPOLYGONS
+## ST_VORONOIPOLYGONS
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_VORONOIPOLYGONS(points, bbox)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -17,11 +17,9 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 `ARRAY<GEOGRAPHY>`
 
-{{% customSelector %}}
 **Examples**
-{{%/ customSelector %}}
 
-``` sql
+```sql
 SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
   [
     ST_GEOGPOINT(-75.833, 39.284),
@@ -51,8 +49,3 @@ SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
 --   POLYGON((4.182 43.634, 4.183 43.634, 4.183 43.634765625, 4.182 43.634140625, 4.182 43.634))
 -- ]
 ```
-
-{{% bannerNote type="note" title="ADDITIONAL EXAMPLES"%}}
-
-* [Analyzing weather stations coverage using a Voronoi diagram](/analytics-toolbox-bigquery/examples/analyzing-weather-stations-coverage-using-a-voronoi-diagram/)
-{{%/ bannerNote %}}

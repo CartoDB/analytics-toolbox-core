@@ -1,8 +1,8 @@
-### ST_RELATE
+## ST_RELATE
 
-{{% bannerNote type="code" %}}
-carto.### ST_RELATE(geomA, geomB)
-{{%/ bannerNote %}}
+```sql:signature
+carto.ST_RELATE(geomA, geomB)
+```
 
 **Description**
 

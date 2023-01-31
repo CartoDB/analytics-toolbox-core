@@ -1,8 +1,8 @@
-### ST_CENTERMEAN
+## ST_CENTERMEAN
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CENTERMEAN(geog)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,7 +16,7 @@ Takes a Feature or FeatureCollection and returns the mean center (average of its
 
 **Example**
 
-``` sql
+```sql
 SELECT carto.ST_CENTERMEAN(TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'));
 -- { "coordinates": [ 26, 24 ], "type": "Point" }
 ```

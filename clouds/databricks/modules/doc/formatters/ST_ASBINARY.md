@@ -1,8 +1,8 @@
-### ST_ASBINARY
+## ST_ASBINARY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_ASBINARY(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

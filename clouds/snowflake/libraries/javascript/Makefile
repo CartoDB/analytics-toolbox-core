@@ -13,6 +13,12 @@ MODULES_DIRS ?= $(ROOT_DIR)/../../modules
 ESLINTRC_DIR ?= $(ROOT_DIR)/../../../..
 COMMON_DIR = $(ROOT_DIR)/../../common
 
+ifeq ($(testall),1)
+BAIL=
+else
+BAIL=--bail
+endif
+
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
@@ -66,7 +72,7 @@ test:
 	echo "Testing libraries..."
 	UNIT_TEST=1 $(MAKE) build
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	jest --testTimeout=30000 --bail --verbose $(TEST_DIR)/$(test)
+	jest --testTimeout=30000 $(BAIL) --verbose $(TEST_DIR)/$(test)
 
 clean:
 	echo "Cleaning libraries..."

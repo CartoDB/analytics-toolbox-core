@@ -1,8 +1,8 @@
-### QUADINT_FROMZXY
+## QUADINT_FROMZXY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_FROMZXY(z, x, y)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -20,9 +20,7 @@ Tile coordinates `x` and `y` depend on the zoom level `z`. For both coordinates,
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADINT_FROMZXY(4, 9, 8);

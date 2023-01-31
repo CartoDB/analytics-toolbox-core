@@ -77,10 +77,10 @@ jobs:
       - name: Run deploy
         run: |
           cd clouds/snowflake
-          make deploy diff="$GIT_DIFF"
+          make deploy diff="$GIT_DIFF" production=1
 
   deploy-share:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'stable'
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20

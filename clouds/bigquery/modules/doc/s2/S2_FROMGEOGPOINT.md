@@ -1,8 +1,8 @@
-### S2_FROMGEOGPOINT
+## S2_FROMGEOGPOINT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_FROMGEOGPOINT(point, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -15,9 +15,7 @@ Returns the S2 cell ID of a given point at a given level of detail.
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.S2_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 8);

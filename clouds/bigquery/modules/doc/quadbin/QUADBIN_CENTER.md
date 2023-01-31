@@ -1,8 +1,8 @@
-### QUADBIN_CENTER
+## QUADBIN_CENTER
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_CENTER(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns the center of a given Quadbin. The center is the intersection point of t
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_CENTER(5209574053332910079);

@@ -1,8 +1,8 @@
-### ST_CONVEXHULL
+## ST_CONVEXHULL
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_CONVEXHULL(geom)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

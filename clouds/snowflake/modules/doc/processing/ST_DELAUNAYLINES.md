@@ -1,8 +1,8 @@
-### ST_DELAUNAYLINES
+## ST_DELAUNAYLINES
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_DELAUNAYLINES(points)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -18,7 +18,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 
 **Examples**
 
-``` sql
+```sql
 SELECT carto.ST_DELAUNAYLINES(
   ARRAY_CONSTRUCT(
     ST_ASGEOJSON(ST_POINT(-75.833, 39.284))::STRING,

@@ -1,5 +1,7 @@
-## indexing
-
-<div class="badges"><div class="core"></div></div>
+---
+badges:
+- core
+---
+# indexing
 
 This module contains functions used for indexing

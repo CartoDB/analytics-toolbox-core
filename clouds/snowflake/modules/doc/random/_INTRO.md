@@ -1,5 +1,7 @@
-## random
-
-<div class="badges"><div class="core"></div></div>
+---
+badges:
+- core
+---
+# random
 
 This module contains functions to generate random geographies.

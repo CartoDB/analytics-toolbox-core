@@ -1,8 +1,8 @@
-### S2_POLYFILL_BBOX
+## S2_POLYFILL_BBOX
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_POLYFILL_BBOX(min_longitude, max_longitude, min_latitude, max_latitude [, min_resolution, max_resolution])
-{{%/ bannerNote %}}
+```
 
 **Description**
 

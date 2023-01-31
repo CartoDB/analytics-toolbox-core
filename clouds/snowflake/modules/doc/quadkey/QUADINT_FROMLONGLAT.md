@@ -1,8 +1,8 @@
-### QUADINT_FROMLONGLAT
+## QUADINT_FROMLONGLAT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADINT_FROMLONGLAT(longitude, latitude, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

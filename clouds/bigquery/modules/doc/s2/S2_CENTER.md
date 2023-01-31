@@ -1,8 +1,8 @@
-### S2_CENTER
+## S2_CENTER
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.S2_CENTER(id)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Returns a POINT corresponding to the centroid of an S2 cell, given its ID.
 
 `GEOGRAPHY`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.S2_CENTER(1735346007979327488);

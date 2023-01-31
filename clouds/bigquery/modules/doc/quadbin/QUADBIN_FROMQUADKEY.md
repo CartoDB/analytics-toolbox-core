@@ -1,8 +1,8 @@
-### QUADBIN_FROMQUADKEY
+## QUADBIN_FROMQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMQUADKEY(quadkey)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Compute a quadbin index from a quadkey.
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMQUADKEY('0231001222');

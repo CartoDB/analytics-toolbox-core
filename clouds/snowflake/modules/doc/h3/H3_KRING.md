@@ -1,8 +1,8 @@
-### H3_KRING
+## H3_KRING
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.H3_KRING(origin, size)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

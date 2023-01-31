@@ -1,8 +1,8 @@
-### ST_SIMPLIFY
+## ST_SIMPLIFY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.ST_SIMPLIFY(geom, tolerance)
-{{%/ bannerNote %}}
+```
 
 **Description**
 

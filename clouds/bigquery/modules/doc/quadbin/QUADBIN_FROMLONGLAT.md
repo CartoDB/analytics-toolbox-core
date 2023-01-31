@@ -1,8 +1,8 @@
-### QUADBIN_FROMLONGLAT
+## QUADBIN_FROMLONGLAT
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -16,9 +16,7 @@ Returns the Quadbin representation of a point for a given level of detail and ge
 
 `INT64`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4);

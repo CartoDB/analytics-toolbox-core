@@ -1,8 +1,8 @@
-### QUADBIN_TOQUADKEY
+## QUADBIN_TOQUADKEY
 
-{{% bannerNote type="code" %}}
+```sql:signature
 carto.QUADBIN_TOQUADKEY(quadbin)
-{{%/ bannerNote %}}
+```
 
 **Description**
 
@@ -14,9 +14,7 @@ Compute a quadkey from a quadbin index.
 
 `STRING`
 
-{{% customSelector %}}
 **Example**
-{{%/ customSelector %}}
 
 ```sql
 SELECT `carto-os`.carto.QUADBIN_TOQUADKEY(5233974874938015743);
