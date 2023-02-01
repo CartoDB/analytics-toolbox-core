@@ -43,7 +43,12 @@ def run_sql(sql, config):
     ) as conn:
         conn.autocommit = True
         with conn.cursor() as cursor:
-            queries = split(sql)
+            queries = split(
+                sql.replace('@@API_BASE_URL@@', config['lds']['api_base_url'])
+                .replace('@@LDS_LAMBDA@@', config['lds']['lambda'])
+                .replace('@@LDS_ROLES@@', config['lds']['roles'])
+                .replace('@@LDS_TOKEN@@', config['lds']['token'])
+            )
             for i in trange(len(queries), ncols=100):
                 query = queries[i]
                 cursor.execute(query)
