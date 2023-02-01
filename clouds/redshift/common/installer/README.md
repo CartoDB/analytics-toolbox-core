@@ -4,6 +4,8 @@ A Python script to install the CARTO Analytics Toolbox in Redshift.
 
 ## Install
 
+Install Python >= 3.7.
+
 Create a virtual environment (optional):
 
 ```
@@ -14,7 +16,8 @@ source env/bin/activate
 Install the tool:
 
 ```
-pip install git+https://github.com/cartodb/analytics-toolbox-core.git@cat-installer
+pip install wheel
+pip install git+https://github.com/cartodb/analytics-toolbox-core.git@cat-installer#subdirectory=clouds/redshift/common/installer
 ```
 
 ## Usage
@@ -34,7 +37,9 @@ lds:
   token: eyJhbGciOiJ...
 ```
 
-Download the installation package and run the script:
+Download the installation package (zip file).
+
+Run the script:
 
 ```
 cat-installer carto-analytics-toolbox-redshift-latest.zip
