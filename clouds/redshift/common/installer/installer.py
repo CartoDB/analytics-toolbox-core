@@ -31,10 +31,7 @@ def read_package(filename):
     with open(os.path.join(folder, 'modules.sql'), 'r') as mod_file:
         modules = mod_file.read()
 
-    return {
-        'libraries': libraries,
-        'modules': modules
-    }
+    return {'libraries': libraries, 'modules': modules}
 
 
 def run_sql(sql, config):
@@ -75,11 +72,11 @@ def validate_config(config):
     if lds is None:
         exit('incorrect configuration: missing lds')
 
-    pattern = r'^(lds-function-asia-northeast1|lds-function-australia-southeast1|lds-function-europe-west1|lds-function-us-east1)$'
+    pattern = r'^(lds-function-asia-northeast1|lds-function-australia-southeast1|lds-function-europe-west1|lds-function-us-east1)$'  # noqa: E501
     if not validate_str(lds.get('lambda'), pattern):
         exit('incorrect configuration: missing or invalid lds.lambda')
 
-    pattern = r'^arn:aws:iam::[0-9]+:role/CartoFunctionsRedshiftRole,arn:aws:iam::000955892807:role/CartoFunctionsRole$'
+    pattern = r'^arn:aws:iam::[0-9]+:role/CartoFunctionsRedshiftRole,arn:aws:iam::000955892807:role/CartoFunctionsRole$'  # noqa: E501
     if not validate_str(lds.get('roles'), pattern):
         exit('incorrect configuration: missing or invalid lds.roles')
 
@@ -91,9 +88,11 @@ def validate_config(config):
 
 
 def validate_str(string, pattern=None):
-    return isinstance(string, str) and \
-        len(string) > 0 and \
-        (not pattern or re.compile(pattern).match(string))
+    return (
+        isinstance(string, str)
+        and len(string) > 0
+        and (not pattern or re.compile(pattern).match(string))
+    )
 
 
 def exit(message):
