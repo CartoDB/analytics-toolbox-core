@@ -1,0 +1,11 @@
+{
+  "name": "carto_analytics_toolbox_core_postgres",
+  "version": "1.0.0",
+  "description": "CARTO Analytics Toolbox Core for Postgres",
+  "author": "CARTO",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "dependencies": {
+    "h3-js": "3.7.2"
+  }
+}
