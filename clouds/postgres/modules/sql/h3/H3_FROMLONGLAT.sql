@@ -2,8 +2,11 @@
 -- Copyright (C) 2023 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_FROMLONGLAT
-(longitude DOUBLE PRECISION, latitude DOUBLE PRECISION, resolution INTEGER)
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_FROMLONGLAT(
+    longitude DOUBLE PRECISION,
+    latitude DOUBLE PRECISION,
+    resolution INTEGER
+)
 RETURNS VARCHAR(16)
 AS $$
     if (longitude == null || latitude == null || resolution == null) {

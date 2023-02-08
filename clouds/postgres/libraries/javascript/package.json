@@ -6,6 +6,7 @@
   "license": "BSD-3-Clause",
   "private": true,
   "dependencies": {
+    "@turf/turf": "6.3.0",
     "h3-js": "3.7.2"
   }
 }

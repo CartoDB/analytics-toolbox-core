@@ -2,9 +2,10 @@
 -- Copyright (C) 2023 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_BOUNDARY
-(index VARCHAR(16))
-RETURNS GEOGRAPHY
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_BOUNDARY(
+    index VARCHAR(16)
+)
+RETURNS GEOMETRY
 AS $$
     if (!index) {
         return null;
