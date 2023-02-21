@@ -34,5 +34,4 @@ SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
 **tip**
 
 The distance of the rings is computed as the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
-
 ````

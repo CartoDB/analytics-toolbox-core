@@ -136,3 +136,19 @@ Additionally, the documentation allows hint blocks (info/warning):
 ...
 ````
 `````
+
+Links to other functions or procedures must follow the next template:
+
+```md
+[`FUNCTION_NAME`](module_name#function_name)
+```
+
+```md
+[`QUADBIN_BOUNDARY`](quadbin#quadbin_boundary)
+```
+
+For external links, include the full address, for example:
+
+```md
+Please check our [documentation for Developers](https://docs.carto.com/carto-user-manual/developers)
+```

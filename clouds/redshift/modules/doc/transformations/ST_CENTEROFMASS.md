@@ -6,7 +6,7 @@ carto.ST_CENTEROFMASS(geom)
 
 **Description**
 
-Takes any Feature or a FeatureCollection and returns its center of mass. It is equivalent to [`ST_CENTROID`](#st_centroid).
+Takes any Feature or a FeatureCollection and returns its center of mass. It is equivalent to [`ST_CENTROID`](transformations#st_centroid).
 
 * `geom`: `GEOMETRY` for which to compute the center of mass.
 

@@ -25,6 +25,5 @@ SELECT carto.H3_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4);
 ````hint:info
 **tip**
 
-If you want the cells covered by a POLYGON see [H3_POLYFILL](#st_ash3_polyfill).
-
+If you want the cells covered by a POLYGON see [H3_POLYFILL](h3#h3_polyfill).
 ````

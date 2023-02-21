@@ -6,7 +6,7 @@ carto.ST_ANGLE(startPoint, midPoint, endPoint, mercator)
 
 **Description**
 
-Finds the angle formed by two adjacent segments defined by 3 points. The result will be the (positive clockwise) angle with origin on the startPoint-midPoint segment, or its [explementary angle](http://www.amathsdictionaryforkids.com/qr/e/explementaryConjugateAngles.html) if required.
+Finds the angle formed by two adjacent segments defined by 3 points. The result will be the (positive clockwise) angle with origin on the startPoint-midPoint segment, or its explementary angle if required.
 
 * `startPoint`: `GEOGRAPHY` start Point Coordinates.
 * `midPoint`: `GEOGRAPHY` mid Point Coordinates.
