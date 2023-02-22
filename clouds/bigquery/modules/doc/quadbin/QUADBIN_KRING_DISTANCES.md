@@ -18,7 +18,7 @@ Returns all Quadbin cell indexes and their distances in a **filled square k-ring
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
+SELECT carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
 -- {"index": "5208043533147045887", "distance": "1"}
 -- {"index": "5209556461146865663", "distance": "1"}
 -- {"index": "5209591645518954495", "distance": "1"}
@@ -34,5 +34,4 @@ SELECT `carto-os`.carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
 **tip**
 
 The distance of the rings is computed as the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
-
 ````

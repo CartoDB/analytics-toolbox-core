@@ -4,4 +4,4 @@ badges:
 ---
 # quadbin
 
-You can learn more about Quadbins in the [Overview section](/analytics-toolbox-bigquery/overview/spatial-indexes/#quadbin) of the documentation.
+You can learn more about Quadbins in the [Spatial Indexes section](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-bigquery/key-concepts/spatial-indexes#quadbin) of the documentation.

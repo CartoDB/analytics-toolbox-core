@@ -18,7 +18,7 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_MAKEELLIPSE(
+SELECT carto.ST_MAKEELLIPSE(
   ST_GEOGPOINT(-73.9385,40.6643),
   5,
   3,

@@ -25,7 +25,7 @@ Lines polyfill is calculated by approximating S2 cells to H3 cells, in some case
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_POLYFILL(
+SELECT carto.H3_POLYFILL(
     ST_GEOGFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
 -- 846b26bffffffff
 -- 843e8b1ffffffff
