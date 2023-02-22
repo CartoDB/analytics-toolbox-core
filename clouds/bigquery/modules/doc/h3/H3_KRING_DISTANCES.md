@@ -18,7 +18,7 @@ Returns all cell indexes and their distances in a **filled hexagonal k-ring** ce
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_KRING_DISTANCES('837b59fffffffff', 1);
+SELECT carto.H3_KRING_DISTANCES('837b59fffffffff', 1);
 -- {"index": "837b59fffffffff", "distance": "0"}
 -- {"index": "837b5dfffffffff", "distance": "1"}
 -- {"index": "837b58fffffffff", "distance": "1"}

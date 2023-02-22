@@ -20,7 +20,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 **Examples**
 
 ```sql
-SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
+SELECT carto.ST_VORONOIPOLYGONS(
   [
     ST_GEOGPOINT(-75.833, 39.284),
     ST_GEOGPOINT(-75.6, 39.984),
@@ -36,7 +36,7 @@ SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
 Note that if some points are very close together (about 1 meter) they may be merged and the result may have fewer polygons than points, for example these three points result in two polygons:
 
 ```sql
-SELECT `carto-os`.carto.ST_VORONOIPOLYGONS(
+SELECT carto.ST_VORONOIPOLYGONS(
      [
           ST_GEOGPOINT(4.1829523,43.6347910),
           ST_GEOGPOINT(4.1829967,43.6347137),

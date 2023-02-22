@@ -18,7 +18,7 @@ Returns an array with the S2 indexes of the children/descendents of the given he
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.S2_TOCHILDREN(-6432928348669739008, 12);
+SELECT carto.S2_TOCHILDREN(-6432928348669739008, 12);
 -- 6432928554828169216
 -- 6432928417389215744
 -- 6432928279950262272

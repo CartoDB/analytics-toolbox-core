@@ -18,7 +18,7 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_CLUSTERKMEANS([ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 1), ST_GEOGPOINT(5, 0), ST_GEOGPOINT(1, 0)], 2);
+SELECT carto.ST_CLUSTERKMEANS([ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 1), ST_GEOGPOINT(5, 0), ST_GEOGPOINT(1, 0)], 2);
 -- {cluster: 1, geom: POINT(0 0)}
 -- {cluster: 1, geom: POINT(0 1)}
 -- {cluster: 0, geom: POINT(5 0)}

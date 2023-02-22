@@ -17,6 +17,6 @@ Returns the H3 cell resolution as an integer. It will return `null` on error (in
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_RESOLUTION('847b59dffffffff');
+SELECT carto.H3_RESOLUTION('847b59dffffffff');
 -- 4
 ```

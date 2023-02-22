@@ -18,7 +18,7 @@ Returns an array with the children Quadbins of a given Quadbin for a specific re
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_TOCHILDREN(5209574053332910079, 5);
+SELECT carto.QUADBIN_TOCHILDREN(5209574053332910079, 5);
 -- 5214064458820747263
 -- 5214073254913769471
 -- 5214068856867258367

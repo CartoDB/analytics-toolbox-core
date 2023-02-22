@@ -17,16 +17,16 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 **Examples**
 
 ```sql
-SELECT `carto-os`.carto.PLACEKEY_ISVALID('@ff7-swh-m49');
+SELECT carto.PLACEKEY_ISVALID('@ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT `carto-os`.carto.PLACEKEY_ISVALID('ff7-swh-m49');
+SELECT carto.PLACEKEY_ISVALID('ff7-swh-m49');
 -- true
 ```
 
 ```sql
-SELECT `carto-os`.carto.PLACEKEY_ISVALID('x');
+SELECT carto.PLACEKEY_ISVALID('x');
 -- false
 ```
