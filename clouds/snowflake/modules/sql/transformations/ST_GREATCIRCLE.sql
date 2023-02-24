@@ -8,7 +8,7 @@ RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    if (!GEOJSONSTART || !GEOJSONEND || NPOINTS == null) {
+    if (!GEOJSONSTART || !GEOJSONEND || NPOINTS == null || GEOJSONSTART === GEOJSONEND) {
         return null;
     }
 
