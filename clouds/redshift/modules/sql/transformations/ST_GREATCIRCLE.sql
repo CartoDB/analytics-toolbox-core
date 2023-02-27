@@ -11,7 +11,7 @@ AS $$
     import geojson
     import json
 
-    if start_point is None or end_point is None or n_points is None:
+    if start_point is None or end_point is None or n_points is None or start_point == end_point:
         return None
 
     _geom = json.loads(start_point)

@@ -33,12 +33,15 @@ def test_greatcircle_none():
         @@RS_SCHEMA@@.ST_GREATCIRCLE(
             ST_MakePoint(-5,-5), NULL, 5),
         @@RS_SCHEMA@@.ST_GREATCIRCLE(
-            ST_MakePoint(-5,-5), ST_MakePoint(5,5), NULL) """
+            ST_MakePoint(-5,-5), ST_MakePoint(5,5), NULL),
+        @@RS_SCHEMA@@.ST_GREATCIRCLE(
+            ST_MakePoint(0,0), ST_MakePoint(0,0), NULL) """
     )
 
     assert results[0][0] is None
     assert results[0][1] is None
     assert results[0][2] is None
+    assert results[0][3] is None
 
 
 def test_greatcircle_default():
