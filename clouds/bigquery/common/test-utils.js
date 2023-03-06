@@ -69,7 +69,7 @@ function readJSONFixture (name, lib) {
 
 function writeJSONFixture (name, lib, json) {
     const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.json`);
-    const data = JSON.stringify(json, null, 2);
+    const data = JSON.stringify(json);
     fs.writeFileSync(filepath, data);
 }
 
