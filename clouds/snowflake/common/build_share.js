@@ -35,7 +35,8 @@ if (diff.length) {
         /\.github\/workflows\/snowflake\.yml/,
         /clouds\/snowflake\/common\/.+/,
         /clouds\/snowflake\/libraries\/.+/,
-        /clouds\/snowflake\/.*Makefile/
+        /clouds\/snowflake\/.*Makefile/,
+        /clouds\/snowflake\/version/
     ];
     const patternModulesSql = /clouds\/snowflake\/modules\/sql\/([^\s]*?)\//g;
     const patternModulesTest = /clouds\/snowflake\/modules\/test\/([^\s]*?)\//g;

@@ -36,7 +36,8 @@ if (diff.length) {
         /\.github\/workflows\/redshift\.yml/,
         /clouds\/redshift\/common\/.+/,
         /clouds\/redshift\/libraries\/.+/,
-        /clouds\/redshift\/.*Makefile/
+        /clouds\/redshift\/.*Makefile/,
+        /clouds\/redshift\/version/
     ];
     const patternModulesSql = /clouds\/redshift\/modules\/sql\/([^\s]*?)\//g;
     const patternModulesTest = /clouds\/redshift\/modules\/test\/([^\s]*?)\//g;
