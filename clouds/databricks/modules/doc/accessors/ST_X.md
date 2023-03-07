@@ -1,7 +1,7 @@
 ## ST_X
 
 ```sql:signature
-carto.ST_X(geom)
+ST_X(geom)
 ```
 
 **Description**

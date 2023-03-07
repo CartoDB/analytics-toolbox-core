@@ -1,7 +1,7 @@
 ## H3_ISVALID
 
 ```sql:signature
-carto.H3_ISVALID(index)
+H3_ISVALID(index)
 ```
 
 **Description**

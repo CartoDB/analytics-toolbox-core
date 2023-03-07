@@ -1,7 +1,7 @@
 ## ST_ISRING
 
 ```sql:signature
-carto.ST_ISRING(geom)
+ST_ISRING(geom)
 ```
 
 **Description**

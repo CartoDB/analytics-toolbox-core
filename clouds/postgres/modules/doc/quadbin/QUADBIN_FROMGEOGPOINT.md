@@ -1,7 +1,7 @@
 ## QUADBIN_FROMGEOGPOINT
 
 ```sql:signature
-carto.QUADBIN_FROMGEOGPOINT(point, resolution)
+QUADBIN_FROMGEOGPOINT(point, resolution)
 ```
 
 **Description**

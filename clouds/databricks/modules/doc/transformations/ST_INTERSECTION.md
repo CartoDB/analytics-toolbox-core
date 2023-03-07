@@ -1,7 +1,7 @@
 ## ST_INTERSECTION
 
 ```sql:signature
-carto.ST_INTERSECTION(geomA, geomB)
+ST_INTERSECTION(geomA, geomB)
 ```
 
 **Description**

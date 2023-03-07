@@ -1,7 +1,7 @@
 ## S2_CENTER
 
 ```sql:signature
-carto.S2_CENTER(id)
+S2_CENTER(id)
 ```
 
 **Description**

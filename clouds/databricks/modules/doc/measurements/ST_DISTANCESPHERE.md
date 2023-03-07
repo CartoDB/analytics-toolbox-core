@@ -1,7 +1,7 @@
 ## ST_DISTANCESPHERE
 
 ```sql:signature
-carto.ST_DISTANCESPHERE(geomA, geomB)
+ST_DISTANCESPHERE(geomA, geomB)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_MAKEENVELOPE
 
 ```sql:signature
-carto.ST_MAKEENVELOPE(xmin, ymin, xmax, ymax)
+ST_MAKEENVELOPE(xmin, ymin, xmax, ymax)
 ```
 
 **Description**

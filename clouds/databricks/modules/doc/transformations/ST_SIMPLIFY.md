@@ -1,7 +1,7 @@
 ## ST_SIMPLIFY
 
 ```sql:signature
-carto.ST_SIMPLIFY(geom, tolerance)
+ST_SIMPLIFY(geom, tolerance)
 ```
 
 **Description**

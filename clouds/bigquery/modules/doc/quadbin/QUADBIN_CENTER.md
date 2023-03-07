@@ -1,7 +1,7 @@
 ## QUADBIN_CENTER
 
 ```sql:signature
-carto.QUADBIN_CENTER(quadbin)
+QUADBIN_CENTER(quadbin)
 ```
 
 **Description**

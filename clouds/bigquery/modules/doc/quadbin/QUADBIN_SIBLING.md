@@ -1,7 +1,7 @@
 ## QUADBIN_SIBLING
 
 ```sql:signature
-carto.QUADBIN_SIBLING(quadbin, direction)
+QUADBIN_SIBLING(quadbin, direction)
 ```
 
 **Description**

@@ -114,7 +114,7 @@ jobs:
     timeout-minutes: 10
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
-      SF_DATABASE: '@@DATABASE@@'
+      SF_DATABASE: 'carto'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

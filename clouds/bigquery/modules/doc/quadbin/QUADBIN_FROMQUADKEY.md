@@ -1,7 +1,7 @@
 ## QUADBIN_FROMQUADKEY
 
 ```sql:signature
-carto.QUADBIN_FROMQUADKEY(quadkey)
+QUADBIN_FROMQUADKEY(quadkey)
 ```
 
 **Description**

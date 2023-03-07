@@ -1,7 +1,7 @@
 ## ST_MAKEBOX2D
 
 ```sql:signature
-carto.ST_MAKEBOX2D(lowerleft, upperRight)
+ST_MAKEBOX2D(lowerleft, upperRight)
 ```
 
 **Description**

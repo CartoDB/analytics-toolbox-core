@@ -1,7 +1,7 @@
 ## ST_ENVELOPE
 
 ```sql:signature
-carto.ST_ENVELOPE(geom)
+ST_ENVELOPE(geom)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## S2_FROMHILBERTQUADKEY
 
 ```sql:signature
-carto.S2_FROMHILBERTQUADKEY(hquadkey)
+S2_FROMHILBERTQUADKEY(hquadkey)
 ```
 
 **Description**

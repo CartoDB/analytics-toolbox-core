@@ -1,7 +1,7 @@
 ## ST_CENTEROFMASS
 
 ```sql:signature
-carto.ST_CENTEROFMASS(geog)
+ST_CENTEROFMASS(geog)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## H3_RESOLUTION
 
 ```sql:signature
-carto.H3_RESOLUTION(index)
+H3_RESOLUTION(index)
 ```
 
 **Description**

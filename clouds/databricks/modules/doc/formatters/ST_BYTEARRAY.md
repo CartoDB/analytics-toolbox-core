@@ -1,7 +1,7 @@
 ## ST_BITEARRAY
 
 ```sql:signature
-carto.ST_BITEARRAY(s)
+ST_BITEARRAY(s)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_BUFFER
 
 ```sql:signature
-carto.ST_BUFFER(geog, distance [, segments])
+ST_BUFFER(geog, distance [, segments])
 ```
 
 **Description**

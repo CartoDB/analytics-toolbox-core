@@ -1,7 +1,7 @@
 ## ST_DELAUNAYLINES
 
 ```sql:signature
-carto.ST_DELAUNAYLINES(points)
+ST_DELAUNAYLINES(points)
 ```
 
 **Description**

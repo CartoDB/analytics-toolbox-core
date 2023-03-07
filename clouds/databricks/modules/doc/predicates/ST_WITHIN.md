@@ -1,7 +1,7 @@
 ## ST_WITHIN
 
 ```sql:signature
-carto.ST_WITHIN(geomA, geomB)
+ST_WITHIN(geomA, geomB)
 ```
 
 **Description**

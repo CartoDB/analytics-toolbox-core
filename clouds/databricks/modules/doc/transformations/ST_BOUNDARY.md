@@ -1,7 +1,7 @@
 ## ST_BOUNDARY
 
 ```sql:signature
-carto.ST_BOUNDARY(geom)
+ST_BOUNDARY(geom)
 ```
 
 **Description**

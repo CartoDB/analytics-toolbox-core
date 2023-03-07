@@ -1,7 +1,7 @@
 ## ST_CROSSES
 
 ```sql:signature
-carto.ST_CROSSES(geomA, geomB)
+ST_CROSSES(geomA, geomB)
 ```
 
 **Description**

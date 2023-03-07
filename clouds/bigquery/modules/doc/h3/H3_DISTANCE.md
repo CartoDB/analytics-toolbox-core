@@ -1,7 +1,7 @@
 ## H3_DISTANCE
 
 ```sql:signature
-carto.H3_DISTANCE(origin, destination)
+H3_DISTANCE(origin, destination)
 ```
 
 **Description**

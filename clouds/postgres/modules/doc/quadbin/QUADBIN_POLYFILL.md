@@ -1,7 +1,7 @@
 ## QUADBIN_POLYFILL
 
 ```sql:signature
-carto.QUADBIN_POLYFILL(geography, resolution)
+QUADBIN_POLYFILL(geography, resolution)
 ```
 
 **Description**

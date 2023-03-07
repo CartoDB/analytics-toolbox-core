@@ -1,7 +1,7 @@
 ## QUADBIN_ISVALID
 
 ```sql:signature
-carto.QUADBIN_ISVALID(quadbin)
+QUADBIN_ISVALID(quadbin)
 ```
 
 **Description**

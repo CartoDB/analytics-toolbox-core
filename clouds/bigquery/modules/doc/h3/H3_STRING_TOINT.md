@@ -1,7 +1,7 @@
 ## H3_STRING_TOINT
 
 ```sql:signature
-carto.H3_STRING_TOINT(index)
+H3_STRING_TOINT(index)
 ```
 
 **Description**

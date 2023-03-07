@@ -1,7 +1,7 @@
 ## ST_POLYGONIZE
 
 ```sql:signature
-carto.ST_POLYGONIZE(lines)
+ST_POLYGONIZE(lines)
 ```
 
 **Description**

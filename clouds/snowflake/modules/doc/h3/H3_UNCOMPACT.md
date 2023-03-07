@@ -1,7 +1,7 @@
 ## H3_UNCOMPACT
 
 ```sql:signature
-carto.H3_UNCOMPACT(indexArray, resolution)
+H3_UNCOMPACT(indexArray, resolution)
 ```
 
 **Description**

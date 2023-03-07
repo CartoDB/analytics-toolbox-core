@@ -1,7 +1,7 @@
 ## S2_FROMUINT64REPR
 
 ```sql:signature
-carto.S2_FROMUINT64REPR(uid)
+S2_FROMUINT64REPR(uid)
 ```
 
 **Description**

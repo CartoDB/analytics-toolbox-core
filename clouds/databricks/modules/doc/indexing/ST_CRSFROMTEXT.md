@@ -1,7 +1,7 @@
 ## ST_CRSFROMTEXT
 
 ```sql:signature
-carto.ST_CRSFROMTEXT(proj4)
+ST_CRSFROMTEXT(proj4)
 ```
 
 **Description**

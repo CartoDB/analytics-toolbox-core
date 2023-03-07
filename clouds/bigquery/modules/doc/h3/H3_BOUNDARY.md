@@ -1,7 +1,7 @@
 ## H3_BOUNDARY
 
 ```sql:signature
-carto.H3_BOUNDARY(index)
+H3_BOUNDARY(index)
 ```
 
 **Description**

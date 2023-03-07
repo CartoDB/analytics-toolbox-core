@@ -1,7 +1,7 @@
 ## ST_DESTINATION
 
 ```sql:signature
-carto.ST_DESTINATION(startPoint, distance, bearing, units)
+ST_DESTINATION(startPoint, distance, bearing, units)
 ```
 
 **Description**

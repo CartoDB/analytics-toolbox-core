@@ -1,7 +1,7 @@
 ## ST_BEZIERSPLINE
 
 ```sql:signature
-carto.ST_BEZIERSPLINE(linestring [, resolution] [, sharpness])
+ST_BEZIERSPLINE(linestring [, resolution] [, sharpness])
 ```
 
 **Description**

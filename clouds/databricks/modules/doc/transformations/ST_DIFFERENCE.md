@@ -1,7 +1,7 @@
 ## ST_DIFFERENCE
 
 ```sql:signature
-carto.ST_DIFFERENCE(geomA, geomB)
+ST_DIFFERENCE(geomA, geomB)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_GEOMFROMTEXT
 
 ```sql:signature
-carto.ST_GEOMFROMTEXT(wkt)
+ST_GEOMFROMTEXT(wkt)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_DISJOINT
 
 ```sql:signature
-carto.ST_DISJOINT(geomA, geomB)
+ST_DISJOINT(geomA, geomB)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## PLACEKEY_FROMH3
 
 ```sql:signature
-carto.PLACEKEY_FROMH3(h3index)
+PLACEKEY_FROMH3(h3index)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_INTERIORRINGN
 
 ```sql:signature
-carto.ST_INTERIORRINGN(geom, n)
+ST_INTERIORRINGN(geom, n)
 ```
 
 **Description**

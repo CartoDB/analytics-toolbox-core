@@ -1,7 +1,7 @@
 ## ST_NUMGEOMETRIES
 
 ```sql:signature
-carto.ST_NUMGEOMETRIES(geom)
+ST_NUMGEOMETRIES(geom)
 ```
 
 **Description**

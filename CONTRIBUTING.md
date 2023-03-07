@@ -6,7 +6,7 @@ Every change in the Analytics Toolbox must be included in a pull request. It wil
 
 The pull request must have a good name and description. We recommend following [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for the naming, which helps have a more structured and descriptive git tree.
 
-These are the main types to be used: `feat`, `fix`, `doc`, `test`, `chore`, and `refactor`, but others can also be used if needed.
+These are the main types to be used: `feat`, `fix`, `docs`, `test`, `chore`, and `refactor`, but others can also be used if needed.
 
 The scope is included to refer to the cloud or clouds (`bq`, `sf`, `rs`, `pg`, `db`), and the module or modules affected (`h3`, `lds`, etc.). The format of the scope will be as follows:
 
@@ -70,7 +70,7 @@ Description of the module.
 ## FUNCTION_A
 
 ```sql:signature
-carto.FUNCTION_A(param_a, param_b)
+FUNCTION_A(param_a, param_b)
 ```
 
 **Description**
@@ -98,7 +98,7 @@ SELECT carto.FUNCTION_A('a', 123);
 ## PROCEDURE_B
 
 ```sql:signature
-carto.PROCEDURE_B(param_a, param_b)
+PROCEDURE_B(param_a, param_b)
 ```
 
 **Description**

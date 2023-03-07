@@ -1,7 +1,7 @@
 ## ST_GENERATEPOINTS
 
 ```sql:signature
-carto.ST_GENERATEPOINTS(geog, npoints)
+ST_GENERATEPOINTS(geog, npoints)
 ```
 
 **Description**

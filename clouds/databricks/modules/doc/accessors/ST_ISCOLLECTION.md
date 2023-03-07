@@ -1,7 +1,7 @@
 ## ST_ISCOLLECTION
 
 ```sql:signature
-carto.ST_ISCOLLECTION(geom)
+ST_ISCOLLECTION(geom)
 ```
 
 **Description**

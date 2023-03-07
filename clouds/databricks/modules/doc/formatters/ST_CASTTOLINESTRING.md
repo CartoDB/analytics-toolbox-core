@@ -1,7 +1,7 @@
 ## ST_CASTTOLINESTRING
 
 ```sql:signature
-carto.ST_CASTTOLINESTRING(geom)
+ST_CASTTOLINESTRING(geom)
 ```
 
 **Description**

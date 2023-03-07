@@ -1,7 +1,7 @@
 ## H3_KRING_DISTANCES
 
 ```sql:signature
-carto.H3_KRING_DISTANCES(origin, size)
+H3_KRING_DISTANCES(origin, size)
 ```
 
 **Description**

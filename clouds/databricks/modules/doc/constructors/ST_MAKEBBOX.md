@@ -1,7 +1,7 @@
 ## ST_MAKEBBOX
 
 ```sql:signature
-carto.ST_MAKEBBOX(lowerX, lowerY, upperX, upperY)
+ST_MAKEBBOX(lowerX, lowerY, upperX, upperY)
 ```
 
 **Description**

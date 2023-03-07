@@ -1,7 +1,7 @@
 ## ST_TILEENVELOPE
 
 ```sql:signature
-carto.ST_TILEENVELOPE(zoomLevel, xTile, yTile)
+ST_TILEENVELOPE(zoomLevel, xTile, yTile)
 ```
 
 **Description**

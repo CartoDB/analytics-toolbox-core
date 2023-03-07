@@ -1,7 +1,7 @@
 ## S2_TOTOKEN
 
 ```sql:signature
-carto.S2_TOTOKEN(id)
+S2_TOTOKEN(id)
 ```
 
 **Description**

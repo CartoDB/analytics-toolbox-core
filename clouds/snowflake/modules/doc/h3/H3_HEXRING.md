@@ -1,7 +1,7 @@
 ## H3_HEXRING
 
 ```sql:signature
-carto.H3_HEXRING(origin, size)
+H3_HEXRING(origin, size)
 ```
 
 **Description**

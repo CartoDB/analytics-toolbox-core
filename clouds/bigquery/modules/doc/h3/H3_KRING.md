@@ -1,7 +1,7 @@
 ## H3_KRING
 
 ```sql:signature
-carto.H3_KRING(origin, size)
+H3_KRING(origin, size)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## QUADBIN_FROMZXY
 
 ```sql:signature
-carto.QUADBIN_FROMZXY(z, x, y)
+QUADBIN_FROMZXY(z, x, y)
 ```
 
 **Description**

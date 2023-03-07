@@ -1,7 +1,7 @@
 ## ST_GEOMETRYN
 
 ```sql:signature
-carto.ST_GEOMETRYN(geom, n)
+ST_GEOMETRYN(geom, n)
 ```
 
 **Description**

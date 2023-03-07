@@ -1,7 +1,7 @@
 ## S2_TOHILBERTQUADKEY
 
 ```sql:signature
-carto.S2_TOHILBERTQUADKEY(id)
+S2_TOHILBERTQUADKEY(id)
 ```
 
 **Description**

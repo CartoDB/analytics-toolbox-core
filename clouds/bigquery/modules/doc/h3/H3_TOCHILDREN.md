@@ -1,7 +1,7 @@
 ## H3_TOCHILDREN
 
 ```sql:signature
-carto.H3_TOCHILDREN(index, resolution)
+H3_TOCHILDREN(index, resolution)
 ```
 
 **Description**

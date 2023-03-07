@@ -1,7 +1,7 @@
 ## GEOMREPROJECT
 
 ```sql:signature
-carto.ST_GEOMREPROJECT(geom, crsA, crsB)
+ST_GEOMREPROJECT(geom, crsA, crsB)
 ```
 
 **Description**

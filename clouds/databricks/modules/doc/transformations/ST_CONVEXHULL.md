@@ -1,7 +1,7 @@
 ## ST_CONVEXHULL
 
 ```sql:signature
-carto.ST_CONVEXHULL(geom)
+ST_CONVEXHULL(geom)
 ```
 
 **Description**

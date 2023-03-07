@@ -1,7 +1,7 @@
 ## ST_ASBINARY
 
 ```sql:signature
-carto.ST_ASBINARY(geom)
+ST_ASBINARY(geom)
 ```
 
 **Description**

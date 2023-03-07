@@ -1,7 +1,7 @@
 ## ST_ENVELOPE_ARR
 
 ```sql:signature
-carto.ST_ENVELOPE_ARR(geojsons)
+ST_ENVELOPE_ARR(geojsons)
 ```
 
 **Description**

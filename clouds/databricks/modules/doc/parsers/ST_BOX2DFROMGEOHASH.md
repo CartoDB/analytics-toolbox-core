@@ -1,7 +1,7 @@
 ## ST_BOX2DFROMGEOHASH
 
 ```sql:signature
-carto.ST_BOX2DFROMGEOHASH(geomHash, prec)
+ST_BOX2DFROMGEOHASH(geomHash, prec)
 ```
 
 **Description**

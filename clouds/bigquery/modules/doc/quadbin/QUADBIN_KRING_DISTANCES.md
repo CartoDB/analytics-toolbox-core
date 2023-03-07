@@ -1,7 +1,7 @@
 ## QUADBIN_KRING_DISTANCES
 
 ```sql:signature
-carto.QUADBIN_KRING_DISTANCES(origin, size)
+QUADBIN_KRING_DISTANCES(origin, size)
 ```
 
 **Description**

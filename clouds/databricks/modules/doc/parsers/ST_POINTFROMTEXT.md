@@ -1,7 +1,7 @@
 ## ST_POINTFROMTEXT
 
 ```sql:signature
-carto.ST_POINTFROMTEXT(wkt)
+ST_POINTFROMTEXT(wkt)
 ```
 
 **Description**

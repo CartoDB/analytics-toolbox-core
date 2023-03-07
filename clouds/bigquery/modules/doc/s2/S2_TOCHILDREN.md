@@ -1,7 +1,7 @@
 ## S2_TOCHILDREN
 
 ```sql:signature
-carto.S2_TOCHILDREN(index, resolution)
+S2_TOCHILDREN(index, resolution)
 ```
 
 **Description**

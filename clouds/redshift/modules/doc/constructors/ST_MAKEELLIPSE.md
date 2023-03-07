@@ -1,7 +1,7 @@
 ## ST_MAKEELLIPSE
 
 ```sql:signature
-carto.ST_MAKEELLIPSE(center, xSemiAxis, ySemiAxis [, angle] [, units] [, steps])
+ST_MAKEELLIPSE(center, xSemiAxis, ySemiAxis [, angle] [, units] [, steps])
 ```
 
 **Description**
