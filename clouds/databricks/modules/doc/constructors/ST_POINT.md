@@ -1,7 +1,7 @@
 ## ST_POINT
 
 ```sql:signature
-carto.ST_POINT(x, y)
+ST_POINT(x, y)
 ```
 
 **Description**

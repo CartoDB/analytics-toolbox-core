@@ -1,7 +1,7 @@
 ## ST_EXTERIORRING
 
 ```sql:signature
-carto.ST_EXTERIORRING(geom)
+ST_EXTERIORRING(geom)
 ```
 
 **Description**

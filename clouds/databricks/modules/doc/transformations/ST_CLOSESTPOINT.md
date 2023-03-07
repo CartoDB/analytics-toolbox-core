@@ -1,7 +1,7 @@
 ## ST_CLOSESTPOINT
 
 ```sql:signature
-carto.ST_CLOSESTPOINT(geomA, geomB)
+ST_CLOSESTPOINT(geomA, geomB)
 ```
 
 **Description**

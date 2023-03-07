@@ -1,7 +1,7 @@
 ## QUADBIN_BBOX
 
 ```sql:signature
-carto.QUADBIN_BBOX(quadbin)
+QUADBIN_BBOX(quadbin)
 ```
 
 **Description**

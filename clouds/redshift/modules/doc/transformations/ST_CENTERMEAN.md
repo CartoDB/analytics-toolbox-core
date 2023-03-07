@@ -1,7 +1,7 @@
 ## ST_CENTERMEAN
 
 ```sql:signature
-carto.ST_CENTERMEAN(geom)
+ST_CENTERMEAN(geom)
 ```
 
 **Description**

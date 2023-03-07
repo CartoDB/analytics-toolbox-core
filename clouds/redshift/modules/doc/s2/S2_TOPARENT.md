@@ -1,7 +1,7 @@
 ## S2_TOPARENT
 
 ```sql:signature
-carto.S2_TOPARENT(id, resolution)
+S2_TOPARENT(id, resolution)
 ```
 
 **Description**

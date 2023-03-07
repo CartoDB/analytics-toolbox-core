@@ -1,7 +1,7 @@
 ## H3_FROMGEOGPOINT
 
 ```sql:signature
-carto.H3_FROMGEOGPOINT(point, resolution)
+H3_FROMGEOGPOINT(point, resolution)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## S2_RESOLUTION
 
 ```sql:signature
-carto.S2_RESOLUTION(index)
+S2_RESOLUTION(index)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## QUADBIN_TOPARENT
 
 ```sql:signature
-carto.QUADBIN_TOPARENT(quadbin, resolution)
+QUADBIN_TOPARENT(quadbin, resolution)
 ```
 
 **Description**

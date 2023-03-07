@@ -1,7 +1,7 @@
 ## ST_CASTTOPOINT
 
 ```sql:signature
-carto.ST_CASTTOPOINT(geom)
+ST_CASTTOPOINT(geom)
 ```
 
 **Description**

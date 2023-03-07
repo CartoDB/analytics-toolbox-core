@@ -1,7 +1,7 @@
 ## ST_CASTTOGEOMETRY
 
 ```sql:signature
-carto.ST_CASTTOGEOMETRY(geom)
+ST_CASTTOGEOMETRY(geom)
 ```
 
 **Description**

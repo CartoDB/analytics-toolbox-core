@@ -1,7 +1,7 @@
 ## ST_POLYGONFROMTEXT
 
 ```sql:signature
-carto.ST_POLYGONFROMTEXT(wkt)
+ST_POLYGONFROMTEXT(wkt)
 ```
 
 **Description**

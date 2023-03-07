@@ -1,7 +1,7 @@
 ## ST_ANGLE
 
 ```sql:signature
-carto.ST_ANGLE(startPoint, midPoint, endPoint, mercator)
+ST_ANGLE(startPoint, midPoint, endPoint, mercator)
 ```
 
 **Description**

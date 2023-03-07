@@ -1,7 +1,7 @@
 ## ST_VORONOILINES
 
 ```sql:signature
-carto.ST_VORONOILINES(points)
+ST_VORONOILINES(points)
 ```
 
 **Description**

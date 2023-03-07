@@ -1,7 +1,7 @@
 ## S2_FROMTOKEN
 
 ```sql:signature
-carto.S2_FROMTOKEN(token)
+S2_FROMTOKEN(token)
 ```
 
 **Description**

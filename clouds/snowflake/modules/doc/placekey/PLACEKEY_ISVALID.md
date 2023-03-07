@@ -1,7 +1,7 @@
 ## PLACEKEY_ISVALID
 
 ```sql:signature
-carto.PLACEKEY_ISVALID(placekey)
+PLACEKEY_ISVALID(placekey)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_ASTWKB
 
 ```sql:signature
-carto.ST_ASTWKB(geom)
+ST_ASTWKB(geom)
 ```
 
 **Description**

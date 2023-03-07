@@ -1,7 +1,7 @@
 ## H3_COMPACT
 
 ```sql:signature
-carto.H3_COMPACT(indexArray)
+H3_COMPACT(indexArray)
 ```
 
 **Description**

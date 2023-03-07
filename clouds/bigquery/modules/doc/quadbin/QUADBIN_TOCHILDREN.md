@@ -1,7 +1,7 @@
 ## QUADBIN_TOCHILDREN
 
 ```sql:signature
-carto.QUADBIN_TOCHILDREN(quadbin, resolution)
+QUADBIN_TOCHILDREN(quadbin, resolution)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_CENTROID
 
 ```sql:signature
-carto.ST_CENTROID(geom)
+ST_CENTROID(geom)
 ```
 
 **Description**

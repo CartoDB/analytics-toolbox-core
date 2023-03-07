@@ -1,7 +1,7 @@
 ## ST_CONTAINS
 
 ```sql:signature
-carto.ST_CONTAINS(geomA, geomB)
+ST_CONTAINS(geomA, geomB)
 ```
 
 **Description**

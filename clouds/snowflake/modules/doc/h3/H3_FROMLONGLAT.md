@@ -1,7 +1,7 @@
 ## H3_FROMLONGLAT
 
 ```sql:signature
-carto.H3_FROMLONGLAT(longitude, latitude, resolution)
+H3_FROMLONGLAT(longitude, latitude, resolution)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## GEOHASH_BOUNDARY
 
 ```sql:signature
-carto.GEOHASH_BOUNDARY(index)
+GEOHASH_BOUNDARY(index)
 ```
 
 **Description**

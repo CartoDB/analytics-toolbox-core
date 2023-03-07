@@ -1,7 +1,7 @@
 ## ST_TRANSLATE
 
 ```sql:signature
-carto.ST_TRANSLATE(geom, deltaX, deltaY)
+ST_TRANSLATE(geom, deltaX, deltaY)
 ```
 
 **Description**

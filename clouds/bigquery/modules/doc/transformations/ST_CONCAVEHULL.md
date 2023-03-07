@@ -1,7 +1,7 @@
 ## ST_CONCAVEHULL
 
 ```sql:signature
-carto.ST_CONCAVEHULL(geog, maxEdge, units)
+ST_CONCAVEHULL(geog, maxEdge, units)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## PLACEKEY_ASH3
 
 ```sql:signature
-carto.PLACEKEY_ASH3(placekey)
+PLACEKEY_ASH3(placekey)
 ```
 
 **Description**

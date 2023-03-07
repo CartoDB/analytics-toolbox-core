@@ -1,7 +1,7 @@
 ## H3_POLYFILL
 
 ```sql:signature
-carto.H3_POLYFILL(geography, resolution)
+H3_POLYFILL(geography, resolution)
 ```
 
 **Description**

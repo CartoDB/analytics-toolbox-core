@@ -1,7 +1,7 @@
 ## S2_TOUINT64REPR
 
 ```sql:signature
-carto.S2_TOUINT64REPR(id)
+S2_TOUINT64REPR(id)
 ```
 
 **Description**

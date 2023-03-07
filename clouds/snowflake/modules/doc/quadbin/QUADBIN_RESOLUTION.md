@@ -1,7 +1,7 @@
 ## QUADBIN_RESOLUTION
 
 ```sql:signature
-carto.QUADBIN_RESOLUTION(quadbin)
+QUADBIN_RESOLUTION(quadbin)
 ```
 
 **Description**

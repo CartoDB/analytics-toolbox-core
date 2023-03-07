@@ -1,7 +1,7 @@
 ## QUADBIN_FROMLONGLAT
 
 ```sql:signature
-carto.QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
+QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
 ```
 
 **Description**

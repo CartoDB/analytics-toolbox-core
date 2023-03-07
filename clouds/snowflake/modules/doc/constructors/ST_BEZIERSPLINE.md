@@ -1,7 +1,7 @@
 ## ST_BEZIERSPLINE
 
 ```sql:signature
-carto.ST_BEZIERSPLINE(geog [, resolution] [, sharpness])
+ST_BEZIERSPLINE(geog [, resolution] [, sharpness])
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## H3_INT_TOSTRING
 
 ```sql:signature
-carto.H3_INT_TOSTRING(index)
+H3_INT_TOSTRING(index)
 ```
 
 **Description**

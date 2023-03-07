@@ -1,7 +1,7 @@
 ## ST_TOUCHES
 
 ```sql:signature
-carto.ST_TOUCHES(geomA, geomB)
+ST_TOUCHES(geomA, geomB)
 ```
 
 **Description**

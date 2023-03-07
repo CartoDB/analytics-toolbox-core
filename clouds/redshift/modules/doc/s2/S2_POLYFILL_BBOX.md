@@ -1,7 +1,7 @@
 ## S2_POLYFILL_BBOX
 
 ```sql:signature
-carto.S2_POLYFILL_BBOX(min_longitude, max_longitude, min_latitude, max_latitude [, min_resolution, max_resolution])
+S2_POLYFILL_BBOX(min_longitude, max_longitude, min_latitude, max_latitude [, min_resolution, max_resolution])
 ```
 
 **Description**

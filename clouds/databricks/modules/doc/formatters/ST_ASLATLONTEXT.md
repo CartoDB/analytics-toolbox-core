@@ -1,7 +1,7 @@
 ## ST_ASLATLONTEXT
 
 ```sql:signature
-carto.ST_ASLATLONTEXT(p)
+ST_ASLATLONTEXT(p)
 ```
 
 **Description**

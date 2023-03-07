@@ -1,7 +1,7 @@
 ## ST_EXTENTFROMGEOM
 
 ```sql:signature
-carto.ST_EXTENTFROMGEOM(geom)
+ST_EXTENTFROMGEOM(geom)
 ```
 
 **Description**

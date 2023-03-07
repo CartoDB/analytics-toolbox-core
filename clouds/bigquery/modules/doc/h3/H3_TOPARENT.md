@@ -1,7 +1,7 @@
 ## H3_TOPARENT
 
 ```sql:signature
-carto.H3_TOPARENT(index, resolution)
+H3_TOPARENT(index, resolution)
 ```
 
 **Description**

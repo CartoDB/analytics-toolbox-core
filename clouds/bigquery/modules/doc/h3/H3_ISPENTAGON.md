@@ -1,7 +1,7 @@
 ## H3_ISPENTAGON
 
 ```sql:signature
-carto.H3_ISPENTAGON(index)
+H3_ISPENTAGON(index)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_GEOMFROMWKB
 
 ```sql:signature
-carto.ST_GEOMFROMWKB(wkb)
+ST_GEOMFROMWKB(wkb)
 ```
 
 **Description**

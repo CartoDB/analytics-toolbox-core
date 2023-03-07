@@ -1,7 +1,7 @@
 ## ST_LINE_INTERPOLATE_POINT
 
 ```sql:signature
-carto.ST_LINE_INTERPOLATE_POINT(geog, distance [, units])
+ST_LINE_INTERPOLATE_POINT(geog, distance [, units])
 ```
 
 **Description**

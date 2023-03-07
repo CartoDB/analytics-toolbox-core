@@ -1,7 +1,7 @@
 ## ST_DELAUNAYPOLYGONS
 
 ```sql:signature
-carto.ST_DELAUNAYPOLYGONS(points)
+ST_DELAUNAYPOLYGONS(points)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_POINTN
 
 ```sql:signature
-carto.ST_POINTN(geom, n)
+ST_POINTN(geom, n)
 ```
 
 **Description**

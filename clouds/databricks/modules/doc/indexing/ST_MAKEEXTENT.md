@@ -1,7 +1,7 @@
 ## ST_MAKEEXTENT
 
 ```sql:signature
-carto.ST_MAKEEXTENT(lowerX, lowerY, upperX, upperY)
+ST_MAKEEXTENT(lowerX, lowerY, upperX, upperY)
 ```
 
 **Description**

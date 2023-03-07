@@ -1,7 +1,7 @@
 ## QUADBIN_BOUNDARY
 
 ```sql:signature
-carto.QUADBIN_BOUNDARY(quadbin)
+QUADBIN_BOUNDARY(quadbin)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_GEOMFROMWKT
 
 ```sql:signature
-carto.ST_GEOMFROMWKT(wkt)
+ST_GEOMFROMWKT(wkt)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_EQUALS
 
 ```sql:signature
-carto.ST_EQUALS(geomA, geomB)
+ST_EQUALS(geomA, geomB)
 ```
 
 **Description**

@@ -70,7 +70,7 @@ Description of the module.
 ## FUNCTION_A
 
 ```sql:signature
-carto.FUNCTION_A(param_a, param_b)
+FUNCTION_A(param_a, param_b)
 ```
 
 **Description**
@@ -98,7 +98,7 @@ SELECT carto.FUNCTION_A('a', 123);
 ## PROCEDURE_B
 
 ```sql:signature
-carto.PROCEDURE_B(param_a, param_b)
+PROCEDURE_B(param_a, param_b)
 ```
 
 **Description**

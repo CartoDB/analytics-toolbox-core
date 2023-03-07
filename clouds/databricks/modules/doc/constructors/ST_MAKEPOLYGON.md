@@ -1,7 +1,7 @@
 ## ST_MAKEPOLYGON
 
 ```sql:signature
-carto.ST_MAKEPOLYGON(shell)
+ST_MAKEPOLYGON(shell)
 ```
 
 **Description**

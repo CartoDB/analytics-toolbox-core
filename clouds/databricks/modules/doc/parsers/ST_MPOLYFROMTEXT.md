@@ -1,7 +1,7 @@
 ## ST_MPOLYFROMTEXT
 
 ```sql:signature
-carto.ST_MPOLYFROMTEXT(wkt)
+ST_MPOLYFROMTEXT(wkt)
 ```
 
 **Description**

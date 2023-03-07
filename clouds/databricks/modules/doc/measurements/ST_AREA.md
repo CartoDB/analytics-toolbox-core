@@ -1,7 +1,7 @@
 ## ST_AREA
 
 ```sql:signature
-carto.ST_AREA(geom)
+ST_AREA(geom)
 ```
 
 **Description**

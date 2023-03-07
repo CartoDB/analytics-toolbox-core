@@ -1,7 +1,7 @@
 ## ST_OVERLAPS
 
 ```sql:signature
-carto.ST_OVERLAPS(geomA, geomB)
+ST_OVERLAPS(geomA, geomB)
 ```
 
 **Description**

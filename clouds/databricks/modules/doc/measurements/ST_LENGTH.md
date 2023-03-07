@@ -1,7 +1,7 @@
 ## ST_LENGTH
 
 ```sql:signature
-carto.ST_LENGTH(line)
+ST_LENGTH(line)
 ```
 
 **Description**

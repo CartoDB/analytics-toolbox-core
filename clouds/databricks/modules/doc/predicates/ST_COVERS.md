@@ -1,7 +1,7 @@
 ## ST_COVERS
 
 ```sql:signature
-carto.ST_COVERS(geomA, geomB)
+ST_COVERS(geomA, geomB)
 ```
 
 **Description**

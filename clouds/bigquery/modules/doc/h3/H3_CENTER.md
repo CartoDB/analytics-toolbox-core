@@ -1,7 +1,7 @@
 ## H3_CENTER
 
 ```sql:signature
-carto.H3_CENTER(index)
+H3_CENTER(index)
 ```
 
 **Description**
