@@ -1,7 +1,7 @@
 ## ST_COORDDIM
 
 ```sql:signature
-carto.ST_COORDDIM(geom)
+ST_COORDDIM(geom)
 ```
 
 **Description**

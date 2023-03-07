@@ -1,7 +1,7 @@
 ## ST_RELATE
 
 ```sql:signature
-carto.ST_RELATE(geomA, geomB)
+ST_RELATE(geomA, geomB)
 ```
 
 **Description**

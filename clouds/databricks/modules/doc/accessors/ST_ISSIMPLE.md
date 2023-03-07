@@ -1,7 +1,7 @@
 ## ST_ISSIMPLE
 
 ```sql:signature
-carto.ST_ISSIMPLE(geom)
+ST_ISSIMPLE(geom)
 ```
 
 **Description**

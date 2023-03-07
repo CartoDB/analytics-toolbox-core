@@ -20,6 +20,13 @@ test('ST_GREATCIRCLE should return NULL if any NULL mandatory argument', async (
     expect(rows[0].greatcircle2).toEqual(null);
 });
 
+test('ST_GREATCIRCLE should return NULL if start and end are equal', async () => {
+    const query = 'SELECT `@@BQ_DATASET@@.ST_GREATCIRCLE`(ST_GEOGPOINT(0, 0), ST_GEOGPOINT(0, 0), 11) as greatcircle';
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].greatcircle).toEqual(null);
+});
+
 test('ST_GREATCIRCLE default values should work', async () => {
     const query = `SELECT \`@@BQ_DATASET@@.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), 100) as defaultValue,
     \`@@BQ_DATASET@@.ST_GREATCIRCLE\`(ST_GEOGPOINT(-3.70325,40.4167), ST_GEOGPOINT(-73.9385,40.6643), NULL) as nullParam1`;

@@ -1,7 +1,7 @@
 ## S2_FROMGEOGPOINT
 
 ```sql:signature
-carto.S2_FROMGEOGPOINT(point, resolution)
+S2_FROMGEOGPOINT(point, resolution)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_CASTTOPOLYGON
 
 ```sql:signature
-carto.ST_CASTTOPOLYGON(geom)
+ST_CASTTOPOLYGON(geom)
 ```
 
 **Description**

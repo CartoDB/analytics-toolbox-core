@@ -1,7 +1,7 @@
 ## ST_MAKEPOINT
 
 ```sql:signature
-carto.ST_MAKEPOINT(x, y)
+ST_MAKEPOINT(x, y)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## PLACEKEY_TOH3
 
 ```sql:signature
-carto.PLACEKEY_TOH3(placekey)
+PLACEKEY_TOH3(placekey)
 ```
 
 **Description**
@@ -17,6 +17,6 @@ Returns the H3 index equivalent of the given placekey.
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.PLACEKEY_TOH3('@ff7-swh-m49');
+SELECT carto.PLACEKEY_TOH3('@ff7-swh-m49');
 -- 8a7b59dffffffff
 ```

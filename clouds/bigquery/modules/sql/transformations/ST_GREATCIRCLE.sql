@@ -11,7 +11,7 @@ OPTIONS (
     library = ["@@BQ_LIBRARY_BUCKET@@"]
 )
 AS """
-    if (!geojsonStart || !geojsonEnd) {
+    if (!geojsonStart || !geojsonEnd || geojsonEnd === geojsonStart) {
         return null;
     }
     const options = {};

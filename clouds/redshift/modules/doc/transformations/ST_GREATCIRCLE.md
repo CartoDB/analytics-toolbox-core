@@ -1,7 +1,7 @@
 ## ST_GREATCIRCLE
 
 ```sql:signature
-carto.ST_GREATCIRCLE(start_point, end_point, n_points)
+ST_GREATCIRCLE(start_point, end_point, n_points)
 ```
 
 **Description**

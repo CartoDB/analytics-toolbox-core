@@ -1,7 +1,7 @@
 ## ST_CENTEROFMASS
 
 ```sql:signature
-carto.ST_CENTEROFMASS(geog)
+ST_CENTEROFMASS(geog)
 ```
 
 **Description**
@@ -17,7 +17,7 @@ Takes any Feature or a FeatureCollection and returns its center of mass (also kn
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_CENTEROFMASS(
+SELECT carto.ST_CENTEROFMASS(
   ST_GEOGFROMTEXT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")
 );
 -- POINT(25.1730977433239 27.2789529273059)

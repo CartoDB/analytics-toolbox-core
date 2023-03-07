@@ -22,7 +22,8 @@ if (diff.length) {
         /\.github\/workflows\/postgres\.yml/,
         /clouds\/postgres\/common\/.+/,
         /clouds\/postgres\/libraries\/.+/,
-        /clouds\/postgres\/.*Makefile/
+        /clouds\/postgres\/.*Makefile/,
+        /clouds\/postgres\/version/
     ];
     const patternModulesSql = /clouds\/postgres\/modules\/sql\/([^\s]*?)\//g;
     const patternModulesTest = /clouds\/postgres\/modules\/test\/([^\s]*?)\//g;

@@ -1,7 +1,7 @@
 ## QUADBIN_FROMQUADKEY
 
 ```sql:signature
-carto.QUADBIN_FROMQUADKEY(quadkey)
+QUADBIN_FROMQUADKEY(quadkey)
 ```
 
 **Description**
@@ -17,6 +17,6 @@ Compute a quadbin index from a quadkey.
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_FROMQUADKEY('0231001222');
+SELECT carto.QUADBIN_FROMQUADKEY('0231001222');
 -- 5233974874938015743
 ```

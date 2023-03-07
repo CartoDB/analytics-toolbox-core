@@ -1,7 +1,7 @@
 ## ST_ANTIMERIDIANSAFEGEOM
 
 ```sql:signature
-carto.ST_ANTIMERIDIANSAFEGEOM(geom)
+ST_ANTIMERIDIANSAFEGEOM(geom)
 ```
 
 **Description**

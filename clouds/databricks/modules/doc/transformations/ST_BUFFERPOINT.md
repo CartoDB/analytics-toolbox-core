@@ -1,7 +1,7 @@
 ## ST_BUFFERPOINT
 
 ```sql:signature
-carto.ST_BUFFERPOINT(point, radius)
+ST_BUFFERPOINT(point, radius)
 ```
 
 **Description**

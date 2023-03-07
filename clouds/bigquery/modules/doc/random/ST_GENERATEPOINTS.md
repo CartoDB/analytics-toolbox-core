@@ -1,7 +1,7 @@
 ## ST_GENERATEPOINTS
 
 ```sql:signature
-carto.ST_GENERATEPOINTS(geog, npoints)
+ST_GENERATEPOINTS(geog, npoints)
 ```
 
 **Description**
@@ -34,7 +34,7 @@ WITH blocks AS (
   WHERE g.county_name = 'Sonoma County'
 ),
 point_lists AS (
-  SELECT `carto-os`.carto.ST_GENERATEPOINTS(blockgroup_geom, CAST(total_pop AS INT64)) AS points
+  SELECT carto.ST_GENERATEPOINTS(blockgroup_geom, CAST(total_pop AS INT64)) AS points
   FROM blocks
 )
 SELECT points FROM point_lists CROSS JOIN point_lists.points

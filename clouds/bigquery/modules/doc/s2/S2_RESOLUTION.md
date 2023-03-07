@@ -1,7 +1,7 @@
 ## S2_RESOLUTION
 
 ```sql:signature
-carto.S2_RESOLUTION(index)
+S2_RESOLUTION(index)
 ```
 
 **Description**
@@ -17,6 +17,6 @@ Returns the S2 cell resolution as an integer.
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.S2_RESOLUTION(-6432928348669739008);
+SELECT carto.S2_RESOLUTION(-6432928348669739008);
 -- 11
 ```

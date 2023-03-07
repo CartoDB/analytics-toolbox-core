@@ -1,7 +1,7 @@
 ## ST_ISVALID
 
 ```sql:signature
-carto.ST_ISVALID(geom)
+ST_ISVALID(geom)
 ```
 
 **Description**

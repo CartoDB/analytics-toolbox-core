@@ -1,7 +1,7 @@
 ## ST_MAKEENVELOPE
 
 ```sql:signature
-carto.ST_MAKEENVELOPE(xmin, ymin, xmax, ymax)
+ST_MAKEENVELOPE(xmin, ymin, xmax, ymax)
 ```
 
 **Description**
@@ -19,6 +19,6 @@ Creates a rectangular Polygon from the minimum and maximum values for X and Y.
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_MAKEENVELOPE(0,0,1,1);
+SELECT carto.ST_MAKEENVELOPE(0,0,1,1);
 -- POLYGON((1 0, 1 1, 0 1, 0 0, 1 0))
 ```

@@ -1,7 +1,7 @@
 ## ST_MINKOWSKIDISTANCE
 
 ```sql:signature
-carto.ST_MINKOWSKIDISTANCE(geog [, p])
+ST_MINKOWSKIDISTANCE(geog [, p])
 ```
 
 **Description**

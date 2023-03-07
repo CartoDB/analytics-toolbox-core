@@ -1,7 +1,7 @@
 ## ST_CONCAVEHULL
 
 ```sql:signature
-carto.ST_CONCAVEHULL(geog, maxEdge, units)
+ST_CONCAVEHULL(geog, maxEdge, units)
 ```
 
 **Description**
@@ -19,7 +19,7 @@ Takes a set of points and returns a concave hull Polygon or MultiPolygon. In cas
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_CONCAVEHULL(
+SELECT carto.ST_CONCAVEHULL(
   [
     ST_GEOGPOINT(-75.833, 39.284),
     ST_GEOGPOINT(-75.6, 39.984),
@@ -33,7 +33,7 @@ SELECT `carto-os`.carto.ST_CONCAVEHULL(
 ```
 
 ```sql
-SELECT `carto-os`.carto.ST_CONCAVEHULL(
+SELECT carto.ST_CONCAVEHULL(
   [
     ST_GEOGPOINT(-75.833, 39.284)
   ],

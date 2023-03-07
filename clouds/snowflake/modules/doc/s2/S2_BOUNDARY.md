@@ -1,7 +1,7 @@
 ## S2_BOUNDARY
 
 ```sql:signature
-carto.S2_BOUNDARY(id)
+S2_BOUNDARY(id)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## H3_KRING
 
 ```sql:signature
-carto.H3_KRING(origin, size)
+H3_KRING(origin, size)
 ```
 
 **Description**
@@ -18,7 +18,7 @@ Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_KRING('837b59fffffffff', 1);
+SELECT carto.H3_KRING('837b59fffffffff', 1);
 -- 837b59fffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff

@@ -1,7 +1,7 @@
 ## H3_TOCHILDREN
 
 ```sql:signature
-carto.H3_TOCHILDREN(index, resolution)
+H3_TOCHILDREN(index, resolution)
 ```
 
 **Description**
@@ -18,7 +18,7 @@ Returns an array with the H3 indexes of the children/descendents of the given he
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_TOCHILDREN('837b59fffffffff', 4);
+SELECT carto.H3_TOCHILDREN('837b59fffffffff', 4);
 -- 847b591ffffffff
 -- 847b593ffffffff
 -- 847b595ffffffff

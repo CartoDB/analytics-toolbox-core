@@ -1,7 +1,7 @@
 ## QUADBIN_SIBLING
 
 ```sql:signature
-carto.QUADBIN_SIBLING(quadbin, direction)
+QUADBIN_SIBLING(quadbin, direction)
 ```
 
 **Description**
@@ -18,6 +18,6 @@ Returns the Quadbin directly next to the given Quadbin at the same resolution. T
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_SIBLING(5209574053332910079, 'up');
+SELECT carto.QUADBIN_SIBLING(5209574053332910079, 'up');
 -- 5208061125333090303
 ```

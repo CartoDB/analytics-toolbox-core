@@ -1,7 +1,7 @@
 ## QUADBIN_TOPARENT
 
 ```sql:signature
-carto.QUADBIN_TOPARENT(quadbin, resolution)
+QUADBIN_TOPARENT(quadbin, resolution)
 ```
 
 **Description**
@@ -18,6 +18,6 @@ Returns the parent (ancestor) Quadbin of a given Quadbin for a specific resoluti
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_TOPARENT(5209574053332910079, 3);
+SELECT carto.QUADBIN_TOPARENT(5209574053332910079, 3);
 -- 5205105638077628415
 ```

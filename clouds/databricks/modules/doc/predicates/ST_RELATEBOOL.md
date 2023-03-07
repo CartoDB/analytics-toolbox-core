@@ -1,7 +1,7 @@
 ## ST_RELATEBOOL
 
 ```sql:signature
-carto.ST_RELATEBOOL(geomA, geomB, mask)
+ST_RELATEBOOL(geomA, geomB, mask)
 ```
 
 **Description**

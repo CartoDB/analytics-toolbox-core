@@ -1,7 +1,7 @@
 ## QUADBIN_POLYFILL
 
 ```sql:signature
-carto.QUADBIN_POLYFILL(geography, resolution)
+QUADBIN_POLYFILL(geography, resolution)
 ```
 
 **Description**
@@ -18,7 +18,7 @@ Returns an array of Quadbins that intersect with the given geography at a given 
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_POLYFILL(
+SELECT carto.QUADBIN_POLYFILL(
     ST_GEOGFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
     17);
 -- 5265786693153193983

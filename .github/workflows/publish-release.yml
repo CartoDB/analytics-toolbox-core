@@ -88,16 +88,16 @@ jobs:
           prerelease: false
           token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
           body: ${{ env.RELEASE_BODY }}
-      - name: Create PR from release into main branch
+      - name: Create PR from stable into main branch
         uses: repo-sync/pull-request@v2
         id: pull_request
         with:
-          source_branch: ${{ github.event.pull_request.head.ref }}
+          source_branch: stable
           destination_branch: main
-          pr_title: Merge release into main branch
+          pr_title: Merge stable into main branch
           pr_body: |
-            This PR merges the release branch back into main.
-            This happens to ensure that the updates that happend on the release branch, i.e. CHANGELOG updates are also present on the main branch.
+            This PR merges the stable branch back into main.
+            This happens to ensure that the updates that happend on the stable branch, i.e. CHANGELOG updates are also present on the main branch.
       - name: Merge PR if possible
         continue-on-error: true
         env:

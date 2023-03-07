@@ -1,7 +1,7 @@
 ## QUADBIN_ISVALID
 
 ```sql:signature
-carto.QUADBIN_ISVALID(quadbin)
+QUADBIN_ISVALID(quadbin)
 ```
 
 **Description**
@@ -17,11 +17,11 @@ Returns `true` when the given index is a valid Quadbin, `false` otherwise.
 **Examples**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_ISVALID(5209574053332910079);
+SELECT carto.QUADBIN_ISVALID(5209574053332910079);
 -- true
 ```
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_ISVALID(1234);
+SELECT carto.QUADBIN_ISVALID(1234);
 -- false
 ```

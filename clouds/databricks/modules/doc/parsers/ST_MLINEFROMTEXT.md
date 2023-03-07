@@ -1,7 +1,7 @@
 ## ST_MLINEFROMTEXT
 
 ```sql:signature
-carto.ST_MLINEFROMTEXT(wkt)
+ST_MLINEFROMTEXT(wkt)
 ```
 
 **Description**

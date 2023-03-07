@@ -1,7 +1,7 @@
 ## ST_ISGEOMFIELD
 
 ```sql:signature
-carto.ST_ISGEOMFIELD(geom)
+ST_ISGEOMFIELD(geom)
 ```
 
 **Description**

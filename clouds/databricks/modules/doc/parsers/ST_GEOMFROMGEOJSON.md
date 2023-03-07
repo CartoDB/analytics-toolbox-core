@@ -1,7 +1,7 @@
 ## ST_GEOMFROMGEOJSON
 
 ```sql:signature
-carto.ST_GEOMFROMGEOJSON(geojson)
+ST_GEOMFROMGEOJSON(geojson)
 ```
 
 **Description**

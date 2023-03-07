@@ -1,12 +1,12 @@
 ## ST_CENTROID
 
 ```sql:signature
-carto.ST_CENTROID(geom)
+ST_CENTROID(geom)
 ```
 
 **Description**
 
-Takes any Feature or a FeatureCollection as input and returns its centroid. It is equivalent to [`ST_CENTEROFMASS`](#st_centerofmass).
+Takes any Feature or a FeatureCollection as input and returns its centroid. It is equivalent to [`ST_CENTEROFMASS`](transformations#st_centerofmass).
 
 * `geom`: `GEOMETRY` for which to compute the centroid.
 

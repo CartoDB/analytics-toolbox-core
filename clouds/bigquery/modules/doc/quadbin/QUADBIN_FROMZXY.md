@@ -1,7 +1,7 @@
 ## QUADBIN_FROMZXY
 
 ```sql:signature
-carto.QUADBIN_FROMZXY(z, x, y)
+QUADBIN_FROMZXY(z, x, y)
 ```
 
 **Description**
@@ -25,6 +25,6 @@ Note that the `y` coordinate increases from North to South, and the `y` coordina
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_FROMZXY(4, 9, 8);
+SELECT carto.QUADBIN_FROMZXY(4, 9, 8);
 -- 5209574053332910079
 ```

@@ -1,7 +1,7 @@
 ## QUADBIN_FROMLONGLAT
 
 ```sql:signature
-carto.QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
+QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
 ```
 
 **Description**
@@ -19,6 +19,6 @@ Returns the Quadbin representation of a point for a given level of detail and ge
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4);
+SELECT carto.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4);
 -- 5209574053332910079
 ```

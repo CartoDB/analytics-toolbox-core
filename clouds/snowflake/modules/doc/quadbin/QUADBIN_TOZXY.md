@@ -1,7 +1,7 @@
 ## QUADBIN_TOZXY
 
 ```sql:signature
-carto.QUADBIN_TOZXY(quadbin)
+QUADBIN_TOZXY(quadbin)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## H3_FROMGEOGPOINT
 
 ```sql:signature
-carto.H3_FROMGEOGPOINT(point, resolution)
+H3_FROMGEOGPOINT(point, resolution)
 ```
 
 **Description**
@@ -18,13 +18,13 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
+SELECT carto.H3_FROMGEOGPOINT(ST_GEOGPOINT(40.4168, -3.7038), 4);
 -- 847b59dffffffff
 ```
 
 ````hint:info
 **tip**
 
-If you want the cells covered by a POLYGON see [H3_POLYFILL](#h3_polyfill).
+If you want the cells covered by a POLYGON see [H3_POLYFILL](h3#h3_polyfill).
 
 ````

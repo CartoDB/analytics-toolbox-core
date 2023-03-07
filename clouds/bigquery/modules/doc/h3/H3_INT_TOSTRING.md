@@ -1,7 +1,7 @@
 ## H3_INT_TOSTRING
 
 ```sql:signature
-carto.H3_INT_TOSTRING(index)
+H3_INT_TOSTRING(index)
 ```
 
 **Description**
@@ -17,6 +17,6 @@ Converts the integer representation of the H3 index to the string representation
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_INT_TOSTRING(596645165859340287);
+SELECT carto.H3_INT_TOSTRING(596645165859340287);
 -- 847b59dffffffff
 ```

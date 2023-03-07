@@ -1,7 +1,7 @@
 ## H3_ISPENTAGON
 
 ```sql:signature
-carto.H3_ISPENTAGON(index)
+H3_ISPENTAGON(index)
 ```
 
 **Description**
@@ -17,11 +17,11 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_ISPENTAGON('837b59fffffffff');
+SELECT carto.H3_ISPENTAGON('837b59fffffffff');
 -- false
 ```
 
 ```sql
-SELECT `carto-os`.carto.H3_ISPENTAGON('8075fffffffffff');
+SELECT carto.H3_ISPENTAGON('8075fffffffffff');
 -- true
 ```

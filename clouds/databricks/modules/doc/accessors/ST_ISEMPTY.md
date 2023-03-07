@@ -1,7 +1,7 @@
 ## ST_ISEMPTY
 
 ```sql:signature
-carto.ST_ISEMPTY(geom)
+ST_ISEMPTY(geom)
 ```
 
 **Description**

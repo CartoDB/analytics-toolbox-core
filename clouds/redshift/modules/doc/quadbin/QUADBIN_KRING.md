@@ -1,7 +1,7 @@
 ## QUADBIN_KRING
 
 ```sql:signature
-carto.QUADBIN_KRING(origin, size)
+QUADBIN_KRING(origin, size)
 ```
 
 **Description**

@@ -1,12 +1,12 @@
 ## H3_HEXRING
 
 ```sql:signature
-carto.H3_HEXRING(origin, size)
+H3_HEXRING(origin, size)
 ```
 
 **Description**
 
-Returns all cell indexes in a **hollow hexagonal ring** centered at the origin in no particular order. Unlike [H3_KRING](#kring), this function will throw an exception if there is a pentagon anywhere in the ring.
+Returns all cell indexes in a **hollow hexagonal ring** centered at the origin in no particular order. Unlike [H3_KRING](h3#h3_kring), this function will throw an exception if there is a pentagon anywhere in the ring.
 
 * `origin`: `STRING` H3 cell index of the origin.
 * `size`: `INT` size of the ring (distance from the origin).

@@ -1,7 +1,7 @@
 ## ST_DELAUNAYLINES
 
 ```sql:signature
-carto.ST_DELAUNAYLINES(points)
+ST_DELAUNAYLINES(points)
 ```
 
 **Description**
@@ -19,7 +19,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 **Examples**
 
 ```sql
-SELECT `carto-os`.carto.ST_DELAUNAYLINES(
+SELECT carto.ST_DELAUNAYLINES(
   [
     ST_GEOGPOINT(-74.5366825512491, 43.6889777784079),
     ST_GEOGPOINT(-74.4821382017478, 43.3096147774153),
@@ -42,7 +42,7 @@ SELECT `carto-os`.carto.ST_DELAUNAYLINES(
 Note that if some points are very close together (about 1 meter) they may be merged and the result may have fewer lines than expected, for example these four points result in two lines:
 
 ```sql
-SELECT `carto-os`.carto.ST_DELAUNAYLINES(
+SELECT carto.ST_DELAUNAYLINES(
      [
           ST_GEOGPOINT(4.1829523, 43.6347910),
           ST_GEOGPOINT(4.1829967, 43.6347137),

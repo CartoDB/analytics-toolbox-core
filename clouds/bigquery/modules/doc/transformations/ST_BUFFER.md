@@ -1,7 +1,7 @@
 ## ST_BUFFER
 
 ```sql:signature
-carto.ST_BUFFER(geog, radius, units, steps)
+ST_BUFFER(geog, radius, units, steps)
 ```
 
 **Description**
@@ -20,7 +20,7 @@ Calculates a Geography buffer for input features for a given radius, i.e. the ar
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_BUFFER(
+SELECT carto.ST_BUFFER(
   ST_GEOGPOINT(-74.00, 40.7128),
   1,
   "kilometers",

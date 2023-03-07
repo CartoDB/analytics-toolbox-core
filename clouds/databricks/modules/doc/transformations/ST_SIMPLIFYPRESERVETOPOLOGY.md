@@ -1,7 +1,7 @@
 ## ST_SIMPLIFYPRESERVETOPOLOGY
 
 ```sql:signature
-carto.ST_SIMPLIFYPRESERVETOPOLOGY(geom, tolerance)
+ST_SIMPLIFYPRESERVETOPOLOGY(geom, tolerance)
 ```
 
 **Description**

@@ -1,7 +1,7 @@
 ## ST_NUMPOINTS
 
 ```sql:signature
-carto.ST_NUMPOINTS(geom)
+ST_NUMPOINTS(geom)
 ```
 
 **Description**

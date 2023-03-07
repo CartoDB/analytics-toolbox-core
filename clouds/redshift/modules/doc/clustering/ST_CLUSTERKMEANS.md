@@ -1,7 +1,7 @@
 ## ST_CLUSTERKMEANS
 
 ```sql:signature
-carto.ST_CLUSTERKMEANS(geog [, numberOfClusters])
+ST_CLUSTERKMEANS(geog [, numberOfClusters])
 ```
 
 **Description**

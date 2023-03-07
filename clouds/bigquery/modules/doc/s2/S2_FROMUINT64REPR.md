@@ -1,7 +1,7 @@
 ## S2_FROMUINT64REPR
 
 ```sql:signature
-carto.S2_FROMUINT64REPR(uid)
+S2_FROMUINT64REPR(uid)
 ```
 
 **Description**
@@ -17,6 +17,6 @@ Returns the cell ID from a UINT64 representation.
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.S2_FROMUINT64REPR('9926595690882924544');
+SELECT carto.S2_FROMUINT64REPR('9926595690882924544');
 -- -8520148382826627072
 ```

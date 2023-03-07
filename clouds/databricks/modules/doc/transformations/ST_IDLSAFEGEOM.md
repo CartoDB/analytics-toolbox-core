@@ -1,7 +1,7 @@
 ## ST_IDLSAFEGEOM
 
 ```sql:signature
-carto.ST_IDLSAFEGEOM(geom)
+ST_IDLSAFEGEOM(geom)
 ```
 
 **Description**

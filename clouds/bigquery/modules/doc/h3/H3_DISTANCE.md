@@ -1,7 +1,7 @@
 ## H3_DISTANCE
 
 ```sql:signature
-carto.H3_DISTANCE(origin, destination)
+H3_DISTANCE(origin, destination)
 ```
 
 **Description**
@@ -18,13 +18,13 @@ Returns the **grid distance** between two hexagon indexes. This function may fai
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
+SELECT carto.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
 -- 1
 ```
 
 ````hint:info
 **tip**
 
-If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions#st_distance) between the cells ([H3_BOUNDARY](#h3_boundary)) or their centroid.
+If you want the distance in meters use [ST_DISTANCE](https://cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions#st_distance) between the cells ([H3_BOUNDARY](h3#h3_boundary)) or their centroid.
 
 ````

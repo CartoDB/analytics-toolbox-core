@@ -1,7 +1,7 @@
 ## CREATE_CLUSTERKMEANS
 
 ```sql:signature
-carto.CREATE_CLUSTERKMEANS(input, output_table, geom_column, number_of_clusters)
+CREATE_CLUSTERKMEANS(input, output_table, geom_column, number_of_clusters)
 ```
 
 **Description**

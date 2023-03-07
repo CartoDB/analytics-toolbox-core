@@ -1,7 +1,7 @@
 ## ST_ISCLOSED
 
 ```sql:signature
-carto.ST_ISCLOSED(geom)
+ST_ISCLOSED(geom)
 ```
 
 **Description**

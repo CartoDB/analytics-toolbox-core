@@ -1,7 +1,7 @@
 ## H3_FROMLONGLAT
 
 ```sql:signature
-carto.H3_FROMLONGLAT(longitude, latitude, resolution)
+H3_FROMLONGLAT(longitude, latitude, resolution)
 ```
 
 **Description**
@@ -19,6 +19,6 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.H3_FROMLONGLAT(40.4168, -3.7038, 4);
+SELECT carto.H3_FROMLONGLAT(40.4168, -3.7038, 4);
 -- 847b59dffffffff
 ```

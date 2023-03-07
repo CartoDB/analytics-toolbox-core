@@ -1,12 +1,12 @@
 ## ST_ANGLE
 
 ```sql:signature
-carto.ST_ANGLE(startPoint, midPoint, endPoint, mercator)
+ST_ANGLE(startPoint, midPoint, endPoint, mercator)
 ```
 
 **Description**
 
-Finds the angle formed by two adjacent segments defined by 3 points. The result will be the (positive clockwise) angle with origin on the startPoint-midPoint segment, or its [explementary angle](http://www.amathsdictionaryforkids.com/qr/e/explementaryConjugateAngles.html) if required.
+Finds the angle formed by two adjacent segments defined by 3 points. The result will be the (positive clockwise) angle with origin on the startPoint-midPoint segment, or its explementary angle if required.
 
 * `startPoint`: `GEOGRAPHY` start Point Coordinates.
 * `midPoint`: `GEOGRAPHY` mid Point Coordinates.
@@ -20,6 +20,6 @@ Finds the angle formed by two adjacent segments defined by 3 points. The result 
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false);
+SELECT carto.ST_ANGLE(ST_GEOGPOINT(-3.70325 ,40.4167), ST_GEOGPOINT(-4.70325 ,10.4167), ST_GEOGPOINT(-5.70325 ,40.4167), false);
 -- 3.933094586038578
 ```

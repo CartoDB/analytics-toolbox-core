@@ -1,7 +1,7 @@
 ## QUADBIN_KRING
 
 ```sql:signature
-carto.QUADBIN_KRING(origin, size)
+QUADBIN_KRING(origin, size)
 ```
 
 **Description**
@@ -18,7 +18,7 @@ Returns all Quadbin cell indexes in a **filled square k-ring** centered at the o
 **Example**
 
 ```sql
-SELECT `carto-os`.carto.QUADBIN_KRING(5209574053332910079, 1);
+SELECT carto.QUADBIN_KRING(5209574053332910079, 1);
 -- 5208043533147045887
 -- 5209556461146865663
 -- 5209591645518954495

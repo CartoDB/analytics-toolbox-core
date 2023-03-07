@@ -1,7 +1,7 @@
 ## ST_LENGTHSPHERE
 
 ```sql:signature
-carto.ST_LENGTHSPHERE(line)
+ST_LENGTHSPHERE(line)
 ```
 
 **Description**
