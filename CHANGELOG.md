@@ -4,7 +4,7 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
-## 2023-03-03
+## 2023-03-06
 
 - chore(rs): add initial version of cat-installer script (#386)
 - docs: update reference links (#389)
