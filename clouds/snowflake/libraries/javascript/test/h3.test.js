@@ -1,4 +1,5 @@
 const h3FromLonglatLib = require('../build/h3_fromlonglat');
+const centerLib = require('../build/h3_center');
 const compactLib = require('../build/h3_compact');
 const distanceLib = require('../build/h3_distance');
 const isValidLib = require('../build/h3_isvalid');
@@ -14,6 +15,8 @@ const uncompactLib = require('../build/h3_uncompact');
 
 test('h3 library defined', () => {
     expect(h3FromLonglatLib.geoToH3).toBeDefined();
+    expect(centerLib.h3IsValid).toBeDefined();
+    expect(centerLib.h3ToGeo).toBeDefined();
     expect(compactLib.compact).toBeDefined();
     expect(distanceLib.h3Distance).toBeDefined();
     expect(isValidLib.h3IsValid).toBeDefined();
