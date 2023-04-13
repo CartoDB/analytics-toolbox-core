@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2023 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_CENTER
@@ -19,7 +19,7 @@ AS $$
     }
 
     const center = h3CenterLib.h3ToGeo(INDEX);
-    return `POINT(`+center[1] + ` ` + center[0] + `)`;
+    return `POINT(${center[1]} ${center[0]})`;
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_CENTER
