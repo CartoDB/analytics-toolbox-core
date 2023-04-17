@@ -1,0 +1,35 @@
+const h3FromlonglatLib = require('../build/h3_fromlonglat');
+// const h3CompactLib = require('../build/h3_compact');
+// const h3DistanceLib = require('../build/h3_distance');
+// const h3IsvalidLib = require('../build/h3_isvalid');
+// const h3HexringLib = require('../build/h3_hexring');
+// const h3IspentagonLib = require('../build/h3_ispentagon');
+// const h3KringLib = require('../build/h3_kring');
+// const h3KringDistancesLib = require('../build/h3_kring_distances');
+// const h3PolyfillLib = require('../build/h3_polyfill');
+const h3BoundaryLib = require('../build/h3_boundary');
+// const h3TochildrenLib = require('../build/h3_tochildren');
+// const h3ToparentLib = require('../build/h3_toparent');
+// const h3UncompactLib = require('../build/h3_uncompact');
+
+test('h3 library defined', () => {
+    expect(h3FromlonglatLib.geoToH3).toBeDefined();
+    // expect(h3CompactLib.compact).toBeDefined();
+    // expect(h3DistanceLib.h3Distance).toBeDefined();
+    // expect(h3IsvalidLib.h3IsValid).toBeDefined();
+    // expect(h3HexringLib.hexRing).toBeDefined();
+    // expect(h3HexringLib.h3IsValid).toBeDefined();
+    // expect(h3IspentagonLib.h3IsPentagon).toBeDefined();
+    // expect(h3KringLib.kRing).toBeDefined();
+    // expect(h3KringLib.h3IsValid).toBeDefined();
+    // expect(h3KringDistancesLib.kRingDistances).toBeDefined();
+    // expect(h3KringDistancesLib.h3IsValid).toBeDefined();
+    // expect(h3PolyfillLib.polyfill).toBeDefined();
+    expect(h3BoundaryLib.h3ToGeoBoundary).toBeDefined();
+    expect(h3BoundaryLib.h3IsValid).toBeDefined();
+    // expect(h3TochildrenLib.h3ToChildren).toBeDefined();
+    // expect(h3TochildrenLib.h3IsValid).toBeDefined();
+    // expect(h3ToparentLib.h3ToParent).toBeDefined();
+    // expect(h3ToparentLib.h3IsValid).toBeDefined();
+    // expect(h3UncompactLib.uncompact).toBeDefined();
+});
