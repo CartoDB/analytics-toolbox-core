@@ -1,4 +1,5 @@
-import { h3IsValid, h3ToGeoBoundary } from '../src/h3/h3_boundary/h3core_custom';
+import { geoToH3, compact, h3Distance, h3GetResolution, h3IsValid, hexRing, h3IsPentagon, kRing, kRingDistances, polyfill, h3ToGeo, h3ToGeoBoundary, h3ToChildren, h3ToParent, uncompact } from 'h3-js';
+import { bboxClip } from '@turf/turf';
 
 function removeNextDuplicates (coordinates) {
     const precision = 0.0000000000001;
@@ -16,7 +17,21 @@ function removeNextDuplicates (coordinates) {
 }
 
 export default {
+    geoToH3,
+    compact,
+    h3Distance,
+    h3GetResolution,
     h3IsValid,
+    hexRing,
+    h3IsPentagon,
+    kRing,
+    kRingDistances,
+    polyfill,
+    h3ToGeo,
     h3ToGeoBoundary,
+    h3ToChildren,
+    h3ToParent,
+    uncompact,
+    bboxClip,
     removeNextDuplicates
 };

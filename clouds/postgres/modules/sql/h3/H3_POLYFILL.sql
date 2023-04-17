@@ -15,7 +15,7 @@ AS $$
         return [];
     }
 
-    @@PG_LIBRARY_H3_POLYFILL@@
+    @@PG_LIBRARY_H3@@
 
     const bboxA = [-180, -90, 0, 90]
     const bboxB = [0, -90, 180, 90]
@@ -26,28 +26,28 @@ AS $$
         case 'GeometryCollection':
             featureGeometry.geometries.forEach(function (geom) {
                 if (geom.type === 'MultiPolygon') {
-                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
+                    var clippedGeometryA = h3Lib.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates);
-                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
+                    var clippedGeometryB = h3Lib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates);
                 } else if (geom.type === 'Polygon') {
-                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
+                    var clippedGeometryA = h3Lib.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
-                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
+                    var clippedGeometryB = h3Lib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
                 }
             });
         break;
         case 'MultiPolygon':
-            var clippedGeometryA = h3PolyfillLib.bboxClip(featureGeometry, bboxA).geometry;
+            var clippedGeometryA = h3Lib.bboxClip(featureGeometry, bboxA).geometry;
             polygonCoordinatesA = clippedGeometryA.coordinates;
-            var clippedGeometryB = h3PolyfillLib.bboxClip(featureGeometry, bboxB).geometry;
+            var clippedGeometryB = h3Lib.bboxClip(featureGeometry, bboxB).geometry;
             polygonCoordinatesB = clippedGeometryB.coordinates;
         break;
         case 'Polygon':
-            var clippedGeometryA = h3PolyfillLib.bboxClip(featureGeometry, bboxA).geometry;
+            var clippedGeometryA = h3Lib.bboxClip(featureGeometry, bboxA).geometry;
             polygonCoordinatesA = [clippedGeometryA.coordinates];
-            var clippedGeometryB = h3PolyfillLib.bboxClip(featureGeometry, bboxB).geometry;
+            var clippedGeometryB = h3Lib.bboxClip(featureGeometry, bboxB).geometry;
             polygonCoordinatesB = [clippedGeometryB.coordinates];
         break;
         default:
@@ -59,11 +59,11 @@ AS $$
     }
 
     let hexesA = polygonCoordinatesA.reduce(
-        (acc, coordinates) => acc.concat(h3PolyfillLib.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     let hexesB = polygonCoordinatesB.reduce(
-        (acc, coordinates) => acc.concat(h3PolyfillLib.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null);
     hexes = [...hexesA, ...hexesB];

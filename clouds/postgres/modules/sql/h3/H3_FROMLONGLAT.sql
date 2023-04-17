@@ -13,7 +13,7 @@ AS $$
         return null;
     }
 
-    @@PG_LIBRARY_H3_FROMLONGLAT@@
+    @@PG_LIBRARY_H3@@
 
-    return h3FromlonglatLib.geoToH3(latitude, longitude, resolution);
+    return h3Lib.geoToH3(latitude, longitude, resolution);
 $$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

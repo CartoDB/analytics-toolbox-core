@@ -11,13 +11,13 @@ AS $$
         return null;
     }
 
-    @@PG_LIBRARY_H3_BOUNDARY@@
+    @@PG_LIBRARY_H3@@
 
-    if (!h3BoundaryLib.h3IsValid(index)) {
+    if (!h3Lib.h3IsValid(index)) {
         return null;
     }
 
-    const coords = h3BoundaryLib.h3ToGeoBoundary(index, true);
-    const uniqueCoords = h3BoundaryLib.removeNextDuplicates(coords);
+    const coords = h3Lib.h3ToGeoBoundary(index, true);
+    const uniqueCoords = h3Lib.removeNextDuplicates(coords);
     return `POLYGON((${uniqueCoords.map(c => `${c[0]} ${c[1]}`).join(',')}))`;
 $$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
