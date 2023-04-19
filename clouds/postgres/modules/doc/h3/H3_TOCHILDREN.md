@@ -19,11 +19,11 @@ Returns an array with the indexes of the children/descendents of the given hexag
 
 ```sql
 SELECT carto.H3_TOCHILDREN('837b59fffffffff', 4);
--- 847b591ffffffff
--- 847b593ffffffff
--- 847b595ffffffff
--- 847b597ffffffff
--- 847b599ffffffff
--- 847b59bffffffff
--- 847b59dffffffff
+-- { 847b591ffffffff,
+--   847b593ffffffff,
+--   847b595ffffffff
+--   847b597ffffffff,
+--   847b599ffffffff,
+--   847b59bffffffff,
+--   847b59dffffffff }
 ```

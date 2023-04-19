@@ -18,5 +18,5 @@ Returns a geography representing the H3 cell. It will return `null` on error (in
 
 ```sql
 SELECT carto.H3_BOUNDARY('847b59dffffffff');
--- { "coordinates": [ [ [ 40.46506362234518, -3.9352772457964957 ], [ 40.546540602670504, -3.706115055436962 ], ...
+-- POLYGON ((40.46506362234518 -3.9352772457964957, 40.546540602670504 -3.706115055436962, 40.387130040966305 -3.5142476508226355, ...
 ```

@@ -19,6 +19,16 @@ Returns all cell indexes in a **filled hexagonal k-ring** centered at the origin
 
 ```sql
 SELECT carto.H3_KRING('837b59fffffffff', 1);
+-- { 837b59fffffffff,
+--   837b58fffffffff,
+--   837b5bfffffffff,
+--   837a66fffffffff,
+--   837a64fffffffff,
+--   837b4afffffffff,
+--   837b5dfffffffff }
+
+
+
 -- 837b59fffffffff
 -- 837b58fffffffff
 -- 837b5bfffffffff
