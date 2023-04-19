@@ -40,7 +40,7 @@ def test_h3_polyfill():
             ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
-        """
+        """  # noqa
     )
     assert len(result) == 18
     assert result[0][0] == 1253
@@ -94,6 +94,6 @@ def test_h3_polyfill_points():
             WHERE
                 ARRAY_LENGTH(p, 1) != 1 OR
                 p[0] != h3_id
-        """
+        """  # noqa
     )
     assert len(result) == 0

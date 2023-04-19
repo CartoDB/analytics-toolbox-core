@@ -19,4 +19,3 @@ AS $$
 
     return h3Lib.h3GetResolution(index);
 $$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
-

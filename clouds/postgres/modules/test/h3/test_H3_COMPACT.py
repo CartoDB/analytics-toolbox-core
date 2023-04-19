@@ -4,8 +4,8 @@ from test_utils import run_query
 def test_h3_compact_null_values():
     """Returns empty arrays with null inputs."""
     result = run_query(
-        """        
-            SELECT 
+        """
+            SELECT
                 @@PG_SCHEMA@@.H3_COMPACT(NULL) as c,
                 @@PG_SCHEMA@@.H3_UNCOMPACT(NULL, 5) as u
         """
@@ -15,7 +15,7 @@ def test_h3_compact_null_values():
     assert result[0][1] == []
 
     result = run_query(
-        """        
+        """
             SELECT
                 @@PG_SCHEMA@@.H3_COMPACT(ARRAY[]::VARCHAR[16]) as c,
                 @@PG_SCHEMA@@.H3_UNCOMPACT(ARRAY[]::VARCHAR[16], 5) as u
@@ -39,7 +39,7 @@ def test_h3_compact_polyfill():
                 ARRAY_LENGTH(@@PG_SCHEMA@@.H3_COMPACT(v), 1) AS compacted,
                 ARRAY_LENGTH(@@PG_SCHEMA@@.H3_UNCOMPACT(@@PG_SCHEMA@@.H3_COMPACT(v), 9), 1) AS uncompacted
             FROM poly
-        """
+        """  # noqa
     )
     assert len(result) == 1
     assert result[0][0] == 1253

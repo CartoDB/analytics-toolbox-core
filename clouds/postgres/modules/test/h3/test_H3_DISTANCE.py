@@ -21,7 +21,7 @@ def test_h3_distance_invalid_inputs():
                 @@PG_SCHEMA@@.H3_DISTANCE(hid1, hid2) as distance
             FROM ids
             ORDER BY id ASC
-        """
+        """  # noqa
     )
     assert len(result) == 5
     assert result[0][1] is None
@@ -37,7 +37,7 @@ def test_h3_distance_valid_inputs():
         """
             WITH distances AS
             (
-                SELECT 0 AS distance 
+                SELECT 0 AS distance
                 UNION ALL SELECT 1
                 UNION ALL SELECT 2
                 UNION ALL SELECT 3

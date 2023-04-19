@@ -20,7 +20,7 @@ def test_h3_fromgeogpoint():
             SELECT @@PG_SCHEMA@@.H3_FROMGEOGPOINT(geom, resolution) as h3_id
             FROM inputs
             ORDER BY id ASC
-        """
+        """  # noqa
     )
     assert len(result) == 7
     assert result[0][0] == '85283473fffffff'
@@ -45,7 +45,7 @@ def test_h3_fromgeogpoint_non_points():
             SELECT @@PG_SCHEMA@@.H3_FROMGEOGPOINT(geom, resolution) as h3_id
             FROM inputs
             ORDER BY id ASC
-        """
+        """  # noqa
     )
     assert len(result) == 3
     assert result[0][0] is None

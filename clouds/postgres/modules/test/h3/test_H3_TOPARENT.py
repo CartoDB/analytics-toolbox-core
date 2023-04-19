@@ -3,7 +3,6 @@ from test_utils import run_query
 
 def test_h3_toparent_invalid_input():
     """Returns null with invalid data."""
-
     result = run_query(
         """
             WITH ids AS
@@ -58,6 +57,6 @@ def test_h3_toparent():
             WHERE
                 @@PG_SCHEMA@@.H3_FROMGEOGPOINT(point, resolution) != @@PG_SCHEMA@@.H3_TOPARENT(@@PG_SCHEMA@@.H3_FROMGEOGPOINT(point, resolution + 1), resolution) OR
                 @@PG_SCHEMA@@.H3_FROMGEOGPOINT(point, resolution) != @@PG_SCHEMA@@.H3_TOPARENT(@@PG_SCHEMA@@.H3_FROMGEOGPOINT(point, resolution + 2), resolution)
-        """
+        """  # noqa
     )
     assert len(result) == 0

@@ -25,7 +25,7 @@ def test_h3_ispentagon():
         """
     )
     assert len(result) == 4
-    assert result[0][1] == False
-    assert result[1][1] == False
-    assert result[2][1] == False
-    assert result[3][1] == True
+    assert result[0][1] is False
+    assert result[1][1] is False
+    assert result[2][1] is False
+    assert result[3][1] is True

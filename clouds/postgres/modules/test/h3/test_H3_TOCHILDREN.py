@@ -2,7 +2,7 @@ from test_utils import run_query
 
 
 def test_h3_tochildren_invalid_data():
-    """Returns empty arrays with invalid data"""
+    """Returns empty arrays with invalid data."""
     result = run_query(
         """
             WITH ids AS
@@ -36,7 +36,7 @@ def test_h3_tochildren():
                 ARRAY_LENGTH(@@PG_SCHEMA@@.H3_TOCHILDREN(hid, 8), 1) AS length_children,
                 ARRAY_LENGTH(@@PG_SCHEMA@@.H3_TOCHILDREN(hid, 9), 1) AS length_grandchildren
             FROM ids
-        """
+        """  # noqa
     )
 
     assert len(result) == 1
@@ -73,7 +73,7 @@ def test_h3_tochildren_coarser_resolutions():
             SELECT
                 @@PG_SCHEMA@@.H3_TOCHILDREN(hid, 6) AS top_children
             FROM ids
-        """
+        """  # noqa
     )
     assert len(result) == 1
     assert result[0][0] == []

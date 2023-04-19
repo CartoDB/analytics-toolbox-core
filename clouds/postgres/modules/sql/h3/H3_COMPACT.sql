@@ -15,4 +15,3 @@ AS $$
 
     return h3Lib.compact(h3array);
 $$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
-
