@@ -55,8 +55,8 @@ def test_h3_polyfill():
     assert result[9][0] is None
     assert result[10][0] is None
     assert result[11][0] is None
-    assert result[12][0] is None
-    assert result[13][0] is None
+    assert result[12][0] == 1
+    assert result[13][0] == 1
     assert result[14][0] is None
     assert result[15][0] is None
     assert result[16][0] is None
