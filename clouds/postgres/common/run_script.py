@@ -26,6 +26,8 @@ def run_queries(queries):
                 if result:
                     function = result.group(1)
                 cursor.execute(query)
+        for notice in list(set(conn.notices)):
+            print(notice.strip())
 
 
 if __name__ == '__main__':
