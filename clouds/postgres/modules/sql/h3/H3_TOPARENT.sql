@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_TOPARENT(
     resolution INT
 )
 RETURNS VARCHAR(16)
-AS $$
+AS
+$BODY$
     if (!index) {
         return null;
     }
@@ -19,4 +20,5 @@ AS $$
     }
 
     return h3Lib.h3ToParent(index, Number(resolution));
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

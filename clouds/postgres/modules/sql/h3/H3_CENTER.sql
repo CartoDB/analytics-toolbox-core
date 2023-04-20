@@ -6,7 +6,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_CENTER(
     index VARCHAR(16)
 )
 RETURNS GEOMETRY
-AS $$
+AS
+$BODY$
     if (!index) {
         return null;
     }
@@ -19,4 +20,5 @@ AS $$
 
     const center = h3Lib.h3ToGeo(index);
     return `POINT(${center[1]} ${center[0]})`;
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

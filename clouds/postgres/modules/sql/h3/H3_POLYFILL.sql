@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL(
     resolution INTEGER
 )
 RETURNS VARCHAR(16)[]
-AS $$
+AS
+$BODY$
     if (!geojson || resolution == null) {
         return [];
     }
@@ -70,7 +71,8 @@ AS $$
     hexes = [...new Set(hexes)];
 
     return hexes;
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_POLYFILL(
     geom GEOMETRY,

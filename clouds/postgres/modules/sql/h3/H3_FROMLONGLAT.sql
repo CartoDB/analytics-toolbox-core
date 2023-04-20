@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_FROMLONGLAT(
     resolution INTEGER
 )
 RETURNS VARCHAR(16)
-AS $$
+AS
+$BODY$
     if (longitude == null || latitude == null || resolution == null) {
         return null;
     }
@@ -16,4 +17,5 @@ AS $$
     @@PG_LIBRARY_H3@@
 
     return h3Lib.geoToH3(latitude, longitude, resolution);
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_KRING_DISTANCES(
     size INT
 )
 RETURNS JSON[]
-AS $$
+AS
+$BODY$
     if (size == null || size < 0) {
         throw new Error('Invalid input size')
     }
@@ -27,4 +28,5 @@ AS $$
         }
     }
     return output;
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

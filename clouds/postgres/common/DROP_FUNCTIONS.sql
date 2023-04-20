@@ -4,7 +4,8 @@
 
 CREATE OR REPLACE PROCEDURE @@PG_SCHEMA@@.__DROP_FUNCTIONS
 (schema_name TEXT)
-AS $$
+AS
+$BODY$
 DECLARE
 	row RECORD;
 begin
@@ -17,6 +18,7 @@ begin
 		EXECUTE row.drop_command;
 	END LOOP;
 END;
-$$ LANGUAGE plpgsql;
+$BODY$
+LANGUAGE plpgsql;
 
 CALL @@PG_SCHEMA@@.__DROP_FUNCTIONS('@@PG_SCHEMA@@');

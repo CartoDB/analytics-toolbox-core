@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_KRING(
     size INT
 )
 RETURNS VARCHAR(16)[]
-AS $$
+AS
+$BODY$
     if (size == null || size < 0) {
         throw new Error('Invalid input size')
     }
@@ -19,4 +20,5 @@ AS $$
     }
 
     return h3Lib.kRing(origin, parseInt(size));
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

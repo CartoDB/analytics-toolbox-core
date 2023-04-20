@@ -6,7 +6,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_BOUNDARY(
     index VARCHAR(16)
 )
 RETURNS GEOMETRY
-AS $$
+AS
+$BODY$
     if (!index) {
         return null;
     }
@@ -20,4 +21,5 @@ AS $$
     const coords = h3Lib.h3ToGeoBoundary(index, true);
     const uniqueCoords = h3Lib.removeNextDuplicates(coords);
     return `POLYGON((${uniqueCoords.map(c => `${c[0]} ${c[1]}`).join(',')}))`;
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

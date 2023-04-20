@@ -6,7 +6,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_RESOLUTION(
     index VARCHAR(16)
 )
 RETURNS INT
-AS $$
+AS
+$BODY$
     if (!index) {
         return null;
     }
@@ -18,4 +19,5 @@ AS $$
     }
 
     return h3Lib.h3GetResolution(index);
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

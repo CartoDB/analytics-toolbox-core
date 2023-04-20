@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_DISTANCE(
     index2 VARCHAR(16)
 )
 RETURNS BIGINT
-AS $$
+AS
+$BODY$
     if (!index1 || !index2) {
         return null;
     }
@@ -19,4 +20,5 @@ AS $$
         dist = null;
     }
     return dist;
-$$ LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
+$BODY$
+LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
