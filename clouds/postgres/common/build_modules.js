@@ -43,6 +43,13 @@ ELSE
 END IF;\n`
 }
 
+function anonymousBlockWrapping (content) {
+    return `DO $$
+BEGIN
+${content}
+END$$;\n`
+}
+
 if (all) {
     console.log('- Build all');
 } else if (diff && diff.length) {
@@ -159,10 +166,8 @@ function add (f, include) {
 }
 functions.forEach(f => add(f));
 
-let content = 'DO $$\nBEGIN\n'
-
 // Replace environment variables
-content += extensionFuctionWrapping(output.map(f => extensionFuctionWrapping(f.content, f.module)).join('\n'), 'all');
+let content = output.map(f => anonymousBlockWrapping(extensionFuctionWrapping(extensionFuctionWrapping(f.content, f.module), 'all'))).join('\n');
 
 function apply_replacements (text) {
     const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_.*@@', 'g')))];
@@ -195,8 +200,6 @@ if (argv.dropfirst) {
 
 const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
 content += footer;
-
-content += 'END$$;\n';
 
 content = apply_replacements(content);
 
