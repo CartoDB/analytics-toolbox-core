@@ -44,10 +44,10 @@ END IF;\n`
 }
 
 function anonymousBlockWrapping (content) {
-    return `DO $$
+    return `DO $FUNCT$
 BEGIN
 ${content}
-END$$;\n`
+END$FUNCT$;\n`
 }
 
 if (all) {
