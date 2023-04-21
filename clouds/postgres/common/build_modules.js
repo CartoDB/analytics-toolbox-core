@@ -23,23 +23,22 @@ let all = !(diff.length || modulesFilter.length || functionsFilter.length);
 
 // Introduces extensions requirements per module
 const modulesExtensions = {
-    all: 'postgis',
     h3: 'plv8'
 }
+
+const postgisInstalledCheck = `IF NOT EXISTS(SELECT 1 FROM pg_extension WHERE extname = 'postgis') THEN
+RAISE EXCEPTION 'Analytics Toolbox not installed. The extension ''postgis'' is required.';
+END IF;\n`
 
 function extensionFuctionWrapping (content, module) {
     const extension = modulesExtensions[module]
     if (!extension) {
         return content
     }
-    const noticeMessage = module === 'all'? 
-        'Analytics Toolbox not installed' :
-        `Functions from the module ${module} cannot be installed`
-
     return `IF EXISTS(SELECT 1 FROM pg_extension WHERE extname = '${extension}') THEN
 ${content}
 ELSE
-	RAISE NOTICE '${noticeMessage}. The extension ''${extension}'' is required.';
+	RAISE NOTICE 'Functions from the module ${module} cannot be installed. The extension ''${extension}'' is required.';
 END IF;\n`
 }
 
@@ -166,8 +165,10 @@ function add (f, include) {
 }
 functions.forEach(f => add(f));
 
+let content = anonymousBlockWrapping(postgisInstalledCheck)
+
 // Replace environment variables
-let content = output.map(f => anonymousBlockWrapping(extensionFuctionWrapping(extensionFuctionWrapping(f.content, f.module), 'all'))).join('\n');
+content += output.map(f => anonymousBlockWrapping(extensionFuctionWrapping(f.content, f.module))).join('\n');
 
 function apply_replacements (text) {
     const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_.*@@', 'g')))];
