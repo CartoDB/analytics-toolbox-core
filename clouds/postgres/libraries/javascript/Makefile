@@ -71,10 +71,12 @@ build-install:
 	done;
 
 test:
-	echo "Testing libraries..."
-	UNIT_TEST=1 $(MAKE) build
-	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	jest --testTimeout=30000 $(BAIL) --verbose $(TEST_DIR)/$(test)
+	if [ -d $(LIBS_DIR) ]; then \
+		echo "Testing libraries..."; \
+		UNIT_TEST=1 $(MAKE) build; \
+		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+		jest --testTimeout=30000 $(BAIL) --verbose $(TEST_DIR)/$(test); \
+	fi;
 
 clean:
 	echo "Cleaning libraries..."
