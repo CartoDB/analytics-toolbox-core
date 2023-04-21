@@ -29,10 +29,12 @@ help:
 	echo "Please choose one of the following targets: lint build test remove clean"
 
 lint: $(NODE_MODULES_DEV)
-	echo "Linting libraries..."
-	echo "- Lint JavaScript files"
-	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
+	if [ -d $(LIBS_DIR) ]; then \
+		echo "Linting libraries..."; \
+		echo "- Lint JavaScript files"; \
+		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+		eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix; \
+	fi;
 
 build:
 	echo "Building libraries..."
