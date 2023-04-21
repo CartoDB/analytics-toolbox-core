@@ -32,8 +32,8 @@ export default {
         file: process.env.OUTPUT,
         format: process.env.UNIT_TEST ? 'umd': 'iife',
         name: process.env.UNIT_TEST ? name : '_' + name,
-        banner: process.env.UNIT_TEST ? '' : 'if (typeof(' +name +') === "undefined") {',
-        footer: process.env.UNIT_TEST ? '' : name +' = _' + name + ';}'
+        banner: process.env.UNIT_TEST ? '' : 'if (typeof(plv8.' +name +') === "undefined") {',
+        footer: process.env.UNIT_TEST ? '' : `plv8.${name} = _${name};}\n${name} = plv8.${name}`
     },
     plugins: [
         resolve(),
