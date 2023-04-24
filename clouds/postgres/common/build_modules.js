@@ -30,7 +30,7 @@ const postgisInstalledCheck = `IF NOT EXISTS(SELECT 1 FROM pg_extension WHERE ex
 RAISE EXCEPTION 'Analytics Toolbox not installed. The extension ''postgis'' is required.';
 END IF;\n`
 
-function extensionFuctionWrapping (content, module) {
+function extensionFunctionWrapping (content, module) {
     const extension = modulesExtensions[module]
     if (!extension) {
         return content
@@ -168,7 +168,7 @@ functions.forEach(f => add(f));
 let content = anonymousBlockWrapping(postgisInstalledCheck)
 
 // Replace environment variables
-content += output.map(f => anonymousBlockWrapping(extensionFuctionWrapping(f.content, f.module))).join('\n');
+content += output.map(f => anonymousBlockWrapping(extensionFunctionWrapping(f.content, f.module))).join('\n');
 
 function apply_replacements (text) {
     const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_.*@@', 'g')))];
