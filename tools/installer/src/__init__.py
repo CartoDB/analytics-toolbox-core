@@ -8,6 +8,7 @@ import redshift_connector
 
 from tqdm import trange
 from sqlparse import split
+from psycopg2 import connect
 
 
 def read_config(filename):
@@ -20,50 +21,79 @@ def read_config(filename):
         exit(f'ERROR: configuration file not found: {filename}')
 
 
-def read_package(filename):
+def read_package(filename, config):
     with zipfile.ZipFile(filename, 'r') as zip_ref:
         folder = zip_ref.infolist()[0].filename
         zip_ref.extractall('.')
 
-    with open(os.path.join(folder, 'libraries.sql'), 'r') as lib_file:
-        libraries = lib_file.read()
+    package = {}
+
+    if config['connection']['cloud'] == 'redshift':
+        with open(os.path.join(folder, 'libraries.sql'), 'r') as lib_file:
+            package['libraries'] = lib_file.read()
 
     with open(os.path.join(folder, 'modules.sql'), 'r') as mod_file:
-        modules = mod_file.read()
+        package['modules'] = mod_file.read()
 
-    return {'libraries': libraries, 'modules': modules}
+    return package
 
 
 def run_sql(sql, config):
-    with redshift_connector.connect(
-        host=config['connection']['host'],
-        database=config['connection']['database'],
-        user=config['connection']['user'],
-        password=config['connection']['password'],
-    ) as conn:
-        conn.autocommit = True
-        with conn.cursor() as cursor:
-            queries = split(
-                sql.replace('@@API_BASE_URL@@', config['lds']['api_base_url'])
-                .replace('@@LDS_LAMBDA@@', config['lds']['lambda'])
-                .replace('@@LDS_ROLES@@', config['lds']['roles'])
-                .replace('@@LDS_TOKEN@@', config['lds']['token'])
-            )
-            for i in trange(len(queries), ncols=100):
-                query = queries[i]
-                cursor.execute(query)
+    if config['connection']['cloud'] == 'redshift':
+        with redshift_connector.connect(
+            host=config['connection']['host'],
+            database=config['connection']['database'],
+            user=config['connection']['user'],
+            password=config['connection']['password'],
+        ) as conn:
+            conn.autocommit = True
+            with conn.cursor() as cursor:
+                queries = split(
+                    sql.replace('@@API_BASE_URL@@', config['lds']['api_base_url'])
+                    .replace('@@LDS_LAMBDA@@', config['lds']['lambda'])
+                    .replace('@@LDS_ROLES@@', config['lds']['roles'])
+                    .replace('@@LDS_TOKEN@@', config['lds']['token'])
+                )
+                for i in trange(len(queries), ncols=100):
+                    query = queries[i]
+                    cursor.execute(query)
+    elif config['connection']['cloud'] == 'postgres':
+        with connect(
+            host=config['connection']['host'],
+            database=config['connection']['database'],
+            user=config['connection']['user'],
+            password=config['connection']['password'],
+        ) as conn:
+            conn.autocommit = True
+            with conn.cursor() as cursor:
+                queries = split(sql)
+                for i in trange(len(queries), ncols=97):
+                    query = queries[i]
+                    cursor.execute(query)
+            for notice in list(set(conn.notices)):
+                print(notice.strip())
 
 
 def validate_config(config):
     connection = config.get('connection')
-    lds = config.get('lds')
+
+    cloud = connection.get('cloud')
+    if not validate_str(cloud):
+        exit('incorrect configuration: missing connection.cloud')
+
+    if cloud not in ['redshift', 'postgres']:
+        exit('incorrect configuration: invalid connection.cloud')
 
     if connection is None:
         exit('incorrect configuration: missing connection')
 
-    pattern = r'^([^.]+)\.([^.]+)\.([^.]+)\.redshift(-serverless)?\.amazonaws\.com$'
-    if not validate_str(connection.get('host'), pattern):
-        exit('incorrect configuration: missing or invalid connection.host')
+    if not validate_str(connection.get('host')):
+        exit('incorrect configuration: missing connection.host')
+
+    if cloud == 'redshift':
+        pattern = r'^([^.]+)\.([^.]+)\.([^.]+)\.redshift(-serverless)?\.amazonaws\.com$'
+        if not validate_str(connection.get('host'), pattern):
+            exit('incorrect configuration: invalid connection.host')
 
     if not validate_str(connection.get('database')):
         exit('incorrect configuration: missing connection.database')
@@ -74,22 +104,24 @@ def validate_config(config):
     if not validate_str(connection.get('password')):
         exit('incorrect configuration: missing connection.password')
 
-    if lds is None:
-        exit('incorrect configuration: missing lds')
+    if cloud == 'redshift':
+        lds = config.get('lds')
+        if lds is None:
+            exit('incorrect configuration: missing lds')
 
-    pattern = r'^(lds-function-asia-northeast1|lds-function-australia-southeast1|lds-function-europe-west1|lds-function-us-east1)$'  # noqa: E501
-    if not validate_str(lds.get('lambda'), pattern):
-        exit('incorrect configuration: missing or invalid lds.lambda')
+        pattern = r'^(lds-function-asia-northeast1|lds-function-australia-southeast1|lds-function-europe-west1|lds-function-us-east1)$'  # noqa: E501
+        if not validate_str(lds.get('lambda'), pattern):
+            exit('incorrect configuration: missing or invalid lds.lambda')
 
-    pattern = r'^arn:aws:iam::[0-9]+:role/CartoFunctionsRedshiftRole,arn:aws:iam::000955892807:role/CartoFunctionsRole$'  # noqa: E501
-    if not validate_str(lds.get('roles'), pattern):
-        exit('incorrect configuration: missing or invalid lds.roles')
+        pattern = r'^arn:aws:iam::[0-9]+:role/CartoFunctionsRedshiftRole,arn:aws:iam::000955892807:role/CartoFunctionsRole$'  # noqa: E501
+        if not validate_str(lds.get('roles'), pattern):
+            exit('incorrect configuration: missing or invalid lds.roles')
 
-    if not validate_str(lds.get('api_base_url')):
-        exit('incorrect configuration: missing lds.api_base_url')
+        if not validate_str(lds.get('api_base_url')):
+            exit('incorrect configuration: missing lds.api_base_url')
 
-    if not validate_str(lds.get('token')):
-        exit('incorrect configuration: missing lds.token')
+        if not validate_str(lds.get('token')):
+            exit('incorrect configuration: missing lds.token')
 
 
 def validate_str(string, pattern=None):
@@ -112,8 +144,9 @@ def main(package_file):
     print(f'Reading config file: {config_file}')
     config = read_config(config_file)
     print(f'Reading package file: {package_file}')
-    package = read_package(package_file)
-    print('Installing libraries...')
-    run_sql(package['libraries'], config)
+    package = read_package(package_file, config)
+    if 'libraries' in package:
+        print('Installing libraries...')
+        run_sql(package['libraries'], config)
     print('Installing modules...')
     run_sql(package['modules'], config)
