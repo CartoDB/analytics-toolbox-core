@@ -1,6 +1,7 @@
 const alongLib = require('../build/transformations_along');
 const bufferLib = require('../build/transformations_buffer');
 const centerLib = require('../build/transformations_center');
+const convexLib = require('../build/transformations_convex');
 const concaveLib = require('../build/transformations_concave');
 const destinationLib = require('../build/transformations_destination');
 const greatCircleLib = require('../build/transformations_greatcircle');
@@ -12,6 +13,7 @@ test('transformations library defined', () => {
     expect(centerLib.centerMean).toBeDefined();
     expect(centerLib.centerMedian).toBeDefined();
     expect(centerLib.centerOfMass).toBeDefined();
+    expect(convexLib.convex).toBeDefined();
     expect(concaveLib.featureCollection).toBeDefined();
     expect(concaveLib.multiPoint).toBeDefined();
     expect(concaveLib.cleanCoords).toBeDefined();

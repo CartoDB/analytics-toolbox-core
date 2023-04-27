@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2023 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_RESOLUTION(
