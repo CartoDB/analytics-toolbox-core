@@ -99,7 +99,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -131,7 +131,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON2_VERSION }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Auth google
         uses: google-github-actions/auth@v0
         with:

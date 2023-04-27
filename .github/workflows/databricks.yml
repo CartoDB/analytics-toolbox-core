@@ -16,6 +16,7 @@ on:
 
 env:
   PYTHON3_VERSION: 3.8.11
+  VIRTUALENV_VERSION: 20.21.1
   GCLOUD_VERSION: 290.0.1
   GOOGLE_SECRET_MANAGER_PROJECT: ${{ secrets.GOOGLE_SECRET_MANAGER_PROJECT }}
 
@@ -53,7 +54,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Setup databricks cli
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Run linter and tests
@@ -99,7 +100,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Setup databricks cli
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: Run deploy
@@ -128,7 +129,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Auth google
         uses: google-github-actions/auth@v0
         with:

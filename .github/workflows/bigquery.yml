@@ -17,6 +17,7 @@ on:
 env:
   NODE_VERSION: 14
   PYTHON3_VERSION: 3.8.10
+  VIRTUALENV_VERSION: 20.21.1
   GCLOUD_VERSION: 290.0.1
 
 jobs:
@@ -54,7 +55,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Run linter and tests
         run: |
           cd clouds/bigquery
