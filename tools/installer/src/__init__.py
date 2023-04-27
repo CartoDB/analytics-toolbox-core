@@ -48,12 +48,15 @@ def run_sql(sql, config):
         ) as conn:
             conn.autocommit = True
             with conn.cursor() as cursor:
-                queries = split(
-                    sql.replace('@@API_BASE_URL@@', config['lds']['api_base_url'])
-                    .replace('@@LDS_LAMBDA@@', config['lds']['lambda'])
-                    .replace('@@LDS_ROLES@@', config['lds']['roles'])
-                    .replace('@@LDS_TOKEN@@', config['lds']['token'])
-                )
+                lds = config.get('lds')
+                if lds is not None:
+                    sql = (
+                        sql.replace('@@API_BASE_URL@@', lds['api_base_url'])
+                        .replace('@@LDS_LAMBDA@@', lds['lambda'])
+                        .replace('@@LDS_ROLES@@', lds['roles'])
+                        .replace('@@LDS_TOKEN@@', lds['token'])
+                    )
+                queries = split(sql)
                 for i in trange(len(queries), ncols=100):
                     query = queries[i]
                     cursor.execute(query)
@@ -104,11 +107,8 @@ def validate_config(config):
     if not validate_str(connection.get('password')):
         exit('incorrect configuration: missing connection.password')
 
-    if cloud == 'redshift':
-        lds = config.get('lds')
-        if lds is None:
-            exit('incorrect configuration: missing lds')
-
+    lds = config.get('lds')
+    if cloud == 'redshift' and lds is not None:
         pattern = r'^(lds-function-asia-northeast1|lds-function-australia-southeast1|lds-function-europe-west1|lds-function-us-east1)$'  # noqa: E501
         if not validate_str(lds.get('lambda'), pattern):
             exit('incorrect configuration: missing or invalid lds.lambda')

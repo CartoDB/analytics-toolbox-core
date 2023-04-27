@@ -41,6 +41,8 @@ A Python script to install the CARTO Analytics Toolbox in Redshift and Postgres.
           token: eyJhbGciOiJ...
         ```
 
+    > Note: Redshift core does not require setting up a `lds` configuration.
+
     - Postgres packages `config.yml` file. This file must contain the information of the Postgres connection.
         ```yml
         connection:
