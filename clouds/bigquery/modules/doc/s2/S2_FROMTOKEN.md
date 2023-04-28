@@ -17,6 +17,6 @@ Returns the conversion of a token into a S2 cell ID.
 **Example**
 
 ```sql
-SELECT carto.S2_FROMTOKEN('89c25a3000000000');
--- -8520148382826627072
+SELECT carto.S2_FROMTOKEN('0d42300000000000');
+-- 955378847514099712
 ```
