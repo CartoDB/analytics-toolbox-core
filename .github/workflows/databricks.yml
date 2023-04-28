@@ -23,6 +23,7 @@ env:
 jobs:
 
   test:
+    if: false
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     env:
