@@ -17,6 +17,6 @@ Returns the conversion of an S2 cell token (hexified ID) into an unsigned, 64 bi
 **Example**
 
 ```sql
-SELECT carto.S2_FROMTOKEN('89c25a3');
--- -8520148382826627072
+SELECT carto.S2_FROMTOKEN('0d423');
+-- 955378847514099712
 ```
