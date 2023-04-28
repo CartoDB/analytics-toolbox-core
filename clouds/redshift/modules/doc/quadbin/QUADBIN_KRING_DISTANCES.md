@@ -18,16 +18,16 @@ Returns all cell indexes and their distances in a **filled square k-ring** cente
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_KRING_DISTANCES(5209574053332910079, 1);
+SELECT carto.QUADBIN_KRING_DISTANCES(5207251884775047167, 1);
+-- {"index":5207128739472736255,"distance":1}
+-- {"index":5207146331658780671,"distance":1}
+-- {"index":5207902795658690559,"distance":1}
+-- {"index":5207234292589002751,"distance":1}
+-- {"index":5207251884775047167,"distance":0}
+-- {"index":5208008348774957055,"distance":1}
+-- {"index":5207269476961091583,"distance":1}
+-- {"index":5207287069147135999,"distance":1}
 -- {"index":5208043533147045887,"distance":1}
--- {"index":5208061125333090303,"distance":1}
--- {"index":5208113901891223551,"distance":1}
--- {"index":5209556461146865663,"distance":1}
--- {"index":5209574053332910079,"distance":0}
--- {"index":5209626829891043327,"distance":1}
--- {"index":5209591645518954495,"distance":1}
--- {"index":5209609237704998911,"distance":1}
--- {"index":5209662014263132159,"distance":1}
 ```
 
 ````hint:info

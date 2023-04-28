@@ -17,6 +17,6 @@ Returns the center of the H3 cell as a GEOGRAPHY point. It will return `null` on
 **Example**
 
 ```sql
-SELECT carto.H3_CENTER('847b59dffffffff');
--- { "coordinates": [ 40.30547642317431, -3.743203325561684 ], "type": "Point" }
+SELECT carto.H3_CENTER('84390cbffffffff');
+-- { "coordinates": [ -3.6176032466282892, 40.37254058216577 ], "type": "Point" }
 ```

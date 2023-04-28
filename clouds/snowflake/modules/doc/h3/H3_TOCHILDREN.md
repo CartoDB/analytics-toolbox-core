@@ -18,12 +18,12 @@ Returns an array with the indexes of the children/descendents of the given hexag
 **Example**
 
 ```sql
-SELECT carto.H3_TOCHILDREN('837b59fffffffff', 4);
--- 847b591ffffffff
--- 847b593ffffffff
--- 847b595ffffffff
--- 847b597ffffffff
--- 847b599ffffffff
--- 847b59bffffffff
--- 847b59dffffffff
+SELECT carto.H3_TOCHILDREN('83390cfffffffff', 4);
+-- 84390c1ffffffff
+-- 84390c3ffffffff
+-- 84390c5ffffffff
+-- 84390c7ffffffff
+-- 84390c9ffffffff
+-- 84390cbffffffff
+-- 84390cdffffffff
 ```

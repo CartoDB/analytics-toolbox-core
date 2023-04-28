@@ -17,6 +17,6 @@ Returns the center for a given Quadbin. The center is the intersection point of 
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_CENTER(5209574053332910079);
--- POINT(33.75 -11.1784018737118)
+SELECT carto.QUADBIN_CENTER(5207251884775047167);
+-- { "coordinates": [ -1.125000000000000e+01, 3.195216223802496e+01 ], "type": "Point" }
 ```

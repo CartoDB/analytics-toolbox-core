@@ -19,6 +19,6 @@ Returns the S2 cell ID representation for a given level of detail and geographic
 **Example**
 
 ```sql
-SELECT carto.S2_FROMLONGLAT(40.4168, -3.7038, 4);
--- 1733885856537640960
+SELECT carto.S2_FROMLONGLAT(-3.7038, 40.4168, 8);
+-- 955378847514099712
 ```

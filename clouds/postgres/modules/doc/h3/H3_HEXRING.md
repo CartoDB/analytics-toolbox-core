@@ -18,11 +18,11 @@ Returns all cell indexes in a **hollow hexagonal ring** centered at the origin i
 **Example**
 
 ```sql
-SELECT carto.H3_HEXRING('837b59fffffffff', 1);
--- { 837b5dfffffffff,
---   837b58fffffffff,
---   837b5bfffffffff,
---   837a66fffffffff,
---   837a64fffffffff,
---   837b4afffffffff }
+SELECT carto.H3_HEXRING('84390cbffffffff', 1);
+-- { 84392b5ffffffff,
+--   84390c9ffffffff,
+--   84390c1ffffffff,
+--   84390c3ffffffff,
+--   84390ddffffffff,
+--   84392b7ffffffff }
 ```

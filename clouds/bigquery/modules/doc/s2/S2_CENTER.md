@@ -17,6 +17,6 @@ Returns a POINT corresponding to the centroid of an S2 cell, given its ID.
 **Example**
 
 ```sql
-SELECT carto.S2_CENTER(1735346007979327488);
--- POINT(40.4720004343497 -3.72646193231851)
+SELECT carto.S2_CENTER(955378847514099712);
+-- POINT(-3.58126923539589 40.4167087628243)
 ```

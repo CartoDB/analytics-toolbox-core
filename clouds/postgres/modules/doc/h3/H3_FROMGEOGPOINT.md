@@ -18,8 +18,8 @@ Returns the H3 cell index that the point belongs to in the required `resolution`
 **Example**
 
 ```sql
-SELECT carto.H3_FROMGEOGPOINT(ST_POINT(40.4168, -3.7038), 4);
--- 847b59dffffffff
+SELECT carto.H3_FROMGEOGPOINT(ST_POINT(-3.7038, 40.4168), 4);
+-- 84390cbffffffff
 ```
 
 ````hint:info

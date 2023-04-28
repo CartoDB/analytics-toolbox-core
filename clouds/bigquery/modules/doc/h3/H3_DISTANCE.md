@@ -18,7 +18,7 @@ Returns the **grid distance** between two hexagon indexes. This function may fai
 **Example**
 
 ```sql
-SELECT carto.H3_DISTANCE('847b591ffffffff', '847b59bffffffff');
+SELECT carto.H3_DISTANCE('84390c1ffffffff', '84390cbffffffff');
 -- 1
 ```
 

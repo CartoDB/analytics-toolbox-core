@@ -17,7 +17,7 @@ Returns `true` if given H3 index is a pentagon. Returns `false` otherwise, even 
 **Example**
 
 ```sql
-SELECT carto.H3_ISPENTAGON('837b59fffffffff');
+SELECT carto.H3_ISPENTAGON('84390cbffffffff');
 -- false
 ```
 
