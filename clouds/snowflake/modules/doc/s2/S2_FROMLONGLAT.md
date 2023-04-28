@@ -19,6 +19,6 @@ Returns the S2 cell ID for a given longitude, latitude and zoom resolution.
 **Example**
 
 ```sql
-SELECT carto.S2_FROMLONGLAT(40.4168, -3.7038, 8);
--- 1735346007979327488
+SELECT carto.S2_FROMLONGLAT(-3.7038, 40.4168, 8);
+-- 955378847514099712
 ```
