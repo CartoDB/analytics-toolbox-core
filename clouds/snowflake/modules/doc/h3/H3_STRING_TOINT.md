@@ -17,6 +17,6 @@ Converts the string representation of the H3 index to the integer representation
 **Example**
 
 ```sql
-SELECT carto.H3_STRING_TOINT('847b59dffffffff');
--- 596645165859340287
+SELECT carto.H3_STRING_TOINT('84390cbffffffff');
+-- 595478781590765567
 ```

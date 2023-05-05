@@ -17,6 +17,6 @@ Returns the boundary for a given Quadbin as a polygon GEOMETRY with the same coo
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_BOUNDARY(5209574053332910079);
--- POLYGON((22.5 0, 22.5 -21.9430455334382, 45 -21.9430455334382, 45 0, 22.5 0))
+SELECT carto.QUADBIN_BOUNDARY(5207251884775047167);
+-- { "coordinates": [ [ [ 0, 40.97989806962013 ], [ 0, 21.94304553343818 ], ...
 ```

@@ -18,8 +18,12 @@ help:
 	echo "Available targets: lint build deploy test remove clean create-package"
 
 lint:
+	$(MAKE) lint-libraries
 	$(MAKE) lint-modules
 	$(MAKE) lint-common
+
+lint-libraries:
+	$(MAKE) -C libraries/javascript lint
 
 lint-modules:
 	$(MAKE) -C modules lint
@@ -38,7 +42,11 @@ lint-common: $(NODE_MODULES_DEV) venv3
 
 build:
 	rm -rf $(BUILD_DIR)
+	$(MAKE) build-libraries
 	$(MAKE) build-modules
+
+build-libraries:
+	$(MAKE) -C libraries/javascript build
 
 build-modules:
 	mkdir -p $(BUILD_DIR)
@@ -46,13 +54,18 @@ build-modules:
 	cp modules/build/modules.sql $(BUILD_DIR)
 
 deploy:
+	$(MAKE) build-libraries
 	$(MAKE) deploy-modules
 
 deploy-modules:
 	$(MAKE) -C modules deploy
 
 test:
+	$(MAKE) test-libraries
 	$(MAKE) test-modules
+
+test-libraries:
+	$(MAKE) -C libraries/javascript test
 
 test-modules:
 	$(MAKE) -C modules test
@@ -65,7 +78,11 @@ remove-modules:
 
 clean:
 	rm -rf $(DIST_DIR) $(BUILD_DIR)
+	$(MAKE) clean-libraries
 	$(MAKE) clean-modules
+
+clean-libraries:
+	$(MAKE) -C libraries/javascript clean
 
 clean-modules:
 	$(MAKE) -C modules clean

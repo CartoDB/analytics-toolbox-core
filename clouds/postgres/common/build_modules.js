@@ -14,11 +14,40 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
+const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
+
+// Introduces extensions requirements per module
+const modulesExtensions = {
+    h3: 'plv8'
+}
+
+const postgisInstalledCheck = `IF NOT EXISTS(SELECT 1 FROM pg_extension WHERE extname = 'postgis') THEN
+RAISE EXCEPTION 'Analytics Toolbox not installed. The extension ''postgis'' is required.';
+END IF;\n`
+
+function extensionFunctionWrapping (content, module) {
+    const extension = modulesExtensions[module]
+    if (!extension) {
+        return content
+    }
+    return `IF EXISTS(SELECT 1 FROM pg_extension WHERE extname = '${extension}') THEN
+${content}
+ELSE
+	RAISE NOTICE 'Functions from the module ${module} cannot be installed. The extension ''${extension}'' is required.';
+END IF;\n`
+}
+
+function anonymousBlockWrapping (content) {
+    return `DO $FUNCT$
+BEGIN
+${content}
+END$FUNCT$;\n`
+}
 
 if (all) {
     console.log('- Build all');
@@ -129,16 +158,32 @@ function add (f, include) {
     if (!output.map(f => f.name).includes(f.name) && include) {
         output.push({
             name: f.name,
-            content: f.content
+            content: f.content,
+            module: f.module
         });
     }
 }
 functions.forEach(f => add(f));
 
+let content = anonymousBlockWrapping(postgisInstalledCheck)
+
 // Replace environment variables
-let content = output.map(f => f.content).join('\n');
+content += output.map(f => anonymousBlockWrapping(extensionFunctionWrapping(f.content, f.module))).join('\n');
 
 function apply_replacements (text) {
+    const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_.*@@', 'g')))];
+    for (let library of libraries) {
+        const libraryName = library.replace('@@PG_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
+        const libraryPath = path.join(libsBuildDir, libraryName);
+        if (fs.existsSync(libraryPath)) {
+            const libraryContent = fs.readFileSync(libraryPath).toString();
+            text = text.replace(new RegExp(library, 'g'), libraryContent);
+        }
+        else {
+            console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
+            process.exit(1);
+        }
+    }
     const replacements = process.env.REPLACEMENTS.split(' ');
     for (let replacement of replacements) {
         if (replacement) {

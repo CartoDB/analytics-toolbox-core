@@ -17,8 +17,8 @@ Returns the boundary for a given S2 cell ID. We extract the boundary by getting 
 **Example**
 
 ```sql
-SELECT carto.S2_BOUNDARY(1735346007979327488);
--- POLYGON((40.6346851320784 -3.8440544113597, 40.6346851320784 ...
+SELECT carto.S2_BOUNDARY(955378847514099712);
+-- POLYGON((-3.41955272426037 40.25850071217, -3.41955272426037  ...
 ```
 
 ````hint:info

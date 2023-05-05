@@ -18,6 +18,6 @@ Returns the parent (ancestor) Quadbin of a given Quadbin for a specific resoluti
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_TOPARENT(5209574053332910079, 3);
--- 5205105638077628415
+SELECT carto.QUADBIN_TOPARENT(5207251884775047167, 3);
+-- 5202783469519765503
 ```

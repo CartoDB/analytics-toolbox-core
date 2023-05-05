@@ -8,6 +8,7 @@ env:
   NODE_VERSION: 14
   PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.8.10
+  VIRTUALENV_VERSION: 20.21.1
 
 jobs:
 
@@ -65,7 +66,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
           aws-region: ${{ secrets.RS_REGION_CD }}
       - name: Setup virtualenv
-        run: pip install virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'

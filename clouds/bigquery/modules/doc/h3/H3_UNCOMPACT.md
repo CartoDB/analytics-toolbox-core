@@ -18,12 +18,12 @@ Returns an array with the H3 indexes of a set of hexagons of the same `resolutio
 **Example**
 
 ```sql
-SELECT carto.H3_UNCOMPACT(['847b59dffffffff'], 5);
--- 857b59c3fffffff
--- 857b59c7fffffff
--- 857b59cbfffffff
--- 857b59cffffffff
--- 857b59d3fffffff
--- 857b59d7fffffff
--- 857b59dbfffffff
+SELECT carto.H3_UNCOMPACT(['83390cfffffffff'], 5);
+-- 85390ca3fffffff
+-- 85390ca7fffffff
+-- 85390cabfffffff
+-- 85390caffffffff
+-- 85390cb3fffffff
+-- 85390cb7fffffff
+-- 85390cbbfffffff
 ```

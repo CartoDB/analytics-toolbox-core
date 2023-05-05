@@ -17,6 +17,6 @@ Compute a quadbin index from a quadkey.
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_FROMQUADKEY('0231001222');
--- 5233974874938015743
+SELECT carto.QUADBIN_FROMQUADKEY('0331110121');
+-- 5234261499580514303
 ```

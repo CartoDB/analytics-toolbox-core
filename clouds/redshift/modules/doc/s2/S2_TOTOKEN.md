@@ -17,6 +17,6 @@ Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 **Example**
 
 ```sql
-SELECT carto.S2_TOTOKEN(-8520148382826627072);
--- 89c25a3
+SELECT carto.S2_TOTOKEN(955378847514099712);
+-- 0d423
 ```

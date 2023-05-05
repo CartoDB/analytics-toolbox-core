@@ -17,6 +17,6 @@ Returns the Placekey equivalent to the given H3 index.
 **Example**
 
 ```sql
-SELECT carto.PLACEKEY_FROMH3('847b59dffffffff');
--- @ff7-swh-m49
+SELECT carto.PLACEKEY_FROMH3('84390cbffffffff');
+-- @7dd-dc3-52k
 ```

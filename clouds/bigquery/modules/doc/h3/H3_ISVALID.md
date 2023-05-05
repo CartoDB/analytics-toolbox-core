@@ -17,7 +17,7 @@ Returns `true` when the given index is a valid H3 index, `false` otherwise.
 **Examples**
 
 ```sql
-SELECT carto.H3_ISVALID('847b59dffffffff');
+SELECT carto.H3_ISVALID('84390cbffffffff');
 -- true
 ```
 

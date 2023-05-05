@@ -17,6 +17,6 @@ Returns an integer with the resolution of a given cell ID.
 **Example**
 
 ```sql
-SELECT carto.S2_RESOLUTION('1733885856537640960');
--- 4
+SELECT carto.S2_RESOLUTION(955378847514099712);
+-- 8
 ```

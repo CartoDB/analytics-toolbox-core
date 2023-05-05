@@ -18,6 +18,6 @@ Returns the Quadbin directly next to the given Quadbin at the same resolution. T
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_SIBLING(5209574053332910079, 'up');
--- 5208061125333090303
+SELECT carto.QUADBIN_SIBLING(5207251884775047167, 'up');
+-- 5207146331658780671
 ```
