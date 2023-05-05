@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Postgres.
 
 All notable commits to this project will be documented in this file.
 
+## [1.1.0] - 2023-05-05
+
+- feat(h3): support H3 functions (#396)
+- feat(tools): add cat-installer for pg (#400)
+
 ## [1.0.0] - 2023-01-30
 
 - docs: adapted docs to gitbook (#380)

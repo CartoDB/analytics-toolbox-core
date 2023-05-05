@@ -4,6 +4,15 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2023-05-05
+
+- feat(sf|h3): add H3_CENTER function (#395)
+- feat(sf|transformations): add ST_CONVEXHULL function (#397)
+- feat(pg|h3): support H3 functions (#396)
+- feat(pg|tools): add cat-installer for pg (#400)
+- fix(all|h3,quadbin,placekey,s2): update indexes in examples (#401)
+- feat(sf|h3): add H3_RESOLUTION function (#402)
+
 ## 2023-03-06
 
 - chore(rs): add initial version of cat-installer script (#386)

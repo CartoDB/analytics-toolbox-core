@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.1.0] - 2023-05-05
+
+- feat(h3): add H3_CENTER function (#395)
+- feat(h3): add H3_RESOLUTION function (#402)
+- feat(transformations): add ST_CONVEXHULL function (#397)
+
 ## [1.0.1] - 2023-03-06
 
 - fix(transformations): great circle crashing for equal origin and end (#390)
