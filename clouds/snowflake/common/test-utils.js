@@ -71,10 +71,21 @@ function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
     return list;
 }
 
+async function existsTable (table) {
+    try {
+        const query = `SELECT * FROM ${table} LIMIT 0`;
+        await runQuery(query);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 module.exports = {
     runQuery,
     createTable,
     deleteTable,
     sortByKey,
-    sortByKeyAndRound
+    sortByKeyAndRound,
+    existsTable
 }
