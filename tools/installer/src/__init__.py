@@ -6,6 +6,7 @@ import click
 import zipfile
 import redshift_connector
 import jwt
+from validator_collection import checkers
 
 from tqdm import trange
 from sqlparse import split
@@ -89,6 +90,9 @@ def validate_lds_config(lds_config):
 
     if not validate_str(lds_config.get('api_base_url')):
         exit('incorrect configuration: missing lds.api_base_url')
+
+    if not checkers.is_url(lds_config.get('api_base_url')):
+        exit('incorrect configuration: invalid lds.api_base_url')
 
     token = lds_config.get('token')
     if not validate_str(token):
