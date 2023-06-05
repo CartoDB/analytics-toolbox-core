@@ -10,6 +10,12 @@ def test_quadbin_fromlonglat():
     assert result[0][0] == 5209574053332910079
 
 
+def test_quadbin_longlat_higher_resolution():
+    """Computes quadbin for longitude latitude."""
+    result = run_query('SELECT @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(40.413365349070865, -3.71219873428345, 26)')
+    assert result[0][0] == 5308641755410858449
+
+
 def test_quadbin_fromlonglat_null():
     result = run_query(
         """
