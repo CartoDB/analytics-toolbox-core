@@ -68,6 +68,16 @@ build-share: $(NODE_MODULES_DEV)
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
+build-setup-script: $(NODE_MODULES_DEV)
+	echo "Building modules..."
+	rm -rf $(BUILD_DIR)
+	mkdir $(BUILD_DIR)
+	SF_SCHEMA=$(SF_PREFIX)$(SF_SCHEMA_DEFAULT) \
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	$(COMMON_DIR)/build_setup_script.js $(MODULES_DIRS) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
+
 deploy: check build
 	echo "Deploying modules..."
 	$(COMMON_DIR)/run-query.js "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);"
