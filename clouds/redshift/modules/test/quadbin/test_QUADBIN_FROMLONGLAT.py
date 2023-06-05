@@ -10,7 +10,7 @@ def test_quadbin_fromlonglat():
     assert result[0][0] == 5209574053332910079
 
 
-def test_quadbin_longlat_higher_resolution():
+def test_quadbin_longlat_highest_resolution():
     """Computes quadbin for longitude latitude at highest resolution.
        This test is useful to get a reference value to build test and check SQL
        implementation against this python implementation of quadbin
