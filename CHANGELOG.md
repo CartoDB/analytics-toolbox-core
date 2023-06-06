@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2023-06-01 
+
+- fix(tools|installer): verify lds config when using cat-installer (#406)
+
 ## 2023-05-05
 
 - feat(sf|h3): add H3_CENTER function (#395)
