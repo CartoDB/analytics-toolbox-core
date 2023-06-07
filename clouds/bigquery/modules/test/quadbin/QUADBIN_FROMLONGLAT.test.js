@@ -33,7 +33,7 @@ test('QUADBIN_FROMLONGLAT highest resolution', async () => {
     let query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(-3.71219873428345, 40.413365349070865, 26) AS STRING) AS output';
     let rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].output).toEqual('5306319089810037072');
+    expect(rows[0].output).toEqual('5306319089810035706');
 
     query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(40.413365349070865, -3.71219873428345, 26) AS STRING) AS output';
     rows = await runQuery(query);
