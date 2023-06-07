@@ -12,10 +12,12 @@ def test_quadbin_fromlonglat():
 
 def test_quadbin_longlat_highest_resolution():
     """Computes quadbin for longitude latitude at highest resolution.
-       This test is useful to get a reference value to build test and check SQL
-       implementation against this python implementation of quadbin
+    This test is useful to get a reference value to build test and check SQL
+    implementation against this python implementation of quadbin
     """
-    result = run_query('SELECT @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(40.413365349070865, -3.71219873428345, 26)')
+    result = run_query(
+        'SELECT @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(40.413365349070865, -3.71219873428345, 26)'
+    )
     assert result[0][0] == 5308641755410858449
 
 
