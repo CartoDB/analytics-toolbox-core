@@ -12,17 +12,16 @@ AS ((
             ERROR('Invalid resolution; should be between 0 and 26'), (
                 WITH
                 __params AS (
-                    select
+                    SELECT
                         longitude,
                         resolution AS z,
                         (1 << resolution) AS __z2,
                         ACOS(-1) AS pi,
                         GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
-                    from __values
                 ),
 
                 ___sinlat AS (
-                    select SIN(latitude * pi / 180.0) as __sinlat from __params
+                    SELECT SIN(latitude * pi / 180.0) AS __sinlat FROM __params
                 ),
 
                 ___x AS (
@@ -49,12 +48,12 @@ AS ((
                             -- floor before cast to avoid up rounding to the next tiLe
                             FLOOR(
                                 __z2 * (
-                                    0.5 - 0.25 * 
-                                    LN(
+                                    0.5 - 0.25
+                                    * LN(
                                         (1 + __sinlat) / (1 - __sinlat)
                                     ) / pi
                                 )
-                            ) AS int64
+                            ) AS INT64
                         ) AS y
                     FROM
                         __params,
