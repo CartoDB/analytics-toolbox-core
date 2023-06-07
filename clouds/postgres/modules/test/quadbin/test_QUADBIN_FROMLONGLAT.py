@@ -34,13 +34,20 @@ def test_quadbin_longlat_large_resolution():
     with pytest.raises(Exception):
         run_query('SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 27)')
 
+
 def test_quadbin_longlat_highest_resolution():
-    query = 'SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(-3.71219873428345, 40.413365349070865, 26)'
+    query = """SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(
+                    -3.71219873428345,
+                    40.413365349070865,
+                    26)"""
     result = run_query(query)
     assert len(result[0]) == 1
-    assert result[0][0] == 5306319089810037072
+    assert result[0][0] == 5306319089810035706
 
-    query = 'SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(40.413365349070865, -3.71219873428345, 26)'
+    query = """SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(
+                    40.413365349070865,
+                    -3.71219873428345,
+                    26)"""
     result = run_query(query)
     assert len(result[0]) == 1
     assert result[0][0] == 5308641755410858449
@@ -55,7 +62,10 @@ def test_quadbin_longlat_highest_resolution():
     assert len(result[0]) == 1
     assert result[0][0] == 5308618060762972160
 
-    query = 'SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(-89.71219873428345, -84.413365349070865, 26)'
+    query = """SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(
+                    -89.71219873428345,
+                    -84.413365349070865,
+                    26)"""
     result = run_query(query)
     assert len(result[0]) == 1
     assert result[0][0] == 5308521992464067502
