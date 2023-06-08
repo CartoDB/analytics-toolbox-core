@@ -20,14 +20,32 @@ $BODY$
         __params AS (
             SELECT
                 resolution AS z,
+                (1 << resolution) AS __z2,
                 GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
+        ),
+        ___sinlat AS (
+            SELECT
+                SIN(latitude * PI() / 180.0) as __sinlat
+            FROM __params
+        ),
+        ___x AS (
+            SELECT
+                (FLOOR(__z2 * ((longitude / 360.0) + 0.5)))::BIGINT & (__z2 - 1) AS __x
+            FROM
+                __params
         ),
         __zxy AS (
             SELECT
                 z,
-                (FLOOR((1 << z) * ((longitude / 360.0) + 0.5)))::BIGINT & ((1 << z) - 1) AS x,
-                (FLOOR((1 << z) * (0.5 - (LN(TAN(PI()/4.0 + latitude/2.0 * PI()/180.0)) / (2*PI())))))::BIGINT & ((1 << z) - 1) AS y
-            FROM __params
+                CASE
+                    WHEN __x < 0 THEN __x + __z2
+                    ELSE __x
+                END AS x,
+                (FLOOR(__z2 * (0.5 - 0.25 * (LN((1 + __sinlat)/(1 - __sinlat)) / PI()))))::BIGINT AS y
+            FROM
+                __params,
+                ___sinlat,
+                ___x
         )
         SELECT @@PG_SCHEMA@@.QUADBIN_FROMZXY(z, x::INT, y::INT)
         FROM __zxy)
