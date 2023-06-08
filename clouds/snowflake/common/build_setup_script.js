@@ -140,10 +140,6 @@ function add (f, include) {
 }
 functions.forEach(f => add(f));
 
-
-
-
-
 // Replace environment variables
 let separator;
 if (argv.production) {
@@ -182,7 +178,7 @@ function getFunctionSignatures (functionMatches)
     const functSignatures = []
     for (const functionMatch of functionMatches) {
         //Remove spaces and diacritics
-        let qualifiedFunctName = functionMatch[0].replace(/[ \p{Diacritic}]/gu, '').split('(')[0].replace(/(\r\n|\n|\r)/gm,'');
+        let qualifiedFunctName = functionMatch[0].split('(')[0].replace(/\s+/gm,'');
         qualifiedFunctNameArr = qualifiedFunctName.split('.');
         const functName = qualifiedFunctNameArr[qualifiedFunctNameArr.length - 1];
         if (functName.startsWith('_'))
@@ -190,7 +186,7 @@ function getFunctionSignatures (functionMatches)
             continue;
         }
         //Remove diacritics and go greedy to take the outer parentheses
-        let functArgs = functionMatch[0].replace(/[\p{Diacritic}]/gu, '').matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value;
+        let functArgs = functionMatch[0].matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value;
         if (functArgs)
         {
             functArgs = functArgs[0];
@@ -221,8 +217,8 @@ function fetchPermissionsGrant (content)
             delete fileContent[i];
         }
     }
-    fileContent = fileContent.join(' ').replace(/(\r\n|\n|\r)/gm,' ');
-    const functionMatches = content.matchAll(new RegExp(/(?<=(?<!TEMP )FUNCTION)(.*?)(?=RETURNS)/gs));
+    fileContent = fileContent.join(' ').replace(/[\p{Diacritic}]/gu, '').replace(/\s+/gm,' ');
+    const functionMatches = fileContent.matchAll(new RegExp(/(?<=(?<!TEMP )FUNCTION)(.*?)(?=RETURNS)/gs));
     const functSignatures = getFunctionSignatures(functionMatches).map(f => `GRANT USAGE ON FUNCTION ${f} TO APPLICATION ROLE ${defaultApplicationRole};`).join('\n')
     const procMatches = fileContent.matchAll(new RegExp(/(?<=PROCEDURE)(.*?)(?=AS)/gs));
     const procSignatures = getFunctionSignatures(procMatches).map(f => `GRANT USAGE ON PROCEDURE ${f} TO APPLICATION ROLE ${defaultApplicationRole};`).join('\n')
