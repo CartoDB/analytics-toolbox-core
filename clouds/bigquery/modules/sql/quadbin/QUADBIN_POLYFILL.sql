@@ -94,7 +94,7 @@ AS ((
             ),
 
             __cells AS (
-                SELECT @@BQ_SCHEMA@@.QUADBIN_FROMZXY(z, x, y) AS quadbin
+                SELECT `@@BQ_SCHEMA@@.QUADBIN_FROMZXY`(z, x, y) AS quadbin
                 FROM __tile_coords_range,
                     UNNEST(GENERATE_ARRAY(xmin, xmax)) AS x,
                     UNNEST(GENERATE_ARRAY(ymin, ymax)) AS y
@@ -103,7 +103,7 @@ AS ((
             SELECT ARRAY_AGG(quadbin)
             FROM __cells
             WHERE ST_INTERSECTS(
-                @@BQ_SCHEMA@@.QUADBIN_BOUNDARY(
+                `@@BQ_SCHEMA@@.QUADBIN_BOUNDARY`(
                     quadbin
                 ),
                 geog
