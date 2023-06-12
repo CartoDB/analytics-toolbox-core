@@ -13,7 +13,6 @@ AS ((
             __constants AS (
               SELECT
                 ~(0x1F << 52) AS zoom_level_mask,
-                (resolution - ((quadbin >> 52) & 0x1F)) AS resolution_diff,
                           (1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1)) AS block_range,
                 CAST(SQRT((1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1))) as int) AS sqrt_block_range,
                 (52 - (resolution << 1)) AS block_shift
@@ -28,11 +27,11 @@ AS ((
             SELECT
               ARRAY(
                 SELECT
-                    child_base | ((block_raw * sqrt_block_range + block_column) << block_shift)
+                    child_base | ((block_row * sqrt_block_range + block_column) << block_shift)
                 FROM
                     __constants,
                     __childbase_constants,
-                    UNNEST(GENERATE_ARRAY(0, sqrt_block_range - 1)) AS block_raw,
+                    UNNEST(GENERATE_ARRAY(0, sqrt_block_range - 1)) AS block_row,
                     UNNEST(GENERATE_ARRAY(0, sqrt_block_range - 1)) AS block_column
               )
         )
