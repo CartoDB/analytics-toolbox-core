@@ -9,14 +9,31 @@ AS ((
     IF(resolution < 0 OR resolution > 26 OR resolution < ((quadbin >> 52) & 0x1F),
         ERROR('Invalid resolution'),
         (
-            WITH __zxy AS (
-                SELECT `@@BQ_DATASET@@.QUADBIN_TOZXY`(quadbin) AS tile
+            WITH
+            __constants AS (
+              SELECT
+                ~(0x1F << 52) AS zoom_level_mask,
+                (1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1)) AS block_range,
+                 1 <<  (resolution - ((quadbin >> 52) & 0x1F))        AS sqrt_block_range,
+                (52 - (resolution << 1)) AS block_shift
+            ),
+            __childbase_constants AS (
+              SELECT
+                ((quadbin & zoom_level_mask) | (resolution << 52)) & ~((block_range - 1) << block_shift)
+                    AS child_base
+              FROM
+                __constants
             )
-            SELECT ARRAY_AGG(`@@BQ_DATASET@@.QUADBIN_FROMZXY`(resolution, xs, ys))
-            FROM
-                __zxy,
-                UNNEST(GENERATE_ARRAY(tile.x << (resolution - tile.z), ((tile.x + 1) << (resolution - tile.z)) - 1)) AS xs,
-                UNNEST(GENERATE_ARRAY(tile.y << (resolution - tile.z), ((tile.y + 1) << (resolution - tile.z)) - 1)) AS ys
+            SELECT
+              ARRAY(
+                SELECT
+                    child_base | ((block_row * sqrt_block_range + block_column) << block_shift)
+                FROM
+                    __constants,
+                    __childbase_constants,
+                    UNNEST(GENERATE_ARRAY(0, sqrt_block_range - 1)) AS block_row,
+                    UNNEST(GENERATE_ARRAY(0, sqrt_block_range - 1)) AS block_column
+              )
         )
     )
-));
+))

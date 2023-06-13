@@ -13,14 +13,28 @@ $BODY$
     WHEN resolution < 0 OR resolution > 26 OR resolution < ((quadbin >> 52) & 31)
     THEN @@PG_SCHEMA@@.__CARTO_ERROR('Invalid resolution')::BIGINT[]
     ELSE (
-      WITH _zxy AS (
-          SELECT @@PG_SCHEMA@@.QUADBIN_TOZXY(quadbin) AS tile
-      )
-      SELECT ARRAY_AGG(@@PG_SCHEMA@@.QUADBIN_FROMZXY(resolution, xs, ys))
-      FROM _zxy,
-        GENERATE_SERIES((tile->>'x')::INT << (resolution - (tile->>'z')::INT), (((tile->>'x')::INT + 1) << (resolution - (tile->>'z')::INT)) - 1) as xs,
-        GENERATE_SERIES((tile->>'y')::INT << (resolution - (tile->>'z')::INT), (((tile->>'y')::INT + 1) << (resolution - (tile->>'z')::INT)) - 1) as ys
-    )
+        WITH
+        __constants AS (
+            SELECT
+                ~(31::bigint << 52) AS zoom_level_mask,
+                (1::bigint << ((resolution - ((quadbin >> 52) & 31)::int) << 1)::int) AS block_range,
+                 1::bigint <<  (resolution - ((quadbin >> 52) & 31)::int)             AS sqrt_block_range,
+                (52 - (resolution << 1)) AS block_shift
+        ),
+        __childbase_constants AS (
+            SELECT
+                ((quadbin & zoom_level_mask) | (resolution::bigint << 52)) & ~((block_range - 1) << block_shift)
+                    AS child_base
+            FROM __constants
+        )
+        SELECT
+            array_agg(child_base | ((block_row * sqrt_block_range + block_column) << block_shift))
+        FROM
+            __constants,
+            __childbase_constants,
+            generate_series(0, sqrt_block_range-1) as block_row,
+            generate_series(0, sqrt_block_range-1) as block_column
+        )
     END
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
