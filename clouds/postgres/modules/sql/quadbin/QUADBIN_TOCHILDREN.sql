@@ -17,8 +17,9 @@ $BODY$
         __constants AS (
             SELECT
                 ~(31::bigint << 52) AS zoom_level_mask,
-                     (1::bigint << ((resolution - ((quadbin >> 52) & 31)::int) << 1)::int) AS block_range,
-                sqrt((1::bigint << ((resolution - ((quadbin >> 52) & 31)::int) << 1)::int))::bigint AS sqrt_block_range,
+                (1::bigint << ((resolution - ((quadbin >> 52) & 31)::int) << 1)::int) AS block_range,
+                 1::bigint <<  (resolution - ((quadbin >> 52) & 31)::int)             AS sqrt_block_range,
+                --sqrt((1::bigint << ((resolution - ((quadbin >> 52) & 31)::int) << 1)::int))::bigint AS sqrt_block_range,
                 (52 - (resolution << 1)) AS block_shift
         ),
         __childbase_constants AS (

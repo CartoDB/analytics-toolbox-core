@@ -6,15 +6,15 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_TOCHILDREN`
 (quadbin INT64, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    IF(resolution < 0 OR resolution > 26 OR resolution < ((resolution >> 52) & 0x1F),
+    IF(resolution < 0 OR resolution > 26 OR resolution < ((quadbin >> 52) & 0x1F),
         ERROR('Invalid resolution'),
         (
             WITH
             __constants AS (
               SELECT
                 ~(0x1F << 52) AS zoom_level_mask,
-                          (1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1)) AS block_range,
-                CAST(SQRT((1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1))) as int) AS sqrt_block_range,
+                (1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1)) AS block_range,
+                 1 <<  (resolution - ((quadbin >> 52) & 0x1F))        AS sqrt_block_range,
                 (52 - (resolution << 1)) AS block_shift
             ),
             __childbase_constants AS (
