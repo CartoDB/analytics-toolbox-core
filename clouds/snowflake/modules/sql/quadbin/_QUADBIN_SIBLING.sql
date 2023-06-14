@@ -8,6 +8,6 @@ RETURNS INT
 IMMUTABLE
 AS $$
     @@SF_SCHEMA@@._ZXY_QUADBIN_SIBLING(
-        @@SF_SCHEMA@@._QUADBIN_TOZXY(TO_VARCHAR(ORIGIN, 'xxxxxxxxxxxxxxxx')), DX, DY
+        @@SF_SCHEMA@@.QUADBIN_TOZXY(ORIGIN), DX, DY
     )
 $$;
