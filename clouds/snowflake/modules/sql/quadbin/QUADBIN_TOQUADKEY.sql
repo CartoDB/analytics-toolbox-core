@@ -2,23 +2,59 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_TOQUADKEY
-(quadbin STRING)
-RETURNS STRING
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._TO_BASE
+(NUM FLOAT, RADIX FLOAT)
+RETURNS FLOAT
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    const q = BigInt(QUADBIN);
-    const z = (q >> 52n) & 0x1Fn;
-    const xy = (q & 0xFFFFFFFFFFFFFn) >> (52n - z*2n);
-    return (z == 0) ? '' : xy.toString(4).padStart(Number(z), '0');
+    return parseFloat((NUM.toString(RADIX)));
 $$;
 
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_TOQUADKEY
 (quadbin BIGINT)
-RETURNS STRING
+RETURNS VARCHAR
 IMMUTABLE
 AS $$
-    SELECT @@SF_SCHEMA@@._QUADBIN_TOQUADKEY(CAST(QUADBIN AS STRING))
+    CASE quadbin
+        WHEN NULL THEN
+            ''
+        ELSE (
+            WITH
+            __hexConstants AS (
+                SELECT
+                    31 AS _0X1F,
+                    4503599627370495 AS _0x000FFFFFFFFFFFFF
+            ),
+            __z AS (
+                SELECT
+                    BITAND(BITSHIFTRIGHT(quadbin, 52), _0X1F) AS z
+                FROM __hexConstants
+            ),
+            __xy AS (
+                SELECT
+                    BITSHIFTRIGHT(
+                        BITAND(quadbin, _0x000FFFFFFFFFFFFF),
+                        (52 - z*2)
+                    ) AS xy
+                FROM __z, __hexConstants
+            )
+            SELECT
+                CASE
+                    WHEN z = 0 THEN
+                        ''
+                    ELSE
+                        LTRIM(
+                            TO_VARCHAR(
+                                @@SF_SCHEMA@@._TO_BASE(xy, 4),
+                                -- FM as fill modifier otherwise a space is added at the beginning
+                                'FM' || REPEAT('0', z) -- e.g 'FM000000000000'
+                            ),
+                            ' '
+                        )
+                END
+            FROM __z, __xy
+        )
+    END
 $$;
