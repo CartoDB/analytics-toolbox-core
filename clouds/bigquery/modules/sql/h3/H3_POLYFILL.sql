@@ -1,32 +1,8 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+---------------------------------
+-- Copyright (C) 2021-2023 CARTO
+---------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`
-(resolution INT64)
-RETURNS INT64
-AS ((
-    CASE resolution
-    WHEN 0 THEN 4
-    WHEN 1 THEN 6
-    WHEN 2 THEN 7
-    WHEN 3 THEN 8
-    WHEN 4 THEN 10
-    WHEN 5 THEN 11
-    WHEN 6 THEN 13
-    WHEN 7 THEN 14
-    WHEN 8 THEN 15
-    WHEN 9 THEN 16
-    WHEN 10 THEN 18
-    WHEN 11 THEN 19
-    WHEN 12 THEN 20
-    WHEN 13 THEN 22
-    WHEN 14 THEN 23
-    WHEN 15 THEN 24
-    END
-));
-
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`
 (geojson STRING, _resolution INT64)
 RETURNS ARRAY<STRING>
 DETERMINISTIC
@@ -36,101 +12,170 @@ OPTIONS (
 )
 AS """
     if (!geojson || _resolution == null) {
-        return null;
+        return null
     }
 
-    const resolution = Number(_resolution);
+    const resolution = Number(_resolution)
     if (resolution < 0 || resolution > 15) {
-        return null;
+        return null
     }
 
     const bboxA = [-180, -90, 0, 90]
     const bboxB = [0, -90, 180, 90]
     const featureGeometry = JSON.parse(geojson)
-    let polygonCoordinatesA = [];
-    let polygonCoordinatesB = [];
+    let polygonCoordinatesA = []
+    let polygonCoordinatesB = []
     switch(featureGeometry.type) {
         case 'GeometryCollection':
             featureGeometry.geometries.forEach(function (geom) {
                 if (geom.type === 'MultiPolygon') {
-                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry;
-                    polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates);
-                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry;
-                    polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates);
+                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry
+                    polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates)
+                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry
+                    polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates)
                 } else if (geom.type === 'Polygon') {
-                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry;
-                    polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
-                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry;
-                    polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
+                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry
+                    polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates])
+                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry
+                    polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates])
                 }
-            });
-        break;
+            })
+        break
         case 'MultiPolygon':
-            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry;
-            polygonCoordinatesA = clippedGeometryA.coordinates;
-            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry;
-            polygonCoordinatesB = clippedGeometryB.coordinates;
-        break;
+            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry
+            polygonCoordinatesA = clippedGeometryA.coordinates
+            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry
+            polygonCoordinatesB = clippedGeometryB.coordinates
+        break
         case 'Polygon':
-            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry;
-            polygonCoordinatesA = [clippedGeometryA.coordinates];
-            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry;
-            polygonCoordinatesB = [clippedGeometryB.coordinates];
-        break;
+            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry
+            polygonCoordinatesA = [clippedGeometryA.coordinates]
+            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry
+            polygonCoordinatesB = [clippedGeometryB.coordinates]
+        break
         default:
-            return null;
+            return null
     }
 
     if (polygonCoordinatesA.length + polygonCoordinatesB.length === 0) {
-        return null;
+        return null
     }
 
     let hexesA = polygonCoordinatesA.reduce(
         (acc, coordinates) => acc.concat(lib.h3.polyfill(coordinates, resolution, true)),
         []
-    ).filter(h => h != null);
+    ).filter(h => h != null)
     let hexesB = polygonCoordinatesB.reduce(
         (acc, coordinates) => acc.concat(lib.h3.polyfill(coordinates, resolution, true)),
         []
-    ).filter(h => h != null);
-    hexes = [...hexesA, ...hexesB];
-    hexes = [...new Set(hexes)];
+    ).filter(h => h != null)
+    hexes = [...hexesA, ...hexesB]
+    hexes = [...new Set(hexes)]
 
-    return hexes;
+    return hexes
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_LINES_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_AVG_EDGE_LENGTH`
+(resolution INT64)
+RETURNS FLOAT64
+DETERMINISTIC
+LANGUAGE js
+AS """
+    return {
+        0: 1281256.011,
+        1: 483056.8391,
+        2: 182512.9565,
+        3: 68979.22179,
+        4: 26071.75968,
+        5: 9854.090990,
+        6: 3724.532667,
+        7: 1406.475763,
+        8: 531.414010,
+        9: 200.786148,
+        10: 75.863783,
+        11: 28.663897,
+        12: 10.830188,
+        13: 4.092010,
+        14: 1.546100,
+        15: 0.584169
+    }[resolution]
+""";
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INIT`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    WITH t AS (
-        SELECT `@@BQ_DATASET@@.H3_FROMGEOGPOINT`(ST_CENTROID(`@@BQ_DATASET@@.S2_BOUNDARY`(s2_index)), resolution) AS h3_cell
-        FROM UNNEST(S2_COVERINGCELLIDS(geog, max_level => `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution), min_level => 0, max_cells => 1000000)) AS s2_parent,
-            UNNEST(`@@BQ_DATASET@@.S2_TOCHILDREN`(s2_parent, `@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution))) AS s2_index
+    IF(geog IS NULL OR resolution IS NULL,
+        NULL,
+        IF(resolution < 0 OR resolution > 15,
+            ERROR('Invalid resolution, should be between 0 and 15'), (
+            SELECT `@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`(
+                ST_ASGEOJSON(ST_BUFFER(geog, `@@BQ_DATASET@@.__H3_AVG_EDGE_LENGTH`(resolution))),
+                resolution
+            )
+        ))
     )
-    SELECT ARRAY_AGG(DISTINCT h3_cell)
-    FROM t
-    WHERE ST_INTERSECTS(`@@BQ_DATASET@@.H3_BOUNDARY`(h3_cell), geog)
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<STRING>
+AS ((
+    WITH cells AS (
+        SELECT h3
+        FROM
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
+    )
+    SELECT ARRAY_AGG(h3)
+    FROM cells
+    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(h3))
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<STRING>
+AS ((
+    WITH cells AS (
+        SELECT h3
+        FROM
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
+    )
+    SELECT ARRAY_AGG(h3)
+    FROM cells
+    WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(h3))
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<STRING>
+AS ((
+    WITH cells AS (
+        SELECT h3
+        FROM
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
+    )
+    SELECT ARRAY_AGG(h3)
+    FROM cells
+    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_CENTER`(h3))
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL_MODE`
+(geog GEOGRAPHY, resolution INT64, mode STRING)
+RETURNS ARRAY<STRING>
+AS ((
+    CASE mode
+        WHEN 'intersects' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+        WHEN 'contains' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
+        WHEN 'center' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
+    END
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
-AS (
-    CASE ST_DIMENSION(geog)
-    WHEN 0 THEN
-        [`@@BQ_DATASET@@.H3_FROMGEOGPOINT`(geog, resolution)]
-    WHEN 1 THEN
-        IF(`@@BQ_DATASET@@.__H3_TO_S2_MAPPING`(resolution) IS NULL,
-               `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`(
-           ST_ASGEOJSON(geog), resolution
-            ),
-            `@@BQ_DATASET@@.__H3_LINES_POLYFILL`(
-            geog, resolution)
-        )
-    ELSE
-       `@@BQ_DATASET@@.__H3_POLYGONS_POLYFILL`(
-           ST_ASGEOJSON(geog), resolution
-       )
-    END
-);
+AS ((
+    SELECT `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+));
