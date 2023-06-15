@@ -22,23 +22,17 @@ AS $$
             ''
         ELSE (
             WITH
-            __hexConstants AS (
-                SELECT
-                    31 AS _0X1F,
-                    4503599627370495 AS _0x000FFFFFFFFFFFFF
-            ),
             __z AS (
                 SELECT
-                    BITAND(BITSHIFTRIGHT(quadbin, 52), _0X1F) AS z
-                FROM __hexConstants
+                    BITAND(BITSHIFTRIGHT(quadbin, 52), 31) AS z
             ),
             __xy AS (
                 SELECT
                     BITSHIFTRIGHT(
-                        BITAND(quadbin, _0x000FFFFFFFFFFFFF),
+                        BITAND(quadbin, 4503599627370495),
                         (52 - z*2)
                     ) AS xy
-                FROM __z, __hexConstants
+                FROM __z
             )
             SELECT
                 CASE
