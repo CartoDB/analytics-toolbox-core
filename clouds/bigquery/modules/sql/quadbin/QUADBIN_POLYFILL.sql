@@ -1,8 +1,8 @@
 ----------------------------
--- Copyright (C) 2022 CARTO
+-- Copyright (C) 2023 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_POLYFILL`
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
@@ -110,4 +110,67 @@ AS ((
             )
         ))
     )
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<INT64>
+AS ((
+    WITH cells AS (
+        SELECT quadbin
+        FROM
+            UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM cells
+    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(quadbin))
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<INT64>
+AS ((
+    WITH cells AS (
+        SELECT quadbin
+        FROM
+            UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM cells
+    WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(quadbin))
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CENTER`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<INT64>
+AS ((
+    WITH cells AS (
+        SELECT quadbin
+        FROM
+            UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM cells
+    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_CENTER`(quadbin))
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_POLYFILL_MODE`
+(geog GEOGRAPHY, resolution INT64, mode STRING)
+RETURNS ARRAY<INT64>
+AS ((
+    CASE mode
+        WHEN 'intersects' THEN `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+        WHEN 'contains' THEN `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
+        WHEN 'center' THEN `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CENTER`(geog, resolution)
+    END
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_POLYFILL`
+(geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<INT64>
+AS ((
+    SELECT `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
 ));
