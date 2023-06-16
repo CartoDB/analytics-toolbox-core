@@ -59,7 +59,7 @@ AS $$
             BITOR(
                 child_base,
                 BITSHIFTLEFT(
-                    (block_row.index * sqrt_block_range + block_column.index),
+                    (block_row.value * sqrt_block_range + block_column.value),
                     block_shift
                 )
             )
