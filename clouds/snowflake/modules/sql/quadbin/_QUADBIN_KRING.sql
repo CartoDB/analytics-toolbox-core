@@ -35,9 +35,9 @@ AS $$
         ARRAY_AGG(
             CASE distanceFlag
                 WHEN TRUE THEN
-                    '{index: 0x' || newindex::STRING || ',distance:' || DISTANCE::STRING || '}'
+                    '{"distance":' || DISTANCE::STRING || ',"index":' || newindex::STRING || '}'
                 ELSE
-                    '0x' || newindex::STRING
+                    newindex::STRING
             END
         )
     FROM __results
