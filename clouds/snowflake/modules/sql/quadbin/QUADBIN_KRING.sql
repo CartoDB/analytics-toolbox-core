@@ -10,7 +10,7 @@
 -- higher level by using the _QUADBIN_STRING_TOINT UDF a non-correlated query can be produced.
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_KRING
-(origin BIGINT, size INT, dinstanceFlag BOOLEAN)
+(origin BIGINT, size INT)
 RETURNS ARRAY
 IMMUTABLE
 AS $$
