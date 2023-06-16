@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2022 CARTO
+-- Copyright (C) 2023 CARTO
 ----------------------------
 
 -- The function returns a STRING for two main issues related with Snowflake limitations
@@ -10,9 +10,9 @@
 -- higher level by using the _QUADBIN_STRING_TOINT UDF a non-correlated query can be produced.
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_KRING
-(origin BIGINT, size INT)
+(origin BIGINT, size INT, dinstanceFlag BOOLEAN)
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    TO_ARRAY(PARSE_JSON(@@SF_SCHEMA@@._QUADBIN_KRING(TO_VARCHAR(ORIGIN, 'xxxxxxxxxxxxxxxx'), SIZE, false)))
+    @@SF_SCHEMA@@._QUADBIN_KRING(ORIGIN, SIZE, false)
 $$;
