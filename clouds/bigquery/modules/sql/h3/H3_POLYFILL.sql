@@ -121,7 +121,7 @@ AS ((
         WHEN area > 307.092 THEN 12
         WHEN area > 43.870 THEN 13
         WHEN area > 6.267 THEN 14
-        ELSE 0
+        ELSE 15
     END
 ));
 
@@ -132,6 +132,13 @@ AS ((
     WITH _bbox AS (SELECT ST_BOUNDINGBOX(geog) AS bbox)
         SELECT `@@BQ_DATASET@@.__H3_POLYFILL_RESOLUTION_BY_AREA`(ST_AREA(`@@BQ_DATASET@@.ST_MAKEENVELOPE`(bbox.xmin, bbox.ymin, bbox.xmax, bbox.ymax))) FROM _bbox
 ));
+
+-- CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INTERMEDIATE_RESOLUTION`
+-- (geog GEOGRAPHY)
+-- RETURNS INT64
+-- AS ((
+--     SELECT `@@BQ_DATASET@@.__H3_POLYFILL_RESOLUTION_BY_AREA`(ST_AREA(`@@BQ_DATASET@@.ST_ENVELOPE`([geog])))
+-- ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INIT`
 (geog GEOGRAPHY, resolution INT64)
