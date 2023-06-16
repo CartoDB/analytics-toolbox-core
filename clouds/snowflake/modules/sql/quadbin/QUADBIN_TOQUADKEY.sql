@@ -2,14 +2,9 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._TO_BASE
-(NUM FLOAT, RADIX FLOAT)
-RETURNS FLOAT
-LANGUAGE JAVASCRIPT
-IMMUTABLE
-AS $$
-    return parseFloat((NUM.toString(RADIX)));
-$$;
+----------------------------
+-- Copyright (C) 2023 CARTO
+----------------------------
 
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_TOQUADKEY
