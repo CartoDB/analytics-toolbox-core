@@ -144,15 +144,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INIT`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    IF(geog IS NULL OR resolution IS NULL,
-        NULL,
-        IF(resolution < 0 OR resolution > 15,
-            ERROR('Invalid resolution, should be between 0 and 15'), (
-            SELECT `@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`(
-                ST_ASGEOJSON(ST_BUFFER(geog, `@@BQ_DATASET@@.__H3_AVG_EDGE_LENGTH`(resolution))),
-                resolution
-            )
-        ))
+    SELECT `@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`(
+        ST_ASGEOJSON(ST_BUFFER(geog, `@@BQ_DATASET@@.__H3_AVG_EDGE_LENGTH`(resolution))),
+        resolution
     )
 ));
 
@@ -205,16 +199,28 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL_MODE`
 (geog GEOGRAPHY, resolution INT64, mode STRING)
 RETURNS ARRAY<STRING>
 AS ((
-    CASE mode
-        WHEN 'intersects' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
-        WHEN 'contains' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
-        WHEN 'center' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
-    END
+    IF(geog IS NULL OR resolution IS NULL,
+        NULL,
+        IF(resolution < 0 OR resolution > 15,
+            ERROR('Invalid resolution, should be between 0 and 15'), (
+            CASE mode
+                WHEN 'intersects' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+                WHEN 'contains' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
+                WHEN 'center' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
+            END
+        ))
+    )
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    SELECT `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+    IF(geog IS NULL OR resolution IS NULL,
+        NULL,
+        IF(resolution < 0 OR resolution > 15,
+            ERROR('Invalid resolution, should be between 0 and 15'), (
+            SELECT `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+        ))
+    )
 ));
