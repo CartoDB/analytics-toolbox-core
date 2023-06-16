@@ -101,6 +101,38 @@ AS """
     }[resolution]
 """;
 
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_RESOLUTION_BY_AREA`
+(area FLOAT64)
+RETURNS INT64
+AS ((
+    SELECT CASE
+        WHEN area > 4357449416078.392 THEN 0
+        WHEN area > 609788441794.134 THEN 1
+        WHEN area > 86801780398.997 THEN 2
+        WHEN area > 12393434655.088 THEN 3
+        WHEN area > 1770347654.491 THEN 4
+        WHEN area > 252903858.182 THEN 5
+        WHEN area > 36129062.164 THEN 6
+        WHEN area > 5161293.360 THEN 7
+        WHEN area > 737327.598 THEN 8
+        WHEN area > 105332.513 THEN 9
+        WHEN area > 15047.502 THEN 10
+        WHEN area > 2149.643 THEN 11
+        WHEN area > 307.092 THEN 12
+        WHEN area > 43.870 THEN 13
+        WHEN area > 6.267 THEN 14
+        ELSE 0
+    END
+));
+
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INTERMEDIATE_RESOLUTION`
+(geog GEOGRAPHY)
+RETURNS INT64
+AS ((
+    WITH _bbox AS (SELECT ST_BOUNDINGBOX(geog) AS bbox)
+        SELECT `@@BQ_DATASET@@.__H3_POLYFILL_RESOLUTION_BY_AREA`(ST_AREA(`@@BQ_DATASET@@.ST_MAKEENVELOPE`(bbox.xmin, bbox.ymin, bbox.xmax, bbox.ymax))) FROM _bbox
+));
+
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INIT`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
@@ -124,7 +156,7 @@ AS ((
     WITH cells AS (
         SELECT h3
         FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, GREATEST(CAST(resolution / 2 AS INT64), `@@BQ_DATASET@@.__H3_POLYFILL_INTERMEDIATE_RESOLUTION`(geog)))) AS parent,
             UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
@@ -139,7 +171,7 @@ AS ((
     WITH cells AS (
         SELECT h3
         FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, GREATEST(CAST(resolution / 2 AS INT64), `@@BQ_DATASET@@.__H3_POLYFILL_INTERMEDIATE_RESOLUTION`(geog)))) AS parent,
             UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
@@ -154,7 +186,7 @@ AS ((
     WITH cells AS (
         SELECT h3
         FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, GREATEST(CAST(resolution / 2 AS INT64), `@@BQ_DATASET@@.__H3_POLYFILL_INTERMEDIATE_RESOLUTION`(geog)))) AS parent,
             UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
