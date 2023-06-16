@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2022 CARTO
+-- Copyright (C) 2023 CARTO
 ----------------------------
 
 -- The function returns a STRING for two main issues related with Snowflake limitations
@@ -14,5 +14,5 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_KRING_DISTANCES
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    TO_ARRAY(PARSE_JSON(@@SF_SCHEMA@@._QUADBIN_KRING(TO_VARCHAR(ORIGIN, 'xxxxxxxxxxxxxxxx'), SIZE, true)))
+    @@SF_SCHEMA@@._QUADBIN_KRING(ORIGIN, SIZE, true)
 $$;
