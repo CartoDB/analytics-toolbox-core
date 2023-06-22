@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2022 CARTO
+-- Copyright (C) 2023 CARTO
 ----------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_TOCHILDREN
