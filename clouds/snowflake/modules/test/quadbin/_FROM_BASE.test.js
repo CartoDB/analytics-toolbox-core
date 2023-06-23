@@ -11,5 +11,5 @@ test('_FROM_BASE should work', async () => {
         )`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].OUTPUT).toEqual(["0", "29236"]);
+    expect(rows[0].OUTPUT).toEqual(['0', '29236']);
 });
