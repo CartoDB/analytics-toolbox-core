@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2023 CARTO
+-- Copyright (C) 2022-2023 CARTO
 ----------------------------
 
 -- The function returns a STRING for two main issues related with Snowflake limitations

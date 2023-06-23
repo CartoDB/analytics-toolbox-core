@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2023 CARTO
+-- Copyright (C) 2022-2023 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_FROMQUADKEY
