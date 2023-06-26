@@ -36,8 +36,15 @@ if __name__ == '__main__':
     with open(script, 'r') as file:
         content = file.read()
 
-    try:
-        run_queries(split(content))
-    except Exception as error:
-        error_msg = str(error)
-        print(f'[{function}] ERROR: {error_msg}')
+    if os.environ.get('SKIP_PROGRESS_BAR'):
+        try:
+            run_queries([content])
+        except Exception as error:
+            error_msg = str(error)
+            print(f'ERROR: {error_msg}')
+    else:
+        try:
+            run_queries(split(content))
+        except Exception as error:
+            error_msg = str(error)
+            print(f'[{function}] ERROR: {error_msg}')

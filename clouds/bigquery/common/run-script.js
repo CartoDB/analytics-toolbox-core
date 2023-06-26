@@ -35,12 +35,21 @@ async function runQueries (queries) {
 }
 
 const script = process.argv[2];
-const content = fs.readFileSync(script).toString();
+let content = fs.readFileSync(script).toString();
 const separator = '\n-->\n';
-const queries = content.split(separator).filter(q => !!q);
-let sqlFunction = '';
 
-runQueries(queries).catch(error => {
-    console.log(`\n[${sqlFunction}] ERROR: ${error}`);
-    process.exit(1);
-});
+if (process.env.SKIP_PROGRESS_BAR) {
+    content = content.replaceAll(separator, '')
+    runQueries([content]).catch(error => {
+        console.log(`\nERROR: ${error}`);
+        process.exit(1);
+    });
+} else {
+    const queries = content.split(separator).filter(q => !!q);
+    let sqlFunction = '';
+
+    runQueries(queries).catch(error => {
+        console.log(`\n[${sqlFunction}] ERROR: ${error}`);
+        process.exit(1);
+    });
+}
