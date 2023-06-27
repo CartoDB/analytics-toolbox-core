@@ -2,12 +2,13 @@
 -- Copyright (C) 2022-2023 CARTO
 --------------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_DATASET@@.__QUADBIN_POLYFILL_INIT(
-    geog GEOGRAPHY,
-    resolution NUMBER
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(
+    geom GEOMETRY,
+    resolution INT
 )
 RETURNS BIGINT[]
-AS $BODY$
+AS
+$BODY$
   SELECT CASE
     WHEN resolution < 0 OR resolution > 26
         THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::BIGINT[]
@@ -15,15 +16,27 @@ AS $BODY$
         THEN NULL::BIGINT[]
     ELSE (
         WITH
+        __geom4326 AS (
+            select
+                CASE ST_SRID(geom)
+                    WHEN 0 THEN ST_SETSRID(geom, 4326)
+                    ELSE ST_TRANSFORM(geom, 4326)
+                END AS geom4326
+        ),
+        __bbox AS (
+            SELECT geom4326, BOX2D(geom4326) AS b FROM __geom4326
+        ),
         __params AS (
             SELECT
+                geom4326,
                 resolution AS z,
-                ST_XMIN(geog::geometry) AS minlon,
-                ST_YMIN(geog::geometry) AS minlat,
-                ST_XMAX(geog::geometry) AS maxlon,
-                ST_YMAX(geog::geometry) AS maxlat,
                 (1::BIGINT << resolution) AS z2,
+                ST_XMIN(b) AS minlon,
+                ST_YMIN(b) AS minlat,
+                ST_XMAX(b) AS maxlon,
+                ST_YMAX(b) AS maxlat,
                 ACOS(-1) AS pi
+            FROM __bbox
         ),
         __sinlat AS (
             SELECT
@@ -35,7 +48,7 @@ AS $BODY$
             -- precalculate Xs to allow simple use of
             -- CASE in the next CTE
             SELECT
-                (FLOOR(z2 * ((minlon / 360.0) + 0.5))::BIGINT &  (z2 - 1) -- bitwise way to calc MODULO
+                (FLOOR(z2 * ((minlon / 360.0) + 0.5))::BIGINT & (z2 - 1) -- bitwise way to calc MODULO
                 ) AS xmin,
                 (FLOOR(z2 * ((maxlon / 360.0) + 0.5))::BIGINT & (z2 - 1) -- bitwise way to calc MODULO
                 ) AS xmax
@@ -83,79 +96,113 @@ AS $BODY$
                 generate_series(t.xmin, t.xmax) AS x,
                 generate_series(t.ymin, t.ymax) AS y
         )
-        SELECT count(__cells), ARRAY_AGG(quadbin)
-        FROM __cells, __values
-        WHERE ST_INTERSECTS(@@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin), geog)
+        SELECT ARRAY_AGG(quadbin)
+        FROM __cells, __params
+        WHERE ST_INTERSECTS(@@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin), geom)
     )
     END;
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
 
-CREATE OR REPLACE FUNCTION @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(
-    geog GEOGRAPHY,
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(
+    geom GEOMETRY,
     resolution INT
 )
 RETURNS BIGINT[]
-AS $BODY$
-    WITH cells AS (
+AS
+$BODY$
+    WITH
+    __geom4326 AS (
+        select
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END AS geom4326
+    ),
+    cells AS (
         SELECT quadbin
         FROM
-            UNNEST(@@SF_DATASET@@.__QUADBIN_POLYFILL_INIT(geog, (resolution / 2)::INT)) AS parent,
-            UNNEST(@@SF_DATASET@@.QUADBIN_TOCHILDREN(parent, resolution))) AS quadbin
+            UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, (resolution / 2)::INT)) AS parent,
+            UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
     )
     SELECT ARRAY_AGG(quadbin)
-    FROM cells
-    WHERE ST_INTERSECTS(geog, @@SF_DATASET@@.QUADBIN_BOUNDARY(quadbin));
-$BODY$;
+    FROM cells, __geom4326
+    WHERE ST_INTERSECTS(geom4326, @@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin));
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
--- CREATE OR REPLACE SECURE FUNCTION @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS
--- (geog GEOGRAPHY, resolution NUMBER)
--- RETURNS ARRAY
--- AS ((
---     WITH cells AS (
---         SELECT quadbin
---         FROM
---             UNNEST(@@SF_DATASET@@.__QUADBIN_POLYFILL_INIT(geog, CAST(resolution / 2 AS NUMBER))) AS parent,
---             UNNEST(@@SF_DATASET@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
---     )
---     SELECT ARRAY_AGG(quadbin)
---     FROM cells
---     WHERE ST_CONTAINS(geog, @@SF_DATASET@@.QUADBIN_BOUNDARY(quadbin))
--- ));
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS
+(geom GEOMETRY, resolution INT)
+RETURNS BIGINT[]
+AS
+$BODY$
+    WITH
+    __geom4326 AS (
+        SELECT
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END AS geom4326
+    ),
+    cells AS (
+        SELECT quadbin
+        FROM
+            UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, (resolution / 2)::INT)) AS parent,
+            UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM cells, __geom4326
+    WHERE ST_CONTAINS(geom4326, @@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin))
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
--- CREATE OR REPLACE SECURE FUNCTION @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CENTER
--- (geog GEOGRAPHY, resolution NUMBER)
--- RETURNS ARRAY
--- AS ((
---     WITH cells AS (
---         SELECT quadbin
---         FROM
---             UNNEST(@@SF_DATASET@@.__QUADBIN_POLYFILL_INIT(geog, CAST(resolution / 2 AS NUMBER))) AS parent,
---             UNNEST(@@SF_DATASET@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
---     )
---     SELECT ARRAY_AGG(quadbin)
---     FROM cells
---     WHERE ST_INTERSECTS(geog, @@SF_DATASET@@.QUADBIN_CENTER(quadbin))
--- ));
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER
+(geom GEOMETRY, resolution INT)
+RETURNS BIGINT[]
+AS
+$BODY$
+    WITH
+    __geom4326 AS (
+        SELECT
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END AS geom4326
+    ),
+    cells AS (
+        SELECT quadbin
+        FROM
+            UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, (resolution / 2)::INT)) AS parent,
+            UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM cells, __geom4326
+    WHERE ST_INTERSECTS(geom, @@PG_SCHEMA@@.QUADBIN_CENTER(quadbin))
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
--- CREATE OR REPLACE SECURE FUNCTION @@SF_DATASET@@.QUADBIN_POLYFILL_MODE
--- (geog GEOGRAPHY, resolution NUMBER, mode STRING)
--- RETURNS ARRAY
--- AS ((
---     CASE mode
---         WHEN 'intersects' THEN @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geog, resolution)
---         WHEN 'contains' THEN @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(geog, resolution)
---         WHEN 'center' THEN @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(geog, resolution)
---     END
--- ));
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_POLYFILL_MODE
+(geom GEOMETRY, resolution INT, mode VARCHAR)
+RETURNS BIGINT[]
+AS
+$BODY$
+    SELECT CASE mode
+        WHEN 'intersects' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
+        WHEN 'contains' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(geom, resolution)
+        WHEN 'center' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(geom, resolution)
+    END
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
-CREATE OR REPLACE FUNCTION @@SF_DATASET@@.QUADBIN_POLYFILL(
-    geog GEOGRAPHY,
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_POLYFILL(
+    geom GEOMETRY,
     resolution INT
 )
 RETURNS BIGINT[]
-AS $BODY$
-    SELECT @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geog, resolution);
-$BODY$;
+AS
+$BODY$
+    SELECT @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geom, resolution);
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
