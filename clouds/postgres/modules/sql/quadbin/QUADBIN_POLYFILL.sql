@@ -98,7 +98,7 @@ $BODY$
         )
         SELECT ARRAY_AGG(quadbin)
         FROM __cells, __params
-        WHERE ST_INTERSECTS(@@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin), geom)
+        WHERE ST_INTERSECTS(@@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin), geom4326)
     )
     END;
 $BODY$
