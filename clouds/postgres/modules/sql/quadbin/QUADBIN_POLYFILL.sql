@@ -123,7 +123,7 @@ $BODY$
             geom4326,
             quadbin
         FROM __geom4326,
-             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326, (resolution / 2)::INT)) AS parent,
+             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326, (resolution - 2))) AS parent,
              UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
     )
     SELECT ARRAY_AGG(quadbin)
@@ -150,7 +150,7 @@ $BODY$
             geom4326,
             quadbin
         FROM __geom4326,
-             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326, (resolution / 2)::INT)) AS parent,
+             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326, (resolution - 2))) AS parent,
              UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
     )
     SELECT ARRAY_AGG(quadbin)
@@ -177,7 +177,7 @@ $BODY$
             geom4326,
             quadbin
         FROM __geom4326,
-             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326, (resolution / 2)::INT)) AS parent,
+             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326, (resolution - 2))) AS parent,
              UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
     )
     SELECT ARRAY_AGG(quadbin)
