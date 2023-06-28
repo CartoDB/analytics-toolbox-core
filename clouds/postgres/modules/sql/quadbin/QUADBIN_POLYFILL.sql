@@ -195,6 +195,8 @@ $BODY$
         WHEN 'intersects' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
         WHEN 'contains' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(geom, resolution)
         WHEN 'center' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(geom, resolution)
+        ELSE
+            @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid MODE "%s"; should be "intersects", "contains", "center"', resolution))::BIGINT[]
     END
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
