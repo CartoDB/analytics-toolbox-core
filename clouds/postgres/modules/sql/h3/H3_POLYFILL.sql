@@ -6,8 +6,7 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(
     geojson TEXT,
     resolution INTEGER
 )
-RETURNS VARCHAR(16)[]
-AS
+RETURNS VARCHAR(16)[]AS
 $BODY$
     if (!geojson || resolution == null) {
         return [];
@@ -107,15 +106,27 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
+    WITH
+    __geom3857 AS (
+        SELECT
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_TRANSFORM(ST_SETSRID(geom, 4326), 3857)
+                ELSE ST_TRANSFORM(geom, 3857)
+            END AS geom3857
+    )
     SELECT CASE
         WHEN resolution < 0 OR resolution > 26 THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::VARCHAR(16)[]
         WHEN resolution IS NULL OR geom IS NULL THEN NULL::VARCHAR(16)[]
         ELSE
             @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(
-                ST_ASGEOJSON(ST_BUFFER(geom, @@PG_SCHEMA@@.__H3_AVG_EDGE_LENGTH(resolution))),
+                ST_ASGEOJSON(
+                    ST_TRANSFORM(
+                        ST_BUFFER(geom3857, @@PG_SCHEMA@@.__H3_AVG_EDGE_LENGTH(resolution)),
+                        4326)),
                 resolution
             )
-    END;
+    END
+    FROM __geom3857
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
@@ -124,15 +135,23 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    WITH cells AS (
+    WITH
+    __geom4326 AS (
+        SELECT
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END AS geom4326
+    ),
+    cells AS (
         SELECT h3
         FROM
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, (resolution - 2))) AS parent,
+            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, GREATEST(0, (resolution - 3)))) AS parent,
             UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
-    FROM cells
-    WHERE ST_INTERSECTS(geom, @@PG_SCHEMA@@.H3_BOUNDARY(h3))
+    FROM cells, __geom4326
+    WHERE ST_INTERSECTS(geom4326, ST_SETSRID(@@PG_SCHEMA@@.H3_BOUNDARY(h3), 4326))
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
@@ -141,15 +160,23 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CONTAINS
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    WITH cells AS (
+    WITH
+    __geom4326 AS (
+        SELECT
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END AS geom4326
+    ),
+    cells AS (
         SELECT h3
         FROM
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, (resolution - 2))) AS parent,
+            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, GREATEST(0, (resolution - 3)))) AS parent,
             UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
-    FROM cells
-    WHERE ST_CONTAINS(geom, @@PG_SCHEMA@@.H3_BOUNDARY(h3))
+    FROM cells, __geom4326
+    WHERE ST_CONTAINS(geom4326, ST_SETSRID(@@PG_SCHEMA@@.H3_BOUNDARY(h3), 4326))
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
@@ -158,15 +185,23 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    WITH cells AS (
+    WITH 
+    __geom4326 AS (
+        SELECT
+            CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END AS geom4326
+    ),
+    cells AS (
         SELECT h3
         FROM
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, (resolution - 2))) AS parent,
+            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, GREATEST(0, (resolution - 3)))) AS parent,
             UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
-    FROM cells
-    WHERE ST_INTERSECTS(geom, @@PG_SCHEMA@@.H3_CENTER(h3))
+    FROM cells, __geom4326
+    WHERE ST_INTERSECTS(geom4326, ST_SETSRID(@@PG_SCHEMA@@.H3_CENTER(h3), 4326))
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
