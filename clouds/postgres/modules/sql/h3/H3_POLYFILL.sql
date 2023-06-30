@@ -115,7 +115,7 @@ $BODY$
             END AS geom3857
     )
     SELECT CASE
-        WHEN resolution < 0 OR resolution > 26 THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::VARCHAR(16)[]
+        WHEN resolution < 0 OR resolution > 15 THEN NULL::VARCHAR(16)[]
         WHEN resolution IS NULL OR geom IS NULL THEN NULL::VARCHAR(16)[]
         ELSE
             @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(
@@ -213,10 +213,13 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_POLYFILL_MODE
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    SELECT CASE mode
-        WHEN 'intersects' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
-        WHEN 'contains' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CONTAINS(geom, resolution)
-        WHEN 'center' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER(geom, resolution)
+    SELECT CASE
+        -- need check resolution here before calls because _INIT receive resolution-1
+        WHEN resolution < 0 OR resolution > 15 THEN NULL::VARCHAR(16)[]
+        WHEN resolution IS NULL OR geom IS NULL THEN NULL::VARCHAR(16)[]
+        WHEN mode = 'intersects' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
+        WHEN mode = 'contains' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CONTAINS(geom, resolution)
+        WHEN mode = 'center' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER(geom, resolution)
     END
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
@@ -226,8 +229,11 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_POLYFILL
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    SELECT CASE ST_DIMENSION(geom)
-        WHEN 0 THEN
+    SELECT CASE
+        -- need check resolution here before calls because _INIT receive resolution-1
+        WHEN resolution < 0 OR resolution > 15 THEN NULL::VARCHAR(16)[]
+        WHEN resolution IS NULL OR geom IS NULL THEN NULL::VARCHAR(16)[]
+        WHEN ST_DIMENSION(geom) = 0 THEN
             ARRAY[@@PG_SCHEMA@@.H3_FROMGEOGPOINT(geom, resolution)]
         ELSE
             @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
