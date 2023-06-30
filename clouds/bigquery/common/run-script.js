@@ -37,6 +37,7 @@ async function runQueries (queries) {
 const script = process.argv[2];
 let content = fs.readFileSync(script).toString();
 const separator = '\n-->\n';
+let sqlFunction = '';
 
 if (process.env.SKIP_PROGRESS_BAR) {
     content = content.replaceAll(separator, '')
@@ -46,7 +47,6 @@ if (process.env.SKIP_PROGRESS_BAR) {
     });
 } else {
     const queries = content.split(separator).filter(q => !!q);
-    let sqlFunction = '';
 
     runQueries(queries).catch(error => {
         console.log(`\n[${sqlFunction}] ERROR: ${error}`);
