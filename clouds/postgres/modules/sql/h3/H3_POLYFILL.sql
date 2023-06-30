@@ -146,7 +146,8 @@ $BODY$
     cells AS (
         SELECT h3
         FROM
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, GREATEST(0, (resolution - 3)))) AS parent,
+            __geom4326,
+            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom4326, GREATEST(0, (resolution - 2)))) AS parent,
             UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
@@ -171,7 +172,8 @@ $BODY$
     cells AS (
         SELECT h3
         FROM
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, GREATEST(0, (resolution - 3)))) AS parent,
+            __geom4326,
+            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom4326, GREATEST(0, (resolution - 2)))) AS parent,
             UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
@@ -196,7 +198,8 @@ $BODY$
     cells AS (
         SELECT h3
         FROM
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, GREATEST(0, (resolution - 3)))) AS parent,
+            __geom4326,
+            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom4326, GREATEST(0, (resolution - 2)))) AS parent,
             UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
