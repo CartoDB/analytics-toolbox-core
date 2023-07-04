@@ -106,7 +106,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INIT`
 RETURNS ARRAY<STRING>
 AS ((
     IF(geog IS NULL OR resolution IS NULL,
-        NULL,
+        CAST(NULL AS ARRAY<STRING>),
         IF(resolution < 0 OR resolution > 15,
             ERROR('Invalid resolution, should be between 0 and 15'), (
             SELECT `@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`(
@@ -166,10 +166,13 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL_MODE`
 (geog GEOGRAPHY, resolution INT64, mode STRING)
 RETURNS ARRAY<STRING>
 AS ((
-    CASE mode
-        WHEN 'intersects' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
-        WHEN 'contains' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
-        WHEN 'center' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
+    SELECT CASE
+        -- need check resolution here before calls because _INIT receive resolution-1
+        WHEN resolution < 0 OR resolution > 15 THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN resolution IS NULL OR geog IS NULL THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN mode = 'intersects' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+        WHEN mode = 'contains' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
+        WHEN mode ='center' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
     END
 ));
 
@@ -177,5 +180,13 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    SELECT `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+    SELECT CASE
+        -- need check resolution here before calls because _INIT receive resolution-1
+        WHEN resolution < 0 OR resolution > 15 THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN resolution IS NULL OR geog IS NULL THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN ST_DIMENSION(geog) = 0 THEN
+             [`@@BQ_DATASET@@.H3_FROMGEOGPOINT`(geog, resolution)]
+        ELSE
+            `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+    END
 ));
