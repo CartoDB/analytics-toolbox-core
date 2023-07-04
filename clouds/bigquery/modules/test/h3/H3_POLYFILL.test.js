@@ -25,7 +25,7 @@ test('H3_POLYFILL check input values round 1', async () => {
         null,
         null,
         null,
-        null,
+        null
     ]);
 });
 
@@ -49,7 +49,7 @@ test('H3_POLYFILL check input values round 2', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows.map((r) => r.id_count)).toEqual([
-        null,
+        null
     ]);
 });
 
@@ -82,7 +82,7 @@ test('H3_POLYFILL returns the proper INT64s round 1', async () => {
         45,
         59,
         219,
-        13,
+        13
     ]);
 });
 
