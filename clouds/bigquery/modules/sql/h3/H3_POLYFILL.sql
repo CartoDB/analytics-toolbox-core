@@ -105,61 +105,81 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_INIT`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    IF(geog IS NULL OR resolution IS NULL,
-        CAST(NULL AS ARRAY<STRING>),
-        IF(resolution < 0 OR resolution > 15,
-            ERROR('Invalid resolution, should be between 0 and 15'), (
+    SELECT CASE
+        WHEN (resolution < 0 OR resolution > 15) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
+        ELSE (
             SELECT `@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`(
                 ST_ASGEOJSON(ST_BUFFER(geog, `@@BQ_DATASET@@.__H3_AVG_EDGE_LENGTH`(resolution))),
                 resolution
             )
-        ))
-    )
+        )
+    END
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    WITH cells AS (
-        SELECT h3
-        FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, (resolution - 1))) AS parent,
-            UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
-    )
-    SELECT ARRAY_AGG(h3)
-    FROM cells
-    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(h3))
+    SELECT CASE
+        WHEN (resolution < 0 OR resolution > 15) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
+        ELSE (
+            WITH cells AS (
+                SELECT h3
+                FROM
+                    UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, GREATEST(0, resolution - 1))) AS parent,
+                    UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
+            )
+            SELECT ARRAY_AGG(h3)
+            FROM cells
+            WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(h3))
+        )
+    END
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    WITH cells AS (
-        SELECT h3
-        FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, (resolution - 1))) AS parent,
-            UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
-    )
-    SELECT ARRAY_AGG(h3)
-    FROM cells
-    WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(h3))
+    SELECT CASE
+        -- need check resolution here before calls because _INIT receive resolution-1
+        WHEN (resolution < 0 OR resolution > 15) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
+        ELSE (
+            WITH cells AS (
+                SELECT h3
+                FROM
+                    UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, GREATEST(0, resolution - 1))) AS parent,
+                    UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
+            )
+            SELECT ARRAY_AGG(h3)
+            FROM cells
+            WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(h3))
+        )
+    END
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<STRING>
 AS ((
-    WITH cells AS (
-        SELECT h3
-        FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, (resolution - 1))) AS parent,
-            UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
-    )
-    SELECT ARRAY_AGG(h3)
-    FROM cells
-    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_CENTER`(h3))
+    SELECT CASE
+        -- need check resolution here before calls because _INIT receive resolution-1
+        WHEN (resolution < 0 OR resolution > 15) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
+        ELSE (
+            WITH cells AS (
+                SELECT h3
+                FROM
+                    UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, GREATEST(0, resolution - 1))) AS parent,
+                    UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
+            )
+            SELECT ARRAY_AGG(h3)
+            FROM cells
+            WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_CENTER`(h3))
+        )
+    END
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.H3_POLYFILL_MODE`
@@ -168,11 +188,11 @@ RETURNS ARRAY<STRING>
 AS ((
     SELECT CASE
         -- need check resolution here before calls because _INIT receive resolution-1
-        WHEN resolution < 0 OR resolution > 15 THEN CAST(NULL AS ARRAY<STRING>)
-        WHEN resolution IS NULL OR geog IS NULL THEN CAST(NULL AS ARRAY<STRING>)
-        WHEN mode = 'intersects' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
-        WHEN mode = 'contains' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
-        WHEN mode ='center' THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
+        WHEN (resolution < 0 OR resolution > 15) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (mode = 'intersects') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
+        WHEN (mode = 'contains') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
+        WHEN (mode ='center') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
     END
 ));
 
@@ -182,10 +202,10 @@ RETURNS ARRAY<STRING>
 AS ((
     SELECT CASE
         -- need check resolution here before calls because _INIT receive resolution-1
-        WHEN resolution < 0 OR resolution > 15 THEN CAST(NULL AS ARRAY<STRING>)
-        WHEN resolution IS NULL OR geog IS NULL THEN CAST(NULL AS ARRAY<STRING>)
-        WHEN ST_DIMENSION(geog) = 0 THEN
-             [`@@BQ_DATASET@@.H3_FROMGEOGPOINT`(geog, resolution)]
+        WHEN (resolution < 0 OR resolution > 15) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
+        WHEN (ST_DIMENSION(geog) = 0) THEN
+            [`@@BQ_DATASET@@.H3_FROMGEOGPOINT`(geog, resolution)]
         ELSE
             `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
     END
