@@ -7,5 +7,6 @@ test('QUADBIN_POLYFILL should work', async () => {
     ) AS output`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].output).toEqual('["5265786693153193983","5265786693163941887","5265786693164466175","5265786693164204031","5265786693164728319","5265786693165514751"]');
+    const out = JSON.stringify((JSON.parse(rows[0].output)).sort())
+    expect(out).toEqual('["5265786693153193983","5265786693163941887","5265786693164204031","5265786693164466175","5265786693164728319","5265786693165514751"]');
 });
