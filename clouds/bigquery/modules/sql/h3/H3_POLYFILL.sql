@@ -124,7 +124,7 @@ AS ((
     WITH cells AS (
         SELECT h3
         FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, (resolution - 1))) AS parent,
             UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
@@ -139,7 +139,7 @@ AS ((
     WITH cells AS (
         SELECT h3
         FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, (resolution - 1))) AS parent,
             UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
@@ -154,7 +154,7 @@ AS ((
     WITH cells AS (
         SELECT h3
         FROM
-            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, CAST(resolution / 2 AS INT64))) AS parent,
+            UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geog, (resolution - 1))) AS parent,
             UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent, resolution)) AS h3
     )
     SELECT ARRAY_AGG(h3)
