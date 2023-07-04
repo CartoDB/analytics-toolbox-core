@@ -25,7 +25,7 @@ test('H3_POLYFILL_MODE center wrong input round 1', async () => {
         [],
         [],
         [],
-        [],
+        []
     ]);
 });
 
@@ -78,7 +78,7 @@ test('H3_POLYFILL_MODE intersects wrong input round 1', async () => {
         [],
         [],
         [],
-        [],
+        []
     ]);
 });
 
@@ -131,7 +131,7 @@ test('H3_POLYFILL_MODE contains wrong input round 1', async () => {
         [],
         [],
         [],
-        [],
+        []
     ]);
 });
 
@@ -221,7 +221,7 @@ test('H3_POLYFILL_MODE intersects polygons', async () => {
         45,
         59,
         219,
-        13,
+        13
     ]);
 });
 
@@ -254,7 +254,7 @@ test('H3_POLYFILL_MODE contains polygons', async () => {
         13,
         13,
         157,
-        1,
+        1
     ]);
 });
 
@@ -286,7 +286,7 @@ test('H3_POLYFILL_MODE center other geometries', async () => {
         null,
         null,
         null,
-        16110,
+        16110
     ]);
 });
 
@@ -318,7 +318,7 @@ test('H3_POLYFILL_MODE intersects other geometries', async () => {
         2,
         4,
         1,
-        16436,
+        16436
     ]);
 });
 
@@ -350,6 +350,6 @@ test('H3_POLYFILL_MODE contains other geometries', async () => {
         null,
         null,
         null,
-        15785,
+        15785
     ]);
 });

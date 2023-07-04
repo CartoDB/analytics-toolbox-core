@@ -192,7 +192,7 @@ AS ((
         WHEN (resolution IS NULL OR geog IS NULL OR ST_ISEMPTY(geog)) THEN CAST(NULL AS ARRAY<STRING>)
         WHEN (mode = 'intersects') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_INTERSECTS`(geog, resolution)
         WHEN (mode = 'contains') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CONTAINS`(geog, resolution)
-        WHEN (mode ='center') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
+        WHEN (mode = 'center') THEN `@@BQ_DATASET@@.__H3_POLYFILL_CHILDREN_CENTER`(geog, resolution)
     END
 ));
 
