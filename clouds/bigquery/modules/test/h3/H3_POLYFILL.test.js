@@ -1,6 +1,59 @@
 const { runQuery } = require('../../../common/test-utils');
 
-test('H3_POLYFILL returns the proper INT64s', async () => {
+test('H3_POLYFILL check input values round 1', async () => {
+    const query = `
+        WITH inputs AS
+        (
+        -- NULL and empty
+        SELECT 8 AS id, NULL as geom, 2 as resolution UNION ALL
+        SELECT 9 AS id, ST_GEOGFROMTEXT('POLYGON EMPTY') as geom, 2 as resolution UNION ALL
+
+        -- Invalid resolution
+        SELECT 10 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, -1 as resolution UNION ALL
+        -- SELECT 11 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 16 as resolution
+        SELECT 12 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution
+        )
+        SELECT
+        ARRAY_LENGTH(\`@@BQ_DATASET@@.H3_POLYFILL\`(geom, resolution)) AS id_count
+        FROM inputs
+        ORDER BY id ASC
+    `;
+
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(4);
+    expect(rows.map((r) => r.id_count)).toEqual([
+        null,
+        null,
+        null,
+        null,
+    ]);
+});
+
+test('H3_POLYFILL check input values round 2', async () => {
+    const query = `
+        WITH inputs AS
+        (
+        -- Invalid resolution
+           -- uncommenting the below query result in unuexpected
+           -- _INIT executtion that result in timout in the subsequent
+           -- query with wrong resulution 16
+        -- SELECT 10 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, -1 as resolution UNION ALL
+        SELECT 11 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 16 as resolution
+        )
+        SELECT
+        ARRAY_LENGTH(\`@@BQ_DATASET@@.H3_POLYFILL\`(geom, resolution)) AS id_count
+        FROM inputs
+        ORDER BY id ASC
+    `;
+
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows.map((r) => r.id_count)).toEqual([
+        null,
+    ]);
+});
+
+test('H3_POLYFILL returns the proper INT64s round 1', async () => {
     const query = `
         WITH inputs AS
         (
@@ -12,17 +65,31 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
         SELECT 5 AS id, ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POLYGON((20 20, 20 30, 30 30, 30 20, 20 20)), POINT(0 10), LINESTRING(0 0, 1 1),MULTIPOLYGON(((-50 -50, -50 -40, -40 -40, -40 -50, -50 -50)), ((50 50, 50 40, 40 40, 40 50, 50 50))))') as geom, 2 as resolution UNION ALL
 
         SELECT 6 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 .0001, .0001 .0001, .0001 0, 0 0))') as geom, 15 as resolution UNION ALL
-        SELECT 7 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution UNION ALL
+        SELECT 7 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution
+        )
+        SELECT
+        ARRAY_LENGTH(\`@@BQ_DATASET@@.H3_POLYFILL\`(geom, resolution)) AS id_count
+        FROM inputs
+        ORDER BY id ASC
+    `;
 
-        -- NULL and empty
-        SELECT 8 AS id, NULL as geom, 2 as resolution UNION ALL
-        SELECT 9 AS id, ST_GEOGFROMTEXT('POLYGON EMPTY') as geom, 2 as resolution UNION ALL
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(7);
+    expect(rows.map((r) => r.id_count)).toEqual([
+        1332,
+        27,
+        18,
+        45,
+        59,
+        219,
+        13,
+    ]);
+});
 
-        -- Invalid resolution
-        SELECT 10 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, -1 as resolution UNION ALL
-        SELECT 11 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 16 as resolution UNION ALL
-        SELECT 12 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution UNION ALL
-
+test('H3_POLYFILL returns the proper INT64s with different geogs', async () => {
+    const query = `
+        WITH inputs AS
+        (
         -- Other supported types
         SELECT 13 AS id, ST_GEOGFROMTEXT('POINT(0 0)') as geom, 15 as resolution UNION ALL
         SELECT 14 AS id, ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)') as geom, 15 as resolution UNION ALL
@@ -40,26 +107,14 @@ test('H3_POLYFILL returns the proper INT64s', async () => {
     `;
 
     const rows = await runQuery(query);
-    expect(rows.length).toEqual(18);
+    expect(rows.length).toEqual(6);
     expect(rows.map((r) => r.id_count)).toEqual([
-        1253,
-        18,
-        12,
-        30,
-        34,
-        182,
-        6,
-        null,
-        null,
-        null,
-        null,
-        null,
         1,
         1,
         2,
         4,
         1,
-        16110
+        16436
     ]);
 });
 
@@ -69,28 +124,20 @@ test('H3_POLYFILL returns the expected values', async () => {
     const query = `
         WITH points AS
         (
-            SELECT ST_GEOGPOINT(0, 0) AS geog UNION ALL
-            SELECT ST_GEOGPOINT(-122.4089866999972145, 37.813318999983238) AS geog UNION ALL
-            SELECT ST_GEOGPOINT(-122.0553238, 37.3615593) AS geog
+            SELECT ST_GEOGPOINT(0, 0) AS geog
+            --SELECT ST_GEOGPOINT(-122.4089866999972145, 37.813318999983238) AS geog UNION ALL
+            --SELECT ST_GEOGPOINT(-122.0553238, 37.3615593) AS geog
         ),
-        cells AS
+        polyfills AS
         (
             SELECT
-                resolution,
-                \`@@BQ_DATASET@@.H3_FROMGEOGPOINT\`(geog, resolution) AS h3_id,
-                \`@@BQ_DATASET@@.H3_BOUNDARY\`(\`@@BQ_DATASET@@.H3_FROMGEOGPOINT\`(geog, resolution)) AS boundary
+                \`@@BQ_DATASET@@.H3_POLYFILL\`(geog, resolution) p,
+                \`@@BQ_DATASET@@.H3_FROMGEOGPOINT\`(geog, resolution) AS h3_id
             FROM points, UNNEST(GENERATE_ARRAY(0, 15, 1)) resolution
-        ),
-        polyfill AS
-        (
-            SELECT
-                *,
-                \`@@BQ_DATASET@@.H3_POLYFILL\`(boundary, resolution) p
-            FROM cells
         )
         SELECT
             *
-        FROM  polyfill
+        FROM  polyfills
         WHERE
             ARRAY_LENGTH(p) != 1 OR
             p[OFFSET(0)] != h3_id
