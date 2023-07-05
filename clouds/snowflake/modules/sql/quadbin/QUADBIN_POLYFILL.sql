@@ -98,7 +98,7 @@ AS $$
             WHERE ST_INTERSECTS(@@SF_DATASET@@.QUADBIN_BOUNDARY(quadbin), geog
             ))
         ))
-    )
+    );
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS
