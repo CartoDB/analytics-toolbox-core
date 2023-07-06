@@ -8,7 +8,7 @@ H3_POLYFILL(geography, resolution)
 
 Returns an array with all the H3 cell indexes which intersect a given polygon, line or point. It will return `null` on error (invalid geography type or resolution out of bounds).
 
-This function is equivalent to using [`H3_POLYFILL_MODE](h3#h3_polyfill) with mode `intersects`. If th input geometry is a polygon check that function for more options and better performance.
+This function is equivalent to using [`H3_POLYFILL_MODE](h3#h3_polyfill) with mode `intersects`. If the input geometry is a polygon check that function for more options and better performance.
 
 * `geography`: `GEOGRAPHY` representing the area to cover.
 * `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
