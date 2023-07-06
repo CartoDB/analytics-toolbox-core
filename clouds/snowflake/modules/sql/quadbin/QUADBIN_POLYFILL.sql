@@ -142,18 +142,18 @@ AS $$
     WITH
     _init AS (
         SELECT
-            // TO_ARRAY(
-            //     PARSE_JSON(
-            //         @@SF_SCHEMA@@._QUADBIN_POLYFILL_JSINIT(
-            //             CAST(ST_ASGEOJSON(GEOG) AS STRING),
-            //             GREATEST(0, CAST(RESOLUTION-2 AS DOUBLE))
-            //         )
-            //     )
-            // ) AS quadbins_array
-            @@SF_SCHEMA@@._QUADBIN_POLYFILL_INIT(
-                        GEOG,
-                        GREATEST(0, resolution - 2)
+            TO_ARRAY(
+                PARSE_JSON(
+                    @@SF_SCHEMA@@._QUADBIN_POLYFILL_JSINIT(
+                        CAST(ST_ASGEOJSON(GEOG) AS STRING),
+                        GREATEST(0, CAST(RESOLUTION-2 AS DOUBLE))
+                    )
+                )
             ) AS quadbins_array
+            // @@SF_SCHEMA@@._QUADBIN_POLYFILL_INIT(
+            //             GEOG,
+            //             GREATEST(0, resolution - 2)
+            // ) AS quadbins_array
     ),
     _parents AS (
         SELECT
