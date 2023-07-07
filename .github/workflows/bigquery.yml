@@ -75,9 +75,6 @@ jobs:
           - project: ${{ secrets.BQ_PROJECT_CD }}
             bucket: ${{ secrets.BQ_BUCKET_CD }}
             region: ${{ secrets.BQ_REGION_CD }}
-          - project: ${{ secrets.BQ_PROJECT_CI }}
-            bucket: ${{ secrets.BQ_BUCKET_CI }}
-            region: ${{ secrets.BQ_REGION_CI }}
     env:
       BQ_PROJECT: ${{ matrix.project }}
       BQ_BUCKET: ${{ matrix.bucket }}

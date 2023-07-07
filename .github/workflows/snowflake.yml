@@ -68,11 +68,6 @@ jobs:
             user: ${{ secrets.SF_USER_CD }}
             password: ${{ secrets.SF_PASSWORD_CD }}
             role: ${{ secrets.SF_ROLE_CD }}
-          - account: ${{ secrets.SF_ACCOUNT_CI }}
-            database: ${{ secrets.SF_DATABASE_CI }}
-            user: ${{ secrets.SF_USER_CI }}
-            password: ${{ secrets.SF_PASSWORD_CI }}
-            role: ${{ secrets.SF_ROLE_CI }}
     env:
       SF_ACCOUNT: ${{ matrix.account }}
       SF_DATABASE: ${{ matrix.database }}

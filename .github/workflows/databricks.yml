@@ -79,9 +79,6 @@ jobs:
           - cluster_id: ${{ secrets.DB_CLUSTER_ID_CD }}
             http_path: ${{ secrets.DB_HTTP_PATH_CD }}
             host: ${{ secrets.DB_HOST_CD }}
-          - cluster_id: ${{ secrets.DB_CLUSTER_ID_CI }}
-            http_path: ${{ secrets.DB_HTTP_PATH_CI }}
-            host: ${{ secrets.DB_HOST_CI }}
     env:
       DB_CLUSTER_ID: ${{ matrix.cluster_id }}
       DB_HTTP_PATH: ${{ matrix.http_path }}
