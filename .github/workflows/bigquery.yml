@@ -69,10 +69,19 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - project: ${{ secrets.BQ_PROJECT_CD }}
+            bucket: ${{ secrets.BQ_BUCKET_CD }}
+            region: ${{ secrets.BQ_REGION_CD }}
+          - project: ${{ secrets.BQ_PROJECT_CI }}
+            bucket: ${{ secrets.BQ_BUCKET_CI }}
+            region: ${{ secrets.BQ_REGION_CI }}
     env:
-      BQ_PROJECT: ${{ secrets.BQ_PROJECT_CD }}
-      BQ_BUCKET: ${{ secrets.BQ_BUCKET_CD }}
-      BQ_REGION: ${{ secrets.BQ_REGION_CD }}
+      BQ_PROJECT: ${{ matrix.project }}
+      BQ_BUCKET: ${{ matrix.bucket }}
+      BQ_REGION: ${{ matrix.region }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
