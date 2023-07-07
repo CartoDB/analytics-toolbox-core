@@ -5,6 +5,7 @@ test('QUADBIN_POLYFILL should work', async () => {
     17), ',') AS OUTPUT`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].OUTPUT).toEqual(
-        '5265786693163941887,5265786693164466175,5265786693153193983,5265786693164728319,5265786693165514751,5265786693164204031');
+    const out = (rows[0].OUTPUT).split(',').sort().join(',')
+    expect(out).toEqual(
+        '5265786693153193983,5265786693163941887,5265786693164204031,5265786693164466175,5265786693164728319,5265786693165514751');
 });
