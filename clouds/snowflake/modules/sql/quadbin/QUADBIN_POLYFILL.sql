@@ -139,115 +139,158 @@ CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS
 (geog GEOGRAPHY, resolution INT)
 RETURNS ARRAY
 AS $$
-    WITH
-    _init AS (
-        SELECT
-            TO_ARRAY(
-                PARSE_JSON(
-                    -- Uncomment this line to use ther JS version
-                    -- of the POLYFILL init
-                    -- @@SF_SCHEMA@@._QUADBIN_POLYFILL_JSINIT(
-                    @@SF_SCHEMA@@._QUADBIN_POLYFILL_INIT(
-                        CAST(ST_ASGEOJSON(GEOG) AS STRING),
-                        GREATEST(0, CAST(RESOLUTION-2 AS DOUBLE))
-                    )
+        IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 26,
+            NULL,(
+            WITH
+                _init AS (
+                    SELECT
+                        TO_ARRAY(
+                            PARSE_JSON(
+                                -- Uncomment this line to use ther JS version
+                                -- of the POLYFILL init
+                                -- @@SF_SCHEMA@@._QUADBIN_POLYFILL_JSINIT(
+                                @@SF_SCHEMA@@._QUADBIN_POLYFILL_INIT(
+                                    CAST(ST_ASGEOJSON(GEOG) AS STRING),
+                                    GREATEST(0, CAST(RESOLUTION-2 AS DOUBLE))
+                                )
+                            )
+                        ) AS quadbins_array
+                ),
+                _parents AS (
+                    SELECT
+                        cast(res.value as bigint) AS parent_quadbin
+                    FROM
+                        _init,
+                        lateral FLATTEN(quadbins_array) as res
+                ),
+                _childrens AS (
+                    SELECT
+                        @@SF_SCHEMA@@.QUADBIN_TOCHILDREN(parent_quadbin, resolution) as child
+                    FROM _parents
                 )
-            ) AS quadbins_array
-    ),
-    _parents AS (
-        SELECT
-            cast(res.value as bigint) AS parent_quadbin
-        FROM
-            _init,
-            lateral FLATTEN(quadbins_array) as res
-    ),
-    _childrens AS (
-        SELECT
-            @@SF_SCHEMA@@.QUADBIN_TOCHILDREN(parent_quadbin, resolution) as child
-        FROM _parents
+                SELECT ARRAY_UNION_AGG(child)
+                FROM _childrens
+            )
+        ))
     )
-    SELECT ARRAY_UNION_AGG(child)
-    FROM _childrens
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_INTERSECTS
 (geog GEOGRAPHY, resolution INT)
 RETURNS ARRAY
 AS $$
-    WITH
-    _childrens_array AS (
-        SELECT
-            @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS(geog, resolution) as child
-    ),
-    _childrens AS (
-        SELECT
-            res.value AS child
-        FROM
-            _childrens_array,
-            LATERAL FLATTEN(child) AS res
+        IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 26,
+            NULL,(
+            WITH
+                _childrens_array AS (
+                    SELECT
+                        @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS(geog, resolution) as child
+                ),
+                _childrens AS (
+                    SELECT
+                        res.value AS child
+                    FROM
+                        _childrens_array,
+                        LATERAL FLATTEN(child) AS res
+                )
+                SELECT ARRAY_UNION_AGG(child)
+                FROM _childrens
+                WHERE ST_INTERSECTS(geog, @@SF_SCHEMA@@.QUADBIN_BOUNDARY(child))
+            )
+        ))
     )
-    SELECT ARRAY_UNION_AGG(child)
-    FROM _childrens
-    WHERE ST_INTERSECTS(geog, @@SF_SCHEMA@@.QUADBIN_BOUNDARY(child))
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_CONTAINS
 (geog GEOGRAPHY, resolution INT)
 RETURNS ARRAY
 AS $$
-    WITH
-    _childrens_array AS (
-        SELECT
-            @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS(geog, resolution) as child
-    ),
-    _childrens AS (
-        SELECT
-            res.value AS child
-        FROM
-            _childrens_array,
-            LATERAL FLATTEN(child) AS res
+        IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 26,
+            NULL,(
+            WITH
+                _childrens_array AS (
+                    SELECT
+                        @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS(geog, resolution) as child
+                ),
+                _childrens AS (
+                    SELECT
+                        res.value AS child
+                    FROM
+                        _childrens_array,
+                        LATERAL FLATTEN(child) AS res
+                )
+                SELECT ARRAY_UNION_AGG(child)
+                FROM _childrens
+                WHERE ST_CONTAINS(geog, @@SF_SCHEMA@@.QUADBIN_BOUNDARY(child))
+            )
+        ))
     )
-    SELECT ARRAY_UNION_AGG(child)
-    FROM _childrens
-    WHERE ST_CONTAINS(geog, @@SF_SCHEMA@@.QUADBIN_BOUNDARY(child))
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_CENTER
 (geog GEOGRAPHY, resolution INT)
 RETURNS ARRAY
 AS $$
-    WITH
-    _childrens_array AS (
-        SELECT
-            @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS(geog, resolution) as child
-    ),
-    _childrens AS (
-        SELECT
-            res.value AS child
-        FROM
-            _childrens_array,
-            LATERAL FLATTEN(child) AS res
+    IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 26,
+            NULL,(
+            WITH
+                _childrens_array AS (
+                    SELECT
+                        @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDRENS(geog, resolution) as child
+                ),
+                _childrens AS (
+                    SELECT
+                        res.value AS child
+                    FROM
+                        _childrens_array,
+                        LATERAL FLATTEN(child) AS res
+                )
+                SELECT ARRAY_UNION_AGG(child)
+                FROM _childrens
+                WHERE ST_INTERSECTS(geog, @@SF_SCHEMA@@.QUADBIN_CENTER(child))
+            )
+        ))
     )
-    SELECT ARRAY_UNION_AGG(child)
-    FROM _childrens
-    WHERE ST_INTERSECTS(geog, @@SF_SCHEMA@@.QUADBIN_CENTER(child))
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_POLYFILL_MODE
 (geog GEOGRAPHY, resolution INT, mode STRING)
 RETURNS ARRAY
 AS $$
-    SELECT
-        CASE mode
-            WHEN 'intersects' THEN @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geog, resolution)
-            WHEN 'contains' THEN @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_CONTAINS(geog, resolution)
-            WHEN 'center' THEN @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_CENTER(geog, resolution)
-        END
+    IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 26,
+            NULL,(
+            SELECT
+                CASE mode
+                    WHEN 'intersects' THEN @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geog, resolution)
+                    WHEN 'contains' THEN @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_CONTAINS(geog, resolution)
+                    WHEN 'center' THEN @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_CENTER(geog, resolution)
+                END
+            )
+        ))
+    )
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_POLYFILL
 (geog GEOGRAPHY, resolution INT)
 RETURNS ARRAY
 AS $$
-    SELECT @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geog, resolution)
+        IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+            NULL, (
+            IFF(resolution < 0 OR resolution > 26,
+                NULL,(
+                SELECT
+                    @@SF_SCHEMA@@._QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geog, resolution)
+                )
+            ))
+        )
 $$;
