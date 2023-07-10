@@ -2,31 +2,63 @@ const { runQuery } = require('../../../common/test-utils');
 
 test('QUADBIN_POLYFILL_MODE all modes wrong input', async () => {
     const modes = [
-        'intersects', 'contains', 'center'
+        'intersects',
+        'contains',
+        'center'
     ]
     const inputs = [
         // NULL and empty
-        "SELECT 0 AS id, NULL as geom, 2 as resolution",
-        "SELECT 1 AS id, ST_GEOGFROMTEXT('POLYGON EMPTY') as geom, 2 as resolution",
-
+        {
+            geom: null,
+            resolution: 2,
+            center: null,
+            intersects: null,
+            contains: null
+        },
+        {
+            geom: "ST_GEOGFROMTEXT('POLYGON EMPTY')",
+            resolution: 2,
+            center: 'raise',
+            intersects: 'raise',
+            contains: 'raise'
+        },
         // Invalid resolution
-        "SELECT 2 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, -1 as resolution",
-        "SELECT 3 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, 16 as resolution",
-        "SELECT 4 AS id, ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution"
+        {
+            geom: "ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))')",
+            resolution: -1,
+            center: null,
+            intersects: null,
+            contains: null
+        },
+        {
+            geom: "ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))')",
+            resolution: 27,
+            center: null,
+            intersects: null,
+            contains: null
+        },
+        {
+            geom: "ST_GEOGFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))')",
+            resolution: null,
+            center: null,
+            intersects: null,
+            contains: null
+        },
     ]
-    for (mode in modes) {
-        for (input in inputs) {
+    for await (mode of modes) {
+        for await (input of inputs) {
             const query = `
-                WITH inputs AS
-                (
-                    ${input}
-                )
                 SELECT
-                    QUADBIN_POLYFILL_MODE(geom, resolution, '${mode}') AS results
-                FROM inputs
-                ORDER BY id ASC
+                    QUADBIN_POLYFILL_MODE(${input.geom}, ${input.resolution}, '${mode}') AS results
             `;
-            await expect( runQuery(query) ).rejects.toThrow(Error);
+            console.log(query)
+            if (input[mode] == 'raise') {
+                await expect( runQuery(query) ).rejects.toThrow(Error);
+            } else {
+                const rows = await runQuery(query);
+                expect(rows.length).toEqual(1);
+                expect(rows.map((r) => r.RESULTS)).toEqual([input[mode]]);
+            }
         }
     }
 });
