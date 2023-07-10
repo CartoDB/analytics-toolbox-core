@@ -63,17 +63,17 @@ jobs:
     strategy:
       matrix:
         include:
-          - account: ${{ secrets.SF_ACCOUNT_CD }}
-            database: ${{ secrets.SF_DATABASE_CD }}
-            user: ${{ secrets.SF_USER_CD }}
-            password: ${{ secrets.SF_PASSWORD_CD }}
-            role: ${{ secrets.SF_ROLE_CD }}
+          - account: SF_ACCOUNT_CD
+            database: SF_DATABASE_CD
+            user: SF_USER_CD
+            password: SF_PASSWORD_CD
+            role: SF_ROLE_CD
     env:
-      SF_ACCOUNT: ${{ matrix.account }}
-      SF_DATABASE: ${{ matrix.database }}
-      SF_USER: ${{ matrix.user }}
-      SF_PASSWORD: ${{ matrix.password }}
-      SF_ROLE: ${{ matrix.role }}
+      SF_ACCOUNT: ${{ secrets[matrix.account] }}
+      SF_DATABASE: ${{ secrets[matrix.database] }}
+      SF_USER: ${{ secrets[matrix.user] }}
+      SF_PASSWORD: ${{ secrets[matrix.password] }}
+      SF_ROLE: ${{ secrets[matrix.role] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

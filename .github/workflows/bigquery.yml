@@ -72,13 +72,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - project: ${{ secrets.BQ_PROJECT_CD }}
-            bucket: ${{ secrets.BQ_BUCKET_CD }}
-            region: ${{ secrets.BQ_REGION_CD }}
+          - project: BQ_PROJECT_CD
+            bucket: BQ_BUCKET_CD
+            region: BQ_REGION_CD
     env:
-      BQ_PROJECT: ${{ matrix.project }}
-      BQ_BUCKET: ${{ matrix.bucket }}
-      BQ_REGION: ${{ matrix.region }}
+      BQ_PROJECT: ${{ secrets[matrix.project] }}
+      BQ_BUCKET: ${{ secrets[matrix.bucket] }}
+      BQ_REGION: ${{ secrets[matrix.region] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -88,13 +88,13 @@ jobs:
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.BQCARTOCD_DEPLOY_CLOUD_EXTENSIONS_SA_BASE64 }}
-          project_id: ${{ env.BQ_PROJECT_CD }}
+          project_id: ${{ env.BQ_PROJECT }}
           create_credentials_file: true
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
         with:
             version: ${{ env.GCLOUD_VERSION }}
-            project_id: ${{ env.BQ_PROJECT_CD }}
+            project_id: ${{ env.BQ_PROJECT }}
       - name: Run deploy
         run: |
           cd clouds/bigquery

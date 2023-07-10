@@ -76,13 +76,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - cluster_id: ${{ secrets.DB_CLUSTER_ID_CD }}
-            http_path: ${{ secrets.DB_HTTP_PATH_CD }}
-            host: ${{ secrets.DB_HOST_CD }}
+          - cluster_id: DB_CLUSTER_ID_CD
+            http_path: DB_HTTP_PATH_CD
+            host: DB_HOST_CD
     env:
-      DB_CLUSTER_ID: ${{ matrix.cluster_id }}
-      DB_HTTP_PATH: ${{ matrix.http_path }}
-      DB_HOST: ${{ matrix.host }}
+      DB_CLUSTER_ID: ${{ secrets[matrix.cluster_id] }}
+      DB_HTTP_PATH: ${{ secrets[matrix.http_path] }}
+      DB_HOST: ${{ secrets[matrix.host] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

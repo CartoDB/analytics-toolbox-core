@@ -76,28 +76,31 @@ jobs:
     strategy:
       matrix:
         include:
-          - host: ${{ secrets.RS_HOST_CD }}
-            database: ${{ secrets.RS_DATABASE_CD }}
-            user: ${{ secrets.RS_USER_CD }}
-            password: ${{ secrets.RS_PASSWORD_CD }}
-            bucket: ${{ secrets.RS_BUCKET_CD }}
-            aws_access_key_id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CD }}
-            aws_secret_access_key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
-          - host: ${{ secrets.RS_HOST_CI }}
-            database: ${{ secrets.RS_DATABASE_CI }}
-            user: ${{ secrets.RS_USER_CI }}
-            password: ${{ secrets.RS_PASSWORD_CI }}
-            bucket: ${{ secrets.RS_BUCKET_CI }}
-            aws_access_key_id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
-            aws_secret_access_key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
+          - host: RS_HOST_CD
+            database: RS_DATABASE_CD
+            user: RS_USER_CD
+            password: RS_PASSWORD_CD
+            bucket: RS_BUCKET_CD
+            region: RS_REGION_CD
+            aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CD
+            aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CD
+          - host: RS_HOST_CI
+            database: RS_DATABASE_CI
+            user: RS_USER_CI
+            password: RS_PASSWORD_CI
+            bucket: RS_BUCKET_CI
+            region: RS_REGION_CI
+            aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CI
+            aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CI
     env:
-      RS_HOST: ${{ matrix.host }}
-      RS_DATABASE: ${{ matrix.database }}
-      RS_USER: ${{ matrix.user }}
-      RS_PASSWORD: ${{ matrix.password }}
-      RS_BUCKET: ${{ matrix.bucket }}
-      AWS_ACCESS_KEY_ID: ${{ matrix.aws_access_key_id }}
-      AWS_SECRET_ACCESS_KEY: ${{ matrix.aws_secret_access_key }}
+      RS_HOST: ${{ secrets[matrix.host] }}
+      RS_DATABASE: ${{ secrets[matrix.database] }}
+      RS_USER: ${{ secrets[matrix.user] }}
+      RS_PASSWORD: ${{ secrets[matrix.password] }}
+      RS_BUCKET: ${{ secrets[matrix.bucket] }}
+      RS_REGION: ${{ secrets[matrix.region] }}
+      AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key_id] }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -120,9 +123,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CD }}
-          aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
-          aws-region: ${{ secrets.RS_REGION_CD }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.RS_REGION }}
       - name: Run deploy
         run: |
           cd clouds/redshift
