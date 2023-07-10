@@ -31,7 +31,7 @@ test('QUADBIN_POLYFILL_MODE all modes wrong input', async () => {
     }
 });
 
-test('H3_POLYFILL_MODE polygons multiple modes', async () => {
+test('QUADBIN_POLYFILL_MODE polygons multiple modes', async () => {
     const modes = [
         'intersects',
         'contains',
@@ -110,7 +110,7 @@ test('H3_POLYFILL_MODE polygons multiple modes', async () => {
     }
 });
 
-test('H3_POLYFILL_MODE other geom types', async () => {
+test('QUADBIN_POLYFILL_MODE other geom types', async () => {
     const modes = [
         'intersects',
         'contains',
