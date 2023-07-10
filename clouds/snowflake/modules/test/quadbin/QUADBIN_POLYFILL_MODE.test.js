@@ -110,3 +110,75 @@ test('H3_POLYFILL_MODE polygons multiple modes', async () => {
     }
 });
 
+test('H3_POLYFILL_MODE other geom types', async () => {
+    const modes = [
+        'intersects',
+        'contains',
+        'center'
+    ]
+    const inputs = [
+        {
+            geom: "ST_GEOGFROMTEXT('POINT(0 0)')",
+            resolution: 15,
+            center: 0,
+            intersects: 1,
+            contains: 0
+        },
+        {
+            geom: "ST_GEOGFROMTEXT('MULTIPOINT(0 0, 1 1)')",
+            resolution: 15,
+            center: 0,
+            intersects: 2,
+            contains: 0
+        },
+        {
+            geom: "ST_GEOGFROMTEXT('LINESTRING(0 0, 1 1)')",
+            resolution: 3,
+            center: 0,
+            intersects: 2,
+            contains: 0
+        },
+        {
+            geom: "ST_GEOGFROMTEXT('MULTILINESTRING((0 0, 1 1), (2 2, 3 3))')",
+            resolution: 3,
+            center: 0,
+            intersects: 2,
+            contains: 0
+        },
+        // a geometry collection containing only not supported types)
+        {
+            geom: "ST_GEOGFROMTEXT('GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))')",
+            resolution: 1,
+            center: 0,
+            intersects: 4,
+            contains: 'raise'
+        },
+        // Polygon larger than 180 degrees
+        {
+            geom: `TO_GEOGRAPHY('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}')`,
+            resolution: 3,
+            center: 2,
+            intersects: 11,
+            contains: 1
+        }
+    ]
+    for await (const mode of modes) {
+        for await (const input of inputs) {
+            const query = `
+                SELECT
+                ARRAY_SIZE(
+                    QUADBIN_POLYFILL_MODE(${input.geom}, ${input.resolution}, '${mode}')
+                ) AS id_count
+            `;
+            if (input[mode] == 'raise') {
+                console.log("rise")
+                await expect( runQuery(query) ).rejects.toThrow(Error);
+            } else {
+                const rows = await runQuery(query);
+                console.log(mode, rows)
+                expect(rows.length).toEqual(1);
+                expect(rows.map((r) => r.ID_COUNT)).toEqual([input[mode]]);
+            }
+        }
+    }
+});
