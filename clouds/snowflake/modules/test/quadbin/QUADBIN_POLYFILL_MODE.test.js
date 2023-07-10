@@ -43,7 +43,7 @@ test('QUADBIN_POLYFILL_MODE all modes wrong input', async () => {
             center: null,
             intersects: null,
             contains: null
-        },
+        }
     ]
     for await (mode of modes) {
         for await (input of inputs) {
@@ -187,7 +187,7 @@ test('QUADBIN_POLYFILL_MODE other geom types', async () => {
         },
         // Polygon larger than 180 degrees
         {
-            geom: `TO_GEOGRAPHY('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}')`,
+            geom: 'TO_GEOGRAPHY(\'{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}\')',
             resolution: 3,
             center: 2,
             intersects: 11,
@@ -203,7 +203,7 @@ test('QUADBIN_POLYFILL_MODE other geom types', async () => {
                 ) AS id_count
             `;
             if (input[mode] == 'raise') {
-                console.log("rise")
+                console.log('rise')
                 await expect( runQuery(query) ).rejects.toThrow(Error);
             } else {
                 const rows = await runQuery(query);
