@@ -26,16 +26,16 @@ AS $$
     let polygonCoordinatesB = [];
     switch(featureGeometry.type) {
         case 'GeometryCollection':
-            featureGeometry.geometries.forEach(function (geog) {
-                if (geog.type === 'MultiPolygon') {
-                    var clippedGeometryA = h3PolyfillLib.bboxClip(geog, bboxA).geometry;
+            featureGeometry.geometries.forEach(function (geom) {
+                if (geom.type === 'MultiPolygon') {
+                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates);
-                    var clippedGeometryB = h3PolyfillLib.bboxClip(geog, bboxB).geometry;
+                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates);
-                } else if (geog.type === 'Polygon') {
-                    var clippedGeometryA = h3PolyfillLib.bboxClip(geog, bboxA).geometry;
+                } else if (geom.type === 'Polygon') {
+                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
                     polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
-                    var clippedGeometryB = h3PolyfillLib.bboxClip(geog, bboxB).geometry;
+                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
                     polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
                 }
             });
@@ -88,22 +88,22 @@ RETURNS DOUBLE
 IMMUTABLE
 AS $$
     SELECT CASE resolution
-    WHEN 0 THEN 1281256.011
-    WHEN 1 THEN 483056.8391
-    WHEN 2 THEN 182512.9565
-    WHEN 3 THEN 68979.22179
-    WHEN 4 THEN 26071.75968
-    WHEN 5 THEN 9854.090990
-    WHEN 6 THEN 3724.532667
-    WHEN 7 THEN 1406.475763
-    WHEN 8 THEN 531.414010
-    WHEN 9 THEN 200.786148
-    WHEN 10 THEN 75.863783
-    WHEN 11 THEN 28.663897
-    WHEN 12 THEN 10.830188
-    WHEN 13 THEN 4.092010
-    WHEN 14 THEN 1.546100
-    WHEN 15 THEN 0.584169
+    WHEN 0 THEN  CAST(1281256.011 AS DOUBLE)
+    WHEN 1 THEN  CAST(483056.8391 AS DOUBLE)
+    WHEN 2 THEN  CAST(182512.9565 AS DOUBLE)
+    WHEN 3 THEN  CAST(68979.22179 AS DOUBLE)
+    WHEN 4 THEN  CAST(26071.75968 AS DOUBLE)
+    WHEN 5 THEN  CAST(9854.090990 AS DOUBLE)
+    WHEN 6 THEN  CAST(3724.532667 AS DOUBLE)
+    WHEN 7 THEN  CAST(1406.475763 AS DOUBLE)
+    WHEN 8 THEN  CAST(531.414010 AS DOUBLE)
+    WHEN 9 THEN  CAST(200.786148 AS DOUBLE)
+    WHEN 10 THEN CAST(75.863783 AS DOUBLE)
+    WHEN 11 THEN CAST(28.663897 AS DOUBLE)
+    WHEN 12 THEN CAST(10.830188 AS DOUBLE)
+    WHEN 13 THEN CAST(4.092010 AS DOUBLE)
+    WHEN 14 THEN CAST(1.546100 AS DOUBLE)
+    WHEN 15 THEN CAST(0.584169 AS DOUBLE)
     ELSE
         NULL
     END
@@ -118,20 +118,17 @@ AS $$
         NULL, (
         IFF(resolution < 0 OR resolution > 15,
             NULL,(
-                CASE
-                WHEN resolution < 0 OR resolution > 15 THEN NULL
-                WHEN resolution IS NULL OR geog IS NULL THEN NULL
-                ELSE
-                    @@SF_SCHEMA@@._H3_POLYFILL_GEOJSON(
+                SELECT
+                @@SF_SCHEMA@@._H3_POLYFILL_GEOJSON(
+                    CAST(
                         ST_ASGEOJSON(
                             ST_BUFFER(
-                                geog,
+                                TO_GEOMETRY(ST_ASGEOJSON(geog)),
                                 @@SF_SCHEMA@@._H3_AVG_EDGE_LENGTH(resolution)
                             )
-                        ),
-                        resolution
-                    )
-                END
+                    ) AS STRING),
+                    CAST(resolution AS DOUBLE)
+                )
             )
         ))
     )
@@ -153,16 +150,12 @@ AS $$
             WITH
                 _init AS (
                     SELECT
-                        TO_ARRAY(
-                            PARSE_JSON(
-                                -- Uncomment this line to use ther JS version
-                                -- of the POLYFILL init
-                                -- @@SF_SCHEMA@@._H3_POLYFILL_JSINIT(
-                                @@SF_SCHEMA@@._H3_POLYFILL_INIT(
-                                    CAST(ST_ASGEOJSON(GEOG) AS STRING),
-                                    GREATEST(0, CAST(RESOLUTION-2 AS DOUBLE))
-                                )
-                            )
+                        -- Uncomment this line to use ther JS version
+                        -- of the POLYFILL init
+                        -- @@SF_SCHEMA@@._H3_POLYFILL_JSINIT(
+                        @@SF_SCHEMA@@._H3_POLYFILL_INIT(
+                            GEOG,
+                            GREATEST(0, CAST(RESOLUTION-2 AS DOUBLE))
                         ) AS H3s_array
                 ),
                 _parents AS (
@@ -211,6 +204,62 @@ AS $$
             )
         ))
      )
+$$;
+
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_CHILDREN_CONTAINS
+(geog GEOGRAPHY, resolution INT)
+RETURNS ARRAY
+AS $$
+        IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 15,
+            NULL,(
+            WITH
+                _childrens_array AS (
+                    SELECT
+                        @@SF_SCHEMA@@._H3_POLYFILL_CHILDRENS(geog, resolution) as child
+                ),
+                _childrens AS (
+                    SELECT
+                        res.value AS child
+                    FROM
+                        _childrens_array,
+                        LATERAL FLATTEN(child) AS res
+                )
+                SELECT ARRAY_UNION_AGG(child)
+                FROM _childrens
+                WHERE ST_CONTAINS(geog, @@SF_SCHEMA@@.H3_BOUNDARY(child))
+            )
+        ))
+    )
+$$;
+
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_CHILDREN_CENTER
+(geog GEOGRAPHY, resolution INT)
+RETURNS ARRAY
+AS $$
+    IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
+        NULL, (
+        IFF(resolution < 0 OR resolution > 15,
+            NULL,(
+            WITH
+                _childrens_array AS (
+                    SELECT
+                        @@SF_SCHEMA@@._H3_POLYFILL_CHILDRENS(geog, resolution) as child
+                ),
+                _childrens AS (
+                    SELECT
+                        res.value AS child
+                    FROM
+                        _childrens_array,
+                        LATERAL FLATTEN(child) AS res
+                )
+                SELECT ARRAY_UNION_AGG(child)
+                FROM _childrens
+                WHERE ST_INTERSECTS(geog, @@SF_SCHEMA@@.H3_CENTER(child))
+            )
+        ))
+    )
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL_MODE
