@@ -49,7 +49,7 @@ test('QUADBIN_POLYFILL_MODE all modes wrong input', async () => {
         for await (input of inputs) {
             const query = `
                 SELECT
-                    QUADBIN_POLYFILL_MODE(${input.geom}, ${input.resolution}, '${mode}') AS results
+                    QUADBIN_POLYFILL(${input.geom}, ${input.resolution}, '${mode}') AS results
             `;
             console.log(query)
             if (input[mode] == 'raise') {
@@ -128,7 +128,7 @@ test('QUADBIN_POLYFILL_MODE polygons multiple modes', async () => {
             const query = `
                 SELECT
                 ARRAY_SIZE(
-                    QUADBIN_POLYFILL_MODE(${input.geom}, ${input.resolution}, '${mode}')
+                    QUADBIN_POLYFILL(${input.geom}, ${input.resolution}, '${mode}')
                 ) AS id_count
             `;
             if (input[mode] == 'raise') {
@@ -199,15 +199,13 @@ test('QUADBIN_POLYFILL_MODE other geom types', async () => {
             const query = `
                 SELECT
                 ARRAY_SIZE(
-                    QUADBIN_POLYFILL_MODE(${input.geom}, ${input.resolution}, '${mode}')
+                    QUADBIN_POLYFILL(${input.geom}, ${input.resolution}, '${mode}')
                 ) AS id_count
             `;
             if (input[mode] == 'raise') {
-                console.log('rise')
                 await expect( runQuery(query) ).rejects.toThrow(Error);
             } else {
                 const rows = await runQuery(query);
-                console.log(mode, rows)
                 expect(rows.length).toEqual(1);
                 expect(rows.map((r) => r.ID_COUNT)).toEqual([input[mode]]);
             }
