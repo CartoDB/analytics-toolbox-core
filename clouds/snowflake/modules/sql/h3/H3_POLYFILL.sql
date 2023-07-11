@@ -2,7 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.__H3_POLYFILL_GEOJSON
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_GEOJSON
 (geojson STRING, input_resolution DOUBLE)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
@@ -82,7 +82,7 @@ $$;
 //     @@SF_SCHEMA@@._H3_POLYFILL(CAST(ST_ASGEOJSON(GEOG) AS STRING), CAST(RESOLUTION AS DOUBLE))
 // $$;
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.__H3_AVG_EDGE_LENGTH
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_AVG_EDGE_LENGTH
 (resolution INTEGER)
 RETURNS DOUBLE
 IMMUTABLE
@@ -107,12 +107,12 @@ AS $$
     ELSE
         NULL
     END
-$$
+$$;
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.__H3_POLYFILL_INIT
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_INIT
 (geog GEOGRAPHY, resolution INTEGER)
 RETURNS ARRAY
-AIMMUTABLE
+IMMUTABLE
 AS $$
     IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
         NULL, (
@@ -122,11 +122,11 @@ AS $$
                 WHEN resolution < 0 OR resolution > 15 THEN NULL
                 WHEN resolution IS NULL OR geog IS NULL THEN NULL
                 ELSE
-                    @@SF_SCHEMA@@.__H3_POLYFILL_GEOJSON(
+                    @@SF_SCHEMA@@._H3_POLYFILL_GEOJSON(
                         ST_ASGEOJSON(
                             ST_BUFFER(
                                 geog,
-                                @@SF_SCHEMA@@.__H3_AVG_EDGE_LENGTH(resolution)
+                                @@SF_SCHEMA@@._H3_AVG_EDGE_LENGTH(resolution)
                             )
                         ),
                         resolution
@@ -135,7 +135,7 @@ AS $$
             )
         ))
     )
-$$
+$$;
 
 -- Utility function to optimize polyfill unzooming and getting childrens
 -- of unzoomed parents. Thios would allow server side SQL parallelization
