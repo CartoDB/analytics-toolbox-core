@@ -23,11 +23,11 @@ def test_h3_polyfill_wrong_input():
         """  # noqa
     )
     assert len(result) == 5
-    assert result[0][0] == None
-    assert result[1][0] == None
-    assert result[2][0] == None
-    assert result[3][0] == None
-    assert result[4][0] == None
+    assert result[0][0] is None
+    assert result[1][0] is None
+    assert result[2][0] is None
+    assert result[3][0] is None
+    assert result[4][0] is None
 
 
 def test_h3_polyfill_polygons():
@@ -95,10 +95,10 @@ def test_h3_polyfill_other_geometries():
 
 def test_h3_polyfill_points():
     """Returns the expected values."""
-    
-    # to reproduce the same test as old implementation would need to test with mode='center'
-    # the reason is that if using H3_POLYFILL (e.g. mode='intersects')  also the
-    # boundary H3 are get.
+    # to reproduce the same test as old implementation would need to
+    # test with mode='center'
+    # the reason is that if using H3_POLYFILL (e.g. mode='intersects')
+    # also the boundary H3 are get.
     # => modifying the test to check that only touching H3 are returned
     result = run_query(
         """
