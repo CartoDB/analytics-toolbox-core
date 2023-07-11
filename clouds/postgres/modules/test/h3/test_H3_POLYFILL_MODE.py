@@ -17,7 +17,7 @@ def test_h3_polyfill_mode_wrong_input():
                 SELECT 4 AS id, ST_GEOMFROMTEXT('POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))') as geom, NULL as resolution
             )
             SELECT
-            @@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'center') AS results
+            @@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'center') AS results
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -47,7 +47,7 @@ def test_h3_polyfill_mode_center_polygons():
                 SELECT 7 AS id, ST_GEOMFROMTEXT('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution
             )
             SELECT
-            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'center'), 1) AS id_count
+            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'center'), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -79,7 +79,7 @@ def test_h3_polyfill_mode_intersects_polygons():
                 SELECT 7 AS id, ST_GEOMFROMTEXT('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution
             )
             SELECT
-            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'intersects'), 1) AS id_count
+            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'intersects'), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -111,7 +111,7 @@ def test_h3_polyfill_mode_contains_polygons():
                 SELECT 7 AS id, ST_GEOMFROMTEXT('POLYGON((0 0, 0 50, 50 50, 50 0, 0 0))') as geom, 0 as resolution
             )
             SELECT
-            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'contains'), 1) AS id_count
+            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'contains'), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -143,7 +143,7 @@ def test_h3_polyfill_mode_center_other_geometries():
                 SELECT 5 AS id, ST_GEOMFROMGEOJSON('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
             )
             SELECT
-            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'center'), 1) AS id_count
+            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'center'), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -174,7 +174,7 @@ def test_h3_polyfill_mode_intersects_other_geometries():
                 SELECT 5 AS id, ST_GEOMFROMGEOJSON('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
             )
             SELECT
-            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'intersects'), 1) AS id_count
+            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'intersects'), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -205,7 +205,7 @@ def test_h3_polyfill_mode_contains_other_geometries():
                 SELECT 5 AS id, ST_GEOMFROMGEOJSON('{"type":"Polygon","coordinates":[[[-161.44993041898587,-3.77971025880735],[129.99811811657568,-3.77971025880735],[129.99811811657568,63.46915831771922],[-161.44993041898587,63.46915831771922],[-161.44993041898587,-3.77971025880735]]]}') as geom, 3 as resolution
             )
             SELECT
-            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'contains'), 1) AS id_count
+            ARRAY_LENGTH(@@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'contains'), 1) AS id_count
             FROM inputs
             ORDER BY id ASC
         """  # noqa
@@ -242,7 +242,7 @@ def test_h3_polyfill_mode_center_points():
             polyfill AS
             (
                 SELECT
-                    @@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'center') p
+                    @@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'center') p
                 FROM points
             )
             SELECT
@@ -279,7 +279,7 @@ def test_h3_polyfill_mode_intersects_points():
             polyfill AS
             (
                 SELECT
-                    @@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'intersects') p
+                    @@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'intersects') p
                 FROM points
             )
             SELECT
@@ -316,7 +316,7 @@ def test_h3_polyfill_mode_contains_points():
             polyfill AS
             (
                 SELECT
-                    @@PG_SCHEMA@@.H3_POLYFILL_MODE(geom, resolution, 'contains') p
+                    @@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'contains') p
                 FROM points
             )
             SELECT
