@@ -116,7 +116,7 @@ IMMUTABLE
 AS $$
     IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
         NULL, (
-        IFF(resolution < 0 OR resolution > 26,
+        IFF(resolution < 0 OR resolution > 15,
             NULL,(
                 CASE
                 WHEN resolution < 0 OR resolution > 15 THEN NULL
@@ -148,7 +148,7 @@ IMMUTABLE
 AS $$
         IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
         NULL, (
-        IFF(resolution < 0 OR resolution > 26,
+        IFF(resolution < 0 OR resolution > 15,
             NULL,(
             WITH
                 _init AS (
@@ -191,7 +191,7 @@ IMMUTABLE
 AS $$
     IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
         NULL, (
-        IFF(resolution < 0 OR resolution > 26,
+        IFF(resolution < 0 OR resolution > 15,
             NULL,(
             WITH
                 _childrens_array AS (
@@ -220,7 +220,7 @@ IMMUTABLE
 AS $$
     IFF(geog IS NULL OR resolution IS NULL or NOT ST_ISVALID(geog),
         NULL, (
-        IFF(resolution < 0 OR resolution > 26,
+        IFF(resolution < 0 OR resolution > 15,
             NULL,(
             SELECT
                 CASE mode
