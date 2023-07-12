@@ -4,11 +4,17 @@
 H3_POLYFILL_MODE(geography, resolution, mode)
 ```
 
-**Brief**
+**Description**
 
 This function is similar to [`H3_POLYFILL`](h3#h3_polyfill), but allows more control over how polygons are respresented by H3 cells.
 
-**Parameters**
+It can operates on three modes:
+
+* `intersects` is equivalent to [`H3_POLYFILL`](h3#h3_polyfill) and returns the indices of the H3 cells that intersect the input polygon. The resulting H3 will completely cover the input polygon. This could be used with line or point geometries, but we recommend using [`H3_POLYFILL`](h3#h3_polyfill) with those. This is the least performant mode.
+* `center` returns the indices of the H3 cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the H3 cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
+* `contains` return the indices of the H3 cells that are completely inside the input polygon.
+
+It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained equivalent to [`H3_FROMGEOPOINT`](h3#h3_fromgeopoint) results
 
 * `geography`: `GEOGRAPHY` representing the area to cover.
 * `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
@@ -20,17 +26,6 @@ This function is similar to [`H3_POLYFILL`](h3#h3_polyfill), but allows more con
 **Return type**
 
 `ARRAY<STRING>`
-
-
-**Description**
-
-The command can operate on three modes:
-
-* `intersects` is equivalent to [`H3_POLYFILL`](h3#h3_polyfill) and returns the indices of the H3 cells that intersect the input polygon. The resulting H3 will completely cover the input polygon. This could be used with line or point geometries, but we recommend using [`H3_POLYFILL`](h3#h3_polyfill) with those. This is the least performant mode.
-* `center` returns the indices of the H3 cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the H3 cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
-* `contains` return the indices of the H3 cells that are completely inside the input polygon.
-
-It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained equivalent to [`H3_FROMGEOPOINT`](h3#h3_fromgeopoint) results
 
 **Example**
 
