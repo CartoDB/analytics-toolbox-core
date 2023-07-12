@@ -42,7 +42,7 @@ Unnesting array result allow quadbin visualization in Carto platfom.
 ```sql
 SELECT quadbin
 FROM UNNEST(carto.QUADBIN_POLYFILL_MODE(
-    ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
+  ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
     9, 'center')
 ) AS quadbin;
 
