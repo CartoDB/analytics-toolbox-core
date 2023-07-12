@@ -36,7 +36,18 @@ It will return `null` on error (invalid geography type or resolution out of boun
 
 **Example**
 
-Unnesting array result allow quadbin visualization in Carto platfom.
+```sql
+SELECT
+    carto.H3_POLYFILL(
+        ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4
+    );
+-- {842da29ffffffff,
+--  843f725ffffffff,
+--  843eac1ffffffff,
+--  8453945ffffffff,
+--   ...
+```
+Unnesting array result allow H3 visualization in Carto platfom.
 ```sql
 SELECT 
     UNNEST(
