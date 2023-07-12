@@ -30,27 +30,22 @@ It will return `null` on error (invalid geography type or resolution out of boun
 **Example**
 
 ```sql
-SELECT
-    carto.QUADBIN_POLYFILL_MODE(
-        ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
-        9,
-        'intersects'
-    );
+SELECT carto.H3_POLYFILL_MODE(
+  ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
+  9, 'center'
+);
 -- [5229574977296007167, 5229668762201882623, 5229668813741490175]
 ```
 
 Unnesting array result allow quadbin visualization in Carto platfom.
 
 ```sql
-SELECT
-    quadbins
-FROM
-    UNNEST(
-        carto.QUADBIN_POLYFILL_MODE(
-            ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
-            9,
-            'intersects')
-        ) as quadbins;
+SELECT quadbin
+FROM UNNEST(
+  carto.QUADBIN_POLYFILL_MODE(
+    ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
+    9, 'center')
+) AS quadbin;
 
 -- 5229574977296007167
 -- 5229668762201882623
