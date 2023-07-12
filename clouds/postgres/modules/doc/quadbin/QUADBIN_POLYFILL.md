@@ -3,13 +3,19 @@
 ```sql:signature
 QUADBIN_POLYFILL(geometry, resolution [, mode])
 ```
-**Brief**
+**Description**
 
 Returns an array with all the QUADBIN cell indexes which intersect a given polygon, line or point. It will return `null` on error (invalid geometry type or resolution out of bounds).
 
 This function is equivalent to using [`QUADBIN_POLYFILL](quadbin#quadbin_polyfill) with parameter `mode` = `intersects`. If the input geometry is a polygon check that function for more options and better performance.
 
-**Parameters**
+It can operates on three modes:
+
+* `intersects` returns the indices of the QUADBIN cells that intersect the input polygon. The resulting QUADBIN will completely cover the input polygon. This is the least performant mode.
+* `center` returns the indices of the QUADBIN cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the QUADBIN cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
+* `contains` return the indices of the QUADBIN cells that are completely inside the input polygon.
+
+It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the QUADBIN cell indexes intersecting those lines. For a given point, it will return the QUADBIN index of cell in which that point is contained equivalent to [`QUADBIN_FROMGEOPOINT`](quadbin#quadbin_fromgeopoint) results
 
 * `geometry`: `GEOMETRY` **polygon** or **multipolygon** representing the area to cover.
 * `resolution`: `INT` number between 0 and 15 with the [Quadbin resolution](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-bigquery/key-concepts/spatial-indexes#quadbin).
@@ -21,17 +27,6 @@ This function is equivalent to using [`QUADBIN_POLYFILL](quadbin#quadbin_polyfil
 **Return type**
 
 `BIGINT[]`
-
-**Description**
-
-The command can operate on three modes:
-
-* `intersects` returns the indices of the QUADBIN cells that intersect the input polygon. The resulting QUADBIN will completely cover the input polygon. This is the least performant mode.
-* `center` returns the indices of the QUADBIN cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the QUADBIN cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
-* `contains` return the indices of the QUADBIN cells that are completely inside the input polygon.
-
-It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the QUADBIN cell indexes intersecting those lines. For a given point, it will return the QUADBIN index of cell in which that point is contained equivalent to [`QUADBIN_FROMGEOPOINT`](quadbin#quadbin_fromgeopoint) results
-
 
 **Example**
 
