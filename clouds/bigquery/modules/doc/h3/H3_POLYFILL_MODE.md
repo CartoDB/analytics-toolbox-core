@@ -36,8 +36,8 @@ It will return `null` on error (invalid geography type or resolution out of boun
 
 ```sql
 SELECT carto.H3_POLYFILL_MODE(
-    ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
-    7, 'center'
+  ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
+  7, 'center'
 );
 -- [872aa1400ffffff, 872aa1401ffffff, 872aa1402ffffff, 872aa1403ffffff, ...]
 ```
@@ -47,9 +47,9 @@ Unnesting array result allow H3 visualization in Carto platfom.
 ```sql
 SELECT h3
 FROM UNNEST(carto.H3_POLYFILL_MODE(
-    ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
-    7, 'center')
-) as h3;
+  ST_GEOGFROM('POLYGON((-77.158 41.031, -77.358 40.807, -76.838 40.902, -76.913 41.142, -77.158 41.031))'),
+  7, 'center')
+) AS h3;
 -- 872aa1400ffffff
 -- 872aa1401ffffff
 -- 872aa1402ffffff
