@@ -8,7 +8,7 @@ env:
   NODE_VERSION: 14
   PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.8.10
-  VIRTUALENV_VERSION: 20.21.1
+  VIRTUALENV_VERSION: 20.15.1
 
 jobs:
 
@@ -51,14 +51,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup python 2
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON2_VERSION }}
-      - name: Setup python 3
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup yarn
+        run: npm install -g yarn
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get -y install rsync zip unzip curl glibc-source groff less
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
