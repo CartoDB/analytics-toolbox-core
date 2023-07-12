@@ -22,11 +22,8 @@ This function is equivalent to using [`H3_POLYFILL_MODE](h3#h3_polyfill) with mo
 ```sql
 SELECT carto.H3_POLYFILL(
     ST_GEOGFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
--- {846b26bffffffff,
---  843e8b1ffffffff,
---  842d1e5ffffffff,
---  843ece5ffffffff,
--- ...
+-- [846b26bffffffff, 843e8b1ffffffff, 842d1e5ffffffff, ...]
+
 ```
 
 Unnesting array result allow H3 visualization in Carto platfom.

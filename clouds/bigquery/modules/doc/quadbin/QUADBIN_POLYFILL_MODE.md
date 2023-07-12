@@ -36,9 +36,7 @@ SELECT
         9,
         'intersects'
     );
--- {5229574977296007167,
---  5229668762201882623,
---  5229668813741490175}
+-- [5229574977296007167, 5229668762201882623, 5229668813741490175]
 ```
 
 Unnesting array result allow quadbin visualization in Carto platfom.

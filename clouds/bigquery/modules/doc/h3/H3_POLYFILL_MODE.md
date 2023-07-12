@@ -40,13 +40,7 @@ SELECT carto.H3_POLYFILL_MODE(
     7,
     'center'
 );
--- {872aa1400ffffff,
---  872aa1401ffffff,
---  872aa1402ffffff,
---  872aa1403ffffff,
---  872aa1404ffffff,
---  872aa1405ffffff,
--- ...
+-- [872aa1400ffffff, 872aa1401ffffff, 872aa1402ffffff, 872aa1403ffffff, ...]
 ```
 
 Unnesting array result allow H3 visualization in Carto platfom.
