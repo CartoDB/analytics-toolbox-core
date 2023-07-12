@@ -22,7 +22,6 @@ This function is equivalent to using [`H3_POLYFILL](h3#h3_polyfill) with paramet
 
 `VARCHAR(16)[]`
 
-
 **Description**
 
 The command can operate on three modes:
@@ -37,24 +36,17 @@ It will return `null` on error (invalid geography type or resolution out of boun
 **Example**
 
 ```sql
-SELECT
-    carto.H3_POLYFILL(
-        ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4
-    );
--- {842da29ffffffff,
---  843f725ffffffff,
---  843eac1ffffffff,
---  8453945ffffffff,
---   ...
+SELECT carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
+-- [842da29ffffffff, 843f725ffffffff, 843eac1ffffffff, 8453945ffffffff, ...]
 ```
+
 Unnesting array result allow H3 visualization in Carto platfom.
+
 ```sql
-SELECT 
-    UNNEST(
-        carto.H3_POLYFILL(
-            ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4
-        )
-    );
+SELECT UNNEST(carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4)
+);
 -- 842da29ffffffff
 -- 843f725ffffffff
 -- 843eac1ffffffff
