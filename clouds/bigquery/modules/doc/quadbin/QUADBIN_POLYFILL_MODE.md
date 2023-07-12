@@ -22,7 +22,7 @@ It will return `null` on error (invalid geography type or resolution out of boun
 
 **Return type**
 
-`ARRAY<STRING>`
+`ARRAY<INT64>`
 
 **Example**
 
