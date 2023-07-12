@@ -10,7 +10,8 @@ Returns an array with all the QUADBIN cell indexes which intersect a given polyg
 
 This function is equivalent to using [`QUADBIN_POLYFILL`](quadbin#quadbin_polyfill) with parameter `mode` = `intersects`. If the input geometry is a polygon check that function for more options and better performance.
 
-It can operate on three modes:
+It can operates on three modes:
+
 * `intersects` returns the indices of the QUADBIN cells that intersect the input polygon. The resulting QUADBIN will completely cover the input polygon. This is the least performant mode.
 * `center` returns the indices of the QUADBIN cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the QUADBIN cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
 * `contains` return the indices of the QUADBIN cells that are completely inside the input polygon.

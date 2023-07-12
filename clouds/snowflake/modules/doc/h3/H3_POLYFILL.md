@@ -10,7 +10,7 @@ Returns an array with all the H3 cell indexes which intersect a given polygon, l
 
 This function is equivalent to using [`H3_POLYFILL](h3#h3_polyfill) with parameter `mode` = `intersects`. If the input geometry is a polygon check that function for more options and better performance.
 
-The command can operate on three modes:
+It can operates on three modes:
 
 * `intersects` returns the indices of the H3 cells that intersect the input polygon. The resulting H3 will completely cover the input polygon. This is the least performant mode.
 * `center` returns the indices of the H3 cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the H3 cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
