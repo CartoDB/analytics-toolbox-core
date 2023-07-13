@@ -7,7 +7,7 @@ All notable commits to this project will be documented in this file.
 ## 2023-07-11
 
 - chore(bq,rs,pg|quadbin): update QUADBIN_FROMLONGLAT formula (#409, #411)
-- chore(bq,rs,pg|quadbin): optimize QUADBIN_TOCHILDREN in all clouds (#412, #413)
+- chore(bq,rs,pg|quadbin): optimize QUADBIN_TOCHILDREN performance (#412, #413)
 - chore(bq,sf,pg): introduce skip_progress_bar option to allow deploying faster (#416, #419)
 - chore(all): use matrix in deploy internal and deploy in ci (#430, #433)
 - fix(rs): update github actions to prevents python2 incompatibility (#431, #434)

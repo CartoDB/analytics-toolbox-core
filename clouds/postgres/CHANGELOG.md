@@ -7,7 +7,7 @@ All notable commits to this project will be documented in this file.
 ## [1.1.1] - 2023-07-11
 
 - chore(quadbin): update QUADBIN_FROMLONGLAT formula (#409, #411)
-- chore(quadbin): optimize QUADBIN_TOCHILDREN in all clouds (#412, #413)
+- chore(quadbin): optimize QUADBIN_TOCHILDREN performance (#412, #413)
 
 ## [1.1.0] - 2023-05-05
 
