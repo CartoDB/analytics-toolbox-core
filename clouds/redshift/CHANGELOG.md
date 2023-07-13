@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.0.2] - 2023-07-11
+
+- chore(quadbin): update QUADBIN_FROMLONGLAT formula (#409, #411)
+- chore(quadbin): optimize QUADBIN_TOCHILDREN in all clouds (#412, #413)
+
 ## [1.0.1] - 2023-03-06
 
 - chore: add initial version of cat-installer script (#386)
