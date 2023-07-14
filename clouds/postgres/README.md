@@ -11,19 +11,20 @@ Make sure you have installed the following tools:
 - `jq`: <https://stedolan.github.io/jq/> (v1.6)
 - `virtualenv`: <https://virtualenv.pypa.io/en/latest/> (v20.11)
 
-### Python version issuse with numpy
+### Python version issue with Numpy
 
-`make build-modules` will fail in case of `Python3.10.x` due to lack of `numpy` package compatible with this python version.
-Unfortunally Ubuntu 20.4 LTS install Python 3.10.6 by default
-To solve the issue Install a lower version e.g. under ubuntu:
+`make build-modules` will fail in the case of `Python3.10.x` due to the lack of `numpy` package compatible with this Python version.
+
+Unfortunately, Ubuntu 20.4 LTS installs Python 3.10.6 by default. To solve the issue Install a lower version e.g. under Ubuntu:
+
 ```
 apt install software-properties-common
 # add repo with python packages
 add-apt-repository ppa:deadsnakes/ppa
 apt install python3.9-full python3.9-distutils
 ```
-then modify []./common/Makefile](https://github.com/CartoDB/analytics-toolbox-core/blob/main/clouds/postgres/common/Makefile#L3) python version
-used to setup virtual env
+
+Then, modify the Python version used to set up the virtualenv in [./common/Makefile](https://github.com/CartoDB/analytics-toolbox-core/blob/main/clouds/postgres/common/Makefile#L3).
 
 ## Environment variables
 
