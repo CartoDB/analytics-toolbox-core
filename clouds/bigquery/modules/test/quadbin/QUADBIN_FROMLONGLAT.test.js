@@ -28,3 +28,57 @@ test('QUADBIN_FROMLONGLAT should throw an error for resolution overflow', async 
     const query = 'SELECT `@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(40.4168, -3.7038, 27) AS output';
     await expect(runQuery(query)).rejects.toThrow();
 });
+
+test('QUADBIN_FROMLONGLAT highest resolution', async () => {
+    let query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(-3.71219873428345, 40.413365349070865, 26) AS STRING) AS output';
+    let rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5306319089810035706');
+
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(40.413365349070865, -3.71219873428345, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5308641755410858449');
+
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 3.552713678800501e-15, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5308618060762972160');
+
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, -3.552713678800501e-15, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5308618060762972160');
+
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(-89.71219873428345, -84.413365349070865, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5308521992464067502');
+
+    // set of call giving the same result with slightly different lat
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 5.3644180297851546e-06, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5307116860887181994');
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 5.364418029785155e-06, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5307116860887181994');
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 5.364418029785156e-06, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5307116860887181994');
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 5.364418029785157e-06, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5307116860887181994');
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 5.364418029785158e-06, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5307116860887181994');
+    query = 'SELECT CAST(`@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(0.0, 5.364418029785156e-06, 26) AS STRING) AS output';
+    rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].output).toEqual('5307116860887181994');
+    
+});

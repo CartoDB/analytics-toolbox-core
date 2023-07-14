@@ -73,10 +73,16 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - cluster_id: DB_CLUSTER_ID_CD
+            http_path: DB_HTTP_PATH_CD
+            host: DB_HOST_CD
     env:
-      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CD }}
-      DB_HTTP_PATH: ${{ secrets.DB_HTTP_PATH_CD }}
-      DB_HOST: ${{ secrets.DB_HOST_CD }}
+      DB_CLUSTER_ID: ${{ secrets[matrix.cluster_id] }}
+      DB_HTTP_PATH: ${{ secrets[matrix.http_path] }}
+      DB_HOST: ${{ secrets[matrix.host] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

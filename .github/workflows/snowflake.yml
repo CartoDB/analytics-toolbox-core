@@ -60,12 +60,20 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - account: SF_ACCOUNT_CD
+            database: SF_DATABASE_CD
+            user: SF_USER_CD
+            password: SF_PASSWORD_CD
+            role: SF_ROLE_CD
     env:
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
-      SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
-      SF_USER: ${{ secrets.SF_USER_CD }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
-      SF_ROLE: ${{ secrets.SF_ROLE_CD }}
+      SF_ACCOUNT: ${{ secrets[matrix.account] }}
+      SF_DATABASE: ${{ secrets[matrix.database] }}
+      SF_USER: ${{ secrets[matrix.user] }}
+      SF_PASSWORD: ${{ secrets[matrix.password] }}
+      SF_ROLE: ${{ secrets[matrix.role] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

@@ -59,11 +59,22 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - host: PG_HOST_CD
+            database: PG_DATABASE_CD
+            user: PG_USER_CD
+            password: PG_PASSWORD_CD
+          - host: PG_HOST_CI
+            database: PG_DATABASE_CI
+            user: PG_USER_CI
+            password: PG_PASSWORD_CI
     env:
-      PG_HOST: ${{ secrets.PG_HOST_CD }}
-      PG_DATABASE: ${{ secrets.PG_DATABASE_CD }}
-      PG_USER: ${{ secrets.PG_USER_CD }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CD }}
+      PG_HOST: ${{ secrets[matrix.host] }}
+      PG_DATABASE: ${{ secrets[matrix.database] }}
+      PG_USER: ${{ secrets[matrix.user] }}
+      PG_PASSWORD: ${{ secrets[matrix.password] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
