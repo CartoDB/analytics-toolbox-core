@@ -67,3 +67,19 @@ SELECT carto.ST_CONCAVEHULL(
   );
 --  { "coordinates": [ -75.833, 39.284 ], "type": "Point" }
 ```
+
+If points are stored in a table, a query like the one below can be used (multiple polygons are generated in this case, one for each `cluster_id` value):
+
+```sql
+WITH _array AS (
+    SELECT
+        cluster_id,
+        ARRAY_AGG(ST_ASGEOJSON(geom)::STRING) as geomarray
+    from mytable
+    group by cluster_id
+)
+SELECT
+    carto.ST_CONCAVEHULL(geomarray) as geom,
+    cluster_id
+from _array
+```
