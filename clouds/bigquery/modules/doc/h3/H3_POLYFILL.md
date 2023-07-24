@@ -1,35 +1,44 @@
 ## H3_POLYFILL
 
 ```sql:signature
-H3_POLYFILL(geography, resolution)
+H3_POLYFILL(geog, resolution)
 ```
 
 **Description**
 
-Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained.
+Returns an array of H3 cell indexes that intersect with the given geography at a given level of detail.
 
-````hint:info
-**warning**
+* `geog`: `GEOGRAPHY` representing the area to cover.
+* `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 
-Lines polyfill is calculated by approximating S2 cells to H3 cells, in some cases some cells might be missing.
-
-````
-
-* `geography`: `GEOGRAPHY` representing the area to cover.
-* `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
+```hint:info
+This function is equivalent to using [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `intersects`. If the input geography is a polygon check that function for more options and better performance.
+```
 
 **Return type**
 
 `ARRAY<STRING>`
 
-**Example**
+**Examples**
 
 ```sql
 SELECT carto.H3_POLYFILL(
-    ST_GEOGFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
--- 846b26bffffffff
--- 843e8b1ffffffff
--- 842d1e5ffffffff
--- 843ece5ffffffff
--- ...
+  ST_GEOGFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+);
+-- [89390cb1b5bffff, 89390ca34b3ffff, 89390ca3487ffff, 89390ca3497ffff, 89390cb1b4bffff, 89390cb1b4fffff]
+```
+
+```sql
+SELECT h3
+FROM UNNEST(carto.H3_POLYFILL(
+  ST_GEOGFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+)) AS h3;
+-- 89390cb1b5bffff
+-- 89390ca34b3ffff
+-- 89390ca3487ffff
+-- 89390ca3497ffff
+-- 89390cb1b4bffff
+-- 89390cb1b4fffff
 ```

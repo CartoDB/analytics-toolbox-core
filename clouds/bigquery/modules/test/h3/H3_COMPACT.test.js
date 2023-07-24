@@ -2,7 +2,7 @@ const { runQuery } = require('../../../common/test-utils');
 
 test('Work as expected with NULLish values', async () => {
     let query = `
-        SELECT 
+        SELECT
         \`@@BQ_DATASET@@.H3_COMPACT\`(NULL) as c,
         \`@@BQ_DATASET@@.H3_UNCOMPACT\`(NULL, 5) as u
     `;
@@ -38,7 +38,7 @@ test('Work with polyfill arrays', async () => {
 
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].original).toEqual(1253);
-    expect(rows[0].compacted).toEqual(209);
-    expect(rows[0].uncompacted).toEqual(1253);
+    expect(rows[0].original).toEqual(1331);
+    expect(rows[0].compacted).toEqual(221);
+    expect(rows[0].uncompacted).toEqual(1331);
 });
