@@ -42,6 +42,6 @@ def test_h3_compact_polyfill():
         """  # noqa
     )
     assert len(result) == 1
-    assert result[0][0] == 1321
-    assert result[0][1] == 211
-    assert result[0][2] == 1321
+    assert result[0][0] == 1333
+    assert result[0][1] == 229
+    assert result[0][2] == 1333

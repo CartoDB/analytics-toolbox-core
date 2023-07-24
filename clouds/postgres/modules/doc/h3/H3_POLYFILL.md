@@ -1,66 +1,71 @@
 ## H3_POLYFILL
 
 ```sql:signature
-H3_POLYFILL(geometry, resolution [, mode])
+H3_POLYFILL(geom, resolution [, mode])
 ```
+
 **Description**
 
-Returns an array with all the H3 cell indexes which intersect a given polygon, line or point. It will return `null` on error (invalid geometry type or resolution out of bounds).
+Returns an array of H3 cell indexes that intersect with the given geography at a given level of detail. This function allows control on how H3 cells are computed. It can operates on three modes: intersects, contains, center.
 
-This function is equivalent to using [`H3_POLYFILL](h3#h3_polyfill) with parameter `mode` = `intersects`. If the input geometry is a polygon check that function for more options and better performance.
+* `geom`: `GEOMETRY` representing the area to cover.
+* `resolution`: `INT` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
+* `mode` (optional): `VARCHAR`
+  * `intersects` (default) returns the indexes of the H3 cells that intersect the input geometry. The resulting H3 set will completely cover the input geometry (point, line, polygon).
+  * `contains` returns the indexes of the H3 cells that are entirely contained inside the input geometry (polygon). This mode is not compatible with points or lines.
+  * `center` returns the indexes of the H3 cells which centers intersect the input geometry (polygon). The resulting H3 set does not fully cover the input geometry, however this is significantly faster that the other modes. This mode is not compatible with points or lines.
 
-It can operates on three modes:
+Mode `intersects`:
 
-* `intersects` returns the indices of the H3 cells that intersect the input polygon. The resulting H3 will completely cover the input polygon. This is the least performant mode.
-* `center` returns the indices of the H3 cells that have its center within the input polygon. This doesn't guarantee that the polygon is fully covered by the H3 cells, nor that all the cells are completely within the polygon. This mode is the most performant (results will be obtained faster).
-* `contains` return the indices of the H3 cells that are completely inside the input polygon.
+![intersects](./images/H3_POLYFILL_MODE_intersects.png)
 
-It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained equivalent to [`H3_FROMGEOPOINT`](h3#h3_fromgeopoint) results
+Mode `contains`:
 
-* `geometry`: `GEOMETRY` **polygon** or **multipolygon** representing the area to cover.
-* `resolution`: `INT` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
-* `mode` (optional): `TEXT` one of
-    * `intersects` (default)
-    * `center`
-    * `contains`.
+![contains](./images/H3_POLYFILL_MODE_contains.png)
+
+Mode `center`:
+
+![center](./images/H3_POLYFILL_MODE_center.png)
 
 **Return type**
 
 `VARCHAR(16)[]`
 
-**Example**
+**Examples**
 
 ```sql
 SELECT carto.H3_POLYFILL(
-  ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
--- [842da29ffffffff, 843f725ffffffff, 843eac1ffffffff, 8453945ffffffff, ...]
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+);
+-- [89390ca3497ffff, 89390ca34b3ffff, 89390cb1b4bffff, 89390cb1b5bffff]
 ```
-
-Unnesting array result allow H3 visualization in Carto platfom.
 
 ```sql
-SELECT UNNEST(carto.H3_POLYFILL(
-  ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4)
-);
--- 842da29ffffffff
--- 843f725ffffffff
--- 843eac1ffffffff
--- 8453945ffffffff
---   ...
+SELECT h3
+FROM UNNEST(carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+)) AS h3;
+-- 89390ca3497ffff
+-- 89390ca34b3ffff
+-- 89390cb1b4bffff
+-- 89390cb1b5bffff
 ```
 
-For example, given this polygon:
+```sql
+SELECT carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9, 'center'
+);
+-- [89390cb1b4bffff]
+```
 
-![polygon](./images/H3_POLYFILL_MODE_01_polygon.png)
-
-The resulting cells with mode `center` are:
-
-![polygon](./images/H3_POLYFILL_MODE_02_center.png)
-
-Mode `intersects`:
-
-![polygon](./images/H3_POLYFILL_MODE_03_intersects.png)
-
-Mode `contains`:
-
-![polygon](./images/H3_POLYFILL_MODE_04_contains.png)
+```sql
+SELECT h3
+FROM UNNEST(carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9, 'center'
+)) AS h3;
+-- 89390cb1b4bffff
+```
