@@ -4,7 +4,7 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
-## [1.1.0] 2023-08-04
+## [1.1.0] - 2023-08-04
 
 - chore(quadbin,h3): optimize quadbin/h3 polyfill performance (#421)
 - feat(quadbin,h3): center as default mode in QUADBIN_POLYFILL and H3_POLYFILL (#439)
