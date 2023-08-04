@@ -4,6 +4,14 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2023-08-04
+
+- docs(sf): added example using array_agg for concave hull in SF (#437)
+- docs(db): fixed return type in ST_RELATE example (#440)
+- feat(bq,pg|quadbin,h3): center as default mode in QUADBIN_POLYFILL and H3_POLYFILL (#439)
+- chore(pg|quadbin,h3): optimize quadbin/h3 polyfill performance (#418)
+- chore(bq|quadbin,h3): optimize quadbin/h3 polyfill performance (#421)
+
 ## 2023-07-11
 
 - chore(bq,rs,pg|quadbin): update QUADBIN_FROMLONGLAT formula (#409, #411)
