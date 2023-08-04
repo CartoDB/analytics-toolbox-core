@@ -17,15 +17,15 @@ Returns an array of quadbin cell indexes contained in the given geometry at a gi
 
 Mode `center`:
 
-![center](./images/QUADBIN_POLYFILL_MODE_center.png)
+![](quadbin_polyfill_mode_center.png)
 
 Mode `intersects`:
 
-![intersects](./images/QUADBIN_POLYFILL_MODE_intersects.png)
+![](quadbin_polyfill_mode_intersects.png)
 
 Mode `contains`:
 
-![contains](./images/QUADBIN_POLYFILL_MODE_contains.png)
+![](quadbin_polyfill_mode_contains.png)
 
 **Return type**
 

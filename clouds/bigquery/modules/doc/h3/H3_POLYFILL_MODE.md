@@ -17,15 +17,15 @@ Returns an array of quadbin cell indexes contained in the given geography at a g
 
 Mode `center`:
 
-![center](./images/H3_POLYFILL_MODE_center.png)
+![](h3_polyfill_mode_center.png)
 
 Mode `intersects`:
 
-![intersects](./images/H3_POLYFILL_MODE_intersects.png)
+![](h3_polyfill_mode_intersects.png)
 
 Mode `contains`:
 
-![contains](./images/H3_POLYFILL_MODE_contains.png)
+![](h3_polyfill_mode_contains.png)
 
 **Return type**
 
