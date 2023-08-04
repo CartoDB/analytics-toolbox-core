@@ -6,8 +6,8 @@ All notable commits to this project will be documented in this file.
 
 ## [1.2.0] - 2023-08-04
 
-- feat(quadbin,h3): center as default mode in QUADBIN_POLYFILL and H3_POLYFILL (#439)
 - chore(quadbin,h3): optimize quadbin/h3 polyfill performance (#418)
+- feat(quadbin,h3): center as default mode in QUADBIN_POLYFILL and H3_POLYFILL (#439)
 
 ## [1.1.1] - 2023-07-11
 
