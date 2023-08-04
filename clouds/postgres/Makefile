@@ -35,7 +35,7 @@ lint-common: $(NODE_MODULES_DEV) venv3
 	eslint --config $(ROOT_DIR)/../../.eslintrc.js $(COMMON_DIR)/*.js --fix
 	echo "- Lint Markdown files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
 	echo "- Lint Python files"
 	$(VENV3_BIN)/brunette $(COMMON_DIR) --line-length=88 --single-quotes --quiet
 	$(VENV3_BIN)/flake8 $(COMMON_DIR) --max-line-length=88 --enable-extensions Q0 --ignore=D100,D103,D104,E203
