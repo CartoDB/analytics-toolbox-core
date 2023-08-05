@@ -41,3 +41,9 @@ FROM UNNEST(carto.QUADBIN_POLYFILL(
 -- 5265786693164466175
 -- 5265786693164728319
 ```
+
+```sql
+SELECT quadbin
+FROM <project>.<dataset>.<table>,
+  UNNEST(carto.QUADBIN_POLYFILL(geog, 17)) AS quadbin;
+```

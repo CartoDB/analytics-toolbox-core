@@ -136,7 +136,7 @@ AS ((
                 SELECT
                     IF(ST_DIMENSION(geog) = 0,
                         geog,
-                        `@@BQ_DATASET@@.ST_MAKEENVELOPE`(box.xmin, box.ymin, box.xmax, box.ymax)
+                        COALESCE(`@@BQ_DATASET@@.ST_MAKEENVELOPE`(box.xmin, box.ymin, box.xmax, box.ymax), geog)
                     ) AS bbox,
                     `@@BQ_DATASET@@.__H3_AVG_EDGE_LENGTH`(resolution) AS edge_length
                 FROM __bbox
@@ -144,7 +144,7 @@ AS ((
             __cells AS (
                 SELECT parent
                 FROM __params, UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_GEOJSON`(
-                    ST_ASGEOJSON(ST_BUFFER(bbox, edge_length)),
+                    ST_ASGEOJSON(ST_BUFFER(ST_SIMPLIFY(geog, edge_length / 10), edge_length)),
                     resolution
                 )) AS parent
                 WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.H3_BOUNDARY`(parent))

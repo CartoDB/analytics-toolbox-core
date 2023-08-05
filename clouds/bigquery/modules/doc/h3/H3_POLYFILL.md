@@ -39,3 +39,9 @@ FROM UNNEST(carto.H3_POLYFILL(
 )) AS h3;
 -- 89390cb1b4bffff
 ```
+
+```sql
+SELECT h3
+FROM <project>.<dataset>.<table>,
+  UNNEST(carto.H3_POLYFILL(geog, 9)) AS h3;
+```

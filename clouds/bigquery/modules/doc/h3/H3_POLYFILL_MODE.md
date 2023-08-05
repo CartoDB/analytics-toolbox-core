@@ -54,3 +54,9 @@ FROM UNNEST(carto.H3_POLYFILL_MODE(
 -- 89390cb1b4bffff
 -- 89390cb1b4fffff
 ```
+
+```sql
+SELECT h3
+FROM <project>.<dataset>.<table>,
+  UNNEST(carto.H3_POLYFILL_MODE(geog, 9, 'intersects')) AS h3;
+```

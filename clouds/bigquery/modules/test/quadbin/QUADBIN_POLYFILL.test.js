@@ -8,43 +8,51 @@ const polygon = 'POLYGON ((-3.71219873428345 40.413365349070865,-3.7144088745117
 const multiPolygon = 'MULTIPOLYGON (((-3.7102890014648438 40.412768896581476,-3.7081432342529297 40.41124946964811,-3.707242012023926 40.41370014129302,-3.7102890014648438 40.412768896581476)),((-3.71219873428345 40.413365349070865,-3.7144088745117 40.40965661286395,-3.70659828186035 40.409525904775634,-3.71219873428345 40.413365349070865),(-3.7122470136178776 40.41158984452673,-3.710165619422321 40.41109970196702,-3.711882233191852 40.41018475963737,-3.7122470136178776 40.41158984452673)))'
 
 test.each([
-    ['Point', 17, point, 'null'],
-    ['Line', 15, line, 'null'],
-    ['Polygon', 17, polygon, '["5265786693163941887","5265786693164466175","5265786693164728319"]'],
-    ['MultiPolygon',17, multiPolygon, '["5265786693163941887","5265786693164466175","5265786693164204031","5265786693164728319"]']
+    ['Point', 17, point, null],
+    ['Line', 15, line, null],
+    ['Polygon', 17, polygon, ['5265786693163941887','5265786693164466175','5265786693164728319']],
+    ['MultiPolygon',17, multiPolygon, ['5265786693163941887','5265786693164466175','5265786693164204031','5265786693164728319']]
 ])('QUADBIN_POLYFILL should work with %p at resolution %p', async (_, resolution, geom, output) => {
     const query = `SELECT TO_JSON_STRING(\`@@BQ_DATASET@@.QUADBIN_POLYFILL\`(
         ST_GEOGFROMTEXT('${geom}'), ${resolution})) AS output`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].output).toEqual(output);
+    if (output) {
+        expect(JSON.parse(rows[0].output).sort()).toEqual(output.sort());
+    } else {
+        expect(JSON.parse(rows[0].output)).toEqual(output);
+    }
 });
 
 test.each([
-    ['Point', 'center', 17, point, 'null'],
-    ['Point', 'contains', 17, point, 'null'],
-    ['Point', 'intersects', 17, point, '["5265786693164466175"]'],
-    ['MultiPoint', 'intersects', 16, multiPoint, '["5261283093537357823"]'],
-    ['MultiPoint', 'intersects', 17, multiPoint, '["5265786693163941887","5265786693164466175"]'],
-    ['MultiPoint', 'intersects', 19, multiPoint, '["5274793892419026943","5274793892418650111","5274793892419076095"]'],
-    ['Line', 'center', 15, line, 'null'],
-    ['Line', 'contains', 15, line, 'null'],
-    ['Line', 'intersects', 15, line, '["5256779493900550143","5256779493913133055"]'],
-    ['Line', 'intersects', 17, line, '["5265786693153193983","5265786693154766847","5265786693164466175","5265786693164728319"]'],
-    ['Line', 'intersects', 18, line, '["5270290292780564479","5270290292782006271","5270290292791640063","5270290292791771135","5270290292791705599","5270290292791836671","5270290292791902207","5270290292792033279"]'],
-    ['MultiLine', 'intersects', 15, multiLine, '["5256779493900550143","5256779493913133055"]'],
-    ['MultiLine', 'intersects', 17, multiLine, '["5265786693153193983","5265786693154766847","5265786693164466175","5265786693166039039","5265786693164728319","5265786693166301183"]'],
-    ['Polygon', 'wrong-mode', 10, polygon, 'null'],
-    ['Polygon', 'center', 17, polygon, '["5265786693163941887","5265786693164466175","5265786693164728319"]'],
-    ['Polygon', 'contains', 18, polygon, '["5270290292791705599"]'],
-    ['Polygon', 'intersects', 17, polygon, '["5265786693153193983","5265786693163941887","5265786693164466175","5265786693164204031","5265786693164728319","5265786693165514751"]'],
-    ['MultiPolygon', 'center', 17, multiPolygon, '["5265786693163941887","5265786693164466175","5265786693164204031","5265786693164728319"]'],
-    ['MultiPolygon', 'contains', 18, multiPolygon, 'null'],
-    ['MultiPolygon', 'intersects', 17, multiPolygon, '["5265786693153193983","5265786693163941887","5265786693164466175","5265786693074550783","5265786693164204031","5265786693164728319","5265786693075337215","5265786693164990463","5265786693165514751"]']
+    ['Point', 'center', 17, point, null],
+    ['Point', 'contains', 17, point, null],
+    ['Point', 'intersects', 17, point, ['5265786693164466175']],
+    ['MultiPoint', 'intersects', 16, multiPoint, ['5261283093537357823']],
+    ['MultiPoint', 'intersects', 17, multiPoint, ['5265786693163941887','5265786693164466175']],
+    ['MultiPoint', 'intersects', 19, multiPoint, ['5274793892419026943','5274793892418650111','5274793892419076095']],
+    ['Line', 'center', 15, line, null],
+    ['Line', 'contains', 15, line, null],
+    ['Line', 'intersects', 15, line, ['5256779493900550143','5256779493913133055']],
+    ['Line', 'intersects', 17, line, ['5265786693153193983','5265786693154766847','5265786693164466175','5265786693164728319']],
+    ['Line', 'intersects', 18, line, ['5270290292780564479','5270290292782006271','5270290292791640063','5270290292791771135','5270290292791705599','5270290292791836671','5270290292791902207','5270290292792033279']],
+    ['MultiLine', 'intersects', 15, multiLine, ['5256779493900550143','5256779493913133055']],
+    ['MultiLine', 'intersects', 17, multiLine, ['5265786693153193983','5265786693154766847','5265786693164466175','5265786693166039039','5265786693164728319','5265786693166301183']],
+    ['Polygon', 'wrong-mode', 10, polygon, null],
+    ['Polygon', 'center', 17, polygon, ['5265786693163941887','5265786693164466175','5265786693164728319']],
+    ['Polygon', 'contains', 18, polygon, ['5270290292791705599']],
+    ['Polygon', 'intersects', 17, polygon, ['5265786693153193983','5265786693163941887','5265786693164466175','5265786693164204031','5265786693164728319','5265786693165514751']],
+    ['MultiPolygon', 'center', 17, multiPolygon, ['5265786693163941887','5265786693164466175','5265786693164204031','5265786693164728319']],
+    ['MultiPolygon', 'contains', 18, multiPolygon, null],
+    ['MultiPolygon', 'intersects', 17, multiPolygon, ['5265786693153193983','5265786693163941887','5265786693164466175','5265786693074550783','5265786693164204031','5265786693164728319','5265786693075337215','5265786693164990463','5265786693165514751']]
 ])('QUADBIN_POLYFILL_MODE should work with %p mode %p at resolution %p', async (_, mode, resolution, geom, output) => {
     const query = `SELECT TO_JSON_STRING(\`@@BQ_DATASET@@.QUADBIN_POLYFILL_MODE\`(
         ST_GEOGFROMTEXT('${geom}'), ${resolution}, '${mode}')) AS output`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].output).toEqual(output);
+    if (output) {
+        expect(JSON.parse(rows[0].output).sort()).toEqual(output.sort());
+    } else {
+        expect(JSON.parse(rows[0].output)).toEqual(output);
+    }
 });
