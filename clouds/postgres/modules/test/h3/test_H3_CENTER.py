@@ -28,8 +28,8 @@ def test_h3_center_null_expected():
         """
             WITH ids AS
             (
-                SELECT 1 AS id, @@PG_SCHEMA@@.H3_CENTER('85283473fffffff') as bounds, ST_GEOMFROMTEXT('POINT(-121.9763759725512 37.34579337536848)') AS expected UNION ALL
-                SELECT 2 AS id, @@PG_SCHEMA@@.H3_CENTER('81623ffffffffff') as bounds, ST_GEOMFROMTEXT('POINT (58.157705839572586 10.447345187511033)') AS expected
+                SELECT 1 AS id, @@PG_SCHEMA@@.H3_CENTER('85283473fffffff') as bounds, ST_GEOMFROMTEXT('SRID=4326;POINT(-121.9763759725512 37.34579337536848)') AS expected UNION ALL
+                SELECT 2 AS id, @@PG_SCHEMA@@.H3_CENTER('81623ffffffffff') as bounds, ST_GEOMFROMTEXT('SRID=4326;POINT (58.157705839572586 10.447345187511033)') AS expected
             )
             SELECT
                 *
