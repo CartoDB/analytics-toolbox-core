@@ -11,21 +11,21 @@ Returns an array of quadbin cell indexes contained in the given geometry at a gi
 * `geom`: `GEOMETRY` representing the shape to cover.
 * `resolution`: `INT` level of detail. The value must be between 0 and 26.
 * `mode` (optional): `VARCHAR`
-  * `center` (default) returns the indexes of the quadbin cells which centers intersect the input geometry (polygon). The resulting quadbin set does not fully cover the input geometry, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines. Equivalent to [`QUADBIN_POLYFILL`](quadbin#quadbin_polyfill).
+  * `center` (default) returns the indexes of the quadbin cells which centers intersect the input geometry (polygon). The resulting quadbin set does not fully cover the input geometry, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines.
   * `intersects` returns the indexes of the quadbin cells that intersect the input geometry. The resulting quadbin set will completely cover the input geometry (point, line, polygon).
   * `contains` returns the indexes of the quadbin cells that are entirely contained inside the input geometry (polygon). This mode is not compatible with points or lines.
 
 Mode `center`:
 
-![center](./images/QUADBIN_POLYFILL_MODE_center.png)
+![](quadbin_polyfill_mode_center.png)
 
 Mode `intersects`:
 
-![intersects](./images/QUADBIN_POLYFILL_MODE_intersects.png)
+![](quadbin_polyfill_mode_intersects.png)
 
 Mode `contains`:
 
-![contains](./images/QUADBIN_POLYFILL_MODE_contains.png)
+![](quadbin_polyfill_mode_contains.png)
 
 **Return type**
 
@@ -53,6 +53,12 @@ FROM UNNEST(carto.QUADBIN_POLYFILL(
 ```
 
 ```sql
+SELECT quadbin
+FROM <database>.<schema>.<table>,
+  UNNEST(carto.QUADBIN_POLYFILL(geom, 17)) AS quadbin;
+```
+
+```sql
 SELECT carto.QUADBIN_POLYFILL(
   ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
   17, 'intersects'
@@ -72,4 +78,10 @@ FROM UNNEST(carto.QUADBIN_POLYFILL(
 -- 5265786693164204031
 -- 5265786693164728319
 -- 5265786693165514751
+```
+
+```sql
+SELECT quadbin
+FROM <database>.<schema>.<table>,
+  UNNEST(carto.QUADBIN_POLYFILL(geom, 17, 'intersects')) AS quadbin;
 ```

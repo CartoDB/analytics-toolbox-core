@@ -17,15 +17,15 @@ Returns an array of quadbin cell indexes contained in the given geography at a g
 
 Mode `center`:
 
-![center](./images/QUADBIN_POLYFILL_MODE_center.png)
+![](quadbin_polyfill_mode_center.png)
 
 Mode `intersects`:
 
-![intersects](./images/QUADBIN_POLYFILL_MODE_intersects.png)
+![](quadbin_polyfill_mode_intersects.png)
 
 Mode `contains`:
 
-![contains](./images/QUADBIN_POLYFILL_MODE_contains.png)
+![](quadbin_polyfill_mode_contains.png)
 
 **Return type**
 
@@ -53,4 +53,10 @@ FROM UNNEST(carto.QUADBIN_POLYFILL_MODE(
 -- 5265786693164204031
 -- 5265786693164728319
 -- 5265786693165514751
+```
+
+```sql
+SELECT quadbin
+FROM <project>.<dataset>.<table>,
+  UNNEST(carto.QUADBIN_POLYFILL_MODE(geog, 17, 'intersects')) AS quadbin;
 ```

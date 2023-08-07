@@ -11,11 +11,11 @@ Returns an array of H3 cell indexes contained in the given geography (Polygon, M
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 
-```hint:warning
+````hint:warning
 Use [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `intersects` in the following cases:
 - You want to provide the minimum covering set of a Polygon, MultiPolygon.
 - The input geography type is Point, MultiPoint, LineString, MultiLineString.
-```
+````
 
 **Return type**
 
@@ -38,4 +38,10 @@ FROM UNNEST(carto.H3_POLYFILL(
   9
 )) AS h3;
 -- 89390cb1b4bffff
+```
+
+```sql
+SELECT h3
+FROM <project>.<dataset>.<table>,
+  UNNEST(carto.H3_POLYFILL(geog, 9)) AS h3;
 ```

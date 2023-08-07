@@ -40,7 +40,10 @@ def test_quadbin_polyfill(name, resolution, geom, output):
         SELECT @@PG_SCHEMA@@.QUADBIN_POLYFILL(
             ST_GEOMFROMTEXT('{geom}'), {resolution})"""
     )
-    assert result[0][0] == output
+    if output:
+        assert sorted(result[0][0]) == sorted(output)
+    else:
+        result[0][0] == output
 
 
 @pytest.mark.parametrize(
@@ -177,4 +180,7 @@ def test_quadbin_polyfill_mode(name, mode, resolution, geom, output):
         SELECT @@PG_SCHEMA@@.QUADBIN_POLYFILL(
             ST_GEOMFROMTEXT('{geom}'), {resolution}, '{mode}')"""
     )
-    assert result[0][0] == output
+    if output:
+        assert sorted(result[0][0]) == sorted(output)
+    else:
+        result[0][0] == output

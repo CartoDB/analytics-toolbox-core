@@ -95,33 +95,33 @@ $BODY$
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
-CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_AVG_HEXAGON_AREA(
-    resolution INT
-)
-RETURNS NUMERIC
-AS
-$BODY$
-    -- https://h3geo.org/docs/core-library/restable/#average-area-in-m2
-    SELECT CASE resolution
-        WHEN 0 THEN 4357449416078.392
-        WHEN 1 THEN 609788441794.134
-        WHEN 2 THEN 86801780398.997
-        WHEN 3 THEN 12393434655.088
-        WHEN 4 THEN 1770347654.491
-        WHEN 5 THEN 252903858.182
-        WHEN 6 THEN 36129062.164
-        WHEN 7 THEN 5161293.360
-        WHEN 8 THEN 737327.598
-        WHEN 9 THEN 105332.513
-        WHEN 10 THEN 15047.502
-        WHEN 11 THEN 2149.643
-        WHEN 12 THEN 307.092
-        WHEN 13 THEN 43.870
-        WHEN 14 THEN 6.267
-        WHEN 15 THEN 0.895
-    END
-$BODY$
-LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+-- CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_AVG_HEXAGON_AREA(
+--     resolution INT
+-- )
+-- RETURNS NUMERIC
+-- AS
+-- $BODY$
+--     -- https://h3geo.org/docs/core-library/restable/#average-area-in-m2
+--     SELECT CASE resolution
+--         WHEN 0 THEN 4357449416078.392
+--         WHEN 1 THEN 609788441794.134
+--         WHEN 2 THEN 86801780398.997
+--         WHEN 3 THEN 12393434655.088
+--         WHEN 4 THEN 1770347654.491
+--         WHEN 5 THEN 252903858.182
+--         WHEN 6 THEN 36129062.164
+--         WHEN 7 THEN 5161293.360
+--         WHEN 8 THEN 737327.598
+--         WHEN 9 THEN 105332.513
+--         WHEN 10 THEN 15047.502
+--         WHEN 11 THEN 2149.643
+--         WHEN 12 THEN 307.092
+--         WHEN 13 THEN 43.870
+--         WHEN 14 THEN 6.267
+--         WHEN 15 THEN 0.895
+--     END
+-- $BODY$
+-- LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT(
     geom GEOMETRY,
@@ -130,45 +130,76 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT(
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    SELECT CASE
-        WHEN resolution IS NULL OR geom IS NULL THEN NULL::VARCHAR(16)[]
-        WHEN resolution < 0 OR resolution > 26 THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 26', resolution))::VARCHAR(16)[]
-        ELSE @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(
-                ST_ASGEOJSON(
-                    ST_BUFFER(geom::GEOGRAPHY, @@PG_SCHEMA@@.__H3_AVG_EDGE_LENGTH(resolution))::GEOMETRY
-                ),
-                resolution
-            )
-        END
+    SELECT @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(ST_ASGEOJSON(geom), resolution)
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
--- __H3_POLYFILL_INIT_BBOX
--- __H3_POLYFILL_INIT_SIMP
-
-CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT_Z(
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT_BUFFER(
     geom GEOMETRY,
     resolution INT
 )
-RETURNS INT
+RETURNS VARCHAR(16)[]
 AS
 $BODY$
     WITH __params AS (
-        SELECT ST_AREA(geom) AS geom_area,
-            @@PG_SCHEMA@@.__H3_AVG_HEXAGON_AREA(resolution) AS cell_area
+       SELECT @@PG_SCHEMA@@.__H3_AVG_EDGE_LENGTH(resolution) AS edge_length
     )
-    -- return the min value between the target and intermediate resolutions
-    SELECT LEAST(
-        resolution,
-        -- compute the resolution of cells that match the geog area
-        -- by comparing with the area of the cell, plus 3 levels
-        (CASE
-            WHEN geom_area > 0 THEN resolution - CAST(LOG(7::NUMERIC, (geom_area/cell_area)::NUMERIC) AS INT) + 3
-            ELSE resolution
-        END))
+    SELECT @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(
+        ST_ASGEOJSON(
+            ST_BUFFER(geom::GEOGRAPHY, edge_length)::GEOMETRY
+        ),
+        resolution
+    )
     FROM __params
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT_BUFFER_SIMP(
+    geom GEOMETRY,
+    resolution INT
+)
+RETURNS VARCHAR(16)[]
+AS
+$BODY$
+    WITH __params AS (
+       SELECT @@PG_SCHEMA@@.__H3_AVG_EDGE_LENGTH(resolution) AS edge_length
+    )
+    SELECT @@PG_SCHEMA@@.__H3_POLYFILL_GEOJSON(
+        ST_ASGEOJSON(
+            ST_BUFFER(
+                ST_TRANSFORM(ST_SIMPLIFY(ST_TRANSFORM(geom, 3857), edge_length / 10), 4326)::GEOGRAPHY,
+                edge_length
+            )::GEOMETRY
+        ),
+        resolution
+    )
+    FROM __params
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+-- CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_INIT_Z(
+--     geom GEOMETRY,
+--     resolution INT
+-- )
+-- RETURNS INT
+-- AS
+-- $BODY$
+--     WITH __params AS (
+--         SELECT ST_AREA(geom::GEOGRAPHY) AS geom_area,
+--             @@PG_SCHEMA@@.__H3_AVG_HEXAGON_AREA(resolution) AS cell_area
+--     )
+--     -- return the min value between the target and intermediate resolutions
+--     SELECT LEAST(
+--         resolution,
+--         -- compute the resolution of cells that match the geog area
+--         -- by comparing with the area of the cell, plus 3 levels
+--         (CASE
+--             WHEN geom_area > 0 THEN resolution - CAST(LOG(7::NUMERIC, (geom_area/cell_area)::NUMERIC) AS INT) + 3
+--             ELSE resolution
+--         END))
+--     FROM __params
+-- $BODY$
+-- LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(
     geom GEOMETRY,
@@ -177,23 +208,9 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    WITH __geom4326 AS (
-        SELECT
-            (CASE ST_SRID(geom)
-                WHEN 0 THEN ST_SETSRID(geom, 4326)
-                ELSE ST_TRANSFORM(geom, 4326)
-            END) AS geom4326
-    ),
-    __cells AS (
-        SELECT h3
-        FROM __geom4326,
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom4326,
-                @@PG_SCHEMA@@.__H3_POLYFILL_INIT_Z(geom4326, resolution))) AS parent,
-            UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
-    )
     SELECT ARRAY_AGG(h3)
-    FROM __cells, __geom4326
-    WHERE ST_INTERSECTS(geom4326, ST_SETSRID(@@PG_SCHEMA@@.H3_BOUNDARY(h3), 4326))
+    FROM UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT_BUFFER(geom, resolution)) AS h3
+    WHERE ST_INTERSECTS(geom, @@PG_SCHEMA@@.H3_BOUNDARY(h3))
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
@@ -204,23 +221,9 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CONTAINS(
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    WITH __geom4326 AS (
-        SELECT
-            (CASE ST_SRID(geom)
-                WHEN 0 THEN ST_SETSRID(geom, 4326)
-                ELSE ST_TRANSFORM(geom, 4326)
-            END) AS geom4326
-    ),
-    __cells AS (
-        SELECT h3
-        FROM __geom4326,
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom4326,
-                @@PG_SCHEMA@@.__H3_POLYFILL_INIT_Z(geom4326, resolution))) AS parent,
-            UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
-    )
     SELECT ARRAY_AGG(h3)
-    FROM __cells, __geom4326
-    WHERE ST_CONTAINS(geom4326, ST_SETSRID(@@PG_SCHEMA@@.H3_BOUNDARY(h3), 4326))
+    FROM UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT_BUFFER_SIMP(geom, resolution)) AS h3
+    WHERE ST_CONTAINS(geom, @@PG_SCHEMA@@.H3_BOUNDARY(h3))
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
@@ -231,23 +234,7 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER(
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    WITH __geom4326 AS (
-        SELECT
-            (CASE ST_SRID(geom)
-                WHEN 0 THEN ST_SETSRID(geom, 4326)
-                ELSE ST_TRANSFORM(geom, 4326)
-            END) AS geom4326
-    ),
-    __cells AS (
-        SELECT h3
-        FROM __geom4326,
-            UNNEST(@@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom4326,
-                @@PG_SCHEMA@@.__H3_POLYFILL_INIT_Z(geom4326, resolution))) AS parent,
-            UNNEST(@@PG_SCHEMA@@.H3_TOCHILDREN(parent, resolution)) AS h3
-    )
-    SELECT ARRAY_AGG(h3)
-    FROM __cells, __geom4326
-    WHERE ST_INTERSECTS(geom4326, ST_SETSRID(@@PG_SCHEMA@@.H3_CENTER(h3), 4326))
+    SELECT @@PG_SCHEMA@@.__H3_POLYFILL_INIT(geom, resolution)
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
@@ -259,10 +246,22 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_POLYFILL(
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    SELECT CASE mode
-        WHEN 'intersects' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
-        WHEN 'contains' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CONTAINS(geom, resolution)
-        WHEN 'center' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER(geom, resolution)
+    SELECT CASE
+        WHEN resolution IS NULL OR geom IS NULL THEN NULL::VARCHAR(16)[]
+        WHEN resolution < 0 OR resolution > 15 THEN @@PG_SCHEMA@@.__CARTO_ERROR(FORMAT('Invalid resolution "%s"; should be between 0 and 15', resolution))::VARCHAR(16)[]
+        ELSE (WITH __geom4326 AS (
+                SELECT
+                    (CASE ST_SRID(geom)
+                        WHEN 0 THEN ST_SETSRID(geom, 4326)
+                        ELSE ST_TRANSFORM(geom, 4326)
+                    END) AS geom4326
+            )
+            SELECT CASE mode
+                WHEN 'intersects' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_INTERSECTS(geom4326, resolution)
+                WHEN 'contains' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CONTAINS(geom4326, resolution)
+                WHEN 'center' THEN @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER(geom4326, resolution)
+            END
+            FROM __geom4326)
     END
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
@@ -274,6 +273,6 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_POLYFILL(
 RETURNS VARCHAR(16)[]
 AS
 $BODY$
-    SELECT @@PG_SCHEMA@@.__H3_POLYFILL_CHILDREN_CENTER(geom, resolution)
+    SELECT @@PG_SCHEMA@@.H3_POLYFILL(geom, resolution, 'center')
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;

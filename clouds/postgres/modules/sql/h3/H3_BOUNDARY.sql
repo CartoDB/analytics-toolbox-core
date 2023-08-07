@@ -20,6 +20,6 @@ $BODY$
 
     const coords = h3Lib.h3ToGeoBoundary(index, true);
     const uniqueCoords = h3Lib.removeNextDuplicates(coords);
-    return `POLYGON((${uniqueCoords.map(c => `${c[0]} ${c[1]}`).join(',')}))`;
+    return `SRID=4326;POLYGON((${uniqueCoords.map(c => `${c[0]} ${c[1]}`).join(',')}))`;
 $BODY$
 LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;

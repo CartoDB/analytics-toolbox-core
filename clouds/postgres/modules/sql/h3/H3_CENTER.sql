@@ -19,6 +19,6 @@ $BODY$
     }
 
     const center = h3Lib.h3ToGeo(index);
-    return `POINT(${center[1]} ${center[0]})`;
+    return `SRID=4326;POINT(${center[1]} ${center[0]})`;
 $BODY$
 LANGUAGE plv8 IMMUTABLE PARALLEL SAFE;
