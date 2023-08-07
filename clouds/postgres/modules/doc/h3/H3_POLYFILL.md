@@ -1,28 +1,85 @@
 ## H3_POLYFILL
 
 ```sql:signature
-H3_POLYFILL(geography, resolution)
+H3_POLYFILL(geom, resolution [, mode])
 ```
 
 **Description**
 
-Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds).
+Returns an array of H3 cell indexes contained in the given geometry at a given level of detail. Containment is determined by the mode: center, intersects, contains.
 
-* `geography`: `GEOMETRY` **polygon** or **multipolygon** representing the area to cover.
-* `resolution`: `INT` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
+* `geom`: `GEOMETRY` representing the shape to cover.
+* `resolution`: `INT` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
+* `mode` (optional): `VARCHAR`
+  * `center` (default) returns the indexes of the H3 cells which centers intersect the input geometry (polygon). The resulting H3 set does not fully cover the input geometry, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines.
+  * `intersects` returns the indexes of the H3 cells that intersect the input geometry. The resulting H3 set will completely cover the input geometry (point, line, polygon).
+  * `contains` returns the indexes of the H3 cells that are entirely contained inside the input geometry (polygon). This mode is not compatible with points or lines.
+
+Mode `center`:
+
+![](h3_polyfill_mode_center.png)
+
+Mode `intersects`:
+
+![](h3_polyfill_mode_intersects.png)
+
+Mode `contains`:
+
+![](h3_polyfill_mode_contains.png)
 
 **Return type**
 
 `VARCHAR(16)[]`
 
-**Example**
+**Examples**
 
 ```sql
 SELECT carto.H3_POLYFILL(
-    ST_GEOMFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
--- { 842da29ffffffff,
---   843f725ffffffff,
---   843eac1ffffffff,
---   8453945ffffffff,
---   ...
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+);
+-- [89390cb1b4bffff]
+```
+
+```sql
+SELECT h3
+FROM UNNEST(carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+)) AS h3;
+-- 89390cb1b4bffff
+```
+
+```sql
+SELECT h3
+FROM <database>.<schema>.<table>,
+  UNNEST(carto.H3_POLYFILL(geom, 9)) AS h3;
+```
+
+```sql
+SELECT carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9, 'intersects'
+);
+-- [89390cb1b4fffff, 89390ca3497ffff, 89390ca34b3ffff, 89390cb1b4bffff, 89390ca3487ffff, 89390cb1b5bffff]
+```
+
+```sql
+SELECT h3
+FROM UNNEST(carto.H3_POLYFILL(
+  ST_GEOMFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9, 'intersects'
+)) AS h3;
+-- 89390cb1b4fffff
+-- 89390ca3497ffff
+-- 89390ca34b3ffff
+-- 89390cb1b4bffff
+-- 89390ca3487ffff
+-- 89390cb1b5bffff
+```
+
+```sql
+SELECT h3
+FROM <database>.<schema>.<table>,
+  UNNEST(carto.H3_POLYFILL(geom, 9, 'intersects')) AS h3;
 ```

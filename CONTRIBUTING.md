@@ -152,3 +152,13 @@ For external links, include the full address, for example:
 ```md
 Please check our [documentation for Developers](https://docs.carto.com/carto-user-manual/developers)
 ```
+
+Images must be stored in `common/assets/`, and included with the following syntax:
+
+```md
+![](my_image.png)
+```
+
+```md
+![My image](my_image.png)
+```

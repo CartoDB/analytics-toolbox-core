@@ -33,7 +33,7 @@ lint-common: $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	echo "- Lint Markdown files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 --
+	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
 
 build:
 	rm -rf $(BUILD_DIR)

@@ -1,35 +1,47 @@
 ## H3_POLYFILL
 
 ```sql:signature
-H3_POLYFILL(geography, resolution)
+H3_POLYFILL(geog, resolution)
 ```
 
 **Description**
 
-Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds). In case of lines, it will return the H3 cell indexes intersecting those lines. For a given point, it will return the H3 index of cell in which that point is contained.
+Returns an array of H3 cell indexes contained in the given geography (Polygon, MultiPolygon) at a given level of detail. Containment is determined by the cells' center. This function is equivalent to [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `center`.
 
-````hint:info
-**warning**
+* `geog`: `GEOGRAPHY` representing the shape to cover.
+* `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 
-Lines polyfill is calculated by approximating S2 cells to H3 cells, in some cases some cells might be missing.
-
+````hint:warning
+Use [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `intersects` in the following cases:
+- You want to provide the minimum covering set of a Polygon, MultiPolygon.
+- The input geography type is Point, MultiPoint, LineString, MultiLineString.
 ````
-
-* `geography`: `GEOGRAPHY` representing the area to cover.
-* `resolution`: `INT64` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
 **Return type**
 
 `ARRAY<STRING>`
 
-**Example**
+**Examples**
 
 ```sql
 SELECT carto.H3_POLYFILL(
-    ST_GEOGFROMTEXT('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4);
--- 846b26bffffffff
--- 843e8b1ffffffff
--- 842d1e5ffffffff
--- 843ece5ffffffff
--- ...
+  ST_GEOGFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+);
+-- [89390cb1b4bffff]
+```
+
+```sql
+SELECT h3
+FROM UNNEST(carto.H3_POLYFILL(
+  ST_GEOGFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))'),
+  9
+)) AS h3;
+-- 89390cb1b4bffff
+```
+
+```sql
+SELECT h3
+FROM <project>.<dataset>.<table>,
+  UNNEST(carto.H3_POLYFILL(geog, 9)) AS h3;
 ```

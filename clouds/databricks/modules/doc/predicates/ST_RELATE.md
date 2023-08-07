@@ -23,5 +23,5 @@ WITH t AS (
   carto.ST_MAKEBBOX(1, 1, 3, 3) AS geomB
 )
 SELECT carto.ST_RELATE(geomA, geomB) FROM t;
--- true
+-- 212101212
 ```
