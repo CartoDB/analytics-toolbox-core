@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const snowflake = require('snowflake-sdk');
 
 snowflake.configure({ insecureConnect: true })
@@ -81,11 +82,42 @@ async function existsTable (table) {
     }
 }
 
+function readJSONFixture (name, lib) {
+    const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.json`);
+    return JSON.parse(fs.readFileSync(filepath));
+}
+
+function writeJSONFixture (name, lib, json) {
+    const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.json`);
+    const data = JSON.stringify(json);
+    fs.writeFileSync(filepath, data);
+}
+
+function writeNDJSONFixture (name, lib, json) {
+    const filepath = path.join('.', 'test', lib, 'fixtures', `${name}.ndjson`);
+    const data = json.map(JSON.stringify).join('\n');
+    fs.writeFileSync(filepath, data);
+}
+
+function arrayDictsKeysToLower (array) {
+    return array.map((item) => {
+        const newItem = {};
+        for (const key in item) {
+            newItem[key.toLowerCase()] = item[key];
+        }
+        return newItem;
+    });
+}
+
 module.exports = {
     runQuery,
     createTable,
     deleteTable,
     sortByKey,
     sortByKeyAndRound,
-    existsTable
+    existsTable,
+    readJSONFixture,
+    writeJSONFixture,
+    writeNDJSONFixture,
+    arrayDictsKeysToLower
 }
