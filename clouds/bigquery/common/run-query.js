@@ -7,7 +7,7 @@ const BQ_PROJECT = process.env.BQ_PROJECT;
 const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
 
 function runQuery (query) {
-    const query_options = { 'timeoutMs' : 120000 };
+    const query_options = { 'timeoutMs' : 420000 };
     client.query(query, query_options);
 }
 
