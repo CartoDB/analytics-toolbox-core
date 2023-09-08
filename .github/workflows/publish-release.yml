@@ -92,7 +92,7 @@ jobs:
         uses: repo-sync/pull-request@v2
         id: pull_request
         with:
-          source_branch: github.event.pull_request.head.ref
+          source_branch: ${{ github.event.pull_request.head.ref }}
           destination_branch: main
           pr_title: Merge release into main branch
           pr_body: |
