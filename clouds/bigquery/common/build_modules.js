@@ -99,7 +99,7 @@ functionsFilter.forEach(f => {
 if (!nodeps) {
     functions.forEach(mainFunction => {
         functions.forEach(depFunction => {
-            if (mainFunction.name != depFunction.name) {
+            if (mainFunction.name != depFunction.name && depFunction.name !== 'SETUP') {
                 const depFunctionMatches = [];
                 depFunctionMatches.push(...depFunction.content.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=(?<!TEMP )FUNCTION)(.*?)(?=AS |RETURNS)','g')));
                 depFunctionMatches.push(...depFunction.content.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g')));
