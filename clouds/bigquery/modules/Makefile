@@ -70,6 +70,9 @@ endif
 ifdef BQ_PERMISSIONS_GROUP
 	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/set_module_permissions_group.sh
 endif
+	$(MAKE) extra-deploy
+
+extra-deploy::
 
 dataset-create:
 	$(BQ) show $(BQ_DEPLOY_DATASET) 2>/dev/null 1>/dev/null || \
