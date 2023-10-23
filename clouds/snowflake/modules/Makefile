@@ -72,6 +72,9 @@ deploy: check build
 	echo "Deploying modules..."
 	$(COMMON_DIR)/run-query.js "CREATE SCHEMA IF NOT EXISTS $(SF_SCHEMA);"
 	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/modules.sql
+	$(MAKE) extra-deploy
+
+extra-deploy::
 
 deploy-share: check build-share
 	echo "Deploying share..."
