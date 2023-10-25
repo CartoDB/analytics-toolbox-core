@@ -49,6 +49,9 @@ deploy: check venv3 build
 	echo "Deploying modules..."
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "CREATE SCHEMA IF NOT EXISTS $(RS_SCHEMA);"
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/modules.sql
+	$(MAKE) extra-deploy
+
+extra-deploy::
 
 test: check venv3 $(NODE_MODULES_DEV)
 	echo "Testing modules..."

@@ -221,3 +221,135 @@ $BODY$
     SELECT @@PG_SCHEMA@@.QUADBIN_POLYFILL(geom, resolution, 'center')
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(
+    geom GEOMETRY,
+    resolution INT
+)
+RETURNS INT
+AS
+$BODY$
+    WITH __params AS (
+        SELECT ST_AREA(geom) AS geom_area
+    )
+    -- return the min value between the target and intermediate
+    -- resolutions to return between 1 and 256 cells
+    SELECT LEAST(
+        resolution,
+        -- compute the resolution of cells that match the geog area
+        -- by comparing with the area of the quadbin 0, plus 3 levels
+        (CASE
+            WHEN geom_area > 0 THEN CAST(-LOG(4::NUMERIC, (geom_area/61236.812721460745)::NUMERIC) AS INT) + 3
+            ELSE resolution
+        END))
+    FROM __params
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(
+    geom GEOMETRY,
+    resolution INT
+)
+RETURNS BIGINT[]
+AS
+$BODY$
+    WITH __geom4326 AS (
+        SELECT
+            (CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END) AS geom4326
+    ),
+    __cells AS (
+        SELECT quadbin
+        FROM __geom4326,
+             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326,
+                @@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom4326, resolution))) AS parent,
+             UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM __cells, __geom4326
+    WHERE ST_INTERSECTS(geom4326, @@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin));
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(
+    geom GEOMETRY,
+    resolution INT
+)
+RETURNS BIGINT[]
+AS
+$BODY$
+    WITH __geom4326 AS (
+        SELECT
+            (CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END) AS geom4326
+    ),
+    __cells AS (
+        SELECT quadbin
+        FROM __geom4326,
+             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326,
+                @@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom4326, resolution))) AS parent,
+             UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM __cells, __geom4326
+    WHERE ST_CONTAINS(geom4326, @@PG_SCHEMA@@.QUADBIN_BOUNDARY(quadbin))
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(
+    geom GEOMETRY,
+    resolution INT
+)
+RETURNS BIGINT[]
+AS
+$BODY$
+    WITH __geom4326 AS (
+        SELECT
+            (CASE ST_SRID(geom)
+                WHEN 0 THEN ST_SETSRID(geom, 4326)
+                ELSE ST_TRANSFORM(geom, 4326)
+            END) AS geom4326
+    ),
+    __cells AS (
+        SELECT quadbin
+        FROM __geom4326,
+             UNNEST(@@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom4326,
+                @@PG_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom4326, resolution))) AS parent,
+             UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(parent, resolution)) AS quadbin
+    )
+    SELECT ARRAY_AGG(quadbin)
+    FROM __cells, __geom4326
+    WHERE ST_INTERSECTS(geom4326, @@PG_SCHEMA@@.QUADBIN_CENTER(quadbin))
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_POLYFILL(
+    geom GEOMETRY,
+    resolution INT,
+    mode VARCHAR
+)
+RETURNS BIGINT[]
+AS
+$BODY$
+    SELECT CASE mode
+        WHEN 'intersects' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(geom, resolution)
+        WHEN 'contains' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(geom, resolution)
+        WHEN 'center' THEN @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(geom, resolution)
+    END
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_POLYFILL(
+    geom GEOMETRY,
+    resolution INT
+)
+RETURNS BIGINT[]
+AS
+$BODY$
+    SELECT @@PG_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(geom, resolution)
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;

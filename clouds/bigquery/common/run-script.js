@@ -17,7 +17,7 @@ const bar = new cliProgress.SingleBar(options, cliProgress.Presets.shades_classi
 const client = new BigQuery({ projectId: `${BQ_PROJECT}`, timeout: 600000 });
 
 async function runQueries (queries) {
-    const query_options = { 'timeoutMs' : 120000 };
+    const query_options = { 'timeoutMs' : 600000 };
     const n = queries.length;
     bar.start(n, 0);
     for (let i = 0; i < n; i++) {
