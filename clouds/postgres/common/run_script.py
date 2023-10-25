@@ -42,9 +42,11 @@ if __name__ == '__main__':
         except Exception as error:
             error_msg = str(error)
             print(f'ERROR: {error_msg}')
+            exit(1)
     else:
         try:
             run_queries(split(content))
         except Exception as error:
             error_msg = str(error)
             print(f'[{function}] ERROR: {error_msg}')
+            exit(1)
