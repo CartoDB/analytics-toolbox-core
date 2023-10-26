@@ -42,3 +42,4 @@ if __name__ == '__main__':
     except ProgrammingError as error:
         error_msg = re.search("'M': '(.*?)',", str(error)).group(1)
         print(f'[{function}] ERROR: {error_msg}')
+        exit(1)
