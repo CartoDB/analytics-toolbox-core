@@ -179,32 +179,10 @@ CALL `@@BQ_DATASET@@.A_PROCEDURE`();
 Function/procedure definitions: must be quoted as invocations, but parentheses should be on a separate line:
 
 ```sql
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.A_FUNCTION`()
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.A_FUNCTION`
 (
     an_argument STRING
 )
-...
-```
-
-### Snowflake
-
-Function/procedure invocations: The opening bracket must follow name with no space between them:
-
-
-```sql
-SELECT @@SF_SCHEMA@@.A_FUNCTION();
-CALL @@SF_SCHEMA@@.A_PROCEDURE();
-```
-
-Function/procedure definitions: must be quoted as invocations, but parentheses should be on a separate line:
-
-```sql
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.A_FUNCTION
-(
-  an_argument STRING
-)
-RETURNS STRING
-IMMUTABLE
 ...
 ```
 
