@@ -162,3 +162,63 @@ Images must be stored in `common/assets/`, and included with the following synta
 ```md
 ![My image](my_image.png)
 ```
+
+## Naming requirements
+
+The format of function and procedure names in the code must follow some conventions, so that the scripts that build the SQL code can determine the dependencies between them.
+
+### BigQuery
+
+Function/procedure invocations: the name must be quoted with backticks, including the project/dataset name. The opening bracket must follow the closing quote with no space between them:
+
+```sql
+SELECT `@@BQ_DATASET@@.A_FUNCTION`();
+CALL `@@BQ_DATASET@@.A_PROCEDURE`();
+```
+
+Function/procedure definitions: must be quoted as invocations, but parentheses should be on a separate line:
+
+```sql
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.A_FUNCTION`
+(
+    an_argument STRING
+)
+...
+```
+
+### Other clouds (Snowflake, Redshift, Postgres)
+
+Function/procedure invocations: The opening bracket must follow name with no space between them:
+
+
+```sql
+SELECT @@XX_SCHEMA@@.A_FUNCTION();
+CALL @@XX_SCHEMA@@.A_PROCEDURE();
+```
+
+Function/procedure definitions: must be quoted as invocations, but parentheses should be on a separate line:
+
+```sql
+CREATE OR REPLACE FUNCTION @@XX_SCHEMA@@.A_FUNCTION
+(
+  an_argument STRING
+)
+RETURNS STRING
+IMMUTABLE
+...
+```
+
+### Extra dependencies
+
+Sometimes the name of an invoked function or procedure is dynamically generated in the SQL code;
+in those cases it's necessary to add a coment in the file referencing all the functions/procedures that can potentially be called.
+
+In this comment, the names must appear as in actual invocations, following the rules of each cloud, i.e. including the argument parentheses, and
+in the case of BigQuery, the backtick quotes. For example:
+
+```sql
+/*
+Extra dependencies:
+`@@BQ_DATASET@@.SOME_FUNCTION`()
+*/
+```
