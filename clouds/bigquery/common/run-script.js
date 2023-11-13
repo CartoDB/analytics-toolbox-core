@@ -14,10 +14,9 @@ const options = {
 };
 const bar = new cliProgress.SingleBar(options, cliProgress.Presets.shades_classic);
 
-const client = new BigQuery({ projectId: `${BQ_PROJECT}`, timeout: 600000 });
+const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
 
 async function runQueries (queries) {
-    const query_options = { 'timeoutMs' : 600000 };
     const n = queries.length;
     bar.start(n, 0);
     for (let i = 0; i < n; i++) {
@@ -28,7 +27,10 @@ async function runQueries (queries) {
         const result = results && results.reverse()[0]
         sqlFunction = result && result.split('.').reverse()[0]
 
-        await client.query(query, query_options);
+        await client.query({
+            query,
+            jobTimeoutMs: 600000
+        });
         bar.increment();
     }
     bar.stop(n);
