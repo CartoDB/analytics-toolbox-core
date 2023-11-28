@@ -6,17 +6,19 @@ DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 ESLINTRC_DIR ?= $(ROOT_DIR)/../..
 COMMON_DIR = $(ROOT_DIR)/common
+NATIVE_APPS_DIR ?= $(ROOT_DIR)/native_app
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
 PACKAGE_NAME ?= carto-analytics-toolbox-core-snowflake-$(PACKAGE_VERSION)
+NATIVE_APPACKAGE_NAME ?= carto-analytics-toolbox-core-snowflake-native-app-$(PACKAGE_VERSION)
 
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean create-package
+.PHONY: help lint build deploy test remove clean create-package create-native-app-package
 
 help:
-	echo "Available targets: lint build deploy test remove clean create-package"
+	echo "Available targets: lint build deploy test remove clean create-package create-native-app-package"
 
 lint:
 	$(MAKE) lint-libraries
@@ -53,6 +55,11 @@ build-modules:
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build
 	cp modules/build/modules.sql $(BUILD_DIR)
+
+build-setup-script:
+	mkdir -p $(BUILD_DIR)
+	$(MAKE) -C modules build-setup-script
+	cp modules/build/setup_script.sql $(BUILD_DIR)
 
 deploy:
 	$(MAKE) build-libraries
@@ -100,5 +107,16 @@ create-package:
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
 
 	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
+
+create-native-app-package:
+	rm -rf $(BUILD_DIR)
+	$(MAKE) build-libraries
+	$(MAKE) build-setup-script production=1 dropfirst=1
+
+	rm -rf $(DIST_DIR)
+	mkdir -p $(DIST_DIR)/$(NATIVE_APPACKAGE_NAME)
+	cp $(BUILD_DIR)/setup_script.sql $(DIST_DIR)/$(NATIVE_APPACKAGE_NAME)/
+	sed 's/@@VERSION@@/$(PACKAGE_VERSION)/g' $(NATIVE_APPS_DIR)/manifest.yml > $(DIST_DIR)/$(NATIVE_APPACKAGE_NAME)/manifest.yml
+	cp $(NATIVE_APPS_DIR)/README.md $(DIST_DIR)/$(NATIVE_APPACKAGE_NAME)/
 
 extra-package::

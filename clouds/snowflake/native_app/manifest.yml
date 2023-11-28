@@ -1,0 +1,10 @@
+manifest_version: 1 # required
+version:
+  name: @@VERSION@@
+  label: "@@VERSION@@"
+  comment: "Analytics Toolbox Core"
+
+artifacts:
+  readme: README.md
+  setup_script: setup_script.sql
+  extension_code: true
