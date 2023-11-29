@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-// Build the modules file based on the input filters
+// Build the setup_script file based on the input filters
 // and ordered to solve the dependencies
 
-// ./build_modules.js modules --output=build --diff="clouds/snowflake/modules/sql/quadbin/QUADBIN_TOZXY.sql"
-// ./build_modules.js modules --output=build --functions=ST_TILEENVELOPE
-// ./build_modules.js modules --output=build --modules=quadbin
-// ./build_modules.js modules --output=build --production --dropfirst
+// ./build_setup_script.js modules --output=build --diff="clouds/snowflake/modules/sql/quadbin/QUADBIN_TOZXY.sql"
+// ./build_setup_script.js modules --output=build --functions=ST_TILEENVELOPE
+// ./build_setup_script.js modules --output=build --modules=quadbin
+// ./build_setup_script.js modules --output=build --production --dropfirst
 
 const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const defaultApplicationRole = 'CARTO_APP_PUBLIC'
+const appRole = argv.approle
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
@@ -219,9 +219,9 @@ function fetchPermissionsGrant (content)
     }
     fileContent = fileContent.join(' ').replace(/[\p{Diacritic}]/gu, '').replace(/\s+/gm,' ');
     const functionMatches = fileContent.matchAll(new RegExp(/(?<=(?<!TEMP )FUNCTION)(.*?)(?=RETURNS)/gs));
-    const functSignatures = getFunctionSignatures(functionMatches).map(f => `GRANT USAGE ON FUNCTION ${f} TO APPLICATION ROLE ${defaultApplicationRole};`).join('\n')
+    const functSignatures = getFunctionSignatures(functionMatches).map(f => `GRANT USAGE ON FUNCTION ${f} TO APPLICATION ROLE ${appRole};`).join('\n')
     const procMatches = fileContent.matchAll(new RegExp(/(?<=PROCEDURE)(.*?)(?=AS)/gs));
-    const procSignatures = getFunctionSignatures(procMatches).map(f => `GRANT USAGE ON PROCEDURE ${f} TO APPLICATION ROLE ${defaultApplicationRole};`).join('\n')
+    const procSignatures = getFunctionSignatures(procMatches).map(f => `GRANT USAGE ON PROCEDURE ${f} TO APPLICATION ROLE ${appRole};`).join('\n')
     return content + functSignatures +procSignatures
 }
 
@@ -230,9 +230,9 @@ if (argv.dropfirst) {
     content = header + separator + content
 }
 
-const header = `CREATE APPLICATION ROLE ${defaultApplicationRole};
+const header = `CREATE APPLICATION ROLE ${appRole};
 CREATE OR ALTER VERSIONED SCHEMA @@SF_SCHEMA@@;
-GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE ${defaultApplicationRole};\n`;
+GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE ${appRole};\n`;
 
 const footer = fetchPermissionsGrant (fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString());
 content = header + separator + content + separator + footer;

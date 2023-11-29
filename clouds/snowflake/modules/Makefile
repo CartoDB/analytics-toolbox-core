@@ -27,6 +27,8 @@ endif
 
 REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE"
 
+APP_ROLE ?= app_public
+
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
@@ -76,7 +78,7 @@ build-setup-script: $(NODE_MODULES_DEV)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_setup_script.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst) --approle=$(APP_ROLE)
 
 deploy: check build
 	echo "Deploying modules..."
