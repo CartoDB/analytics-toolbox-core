@@ -74,7 +74,7 @@ build-setup-script: $(NODE_MODULES_DEV)
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
-	SF_SCHEMA=$(SF_PREFIX)$(SF_SCHEMA_DEFAULT) \
+	SF_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) \
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_setup_script.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
