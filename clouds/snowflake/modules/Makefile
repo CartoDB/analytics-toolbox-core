@@ -25,9 +25,7 @@ else
 BAIL=--bail
 endif
 
-REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE"
-
-APP_ROLE ?= app_public
+REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE APP_ROLE"
 
 include $(COMMON_DIR)/Makefile
 
@@ -74,11 +72,11 @@ build-setup-script: $(NODE_MODULES_DEV)
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
-	SF_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) \
+	SF_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_setup_script.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst) --approle=$(APP_ROLE)
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
 deploy: check build
 	echo "Deploying modules..."

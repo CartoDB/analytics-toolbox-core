@@ -12,8 +12,6 @@ const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const appRole = argv.approle
-
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
@@ -219,9 +217,9 @@ function fetchPermissionsGrant (content)
     }
     fileContent = fileContent.join(' ').replace(/[\p{Diacritic}]/gu, '').replace(/\s+/gm,' ');
     const functionMatches = fileContent.matchAll(new RegExp(/(?<=(?<!TEMP )FUNCTION)(.*?)(?=RETURNS)/gs));
-    const functSignatures = getFunctionSignatures(functionMatches).map(f => `GRANT USAGE ON FUNCTION ${f} TO APPLICATION ROLE ${appRole};`).join('\n')
+    const functSignatures = getFunctionSignatures(functionMatches).map(f => `GRANT USAGE ON FUNCTION ${f} TO APPLICATION ROLE @@APP_ROLE@@;`).join('\n')
     const procMatches = fileContent.matchAll(new RegExp(/(?<=PROCEDURE)(.*?)(?=AS)/gs));
-    const procSignatures = getFunctionSignatures(procMatches).map(f => `GRANT USAGE ON PROCEDURE ${f} TO APPLICATION ROLE ${appRole};`).join('\n')
+    const procSignatures = getFunctionSignatures(procMatches).map(f => `GRANT USAGE ON PROCEDURE ${f} TO APPLICATION ROLE @@APP_ROLE@@;`).join('\n')
     return content + functSignatures +procSignatures
 }
 
@@ -230,9 +228,9 @@ if (argv.dropfirst) {
     content = header + separator + content
 }
 
-const header = `CREATE APPLICATION ROLE ${appRole};
+const header = `CREATE APPLICATION ROLE @@APP_ROLE@@;
 CREATE OR ALTER VERSIONED SCHEMA @@SF_SCHEMA@@;
-GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE ${appRole};\n`;
+GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE @@APP_ROLE@@;\n`;
 
 const footer = fetchPermissionsGrant (fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString());
 content = header + separator + content + separator + footer;
