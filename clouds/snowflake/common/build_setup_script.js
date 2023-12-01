@@ -228,7 +228,7 @@ if (argv.dropfirst) {
     content = header + separator + content
 }
 
-const header = `CREATE APPLICATION ROLE @@APP_ROLE@@;
+const header = `CREATE OR REPLACE APPLICATION ROLE @@APP_ROLE@@;
 CREATE OR ALTER VERSIONED SCHEMA @@SF_SCHEMA@@;
 GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE @@APP_ROLE@@;\n`;
 
