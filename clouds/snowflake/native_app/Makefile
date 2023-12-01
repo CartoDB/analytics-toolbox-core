@@ -13,10 +13,16 @@ include $(COMMON_DIR)/Makefile
 APP_NAME ?= APP_$(SF_UNQUALIFIED_SCHEMA)
 APP_PACKAGE_NAME ?= APP_PACKAGE_$(SF_UNQUALIFIED_SCHEMA)
 APP_PACKAGE_DIST_NAME ?= carto-analytics-toolbox-core-snowflake-native-app-$(APP_VERSION)
-APP_STAGE_NAME ?= $(SF_SCHEMA).APP_$(SF_UNQUALIFIED_SCHEMA)
 APP_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
-APP_FORMATTED_VERSION = v_$(subst .,_,$(APP_VERSION))
+APP_MAJOR_VERSION = v$(firstword $(subst ., ,$(APP_VERSION)))
+APP_FORMATTED_VERSION = v$(subst .,_,$(APP_VERSION))
 
+APP_STAGE_NAME ?= $(SF_SCHEMA).APP_$(SF_UNQUALIFIED_SCHEMA)
+ifeq ($(production),1)
+	APP_STAGE_LOCATION ?= $(APP_STAGE_NAME)/$(APP_FORMATTED_VERSION)
+else
+	APP_STAGE_LOCATION ?= $(APP_STAGE_NAME)
+endif
 
 .SILENT:
 
@@ -36,31 +42,31 @@ build:
 deploy-app-package:
 	echo "Deploying native app package..."
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
-ifeq ($(production),1)
-	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_NAME)/$(APP_FORMATTED_VERSION) overwrite=true auto_compress=false;"
-else
-	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_NAME) overwrite=true auto_compress=false;"
-endif
+	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 
-# IF DROP FIRST
+ifeq ($(create_package),1)
+	echo "Creating native app package..."
 	$(COMMON_DIR)/run-query.js "DROP APPLICATION PACKAGE IF EXISTS $(APP_PACKAGE_NAME);"
 	$(COMMON_DIR)/run-query.js "CREATE APPLICATION PACKAGE $(APP_PACKAGE_NAME);"
-ifeq ($(production),1)
+endif
+
+ifeq ($(or $(create_package),$(deploy_version)),1)
+	echo "Deploying native app package version..."
 	$(COMMON_DIR)/run-query.js "ALTER APPLICATION PACKAGE $(APP_PACKAGE_NAME) \
-		ADD VERSION $(APP_FORMATTED_VERSION) \
-		USING @$(APP_STAGE_NAME)/$(APP_FORMATTED_VERSION);"
+		ADD VERSION $(APP_MAJOR_VERSION) \
+		USING @$(APP_STAGE_LOCATION);"
 else
+	echo "Deploying native app package patch..."
 	$(COMMON_DIR)/run-query.js "ALTER APPLICATION PACKAGE $(APP_PACKAGE_NAME) \
-		ADD VERSION $(APP_FORMATTED_VERSION) \
-		USING @$(APP_STAGE_NAME);"
+		ADD PATCH FOR VERSION $(APP_MAJOR_VERSION) \
+		USING @$(APP_STAGE_LOCATION);"
 endif
 
 deploy-app:
 	echo "Installing native app... (this may take a while)"
 	$(COMMON_DIR)/run-query.js "DROP APPLICATION IF EXISTS $(APP_NAME);"
 	$(COMMON_DIR)/run-query.js "CREATE APPLICATION $(APP_NAME) \
-		FROM APPLICATION PACKAGE $(APP_PACKAGE_NAME) \
-		USING VERSION $(APP_FORMATTED_VERSION);"
+		FROM APPLICATION PACKAGE $(APP_PACKAGE_NAME);"
 	$(MAKE) extra-deploy
 
 extra-deploy::
