@@ -40,7 +40,6 @@ build:
 
 
 deploy-app-package:
-	echo "Deploying native app package..."
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 
@@ -85,9 +84,6 @@ deploy-app:
 
 extra-deploy::
 
-deploy:
-	$(MAKE) deploy-app-package
-	$(MAKE) deploy-app
-
 upgrade-app:
+	echo "Upgrading native app... (this may take a while)"
 	$(COMMON_DIR)/run-query.js "ALTER APPLICATION $(APP_NAME) UPGRADE;"
