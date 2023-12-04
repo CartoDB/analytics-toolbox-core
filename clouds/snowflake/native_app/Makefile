@@ -61,6 +61,20 @@ else
 		ADD PATCH FOR VERSION $(APP_MAJOR_VERSION) \
 		USING @$(APP_STAGE_LOCATION);"
 endif
+	echo "Setting release package to the newest patch"
+	SET_PACKAGE_RELEASE=1 \
+	APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) \
+	VERSION=$(APP_MAJOR_VERSION) \
+	$(COMMON_DIR)/native-app-setup.js
+
+ifeq ($(deploy_version),1)
+	echo "Requesting previous native app package version drop..."
+# This ensures that there are no more than 2 versions which is a Snowflake limitations
+	DROP_PREVIOUS_VERSION=1 \
+	APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) \
+	VERSION=$(APP_MAJOR_VERSION) \
+	$(COMMON_DIR)/native-app-setup.js
+endif
 
 deploy-app:
 	echo "Installing native app... (this may take a while)"
@@ -74,3 +88,6 @@ extra-deploy::
 deploy:
 	$(MAKE) deploy-app-package
 	$(MAKE) deploy-app
+
+upgrade-app:
+	$(COMMON_DIR)/run-query.js "ALTER APPLICATION $(APP_NAME) UPGRADE;"
