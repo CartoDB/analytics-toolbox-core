@@ -54,11 +54,11 @@ build-modules:
 	$(MAKE) -C modules build
 	cp modules/build/modules.sql $(BUILD_DIR)
 
-build-setup-script:
+build-native-app-setup-script:
 	rm -rf $(BUILD_DIR)
 	$(MAKE) build-libraries
 	mkdir -p $(BUILD_DIR)
-	$(MAKE) -C modules build-setup-script
+	$(MAKE) -C modules build-native-app-setup-script
 	cp modules/build/setup_script.sql $(BUILD_DIR)
 
 deploy:
@@ -112,7 +112,7 @@ extra-package::
 
 deploy-native-app-package:
 	echo "Creating native app package..."
-	$(MAKE) build-setup-script production=1 dropfirst=1
+	$(MAKE) build-native-app-setup-script
 	$(MAKE) -C native_app build
 	$(MAKE) -C native_app deploy-app-package
 

@@ -31,7 +31,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share deploy deploy-share test remove remove-share clean
+.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test remove remove-share clean
 
 help:
 	echo "Available targets: lint build deploy test remove clean"
@@ -68,7 +68,7 @@ build-share: $(NODE_MODULES_DEV)
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
-build-setup-script: $(NODE_MODULES_DEV)
+build-native-app-setup-script: $(NODE_MODULES_DEV)
 	echo "Building modules..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
@@ -76,7 +76,7 @@ build-setup-script: $(NODE_MODULES_DEV)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_setup_script.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=1
 
 deploy: check build
 	echo "Deploying modules..."
