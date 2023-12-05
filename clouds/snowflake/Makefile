@@ -111,7 +111,6 @@ create-package:
 extra-package::
 
 deploy-native-app-package:
-	echo "Creating native app package..."
 	$(MAKE) build-native-app-setup-script
 	$(MAKE) -C native_app build
 	$(MAKE) -C native_app deploy-app-package
