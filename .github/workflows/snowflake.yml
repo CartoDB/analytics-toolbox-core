@@ -152,3 +152,30 @@ jobs:
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-snowflake-latest.zip
           gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
+
+  publish-native-app:
+    if: github.ref_name == 'stable'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_NATIVE_APP }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_NATIVE_APP }}
+      SF_USER: ${{ secrets.SF_USER_NATIVE_APP }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_NATIVE_APP }}
+      SF_ROLE: ${{ secrets.SF_ROLE_NATIVE_APP }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Deploy native app package
+        run: |
+          make deploy-native-app-package production=1
+      - name: Upgrade native app
+        run: |
+          make upgrade-native-app
