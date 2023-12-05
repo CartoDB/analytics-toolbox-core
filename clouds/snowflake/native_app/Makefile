@@ -80,7 +80,7 @@ deploy-app-package:
 
 clean-app-package:
 	echo "Dropping native app package..."
-	$(COMMON_DIR)/run-query.js "DROP APPLICATION PACKAGE $(APP_PACKAGE_NAME);"
+	$(COMMON_DIR)/run-query.js "DROP APPLICATION PACKAGE IF EXISTS $(APP_PACKAGE_NAME);"
 
 deploy-app:
 	echo "Installing native app... (this may take a while)"
@@ -97,4 +97,4 @@ upgrade-app:
 
 clean-app:
 	echo "Dropping native app..."
-	$(COMMON_DIR)/run-query.js "DROP APPLICATION $(APP_NAME);"
+	$(COMMON_DIR)/run-query.js "DROP APPLICATION IF EXISTS $(APP_NAME);"
