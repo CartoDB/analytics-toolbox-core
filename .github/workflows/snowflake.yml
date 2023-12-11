@@ -88,6 +88,37 @@ jobs:
           cd clouds/snowflake
           make deploy diff="$GIT_DIFF" production=1
 
+  deploy-internal-app:
+    if: github.ref_name == 'main'
+    needs: test
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    env:
+      APP_PACKAGE_NAME: ${{ secrets.SF_INTERNAL_CORE_NATIVE_APP_PACKAGE_NAME }}
+      APP_NAME: ${{ secrets.SF_INTERNAL_CORE_NATIVE_APP_NAME }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_NATIVE_APP }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_NATIVE_APP }}
+      SF_USER: ${{ secrets.SF_USER_NATIVE_APP }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_NATIVE_APP }}
+      SF_ROLE: ${{ secrets.SF_ROLE_NATIVE_APP }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Deploy native app package
+        run: |
+          cd clouds/snowflake
+          make deploy-native-app-package production=1
+      - name: Deploy native app locally
+        run: |
+          cd clouds/snowflake
+          make deploy-native-app
+
   deploy-share:
     if: github.ref_name == 'stable'
     needs: test
