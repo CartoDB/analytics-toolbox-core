@@ -117,7 +117,7 @@ jobs:
       - name: Deploy native app locally
         run: |
           cd clouds/snowflake
-          make deploy-native-app
+          make deploy-native-app production=1
 
   deploy-share:
     if: github.ref_name == 'stable'
