@@ -26,10 +26,10 @@ endif
 
 .SILENT:
 
-.PHONY: help build deploy-app-package deploy-app upgrade-app clean-app-package clean-app
+.PHONY: help build deploy-app-package deploy-app drop-app-package drop-app
 
 help:
-	echo "Available targets: help build ddeploy-app-package deploy-app upgrade-app clean-app-package clean-app"
+	echo "Available targets: help build deploy-app-package deploy-app drop-app-package drop-app"
 
 build:
 	rm -rf $(DIST_DIR)
@@ -43,7 +43,7 @@ deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 
-	result=$$(CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION) $(COMMON_DIR)/native-app-setup.js) && \
+	result=$$(CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-setup.js) && \
 	if [ $${result} -eq 0 ]; then \
 		echo "Creating native app package..."; \
 		$(COMMON_DIR)/run-query.js "CREATE APPLICATION PACKAGE $(APP_PACKAGE_NAME);"; \
@@ -69,7 +69,7 @@ deploy-app-package:
 	$(COMMON_DIR)/native-app-setup.js
 
 # This ensures that there are no more than 2 versions which is a Snowflake limitations
-	result=$$(COUNT_VERSIONS=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION) $(COMMON_DIR)/native-app-setup.js) && \
+	result=$$(COUNT_VERSIONS=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-setup.js) && \
 	if [ $${result} -eq 2 ]; then \
 		echo "Requesting previous native app package version drop..."; \
 		DROP_PREVIOUS_VERSION=1 \
@@ -78,23 +78,24 @@ deploy-app-package:
 		$(COMMON_DIR)/native-app-setup.js; \
 	fi
 
-clean-app-package:
+drop-app-package:
 	echo "Dropping native app package..."
 	$(COMMON_DIR)/run-query.js "DROP APPLICATION PACKAGE IF EXISTS $(APP_PACKAGE_NAME);"
 
 deploy-app:
-	echo "Installing native app... (this may take a while)"
-	$(COMMON_DIR)/run-query.js "DROP APPLICATION IF EXISTS $(APP_NAME);"
-	$(COMMON_DIR)/run-query.js "CREATE APPLICATION $(APP_NAME) \
-		FROM APPLICATION PACKAGE $(APP_PACKAGE_NAME);"
-	$(MAKE) extra-app-deploy
+	result=$$(CHECK_APP_EXISTENCE=1 APP_NAME=$(APP_NAME) $(COMMON_DIR)/native-app-setup.js) && \
+	if [ $${result} -eq 0 ]; then \
+		echo "Installing native app... (this may take a while)"; \
+		$(COMMON_DIR)/run-query.js "CREATE APPLICATION $(APP_NAME) \
+		FROM APPLICATION PACKAGE $(APP_PACKAGE_NAME);"; \
+		$(MAKE) extra-app-deploy; \
+	else \
+		echo "Upgrading native app... (this may take a while)"; \
+		$(COMMON_DIR)/run-query.js "ALTER APPLICATION $(APP_NAME) UPGRADE;"; \
+	fi
 
 extra-app-deploy::
 
-upgrade-app:
-	echo "Upgrading native app... (this may take a while)"
-	$(COMMON_DIR)/run-query.js "ALTER APPLICATION $(APP_NAME) UPGRADE;"
-
-clean-app:
+drop-app:
 	echo "Dropping native app..."
 	$(COMMON_DIR)/run-query.js "DROP APPLICATION IF EXISTS $(APP_NAME);"

@@ -98,6 +98,24 @@ function runGetAppPackagesQuery (callback) {
         complete: callback
     });
 }
+
+function runCheckAppExistenceQuery (err, stmt, rows) {
+    packagesArr = rows.filter(obj => obj['name'] === process.env.APP_NAME.toUpperCase())
+    if (packagesArr.length > 0) {
+        console.log('1')
+    } else {
+        console.log('0')
+    }
+}
+
+function runGetAppsQuery (callback) {
+    const query = 'SHOW APPLICATIONS;'
+    connection.execute({
+        sqlText: query,
+        complete: callback
+    });
+}
+
 if (process.env.SET_PACKAGE_RELEASE) {
     runGetVersionsQuery(runSetRelease)
 } else if (process.env.DROP_PREVIOUS_VERSION) {
@@ -108,4 +126,6 @@ if (process.env.SET_PACKAGE_RELEASE) {
     runGetVersionsQuery (runCountVersionsQuery)
 } else if (process.env.CHECK_APP_PACKAGE_EXISTENCE) {
     runGetAppPackagesQuery(runCheckAppPackageExistenceQuery)
+} else if (process.env.CHECK_APP_EXISTENCE) {
+    runGetAppsQuery(runCheckAppExistenceQuery)
 }

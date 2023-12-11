@@ -13,10 +13,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app upgrade-native-app
+.PHONY: help lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app
 
 help:
-	echo "Available targets: lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app upgrade-native-app"
+	echo "Available targets: lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app"
 
 lint:
 	$(MAKE) lint-libraries
@@ -117,6 +117,3 @@ deploy-native-app-package:
 
 deploy-native-app:
 	$(MAKE) -C native_app deploy-app
-
-upgrade-native-app:
-	$(MAKE) -C native_app upgrade-app
