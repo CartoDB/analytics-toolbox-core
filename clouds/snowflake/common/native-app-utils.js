@@ -1,5 +1,25 @@
 #!/usr/bin/env node
 
+// Perform operations related with the versioning of the native app
+
+// -- Set the app package release to the max patch of a given version. This is the version that will be used by default by customers.
+// ./native-app-utils.js SET_PACKAGE_RELEASE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION)
+
+// -- Drop the previous version of the app package. This is done to avoid having more than two versions of the package.
+// ./native-app-utils.js DROP_PREVIOUS_VERSION=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION)
+
+// -- Check if a given version exists in the app package. This is checked in order to deploy a version or a patch
+// ./native-app-utils.js CHECK_VERSION_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION)
+
+// -- Count the number of versions in an app package. This is checked in order to drop a version if necessary
+// ./native-app-utils.js COUNT_VERSIONS=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME)
+
+// -- Check if a given app package exists. This is checked in order to create a package or not
+// ./native-app-utils.js CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME)
+
+// -- Check if a given app exists. This is checked in order to create an app or launch an upgrade
+// ./native-app-utils.js CHECK_APP_EXISTENCE=1 APP_NAME=$(APP_NAME)
+
 const snowflake = require('snowflake-sdk');
 
 snowflake.configure({ insecureConnect: true });

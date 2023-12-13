@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-// Build the setup_script file based on the input filters
+// Build the setup_script for the native app file based on the input filters
 // and ordered to solve the dependencies
 
-// ./build_setup_script.js modules --output=build --diff="clouds/snowflake/modules/sql/quadbin/QUADBIN_TOZXY.sql"
-// ./build_setup_script.js modules --output=build --functions=ST_TILEENVELOPE
-// ./build_setup_script.js modules --output=build --modules=quadbin
-// ./build_setup_script.js modules --output=build --production --dropfirst
+// ./build_native_app_setup_script.js modules --output=build --diff="clouds/snowflake/modules/sql/quadbin/QUADBIN_TOZXY.sql"
+// ./build_native_app_setup_script.js modules --output=build --functions=ST_TILEENVELOPE
+// ./build_native_app_setup_script.js modules --output=build --modules=quadbin
+// ./build_native_app_setup_script.js modules --output=build --production --dropfirst
 
 const fs = require('fs');
 const path = require('path');

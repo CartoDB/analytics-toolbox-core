@@ -69,12 +69,12 @@ build-share: $(NODE_MODULES_DEV)
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
 build-native-app-setup-script: $(NODE_MODULES_DEV)
-	echo "Building modules..."
+	echo "Building native app setup script..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	SF_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/build_setup_script.js $(MODULES_DIRS) \
+	$(COMMON_DIR)/build_native_app_setup_script.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=1
 

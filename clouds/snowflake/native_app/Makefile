@@ -43,13 +43,13 @@ deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 
-	result=$$(CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-setup.js) && \
+	result=$$(CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-utils.js) && \
 	if [ $${result} -eq 0 ]; then \
 		echo "Creating native app package..."; \
 		$(COMMON_DIR)/run-query.js "CREATE APPLICATION PACKAGE $(APP_PACKAGE_NAME);"; \
 	fi
 
-	result=$$(CHECK_VERSION_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION) $(COMMON_DIR)/native-app-setup.js) && \
+	result=$$(CHECK_VERSION_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) VERSION=$(APP_MAJOR_VERSION) $(COMMON_DIR)/native-app-utils.js) && \
 	if [ $${result} -eq 1 ]; then \
 		echo "Deploying native app package patch..."; \
 		$(COMMON_DIR)/run-query.js "ALTER APPLICATION PACKAGE $(APP_PACKAGE_NAME) \
@@ -62,20 +62,20 @@ deploy-app-package:
 			USING @$(APP_STAGE_LOCATION);"; \
 	fi
 
-	echo "Setting release package to the newest patch"
+	echo "Setting release package to the newest patch..."
 	SET_PACKAGE_RELEASE=1 \
 	APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) \
 	VERSION=$(APP_MAJOR_VERSION) \
-	$(COMMON_DIR)/native-app-setup.js
+	$(COMMON_DIR)/native-app-utils.js
 
 # This ensures that there are no more than 2 versions which is a Snowflake limitations
-	result=$$(COUNT_VERSIONS=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-setup.js) && \
+	result=$$(COUNT_VERSIONS=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-utils.js) && \
 	if [ $${result} -eq 2 ]; then \
 		echo "Requesting previous native app package version drop..."; \
 		DROP_PREVIOUS_VERSION=1 \
 		APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) \
 		VERSION=$(APP_MAJOR_VERSION) \
-		$(COMMON_DIR)/native-app-setup.js; \
+		$(COMMON_DIR)/native-app-utils.js; \
 	fi
 
 drop-app-package:
@@ -83,7 +83,7 @@ drop-app-package:
 	$(COMMON_DIR)/run-query.js "DROP APPLICATION PACKAGE IF EXISTS $(APP_PACKAGE_NAME);"
 
 deploy-app:
-	result=$$(CHECK_APP_EXISTENCE=1 APP_NAME=$(APP_NAME) $(COMMON_DIR)/native-app-setup.js) && \
+	result=$$(CHECK_APP_EXISTENCE=1 APP_NAME=$(APP_NAME) $(COMMON_DIR)/native-app-utils.js) && \
 	if [ $${result} -eq 0 ]; then \
 		echo "Installing native app... (this may take a while)"; \
 		$(COMMON_DIR)/run-query.js "CREATE APPLICATION $(APP_NAME) \
