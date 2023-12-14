@@ -57,7 +57,7 @@ Make commands can be run also inside `libraries/javascript` and `modules` folder
 
 **Filtering**
 
-Commands `build-libraries`, `build-modules`, `deploy-modules`, `test-libraries`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-libraries`, `build-modules`, `deploy-modules`, `test-libraries`, `test-modules`, `create-package` and `deploy-native-app-package` can be filtered by the following. All the filters are additive:
 
 - `diff`: list of changed files
 - `modules`: list of modules to filter
