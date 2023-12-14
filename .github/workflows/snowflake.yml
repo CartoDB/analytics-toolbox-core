@@ -94,13 +94,13 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      APP_PACKAGE_NAME: ${{ secrets.SF_INTERNAL_CORE_NATIVE_APP_PACKAGE_NAME }}
-      APP_NAME: ${{ secrets.SF_INTERNAL_CORE_NATIVE_APP_NAME }}
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_NATIVE_APP }}
-      SF_DATABASE: ${{ secrets.SF_DATABASE_NATIVE_APP }}
-      SF_USER: ${{ secrets.SF_USER_NATIVE_APP }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_NATIVE_APP }}
-      SF_ROLE: ${{ secrets.SF_ROLE_NATIVE_APP }}
+      APP_PACKAGE_NAME: ${{ secrets.SF_NATIVE_APP_PACKAGE_NAME_CD }}
+      APP_NAME: ${{ secrets.SF_NATIVE_APP_NAME_CD }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_NATIVE_APP_CD }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_NATIVE_APP_CD }}
+      SF_USER: ${{ secrets.SF_USER_NATIVE_APP_CD }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD_NATIVE_APP_CD }}
+      SF_ROLE: ${{ secrets.SF_ROLE_NATIVE_APP_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

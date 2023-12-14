@@ -17,7 +17,7 @@ APP_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 APP_MAJOR_VERSION = v$(firstword $(subst ., ,$(APP_VERSION)))
 APP_FORMATTED_VERSION = v$(subst .,_,$(APP_VERSION))
 
-APP_STAGE_NAME ?= $(SF_SCHEMA).APP_$(SF_UNQUALIFIED_SCHEMA)
+APP_STAGE_NAME ?= $(SF_SCHEMA).$(APP_NAME)
 ifeq ($(production),1)
 	APP_STAGE_LOCATION ?= $(APP_STAGE_NAME)/$(APP_FORMATTED_VERSION)
 else
