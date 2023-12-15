@@ -222,3 +222,8 @@ Extra dependencies:
 `@@BQ_DATASET@@.SOME_FUNCTION`()
 */
 ```
+
+## Known Limitations
+### Snowflake
+
+Due to Snowflake Native Apps limitations at this moment TEMPORARY tables cannot be used within procedures. For the time being create normal tables and ensure that they are dropped.
