@@ -42,6 +42,6 @@ SELECT carto.H3_POLYFILL(
 -- ...
 ```
 
-Learn how to visualize the result of these queries in CARTO by visiting https://docs.carto.com/carto-user-manual/maps/data-sources#add-source-from-a-custom-query
+Learn how to visualize the result of these queries in CARTO by visiting [https://docs.carto.com/carto-user-manual/maps/data-sources#add-source-from-a-custom-query](https://docs.carto.com/carto-user-manual/maps/data-sources#add-source-from-a-custom-query).
 
-Get a CARTO account in https://app.carto.com/signup
+Get a CARTO account in [https://app.carto.com/signup](https://app.carto.com/signup).
