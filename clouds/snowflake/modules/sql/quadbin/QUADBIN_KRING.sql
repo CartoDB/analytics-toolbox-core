@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2023 CARTO
+--------------------------------
 
 -- The function returns a STRING for two main issues related with Snowflake limitations
 -- 1. Snowflake has a native support of BigInt numbers, however, if the UDF
