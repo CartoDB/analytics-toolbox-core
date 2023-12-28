@@ -17,7 +17,7 @@ AS ((
                         resolution AS z,
                         (1 << resolution) AS __z2,
                         ACOS(-1) AS pi,
-                        GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
+                        latitude
                 ),
 
                 ___sinlat AS (
@@ -49,9 +49,9 @@ AS ((
                             FLOOR(
                                 __z2 * (
                                     0.5 - 0.25
-                                    * LN(
+                                    * GREATEST(-2, LEAST(2, LN(
                                         (1 + __sinlat) / (1 - __sinlat)
-                                    ) / pi
+                                    ) / pi))
                                 )
                             ) AS INT64
                         ) AS y
