@@ -17,7 +17,7 @@ AS ((
                         resolution AS z,
                         (1 << resolution) AS __z2,
                         ACOS(-1) AS pi,
-                        latitude
+                        GREATEST(-89.99999, LEAST(89.99999, latitude)) AS latitude
                 ),
 
                 ___sinlat AS (
