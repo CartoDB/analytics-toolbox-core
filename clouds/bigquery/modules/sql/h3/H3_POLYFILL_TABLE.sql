@@ -29,7 +29,7 @@ AS """
     return 'CREATE TABLE `' + output_table + '` CLUSTER BY (h3) AS\\n' +
         'WITH __input AS (' + input_query + '),\\n' +
         '__cells AS (SELECT h3, i.* FROM __input AS i,\\n' +
-        'UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT`(geom,`@@BQ_DATASET@@.__H3_POLYFILL_INIT_Z`(geom,' + resolution + '))) AS parent,\\n' +
+        'UNNEST(`@@BQ_DATASET@@.__H3_POLYFILL_INIT_BBOX`(geom,`@@BQ_DATASET@@.__H3_POLYFILL_INIT_Z`(geom,' + resolution + '))) AS parent,\\n' +
         'UNNEST(`@@BQ_DATASET@@.H3_TOCHILDREN`(parent,' + resolution + ')) AS h3)\\n' +
         'SELECT * EXCEPT (geom) FROM __cells\\n' +
         'WHERE ' + containmentFunction + '(geom, `' + cellFunction + '`(h3));'
