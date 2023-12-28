@@ -21,8 +21,8 @@ $BODY$
                     NULL
                 ELSE
                     GREATEST(
-                        ABS((destination_coords->>'x')::DOUBLE PRECISION - (origin_coords->>'x')::DOUBLE PRECISION),
-                        ABS((destination_coords->>'y')::DOUBLE PRECISION - (origin_coords->>'y')::DOUBLE PRECISION)
+                        ABS((destination_coords->>'x')::BIGINT - (origin_coords->>'x')::BIGINT),
+                        ABS((destination_coords->>'y')::BIGINT - (origin_coords->>'y')::BIGINT)
                     )
                 END
             FROM __quadbin_coords
