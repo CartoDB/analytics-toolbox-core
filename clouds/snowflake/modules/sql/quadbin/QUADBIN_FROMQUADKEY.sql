@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2023 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_FROMQUADKEY
 (quadkey STRING)
@@ -22,5 +22,8 @@ CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_FROMQUADKEY
 RETURNS BIGINT
 IMMUTABLE
 AS $$
-    SELECT CAST(@@SF_SCHEMA@@._QUADBIN_FROMQUADKEY(QUADKEY) AS BIGINT)
+    IFF(quadkey IS NULL,
+        NULL,
+        CAST(@@SF_SCHEMA@@._QUADBIN_FROMQUADKEY(QUADKEY) AS BIGINT)
+    )
 $$;

@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2023 CARTO
+--------------------------------
 
 -- The function returns a STRING for two main issues related with Snowflake limitations
 -- 1. Snowflake has a native support of BigInt numbers, however, if the UDF
@@ -14,5 +14,8 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_KRING_DISTANCES
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    TO_ARRAY(PARSE_JSON(@@SF_SCHEMA@@._QUADBIN_KRING(TO_VARCHAR(ORIGIN, 'xxxxxxxxxxxxxxxx'), SIZE, true)))
+    IFF(origin IS NULL OR size IS NULL,
+        NULL,
+        TO_ARRAY(PARSE_JSON(@@SF_SCHEMA@@._QUADBIN_KRING(TO_VARCHAR(ORIGIN, 'xxxxxxxxxxxxxxxx'), SIZE, true)))
+    )
 $$;
