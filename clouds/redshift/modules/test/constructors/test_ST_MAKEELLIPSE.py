@@ -8,12 +8,12 @@ here = os.path.dirname(__file__)
 def test_makeellipse_success():
     results = run_query(
         """
-        SELECT @@RS_SCHEMA@@.ST_MAKEELLIPSE(
-                ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', 20),
-               @@RS_SCHEMA@@.ST_MAKEELLIPSE(
-                ST_POINT(13.9385,0.6643), 10, 2, 15, 'kilometers', 10),
-               @@RS_SCHEMA@@.ST_MAKEELLIPSE(
-                ST_POINT(53.9385,-10.6643), 8, 7, 100, 'miles', 15)
+        SELECT ST_ASGEOJSON(@@RS_SCHEMA@@.ST_MAKEELLIPSE(
+                ST_POINT(-73.9385,40.6643), 5, 3, -30, 'miles', 20)),
+               ST_ASGEOJSON(@@RS_SCHEMA@@.ST_MAKEELLIPSE(
+                ST_POINT(13.9385,0.6643), 10, 2, 15, 'kilometers', 10)),
+               ST_ASGEOJSON(@@RS_SCHEMA@@.ST_MAKEELLIPSE(
+                ST_POINT(53.9385,-10.6643), 8, 7, 100, 'miles', 15))
     """
     )
 
