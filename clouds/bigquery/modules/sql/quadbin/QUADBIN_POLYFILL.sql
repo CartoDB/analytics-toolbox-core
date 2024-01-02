@@ -16,9 +16,9 @@ AS ((
             __params AS (
                 SELECT
                     box.xmin AS minlon,
-                    box.ymin AS minlat,
+                    GREATEST(-89, LEAST(89, box.ymin)) AS minlat,
                     box.xmax AS maxlon,
-                    box.ymax AS maxlat,
+                    GREATEST(-89, LEAST(89, box.ymax)) AS maxlat,
                     (1 << resolution) AS z2,
                     ACOS(-1) AS pi
                 FROM __bbox
@@ -37,11 +37,13 @@ AS ((
                     ) AS xmin,
                     CAST(
                         FLOOR(
-                            z2 * (
-                                0.5 - 0.25 * LN(
-                                    (1 + sinlat_max) / (1 - sinlat_max)
-                                ) / pi
-                            )
+                            GREATEST(0, LEAST(z2 - 1,
+                                z2 * (
+                                    0.5 - 0.25 * LN(
+                                        (1 + sinlat_max) / (1 - sinlat_max)
+                                    ) / pi
+                                )
+                            ))
                         ) AS INT64
                     ) AS ymin,
                     CAST(
@@ -49,11 +51,13 @@ AS ((
                     ) AS xmax,
                     CAST(
                         FLOOR(
-                            z2 * (
-                                0.5 - 0.25 * LN(
-                                    (1 + sinlat_min) / (1 - sinlat_min)
-                                ) / pi
-                            )
+                            GREATEST(0, LEAST(z2 - 1,
+                                z2 * (
+                                    0.5 - 0.25 * LN(
+                                        (1 + sinlat_min) / (1 - sinlat_min)
+                                    ) / pi
+                                )
+                            ))
                         ) AS INT64
                     ) AS ymax
                 FROM __params, __sinlat
