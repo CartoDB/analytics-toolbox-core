@@ -12,10 +12,10 @@ def test_bezierspline_success():
 
     results = run_query(
         f"""
-        SELECT @@RS_SCHEMA@@.ST_BEZIERSPLINE(
-                ST_GEOMFROMTEXT('{lines[0].rstrip()}'), 100, 0.85),
-               @@RS_SCHEMA@@.ST_BEZIERSPLINE(
-                ST_GEOMFROMTEXT('{lines[1].rstrip()}'), 60, 0.85)
+        SELECT ST_ASGEOJSON(@@RS_SCHEMA@@.ST_BEZIERSPLINE(
+                ST_GEOMFROMTEXT('{lines[0].rstrip()}'), 100, 0.85)),
+               ST_ASGEOJSON(@@RS_SCHEMA@@.ST_BEZIERSPLINE(
+                ST_GEOMFROMTEXT('{lines[1].rstrip()}'), 60, 0.85))
     """
     )
 
