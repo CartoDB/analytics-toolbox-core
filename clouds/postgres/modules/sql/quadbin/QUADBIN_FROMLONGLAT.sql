@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(
     longitude DOUBLE PRECISION,
@@ -21,7 +21,7 @@ $BODY$
             SELECT
                 resolution AS z,
                 (1 << resolution) AS __z2,
-                GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
+                GREATEST(-89, LEAST(89, latitude)) AS latitude
         ),
         ___sinlat AS (
             SELECT
@@ -41,7 +41,7 @@ $BODY$
                     WHEN __x < 0 THEN __x + __z2
                     ELSE __x
                 END AS x,
-                (FLOOR(__z2 * (0.5 - 0.25 * (LN((1 + __sinlat)/(1 - __sinlat)) / PI()))))::BIGINT AS y
+                (FLOOR(GREATEST(0, LEAST(__z2 - 1, __z2 * (0.5 - 0.25 * (LN((1 + __sinlat)/(1 - __sinlat)) / PI()))))))::BIGINT AS y
             FROM
                 __params,
                 ___sinlat,
