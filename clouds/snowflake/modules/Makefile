@@ -106,7 +106,8 @@ test: check $(NODE_MODULES_DEV)
 
 remove: $(NODE_MODULES_DEV)
 	echo "Removing modules..."
-	$(COMMON_DIR)/run-query.js "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE;"
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
 remove-share: $(NODE_MODULES_DEV)
 	echo "Removing share..."

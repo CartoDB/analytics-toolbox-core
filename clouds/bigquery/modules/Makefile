@@ -97,7 +97,9 @@ test: check $(NODE_MODULES_DEV)
 
 remove: check
 	echo "Removing modules..."
-	$(BQ) rm -r -f -d $(BQ_DEPLOY_DATASET)
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
 clean:
 	echo "Cleaning modules..."

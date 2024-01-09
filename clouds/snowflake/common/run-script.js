@@ -42,11 +42,24 @@ async function runQuery (query) {
     });
 }
 
+function apply_replacements (text) {
+    if (process.env.REPLACEMENTS) {
+        const replacements = process.env.REPLACEMENTS.split(' ');
+        for (let replacement of replacements) {
+            if (replacement) {
+                const pattern = new RegExp(`@@${replacement}@@`, 'g');
+                text = text.replace(pattern, process.env[replacement]);
+            }
+        }
+    }
+    return text;
+}
+
 async function runQueries (queries) {
     const n = queries.length;
     bar.start(n, 0);
     for (let i = 0; i < n; i++) {
-        let query = `BEGIN\n${queries[i]}\nEND;`;
+        let query = apply_replacements (`BEGIN\n${queries[i]}\nEND;`);
 
         const pattern = /(FUNCTION|PROCEDURE)\s+(.*?)[(\n]/g;
         const results = pattern.exec(query);
