@@ -6,8 +6,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_TILEENVELOPE`
 (zoomLevel INT64, xTile INT64, yTile INT64)
 RETURNS GEOGRAPHY
 AS (
-    `@@BQ_DATASET@@.QUADINT_BOUNDARY`(
-        `@@BQ_DATASET@@.QUADINT_FROMZXY`(
+    `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(
+        `@@BQ_DATASET@@.QUADBIN_FROMZXY`(
             zoomlevel, xtile, ytile
         )
     )

@@ -9,6 +9,16 @@ from psycopg2 import connect
 function = ''
 
 
+def apply_replacements(text):
+    if os.environ.get('REPLACEMENTS'):
+        replacements = os.environ.get('REPLACEMENTS').split(' ')
+        for replacement in replacements:
+            if replacement:
+                pattern = re.compile(f'@@{replacement}@@', re.MULTILINE)
+                text = pattern.sub(os.environ.get(replacement, ''), text)
+    return text
+
+
 def run_queries(queries):
     global function
     with connect(
@@ -20,7 +30,7 @@ def run_queries(queries):
         conn.autocommit = True
         with conn.cursor() as cursor:
             for i in trange(len(queries), ncols=97):
-                query = queries[i]
+                query = apply_replacements(queries[i])
                 pattern = os.environ['PG_SCHEMA'] + '.(.*?)[(|\n]'
                 result = re.search(pattern, query)
                 if result:

@@ -15,7 +15,9 @@ test('ST_TILEENVELOPE should work', async () => {
 
 test('ST_TILEENVELOPE should fail if any NULL argument', async () => {
     const query = `
-        SELECT \`@@BQ_DATASET@@.ST_TILEENVELOPE\`(10, 384, null)
+        SELECT \`@@BQ_DATASET@@.ST_TILEENVELOPE\`(10, 384, null) AS geog
     `;
-    await expect(runQuery(query)).rejects.toThrow();
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].geog).toEqual(null);
 });
