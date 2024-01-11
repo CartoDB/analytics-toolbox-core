@@ -13,9 +13,11 @@ test('ST_TILEENVELOPE should work', async () => {
     expect(JSON.stringify(rows[0].GEOG3)).toEqual('{"coordinates":[[[-44.99998927116395,45.000002199069606],[-44.99998927116395,44.99999461263666],[-45,44.99999461263666],[-45,45.000002199069606],[-44.99998927116395,45.000002199069606]]],"type":"Polygon"}');
 });
 
-test('ST_TILEENVELOPE should fail if any NULL argument', async () => {
+test('ST_TILEENVELOPE should return NULL if any NULL argument', async () => {
     const query = `
-        SELECT ST_TILEENVELOPE(10, 384, null)
+        SELECT ST_TILEENVELOPE(10, 384, null) as geog
     `;
-    await expect(runQuery(query)).rejects.toThrow();
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].GEOG).toEqual(null);
 });
