@@ -1,5 +1,5 @@
 --------------------------------
--- Copyright (C) 2022-2023 CARTO
+-- Copyright (C) 2022-2024 CARTO
 --------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_FROMLONGLAT
@@ -16,14 +16,13 @@ AS $$
                 SELECT
                     resolution AS z,
                     ACOS(-1) AS PI,
-                    GREATEST(-85.05, LEAST(85.05, latitude)) AS params_latitude
+                    GREATEST(-89, LEAST(89, latitude)) AS params_latitude
             ),
             __zxy AS (
                 SELECT
                     z,
                     BITAND( CAST(FLOOR(BITSHIFTLEFT(1, z) * ((longitude / 360.0) + 0.5)) AS INT), (BITSHIFTLEFT(1, z) - 1)) AS x,
-                    BITAND( CAST(FLOOR(BITSHIFTLEFT(1, z) * (0.5 - (LN(TAN(PI/4.0 + params_latitude/2.0 * PI/180.0)) / (2*PI)))) AS INT),
-                            (BITSHIFTLEFT(1, z) - 1)) AS y
+                    BITAND( CAST(FLOOR(GREATEST(0, LEAST(BITSHIFTLEFT(1, z) - 1, BITSHIFTLEFT(1, z) * (0.5 - (LN(TAN(PI/4.0 + params_latitude/2.0 * PI/180.0)) / (2*PI)))))) AS INT),(BITSHIFTLEFT(1, z) - 1)) AS y
                 FROM __params
             )
             SELECT @@SF_SCHEMA@@.QUADBIN_FROMZXY(z, x, y)

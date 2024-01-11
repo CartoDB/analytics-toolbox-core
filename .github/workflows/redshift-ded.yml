@@ -18,6 +18,7 @@ jobs:
       (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift')) ||
       (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift'))
     runs-on: ubuntu-20.04
+    container: python:2.7.18-buster
     timeout-minutes: 20
     env:
       RS_HOST: ${{ secrets.RS_HOST_CD }}
@@ -30,19 +31,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Set RS_PREFIX for releases
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: |
-          echo "RS_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set RS_PREFIX for hotfixes
-        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
-        run: |
-          echo "RS_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set RS_PREFIX for regular deploys
-        if: |
-          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
-          !(startsWith(github.event.pull_request.head.ref, 'release/'))
-        run: echo "RS_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Check diff
+        uses: technote-space/get-diff-action@v4
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -58,6 +48,8 @@ jobs:
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
           ./aws/install
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
