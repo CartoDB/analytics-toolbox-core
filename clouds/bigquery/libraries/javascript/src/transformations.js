@@ -11,6 +11,7 @@ import {
     along,
     lineString,
     cleanCoords,
+    pointOnFeature,
     multiPoint,
     point
 } from '@turf/turf';
@@ -28,6 +29,7 @@ export default {
     along,
     lineString,
     cleanCoords,
+    pointOnFeature,
     multiPoint,
     point
 };
