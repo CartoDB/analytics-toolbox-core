@@ -10,7 +10,7 @@ test('ST_POINTONSURFACE should work', async () => {
 });
 
 test('ST_POINTONSURFACE should return NULL if any NULL mandatory argument', async () => {
-    const query = 'SELECT ST_POINTONSURFACE(NULL) as centerofmass1';
+    const query = 'SELECT ST_POINTONSURFACE(NULL) as pointOnSurface1';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].POINTONSURFACE1).toEqual(null);
