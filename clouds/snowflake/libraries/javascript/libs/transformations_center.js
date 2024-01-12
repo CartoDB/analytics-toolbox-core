@@ -2,12 +2,14 @@ import {
     feature,
     centerMean,
     centerMedian,
-    centerOfMass
+    centerOfMass,
+    pointOnSurface
 } from '@turf/turf';
 
 export default {
     feature,
     centerMean,
     centerMedian,
-    centerOfMass
+    centerOfMass,
+    pointOnSurface
 };
