@@ -4,7 +4,7 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
-## [1.2.0] - 2023-01-17
+## [1.2.0] - 2024-01-17
 
 - chore: increase tests timeout to 200000 (#455)
 - feat(quadbin): add function QUADBIN_DISTANCE (#457)

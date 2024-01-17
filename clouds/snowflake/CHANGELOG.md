@@ -4,7 +4,7 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
-## [1.2.0] - 2023-01-17
+## [1.2.0] - 2024-01-17
 
 - feat(quadbin): add function QUADBIN_DISTANCE (#457)
 - chore: fix naming dedicated deployments for releases (#462)

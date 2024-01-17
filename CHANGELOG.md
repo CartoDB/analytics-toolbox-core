@@ -4,7 +4,7 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
-## 2023-01-17
+## 2024-01-17
 
 - chore(bq): increase tests timeout to 200000 (#455)
 - feat(bq,sf,rs,pg|quadbin): add function QUADBIN_DISTANCE (#457)
