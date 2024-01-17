@@ -4,6 +4,16 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.0] - 2023-01-17
+
+- chore: increase tests timeout to 200000 (#455)
+- feat(quadbin): add function QUADBIN_DISTANCE (#457)
+- fix(h3): fix broken reference in H3_POLYFILL_TABLE (#458, #460)
+- chore: fix naming dedicated deployments for releases (#462)
+- chore: make remove drop functions instead of whole schema (#466)
+- fix(quadbin): improve precision of long lat conversion near the latitude limits (#461)
+- feat(transformations): add function ST_POINTONSURFACE (#469)
+
 ## [1.1.0] - 2023-08-04
 
 - chore(quadbin,h3): optimize quadbin/h3 polyfill performance (#421)

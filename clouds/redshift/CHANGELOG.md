@@ -4,6 +4,14 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.1.0] - 2023-01-17
+
+- feat(quadbin): add function QUADBIN_DISTANCE (#457)
+- chore: fix naming dedicated deployments for releases (#462)
+- fix(constructors,transformations): adjust SRID and use native ST_GEOMFROMGEOJSON to return geometries instead of VARCHAR (#463)
+- chore: make remove drop functions instead of whole schema (#466)
+- fix(quadbin): improve precision of long lat conversion near the latitude limits (#461)
+
 ## [1.0.2] - 2023-07-11
 
 - chore(quadbin): update QUADBIN_FROMLONGLAT formula (#409, #411)

@@ -4,6 +4,15 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.0] - 2023-01-17
+
+- feat(quadbin): add function QUADBIN_DISTANCE (#457)
+- chore: fix naming dedicated deployments for releases (#462)
+- fix(quadbin): QUADBIN_FROMLONGLAT not clamping latitudes and return some quadbin functions return NULL when NULL parameters (#456)
+- chore: make remove drop functions instead of whole schema (#466)
+- fix(quadbin): improve precision of long lat conversion near the latitude limits (#461)
+- feat(transformations): add function ST_POINTONSURFACE (#470)
+
 ## [1.1.0] - 2023-05-05
 
 - feat(h3): add H3_CENTER function (#395)

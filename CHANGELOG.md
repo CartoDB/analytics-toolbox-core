@@ -4,6 +4,19 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2023-01-17
+
+- chore(bq): increase tests timeout to 200000 (#455)
+- feat(bq,sf,rs,pg|quadbin): add function QUADBIN_DISTANCE (#457)
+- fix(bq|h3): fix broken reference in H3_POLYFILL_TABLE (#458, #460)
+- chore(bq,sf,rs,pg): fix naming dedicated deployments for releases (#462)
+- fix(sf|quadbin): QUADBIN_FROMLONGLAT not clamping latitudes and return some quadbin functions return NULL when NULL parameters (#456)
+- fix(rs|constructors,transformations): adjust SRID and use native ST_GEOMFROMGEOJSON to return geometries instead of VARCHAR (#463)
+- chore(pg): fix typo naming dedicated deployments for releases (#464)
+- chore(bq,sf,rs,pg): make remove drop functions instead of whole schema (#466)
+- fix(bq,sf,rs,pg|quadbin): improve precision of long lat conversion near the latitude limits (#461)
+- feat(bq,sf|transformations): add function ST_POINTONSURFACE (#469, #470)
+
 ## 2023-08-04
 
 - chore(bq|quadbin,h3): optimize quadbin/h3 polyfill performance (#421)
