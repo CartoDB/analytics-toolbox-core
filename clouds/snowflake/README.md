@@ -38,6 +38,7 @@ SF_SHARE=<share>  # optional
   - `doc`: contains the functions' documentation
   - `sql`: contains the functions' SQL code
   - `test`: contains the functions' tests
+- `native_app`
 
 ## Make commands
 
@@ -49,12 +50,14 @@ SF_SHARE=<share>  # optional
 - `make remove`: removes the SQL scripts from the Snowflake database
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates the installation package in the dist folder (zip)
+- `make deploy-native-app-package`: builds the JS libraries and SQL scripts and deploys a native app package. When the new version does not imply a major version change a patch is deployed.
+- `make deploy-native-app`: deploys a native app from a deployed native app package or upgrade it if already exists.
 
 Make commands can be run also inside `libraries/javascript` and `modules` folders, or be called like `make lint-libraries`, `make deploy-modules`.
 
 **Filtering**
 
-Commands `build-libraries`, `build-modules`, `deploy-modules`, `test-libraries`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-libraries`, `build-modules`, `deploy-modules`, `test-libraries`, `test-modules`, `create-package` and `deploy-native-app-package` can be filtered by the following. All the filters are additive:
 
 - `diff`: list of changed files
 - `modules`: list of modules to filter
@@ -68,6 +71,8 @@ make build-modules diff=modules/sql/quadbin/QUADBIN_RESOLUTION.sql
 make deploy-modules modules=quadbin,constructors
 make test-modules functions=ST_MAKEENVELOPE
 make create-package modules=quadbin
+make deploy-native-app-package modules=quadbin
+make deploy-native-app
 ```
 
 Command `test-libraries` can be also filtered by setting the `test` variable with a path of the test file. It supports passing the name of the test. Note that `build-libraries` will rebuild the libraries to make them suitable for testing.

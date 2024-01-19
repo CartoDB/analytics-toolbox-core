@@ -14,21 +14,36 @@ const options = {
 };
 const bar = new cliProgress.SingleBar(options, cliProgress.Presets.shades_classic);
 
-const client = new BigQuery({ projectId: `${BQ_PROJECT}`, timeout: 600000 });
+const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
+
+function apply_replacements (text) {
+    if (process.env.REPLACEMENTS) {
+        const replacements = process.env.REPLACEMENTS.split(' ');
+        for (let replacement of replacements) {
+            if (replacement) {
+                const pattern = new RegExp(`@@${replacement}@@`, 'g');
+                text = text.replace(pattern, process.env[replacement]);
+            }
+        }
+    }
+    return text;
+}
 
 async function runQueries (queries) {
-    const query_options = { 'timeoutMs' : 600000 };
     const n = queries.length;
     bar.start(n, 0);
     for (let i = 0; i < n; i++) {
-        let query = queries[i];
+        let query = apply_replacements(queries[i]);
 
         const pattern = /(FUNCTION|PROCEDURE)\s+(.*?)[(\n]/g;
         const results = pattern.exec(query);
         const result = results && results.reverse()[0]
         sqlFunction = result && result.split('.').reverse()[0]
 
-        await client.query(query, query_options);
+        await client.query({
+            query,
+            jobTimeoutMs: 600000
+        });
         bar.increment();
     }
     bar.stop(n);

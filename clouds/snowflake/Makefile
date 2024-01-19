@@ -13,10 +13,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean create-package
+.PHONY: help lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app
 
 help:
-	echo "Available targets: lint build deploy test remove clean create-package"
+	echo "Available targets: lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app"
 
 lint:
 	$(MAKE) lint-libraries
@@ -53,6 +53,13 @@ build-modules:
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build
 	cp modules/build/modules.sql $(BUILD_DIR)
+
+build-native-app-setup-script:
+	rm -rf $(BUILD_DIR)
+	$(MAKE) build-libraries
+	mkdir -p $(BUILD_DIR)
+	$(MAKE) -C modules build-native-app-setup-script
+	cp modules/build/setup_script.sql $(BUILD_DIR)
 
 deploy:
 	$(MAKE) build-libraries
@@ -102,3 +109,11 @@ create-package:
 	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 
 extra-package::
+
+deploy-native-app-package:
+	$(MAKE) build-native-app-setup-script
+	$(MAKE) -C native_app build
+	$(MAKE) -C native_app deploy-app-package
+
+deploy-native-app:
+	$(MAKE) -C native_app deploy-app

@@ -4,8 +4,28 @@ from test_utils import run_query
 
 def test_quadbin_longlat():
     """Computes quadbin for longitude latitude."""
-    result = run_query('SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4)')
-    assert result[0][0] == 5209574053332910079
+    result = run_query(
+        """
+        WITH inputs AS (
+            SELECT 1 AS ID, @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4)
+                UNION ALL SELECT 2,
+                    @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(0, 85.05112877980659, 26)
+                UNION ALL SELECT 3, @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(0, 88, 26)
+                UNION ALL SELECT 4, @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(0, 90, 26)
+                UNION ALL SELECT 5,
+                    @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(0, -85.05112877980659, 26)
+                UNION ALL SELECT 6, @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(0, -88, 26)
+                UNION ALL SELECT 7, @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(0, -90, 26)
+        )
+        SELECT * FROM inputs ORDER BY id ASC"""
+    )
+    assert result[0][1] == 5209574053332910079
+    assert result[1][1] == 5306366260949286912
+    assert result[2][1] == 5306366260949286912
+    assert result[3][1] == 5306366260949286912
+    assert result[4][1] == 5309368660700867242
+    assert result[5][1] == 5309368660700867242
+    assert result[6][1] == 5309368660700867242
 
 
 def test_quadbin_longlat_null_input():

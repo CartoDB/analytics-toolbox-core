@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2023 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._QUADBIN_TOQUADKEY
 (quadbin STRING)
@@ -20,5 +20,8 @@ CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@.QUADBIN_TOQUADKEY
 RETURNS STRING
 IMMUTABLE
 AS $$
-    SELECT @@SF_SCHEMA@@._QUADBIN_TOQUADKEY(CAST(QUADBIN AS STRING))
+    IFF(quadbin IS NULL,
+        NULL,
+        @@SF_SCHEMA@@._QUADBIN_TOQUADKEY(CAST(QUADBIN AS STRING))
+    )
 $$;

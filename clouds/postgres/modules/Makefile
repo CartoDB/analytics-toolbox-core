@@ -61,7 +61,8 @@ test: check venv3 $(NODE_MODULES_DEV)
 
 remove: venv3
 	echo "Removing modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(PG_SCHEMA) CASCADE;"
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
 clean:
 	echo "Cleaning modules..."

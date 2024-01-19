@@ -29,15 +29,11 @@ jobs:
       - name: Set PG_PREFIX for releases
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION=${BRANCH_NAME#release/}
-          echo "PG_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+          echo "PG_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Set PG_PREFIX for hotfixes
         if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
         run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION=${BRANCH_NAME#hotfix/}
-          echo "PG_PREFIX=dedicated_release_${VERSION}_" >> $GITHUB_ENV
+          echo "PG_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Set PG_PREFIX for regular deploys
         if: |
           !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&

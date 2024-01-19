@@ -10,6 +10,16 @@ from redshift_connector.error import ProgrammingError
 function = ''
 
 
+def apply_replacements(text):
+    if os.environ.get('REPLACEMENTS'):
+        replacements = os.environ.get('REPLACEMENTS').split(' ')
+        for replacement in replacements:
+            if replacement:
+                pattern = re.compile(f'@@{replacement}@@', re.MULTILINE)
+                text = pattern.sub(os.environ.get(replacement, ''), text)
+    return text
+
+
 def run_queries(queries):
     global function
     with connect(
@@ -22,7 +32,7 @@ def run_queries(queries):
         filter = os.environ.get('FILTER')
         with conn.cursor() as cursor:
             for i in trange(len(queries) if not filter else 1, ncols=97):
-                query = queries[i]
+                query = apply_replacements(queries[i])
                 if (not filter) or (filter in query):
                     pattern = os.environ['RS_SCHEMA'] + '.(.*?)[(|\n]'
                     result = re.search(pattern, str(query))
@@ -42,3 +52,4 @@ if __name__ == '__main__':
     except ProgrammingError as error:
         error_msg = re.search("'M': '(.*?)',", str(error)).group(1)
         print(f'[{function}] ERROR: {error_msg}')
+        exit(1)

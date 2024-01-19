@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`
 (longitude FLOAT64, latitude FLOAT64, resolution INT64)
@@ -17,7 +17,7 @@ AS ((
                         resolution AS z,
                         (1 << resolution) AS __z2,
                         ACOS(-1) AS pi,
-                        GREATEST(-85.05, LEAST(85.05, latitude)) AS latitude
+                        GREATEST(-89, LEAST(89, latitude)) AS latitude
                 ),
 
                 ___sinlat AS (
@@ -47,12 +47,13 @@ AS ((
                         CAST(
                             -- floor before cast to avoid up rounding to the next tiLe
                             FLOOR(
-                                __z2 * (
-                                    0.5 - 0.25
-                                    * LN(
-                                        (1 + __sinlat) / (1 - __sinlat)
-                                    ) / pi
-                                )
+                                GREATEST(0, LEAST(__z2 - 1,
+                                    __z2 * (
+                                        0.5 - 0.25
+                                        * LN(
+                                            (1 + __sinlat) / (1 - __sinlat)
+                                        ) / pi
+                                    )))
                             ) AS INT64
                         ) AS y
                     FROM

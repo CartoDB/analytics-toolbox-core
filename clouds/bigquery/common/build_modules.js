@@ -99,7 +99,7 @@ functionsFilter.forEach(f => {
 if (!nodeps) {
     functions.forEach(mainFunction => {
         functions.forEach(depFunction => {
-            if (mainFunction.name != depFunction.name && depFunction.name !== 'SETUP') {
+            if (mainFunction.name != depFunction.name) {
                 const depFunctionMatches = [];
                 depFunctionMatches.push(...depFunction.content.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=(?<!TEMP )FUNCTION)(.*?)(?=AS |RETURNS)','g')));
                 depFunctionMatches.push(...depFunction.content.replace(/(\r\n|\n|\r)/gm,' ').matchAll(new RegExp('(?<=PROCEDURE)(.*?)(?=BEGIN)','g')));
@@ -109,7 +109,7 @@ if (!nodeps) {
                     qualifiedDepFunctName = qualifiedDepFunctName.split('.');
                     depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
                 })
-                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}`))) {
+                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\`(`))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }
