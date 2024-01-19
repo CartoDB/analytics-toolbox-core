@@ -13,7 +13,7 @@ Returns the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distanc
 
 **Return type**
 
-`GEOGRAPHY`
+`BIGINT`
 
 **Example**
 

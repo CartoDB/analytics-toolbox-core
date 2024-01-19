@@ -16,8 +16,8 @@ AS ((
             __params AS (
                 SELECT
                     box.xmin AS minlon,
-                    GREATEST(-89, LEAST(89, box.ymin)) AS minlat,
                     box.xmax AS maxlon,
+                    GREATEST(-89, LEAST(89, box.ymin)) AS minlat,
                     GREATEST(-89, LEAST(89, box.ymax)) AS maxlat,
                     (1 << resolution) AS z2,
                     ACOS(-1) AS pi

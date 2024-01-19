@@ -4,6 +4,14 @@ CARTO Analytics Toolbox Core for Postgres.
 
 All notable commits to this project will be documented in this file.
 
+## [1.3.0] - 2024-01-17
+
+- feat(quadbin): add function QUADBIN_DISTANCE (#457)
+- chore: fix naming dedicated deployments for releases (#462)
+- chore: fix typo naming dedicated deployments for releases (#464)
+- chore: make remove drop functions instead of whole schema (#466)
+- fix(quadbin): improve precision of long lat conversion near the latitude limits (#461)
+
 ## [1.2.0] - 2023-08-04
 
 - chore(quadbin,h3): optimize quadbin/h3 polyfill performance (#418)
