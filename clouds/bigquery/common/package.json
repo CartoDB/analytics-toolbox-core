@@ -12,6 +12,7 @@
     "markdownlint-cli": "^0.32.2",
     "rollup": "^2.47.0",
     "rollup-plugin-bundle-size": "^1.0.3",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-polyfill-node": "^0.13.0"
   }
 }
