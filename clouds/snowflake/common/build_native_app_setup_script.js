@@ -15,6 +15,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
+const nativeAppDir = argv.native_app_dir || '../native_app';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
@@ -232,8 +233,13 @@ const header = `CREATE OR REPLACE APPLICATION ROLE @@APP_ROLE@@;
 CREATE OR ALTER VERSIONED SCHEMA @@SF_SCHEMA@@;
 GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE @@APP_ROLE@@;\n`;
 
+let additionalTables = '';
+if (argv.production) {
+    additionalTables = fs.readFileSync(path.resolve(nativeAppDir, 'ADDITIONAL_TABLES.sql')).toString() + separator;
+}
+
 const footer = fetchPermissionsGrant (fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString());
-content = header + separator + content + separator + footer;
+content = header + separator + additionalTables + content + separator + footer;
 
 content = apply_replacements(content);
 
