@@ -10,7 +10,7 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 * `origin`: `GEOGRAPHY` starting point.
 * `distance`: `DOUBLE` distance from the origin point in the units specified.
-* `bearing`: `DOUBLE` counter-clockwise angle from East, ranging from -180 to 180 (e.g. 0 is East, 90 is North, 180 is West, -90 is South).
+* `bearing`: `DOUBLE` ranging from -180 to 180 (e.g. 0 is North, 90 is East, 180 is South, -90 is West).
 * `units` (optional): `STRING` units of length, the supported options are: `miles`, `kilometers`, `degrees` or `radians`. If `NULL`the default value `kilometers` is used.
 
 **Return type**

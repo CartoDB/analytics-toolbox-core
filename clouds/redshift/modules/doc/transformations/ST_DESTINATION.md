@@ -10,7 +10,7 @@ Takes a Point and calculates the location of a destination point given a distanc
 
 * `geom`: `GEOMETRY` starting point.
 * `distance`: `FLOAT8` distance from the origin point in the units specified.
-* `bearing`: `FLOAT8` counter-clockwise angle from East, ranging from -180 to 180 (e.g. 0 is East, 90 is North, 180 is West, -90 is South).
+* `bearing`: `FLOAT8` ranging from -180 to 180 (e.g. 0 is North, 90 is East, 180 is South, -90 is West).
 * `units` (optional): `VARCHAR(15)` units of length. The supported options are: `miles`, `kilometers`, `degrees` or `radians`. If `NULL`the default value `kilometers` is used.
 
 **Return type**
