@@ -1,10 +1,6 @@
 const { createTable, deleteTable } = require('../../../../common/test-utils');
 
-async function initializeDOSubscriptions () {
-    await Promise.all([
-        deleteTable('coords_sample')
-    ]);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+async function initializeTables () {
     await Promise.all([
         createTable(
             'coords_sample',
@@ -13,4 +9,4 @@ async function initializeDOSubscriptions () {
     ]);
 }
 
-module.exports = initializeDOSubscriptions;
+module.exports = initializeTables;

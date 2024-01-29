@@ -1,9 +1,9 @@
 const { deleteTable } = require('../../../../common/test-utils');
 
-async function removeDOSubscriptions () {
+async function deleteTables () {
     await Promise.all([
         deleteTable('coords_sample')
     ]);
 }
 
-module.exports = removeDOSubscriptions;
+module.exports = deleteTables;
