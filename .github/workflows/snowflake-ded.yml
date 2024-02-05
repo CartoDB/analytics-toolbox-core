@@ -5,7 +5,7 @@ on:
     types: [closed, unlabeled, labeled, synchronize]
 
 env:
-  NODE_VERSION: 16
+  NODE_VERSION: 18.16
 
 jobs:
 
