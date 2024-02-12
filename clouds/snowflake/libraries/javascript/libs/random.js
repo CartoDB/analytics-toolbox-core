@@ -1,5 +1,8 @@
-import { bbox } from '@turf/turf';
+import {
+    generateRandomPointsInPolygon
+
+} from '../src/random';
 
 export default {
-    bbox
+    generateRandomPointsInPolygon
 };
