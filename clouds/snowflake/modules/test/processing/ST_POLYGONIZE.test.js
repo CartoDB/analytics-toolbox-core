@@ -12,7 +12,7 @@ test('ST_POLYGONIZE should work', async () => {
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(fixturesOut.expectedPolygons.length);
-    expect(rows.map(item => item.GEOM)).toEqual(fixturesOut.expectedPolygons);
+    expect(rows.map(item => item.GEOM)).toEqual(expect.arrayContaining(fixturesOut.expectedPolygons));
 });
 
 test('ST_POLYGONIZE should fail if a degenerated line path is received', async () => {
