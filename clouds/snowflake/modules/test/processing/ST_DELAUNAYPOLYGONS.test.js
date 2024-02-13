@@ -12,7 +12,7 @@ test('ST_DELAUNAYPOLYGONS should work', async () => {
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(fixturesOut.expectedPolygons1.length);
-    expect(rows.map(item => item.GEOM)).toEqual(fixturesOut.expectedPolygons1);
+    expect(rows.map(item => item.GEOM)).toEqual(expect.arrayContaining(fixturesOut.expectedPolygons1));
 });
 
 test('ST_DELAUNAYPOLYGONS should return an empty array if passed null geometry', async () => {

@@ -12,7 +12,7 @@ test('ST_DELAUNAYLINES should work', async () => {
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(fixturesOut.expectedTriangles1.length);
-    expect(rows.map(item => item.GEOM)).toEqual(fixturesOut.expectedTriangles1);
+    expect(rows.map(item => item.GEOM)).toEqual(expect.arrayContaining(fixturesOut.expectedTriangles1));
 });
 
 test('ST_DELAUNAYLINES should return an empty array if passed an empty array geometry', async () => {

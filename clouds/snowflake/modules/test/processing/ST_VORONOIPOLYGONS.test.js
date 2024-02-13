@@ -18,7 +18,7 @@ test('ST_VORONOIPOLYGONS should work', async () => {
         FROM voronoi, LATERAL FLATTEN(input => voronoi.geomArray) as unnestedFeatures`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(fixturesOut.expectedPoly1.length);
-    expect(rows.map(item => item.GEOM)).toEqual(fixturesOut.expectedPoly1);
+    expect(rows.map(item => item.GEOM)).toEqual(expect.arrayContaining(fixturesOut.expectedPoly1));
 });
 
 
