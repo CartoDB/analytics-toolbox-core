@@ -56,6 +56,13 @@ async function deleteTable (tablename) {
     await runQuery(query);
 }
 
+async function deleteView (tablename) {
+    const query = `
+      DROP VIEW IF EXISTS ${tablename}
+    `;
+    await runQuery(query);
+}
+
 function sortByKey (list, key) {
     return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
 }
@@ -113,6 +120,7 @@ module.exports = {
     runQuery,
     createTable,
     deleteTable,
+    deleteView,
     sortByKey,
     sortByKeyAndRound,
     existsTable,

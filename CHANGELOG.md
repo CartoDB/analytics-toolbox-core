@@ -4,6 +4,14 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-02-15
+
+- chore(sf): add additional tables to native apps (#473)
+- docs(bs,sf,rs|transformations): fix ST_DESTINATION bearing parameter description (#475)
+- fix(sf|quadbin): QUADBIN_TOPARENT not working with views (#476)
+- docs(bq,sf,rs|constructors): fix angle parameter description in ST_MAKEELLIPSE (#477)
+- fix(sf|random): ST_GENERATEPOINTS was not accepting column names (#480)
+
 ## 2024-01-17
 
 - chore(bq): increase tests timeout to 200000 (#455)
