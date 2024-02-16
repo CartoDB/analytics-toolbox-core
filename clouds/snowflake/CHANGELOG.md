@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.1] - 2024-02-15
+
+- chore: add additional tables to native apps (#473)
+- fix(quadbin): QUADBIN_TOPARENT not working with views (#476)
+- fix(random): ST_GENERATEPOINTS was not accepting column names (#480)
+
 ## [1.2.0] - 2024-01-17
 
 - feat(quadbin): add function QUADBIN_DISTANCE (#457)
