@@ -54,9 +54,9 @@ def run_sql(sql, config):
                 if lds is not None:
                     sql = (
                         sql.replace('@@API_BASE_URL@@', lds['api_base_url'])
-                        .replace('@@LDS_LAMBDA@@', lds['lambda'])
-                        .replace('@@LDS_ROLES@@', lds['roles'])
-                        .replace('@@LDS_TOKEN@@', lds['token'])
+                        .replace('@@RS_LAMBDA@@', lds['lambda'])
+                        .replace('@@RS_ROLES@@', lds['roles'])
+                        .replace('@@RS_API_ACCESS_TOKEN@@', lds['token'])
                     )
                 queries = split(sql)
                 for i in trange(len(queries), ncols=100):
