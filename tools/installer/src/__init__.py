@@ -50,13 +50,13 @@ def run_sql(sql, config):
         ) as conn:
             conn.autocommit = True
             with conn.cursor() as cursor:
-                lds = config.get('lds')
-                if lds is not None:
+                gateway = config.get('gateway')
+                if gateway is not None:
                     sql = (
-                        sql.replace('@@API_BASE_URL@@', lds['api_base_url'])
-                        .replace('@@RS_LAMBDA@@', lds['lambda'])
-                        .replace('@@RS_ROLES@@', lds['roles'])
-                        .replace('@@RS_API_ACCESS_TOKEN@@', lds['token'])
+                        sql.replace('@@API_BASE_URL@@', gateway['api_base_url'])
+                        .replace('@@RS_LAMBDA@@', gateway['lambda'])
+                        .replace('@@RS_ROLES@@', gateway['roles'])
+                        .replace('@@RS_API_ACCESS_TOKEN@@', gateway['token'])
                     )
                 queries = split(sql)
                 for i in trange(len(queries), ncols=100):
@@ -79,32 +79,32 @@ def run_sql(sql, config):
                 print(notice.strip())
 
 
-def validate_lds_config(lds_config):
+def validate_gateway_config(gateway_config):
     pattern = r'^(lds-function-asia-northeast1|lds-function-australia-southeast1|lds-function-europe-west1|lds-function-us-east1)$'  # noqa: E501
-    if not validate_str(lds_config.get('lambda'), pattern):
-        exit('incorrect configuration: missing or invalid lds.lambda')
+    if not validate_str(gateway_config.get('lambda'), pattern):
+        exit('incorrect configuration: missing or invalid gateway.lambda')
 
     pattern = r'^arn:aws:iam::[0-9]+:role/CartoFunctionsRedshiftRole,arn:aws:iam::000955892807:role/CartoFunctionsRole$'  # noqa: E501
-    if not validate_str(lds_config.get('roles'), pattern):
-        exit('incorrect configuration: missing or invalid lds.roles')
+    if not validate_str(gateway_config.get('roles'), pattern):
+        exit('incorrect configuration: missing or invalid gateway.roles')
 
-    if not validate_str(lds_config.get('api_base_url')):
-        exit('incorrect configuration: missing lds.api_base_url')
+    if not validate_str(gateway_config.get('api_base_url')):
+        exit('incorrect configuration: missing gateway.api_base_url')
 
-    if not checkers.is_url(lds_config.get('api_base_url')):
-        exit('incorrect configuration: invalid lds.api_base_url')
+    if not checkers.is_url(gateway_config.get('api_base_url')):
+        exit('incorrect configuration: invalid gateway.api_base_url')
 
-    token = lds_config.get('token')
+    token = gateway_config.get('token')
     if not validate_str(token):
-        exit('incorrect configuration: missing lds.token')
+        exit('incorrect configuration: missing gateway.token')
     algorithm = jwt.get_unverified_header(token).get('alg')
     if not algorithm:
-        exit('incorrect configuration: invalid lds.token')
+        exit('incorrect configuration: invalid gateway.token')
     jwt_payload = jwt.decode(
         token, algorithms=[algorithm], options={'verify_signature': False}
     )
     if not jwt_payload.get('a') or not jwt_payload.get('jti'):
-        exit('incorrect configuration: invalid lds.token')
+        exit('incorrect configuration: invalid gateway.token')
 
 
 def validate_config(config):
@@ -137,9 +137,9 @@ def validate_config(config):
     if not validate_str(connection.get('password')):
         exit('incorrect configuration: missing connection.password')
 
-    lds_config = config.get('lds')
-    if cloud == 'redshift' and lds_config is not None:
-        validate_lds_config(lds_config)
+    gateway_config = config.get('gateway')
+    if cloud == 'redshift' and gateway_config is not None:
+        validate_gateway_config(gateway_config)
 
 
 def validate_str(string, pattern=None):

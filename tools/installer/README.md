@@ -26,7 +26,7 @@ A Python script to install the CARTO Analytics Toolbox in Redshift and Postgres.
 
 1. Create a `config.yml` file:
 
-    - Redshift packages `config.yml` file. This file must contain the information of the Redshift connection and LDS.
+    - Redshift packages `config.yml` file. This file must contain the information of the Redshift connection and Gateway.
         ```yml
         connection:
           cloud: redshift
@@ -34,14 +34,14 @@ A Python script to install the CARTO Analytics Toolbox in Redshift and Postgres.
           database: DATABASE
           user: USER
           password: PASSWORD
-        lds:
+        gateway:
           lambda: lds-function-europe-west1
           roles: arn:aws:iam::XXXXXXXXXXXX:role/CartoFunctionsRedshiftRole,arn:aws:iam::000955892807:role/CartoFunctionsRole
           api_base_url: https://gcp-europe-west1.api.carto.com
           token: eyJhbGciOiJ...
         ```
 
-    > Note: Redshift core does not require setting up a `lds` configuration.
+    > Note: Redshift core does not require setting up a `gateway` configuration.
 
     - Postgres packages `config.yml` file. This file must contain the information of the Postgres connection.
         ```yml
