@@ -63,7 +63,7 @@ jobs:
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
         run: |
           cd clouds/redshift
-          make deploy
+          make deploy dropfirst=1
       - name: Run remove
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
