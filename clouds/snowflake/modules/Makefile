@@ -32,10 +32,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test remove remove-share clean
+.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test remove remove-functions remove-share clean
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: lint build deploy test remove remove-functions clean"
 
 lint: $(NODE_MODULES_DEV) venv3
 	echo "Linting modules..."
@@ -107,6 +107,10 @@ test: check $(NODE_MODULES_DEV)
 
 remove: $(NODE_MODULES_DEV)
 	echo "Removing modules..."
+	$(COMMON_DIR)/run-query.js "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE;"
+
+remove-functions: $(NODE_MODULES_DEV)
+	echo "Removing functions..."
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
