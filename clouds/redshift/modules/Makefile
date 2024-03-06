@@ -21,10 +21,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test remove remove-functions clean
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: lint build deploy test remove remove-functions clean"
 
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
@@ -61,6 +61,10 @@ test: check venv3 $(NODE_MODULES_DEV)
 
 remove: venv3
 	echo "Removing modules..."
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE;"
+
+remove-functions: venv3
+	echo "Removing functions..."
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(COMMON_DIR)/DROP_FUNCTIONS.sql
 

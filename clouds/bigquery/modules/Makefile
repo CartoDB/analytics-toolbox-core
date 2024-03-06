@@ -34,10 +34,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share deploy deploy-share test remove remove-share clean
+.PHONY: help lint build build-share deploy deploy-share test remove remove-functions remove-share clean
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: lint build deploy test remove remove-functions clean"
 
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
@@ -97,6 +97,10 @@ test: check $(NODE_MODULES_DEV)
 
 remove: check
 	echo "Removing modules..."
+	$(BQ) rm -r -f -d $(BQ_DEPLOY_DATASET)
+
+remove-functions: check
+	echo "Removing functions..."
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
