@@ -25,12 +25,12 @@ test('Returns NULL the expected geography', async () => {
         WITH ids AS
         (
             SELECT 1 AS id, H3_CENTER('85283473fffffff') as bounds, TO_GEOGRAPHY('POINT(-121.9763759725512 37.34579337536848)') AS expected UNION ALL
-            SELECT 2 AS id, H3_CENTER('81623ffffffffff') as bounds, TO_GEOGRAPHY('POINT(58.1577058395726 10.447345187511)') AS expected
+            SELECT 2 AS id, H3_CENTER('81623ffffffffff') as bounds, TO_GEOGRAPHY('POINT(58.157705839572586 10.447345187511033)') AS expected
         )
         SELECT
             *            
         FROM ids
-        WHERE ST_ASBINARY(expected) != ST_ASBINARY(expected) or bounds is null
+        WHERE ST_ASBINARY(bounds) != ST_ASBINARY(expected) or bounds is null
     `;
 
     const rows = await runQuery(query);
