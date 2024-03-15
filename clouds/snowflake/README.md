@@ -46,7 +46,7 @@ SF_SHARE=<share>  # optional
 - `make lint`: runs a linter (eslint) and fixes the trivial issues
 - `make build`: builds the final SQL scripts and libraries (JS)
 - `make deploy`: builds the JS libraries and SQL scripts and deploys in the Snowflake database
-- `make test`: runs the library tests locally and the modules tests with the Snowflake database (jest)
+- `make test`: runs the library tests locally and the modules tests with the Snowflake database (jest). You must deploy changes to Snowflake with `make deploy` before running tests.
 - `make remove`: removes the SQL scripts from the Snowflake database
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates the installation package in the dist folder (zip)
