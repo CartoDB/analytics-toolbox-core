@@ -1,6 +1,7 @@
 import accessors from '../src/accessors';
 import constructors from '../src/constructors';
 import measurements from '../src/measurements';
+import quadbin from '../src/quadbin';
 import quadkey from '../src/quadkey';
 import s2 from '../src/s2';
 import processing from '../src/processing';
@@ -14,6 +15,7 @@ export default {
     accessors,
     constructors,
     measurements,
+    quadbin,
     quadkey,
     s2,
     processing,

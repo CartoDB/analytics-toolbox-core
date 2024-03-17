@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2023 CARTO
-----------------------------
+---------------------------------
+-- Copyright (C) 2023-2024 CARTO
+---------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_QUERY`
 (
@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_QUERY`
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
+OPTIONS (library = ["@@BQ_LIBRARY_BUCKET@@"])
 AS """
     if (!['center', 'intersects', 'contains'].includes(mode)) {
         throw Error('Invalid mode, should be center, intersects, or contains.')
@@ -21,18 +22,7 @@ AS """
         throw Error('Invalid resolution, should be between 0 and 26.')
     }
 
-    output_table = output_table.replace(/`/g, '')
-
-    const containmentFunction = (mode === 'contains') ? 'ST_CONTAINS' : 'ST_INTERSECTS'
-    const cellFunction = (mode === 'center') ? '@@BQ_DATASET@@.QUADBIN_CENTER' : '@@BQ_DATASET@@.QUADBIN_BOUNDARY'
-
-    return 'CREATE TABLE `' + output_table + '` CLUSTER BY (quadbin) AS\\n' +
-        'WITH __input AS (' + input_query + '),\\n' +
-        '__cells AS (SELECT quadbin, i.* FROM __input AS i,\\n' +
-        'UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geom,`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geom,' + resolution + '))) AS parent,\\n' +
-        'UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent,' + resolution + ')) AS quadbin)\\n' +
-        'SELECT * EXCEPT (geom) FROM __cells\\n' +
-        'WHERE ' + containmentFunction + '(geom, `' + cellFunction + '`(quadbin));'
+    return lib.quadbin.polyfillQuery(input_query, resolution, mode, output_table, '@@BQ_DATASET@@')
 """;
 
 CREATE OR REPLACE PROCEDURE `@@BQ_DATASET@@.QUADBIN_POLYFILL_TABLE`

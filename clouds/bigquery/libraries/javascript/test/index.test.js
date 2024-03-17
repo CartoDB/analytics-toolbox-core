@@ -48,6 +48,10 @@ test('processing library defined', () => {
     expect(lib.processing.polygonToLine).toBeDefined();
 });
 
+test('quadbin library defined', () => {
+    expect(lib.quadbin.polyfillQuery).toBeDefined();
+});
+
 test('quadkey library defined', () => {
     expect(lib.quadkey.bbox).toBeDefined();
     expect(lib.quadkey.toChildren).toBeDefined();
