@@ -1,4 +1,3 @@
-const h3FromLonglatLib = require('../build/h3_fromlonglat');
 const compactLib = require('../build/h3_compact');
 const isValidLib = require('../build/h3_isvalid');
 const hexRingLib = require('../build/h3_hexring');
@@ -11,7 +10,6 @@ const toParentLib = require('../build/h3_toparent');
 const uncompactLib = require('../build/h3_uncompact');
 
 test('h3 library defined', () => {
-    expect(h3FromLonglatLib.geoToH3).toBeDefined();
     expect(compactLib.compact).toBeDefined();
     expect(isValidLib.h3IsValid).toBeDefined();
     expect(hexRingLib.hexRing).toBeDefined();
