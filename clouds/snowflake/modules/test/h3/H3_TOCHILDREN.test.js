@@ -56,6 +56,7 @@ test('Same resolution lists self', async () => {
     expect(rows[0].SELF_CHILDREN).toEqual([ '87283080dffffff' ]);
 });
 
+// TODO - test which uses integer form of H3 index
 test('Coarser resolution returns empty array', async () => {
     const query = `
         WITH ids AS

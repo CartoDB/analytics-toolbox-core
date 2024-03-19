@@ -20,7 +20,7 @@ test('Returns NULL with invalid parameters', async () => {
     expect(rows[1].RESOLUTION).toEqual(null);
 });
 
-test('Returns NULL the expected resolution', async () => {
+test('Returns the expected resolution', async () => {
     const query = `
         WITH ids AS
         (

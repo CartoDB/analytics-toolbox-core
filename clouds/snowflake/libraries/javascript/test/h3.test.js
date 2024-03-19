@@ -5,8 +5,6 @@ const isPentagonLib = require('../build/h3_ispentagon');
 const kringLib = require('../build/h3_kring');
 const kringDistancesLib = require('../build/h3_kring_distances');
 const h3PolyfillLib = require('../build/h3_polyfill');
-const toChildrenLib = require('../build/h3_tochildren');
-const toParentLib = require('../build/h3_toparent');
 const uncompactLib = require('../build/h3_uncompact');
 
 test('h3 library defined', () => {
@@ -20,9 +18,5 @@ test('h3 library defined', () => {
     expect(kringDistancesLib.kRingDistances).toBeDefined();
     expect(kringDistancesLib.h3IsValid).toBeDefined();
     expect(h3PolyfillLib.polyfill).toBeDefined();
-    expect(toChildrenLib.h3ToChildren).toBeDefined();
-    expect(toChildrenLib.h3IsValid).toBeDefined();
-    expect(toParentLib.h3ToParent).toBeDefined();
-    expect(toParentLib.h3IsValid).toBeDefined();
     expect(uncompactLib.uncompact).toBeDefined();
 });
