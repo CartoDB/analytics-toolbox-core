@@ -2,29 +2,15 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_KRING
-(origin STRING, size DOUBLE)
-RETURNS ARRAY
-LANGUAGE JAVASCRIPT
-IMMUTABLE
-AS $$
-    if (SIZE == null || SIZE < 0) {
-        throw new Error('Invalid input size')
-    }
-
-    @@SF_LIBRARY_H3_KRING@@
-
-    if (!h3KringLib.h3IsValid(ORIGIN)) {
-        throw new Error('Invalid input origin')
-    }
-
-    return h3KringLib.kRing(ORIGIN, parseInt(SIZE));
-$$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_KRING
 (origin STRING, size INT)
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    @@SF_SCHEMA@@._H3_KRING(ORIGIN, CAST(SIZE AS DOUBLE))
+    CASE
+        WHEN SIZE IS NULL or SIZE < 0 THEN @@SF_SCHEMA@@._CARTO_ARRAY_ERROR('Invalid input size')
+        WHEN NOT @@SF_SCHEMA@@.H3_ISVALID(ORIGIN) THEN @@SF_SCHEMA@@._CARTO_ARRAY_ERROR('Invalid input origin')
+	ELSE H3_GRID_DISK(ORIGIN, SIZE)
+    END
 $$;
