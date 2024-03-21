@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.1] - 2024-03-18
+
+- fix(random): ST_GENERATEPOINTS returning exact name of points (#486)
+
 ## [1.2.0] - 2024-01-17
 
 - chore: increase tests timeout to 200000 (#455)
