@@ -9,7 +9,7 @@ ST_CONCAVEHULL(geog, maxEdge, units)
 Takes a set of points and returns a concave hull Polygon or MultiPolygon. In case that a single or a couple of points are passed as input, the function will return that point or a segment respectively.
 
 * `geog`: `ARRAY<GEOGRAPHY>` input points.
-* `maxEdge`: `FLOAT64`|`NULL` the length (in 'units') of an edge necessary for part of the hull to become concave. If `NULL`the default value `infinity` is used.
+* `maxEdge`: `FLOAT64`|`NULL` the maximum length allowed for an edge of the concave hull. Higher `maxEdge` values will produce more convex-like hulls. If `NULL`, the default value `infinity` is used and it would be equivalent to a Convex Hull.
 * `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, degrees or radians. If `NULL`the default value `kilometers` is used.
 
 **Return type**

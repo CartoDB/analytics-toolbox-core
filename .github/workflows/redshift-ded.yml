@@ -33,6 +33,19 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Set RS_PREFIX for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          echo "RS_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set RS_PREFIX for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          echo "RS_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set RS_PREFIX for the rest
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "RS_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -63,7 +76,7 @@ jobs:
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
         run: |
           cd clouds/redshift
-          make deploy
+          make deploy dropfirst=1
       - name: Run remove
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'

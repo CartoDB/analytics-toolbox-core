@@ -4,6 +4,14 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-03-18
+
+- fix(sf): CI and CD not working because of snowflake driver breaking changes (#484)
+- fix(bq,sf,rs,pg): drop schemas when dedicateds gets released (#485)
+- fix(bq|random): ST_GENERATEPOINTS returning exact name of points (#486)
+- chore(rs,pg): remove installer tool (#483)
+- chore(deps): bump jinja2 from 3.1.2 to 3.1.3 in /clouds/databricks/common (#468)
+
 ## 2024-02-15
 
 - chore(sf): add additional tables to native apps (#473)

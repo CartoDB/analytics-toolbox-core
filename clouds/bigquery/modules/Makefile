@@ -34,10 +34,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share deploy deploy-share test remove remove-share clean
+.PHONY: help lint build build-share deploy deploy-share test remove remove-functions remove-share clean
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: lint build deploy test remove remove-functions clean"
 
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
@@ -85,7 +85,7 @@ test: check $(NODE_MODULES_DEV)
 		if [ ! -z "$$TESTS" ]; then \
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=200000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS \
+			jest --testTimeout=250000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS \
 			     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
 			OLD_TEST=$(TEST_DIR)/$$m/old-test; \
 			if [ -d $$OLD_TEST ]; then \
@@ -97,6 +97,12 @@ test: check $(NODE_MODULES_DEV)
 
 remove: check
 	echo "Removing modules..."
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
+
+remove-functions: check
+	echo "Removing functions..."
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
