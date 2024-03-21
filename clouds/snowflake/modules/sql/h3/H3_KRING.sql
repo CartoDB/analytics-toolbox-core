@@ -2,7 +2,6 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_KRING
 (h3_hex STRING, distance INT)
 RETURNS ARRAY
