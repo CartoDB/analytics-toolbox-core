@@ -3,13 +3,13 @@
 ----------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_TOPARENT
-(index STRING, resolution INT)
+(h3_hex STRING, resolution INT)
 RETURNS STRING
 IMMUTABLE
 AS $$
     IFF(
-	@@SF_SCHEMA@@.H3_ISVALID(INDEX),
-	H3_CELL_TO_PARENT(INDEX, RESOLUTION),
+	@@SF_SCHEMA@@.H3_ISVALID(h3_hex),
+	H3_CELL_TO_PARENT(h3_hex, resolution),
 	NULL
     )
 $$;
