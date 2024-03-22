@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2023 CARTO
+-- Copyright (C) 2023-2024 CARTO
 ----------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_RESOLUTION

@@ -1,3 +1,7 @@
+----------------------------
+-- Copyright (C) 2021-2024 CARTO
+----------------------------
+
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_STRING_TOINT
 (
     h3_hex STRING

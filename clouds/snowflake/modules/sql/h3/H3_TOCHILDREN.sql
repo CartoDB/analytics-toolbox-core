@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2021 CARTO
+-- Copyright (C) 2021-2024 CARTO
 ----------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_TOCHILDREN
