@@ -1,6 +1,5 @@
-import { h3IsValid, kRingDistances } from '../src/h3/h3_kring_distances/h3core_custom';
+import { h3Distance } from '../src/h3/h3_kring_distances/h3core_custom';
 
 export default {
-    h3IsValid,
-    kRingDistances
+    h3Distance
 };

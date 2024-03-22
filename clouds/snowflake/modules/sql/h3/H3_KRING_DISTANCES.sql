@@ -7,9 +7,11 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@._H3_KRING_DISTANCES
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 AS $$
-    @@SF_LIBRARY_H3_DISTANCE@@
+
+    @@SF_LIBRARY_H3_KRING_DISTANCES@@
+
     var results = []
-    HEXARRAY.forEach(hex => results.push({"index": hex, "distance": h3DistanceLib.h3Distance(ORIGIN, hex)}))
+    HEXARRAY.forEach(hex => results.push({"index": hex, "distance": h3KringDistancesLib.h3Distance(ORIGIN, hex)}))
     return results
 $$;
 

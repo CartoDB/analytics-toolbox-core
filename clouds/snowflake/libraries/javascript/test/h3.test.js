@@ -3,6 +3,7 @@ const isValidLib = require('../build/h3_isvalid');
 const hexRingLib = require('../build/h3_hexring');
 const isPentagonLib = require('../build/h3_ispentagon');
 const h3PolyfillLib = require('../build/h3_polyfill');
+const kringDistancesLib = require('../build/h3_kring_distances');
 const uncompactLib = require('../build/h3_uncompact');
 
 test('h3 library defined', () => {
@@ -12,5 +13,6 @@ test('h3 library defined', () => {
     expect(hexRingLib.h3IsValid).toBeDefined();
     expect(isPentagonLib.h3IsPentagon).toBeDefined();
     expect(h3PolyfillLib.polyfill).toBeDefined();
+    expect(kringDistancesLib.h3Distance).toBeDefined();
     expect(uncompactLib.uncompact).toBeDefined();
 });
