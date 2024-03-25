@@ -8,7 +8,7 @@ H3_POLYFILL(geography, resolution)
 
 Returns an array with all the H3 cell indexes **with centers** contained in a given polygon. It will return `null` on error (invalid geography type or resolution out of bounds).
 
-* `geography`: `GEOGRAPHY` **polygon** or **multipolygon** representing the shape to cover.
+* `geography`: `GEOGRAPHY` **polygon** or **multipolygon** representing the shape to cover. **GeometryCollections** are also allowed but they should contain **polygon** or **multipolygon** geographies. Non-Polygon types will not raise an error but will be ignored instead.
 * `resolution`: `INT` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 
 **Return type**

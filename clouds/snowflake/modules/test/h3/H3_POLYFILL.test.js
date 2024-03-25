@@ -79,7 +79,7 @@ test('H3_POLYFILL returns the expected values', async () => {
             SELECT
                 resolution,
                 H3_FROMGEOGPOINT(geog, resolution) AS hex_id,
-                H3_BOUNDARY(H3_FROMGEOGPOINT(geog, resolution)) AS boundary
+                H3_CELL_TO_BOUNDARY(H3_FROMGEOGPOINT(geog, resolution)) AS boundary
             FROM points
         ),
         polyfill AS
@@ -110,7 +110,7 @@ test('H3_POLYFILL returns the expected values', async () => {
             SELECT
                 resolution,
                 H3_FROMGEOGPOINT(geog, resolution) AS hex_id,
-                H3_BOUNDARY(H3_FROMGEOGPOINT(geog, resolution)) AS boundary
+                H3_CELL_TO_BOUNDARY(H3_FROMGEOGPOINT(geog, resolution)) AS boundary
             FROM points
         ),
         polyfill AS
@@ -141,7 +141,7 @@ test('H3_POLYFILL returns the expected values', async () => {
             SELECT
                 resolution,
                 H3_FROMGEOGPOINT(geog, resolution) AS hex_id,
-                H3_BOUNDARY(H3_FROMGEOGPOINT(geog, resolution)) AS boundary
+                H3_CELL_TO_BOUNDARY(H3_FROMGEOGPOINT(geog, resolution)) AS boundary
             FROM points
         ),
         polyfill AS
