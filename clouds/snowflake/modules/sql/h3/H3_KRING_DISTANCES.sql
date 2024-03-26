@@ -1,11 +1,12 @@
-----------------------------
+---------------------------------
 -- Copyright (C) 2021-2024 CARTO
-----------------------------
+---------------------------------
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@._H3_KRING_DISTANCES
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_KRING_DISTANCES
 (origin STRING, hexarray ARRAY)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
+IMMUTABLE
 AS $$
 
     @@SF_LIBRARY_H3_KRING_DISTANCES@@

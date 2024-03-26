@@ -1,6 +1,6 @@
-----------------------------
+--------------------------------
 -- Copyright (C) 2021 CARTO
-----------------------------
+--------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_COMPACT
 (h3Array ARRAY)

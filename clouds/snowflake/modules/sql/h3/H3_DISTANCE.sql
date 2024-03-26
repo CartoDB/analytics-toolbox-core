@@ -1,6 +1,6 @@
-----------------------------
+--------------------------------
 -- Copyright (C) 2021-2024 CARTO
-----------------------------
+--------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_DISTANCE
 (h3_hex_a STRING, h3_hex_b STRING)
