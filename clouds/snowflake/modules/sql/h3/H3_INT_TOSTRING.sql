@@ -1,12 +1,12 @@
 ---------------------------------
--- Copyright (C) 2021-2024 CARTO
+-- Copyright (C) 2022-2024 CARTO
 ---------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_INT_TOSTRING
 (
-    h3_int INT
+    h3int INT
 )
 RETURNS STRING
 AS $$
-  H3_INT_TO_STRING(h3_int)
+  H3_INT_TO_STRING(h3int)
 $$;
