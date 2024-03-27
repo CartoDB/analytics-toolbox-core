@@ -1,13 +1,13 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2021-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_FROMGEOGPOINT
 (geog GEOGRAPHY, resolution INT)
 RETURNS STRING
 IMMUTABLE
 AS $$
-    IFF(ST_NPOINTS(geog) = 1,
-        @@SF_SCHEMA@@.H3_FROMLONGLAT(ST_X(GEOG), ST_Y(GEOG), CAST(RESOLUTION AS DOUBLE)),
-        null)
+    IFF(ST_NPOINTS(GEOG) = 1 AND RESOLUTION >= 0 AND RESOLUTION <= 15,
+	H3_POINT_TO_CELL_STRING(GEOG, RESOLUTION),
+        NULL)
 $$;

@@ -1,32 +1,19 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+---------------------------------
+-- Copyright (C) 2021-2024 CARTO
+---------------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_KRING_DISTANCES
-(origin STRING, size DOUBLE)
+(origin STRING, hexarray ARRAY)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    if (SIZE == null || SIZE < 0) {
-        throw new Error('Invalid input size')
-    }
 
     @@SF_LIBRARY_H3_KRING_DISTANCES@@
 
-    if (!h3KringDistancesLib.h3IsValid(ORIGIN)) {
-        throw new Error('Invalid input origin')
-    }
-
-    const kringDistances = h3KringDistancesLib.kRingDistances(ORIGIN, parseInt(SIZE));
-    const output = [];
-    for (let distance = 0; distance <= parseInt(SIZE); distance++) {
-        const indexes = kringDistances[distance];
-        for (const index of indexes) {
-            output.push({ index, distance });
-        }
-    }
-    return output;
+    var results = []
+    HEXARRAY.forEach(hex => results.push({"index": hex, "distance": h3KringDistancesLib.h3Distance(ORIGIN, hex)}))
+    return results
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_KRING_DISTANCES
@@ -34,5 +21,9 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_KRING_DISTANCES
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    @@SF_SCHEMA@@._H3_KRING_DISTANCES(ORIGIN, CAST(SIZE AS DOUBLE))
+    CASE
+        WHEN SIZE IS NULL or SIZE < 0 THEN @@SF_SCHEMA@@._CARTO_ARRAY_ERROR('Invalid input size')
+        WHEN NOT @@SF_SCHEMA@@.H3_ISVALID(ORIGIN) THEN @@SF_SCHEMA@@._CARTO_ARRAY_ERROR('Invalid input origin')
+	ELSE @@SF_SCHEMA@@._H3_KRING_DISTANCES(origin, H3_GRID_DISK(ORIGIN, SIZE))
+    END
 $$;

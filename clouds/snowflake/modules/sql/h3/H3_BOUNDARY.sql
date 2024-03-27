@@ -1,6 +1,8 @@
 ----------------------------
 -- Copyright (C) 2021 CARTO
 ----------------------------
+-- TODO: Re-implement this using SF's native H3_CELL_TO_BOUNDARY when they improve performance
+-- Shortcut story/chore ID: 398796
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_BOUNDARY
 (index STRING)

@@ -1,8 +1,12 @@
+---------------------------------
+-- Copyright (C) 2022-2024 CARTO
+---------------------------------
+
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_INT_TOSTRING
 (
     h3int INT
 )
 RETURNS STRING
 AS $$
-  TO_VARCHAR(h3int, 'xxxxxxxxxxxxxxx')
+  H3_INT_TO_STRING(h3int)
 $$;
