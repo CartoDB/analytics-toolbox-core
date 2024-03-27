@@ -2,76 +2,48 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL
-(geojson STRING, input_resolution DOUBLE)
-RETURNS ARRAY
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._HEMI_SPLIT
+(geojson STRING)
+RETURNS STRING
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-    if (!GEOJSON || INPUT_RESOLUTION == null) {
-        return [];
-    }
+
+    let inputGeoJSON = JSON.parse(GEOJSON);
 
     @@SF_LIBRARY_H3_POLYFILL@@
 
-    const resolution = Number(INPUT_RESOLUTION);
-    if (resolution < 0 || resolution > 15) {
-        return [];
+    const westernHemisphere = h3PolyfillLib.polygon([[ [-180, 90], [0, 90], [0, -90], [-180, -90], [-180, 90]]]);
+    const easternHemisphere = h3PolyfillLib.polygon([[ [0, 90], [180, 90], [180, -90], [0, -90], [0, 90] ]]);
+
+    let polygons = [];
+
+    if (inputGeoJSON.type == "GeometryCollection") {
+	inputGeoJSON.geometries.forEach(g => {
+	    if (g.type === 'Polygon'|| g.type === 'MultiPolygon') {
+	        polygons.push(g)	
+	    }	
+	});
+    }
+    else if (inputGeoJSON.type === 'Polygon' || inputGeoJSON.type === 'MultiPolygon') {
+        polygons.push(inputGeoJSON)	
     }
 
-    const bboxA = [-180, -90, 0, 90]
-    const bboxB = [0, -90, 180, 90]
-    const featureGeometry = JSON.parse(GEOJSON)
-    let polygonCoordinatesA = [];
-    let polygonCoordinatesB = [];
-    switch(featureGeometry.type) {
-        case 'GeometryCollection':
-            featureGeometry.geometries.forEach(function (geom) {
-                if (geom.type === 'MultiPolygon') {
-                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
-                    polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates);
-                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
-                    polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates);
-                } else if (geom.type === 'Polygon') {
-                    var clippedGeometryA = h3PolyfillLib.bboxClip(geom, bboxA).geometry;
-                    polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates]);
-                    var clippedGeometryB = h3PolyfillLib.bboxClip(geom, bboxB).geometry;
-                    polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates]);
-                }
-            });
-        break;
-        case 'MultiPolygon':
-            var clippedGeometryA = h3PolyfillLib.bboxClip(featureGeometry, bboxA).geometry;
-            polygonCoordinatesA = clippedGeometryA.coordinates;
-            var clippedGeometryB = h3PolyfillLib.bboxClip(featureGeometry, bboxB).geometry;
-            polygonCoordinatesB = clippedGeometryB.coordinates;
-        break;
-        case 'Polygon':
-            var clippedGeometryA = h3PolyfillLib.bboxClip(featureGeometry, bboxA).geometry;
-            polygonCoordinatesA = [clippedGeometryA.coordinates];
-            var clippedGeometryB = h3PolyfillLib.bboxClip(featureGeometry, bboxB).geometry;
-            polygonCoordinatesB = [clippedGeometryB.coordinates];
-        break;
-        default:
-            return [];
-    }
+    let intersections = [];
 
-    if (polygonCoordinatesA.length + polygonCoordinatesB.length === 0) {
-        return [];
-    }
+    let intersectAndPush = (hemisphere, poly) => {
+        const intersection = h3PolyfillLib.intersect(poly, hemisphere);
+	if (intersection) {
+	    intersections.push(intersection);
+	}
+    };
 
-    let hexesA = polygonCoordinatesA.reduce(
-        (acc, coordinates) => acc.concat(h3PolyfillLib.polyfill(coordinates, resolution, true)),
-        []
-    ).filter(h => h != null);
-    let hexesB = polygonCoordinatesB.reduce(
-        (acc, coordinates) => acc.concat(h3PolyfillLib.polyfill(coordinates, resolution, true)),
-        []
-    ).filter(h => h != null);
-    hexes = [...hexesA, ...hexesB];
-    hexes = [...new Set(hexes)];
+    polygons.forEach(p => {
+        intersectAndPush(westernHemisphere, p);
+        intersectAndPush(easternHemisphere, p);
+    })
 
-    return hexes;
+    return JSON.stringify(h3PolyfillLib.geometryCollection(intersections.map(i => i.geometry)));
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
@@ -79,5 +51,9 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    @@SF_SCHEMA@@._H3_POLYFILL(CAST(ST_ASGEOJSON(GEOG) AS STRING), CAST(RESOLUTION AS DOUBLE))
+    IFF(
+        GEOG IS NOT NULL AND RESOLUTION BETWEEN 0 AND 15,
+	COALESCE(H3_POLYGON_TO_CELLS_STRINGS(TO_GEOGRAPHY(@@SF_SCHEMA@@._HEMI_SPLIT(CAST(ST_ASGEOJSON(GEOG) AS STRING))), RESOLUTION), []),
+	[]
+    ) 
 $$;
