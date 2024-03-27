@@ -2,5 +2,5 @@ import { h3Distance, h3IsPentagon } from '../src/h3/h3_kring_distances/h3core_cu
 
 export default {
     h3Distance,
-		h3IsPentagon
+    h3IsPentagon
 };
