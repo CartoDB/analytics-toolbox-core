@@ -1,7 +1,10 @@
-import { polygon, intersect, geometryCollection } from '@turf/turf';
+import { booleanContains, geometryCollection, intersect, polygon } from '@turf/turf';
+import { h3ToGeoBoundary } from '../src/h3/h3_polyfill/h3core_custom';
 
 export default {
-    polygon,
+    booleanContains,
+    geometryCollection,
     intersect,
-    geometryCollection
+    polygon,
+    h3ToGeoBoundary
 };
