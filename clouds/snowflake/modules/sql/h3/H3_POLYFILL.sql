@@ -52,9 +52,33 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
+
     let results = []
-    if !h3PolyfillLib.h3ToGeoBoundary throw 'error'
-    return results
+    let inputGeoJSON = JSON.parse(GEOJSON);
+
+    @@SF_LIBRARY_H3_POLYFILL@@
+    @@SF_LIBRARY_H3_BOUNDARY@@
+
+    let polygons = [];
+
+    if (inputGeoJSON.type == "GeometryCollection") {
+	inputGeoJSON.geometries.forEach(g => {
+	    if (g.type === 'Polygon'|| g.type === 'MultiPolygon') {
+	        polygons.push(g)	
+	    }	
+	});
+    }
+    else if (inputGeoJSON.type === 'Polygon' || inputGeoJSON.type === 'MultiPolygon') {
+        polygons.push(inputGeoJSON)	
+    }
+    INDICIES.forEach(h3Index => {
+	polygons.some(p => {
+	    if (h3PolyfillLib.booleanContains(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)]))) {
+	        results.push(h3Index)	
+	    }
+	})	
+    })
+    return [...new Set(results)]
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
