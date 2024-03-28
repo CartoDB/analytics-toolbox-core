@@ -78,7 +78,7 @@ AS $$
 	    }
 	})	
     })
-    return [...new Set(results)]
+    return results
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
