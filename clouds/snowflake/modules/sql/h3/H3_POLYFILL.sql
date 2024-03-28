@@ -61,6 +61,7 @@ AS $$
 
     let polygons = [];
 
+    // TODO - I think this will always be one polygon? Does it get _HEMI_SPLIT?
     if (inputGeoJSON.type == "GeometryCollection") {
 	inputGeoJSON.geometries.forEach(g => {
 	    if (g.type === 'Polygon'|| g.type === 'MultiPolygon') {
@@ -79,6 +80,78 @@ AS $$
 	})	
     })
     return results
+$$;
+
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_AVG_M_DIAMETER
+(resolution DOUBLE)
+RETURNS DOUBLE
+LANGUAGE JAVASCRIPT
+IMMUTABLE
+AS $$
+    return parseInt([
+        1281.256011 * 2 * 1000,
+        483.0568391 * 2 * 1000,
+        182.5129565 * 2 * 1000,
+        68.97922179 * 2 * 1000,
+        26.07175968 * 2 * 1000,
+        9.854090990 * 2 * 1000,
+        3.724532667 * 2 * 1000,
+        1.406475763 * 2 * 1000,
+        0.531414010 * 2 * 1000,
+        0.200786148 * 2 * 1000,
+        0.075863783 * 2 * 1000,
+        0.028663897 * 2 * 1000,
+        0.010830188 * 2 * 1000,
+        0.004092010 * 2 * 1000,
+        0.001546100 * 2 * 1000,
+        0.000584169 * 2 * 1000
+    ][RESOLUTION])
+$$;
+
+CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER
+(geojson STRING, h3Indicies ARRAY)
+RETURNS ARRAY
+LANGUAGE JAVASCRIPT
+IMMUTABLE
+AS $$
+
+    let results = []
+    let inputGeoJSON = JSON.parse(GEOJSON);
+
+    @@SF_LIBRARY_H3_POLYFILL@@
+    @@SF_LIBRARY_H3_BOUNDARY@@
+
+    let polygons = [];
+
+    if (inputGeoJSON.type == "GeometryCollection") {
+	inputGeoJSON.geometries.forEach(g => {
+	    if (g.type === 'Polygon'|| g.type === 'MultiPolygon') {
+	        polygons.push(g)	
+	    }	
+	});
+    }
+    else if (inputGeoJSON.type === 'Polygon' || inputGeoJSON.type === 'MultiPolygon') {
+        polygons.push(inputGeoJSON)	
+    }
+    H3INDICIES.forEach(h3Index => {
+	polygons.some(p => {
+	    if (h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)]))) {
+	        results.push(h3Index)	
+	    }
+	})	
+    })
+    return results
+$$;
+
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTION
+(geog GEOGRAPHY, resolution INT)
+RETURNS ARRAY
+IMMUTABLE
+AS $$
+	@@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER(
+		CAST(ST_ASGEOJSON(GEOG) AS STRING),
+		@@SF_SCHEMA@@.H3_POLYFILL(ST_UNION(TO_GEOGRAPHY(ST_TRANSFORM(ST_BUFFER(ST_TRANSFORM(TO_GEOMETRY(GEOG, 4326), 4326, 3857),  @@SF_SCHEMA@@._H3_AVG_M_DIAMETER(CAST(RESOLUTION AS DOUBLE))), 4326)), GEOG), RESOLUTION)
+	)
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
@@ -100,7 +173,7 @@ IMMUTABLE
 AS $$
     CASE WHEN GEOG IS NULL OR RESOLUTION NOT BETWEEN 0 AND 15 THEN []
 	WHEN MODE = 'center' THEN @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION)
-	WHEN MODE = 'intersects' THEN COALESCE(H3_COVERAGE_STRINGS(TO_GEOGRAPHY(@@SF_SCHEMA@@._HEMI_SPLIT(CAST(ST_ASGEOJSON(GEOG) AS STRING))), RESOLUTION), [])
+	WHEN MODE = 'intersects' THEN @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTION(GEOG, RESOLUTION)
 	WHEN MODE = 'contains' THEN @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS(CAST(ST_ASGEOJSON(GEOG) AS STRING), @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION))
 	ELSE []
     END
