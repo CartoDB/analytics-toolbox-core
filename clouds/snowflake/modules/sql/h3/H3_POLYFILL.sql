@@ -82,32 +82,6 @@ AS $$
     return results
 $$;
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_AVG_M_DIAMETER
-(resolution DOUBLE)
-RETURNS DOUBLE
-LANGUAGE JAVASCRIPT
-IMMUTABLE
-AS $$
-    return parseInt([
-        1281.256011 * 2 * 1000,
-        483.0568391 * 2 * 1000,
-        182.5129565 * 2 * 1000,
-        68.97922179 * 2 * 1000,
-        26.07175968 * 2 * 1000,
-        9.854090990 * 2 * 1000,
-        3.724532667 * 2 * 1000,
-        1.406475763 * 2 * 1000,
-        0.531414010 * 2 * 1000,
-        0.200786148 * 2 * 1000,
-        0.075863783 * 2 * 1000,
-        0.028663897 * 2 * 1000,
-        0.010830188 * 2 * 1000,
-        0.004092010 * 2 * 1000,
-        0.001546100 * 2 * 1000,
-        0.000584169 * 2 * 1000
-    ][RESOLUTION])
-$$;
-
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER
 (h3Indicies ARRAY, geojson STRING)
 RETURNS ARRAY
@@ -134,15 +108,26 @@ AS $$
         polygons.push(inputGeoJSON)	
     }
     H3INDICIES.forEach(h3Index => {
-	polygons.some(p => {
-	    if (h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)]))) {
-	        results.push(h3Index)	
-	    }
-	})	
+	if (polygons.some(p => h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)])))) {
+	    results.push(h3Index)
+	}
     })
-    return results
+    return [...new Set(results)]
 $$;
 
+
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._CHECK_TOO_WIDE(geo GEOGRAPHY)
+RETURNS BOOLEAN
+AS
+$$
+    CASE
+        WHEN ST_XMax(geo) < ST_XMin(geo) THEN
+            -- Adjusts for crossing the antimeridian
+            360 + ST_XMax(geo) - ST_XMin(geo) >= 180
+        ELSE
+            ST_XMax(geo) - ST_XMin(geo) >= 180
+    END
+$$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
 (geog GEOGRAPHY, resolution INT)
@@ -163,7 +148,10 @@ IMMUTABLE
 AS $$
     CASE WHEN GEOG IS NULL OR RESOLUTION NOT BETWEEN 0 AND 15 THEN []
 	WHEN MODE = 'center' THEN @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION)
-	WHEN MODE = 'intersects' THEN @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER(H3_COVERAGE_STRINGS(TO_GEOGRAPHY(@@SF_SCHEMA@@._HEMI_SPLIT(CAST(ST_ASGEOJSON(GEOG) AS STRING))), RESOLUTION), CAST(ST_ASGEOJSON(GEOG) AS STRING))
+	WHEN MODE = 'intersects' THEN
+	    CASE WHEN @@SF_SCHEMA@@._CHECK_TOO_WIDE(GEOG) THEN @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER(H3_COVERAGE_STRINGS(TO_GEOGRAPHY(@@SF_SCHEMA@@._HEMI_SPLIT(CAST(ST_ASGEOJSON(GEOG) AS STRING))), RESOLUTION), CAST(ST_ASGEOJSON(GEOG) AS STRING))
+	        ELSE H3_COVERAGE_STRINGS(@@SF_SCHEMA@@.ST_BUFFER(GEOG, CAST(0.00000001 AS DOUBLE)), RESOLUTION)
+	    END
 	WHEN MODE = 'contains' THEN @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS(CAST(ST_ASGEOJSON(GEOG) AS STRING), @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION))
 	ELSE []
     END
