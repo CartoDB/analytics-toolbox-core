@@ -20,7 +20,7 @@ AS $$
 
     if (inputGeoJSON.type == "GeometryCollection") {
 	inputGeoJSON.geometries.forEach(g => {
-	    if (g.type === 'Polygon'|| g.type === 'MultiPolygon') {
+	    if (g.type === 'Polygon' || g.type === 'MultiPolygon') {
 	        polygons.push(g)	
 	    }	
 	});
@@ -52,7 +52,6 @@ RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
-
     let results = []
     let inputGeoJSON = JSON.parse(GEOJSON);
 
@@ -60,18 +59,22 @@ AS $$
     @@SF_LIBRARY_H3_BOUNDARY@@
 
     let polygons = [];
+    let geometries = []
 
-    // TODO - I think this will always be one polygon? Does it get _HEMI_SPLIT?
     if (inputGeoJSON.type == "GeometryCollection") {
-	inputGeoJSON.geometries.forEach(g => {
-	    if (g.type === 'Polygon'|| g.type === 'MultiPolygon') {
-	        polygons.push(g)	
-	    }	
-	});
+        geometries = inputGeoJSON.geometries	
     }
-    else if (inputGeoJSON.type === 'Polygon' || inputGeoJSON.type === 'MultiPolygon') {
-        polygons.push(inputGeoJSON)	
+    else {
+	geometries = [inputGeoJSON]	
     }
+    geometries.forEach(g => {
+        if (g.type === 'Polygon') {
+	    polygons.push(g)	
+        }	
+        else if (g.type === 'MultiPolygon') {
+	    g.coordinates.forEach(ring => polygons.push({type: 'Feature', geometry: {type: 'Polygon', coordinates: ring}}))
+        }
+    });
     INDICIES.forEach(h3Index => {
 	polygons.some(p => {
 	    if (h3PolyfillLib.booleanContains(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)]))) {
@@ -152,7 +155,7 @@ AS $$
 	    CASE WHEN @@SF_SCHEMA@@._CHECK_TOO_WIDE(GEOG) THEN @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER(H3_COVERAGE_STRINGS(TO_GEOGRAPHY(@@SF_SCHEMA@@._HEMI_SPLIT(CAST(ST_ASGEOJSON(GEOG) AS STRING))), RESOLUTION), CAST(ST_ASGEOJSON(GEOG) AS STRING))
 	        ELSE H3_COVERAGE_STRINGS(@@SF_SCHEMA@@.ST_BUFFER(GEOG, CAST(0.00000001 AS DOUBLE)), RESOLUTION)
 	    END
-	WHEN MODE = 'contains' THEN @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS(CAST(ST_ASGEOJSON(GEOG) AS STRING), @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION))
+	WHEN MODE = 'contains' THEN @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS(CAST(ST_ASGEOJSON(@@SF_SCHEMA@@.ST_BUFFER(GEOG, CAST(0.00000001 AS DOUBLE))) AS STRING), @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION))
 	ELSE []
     END
 $$;

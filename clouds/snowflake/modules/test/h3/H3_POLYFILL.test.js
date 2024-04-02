@@ -1,5 +1,65 @@
 const { runQuery } = require('../../../common/test-utils');
 
+test('Should support POLYGON Geographies', async () => {
+
+})
+
+test('Should support MULTIPOLYGON Geographies', async () => {
+
+})
+
+test('Should support GEOMETRYCOLLECTION containing 1 or more POLYGON Geographies', async () => {
+
+})
+
+test('Should support GEOMETRYCOLLECTION containing 0 POLYGON Geographies', async () => {
+
+})
+
+test('Should support resolutions between 0 and 15 inclusive. Otherwise, returns [].', async () => {
+
+})
+
+test('Should NOT support POINT Geographies. Returns []', async () => {
+
+})
+
+test('Should NOT support MULTIPOINT Geographies. Returns []', async () => {
+
+})
+
+test('Should NOT support LINESTRING Geographies. Returns []', async () => {
+
+})
+
+test('Should NOT support MULTILINESTRING Geographies. Returns []', async () => {
+
+})
+
+test('Should NOT support NULL Geography. Returns [].', async () => {
+
+})
+
+test('Should support POLYGON MULTIPOLYGON and GEOMETRYCOLLECTION Geographies over 180 degrees wide', async () => {
+
+})
+
+test('Should return only the cell id for the cell boundary/polygon at the same resolution in center mode', async () => {
+
+})
+
+test('Should return 7 cell ids for the cell boundary/polygon at its resolution - 1 in center mode. Same as calling H3_CELL_TO_CHILDREN.', async () => {
+
+})
+
+test('Should return 7 cell ids for the cell boundary/polygon at the same resolution in intersects mode. H3 cells intersect with themselves and neighbours.', async () => {
+
+})
+
+test('Should return only the cell id for the cell boundary/polygon at the same resolution in contains mode. H3 cells contain themselves.', async () => {
+
+})
+
 test('H3_POLYFILL returns the proper INT64s', async () => {
     const query = `
         WITH inputs AS
@@ -353,5 +413,5 @@ test('H3_POLYFILL returns the expected values', async () => {
             GET(p,0) != hex_id;
     `;
     rows = await runQuery(query);
-    //expect(rows.length).toEqual(0); // TODO - H3 cell should contain itself
+    expect(rows.length).toEqual(0);
 });
