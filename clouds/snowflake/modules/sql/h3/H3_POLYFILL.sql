@@ -9,6 +9,7 @@ LANGUAGE JAVASCRIPT
 IMMUTABLE
 AS $$
     // remove non-polygons and split polygons >= 180 degrees
+    // output is a always MULTIPOLYGON
 
     let inputGeoJSON = JSON.parse(GEOJSON);
 
@@ -22,7 +23,7 @@ AS $$
 
     geometries.forEach(g => {
         if (g.type === 'Polygon') {
-	    polygons.push(g)	
+	    polygons.push({type: 'Feature', geometry: g})	
         }	
         else if (g.type === 'MultiPolygon') {
 	    g.coordinates.forEach(ring => polygons.push({type: 'Feature', geometry: {type: 'Polygon', coordinates: ring}}))
@@ -34,7 +35,12 @@ AS $$
     let intersectAndPush = (hemisphere, poly) => {
         const intersection = h3PolyfillLib.intersect(poly, hemisphere);
 	if (intersection) {
-	    intersections.push(intersection);
+            if (intersection.geometry.type === 'Polygon') {
+	        intersections.push(intersection);
+            }	
+            else if (intersection.geometry.type === 'MultiPolygon') {
+	        intersection.geometry.coordinates.forEach(ring => intersections.push({type: 'Feature', geometry: {type: 'Polygon', coordinates: ring}}))
+            }
 	}
     };
 
@@ -43,7 +49,7 @@ AS $$
         intersectAndPush(easternHemisphere, p);
     })
 
-    return JSON.stringify(h3PolyfillLib.multiPolygon(intersections));
+    return JSON.stringify(h3PolyfillLib.multiPolygon(intersections.map(i => i.geometry.coordinates)).geometry);
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._FILTER_GEOG
@@ -66,7 +72,9 @@ AS $$
 
     @@SF_LIBRARY_H3_POLYFILL@@
 
-    let polygons = inputGeoJSON.geometry.geometries
+    // @@SF_SCHEMA@@.ST_BUFFER demotes MULTIPOLYGONs to POLYGON if it only has one ring. So we check again here.
+    let polygons = inputGeoJSON.type === 'MultiPolygon' ? inputGeoJSON.coordinates.map(ring => h3PolyfillLib.polygon(ring)) : [h3PolyfillLib.polygon(inputGeoJSON.coordinates)]
+
 
     INDICIES.forEach(h3Index => {
 	polygons.some(p => {
@@ -90,7 +98,7 @@ AS $$
 
     @@SF_LIBRARY_H3_POLYFILL@@
 
-    let polygons = inputGeoJSON.geometry.geometries
+    let polygons = inputGeoJSON.coordinates.map(ring => h3PolyfillLib.polygon(ring))
 
     H3INDICIES.forEach(h3Index => {
 	if (polygons.some(p => h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3PolyfillLib.h3ToGeoBoundary(h3Index, true)])))) {
@@ -134,9 +142,9 @@ AS $$
 	WHEN MODE = 'center' THEN @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION)
 	WHEN MODE = 'intersects' THEN
 	    CASE WHEN @@SF_SCHEMA@@._CHECK_TOO_WIDE(GEOG) THEN @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER(H3_COVERAGE_STRINGS(@@SF_SCHEMA@@._FILTER_GEOG(GEOG), RESOLUTION), CAST(ST_ASGEOJSON(GEOG) AS STRING))
-	        ELSE H3_COVERAGE_STRINGS(@@SF_SCHEMA@@.ST_BUFFER(GEOG, CAST(0.00000001 AS DOUBLE)), RESOLUTION)
+	        ELSE H3_COVERAGE_STRINGS(@@SF_SCHEMA@@.ST_BUFFER(@@SF_SCHEMA@@._FILTER_GEOG(GEOG), CAST(0.00000001 AS DOUBLE)), RESOLUTION)
 	    END
-	WHEN MODE = 'contains' THEN @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS(CAST(ST_ASGEOJSON(@@SF_SCHEMA@@._FILTER_GEOG(@@SF_SCHEMA@@.ST_BUFFER(GEOG, CAST(0.00000001 AS DOUBLE))) ) AS STRING), @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION))
+	WHEN MODE = 'contains' THEN @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS(CAST(ST_ASGEOJSON(@@SF_SCHEMA@@.ST_BUFFER(@@SF_SCHEMA@@._FILTER_GEOG(GEOG), CAST(0.00000001 AS DOUBLE)) ) AS STRING), @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION))
 	ELSE []
     END
 $$;

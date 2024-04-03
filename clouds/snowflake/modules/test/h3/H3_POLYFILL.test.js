@@ -39,7 +39,7 @@ test('Should support POLYGON Geographies', async () => {
         {polygonWkt: polygonsWkt.spain, resolution: 6, mode: undefined, expectedCellCount: 13344},
         {polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'contains', expectedCellCount: 13006},
         {polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'center', expectedCellCount: 13344},
-        {polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'intersects', expectedCellCount: 13699},
+        {polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'intersects', expectedCellCount: 13701},
         {polygonWkt: polygonsWkt.africa, resolution: 3, mode: undefined, expectedCellCount: 2323},
         {polygonWkt: polygonsWkt.africa, resolution: 3, mode: 'contains', expectedCellCount: 2178},
         {polygonWkt: polygonsWkt.africa, resolution: 3, mode: 'center', expectedCellCount: 2323},
@@ -54,6 +54,8 @@ test('Should support POLYGON Geographies', async () => {
 			  else {
             query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution}, '${test.mode}')) as cell_count`
 				}
+
+			  console.log(query)
 
         let rows = await runQuery(query);
 	      expect(rows[0].CELL_COUNT).toEqual(test.expectedCellCount)
@@ -105,11 +107,11 @@ test('Should support GEOMETRYCOLLECTION containing 1 or more POLYGON Geographies
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'contains')) as cell_count`
     rows = await runQuery(query);
-	  expect(rows[0].CELL_COUNT).toEqual(999999) // TODO: FAILING
+	  expect(rows[0].CELL_COUNT).toEqual(36)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'intersects')) as cell_count`
     rows = await runQuery(query);
-	  expect(rows[0].CELL_COUNT).toEqual(999999) // TODO: FAILING
+	  expect(rows[0].CELL_COUNT).toEqual(90)
 })
 
 test('Should support NOT GEOMETRYCOLLECTION containing 0 POLYGON Geographies. Returns [].', async () => {
