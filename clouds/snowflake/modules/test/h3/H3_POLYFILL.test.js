@@ -55,8 +55,6 @@ test('Should support POLYGON Geographies', async () => {
             query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution}, '${test.mode}')) as cell_count`
 				}
 
-			  console.log(query)
-
         let rows = await runQuery(query);
 	      expect(rows[0].CELL_COUNT).toEqual(test.expectedCellCount)
 		}

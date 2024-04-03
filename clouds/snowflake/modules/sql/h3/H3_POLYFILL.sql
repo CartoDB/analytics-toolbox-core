@@ -2,6 +2,31 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._HAS_POLYGON_JS
+(geojson STRING)
+RETURNS BOOLEAN
+LANGUAGE JAVASCRIPT
+IMMUTABLE
+AS $$
+    let inputGeoJSON = JSON.parse(GEOJSON);
+    let geometries = inputGeoJSON.geometries ? inputGeoJSON.geometries : [inputGeoJSON] // geometrycollection or regular feature geometry
+    for (let g of geometries) {
+        if (g.type === 'Polygon' || g.type === 'MultiPolygon') {
+	    return true
+        }	
+    }
+    return false
+$$;
+
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._HAS_POLYGON
+(geog GEOGRAPHY)
+RETURNS BOOLEAN
+LANGUAGE SQL
+IMMUTABLE
+AS $$
+	@@SF_SCHEMA@@._HAS_POLYGON_JS(CAST(ST_ASGEOJSON(GEOG) AS STRING))
+$$;
+
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._FILTER_GEOG_JS
 (geojson STRING)
 RETURNS STRING
@@ -30,6 +55,7 @@ AS $$
         }
     });
 
+
     let intersections = [];
 
     let intersectAndPush = (hemisphere, poly) => {
@@ -49,7 +75,7 @@ AS $$
         intersectAndPush(easternHemisphere, p);
     })
 
-    return JSON.stringify(h3PolyfillLib.multiPolygon(intersections.map(i => i.geometry.coordinates)).geometry);
+    return JSON.stringify(h3PolyfillLib.multiPolygon(intersections.map(i => i.geometry.coordinates)).geometry)
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._FILTER_GEOG
@@ -127,7 +153,7 @@ RETURNS ARRAY
 IMMUTABLE
 AS $$
     IFF(
-        GEOG IS NOT NULL AND RESOLUTION BETWEEN 0 AND 15,
+        GEOG IS NOT NULL AND RESOLUTION >= 0 AND RESOLUTION <= 15 AND @@SF_SCHEMA@@._HAS_POLYGON(GEOG),
 	COALESCE(H3_POLYGON_TO_CELLS_STRINGS(@@SF_SCHEMA@@._FILTER_GEOG(GEOG), RESOLUTION), []),
 	[]
     ) 
@@ -138,7 +164,7 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_POLYFILL
 RETURNS ARRAY
 IMMUTABLE
 AS $$
-    CASE WHEN GEOG IS NULL OR RESOLUTION NOT BETWEEN 0 AND 15 THEN []
+    CASE WHEN GEOG IS NULL OR RESOLUTION < 0 OR RESOLUTION > 15 OR NOT @@SF_SCHEMA@@._HAS_POLYGON(GEOG) THEN []
 	WHEN MODE = 'center' THEN @@SF_SCHEMA@@.H3_POLYFILL(GEOG, RESOLUTION)
 	WHEN MODE = 'intersects' THEN
 	    CASE WHEN @@SF_SCHEMA@@._CHECK_TOO_WIDE(GEOG) THEN @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER(H3_COVERAGE_STRINGS(@@SF_SCHEMA@@._FILTER_GEOG(GEOG), RESOLUTION), CAST(ST_ASGEOJSON(GEOG) AS STRING))
