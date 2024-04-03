@@ -15,6 +15,8 @@ AS """
     const options = {};
     if (numberOfClusters != null) {
         options.numberOfClusters = Number(numberOfClusters);
+    } else {
+        options.numberOfClusters = parseInt(Math.sqrt(geojson.length/2))
     }
     options.mutate = true;
     geojson = Array.from(new Set(geojson));
