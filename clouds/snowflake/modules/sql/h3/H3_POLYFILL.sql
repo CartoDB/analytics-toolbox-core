@@ -124,7 +124,8 @@ AS $$
 
     @@SF_LIBRARY_H3_POLYFILL@@
 
-    let polygons = inputGeoJSON.coordinates.map(ring => h3PolyfillLib.polygon(ring))
+    // @@SF_SCHEMA@@.ST_BUFFER demotes MULTIPOLYGONs to POLYGON if it only has one ring. So we check again here.
+    let polygons = inputGeoJSON.type === 'MultiPolygon' ? inputGeoJSON.coordinates.map(ring => h3PolyfillLib.polygon(ring)) : [h3PolyfillLib.polygon(inputGeoJSON.coordinates)]
 
     H3INDICIES.forEach(h3Index => {
 	if (polygons.some(p => h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3PolyfillLib.h3ToGeoBoundary(h3Index, true)])))) {
