@@ -56,7 +56,6 @@ AS $$
     let inputGeoJSON = JSON.parse(GEOJSON);
 
     @@SF_LIBRARY_H3_POLYFILL@@
-    @@SF_LIBRARY_H3_BOUNDARY@@
 
     let polygons = [];
     let geometries = []
@@ -77,7 +76,7 @@ AS $$
     });
     INDICIES.forEach(h3Index => {
 	polygons.some(p => {
-	    if (h3PolyfillLib.booleanContains(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)]))) {
+	    if (h3PolyfillLib.booleanContains(p, h3PolyfillLib.polygon([h3PolyfillLib.h3ToGeoBoundary(h3Index, true)]))) {
 	        results.push(h3Index)	
 	    }
 	})	
@@ -96,7 +95,6 @@ AS $$
     let inputGeoJSON = JSON.parse(GEOJSON);
 
     @@SF_LIBRARY_H3_POLYFILL@@
-    @@SF_LIBRARY_H3_BOUNDARY@@
 
     let polygons = [];
 
@@ -111,7 +109,7 @@ AS $$
         polygons.push(inputGeoJSON)	
     }
     H3INDICIES.forEach(h3Index => {
-	if (polygons.some(p => h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3BoundaryLib.h3ToGeoBoundary(h3Index, true)])))) {
+	if (polygons.some(p => h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3PolyfillLib.h3ToGeoBoundary(h3Index, true)])))) {
 	    results.push(h3Index)
 	}
     })
