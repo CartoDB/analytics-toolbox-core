@@ -232,12 +232,10 @@ test('Should support POLYGON Geographies over 180 degrees wide', async () => {
     expect(rows[0].CELL_COUNT).toEqual(56)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'contains')) as cell_count`
-    console.log(query)
     rows = await runQuery(query);
     expect(rows[0].CELL_COUNT).toEqual(32)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
-    console.log(query)
     rows = await runQuery(query);
     expect(rows[0].CELL_COUNT).toEqual(76)
 
@@ -249,15 +247,12 @@ test('Should support MULTIPOLYGON Geographies over 180 degrees wide', async () =
     let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'center')) as cell_count`
     //let rows = await runQuery(query);
     //expect(rows[0].CELL_COUNT).toEqual(0)
-    console.log(query)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'contains')) as cell_count`
-    console.log(query)
     //rows = await runQuery(query);
     //expect(rows[0].CELL_COUNT).toEqual(0)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
-    console.log(query)
     //rows = await runQuery(query);
     //expect(rows[0].CELL_COUNT).toEqual(0)
 })
@@ -268,15 +263,12 @@ test('Should support GEOMETRYCOLLECTION Geographies over 180 degrees wide', asyn
     let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'center')) as cell_count`
     //let rows = await runQuery(query);
     //expect(rows[0].CELL_COUNT).toEqual(0)
-    console.log(query)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'contains')) as cell_count`
-    console.log(query)
     //rows = await runQuery(query);
     //expect(rows[0].CELL_COUNT).toEqual(0)
 
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
-    console.log(query)
     //rows = await runQuery(query);
     //expect(rows[0].CELL_COUNT).toEqual(0)
 
