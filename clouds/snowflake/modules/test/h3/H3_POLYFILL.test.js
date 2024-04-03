@@ -32,7 +32,7 @@ test('Should support POLYGON Geographies', async () => {
         {polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: 'contains', expectedCellCount: 11171},
         {polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: 'center', expectedCellCount: 11506},
         {polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: 'intersects', expectedCellCount: 11845},
-        {polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: undefined, expectedCellCount: 3810}, // NOTE: as res 12 it raises exceeds limit error
+        {polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: undefined, expectedCellCount: 3810},
         {polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: 'contains', expectedCellCount: 3591},
         {polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: 'center', expectedCellCount: 3810},
         {polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: 'intersects', expectedCellCount: 4037},
@@ -259,6 +259,8 @@ test('Should return only the cell id for the cell boundary/polygon at the same r
 	  expect(rows[0].CELL_COUNT).toEqual(1)
 
 })
+
+// OLD TESTS ---------------
 
 test('H3_POLYFILL returns the proper INT64s', async () => {
     const query = `
