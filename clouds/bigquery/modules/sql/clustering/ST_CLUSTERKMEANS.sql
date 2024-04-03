@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2021-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__CLUSTERKMEANS`
 (geojson ARRAY<STRING>, numberOfClusters INT64)
@@ -17,6 +17,7 @@ AS """
         options.numberOfClusters = Number(numberOfClusters);
     }
     options.mutate = true;
+    geojson = Array.from(new Set(geojson));
     const featuresCollection = lib.clustering.featureCollection(geojson.map(x => lib.clustering.feature(JSON.parse(x))));
     lib.clustering.clustersKmeans(featuresCollection, options);
     const cluster = [];

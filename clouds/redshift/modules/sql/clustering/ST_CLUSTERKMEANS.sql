@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2021-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__CLUSTERKMEANS
 (geom VARCHAR(MAX), numberofClusters INT)
