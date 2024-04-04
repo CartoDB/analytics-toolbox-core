@@ -10,6 +10,12 @@ Calculates the Voronoi diagram of the points provided. A MultiLineString object 
 
 * `points`: `GEOMETRY` MultiPoint input to the Voronoi diagram.
 
+````hint:warning
+**warning**
+
+The maximum number of points typically used to compute Voronoi diagrams is 300,000. This limit ensures efficient computation while maintaining accuracy in delineating regions based on proximity to specified points.
+````
+
 **Return type**
 
 `VARCHAR(MAX)`
