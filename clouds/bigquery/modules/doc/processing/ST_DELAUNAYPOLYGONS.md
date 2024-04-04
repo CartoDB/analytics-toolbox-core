@@ -15,7 +15,7 @@ Due to technical limitations of the underlying libraries used, the input points'
 ````hint:warning
 **warning**
 
-The maximum number of points typically used to compute Voronoi diagrams is 300,000. This limit ensures efficient computation while maintaining accuracy in delineating regions based on proximity to specified points.
+The maximum number of points typically used to compute Delaunay diagrams is 300,000. This limit ensures efficient computation while maintaining accuracy in delineating regions based on proximity to specified points.
 ````
 
 **Return type**
