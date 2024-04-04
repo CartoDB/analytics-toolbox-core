@@ -10,6 +10,13 @@ def load_geom(geom):
     geom = json.dumps(_geom)
     return loads(geom)
 
+def remove_duplicated_coords(arr):
+    import numpy as np
+    unique_rows = []
+    for row in arr:
+        if not any(np.array_equal(row, unique_row) for unique_row in unique_rows):
+            unique_rows.append(row)
+    return np.array(unique_rows)
 
 def clusterkmeanstable(geom, k):
     from .kmeans import KMeans
@@ -39,14 +46,14 @@ def clusterkmeans(geom, k):
     if geom.type != 'MultiPoint':
         raise Exception('Invalid operation: Input points parameter must be MultiPoint.')
     else:
-        coords = np.array(list(geojson.utils.coords(geom)))
+        coords = remove_duplicated_coords(np.array(list(geojson.utils.coords(geom))))
     cluster_idxs, centers, loss = KMeans()(coords, k)
     return geojson.dumps(
         [
             {
                 'cluster': cluster_idxs[idx],
-                'geom': {'coordinates': point, 'type': 'Point'},
+                'geom': {'coordinates': point.tolist(), 'type': 'Point'},
             }
-            for idx, point in enumerate(geom['coordinates'])
+            for idx, point in enumerate(coords)
         ]
     )

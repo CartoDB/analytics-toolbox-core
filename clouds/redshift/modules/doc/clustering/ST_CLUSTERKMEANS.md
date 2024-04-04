@@ -11,6 +11,10 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 * `geog`: `GEOMETRY` points to be clustered.
 * `numberOfClusters` (optional): `INT` number of clusters that will be generated. It defaults to the square root of half the number of points (`sqrt(<NUMBER OF POINTS>/2)`).
 
+````hint:info
+The resulting geometries are unique. So duplicated points will be removed from the input multipoint
+````
+
 **Return type**
 
 `SUPER`: containing objects with `cluster` as the cluster id and `geom` as the geometry in GeoJSON format.

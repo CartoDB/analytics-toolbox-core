@@ -11,6 +11,10 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 * `geojsons`: `ARRAY` points to be clustered.
 * `numberOfClusters` (optional): `INT` numberOfClusters that will be generated. By default `numberOfClusters` is `Math.sqrt(<NUMBER OF POINTS>/2)`.
 
+````hint:info
+The resulting geometries are unique. So duplicated points will be removed from the input array
+````
+
 **Return type**
 
 `ARRAY`: containing objects with `cluster`, as the cluster id, and `geom`, as the geometry geojson.
