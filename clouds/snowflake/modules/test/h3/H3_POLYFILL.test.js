@@ -229,7 +229,6 @@ test('Should support Geographies that cross the Prime-Meridian multiple times', 
     let polygonWkt = 'POLYGON ((-16.226053271365 29.7435335822744,-13.1839184674949 35.1034853795694,9.26993365630844 26.9911259025824,-4.34724118006261 13.9534053145676,13.0363862706238 6.99995433429298,-15.9363261471869 -5.31344844327657,-19.5579151994132 0.191366916107455,-5.6510132388641 5.98590939966961,-15.6465990230088 10.6215433865193,-3.62292336961735 24.5284453470685,-16.226053271365 29.7435335822744))'
 
     let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 3, 'center')) as cell_count`
-	  console.log(query)
     let rows = await runQuery(query);
     expect(rows[0].CELL_COUNT).toEqual(567)
 
@@ -257,39 +256,6 @@ test('Should support POLYGON Geographies over 180 degrees wide', async () => {
     query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
     rows = await runQuery(query);
     expect(rows[0].CELL_COUNT).toEqual(76)
-
-})
-
-test('Should support MULTIPOLYGON Geographies over 180 degrees wide', async () => {
-
-    let polygonWkt = 'MULTIPOLYGON(((-160 10, -160 30, 160 30, 160 10, -160 10), (-160 -10, -160 -30, 160 -30, 160 -10, -160 -10)))'
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'center')) as cell_count`
-    //let rows = await runQuery(query);
-    //expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'contains')) as cell_count`
-    //rows = await runQuery(query);
-    //expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
-    //rows = await runQuery(query);
-    //expect(rows[0].CELL_COUNT).toEqual(0)
-})
-
-test('Should support GEOMETRYCOLLECTION Geographies over 180 degrees wide', async () => {
-
-    let polygonWkt = 'GEOMETRYCOLLECTION(POLYGON((-160 10, -160 30, 160 30, 160 10, -160 10)), POLYGON((-160 -10, -160 -30, 160 -30, 160 -10, -160 -10)))'
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'center')) as cell_count`
-    //let rows = await runQuery(query);
-    //expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'contains')) as cell_count`
-    //rows = await runQuery(query);
-    //expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
-    //rows = await runQuery(query);
-    //expect(rows[0].CELL_COUNT).toEqual(0)
 
 })
 
