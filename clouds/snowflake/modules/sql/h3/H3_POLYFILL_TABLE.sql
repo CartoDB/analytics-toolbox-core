@@ -66,7 +66,7 @@ BEGIN
 
     column_names_csv := (SELECT LISTAGG(COLUMN_NAME, ',') FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME ILIKE :output_table AND TABLE_CATALOG=@@SF_SCHEMA@@._GET_DATABASE(:output_table) AND TABLE_SCHEMA=@@SF_SCHEMA@@._GET_SCHEMA(:output_table));
 
-    polyfill_query := 'INSERT INTO ' || output_table || ' (' || column_names_csv || ') SELECT ' || column_names_csv || ' FROM (WITH virtual_table AS (' || input_query || ') SELECT *, value as H3 FROM virtual_table, LATERAL FLATTEN(input => H3_POLYFILL(virtual_table.geom, ' || resolution || ',\'' || mode || '\')))';
+    polyfill_query := 'INSERT INTO ' || output_table || ' (' || column_names_csv || ') SELECT ' || column_names_csv || ' FROM (WITH virtual_table AS (' || input_query || ') SELECT *, value as H3 FROM virtual_table, LATERAL FLATTEN(input => @@SF_SCHEMA@@.H3_POLYFILL(virtual_table.geom, ' || resolution || ',\'' || mode || '\')))';
 
     EXECUTE IMMEDIATE polyfill_query;
 
