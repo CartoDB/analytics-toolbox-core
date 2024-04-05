@@ -214,11 +214,14 @@ describe('H3_POLYFILL should not support MULTILINESTRING Geographies', () => {
     });
 });
 
-test('H3_POLYFILL should NOT support NULL Geography. Returns [].', async () => {
-    let query = 'SELECT ARRAY_SIZE(H3_POLYFILL(NULL, 6, \'center\')) as cell_count'
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-});
+describe('H3_POLYFILL should NOT support NULL Geography', () => {
+    test('Returns []', async () => {
+
+        let query = 'SELECT ARRAY_SIZE(H3_POLYFILL(NULL, 6, \'center\')) as cell_count'
+        let rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(0)
+    });
+})
 
 describe('H3_POLYFILL for Geographies crossing the Prime-Meridian multiple times', () => {
     const polygonWkt = 'POLYGON ((-16.226053271365 29.7435335822744,-13.1839184674949 35.1034853795694,9.26993365630844 26.9911259025824,-4.34724118006261 13.9534053145676,13.0363862706238 6.99995433429298,-15.9363261471869 -5.31344844327657,-19.5579151994132 0.191366916107455,-5.6510132388641 5.98590939966961,-15.6465990230088 10.6215433865193,-3.62292336961735 24.5284453470685,-16.226053271365 29.7435335822744))';
@@ -250,34 +253,108 @@ describe('H3_POLYFILL for POLYGON Geographies over 180 degrees wide', () => {
     });
 });
 
-test('Should return only the cell id for the cell boundary/polygon at the same resolution in center mode', async () => {
+describe('H3_POLYFILL called with a H3 cell boundary/polygon in CENTER mode at the same resolution should return only that cell ID', () => {
 
-    let query = "SELECT ARRAY_SIZE(H3_POLYFILL(H3_CELL_TO_BOUNDARY('8c2834636db5bff'), 12, 'center')) as cell_count";
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(1)
+    test.each([
+        ['8029fffffffffff', 0],
+        ['81283ffffffffff', 1],
+        ['822837fffffffff', 2],
+        ['832834fffffffff', 3],
+        ['8428347ffffffff', 4],
+        ['85283463fffffff', 5],
+        ['862834637ffffff', 6],
+        ['872834636ffffff', 7],
+        ['882834636dfffff', 8],
+        ['892834636dbffff', 9],
+        ['8a2834636db7fff', 10],
+        ['8b2834636db5fff', 11],
+        ['8c2834636db5bff', 12],
+        ['8d2834636db5b3f', 13],
+        ['8e2834636db5b4f', 14],
+        ['8f2834636db5bac', 15]
+    ])('boundary of cell with id %s at resolution level %i', async (cellId, resolution) => {
+        let query = `SELECT H3_POLYFILL(H3_CELL_TO_BOUNDARY('${cellId}'), '${resolution}', 'center') as h3_cell`;
+        let rows = await runQuery(query);
+        expect(rows[0].H3_CELL).toEqual([cellId])
+    })
 
 })
 
-test('Should return 7 cell ids for the cell boundary/polygon at its resolution+1 in center mode. Same as calling H3_CELL_TO_CHILDREN.', async () => {
+describe('H3_POLYFILL called with a H3 cell boundary/polygon in CENTER mode as that cells resolution+1 should its 7 child cell ids. Same as calling H3_CELL_TO_CHILDREN_STRINGS.', () => {
 
-    let query = "SELECT ARRAY_SIZE(H3_POLYFILL(H3_CELL_TO_BOUNDARY('8c2834636db5bff'), 13, 'center')) as cell_count";
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(7)
+    test.each([
+        ['8029fffffffffff', 1],
+        ['81283ffffffffff', 2],
+        ['822837fffffffff', 3],
+        ['832834fffffffff', 4],
+        ['8428347ffffffff', 5],
+        ['85283463fffffff', 6],
+        ['862834637ffffff', 7],
+        ['872834636ffffff', 8],
+        ['882834636dfffff', 9],
+        ['892834636dbffff', 10],
+        ['8a2834636db7fff', 11],
+        ['8b2834636db5fff', 12],
+        ['8c2834636db5bff', 13],
+        ['8d2834636db5b3f', 14],
+        ['8e2834636db5b4f', 15]
+    ])('boundary of cell with id %s at resolution level %i', async (cellId, resolution) => {
+        let query = `SELECT ARRAY_SIZE(H3_POLYFILL(H3_CELL_TO_BOUNDARY('${cellId}'), '${resolution}', 'center')) as cell_count`;
+        let rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(7)
+    })
+})
+
+describe('H3_POLYFILL called with a H3 cell boundary/polygon in INTERSECTS mode at the same resolution should return 7 ids. Itself and 6 neighbours.', () => {
+
+    test.each([
+        ['8029fffffffffff', 0],
+        ['81283ffffffffff', 1],
+        ['822837fffffffff', 2],
+        ['832834fffffffff', 3],
+        ['8428347ffffffff', 4],
+        ['85283463fffffff', 5],
+        ['862834637ffffff', 6],
+        ['872834636ffffff', 7],
+        ['882834636dfffff', 8],
+        ['892834636dbffff', 9],
+        ['8a2834636db7fff', 10],
+        ['8b2834636db5fff', 11],
+        ['8c2834636db5bff', 12],
+        ['8d2834636db5b3f', 13],
+        ['8e2834636db5b4f', 14],
+        ['8f2834636db5bac', 15]
+    ])('boundary of cell with id %s at resolution level %i', async (cellId, resolution) => {
+        let query = `SELECT ARRAY_SIZE(H3_POLYFILL(H3_CELL_TO_BOUNDARY('${cellId}'), '${resolution}', 'intersects')) as cell_count`;
+        let rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(7)
+    })
 
 })
 
-test('Should return 7 cell ids for the cell boundary/polygon at the same resolution in intersects mode. H3 cells intersect with themselves and neighbours.', async () => {
+describe('H3_POLYFILL called with a H3 cell boundary/polygon in CONTAINS mode at the same resolution should return its own ID. H3 cells contains themselves.', () => {
 
-    let query = "SELECT ARRAY_SIZE(H3_POLYFILL(H3_CELL_TO_BOUNDARY('8c2834636db5bff'), 12, 'intersects')) as cell_count";
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(7)
-
-})
-
-test('Should return only the cell id for the cell boundary/polygon at the same resolution in contains mode. H3 cells contain themselves.', async () => {
-
-    let query = "SELECT ARRAY_SIZE(H3_POLYFILL(H3_CELL_TO_BOUNDARY('8c2834636db5bff'), 12, 'contains')) as cell_count";
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(1)
+    test.each([
+        ['8029fffffffffff', 0],
+        ['81283ffffffffff', 1],
+        ['822837fffffffff', 2],
+        ['832834fffffffff', 3],
+        ['8428347ffffffff', 4],
+        ['85283463fffffff', 5],
+        ['862834637ffffff', 6],
+        ['872834636ffffff', 7],
+        ['882834636dfffff', 8],
+        ['892834636dbffff', 9],
+        ['8a2834636db7fff', 10],
+        ['8b2834636db5fff', 11],
+        ['8c2834636db5bff', 12],
+        ['8d2834636db5b3f', 13],
+        ['8e2834636db5b4f', 14],
+        ['8f2834636db5bac', 15]
+    ])('boundary of cell with id %s at resolution level %i', async (cellId, resolution) => {
+        let query = `SELECT H3_POLYFILL(H3_CELL_TO_BOUNDARY('${cellId}'), '${resolution}', 'contains') as h3_cell`;
+        let rows = await runQuery(query);
+        expect(rows[0].H3_CELL).toEqual([cellId])
+    })
 
 })
