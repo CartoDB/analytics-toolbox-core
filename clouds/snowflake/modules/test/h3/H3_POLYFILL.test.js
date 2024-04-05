@@ -16,248 +16,239 @@ const multiPolygonsWkt = {
     southAmericanCountries: 'MULTIPOLYGON (((-51.0402348797903 3.80921001016012,-58.8887341410253 1.323353025417,-60.4201486310223 4.95439442681803,-65.3972457235128 4.19113022719449,-73.8200254184967 -8.40894552471227,-59.2715877635245 -15.7045237045925,-54.1030638597844 -25.3698807594659,-58.505880518526 -33.2068574630847,-53.9116370485348 -35.4201585439674,-47.7859790885465 -25.0234557274646,-40.1289066385611 -22.9246716416212,-38.7889189598137 -13.1090750509028,-34.5775291123217 -5.36859469737905,-50.0831008235421 -0.207943331903141,-51.0402348797903 3.80921001016012)),((-69.1527969814148 -11.502562681899,-59.5468686637489 -15.8967321056371,-57.7496304623792 -19.2636677217718,-58.431341504278 -19.497515507521,-62.0877916380992 -19.497515507521,-62.5216077556713 -22.0468385195633,-67.8513486286988 -22.6772793895194,-69.33871817466 -17.5584981509195,-69.1527969814148 -11.502562681899)),((-57.8570538894109 -20.6597445927195,-55.7073592503026 -25.7613409063218,-58.9319012089652 -31.4203489873142,-59.6484660886679 -34.4271185412807,-57.1404890097082 -36.613916268976,-63.768714146959 -41.3456024887631,-65.9184087860674 -41.3456024887631,-68.7846683048786 -52.4295321805673,-71.6509278236897 -51.7692762704576,-72.7257751432439 -49.380862225017,-71.471786603764 -42.1475262020993,-70.3969392842098 -32.7860335716503,-69.14295074473 -27.5225687782282,-67.7098209853244 -24.3005522230791,-57.8570538894109 -20.6597445927195)))'
 }
 
+describe('H3_POLYFILL should support POLYGON geographies', () => {
+    test.each([
+        ['tennisCourt', 15, undefined, 262],
+        ['tennisCourt', 15, 'contains', 222],
+        ['tennisCourt', 15, 'center', 262],
+        ['tennisCourt', 15, 'intersects', 302],
+        ['footballPitch', 15, undefined, 9922],
+        ['footballPitch', 15, 'contains', 9669],
+        ['footballPitch', 15, 'center', 9922],
+        ['footballPitch', 15, 'intersects', 10150],
+        ['centralPark', 12, undefined, 11506],
+        ['centralPark', 12, 'contains', 11171],
+        ['centralPark', 12, 'center', 11506],
+        ['centralPark', 12, 'intersects', 11845],
+        ['manhattanIsland', 10, undefined, 3810],
+        ['manhattanIsland', 10, 'contains', 3591],
+        ['manhattanIsland', 10, 'center', 3810],
+        ['manhattanIsland', 10, 'intersects', 4037],
+        ['spain', 6, undefined, 13344],
+        ['spain', 6, 'contains', 13006],
+        ['spain', 6, 'center', 13344],
+        ['spain', 6, 'intersects', 13701],
+        ['africa', 3, undefined, 2323],
+        ['africa', 3, 'contains', 2178],
+        ['africa', 3, 'center', 2323],
+        ['africa', 3, 'intersects', 2470]
+    ])('Called with geography POLYGON:%s, a resolution of %i in %s mode, should return %i H3 cell identifiers', async (polygonName, resolution, mode, expectedCellCount) => {
+        const polygonWkt = polygonsWkt[polygonName]; // Assuming polygonsWkt is an object with WKT strings
 
-test('Should support POLYGON Geographies', async () => {
+        let query = mode === undefined ?
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), ${resolution})) as cell_count` :
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), ${resolution}, '${mode}')) as cell_count`;
 
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+
+});
+
+
+describe('H3_POLYFILL should support MULTIPOLYGON geographies', () => {
+    test.each([
+        ['duckPonds', 13, undefined, 4945],
+        ['duckPonds', 13, 'contains', 4585],
+        ['duckPonds', 13, 'center', 4945],
+        ['duckPonds', 13, 'intersects', 5293],
+        ['farmFields', 10, undefined, 102],
+        ['farmFields', 10, 'contains', 63],
+        ['farmFields', 10, 'center', 102],
+        ['farmFields', 10, 'intersects', 153],
+        ['canaryIslands', 7, undefined, 1312],
+        ['canaryIslands', 7, 'contains', 1068],
+        ['canaryIslands', 7, 'center', 1312],
+        ['canaryIslands', 7, 'intersects', 1570],
+        ['southAmericanCountries', 5, undefined, 49158],
+        ['southAmericanCountries', 5, 'contains', 48136],
+        ['southAmericanCountries', 5, 'center', 49158],
+        ['southAmericanCountries', 5, 'intersects', 50354]
+    ])('Called with geography MULTIPOLYGON:%s, a resolution of %i in %s mode, should return %i H3 cell identifiers', async (multiPolygonName, resolution, mode, expectedCellCount) => {
+        let query;
+        const polygonWkt = multiPolygonsWkt[multiPolygonName];
+
+        if (mode === undefined) {
+            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), ${resolution})) as cell_count`;
+        } else {
+            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), ${resolution}, '${mode}')) as cell_count`;
+        }
+
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    })
+});
+
+describe('Support GEOMETRYCOLLECTION containing 1 or more POLYGON Geographies', () => {
+    const geometryCollection = 'GEOMETRYCOLLECTION( POLYGON((3.00 3.00, 3.20 3.40, 3.40 3.00, 3.00 3.00)), POLYGON((3.50 3.50, 3.50 3.70, 3.80 3.70, 3.80 3.50, 3.50 3.50)))';
+
+    test.each([
+        ['center', 61],
+        ['contains', 36],
+        ['intersects', 90]
+    ])('H3_POLYFILL with mode %s should return expected cell count', async (mode, expectedCellCount) => {
+        const query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, '${mode}')) as cell_count`;
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
+
+describe('NOT Support a GEOMETRYCOLLECTION containing 0 POLYGON Geographies. Return [].', () => {
+    const geometryCollection = 'GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))';
+
+    test.each([
+        ['center', 0],
+        ['contains', 0],
+        ['intersects', 0]
+    ])('H3_POLYFILL with mode %s should return expected empty result', async (mode, expectedCellCount) => {
+        const query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, '${mode}')) as cell_count`;
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
+
+
+describe('Resolution support between 0 and 15 inclusive for H3_POLYFILL', () => {
     const testCases = [
-        { polygonWkt: polygonsWkt.tennisCourt, resolution: 15, mode: undefined, expectedCellCount: 262 },
-        { polygonWkt: polygonsWkt.tennisCourt, resolution: 15, mode: 'contains', expectedCellCount: 222 },
-        { polygonWkt: polygonsWkt.tennisCourt, resolution: 15, mode: 'center', expectedCellCount: 262 },
-        { polygonWkt: polygonsWkt.tennisCourt, resolution: 15, mode: 'intersects', expectedCellCount: 302 },
-        { polygonWkt: polygonsWkt.footballPitch, resolution: 15, mode: undefined, expectedCellCount: 9922 },
-        { polygonWkt: polygonsWkt.footballPitch, resolution: 15, mode: 'contains', expectedCellCount: 9669 },
-        { polygonWkt: polygonsWkt.footballPitch, resolution: 15, mode: 'center', expectedCellCount: 9922 },
-        { polygonWkt: polygonsWkt.footballPitch, resolution: 15, mode: 'intersects', expectedCellCount: 10150 },
-        { polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: undefined, expectedCellCount: 11506 },
-        { polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: 'contains', expectedCellCount: 11171 },
-        { polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: 'center', expectedCellCount: 11506 },
-        { polygonWkt: polygonsWkt.centralPark, resolution: 12, mode: 'intersects', expectedCellCount: 11845 },
-        { polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: undefined, expectedCellCount: 3810 },
-        { polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: 'contains', expectedCellCount: 3591 },
-        { polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: 'center', expectedCellCount: 3810 },
-        { polygonWkt: polygonsWkt.manhattanIsland, resolution: 10, mode: 'intersects', expectedCellCount: 4037 },
-        { polygonWkt: polygonsWkt.spain, resolution: 6, mode: undefined, expectedCellCount: 13344 },
-        { polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'contains', expectedCellCount: 13006 },
-        { polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'center', expectedCellCount: 13344 },
-        { polygonWkt: polygonsWkt.spain, resolution: 6, mode: 'intersects', expectedCellCount: 13701 },
-        { polygonWkt: polygonsWkt.africa, resolution: 3, mode: undefined, expectedCellCount: 2323 },
-        { polygonWkt: polygonsWkt.africa, resolution: 3, mode: 'contains', expectedCellCount: 2178 },
-        { polygonWkt: polygonsWkt.africa, resolution: 3, mode: 'center', expectedCellCount: 2323 },
-        { polygonWkt: polygonsWkt.africa, resolution: 3, mode: 'intersects', expectedCellCount: 2470 }
-    ]
+        ['duckPonds',-1, 'contains', 0],
+        ['duckPonds',16, 'center', 0],
+        ['duckPonds',16, 'intersects',  0],
+        ['duckPonds',999, undefined, 0],
+        ['duckPonds',13, undefined, 4945]
+    ];
 
-    for (const test of testCases) {
-        let query
-        if (test.mode === undefined) {
-            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution})) as cell_count`
-        }
-        else {
-            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution}, '${test.mode}')) as cell_count`
+    test.each(testCases)('For %s at resolution %i in %s mode, expected cell count is %i', async (polygonWkt, resolution, mode, expectedCellCount) => {
+        let query;
+        const wkt = multiPolygonsWkt[polygonWkt];
+
+        if (mode === undefined) {
+            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${wkt}'), ${resolution})) as cell_count`;
+        } else {
+            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${wkt}'), ${resolution}, '${mode}')) as cell_count`;
         }
 
-        let rows = await runQuery(query);
-        expect(rows[0].CELL_COUNT).toEqual(test.expectedCellCount)
-    }
-})
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
-test('Should support MULTIPOLYGON Geographies', async () => {
+describe('H3_POLYFILL should not support POINT Geographies', () => {
+    const pointWkt = 'POINT(1.111 5.555)';
 
-    const testCases = [
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 13, mode: undefined, expectedCellCount: 4945 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 13, mode: 'contains', expectedCellCount: 4585 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 13, mode: 'center', expectedCellCount: 4945 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 13, mode: 'intersects', expectedCellCount: 5293 },
-        { polygonWkt: multiPolygonsWkt.farmFields, resolution: 10, mode: undefined, expectedCellCount: 102 },
-        { polygonWkt: multiPolygonsWkt.farmFields, resolution: 10, mode: 'contains', expectedCellCount: 63 },
-        { polygonWkt: multiPolygonsWkt.farmFields, resolution: 10, mode: 'center', expectedCellCount: 102 },
-        { polygonWkt: multiPolygonsWkt.farmFields, resolution: 10, mode: 'intersects', expectedCellCount: 153 },
-        { polygonWkt: multiPolygonsWkt.canaryIslands, resolution: 7, mode: undefined, expectedCellCount: 1312 },
-        { polygonWkt: multiPolygonsWkt.canaryIslands, resolution: 7, mode: 'contains', expectedCellCount: 1068 },
-        { polygonWkt: multiPolygonsWkt.canaryIslands, resolution: 7, mode: 'center', expectedCellCount: 1312 },
-        { polygonWkt: multiPolygonsWkt.canaryIslands, resolution: 7, mode: 'intersects', expectedCellCount: 1570 },
-        { polygonWkt: multiPolygonsWkt.southAmericanCountries, resolution: 5, mode: undefined, expectedCellCount: 49158 },
-        { polygonWkt: multiPolygonsWkt.southAmericanCountries, resolution: 5, mode: 'contains', expectedCellCount: 48136 },
-        { polygonWkt: multiPolygonsWkt.southAmericanCountries, resolution: 5, mode: 'center', expectedCellCount: 49158 },
-        { polygonWkt: multiPolygonsWkt.southAmericanCountries, resolution: 5, mode: 'intersects', expectedCellCount: 50354 }
-    ]
+    test.each([
+        [undefined, 0],
+        ['center', 0],
+        ['contains', 0],
+        ['intersects', 0]
+    ])('with mode %s, should return empty array', async (mode, expectedCellCount) => {
+        let query = mode === undefined ?
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${pointWkt}'), 6)) as cell_count` :
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${pointWkt}'), 6, '${mode}')) as cell_count`;
 
-    for (const test of testCases) {
-        let query
-        if (test.mode === undefined) {
-            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution})) as cell_count`
-        }
-        else {
-            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution}, '${test.mode}')) as cell_count`
-        }
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
-        let rows = await runQuery(query);
-        expect(rows[0].CELL_COUNT).toEqual(test.expectedCellCount)
-    }
+describe('H3_POLYFILL should not support MULTIPOINT Geographies', () => {
+    const multiPointWkt = 'MULTIPOINT(1.111 5.555, 2.222 6.666)';
 
-})
+    test.each([
+        [undefined, 0],
+        ['center', 0],
+        ['contains', 0],
+        ['intersects', 0]
+    ])('with mode %s, should return empty array', async (mode, expectedCellCount) => {
+        let query = mode === undefined ?
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiPointWkt}'), 6)) as cell_count` :
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiPointWkt}'), 6, '${mode}')) as cell_count`;
 
-test('Should support GEOMETRYCOLLECTION containing 1 or more POLYGON Geographies', async () => {
-    const geometryCollection = 'GEOMETRYCOLLECTION( POLYGON((3.00 3.00, 3.20 3.40, 3.40 3.00, 3.00 3.00)), POLYGON((3.50 3.50, 3.50 3.70, 3.80 3.70, 3.80 3.50, 3.50 3.50)))'
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(61)
+describe('H3_POLYFILL should not support LINESTRING Geographies', () => {
+    const lineStringWkt = 'LINESTRING(0 0, 1 1)';
 
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(36)
+    test.each([
+        [undefined, 0],
+        ['center', 0],
+        ['contains', 0],
+        ['intersects', 0]
+    ])('with mode %s, should return empty array', async (mode, expectedCellCount) => {
+        let query = mode === undefined ?
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${lineStringWkt}'), 6)) as cell_count` :
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${lineStringWkt}'), 6, '${mode}')) as cell_count`;
 
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(90)
-})
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
-test('Should support NOT GEOMETRYCOLLECTION containing 0 POLYGON Geographies. Returns [].', async () => {
+describe('H3_POLYFILL should not support MULTILINESTRING Geographies', () => {
+    const multiLineStringWkt = 'MULTILINESTRING((0 0, 1 1), (2 2, 3 3))';
 
-    const geometryCollection = 'GEOMETRYCOLLECTION(POINT(0 0), LINESTRING(1 2, 2 1))'
+    test.each([
+        [undefined, 0],
+        ['center', 0],
+        ['contains', 0],
+        ['intersects', 0]
+    ])('with mode %s, should return empty array', async (mode, expectedCellCount) => {
+        let query = mode === undefined ?
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiLineStringWkt}'), 6)) as cell_count` :
+            `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiLineStringWkt}'), 6, '${mode}')) as cell_count`;
 
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0) // TODO: FAILING
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${geometryCollection}'), 6, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0) // TODO: FAILING
-
-})
-
-test('Should support resolutions between 0 and 15 inclusive. Otherwise, returns [].', async () => {
-    const testCases = [
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: -1, mode: 'contains', expectedCellCount: 0 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 16, mode: 'center', expectedCellCount: 0 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 16, mode: 'intersects', expectedCellCount: 0 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 999, mode: undefined, expectedCellCount: 0 },
-        { polygonWkt: multiPolygonsWkt.duckPonds, resolution: 13, mode: undefined, expectedCellCount: 4945 }
-    ]
-
-    for (const test of testCases) {
-        let query
-        if (test.mode === undefined) {
-            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution})) as cell_count`
-        }
-        else {
-            query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${test.polygonWkt}'), ${test.resolution}, '${test.mode}')) as cell_count`
-        }
-
-        let rows = await runQuery(query);
-        expect(rows[0].CELL_COUNT).toEqual(test.expectedCellCount)
-    }
-
-})
-
-test('Should NOT support POINT Geographies. Returns []', async () => {
-    const pointWkt = 'POINT(1.111 5.555)'
-
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${pointWkt}'), 6, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${pointWkt}'), 6, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${pointWkt}'), 6, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-})
-
-test('Should NOT support MULTIPOINT Geographies. Returns []', async () => {
-    const multiPointWkt = 'MULTIPOINT(1.111 5.555, 2.222 6.666)'
-
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiPointWkt}'), 6, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiPointWkt}'), 6, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiPointWkt}'), 6, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-})
-
-test('Should NOT support LINESTRING Geographies. Returns []', async () => {
-    const lineStringWkt = 'LINESTRING(0 0, 1 1)'
-
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${lineStringWkt}'), 6, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${lineStringWkt}'), 6, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${lineStringWkt}'), 6, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-})
-
-test('Should NOT support MULTILINESTRING Geographies. Returns []', async () => {
-    const multiLineStringWkt = 'MULTILINESTRING((0 0, 1 1), (2 2, 3 3))'
-
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiLineStringWkt}'), 6, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiLineStringWkt}'), 6, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${multiLineStringWkt}'), 6, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(0)
-})
-
-test('Should NOT support NULL Geography. Returns [].', async () => {
+test('H3_POLYFILL should NOT support NULL Geography. Returns [].', async () => {
     let query = 'SELECT ARRAY_SIZE(H3_POLYFILL(NULL, 6, \'center\')) as cell_count'
     let rows = await runQuery(query);
     expect(rows[0].CELL_COUNT).toEqual(0)
-})
+});
 
-test('Should support Geographies that cross the Prime-Meridian multiple times', async () => {
+describe('H3_POLYFILL for Geographies crossing the Prime-Meridian multiple times', () => {
+    const polygonWkt = 'POLYGON ((-16.226053271365 29.7435335822744,-13.1839184674949 35.1034853795694,9.26993365630844 26.9911259025824,-4.34724118006261 13.9534053145676,13.0363862706238 6.99995433429298,-15.9363261471869 -5.31344844327657,-19.5579151994132 0.191366916107455,-5.6510132388641 5.98590939966961,-15.6465990230088 10.6215433865193,-3.62292336961735 24.5284453470685,-16.226053271365 29.7435335822744))';
+    const resolution = 3;
 
-    let polygonWkt = 'POLYGON ((-16.226053271365 29.7435335822744,-13.1839184674949 35.1034853795694,9.26993365630844 26.9911259025824,-4.34724118006261 13.9534053145676,13.0363862706238 6.99995433429298,-15.9363261471869 -5.31344844327657,-19.5579151994132 0.191366916107455,-5.6510132388641 5.98590939966961,-15.6465990230088 10.6215433865193,-3.62292336961735 24.5284453470685,-16.226053271365 29.7435335822744))'
+    test.each([
+        ['center', 567],
+        ['contains', 469],
+        ['intersects', 667]
+    ])('with mode %s, should return expected cell count', async (mode, expectedCellCount) => {
+        const query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), ${resolution}, '${mode}')) as cell_count`;
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 3, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(567)
+describe('H3_POLYFILL for POLYGON Geographies over 180 degrees wide', () => {
+    const polygonWkt = 'POLYGON((-160 -30, -160 30, 160 30, 160 -30, -160 -30))';
+    const resolution = 0;
 
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 3, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(469)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 3, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(667)
-
-})
-
-test('Should support POLYGON Geographies over 180 degrees wide', async () => {
-
-    let polygonWkt = 'POLYGON((-160 -30, -160 30, 160 30, 160 -30, -160 -30))'
-    let query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'center')) as cell_count`
-    let rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(56)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'contains')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(32)
-
-    query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), 0, 'intersects')) as cell_count`
-    rows = await runQuery(query);
-    expect(rows[0].CELL_COUNT).toEqual(76)
-
-})
+    test.each([
+        ['center', 56],
+        ['contains', 32],
+        ['intersects', 76]
+    ])('with mode %s, should return expected cell count', async (mode, expectedCellCount) => {
+        const query = `SELECT ARRAY_SIZE(H3_POLYFILL(TO_GEOGRAPHY('${polygonWkt}'), ${resolution}, '${mode}')) as cell_count`;
+        const rows = await runQuery(query);
+        expect(rows[0].CELL_COUNT).toEqual(expectedCellCount);
+    });
+});
 
 test('Should return only the cell id for the cell boundary/polygon at the same resolution in center mode', async () => {
 
