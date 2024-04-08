@@ -31,7 +31,7 @@ Mode `contains`:
 
 `ARRAY<STRING>`
 
-**Example**
+**Examples**
 
 ```sql
 SELECT carto.H3_POLYFILL(
