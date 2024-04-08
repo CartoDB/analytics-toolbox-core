@@ -88,7 +88,7 @@ AS $$
 $$;
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_CONTAINS
-(geojson STRING, indicies ARRAY)
+(geojson STRING, indexes ARRAY)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
@@ -102,7 +102,7 @@ AS $$
     let polygons = inputGeoJSON.type === 'MultiPolygon' ? inputGeoJSON.coordinates.map(ring => h3PolyfillLib.polygon(ring)) : [h3PolyfillLib.polygon(inputGeoJSON.coordinates)]
 
 
-    INDICIES.forEach(h3Index => {
+    INDEXES.forEach(h3Index => {
 	polygons.some(p => {
 	    if (h3PolyfillLib.booleanContains(p, h3PolyfillLib.polygon([h3PolyfillLib.h3ToGeoBoundary(h3Index, true)]))) {
 	        results.push(h3Index)	
@@ -113,7 +113,7 @@ AS $$
 $$;
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@._H3_POLYFILL_INTERSECTS_FILTER
-(h3Indicies ARRAY, geojson STRING)
+(h3Indexes ARRAY, geojson STRING)
 RETURNS ARRAY
 LANGUAGE JAVASCRIPT
 IMMUTABLE
@@ -127,7 +127,7 @@ AS $$
     // @@SF_SCHEMA@@.ST_BUFFER demotes MULTIPOLYGONs to POLYGON if it only has one ring. So we check again here.
     let polygons = inputGeoJSON.type === 'MultiPolygon' ? inputGeoJSON.coordinates.map(ring => h3PolyfillLib.polygon(ring)) : [h3PolyfillLib.polygon(inputGeoJSON.coordinates)]
 
-    H3INDICIES.forEach(h3Index => {
+    H3INDEXES.forEach(h3Index => {
 	if (polygons.some(p => h3PolyfillLib.booleanIntersects(p, h3PolyfillLib.polygon([h3PolyfillLib.h3ToGeoBoundary(h3Index, true)])))) {
 	    results.push(h3Index)
 	}
