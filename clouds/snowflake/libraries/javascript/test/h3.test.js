@@ -13,7 +13,7 @@ test('h3 library defined', () => {
     expect(hexRingLib.hexRing).toBeDefined();
     expect(hexRingLib.h3IsValid).toBeDefined();
     expect(isPentagonLib.h3IsPentagon).toBeDefined();
-    expect(h3PolyfillLib.polyfill).toBeDefined();
+    expect(h3PolyfillLib.h3ToGeoBoundary).toBeDefined();
     expect(boundaryLib.h3ToGeoBoundary).toBeDefined();
     expect(boundaryLib.h3IsValid).toBeDefined();
     expect(kringDistancesLib.h3Distance).toBeDefined();
