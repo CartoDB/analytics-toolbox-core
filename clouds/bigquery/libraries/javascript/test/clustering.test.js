@@ -4,4 +4,5 @@ test('clustering library defined', () => {
     expect(lib.clustering.featureCollection).toBeDefined();
     expect(lib.clustering.feature).toBeDefined();
     expect(lib.clustering.clustersKmeans).toBeDefined();
+    expect(lib.clustering.prioritizeDistinctSort).toBeDefined();
 });
