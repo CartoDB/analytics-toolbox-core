@@ -18,6 +18,54 @@ def remove_duplicated_coords(arr):
             unique_rows.append(row)
     return np.array(unique_rows)
 
+def reorder_coords(coords):
+    import numpy as np
+
+    unique_coords = []
+    duplicated_coords = []
+
+    # Split the array into unique and duplicated coordinates
+    count_map = {}
+    for coord in coords:
+        coord_str = tuple(coord)
+        if coord_str not in count_map:
+            count_map[coord_str] = 1
+            unique_coords.append(coord)
+        else:
+            count_map[coord_str] += 1
+            duplicated_coords.append(coord)
+
+    # Convert lists to NumPy arrays for sorting
+    unique_coords = np.array(unique_coords)
+    duplicated_coords = np.array(duplicated_coords)
+
+    # Sort unique coordinates lexicographically if not empty
+    if unique_coords.size > 0:
+        unique_coords_sorted = unique_coords[np.lexsort(np.rot90(unique_coords))]
+
+        # Sort duplicated coordinates lexicographically if not empty
+        if duplicated_coords.size > 0:
+            duplicated_coords_sorted = duplicated_coords[np.lexsort(np.rot90(duplicated_coords))]
+
+            # Concatenate unique and duplicated coordinates
+            return np.concatenate((unique_coords_sorted, duplicated_coords_sorted))
+        else:
+            return unique_coords_sorted
+    else:
+        # Sort duplicated coordinates lexicographically if not empty
+        if duplicated_coords.size > 0:
+            return duplicated_coords[np.lexsort(np.rot90(duplicated_coords))]
+        else:
+            return coords
+
+def count_distinct_coords(coords):
+    import numpy as np
+    count_map = {}
+    for coord in coords:
+        coord_str = tuple(coord)
+        count_map[coord_str] = count_map.get(coord_str, 0) + 1
+    return len(count_map)
+
 def clusterkmeanstable(geom, k):
     from .kmeans import KMeans
     import json
@@ -25,9 +73,11 @@ def clusterkmeanstable(geom, k):
 
     geom = load_geom(geom)
     points = geom['_coords']
-    coords = np.array(
+    coords = reorder_coords(np.array(
         [[points[i], points[i + 1]] for i in range(0, len(points) - 1, 2)]
-    )
+    ))
+    # k cannot be greater than the number of distinct coordinates
+    k = min(k, count_distinct_coords(coords))
 
     cluster_idxs, centers, loss = KMeans()(coords, k)
 
@@ -46,7 +96,10 @@ def clusterkmeans(geom, k):
     if geom.type != 'MultiPoint':
         raise Exception('Invalid operation: Input points parameter must be MultiPoint.')
     else:
-        coords = remove_duplicated_coords(np.array(list(geojson.utils.coords(geom))))
+        coords = reorder_coords(np.array(list(geojson.utils.coords(geom))))
+    # k cannot be greater than the number of distinct coordinates
+    k = min(k, count_distinct_coords(coords))
+        
     cluster_idxs, centers, loss = KMeans()(coords, k)
     return geojson.dumps(
         [
