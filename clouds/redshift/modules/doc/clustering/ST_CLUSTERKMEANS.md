@@ -9,11 +9,7 @@ ST_CLUSTERKMEANS(geog [, numberOfClusters])
 Takes a set of points as input and partitions them into clusters using the k-means algorithm. Returns an array of tuples with the cluster index for each of the input features and the input geometry.
 
 * `geog`: `GEOMETRY` points to be clustered.
-* `numberOfClusters` (optional): `INT` number of clusters that will be generated. It defaults to the square root of half the number of points (`sqrt(<NUMBER OF POINTS>/2)`).
-
-````hint:info
-The resulting geometries are unique. So duplicated points will be removed from the input multipoint
-````
+* `numberOfClusters` (optional): `INT` number of clusters that will be generated. It defaults to the square root of half the number of points (`sqrt(<NUMBER OF POINTS>/2)`). The output number of cluster cannot be greater to the number of distinct points of the `geog`.
 
 **Return type**
 
