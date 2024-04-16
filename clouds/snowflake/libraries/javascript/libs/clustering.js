@@ -1,7 +1,35 @@
 import { featureCollection, feature, clustersKmeans } from '@turf/turf';
 
+function prioritizeDistinctSort(arr) {
+    const uniqueValues = [];
+    const duplicatedValues = [];
+
+    // Split the array into unique and duplicated values
+    const countMap = {};
+    for (const item of arr) {
+        if (countMap[item] === undefined) {
+            countMap[item] = 1;
+            uniqueValues.push(item);
+        } else {
+            countMap[item]++;
+            duplicatedValues.push(item);
+        }
+    }
+
+    // Sort unique values alphabetically
+    uniqueValues.sort();
+
+    // Sort duplicated values alphabetically
+    duplicatedValues.sort();
+
+    // Concatenate unique and duplicated values
+    const result = [...uniqueValues, ...duplicatedValues];
+    return result;
+}
+
 export default {
     featureCollection,
     feature,
-    clustersKmeans
+    clustersKmeans,
+    prioritizeDistinctSort
 };
