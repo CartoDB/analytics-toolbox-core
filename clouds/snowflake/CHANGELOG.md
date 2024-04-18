@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.2] - 2024-04-18
+
+- docs(processing): update voronoi doc (#492)
+- fix(clustering): improve how ST_CLUSTERKMEANS deals with duplicates (#491, #495)
+
 ## [1.2.1] - 2024-02-15
 
 - chore: add additional tables to native apps (#473)
