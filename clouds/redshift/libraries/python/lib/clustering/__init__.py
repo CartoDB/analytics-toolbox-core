@@ -10,13 +10,16 @@ def load_geom(geom):
     geom = json.dumps(_geom)
     return loads(geom)
 
+
 def remove_duplicated_coords(arr):
     import numpy as np
+
     unique_rows = []
     for row in arr:
         if not any(np.array_equal(row, unique_row) for unique_row in unique_rows):
             unique_rows.append(row)
     return np.array(unique_rows)
+
 
 def reorder_coords(coords):
     import numpy as np
@@ -54,13 +57,16 @@ def reorder_coords(coords):
             # This should never happen, so just returning the input
             return coords
 
+
 def count_distinct_coords(coords):
     import numpy as np
+
     count_map = {}
     for coord in coords:
         coord_str = tuple(coord)
         count_map[coord_str] = count_map.get(coord_str, 0) + 1
     return len(count_map)
+
 
 def clusterkmeanstable(geom, k):
     from .kmeans import KMeans
@@ -69,9 +75,9 @@ def clusterkmeanstable(geom, k):
 
     geom = load_geom(geom)
     points = geom['_coords']
-    coords = reorder_coords(np.array(
-        [[points[i], points[i + 1]] for i in range(0, len(points) - 1, 2)]
-    ))
+    coords = reorder_coords(
+        np.array([[points[i], points[i + 1]] for i in range(0, len(points) - 1, 2)])
+    )
     # k cannot be greater than the number of distinct coordinates
     k = min(k, count_distinct_coords(coords))
 
@@ -95,7 +101,7 @@ def clusterkmeans(geom, k):
         coords = reorder_coords(np.array(list(geojson.utils.coords(geom))))
     # k cannot be greater than the number of distinct coordinates
     k = min(k, count_distinct_coords(coords))
-        
+
     cluster_idxs, centers, loss = KMeans()(coords, k)
     return geojson.dumps(
         [

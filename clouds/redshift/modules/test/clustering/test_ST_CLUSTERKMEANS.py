@@ -28,6 +28,26 @@ def test_st_clusterkmeans():
         assert str(result[0]) == lines[idx].rstrip()
 
 
+def test_st_clusterkmeans_duplicated_entries():
+    import json
+
+    requested_clusters = 3
+    # When the input array contains consecutives entries at the beggining,
+    # it should be reordered to the required number of clusters
+    results = run_query(
+        f"""
+        SELECT @@RS_SCHEMA@@.ST_CLUSTERKMEANS(
+            ST_GEOMFROMTEXT('MULTIPOINT ((0 0), (0 0), (0 0), (0 1), (0 1), (0 1), (5 0))'), {requested_clusters})
+        """
+    )
+    results_data = json.loads(results[0][0])
+    unique_clusters = set()
+    for item in results_data:
+        unique_clusters.add(item['cluster'])
+
+    assert len(unique_clusters) == requested_clusters
+
+
 def test_st_clusterkmeans_default_args_success():
     with open(f'{here}/fixtures/st_clusterkmeans_in.txt', 'r') as fixture_file:
         lines = fixture_file.readlines()

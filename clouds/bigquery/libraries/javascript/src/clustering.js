@@ -1,6 +1,6 @@
 import { featureCollection, feature, clustersKmeans } from '@turf/turf';
 
-function prioritizeDistinctSort(arr) {
+function prioritizeDistinctSort (arr) {
     const uniqueValues = [];
     const duplicatedValues = [];
 
