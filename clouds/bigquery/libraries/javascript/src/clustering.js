@@ -16,12 +16,6 @@ function prioritizeDistinctSort(arr) {
         }
     }
 
-    // Sort unique values alphabetically
-    uniqueValues.sort();
-
-    // Sort duplicated values alphabetically
-    duplicatedValues.sort();
-
     // Concatenate unique and duplicated values
     const result = [...uniqueValues, ...duplicatedValues];
     return result;

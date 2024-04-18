@@ -41,21 +41,17 @@ def reorder_coords(coords):
 
     # Sort unique coordinates lexicographically if not empty
     if unique_coords.size > 0:
-        unique_coords_sorted = unique_coords[np.lexsort(np.rot90(unique_coords))]
-
-        # Sort duplicated coordinates lexicographically if not empty
         if duplicated_coords.size > 0:
-            duplicated_coords_sorted = duplicated_coords[np.lexsort(np.rot90(duplicated_coords))]
-
             # Concatenate unique and duplicated coordinates
-            return np.concatenate((unique_coords_sorted, duplicated_coords_sorted))
+            return np.concatenate((unique_coords, duplicated_coords))
         else:
-            return unique_coords_sorted
+            return unique_coords
     else:
         # Sort duplicated coordinates lexicographically if not empty
         if duplicated_coords.size > 0:
-            return duplicated_coords[np.lexsort(np.rot90(duplicated_coords))]
+            return duplicated_coords
         else:
+            # This should never happen, so just returning the input
             return coords
 
 def count_distinct_coords(coords):
