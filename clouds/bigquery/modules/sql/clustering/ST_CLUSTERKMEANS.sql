@@ -19,8 +19,7 @@ AS """
         options.numberOfClusters = parseInt(Math.sqrt(geojson.length/2))
     }
     options.mutate = true;
-    geojson = Array.from(new Set(geojson));
-    const featuresCollection = lib.clustering.featureCollection(geojson.map(x => lib.clustering.feature(JSON.parse(x))));
+    const featuresCollection = lib.clustering.featureCollection(lib.clustering.prioritizeDistinctSort(geojson).map(x => lib.clustering.feature(JSON.parse(x))));
     lib.clustering.clustersKmeans(featuresCollection, options);
     const cluster = [];
     featuresCollection.features.forEach(function(item, index, array) {

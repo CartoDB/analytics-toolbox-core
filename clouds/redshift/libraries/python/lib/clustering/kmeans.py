@@ -154,7 +154,9 @@ class KMeans(object):
         cluster centers: k x d numpy array, the centers
         loss: final loss value of the objective function of KMeans
         """
-        centers = self._init_centers(points, k, **kwargs)
+        # centers = self._init_centers(points, k, **kwargs)
+        # instead of using random initialization, we will use the first k points
+        centers = points[:k]
         prev_loss = 0
         for it in range(max_iters):
             cluster_idx = self._update_assignment(centers, points)

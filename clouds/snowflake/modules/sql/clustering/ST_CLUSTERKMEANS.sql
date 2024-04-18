@@ -17,8 +17,7 @@ AS $$
     const options = {};
     options.numberOfClusters = Number(NUMBEROFCLUSTERS);
     options.mutate = true;
-    GEOJSONS = Array.from(new Set(GEOJSONS));
-    const featuresCollection = clusteringLib.featureCollection(GEOJSONS.map(x => clusteringLib.feature(JSON.parse(x))));
+    const featuresCollection = clusteringLib.featureCollection(clusteringLib.prioritizeDistinctSort(GEOJSONS).map(x => clusteringLib.feature(JSON.parse(x))));
     clusteringLib.clustersKmeans(featuresCollection, options);
     const cluster = [];
     featuresCollection.features.forEach(function(item, index, array) {
