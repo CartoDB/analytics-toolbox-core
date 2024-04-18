@@ -12,7 +12,7 @@ All notable commits to this project will be documented in this file.
 - fix(bq,sf,rs|clustering): improve how ST_CLUSTERKMEANS deals with duplicates (#491, #495)
 - chore(deps): bump sqlparse from 0.4.4 to 0.5.0 in /clouds/redshift/common (#494)
 - chore(deps): bump sqlparse from 0.4.4 to 0.5.0 in /clouds/postgres/common (#493)
-- chore(deps): fix CI crashing because native-apps timeout and sql-parse version  (#496)
+- chore(deps): fix CI crashing because native-apps timeout and sql-parse version (#496)
 
 ## 2024-03-18
 
