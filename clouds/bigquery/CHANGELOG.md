@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.2] - 2024-04-18
+
+- docs(processing): update voronoi doc (#492)
+- fix(clustering): improve how ST_CLUSTERKMEANS deals with duplicates (#491, #495)
+
 ## [1.2.1] - 2024-03-18
 
 - fix(random): ST_GENERATEPOINTS returning exact name of points (#486)

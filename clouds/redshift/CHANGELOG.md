@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.1.1] - 2024-04-18
+
+- docs(processing): update voronoi doc (#492)
+- fix(clustering): improve how ST_CLUSTERKMEANS deals with duplicates (#491, #495)
+
 ## [1.1.0] - 2024-01-17
 
 - feat(quadbin): add function QUADBIN_DISTANCE (#457)
