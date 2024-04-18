@@ -42,7 +42,6 @@ def reorder_coords(coords):
     unique_coords = np.array(unique_coords)
     duplicated_coords = np.array(duplicated_coords)
 
-    # Sort unique coordinates lexicographically if not empty
     if unique_coords.size > 0:
         if duplicated_coords.size > 0:
             # Concatenate unique and duplicated coordinates
@@ -50,7 +49,6 @@ def reorder_coords(coords):
         else:
             return unique_coords
     else:
-        # Sort duplicated coordinates lexicographically if not empty
         if duplicated_coords.size > 0:
             return duplicated_coords
         else:
