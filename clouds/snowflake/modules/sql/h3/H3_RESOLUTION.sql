@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2023 CARTO
-----------------------------
+---------------------------------
+-- Copyright (C) 2023-2024 CARTO
+---------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_RESOLUTION
 (
@@ -8,8 +8,5 @@ CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_RESOLUTION
 )
 RETURNS INT
 AS $$
-    IFF(@@SF_SCHEMA@@.H3_ISVALID(h3),
-        bitshiftright(bitand(@@SF_SCHEMA@@.H3_STRING_TOINT(h3),
-            bitshiftleft(15, 52)), 52),
-        NULL)
+    IFF(@@SF_SCHEMA@@.H3_ISVALID(h3), H3_GET_RESOLUTION(H3), NULL)
 $$;

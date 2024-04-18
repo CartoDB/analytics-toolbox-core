@@ -4,6 +4,16 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-04-18
+
+- chore(sf|h3): reimplement basic h3 functions (#489)
+- docs(bq,sf,rs|processing): update voronoi doc (#492)
+- chore(sf|h3): reimplement polyfill h3 functions (#490)
+- fix(bq,sf,rs|clustering): improve how ST_CLUSTERKMEANS deals with duplicates (#491, #495)
+- chore(deps): bump sqlparse from 0.4.4 to 0.5.0 in /clouds/redshift/common (#494)
+- chore(deps): bump sqlparse from 0.4.4 to 0.5.0 in /clouds/postgres/common (#493)
+- chore(deps): fix CI crashing because native-apps timeout and sql-parse version (#496)
+
 ## 2024-03-18
 
 - fix(sf): CI and CD not working because of snowflake driver breaking changes (#484)

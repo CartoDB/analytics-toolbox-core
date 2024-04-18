@@ -1,7 +1,11 @@
-import { polyfill } from '../src/h3/h3_polyfill/h3core_custom';
-import { bboxClip } from '@turf/turf';
+import { booleanContains, booleanIntersects, intersect, polygon, multiPolygon } from '@turf/turf';
+import { h3ToGeoBoundary } from '../src/h3/h3_polyfill/h3core_custom';
 
 export default {
-    bboxClip,
-    polyfill
+    booleanContains,
+    booleanIntersects,
+    intersect,
+    polygon,
+    multiPolygon,
+    h3ToGeoBoundary
 };

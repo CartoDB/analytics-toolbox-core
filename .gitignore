@@ -25,3 +25,6 @@ MANIFEST
 
 # IntelliJ
 .idea/
+
+# Vim
+*.swp

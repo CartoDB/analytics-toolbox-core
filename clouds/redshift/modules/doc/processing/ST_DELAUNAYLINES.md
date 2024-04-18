@@ -10,6 +10,12 @@ Calculates the Delaunay triangulation of the points provided. A MultiLineString 
 
 * `points`: `GEOMETRY` MultiPoint input to the Delaunay triangulation.
 
+````hint:warning
+**warning**
+
+The maximum number of points typically used to compute Delaunay diagrams is 300,000. This limit ensures efficient computation while maintaining accuracy in delineating regions based on proximity to specified points.
+````
+
 **Return type**
 
 `VARCHAR(MAX)`

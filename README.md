@@ -62,6 +62,23 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 | Postgres | [README.md](./clouds/postgres/README.md) |
 | Databricks | [README.md](./clouds/databricks/README.md) |
 
+### Useful make commands
+
+To run tests, switch to a specific cloud directory. For example, Showflake: `cd clouds/snowflake`.  
+
+```
+# All tests
+make test
+
+# Specific module(s)
+make test modules=h3
+make test modules=h3,transformations
+
+# Specific function(s)
+make test functions=H3_POLYFILL
+make test functions=H3_POLYFILL,ST_BUFFER
+```
+
 ## Contribute
 
 This project is public. We are more than happy of receiving feedback and contributions. Feel free to open a ticket with a bug, a doubt or a discussion, or open a pull request with a fix or a new feature.

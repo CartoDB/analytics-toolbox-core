@@ -1,30 +1,15 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
-
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._H3_TOPARENT
-(index STRING, resolution DOUBLE)
-RETURNS STRING
-LANGUAGE JAVASCRIPT
-IMMUTABLE
-AS $$
-    if (!INDEX) {
-        return null;
-    }
-
-    @@SF_LIBRARY_H3_TOPARENT@@
-
-    if (!h3ToparentLib.h3IsValid(INDEX)) {
-        return null;
-    }
-
-    return h3ToparentLib.h3ToParent(INDEX, Number(RESOLUTION));
-$$;
+---------------------------------
+-- Copyright (C) 2021-2024 CARTO
+---------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_TOPARENT
 (index STRING, resolution INT)
 RETURNS STRING
 IMMUTABLE
 AS $$
-    @@SF_SCHEMA@@._H3_TOPARENT(INDEX, CAST(RESOLUTION AS DOUBLE))
+    IFF(
+	@@SF_SCHEMA@@.H3_ISVALID(INDEX) AND RESOLUTION <= H3_GET_RESOLUTION(INDEX),
+	H3_CELL_TO_PARENT(INDEX, RESOLUTION),
+	NULL
+    )
 $$;

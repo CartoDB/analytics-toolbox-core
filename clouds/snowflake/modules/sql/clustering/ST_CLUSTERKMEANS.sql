@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2021-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._CLUSTERKMEANS
 (geojsons ARRAY, numberOfClusters DOUBLE)
@@ -17,7 +17,7 @@ AS $$
     const options = {};
     options.numberOfClusters = Number(NUMBEROFCLUSTERS);
     options.mutate = true;
-    const featuresCollection = clusteringLib.featureCollection(GEOJSONS.map(x => clusteringLib.feature(JSON.parse(x))));
+    const featuresCollection = clusteringLib.featureCollection(clusteringLib.prioritizeDistinctSort(GEOJSONS).map(x => clusteringLib.feature(JSON.parse(x))));
     clusteringLib.clustersKmeans(featuresCollection, options);
     const cluster = [];
     featuresCollection.features.forEach(function(item, index, array) {

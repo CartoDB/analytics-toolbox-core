@@ -1,8 +1,12 @@
+---------------------------------
+-- Copyright (C) 2022-2024 CARTO
+---------------------------------
+
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_STRING_TOINT
 (
-    h3 STRING
+    index STRING
 )
 RETURNS INT
 AS $$
-  TO_NUMBER(h3, 'xxxxxxxxxxxxxxx')
+  H3_STRING_TO_INT(INDEX)
 $$;

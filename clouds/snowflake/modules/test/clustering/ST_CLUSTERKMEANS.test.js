@@ -17,6 +17,25 @@ test('ST_CLUSTERKMEANS should work', async () => {
     expect(JSON.stringify(rows[0].CLUSTERKMEANS3)).toEqual(points3FixturesOut.value);
 });
 
+test('ST_CLUSTERKMEANS should work for duplicated entries ', async () => {
+    const requestedClusters = 3;
+    // When the input array contains consecutives entries at the beggining,
+    // it should be reordered to the required number of clusters
+    const query = `SELECT
+        @@SF_SCHEMA@@.ST_CLUSTERKMEANS(ARRAY_CONSTRUCT(ST_ASGEOJSON(ST_POINT(0, 0))::STRING, ST_ASGEOJSON(ST_POINT(0, 0))::STRING, ST_ASGEOJSON(ST_POINT(0, 0))::STRING, ST_ASGEOJSON(ST_POINT(0, 1))::STRING, ST_ASGEOJSON(ST_POINT(0, 1))::STRING, ST_ASGEOJSON(ST_POINT(0, 1))::STRING, ST_ASGEOJSON(ST_POINT(5, 0))::STRING), ${requestedClusters}) as clusterKMeans
+    `;
+    const rows = await runQuery(query);
+    const uniqueClusters = new Set();
+
+    rows[0].CLUSTERKMEANS.forEach(item => {
+        uniqueClusters.add(item.cluster);
+    });
+
+    expect(rows.length).toEqual(1);
+    expect(uniqueClusters.size).toEqual(requestedClusters);
+
+});
+
 test('ST_CLUSTERKMEANS should return NULL if any NULL mandatory argument', async () => {
     const query = `SELECT
         @@SF_SCHEMA@@.ST_CLUSTERKMEANS(NULL, 2) as clusterKMeans1,
