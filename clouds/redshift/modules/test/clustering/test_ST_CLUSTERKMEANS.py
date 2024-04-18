@@ -37,7 +37,9 @@ def test_st_clusterkmeans_duplicated_entries():
     results = run_query(
         f"""
         SELECT @@RS_SCHEMA@@.ST_CLUSTERKMEANS(
-            ST_GEOMFROMTEXT('MULTIPOINT ((0 0), (0 0), (0 0), (0 1), (0 1), (0 1), (5 0))'), {requested_clusters})
+            ST_GEOMFROMTEXT(
+                'MULTIPOINT ((0 0), (0 0), (0 0), (0 1), (0 1), (0 1), (5 0))'),
+            {requested_clusters})
         """
     )
     results_data = json.loads(results[0][0])
