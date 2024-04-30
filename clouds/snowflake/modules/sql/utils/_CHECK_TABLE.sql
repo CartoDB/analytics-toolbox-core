@@ -3,7 +3,7 @@
 ---------------------------
 
 CREATE OR REPLACE PROCEDURE @@SF_SCHEMA@@._CHECK_TABLE
-(table_identifier STRING)
+(TABLE_IDENTIFIER STRING)
 RETURNS STRING
 LANGUAGE SQL
 EXECUTE AS CALLER
@@ -13,11 +13,11 @@ DECLARE
 BEGIN
 	parts_count := (
 		SELECT ARRAY_SIZE(SPLIT(table_identifier, '.'))
-		FROM (SELECT TABLE_IDENTIFIER AS table_identifier)
+		FROM (SELECT :TABLE_IDENTIFIER AS table_identifier)
 	);
 
 	IF (parts_count != 3) THEN
-		SELECT @@SF_SCHEMA@@._CARTO_ERROR('Invalid table name: ' || table_identifier);
+		SELECT @@SF_SCHEMA@@._CARTO_ERROR('Invalid table name: ' || :TABLE_IDENTIFIER);
 	END IF;
 END;
 $$;
