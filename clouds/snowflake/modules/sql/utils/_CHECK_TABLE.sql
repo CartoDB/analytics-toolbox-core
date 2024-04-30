@@ -16,8 +16,8 @@ BEGIN
 		FROM (SELECT TABLE_IDENTIFIER AS table_identifier)
 	);
 
-	IF parts_count != 3 THEN
-		@@SF_SCHEMA@@._CARTO_ERROR('Invalid table name: ' || table_identifier);
+	IF (parts_count != 3) THEN
+		SELECT @@SF_SCHEMA@@._CARTO_ERROR('Invalid table name: ' || table_identifier);
 	END IF;
 END;
 $$;
