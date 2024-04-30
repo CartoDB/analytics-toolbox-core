@@ -13,8 +13,7 @@ test('H3_POLYFILL_TABLE should work', async () => {
                         ) AS geom',
                     9, 'intersects',
                     '@@SF_SCHEMA@@.polyfill_test_output_table'
-                  );
-                );`;
+                  );`;
     await runQuery(query);
 
     query = 'SELECT * FROM @@SF_SCHEMA@@.polyfill_test_output_table`;';
