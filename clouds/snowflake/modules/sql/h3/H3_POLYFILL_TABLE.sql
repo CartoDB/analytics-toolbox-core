@@ -36,6 +36,7 @@ BEGIN
         FROM ' || database_name || '.INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_NAME ILIKE @@SF_SCHEMA@@._GET_TABLENAME(''' || output_table || ''')
         AND TABLE_CATALOG ILIKE @@SF_SCHEMA@@._GET_DATABASE(''' || output_table || ''')
+        AND TABLE_SCHEMA ILIKE @@SF_SCHEMA@@._GET_SCHEMA(''' || output_table || ''')
         AND COLUMN_NAME NOT ILIKE ''geom''
         ';
 
@@ -47,7 +48,6 @@ BEGIN
                             ') SELECT *, value as H3 FROM virtual_table, LATERAL FLATTEN(input => @@SF_SCHEMA@@.H3_POLYFILL(virtual_table.geom, '
                             || resolution || ',\'' || mode || '\')))';
 
-    return polyfill_query;
     EXECUTE IMMEDIATE polyfill_query;
 
     RETURN 'Finished!';
