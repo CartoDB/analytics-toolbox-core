@@ -47,6 +47,7 @@ BEGIN
                             ') SELECT *, value as H3 FROM virtual_table, LATERAL FLATTEN(input => @@SF_SCHEMA@@.H3_POLYFILL(virtual_table.geom, '
                             || resolution || ',\'' || mode || '\')))';
 
+    return polyfill_query;
     EXECUTE IMMEDIATE polyfill_query;
 
     RETURN 'Finished!';
