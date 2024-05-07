@@ -11,7 +11,7 @@ Takes a Point and calculates the ellipse polygon given two semi-axes expressed i
 * `center`: `GEOGRAPHY` center point.
 * `xSemiAxis`: `DOUBLE` semi (major) axis of the ellipse along the x-axis.
 * `ySemiAxis`: `DOUBLE` semi (minor) axis of the ellipse along the y-axis.
-* `angle` (optional): `DOUBLE` angle of rotation (along the vertical axis), from North in decimal degrees, positive clockwise. By default `angle` is `0`.
+* `angle` (optional): `DOUBLE` angle of rotation (along the horizontal axis), from East in decimal degrees, positive clockwise. By default `angle` is `0`.
 * `units` (optional): `STRING` units of length, the supported options are: miles, kilometers, and degrees. By default `units` is `kilometers`.
 * `steps` (optional): `INT` number of steps. By default `steps` is `64`.
 
