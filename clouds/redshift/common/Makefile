@@ -19,7 +19,7 @@ ifeq ($(production),1)
 export RS_SCHEMA = $(RS_SCHEMA_DEFAULT)
 export RS_LIBRARY = $(RS_LIBRARY_DEFAULT)
 else
-export RS_SCHEMA = $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
+export RS_SCHEMA := $(or $(RS_SCHEMA),$(RS_PREFIX)$(RS_SCHEMA_DEFAULT))
 export RS_LIBRARY = $(RS_PREFIX)$(RS_LIBRARY_DEFAULT)
 endif
 
