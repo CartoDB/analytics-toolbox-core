@@ -4,11 +4,15 @@ PYTHON3_VERSION = 3
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
-export SF_SCHEMA_DEFAULT = carto
+export SF_SCHEMA_DEFAULT = CARTO
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
+endif
+
+ifdef database
+export SF_DATABASE = $(database)
 endif
 
 ifeq ($(production),1)

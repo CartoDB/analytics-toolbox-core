@@ -96,7 +96,7 @@ clean-modules:
 	$(MAKE) -C modules clean
 
 create-package:
-	$(MAKE) build production=1 dropfirst=1
+	$(MAKE) build production=1 dropfirst=1 database=CARTO
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
