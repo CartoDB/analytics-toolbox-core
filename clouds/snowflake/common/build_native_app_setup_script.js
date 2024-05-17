@@ -45,66 +45,16 @@ function apply_replacements (text) {
     return text;
 }
 
-function getFunctionSignatures (functionMatches)
-{
-    const functSignatures = []
-    for (const functionMatch of functionMatches) {
-        //Remove spaces and diacritics
-        let qualifiedFunctName = functionMatch[0].split('(')[0].replace(/\s+/gm,'');
-        qualifiedFunctNameArr = qualifiedFunctName.split('.');
-        const functName = qualifiedFunctNameArr[qualifiedFunctNameArr.length - 1];
-        if (functName.startsWith('_'))
-        {
-            continue;
-        }
-        //Remove diacritics and go greedy to take the outer parentheses
-        let functArgs = functionMatch[0].matchAll(new RegExp('(?<=\\()(.*)(?=\\))','g')).next().value;
-        if (functArgs)
-        {
-            functArgs = functArgs[0];
-        }
-        else
-        {
-            continue;
-        }
-        functArgs = functArgs.split(',')
-        let functArgsTypes = [];
-        for (const functArg of functArgs) {
-            const functArgSplitted = functArg.trim(' ').split(' ');
-            functArgsTypes.push(functArgSplitted[functArgSplitted.length - 1]);
-        }
-        const functSignature = qualifiedFunctName + '(' + functArgsTypes.join(',') + ')';
-        functSignatures.push(functSignature)
-    }
-    return functSignatures
-}
-
-function fetchPermissionsGrant (content)
-{
-    let fileContent = content.split('\n');
-    for (let i = 0 ; i < fileContent.length; i++)
-    {
-        if (fileContent[i].startsWith('--'))
-        {
-            delete fileContent[i];
-        }
-    }
-    fileContent = fileContent.join(' ').replace(/[\p{Diacritic}]/gu, '').replace(/\s+/gm,' ');
-    const functionMatches = fileContent.matchAll(new RegExp(/(?<=(?<!TEMP )FUNCTION)(.*?)(?=RETURNS)/gs));
-    const functSignatures = getFunctionSignatures(functionMatches).map(f => `GRANT USAGE ON FUNCTION ${f} TO APPLICATION ROLE @@APP_ROLE@@;`).join('\n')
-    const procMatches = fileContent.matchAll(new RegExp(/(?<=PROCEDURE)(.*?)(?=AS)/gs));
-    const procSignatures = getFunctionSignatures(procMatches).map(f => `GRANT USAGE ON PROCEDURE ${f} TO APPLICATION ROLE @@APP_ROLE@@;`).join('\n')
-    return content + functSignatures +procSignatures
-}
-
 if (argv.dropfirst) {
-    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
+    let header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
+    const pattern = new RegExp('@@SF_SCHEMA@@', 'g');
+    header = header.replace(pattern, '@@SF_APP_SCHEMA@@');
     content = header + separator + content
 }
 
 const header = `CREATE OR REPLACE APPLICATION ROLE @@APP_ROLE@@;
-CREATE OR ALTER VERSIONED SCHEMA @@SF_SCHEMA@@;
-GRANT USAGE ON SCHEMA @@SF_SCHEMA@@ TO APPLICATION ROLE @@APP_ROLE@@;\n`;
+CREATE OR ALTER VERSIONED SCHEMA @@SF_APP_SCHEMA@@;
+GRANT USAGE ON SCHEMA @@SF_APP_SCHEMA@@ TO APPLICATION ROLE @@APP_ROLE@@;\n`;
 
 let additionalTables = '';
 if (argv.production) {
