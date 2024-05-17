@@ -25,7 +25,7 @@ AS $$
     EXECUTE AS OWNER
     AS ${QUOTE}
         const QUOTE = '$' + '$';
-        const rs = snowflake.execute({ sqlText: 'CALL ' + SOURCE_APP + '@@SF_APP_SCHEMA@@.GET_MODULES_SQL_FROM_STAGE()'});
+        const rs = snowflake.execute({ sqlText: 'CALL ' + SOURCE_APP + '.@@SF_APP_SCHEMA@@.GET_MODULES_SQL_FROM_STAGE()'});
         rs.next();
         let modulesSql = rs.getColumnValue(1);
         let resultMessage = 'Procedures installed';
