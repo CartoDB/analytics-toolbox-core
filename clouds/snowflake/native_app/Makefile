@@ -38,7 +38,7 @@ build:
 	cp $(BUILD_DIR)/setup_script.sql $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 	sed 's/@@VERSION@@/$(APP_VERSION)/g' $(APP_DIR)/manifest.yml > $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/manifest.yml
 	cp $(APP_DIR)/README.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
-	cp $(APP_DIR)/install_scripts_from_stage.py $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
+	cp $(APP_DIR)/get_modules_sql_from_stage.py $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 
 
 deploy-app-package:
