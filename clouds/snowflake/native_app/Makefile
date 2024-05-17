@@ -34,9 +34,11 @@ help:
 build:
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)
+	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 	cp $(BUILD_DIR)/setup_script.sql $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 	sed 's/@@VERSION@@/$(APP_VERSION)/g' $(APP_DIR)/manifest.yml > $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/manifest.yml
 	cp $(APP_DIR)/README.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
+	cp $(APP_DIR)/install_scripts_from_stage.py $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 
 
 deploy-app-package:

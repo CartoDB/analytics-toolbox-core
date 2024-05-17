@@ -76,8 +76,8 @@ build-native-app-setup-script: $(NODE_MODULES_DEV)
 	SF_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_native_app_setup_script.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=1
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) \
+		--production=$(production) --dropfirst=1
 
 deploy: check build
 	echo "Deploying modules..."
