@@ -4,6 +4,13 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-05-21
+
+- refactor(sf|h3): avoid memory limit exceeded in H3_POLYFILL_TABLE (#501)
+- docs(bq,sf,rs|constructors): fix ST_MAKEELLIPSE angle parameter explanation (#505)
+- chore(sf): update create-package and licenses year (#507)
+- chore(pg): DB Connection Error in tests when % character in PG_PASSWORD (#509)
+
 ## 2024-04-18
 
 - chore(sf|h3): reimplement basic h3 functions (#489)

@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.3] - 2024-05-21
+
+- docs(constructors): fix ST_MAKEELLIPSE angle parameter explanation (#505)
+
 ## [1.2.2] - 2024-04-18
 
 - docs(processing): update voronoi doc (#492)
