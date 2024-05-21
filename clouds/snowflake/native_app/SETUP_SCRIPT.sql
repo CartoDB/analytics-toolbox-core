@@ -39,6 +39,7 @@ AS $$
         }
 
         snowflake.execute({ sqlText: modulesSql });
+        snowflake.execute({ sqlText: 'DROP PROCEDURE IF EXISTS ${DESTINATION_SCHEMA}.INSTALL(STRING, STRING)' });
         return resultMessage
 
     ${QUOTE};
