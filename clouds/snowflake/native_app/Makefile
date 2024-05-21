@@ -94,6 +94,7 @@ deploy-app:
 	else \
 		echo "Upgrading native app... (this may take a while)"; \
 		$(COMMON_DIR)/run-query.js "ALTER APPLICATION $(APP_NAME) UPGRADE;"; \
+		$(MAKE) extra-app-deploy; \
 	fi
 
 extra-app-deploy::
