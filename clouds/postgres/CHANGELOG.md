@@ -4,10 +4,6 @@ CARTO Analytics Toolbox Core for Postgres.
 
 All notable commits to this project will be documented in this file.
 
-## [1.3.1] - 2024-05-21
-
-- chore: DB Connection Error in tests when % character in PG_PASSWORD (#509)
-
 ## [1.3.0] - 2024-01-17
 
 - feat(quadbin): add function QUADBIN_DISTANCE (#457)

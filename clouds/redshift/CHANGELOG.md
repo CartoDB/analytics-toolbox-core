@@ -4,10 +4,6 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
-## [1.1.2] - 2024-05-21
-
-- docs(constructors): fix ST_MAKEELLIPSE angle parameter explanation (#505)
-
 ## [1.1.1] - 2024-04-18
 
 - docs(processing): update voronoi doc (#492)

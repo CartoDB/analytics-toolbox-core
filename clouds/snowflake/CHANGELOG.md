@@ -7,8 +7,6 @@ All notable commits to this project will be documented in this file.
 ## [1.2.3] - 2024-05-21
 
 - refactor(h3): avoid memory limit exceeded in H3_POLYFILL_TABLE (#501)
-- docs(constructors): fix ST_MAKEELLIPSE angle parameter explanation (#505)
-- chore: update create-package and licenses year (#507)
 
 ## [1.2.2] - 2024-04-18
 
