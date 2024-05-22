@@ -4,27 +4,45 @@
 
 The CARTO Analytics Toolbox for Snowflake is composed of a set of user-defined functions and procedures organized in a set of modules based on the functionality they offer. This app gives you access to the Open Source modules included in the CARTO's Analytics Toolbox, supporting different spatial indexes and other geospatial operations: quadkeys, H3, S2, placekey, geometry constructors, accessors, transformations, etc.
 
-We recommend that at the moment of installing the app you name the app "CARTO". The next guidelines and examples will assume that in order to simplify the onboarding process.
-
 ### Installation
 
 #### Install the Analytics Toolbox
 
-This Native App is an installer so it does not contain the actual Analytics Toolbox functions and procedures. The next steps are required in order to install the Analytics Toolbox in a defined SCHEMA.
+This Native App is an installer so it does not contain the actual Analytics Toolbox functions and procedures. We recommend that at the moment of installing the app you name the app "CARTO_INSTALLER". The next guidelines and examples will assume that in order to simplify the onboarding process.
 
 ```
+-- Set admin permissions
+USE ROLE ACCOUNTADMIN;
+
+-- Create the carto database
+CREATE DATABASE CARTO;
+
+-- Create the carto schema
+CREATE SCHEMA CARTO.CARTO;
+
+-- Grant all to sysadmin role
+GRANT ALL ON SCHEMA CARTO.CARTO TO ROLE SYSADMIN;
+
 -- Set create function and procedure permissions
-GRANT USAGE ON DATABASE CARTO_DATA_ENGINEERING_TEAM TO APPLICATION CARTO;
-GRANT USAGE, CREATE FUNCTION, CREATE PROCEDURE ON SCHEMA <DATABASE>.<SCHEMA> TO APPLICATION CARTO;
+GRANT USAGE ON DATABASE CARTO TO APPLICATION CARTO;
+GRANT USAGE, CREATE FUNCTION, CREATE PROCEDURE ON SCHEMA CARTO.CARTO TO APPLICATION CARTO;
 
 -- Generate the installer procedure in the specified location
-CALL CARTO.CARTO.GENERATE_INSTALLER('<DATABASE>.<SCHEMA>');
+CALL CARTO_INSTALLER.CARTO.GENERATE_INSTALLER('CARTO.CARTO');
 
 -- Update ownership of the install procedure
-GRANT OWNERSHIP ON PROCEDURE <DATABASE>.<SCHEMA>.INSTALL(STRING, STRING) TO ROLE ACCOUNTADMIN;
+GRANT OWNERSHIP ON PROCEDURE CARTO.CARTO.INSTALL(STRING, STRING) TO ROLE ACCOUNTADMIN;
 
--- Install the Analytics Toolbox in <DATABASE>.<SCHEMA>
-CALL <DATABASE>.<SCHEMA>.INSTALL('CARTO', '<DATABASE>.<SCHEMA>');
+-- Grant usage to public role
+GRANT USAGE ON DATABASE CARTO TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA CARTO.CARTO TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
+GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
+
+-- Install the Analytics Toolbox in CARTO.CARTO
+CALL CARTO.CARTO.INSTALL('CARTO_INSTALLER', 'CARTO.CARTO');
 ```
 
 ### Usage Examples
