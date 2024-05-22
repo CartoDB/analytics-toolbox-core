@@ -16,7 +16,7 @@ on:
 
 env:
   NODE_VERSION: 18.16
-  PYTHON3_VERSION: 3.8.10
+  PYTHON3_VERSION: 3.8.18
   VIRTUALENV_VERSION: 20.21.1
   GCLOUD_VERSION: 290.0.1
 
@@ -154,7 +154,6 @@ jobs:
     timeout-minutes: 10
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake
-      SF_DATABASE: 'carto'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

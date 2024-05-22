@@ -5,6 +5,7 @@ import geopandas as gpd
 import pandas as pd
 import psycopg2
 
+from urllib.parse import quote_plus
 from shapely import wkt
 from sqlalchemy import create_engine
 
@@ -15,6 +16,13 @@ PG_CONFIG = {
     'password': os.environ['PG_PASSWORD'],
     'port': 5432,
 }
+URL_PG_CONFIG = {
+    'host': os.environ['PG_HOST'],
+    'database': os.environ['PG_DATABASE'],
+    'user': os.environ['PG_USER'],
+    'password': quote_plus(os.environ['PG_PASSWORD']),
+    'port': 5432,
+}
 
 conn = psycopg2.connect(**PG_CONFIG)
 conn.autocommit = (
@@ -22,7 +30,7 @@ conn.autocommit = (
 )
 
 connection_string = 'postgresql://{user}:{password}@{host}:{port}/{database}'.format(
-    **PG_CONFIG
+    **URL_PG_CONFIG
 )
 engine = create_engine(connection_string)
 

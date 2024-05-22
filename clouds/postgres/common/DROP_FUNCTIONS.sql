@@ -1,5 +1,5 @@
 ---------------------------------
--- Copyright (C) 2021-2023 CARTO
+-- Copyright (C) 2021-2024 CARTO
 ---------------------------------
 
 CREATE OR REPLACE PROCEDURE @@PG_SCHEMA@@.__DROP_FUNCTIONS
