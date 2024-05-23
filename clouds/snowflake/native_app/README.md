@@ -8,7 +8,9 @@ The CARTO Analytics Toolbox for Snowflake is composed of a set of user-defined f
 
 #### Install the Analytics Toolbox
 
-This Native App is an installer so it does not contain the actual Analytics Toolbox functions and procedures. We recommend that at the moment of installing the app you name the app "CARTO_INSTALLER". The next guidelines and examples will assume that in order to simplify the onboarding process.
+This Native App is an installer so it does not contain the actual Analytics Toolbox functions and procedures. For the sake of documenting the process, we'll will assume a database named CARTO, as well as a schema named CARTO in that database, also we assume the app to be called CARTO_INSTALLER. The next guidelines and examples will assume that in order to simplify the onboarding process.
+
+All the database, schema and user can have a different name, but remember to adapt the code snippets accordingly.
 
 ```
 -- Set admin permissions
