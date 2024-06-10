@@ -85,11 +85,11 @@ AS ((
     )
     -- return the min value between the target and intermediate
     -- resolutions to return between 1 and 256 cells
-    SELECT LEAST(
+    SELECT LEAST(26, LEAST(
         resolution,
         -- compute the resolution of cells that match the geog area
-        -- by comparing with the area of the quadbin 0, plus 3 levels
-        IF(geog_area > 0, CAST(-LOG(geog_area / 508164597540055.75, 4) AS INT64) + 3, resolution))
+        -- by comparing with the area of the quadbin 0, plus 6 levels
+        IF(geog_area > 0, CAST(-LOG(geog_area / 508164597540055.75, 4) AS INT64) + 6, resolution)))
     FROM __params
 ));
 
@@ -97,45 +97,108 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECT
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    WITH __cells AS (
-        SELECT quadbin
+    WITH __parents AS (
+        SELECT parent, ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent)) AS inside
         FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog,
-                `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geog, resolution))) AS parent,
-            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS quadbin
+            `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geog, resolution))) AS parent
+    ),
+    __children AS (
+        SELECT child, inside
+        FROM __parents,
+            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS child
+    ),
+    __children_inside AS (
+        SELECT child
+        FROM __children
+        WHERE inside
+    ),
+    __children_border AS (
+        SELECT child
+        FROM __children
+        WHERE NOT inside
+    ),
+    __cells AS (
+        SELECT child
+        FROM __children_inside
+        UNION ALL
+        SELECT child
+        FROM __children_border
+        WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(child))
     )
-    SELECT ARRAY_AGG(quadbin)
+    SELECT ARRAY_AGG(child)
     FROM __cells
-    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(quadbin))
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    WITH __cells AS (
-        SELECT quadbin
+    WITH __parents AS (
+        SELECT parent, ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent)) AS inside
         FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog,
-                `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geog, resolution))) AS parent,
-            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS quadbin
+            `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geog, resolution))) AS parent
+    ),
+    __children AS (
+        SELECT child, inside
+        FROM __parents,
+            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS child
+    ),
+    __children_inside AS (
+        SELECT child
+        FROM __children
+        WHERE inside
+    ),
+    __children_border AS (
+        SELECT child
+        FROM __children
+        WHERE not inside
+    ),
+    __cells AS (
+        SELECT child
+        FROM __children_inside
+        UNION ALL
+        SELECT child
+        FROM __children_border
+        WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(child))
     )
-    SELECT ARRAY_AGG(quadbin)
+    SELECT ARRAY_AGG(child)
     FROM __cells
-    WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(quadbin))
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CHILDREN_CENTER`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    WITH __cells AS (
-        SELECT quadbin
+    WITH __parents AS (
+        SELECT parent, ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent)) AS inside
         FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog,
-                `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geog, resolution))) AS parent,
-            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS quadbin
+            `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT_Z`(geog, resolution))) AS parent
+    ),
+    __children AS (
+        SELECT child, inside
+        FROM __parents,
+            UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent, resolution)) AS child
+    ),
+    __children_inside AS (
+        SELECT child
+        FROM __children
+        WHERE inside
+    ),
+    __children_border AS (
+        SELECT child
+        FROM __children
+        WHERE not inside
+    ),
+    __cells AS (
+        SELECT child
+        FROM __children_inside
+        UNION ALL
+        SELECT child
+        FROM __children_border
+        WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_CENTER`(child))
     )
-    SELECT ARRAY_AGG(quadbin)
+    SELECT ARRAY_AGG(child)
     FROM __cells
-    WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_CENTER`(quadbin))
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_POLYFILL_MODE`
