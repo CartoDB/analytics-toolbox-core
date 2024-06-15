@@ -3,19 +3,24 @@
 ---------------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`
-(parent_quadbin INT64, parent_inside BOOL, geog GEOGRAPHY, resolution INT64, resolution_level INT64)
-RETURNS ARRAY<STRUCT<child INT64, inside BOOL>>
+(parent STRUCT<z INT64, x INT64, y INT64>, parent_inside BOOL, geog GEOGRAPHY, resolution INT64, resolution_level INT64)
+RETURNS ARRAY<STRUCT<child STRUCT<z INT64, x INT64, y INT64>, inside BOOL>>
 AS ((
     IF(resolution < resolution_level - 1, (
         WITH __parent AS (
-            SELECT parent_quadbin, parent_inside
+            SELECT parent, parent_inside
         )
         SELECT ARRAY_AGG(p)
         FROM __parent p
     ), (
-        WITH __children AS (
-            SELECT child
-            FROM UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent_quadbin, LEAST(resolution, resolution_level))) AS child
+        WITH __params AS (
+            SELECT (MOD(LEAST(resolution, resolution_level), 2) = 0) AS even
+        ),
+        __children AS (
+            SELECT STRUCT(IF(even, parent.z + 2, parent.z + 1) AS z, x, y) AS child
+            FROM __params,
+                UNNEST(GENERATE_ARRAY(IF(even, 4 * parent.x, 2 * parent.x), IF(even, 4 * parent.x + 3, 2 * parent.x + 1))) AS x,
+                UNNEST(GENERATE_ARRAY(IF(even, 4 * parent.y, 2 * parent.y), IF(even, 4 * parent.y + 3, 2 * parent.y + 1))) AS y
         ),
         __children_inside AS (
             SELECT child
@@ -23,7 +28,7 @@ AS ((
             WHERE parent_inside
         ),
         __children_border AS (
-            SELECT child, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(child) AS child_boundary
+            SELECT child, `@@BQ_DATASET@@.__ZXY_BOUNDARY`(child) AS child_boundary
             FROM __children
             WHERE NOT parent_inside
         ),
@@ -41,12 +46,14 @@ AS ((
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_CONTAINS`
-(parent_quadbin INT64, parent_inside BOOL, geog GEOGRAPHY, resolution INT64)
-RETURNS ARRAY<INT64>
+(parent STRUCT<z INT64, x INT64, y INT64>, parent_inside BOOL, geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<STRUCT<z INT64, x INT64, y INT64>>
 AS ((
     WITH __children AS (
-        SELECT child
-        FROM UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent_quadbin, resolution)) AS child
+        SELECT STRUCT(parent.z + 1 AS z, x, y) AS child
+        FROM
+            UNNEST(GENERATE_ARRAY(2 * parent.x, 2 * parent.x + 1)) AS x,
+            UNNEST(GENERATE_ARRAY(2 * parent.y, 2 * parent.y + 1)) AS y
     ),
     __children_inside AS (
         SELECT child
@@ -54,7 +61,7 @@ AS ((
         WHERE parent_inside
     ),
     __children_border AS (
-        SELECT child, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(child) AS child_boundary
+        SELECT child, `@@BQ_DATASET@@.__ZXY_BOUNDARY`(child) AS child_boundary
         FROM __children
         WHERE NOT parent_inside
     ),
@@ -71,12 +78,14 @@ AS ((
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_CENTER`
-(parent_quadbin INT64, parent_inside BOOL, geog GEOGRAPHY, resolution INT64)
-RETURNS ARRAY<INT64>
+(parent STRUCT<z INT64, x INT64, y INT64>, parent_inside BOOL, geog GEOGRAPHY, resolution INT64)
+RETURNS ARRAY<STRUCT<z INT64, x INT64, y INT64>>
 AS ((
     WITH __children AS (
-        SELECT child
-        FROM UNNEST(`@@BQ_DATASET@@.QUADBIN_TOCHILDREN`(parent_quadbin, resolution)) AS child
+        SELECT STRUCT(parent.z + 1 AS z, x, y) AS child
+        FROM
+            UNNEST(GENERATE_ARRAY(2 * parent.x, 2 * parent.x + 1)) AS x,
+            UNNEST(GENERATE_ARRAY(2 * parent.y, 2 * parent.y + 1)) AS y
     ),
     __children_inside AS (
         SELECT child
@@ -84,7 +93,7 @@ AS ((
         WHERE parent_inside
     ),
     __children_border AS (
-        SELECT child, `@@BQ_DATASET@@.QUADBIN_CENTER`(child) AS child_center
+        SELECT child, `@@BQ_DATASET@@.__ZXY_CENTER`(child) AS child_center
         FROM __children
         WHERE NOT parent_inside
     ),
@@ -104,8 +113,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INTERSECTS`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    SELECT ARRAY_AGG(q26.child)
-    FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(5192650370358181887, FALSE, geog, resolution, 2)) q2
+    SELECT ARRAY_AGG(`@@BQ_DATASET@@.QUADBIN_FROMZXY`(q26.child.z, q26.child.x, q26.child.y))
+    FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(STRUCT(0, 0, 0), FALSE, geog, resolution, 2)) q2
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q2.child, q2.inside, geog, resolution, 4)) q4
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q4.child, q4.inside, geog, resolution, 6)) q6
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q6.child, q6.inside, geog, resolution, 8)) q8
@@ -124,8 +133,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CONTAINS`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    SELECT ARRAY_AGG(q)
-    FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(5192650370358181887, FALSE, geog, resolution-1, 2)) q2
+    SELECT ARRAY_AGG(`@@BQ_DATASET@@.QUADBIN_FROMZXY`(q.z, q.x, q.y))
+    FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(STRUCT(0, 0, 0), FALSE, geog, resolution-1, 2)) q2
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q2.child, q2.inside, geog, resolution-1, 4)) q4
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q4.child, q4.inside, geog, resolution-1, 6)) q6
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q6.child, q6.inside, geog, resolution-1, 8)) q8
@@ -145,8 +154,8 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CENTER`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
-    SELECT ARRAY_AGG(q)
-    FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(5192650370358181887, FALSE, geog, resolution-1, 2)) q2
+    SELECT ARRAY_AGG(`@@BQ_DATASET@@.QUADBIN_FROMZXY`(q.z, q.x, q.y))
+    FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(STRUCT(0, 0, 0), FALSE, geog, resolution-1, 2)) q2
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q2.child, q2.inside, geog, resolution-1, 4)) q4
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q4.child, q4.inside, geog, resolution-1, 6)) q6
     JOIN UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_STEP_INTERSECTS`(q6.child, q6.inside, geog, resolution-1, 8)) q8
