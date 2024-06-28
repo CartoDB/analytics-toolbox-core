@@ -1,6 +1,5 @@
 ---
 badges:
-- core
 ---
 # s2
 
