@@ -83,7 +83,7 @@ AS ((
         FROM __geog_area
     )
     -- compute the average resolution for the initial polyfill
-    SELECT CAST((resolution + geog_resolution) / 2 AS INT64)
+    SELECT LEAST(resolution, CAST((resolution + geog_resolution) / 2 AS INT64))
     FROM __geog_resolution
 ));
 
