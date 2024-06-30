@@ -70,47 +70,31 @@ AS ((
     WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(quadbin))
 ));
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__INIT_RESOLUTION`
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__GEOG_RESOLUTION`
 (geog GEOGRAPHY, resolution INT64)
 RETURNS INT64
 AS ((
     WITH __geog_area AS (
-        SELECT ST_AREA(geog) AS geog_area
-    ),
-    __geog_resolution AS (
-        -- compute the resolution of cells that match the geog area
-        SELECT IF(geog_area > 0, CAST(-LOG(geog_area / 508164597540055.75, 4) AS INT64), resolution) AS geog_resolution
-        FROM __geog_area
+        SELECT
+            ST_AREA(geog) AS geog_area,
+            COS(ST_Y(ST_CENTROID(geog)) * ACOS(-1) / 180) AS cos_geog_lat,
+            508164597540055.75 AS q0_area
     )
-    -- compute the average resolution for the initial polyfill
-    SELECT LEAST(resolution, CAST((resolution + geog_resolution) / 2 AS INT64))
-    FROM __geog_resolution
-));
-
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__USE_PARENT_CONTAINS`
-(geog GEOGRAPHY)
-RETURNS BOOL
-AS ((
-    -- the algorithm using the parent contains can be used if the
-    -- area is more than 20% of the max coverage area, otherwise,
-    -- the computation of the contains is not worth it
-    WITH __geog_area AS (
-        SELECT ST_AREA(geog) AS geog_area,
-            POW(ST_MAXDISTANCE(geog, geog), 2) AS max_area
-    )
-    SELECT IF(max_area > 0, geog_area / max_area > 0.2, FALSE)
+    -- compute the resolution of cells that match the geog area
+    SELECT IF(geog_area > 0 AND cos_geog_lat > 0,
+        CAST(-LOG(geog_area / q0_area / cos_geog_lat, 4) AS INT64), resolution)
     FROM __geog_area
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INTERSECTS`
-(geog GEOGRAPHY, use_parent_contains BOOLEAN, resolution INT64)
+(geog GEOGRAPHY, use_contains BOOLEAN, init_resolution INT64, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
     WITH __parents AS (
-        SELECT parent, IF(use_parent_contains, ST_CONTAINS(
-            geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent)), FALSE) AS inside
-        FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(
-            geog, `@@BQ_DATASET@@.__INIT_RESOLUTION`(geog, resolution))) AS parent
+        SELECT parent, COALESCE(ST_CONTAINS(
+            geog, IF(use_contains, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent), NULL)
+        ), FALSE) AS inside
+        FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog, init_resolution)) AS parent
     ),
     __children AS (
         SELECT child, inside
@@ -140,14 +124,14 @@ AS ((
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CONTAINS`
-(geog GEOGRAPHY, use_parent_contains BOOLEAN, resolution INT64)
+(geog GEOGRAPHY, use_contains BOOLEAN, init_resolution INT64, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
     WITH __parents AS (
-        SELECT parent, IF(use_parent_contains, ST_CONTAINS(
-            geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent)), FALSE) AS inside
-        FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(
-            geog, `@@BQ_DATASET@@.__INIT_RESOLUTION`(geog, resolution))) AS parent
+        SELECT parent, COALESCE(ST_CONTAINS(
+            geog, IF(use_contains, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent), NULL)
+        ), FALSE) AS inside
+        FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog, init_resolution)) AS parent
     ),
     __children AS (
         SELECT child, inside
@@ -177,14 +161,14 @@ AS ((
 ));
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CENTER`
-(geog GEOGRAPHY, use_parent_contains BOOLEAN, resolution INT64)
+(geog GEOGRAPHY, use_contains BOOLEAN, init_resolution INT64, resolution INT64)
 RETURNS ARRAY<INT64>
 AS ((
     WITH __parents AS (
-        SELECT parent, IF(use_parent_contains, ST_CONTAINS(
-            geog, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent)), FALSE) AS inside
-        FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(
-            geog, `@@BQ_DATASET@@.__INIT_RESOLUTION`(geog, resolution))) AS parent
+        SELECT parent, COALESCE(ST_CONTAINS(
+            geog, IF(use_contains, `@@BQ_DATASET@@.QUADBIN_BOUNDARY`(parent), NULL)
+        ), FALSE) AS inside
+        FROM UNNEST(`@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`(geog, init_resolution)) AS parent
     ),
     __children AS (
         SELECT child, inside
@@ -219,14 +203,27 @@ RETURNS ARRAY<INT64>
 AS ((
     IF(resolution IS NULL OR resolution < 0 OR resolution > 26,
         ERROR('Invalid resolution, should be between 0 and 26'),
-        (SELECT CASE mode
+        (
+            WITH __geog_params AS (
+                SELECT
+                    `@@BQ_DATASET@@.__GEOG_RESOLUTION`(geog, resolution) AS geog_resolution
+            ),
+            __params AS (
+                SELECT
+                    resolution - geog_resolution >= 10 AS use_contains,
+                    LEAST(resolution, CAST((resolution + geog_resolution) / 2 AS INT64)) AS init_resolution
+                FROM __geog_params
+            )
+            SELECT CASE mode
             WHEN 'intersects' THEN `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INTERSECTS`(
-                geog, `@@BQ_DATASET@@.__USE_PARENT_CONTAINS`(geog), resolution)
+                geog, use_contains, init_resolution, resolution)
             WHEN 'contains' THEN `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CONTAINS`(
-                geog, `@@BQ_DATASET@@.__USE_PARENT_CONTAINS`(geog), resolution)
+                geog, use_contains, init_resolution, resolution)
             WHEN 'center' THEN `@@BQ_DATASET@@.__QUADBIN_POLYFILL_CENTER`(
-                geog, `@@BQ_DATASET@@.__USE_PARENT_CONTAINS`(geog), resolution)
-            END)
+                geog, use_contains, init_resolution, resolution)
+            END
+            FROM __params
+        )
     )
 ));
 
