@@ -7,6 +7,7 @@ import { terser } from 'rollup-plugin-terser';
 import bundleSize from 'rollup-plugin-bundle-size';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 
+
 // Find final input path from dirs array
 let input;
 const dirs = process.env.DIRS.split(',');
@@ -37,9 +38,9 @@ export default {
         footer: process.env.UNIT_TEST ? '' : name +' = _' + name + ';}'
     },
     plugins: [
-        nodePolyfills(),
         resolve(),
         commonjs({ requireReturnsDefault: 'auto' }),
+        nodePolyfills(),
         json(),
         terser(),
         bundleSize()
