@@ -58,6 +58,8 @@ build-native-app-setup-script:
 	rm -rf $(BUILD_DIR)
 	$(MAKE) build-libraries
 	mkdir -p $(BUILD_DIR)
+	$(MAKE) -C modules build SF_SCHEMA=@@SF_SCHEMA@@
+	cp modules/build/modules.sql $(BUILD_DIR)
 	$(MAKE) -C modules build-native-app-setup-script
 	cp modules/build/setup_script.sql $(BUILD_DIR)
 

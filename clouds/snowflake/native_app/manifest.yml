@@ -2,7 +2,7 @@ manifest_version: 1 # required
 version:
   name: @@VERSION@@
   label: "@@VERSION@@"
-  comment: "Analytics Toolbox Core"
+  comment: "Analytics Toolbox Core Installer"
 
 artifacts:
   readme: README.md

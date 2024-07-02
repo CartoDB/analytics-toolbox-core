@@ -27,6 +27,7 @@ BAIL=--bail
 endif
 
 REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE APP_ROLE"
+NATIVE_APP_REPLACEMENTS = "SF_APP_SCHEMA APP_ROLE"
 
 include $(COMMON_DIR)/Makefile
 
@@ -73,11 +74,11 @@ build-native-app-setup-script: $(NODE_MODULES_DEV)
 	echo "Building native app setup script..."
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
-	SF_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
-	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	SF_APP_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
+	REPLACEMENTS=$(NATIVE_APP_REPLACEMENTS) \
 	$(COMMON_DIR)/build_native_app_setup_script.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=1
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) \
+		--production=$(production) --dropfirst=1
 
 deploy: check build
 	echo "Deploying modules..."
