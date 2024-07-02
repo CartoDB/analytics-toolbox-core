@@ -15,6 +15,6 @@
     "@placekey/placekey": "1.0.3"
   },
   "resolutions": {
-    "@turf/turf": "6.3.0"
+    "@turf/bbox": "6.5.0"
   }
 }
