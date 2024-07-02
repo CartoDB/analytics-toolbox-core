@@ -191,7 +191,7 @@ AS ((
         UNION ALL
         SELECT child
         FROM __children_border
-        WHERE ST_CONTAINS(geog, `@@BQ_DATASET@@.QUADBIN_CENTER`(child))
+        WHERE ST_INTERSECTS(geog, `@@BQ_DATASET@@.QUADBIN_CENTER`(child))
     )
     SELECT ARRAY_AGG(child)
     FROM __cells
