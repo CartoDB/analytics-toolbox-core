@@ -39,8 +39,8 @@ export default {
     },
     plugins: [
         resolve(),
-        commonjs({ requireReturnsDefault: 'auto' }),
         nodePolyfills(),
+        commonjs({ requireReturnsDefault: 'auto' }),
         json(),
         terser(),
         bundleSize()
