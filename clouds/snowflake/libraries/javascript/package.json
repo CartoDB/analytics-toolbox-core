@@ -13,5 +13,8 @@
     "@turf/turf": "6.3.0",
     "h3-js": "3.7.2",
     "@placekey/placekey": "1.0.3"
+  },
+  "resolutions": {
+    "@turf/turf": "6.3.0"
   }
 }
