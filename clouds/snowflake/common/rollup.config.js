@@ -5,8 +5,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 import bundleSize from 'rollup-plugin-bundle-size';
-import nodePolyfills from 'rollup-plugin-polyfill-node';
-
 
 // Find final input path from dirs array
 let input;
@@ -35,11 +33,13 @@ export default {
         format: process.env.UNIT_TEST ? 'umd': 'iife',
         name: process.env.UNIT_TEST ? name : '_' + name,
         banner: process.env.UNIT_TEST ? '' : 'if (typeof(' +name +') === "undefined") {',
-        footer: process.env.UNIT_TEST ? '' : name +' = _' + name + ';}'
+        footer: process.env.UNIT_TEST ? '' : name +' = _' + name + ';}',
+        globals: {
+            util: 'require$$0$2'
+        }
     },
     plugins: [
         resolve(),
-        nodePolyfills(),
         commonjs({ requireReturnsDefault: 'auto' }),
         json(),
         terser(),
