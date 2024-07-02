@@ -49,7 +49,7 @@ ifdef UNIT_TEST
 		DIRS=$(LIBS_DIR) \
 		FILENAME=$${f}.js \
 		OUTPUT=$(BUILD_DIR)/$${f}.js \
-		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+		rollup --config $(COMMON_DIR)/rollup.config.mjs $(BUILD_PARAMS); \
 	done
 else
 	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) 1>/dev/null # Check errors
@@ -59,7 +59,7 @@ else
 		DIRS=$(LIBS_DIRS) \
 		FILENAME=$${f}.js \
 		OUTPUT=$(BUILD_DIR)/$${f}.js \
-		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+		rollup --config $(COMMON_DIR)/rollup.config.mjs $(BUILD_PARAMS); \
 	done
 endif
 
