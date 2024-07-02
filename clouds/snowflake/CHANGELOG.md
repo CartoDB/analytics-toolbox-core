@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.4] - 2024-06-27
+
+- chore(sf): refactor at snowflake native app to an installer (#512)
+
 ## [1.2.3] - 2024-05-21
 
 - refactor(h3): avoid memory limit exceeded in H3_POLYFILL_TABLE (#501)
