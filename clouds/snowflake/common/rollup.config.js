@@ -5,8 +5,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 import bundleSize from 'rollup-plugin-bundle-size';
-import nodePolyfills from 'rollup-plugin-polyfill-node';
-
 
 // Find final input path from dirs array
 let input;
@@ -40,7 +38,6 @@ export default {
     plugins: [
         resolve(),
         commonjs({ requireReturnsDefault: 'auto' }),
-        nodePolyfills(),
         json(),
         terser(),
         bundleSize()
