@@ -8,7 +8,7 @@ The CARTO Analytics Toolbox for Snowflake is composed of a set of user-defined f
 
 #### Install the Analytics Toolbox
 
-This Native App is an installer so it does not contain the actual Analytics Toolbox functions and procedures. For the sake of documenting the process, we'll will assume a database named CARTO, as well as a schema named CARTO in that database, also we assume the app to be called CARTO_INSTALLER. The next guidelines and examples will assume that in order to simplify the onboarding process.
+This Native App is an installer so it does not contain the actual Analytics Toolbox functions and procedures. For the sake of documenting the process, we'll will assume a database named CARTO, as well as a schema named CARTO in that database, also we assume the app to be called CARTO_ANALYTICS_TOOLBOX. The next guidelines and examples will assume that in order to simplify the onboarding process.
 
 All the database, schema and user can have a different name, but remember to adapt the code snippets accordingly.
 
@@ -26,11 +26,11 @@ CREATE SCHEMA CARTO.CARTO;
 GRANT ALL ON SCHEMA CARTO.CARTO TO ROLE SYSADMIN;
 
 -- Set create function and procedure permissions
-GRANT USAGE ON DATABASE CARTO TO APPLICATION CARTO;
-GRANT USAGE, CREATE FUNCTION, CREATE PROCEDURE ON SCHEMA CARTO.CARTO TO APPLICATION CARTO;
+GRANT USAGE ON DATABASE CARTO TO APPLICATION CARTO_ANALYTICS_TOOLBOX;
+GRANT USAGE, CREATE FUNCTION, CREATE PROCEDURE ON SCHEMA CARTO.CARTO TO APPLICATION CARTO_ANALYTICS_TOOLBOX;
 
 -- Generate the installer procedure in the specified location
-CALL CARTO_INSTALLER.CARTO.GENERATE_INSTALLER('CARTO.CARTO');
+CALL CARTO_ANALYTICS_TOOLBOX.CARTO.GENERATE_INSTALLER('CARTO.CARTO');
 
 -- Update ownership of the install procedure
 GRANT OWNERSHIP ON PROCEDURE CARTO.CARTO.INSTALL(STRING, STRING) TO ROLE ACCOUNTADMIN REVOKE CURRENT GRANTS;
@@ -44,7 +44,7 @@ GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
 GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
 
 -- Install the Analytics Toolbox in CARTO.CARTO
-CALL CARTO.CARTO.INSTALL('CARTO_INSTALLER', 'CARTO.CARTO');
+CALL CARTO.CARTO.INSTALL('CARTO_ANALYTICS_TOOLBOX', 'CARTO.CARTO');
 ```
 
 ### Usage Examples

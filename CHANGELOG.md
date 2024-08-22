@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-08-22
+
+- chore(rs): bump scipy from 0.12.0 to 0.12.1 in /clouds/redshift/libraries/python (#518)
+- docs(sf): fix native apps installation doc (#519)
+- fix(pg): lock numpy to v1.24.4 until pandas supports 2.X.X (#520)
+
 ## 2024-06-27
 
 - chore(sf): refactor at snowflake native app to an installer (#512)
