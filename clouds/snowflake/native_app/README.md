@@ -47,6 +47,26 @@ GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CARTO.CARTO TO ROLE PUBLIC;
 CALL CARTO.CARTO.INSTALL('CARTO_ANALYTICS_TOOLBOX', 'CARTO.CARTO');
 ```
 
+##### * Update the Analytics Toolbox
+
+When a new package of the Analytics Toolbox gets released, the Analytics Toolbox installer gets updated automatically. As in the first installation most of the required permissions were already set, only the next queries should be necessary in order to update the Analytics Toolbox.
+
+```
+-- Set admin permissions
+USE ROLE ACCOUNTADMIN;
+
+-- Generate the installer procedure in the specified location
+CALL CARTO_ANALYTICS_TOOLBOX.CARTO.GENERATE_INSTALLER('CARTO.CARTO');
+
+-- Update ownership of the install procedure
+GRANT OWNERSHIP ON PROCEDURE CARTO.CARTO.INSTALL(STRING, STRING) TO ROLE ACCOUNTADMIN REVOKE CURRENT GRANTS;
+
+-- Install the Analytics Toolbox in CARTO.CARTO
+CALL CARTO.CARTO.INSTALL('CARTO_ANALYTICS_TOOLBOX', 'CARTO.CARTO');
+```
+
+If your Analytics Toolbox doesn't get updated properly please try to drop the app, get it back from Snowflake Marketplace and follow the Step 1.
+
 ### Usage Examples
 
 Please refer to CARTO's [SQL reference](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference) to find the full list of available functions and procedures as well as examples.
