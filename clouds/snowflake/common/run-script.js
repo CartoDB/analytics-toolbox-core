@@ -19,7 +19,7 @@ const connection = snowflake.createConnection({
     username: process.env.SF_USER,
     password: process.env.SF_PASSWORD,
     role: process.env.SF_ROLE,
-    warehouse: process.env.SF_WAREHOUSE,
+    warehouse: process.env.SF_WAREHOUSE
 });
 
 connection.connect((err) => {
