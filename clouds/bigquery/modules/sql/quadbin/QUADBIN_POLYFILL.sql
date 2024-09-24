@@ -76,9 +76,9 @@ RETURNS INT64
 AS ((
     WITH __geog_area AS (
         SELECT
+            508164597540055.75 AS q0_area,
             ST_AREA(geog) AS geog_area,
-            COS(ST_Y(ST_CENTROID(geog)) * ACOS(-1) / 180) AS cos_geog_lat,
-            508164597540055.75 AS q0_area
+            COS(ST_Y(ST_CENTROID(geog)) * ACOS(-1) / 180) AS cos_geog_lat
     )
     -- compute the resolution of cells that match the geog area
     SELECT IF(geog_area > 0 AND cos_geog_lat > 0,
