@@ -10,7 +10,7 @@ const BQ_DATASET = process.env.BQ_DATASET;
 const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
 
 async function runQuery (query, options) {
-    options = Object.assign({}, { timeoutMs : 150000 }, options);
+    options = Object.assign({}, { timeoutMs : 200000 }, options);
     query = replaceBQPrefix(query);
     const [rows] = await client.query(query, options);
     return rows;
