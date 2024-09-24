@@ -24,6 +24,7 @@ SF_USER=<user>
 SF_PASSWORD=<password>
 SF_ROLE=<role>  # optional
 SF_SHARE=<share>  # optional
+SF_WAREHOUSE=<warehouse> # optional
 ```
 
 ## Structure
