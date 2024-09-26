@@ -33,6 +33,7 @@ def run_queries(queries):
         with conn.cursor() as cursor:
             for i in trange(len(queries) if not filter else 1, ncols=97):
                 query = apply_replacements(queries[i])
+                print(query)
                 if (not filter) or (filter in query):
                     pattern = os.environ['RS_SCHEMA'] + '.(.*?)[(|\n]'
                     result = re.search(pattern, str(query))

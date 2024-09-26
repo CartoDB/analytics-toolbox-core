@@ -39,7 +39,7 @@ build:
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	$(MAKE) build-library
-	$(MAKE) build-dependencies
+# $(MAKE) build-dependencies
 	$(MAKE) build-libraries-sql
 
 build-library:
@@ -69,8 +69,9 @@ endif
 	done
 
 deploy: check build
-	echo "Deploying libraries..."
+	echo "copy libraries..."
 	$(MAKE) copy-libraries
+	echo "Deploying libraries..."
 	$(MAKE) deploy-libraries
 	$(MAKE) remove-libraries
 
@@ -87,9 +88,9 @@ endif
 
 deploy-libraries: venv3
 ifeq ("$(library)","carto")
-	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql || exit 1
+	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
 else
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql || exit 1
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
 endif
 
 remove-libraries:
