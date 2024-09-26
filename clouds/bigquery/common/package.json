@@ -1,7 +1,7 @@
 {
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@google-cloud/bigquery": "^7.3.0",
+    "@google-cloud/bigquery": "7.9.0",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
