@@ -88,9 +88,9 @@ endif
 
 deploy-libraries: venv3
 ifeq ("$(library)","carto")
-	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql || exit 1
+	FILTER=$(RS_LIBRARY) $(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
 else
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql || exit 1
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/libraries.sql
 endif
 
 remove-libraries:
