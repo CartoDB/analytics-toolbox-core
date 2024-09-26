@@ -39,7 +39,7 @@ build:
 	rm -rf $(BUILD_DIR)
 	mkdir $(BUILD_DIR)
 	$(MAKE) build-library
-	$(MAKE) build-dependencies
+# $(MAKE) build-dependencies
 	$(MAKE) build-libraries-sql
 
 build-library:
@@ -69,8 +69,9 @@ endif
 	done
 
 deploy: check build
-	echo "Deploying libraries..."
+	echo "copy libraries..."
 	$(MAKE) copy-libraries
+	echo "Deploying libraries..."
 	$(MAKE) deploy-libraries
 	$(MAKE) remove-libraries
 
