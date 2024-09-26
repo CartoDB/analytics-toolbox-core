@@ -13,6 +13,7 @@ AS $$
     if quadbin is None:
         return None
 
+
     return json.dumps(cell_to_bounding_box(quadbin))
 $$ LANGUAGE plpythonu;
 
