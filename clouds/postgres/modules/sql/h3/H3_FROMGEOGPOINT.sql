@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2023 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2023-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_FROMGEOGPOINT(
     geog GEOMETRY,
@@ -15,5 +15,16 @@ $BODY$
         ELSE
             NULL
     END
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_FROMGEOPOINT(
+    geo GEOMETRY,
+    resolution INT
+)
+RETURNS VARCHAR(16)
+AS
+$BODY$
+    SELECT @@PG_SCHEMA@@.H3_FROMGEOGPOINT(geo, resolution)
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;
