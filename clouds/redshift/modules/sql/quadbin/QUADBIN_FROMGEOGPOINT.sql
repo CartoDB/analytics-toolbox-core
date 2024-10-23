@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.QUADBIN_FROMGEOGPOINT
 (GEOMETRY, INT)

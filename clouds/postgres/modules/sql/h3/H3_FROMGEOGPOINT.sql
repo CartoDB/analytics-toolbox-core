@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2023 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2023-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_FROMGEOGPOINT(
     geog GEOMETRY,
