@@ -52,7 +52,6 @@ test('H3_FROMGEOGPOINT returns NULL with non POINT geographies', async () => {
     ]);
 });
 
-
 test('H3_FROMGEOPOINT returns the proper INT64', async () => {
     const query = `
         WITH inputs AS
