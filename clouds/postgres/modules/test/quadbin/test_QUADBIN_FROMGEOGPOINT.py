@@ -29,3 +29,11 @@ def test_quadbin_fromgeogpoint_other_srid():
     """
     )
     assert result[0][0] == 5209574053332910079
+
+
+def test_quadbin_fromgeopoint_no_srid():
+    """Computes quadbin for point with no SRID."""
+    result = run_query(
+        'SELECT @@PG_SCHEMA@@.QUADBIN_FROMGEOPOINT(ST_MAKEPOINT(40.4168, -3.7038), 4)'
+    )
+    assert result[0][0] == 5209574053332910079
