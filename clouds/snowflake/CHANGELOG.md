@@ -4,9 +4,15 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.5] - 2024-09-23
+
+- feat: added warehouse option for SF (#524)
+- docs: add docs on how to update the analytics toolbox from a native app (#527)
+- chore: update python version on stored procedures from 3.8 to 3.9 (#528)
+
 ## [1.2.4] - 2024-06-27
 
-- chore(sf): refactor at snowflake native app to an installer (#512)
+- chore: refactor at snowflake native app to an installer (#512)
 
 ## [1.2.3] - 2024-05-21
 

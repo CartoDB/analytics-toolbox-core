@@ -4,6 +4,13 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-09-23
+
+- feat(sf): added warehouse option for SF (#524)
+- chore(bq): increse jest timeout to 30000 (#525)
+- docs(sf): add docs on how to update the analytics toolbox from a native app (#527)
+- chore(sf): update python version on stored procedures from 3.8 to 3.9 (#528)
+
 ## 2024-08-22
 
 - chore(rs): bump scipy from 0.12.0 to 0.12.1 in /clouds/redshift/libraries/python (#518)

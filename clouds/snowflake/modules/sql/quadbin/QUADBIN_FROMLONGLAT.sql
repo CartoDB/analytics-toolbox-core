@@ -53,4 +53,3 @@ AS $$
     SELECT @@SF_SCHEMA@@._QUADBIN_STRING_TOINT(@@SF_SCHEMA@@._QUADBIN_FROMZXY(z, x, y))
     FROM __zxy
 $$;
-
