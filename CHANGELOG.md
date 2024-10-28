@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2024-10-28
+
+- chore(bq): fix @google-cloud/bigquery to version 7.9.0 (#531)
+- chore(bq,sf,rs,pg|h3,quadbin): added "geo" aliases for certain functions (#526)
+
 ## 2024-09-23
 
 - feat(sf): added warehouse option for SF (#524)
