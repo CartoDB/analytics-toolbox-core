@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_FROMGEOGPOINT
 (point GEOGRAPHY, resolution INT)
@@ -16,4 +16,12 @@ RETURNS BIGINT
 IMMUTABLE
 AS $$
     @@SF_SCHEMA@@._QUADBIN_FROMLONGLAT(ST_X(point), ST_Y(point), resolution)
+$$;
+
+CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.QUADBIN_FROMGEOPOINT
+(point GEOGRAPHY, resolution INT)
+RETURNS BIGINT
+IMMUTABLE
+AS $$
+    @@SF_SCHEMA@@._QUADBIN_FROMGEOGPOINT(point, resolution)
 $$;

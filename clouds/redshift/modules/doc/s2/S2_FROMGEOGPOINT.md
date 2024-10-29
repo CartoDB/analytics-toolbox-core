@@ -6,7 +6,7 @@ S2_FROMGEOGPOINT(point, resolution)
 
 **Description**
 
-Returns the S2 cell ID of a given point at a given level of detail.
+Returns the S2 cell ID of a given point at a requested resolution.
 
 * `point`: `GEOGRAPHY` vertical coordinate of the map.
 * `resolution`: `INT4` level of detail or zoom.

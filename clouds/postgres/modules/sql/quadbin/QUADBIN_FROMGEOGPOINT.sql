@@ -1,6 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
+--------------------------------
+-- Copyright (C) 2022-2024 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_FROMGEOGPOINT(
     point GEOMETRY,
@@ -18,5 +18,16 @@ $BODY$
     )
     SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(ST_X(geom), ST_Y(geom), resolution)
     FROM __geom4326;
+$BODY$
+LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.QUADBIN_FROMGEOPOINT(
+    point GEOMETRY,
+    resolution INT
+)
+RETURNS BIGINT
+AS
+$BODY$
+    SELECT @@PG_SCHEMA@@.QUADBIN_FROMGEOGPOINT(point, resolution)
 $BODY$
 LANGUAGE sql IMMUTABLE PARALLEL SAFE;

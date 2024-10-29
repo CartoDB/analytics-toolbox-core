@@ -6,7 +6,7 @@ QUADBIN_POLYFILL(geography, resolution)
 
 **Description**
 
-Returns an array of Quadbins that intersect with the given geography at a given level of detail.
+Returns an array of Quadbins that intersect with the given geography at a requested resolution.
 
 * `geography`: `GEOGRAPHY` geography to extract the Quadbins from.
 * `resolution`: `INT` level of detail or zoom.

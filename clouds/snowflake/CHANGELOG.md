@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.6] - 2024-10-28
+
+- chore(h3,quadbin): added "geo" aliases for certain functions (#526)
+
 ## [1.2.5] - 2024-09-23
 
 - feat: added warehouse option for SF (#524)

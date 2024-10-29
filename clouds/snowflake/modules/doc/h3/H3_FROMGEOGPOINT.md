@@ -6,7 +6,7 @@ H3_FROMGEOGPOINT(point, resolution)
 
 **Description**
 
-Returns the H3 cell index that the point belongs to in the required `resolution`. It will return `null` on error (invalid geography type or resolution out of bounds).
+Returns the H3 cell index that the point belongs to in the requested `resolution`. It will return `null` on error (invalid geography type or resolution out of bounds). This function is an alias for `H3_FROMGEOPOINT`.
 
 * `point`: `GEOGRAPHY` point to get the H3 cell from.
 * `resolution`: `INT` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).

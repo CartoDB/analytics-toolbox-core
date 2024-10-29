@@ -6,7 +6,7 @@ QUADBIN_POLYFILL_MODE(geog, resolution, mode)
 
 **Description**
 
-Returns an array of quadbin cell indexes contained in the given geography at a given level of detail. Containment is determined by the mode: center, intersects, contains.
+Returns an array of quadbin cell indexes contained in the given geography at a requested resolution. Containment is determined by the mode: center, intersects, contains.
 
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 26.
