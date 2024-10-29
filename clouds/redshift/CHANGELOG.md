@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.1.2] - 2024-10-28
+
+- chore(h3,quadbin): added "geo" aliases for certain functions (#526)
+
 ## [1.1.1] - 2024-04-18
 
 - docs(processing): update voronoi doc (#492)

@@ -6,7 +6,7 @@ H3_POLYFILL(geog, resolution)
 
 **Description**
 
-Returns an array of H3 cell indexes contained in the given geography (Polygon, MultiPolygon) at a given level of detail. Containment is determined by the cells' center. This function is equivalent to [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `center`.
+Returns an array of H3 cell indexes contained in the given geography (Polygon, MultiPolygon) at a requested resolution. Containment is determined by the cells' center. This function is equivalent to [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `center`.
 
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).

@@ -6,7 +6,7 @@ H3_POLYFILL(geom, resolution [, mode])
 
 **Description**
 
-Returns an array of H3 cell indexes contained in the given geometry at a given level of detail. Containment is determined by the mode: center, intersects, contains.
+Returns an array of H3 cell indexes contained in the given geometry at a requested resolution. Containment is determined by the mode: center, intersects, contains.
 
 * `geom`: `GEOMETRY` representing the shape to cover.
 * `resolution`: `INT` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
