@@ -6,7 +6,7 @@ H3_POLYFILL_TABLE(input_query, resolution, mode, output_table)
 
 **Description**
 
-Returns a table with the H3 cell indexes contained in the given geography at a given level of detail. Containment is determined by the mode: center, intersects, contains. All the attributes except the geography will be included in the output table, clustered by the h3 column.
+Returns a table with the H3 cell indexes contained in the given geography at a requested resolution. Containment is determined by the mode: center, intersects, contains. All the attributes except the geography will be included in the output table, clustered by the h3 column.
 
 * `input_query`: `STRING` input data to polyfill. It must contain a column `geom` with the shape to cover. Additionally, other columns can be included.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
