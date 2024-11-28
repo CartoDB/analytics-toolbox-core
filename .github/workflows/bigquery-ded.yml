@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
-      GCLOUD_VERSION: 290.0.1
+      GCLOUD_VERSION: 500.0.0
       BQ_PROJECT: ${{ secrets.BQ_PROJECT_CD }}
       BQ_REGION: ${{ secrets.BQ_REGION_CD }}
       BQ_BUCKET: ${{ secrets.BQ_BUCKET_CD }}
