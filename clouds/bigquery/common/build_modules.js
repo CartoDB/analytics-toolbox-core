@@ -163,6 +163,7 @@ function apply_replacements (text) {
             text = text.replace(pattern, process.env[replacement]);
         }
     }
+    text = text.replace(/@@SKIP_DEP@@/g, '');
     return text;
 }
 
