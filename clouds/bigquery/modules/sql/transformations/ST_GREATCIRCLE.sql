@@ -8,7 +8,7 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_TRANSFORMATIONS_BUCKET@@"]
 )
 AS """
     if (!geojsonStart || !geojsonEnd || geojsonEnd === geojsonStart) {
@@ -18,7 +18,7 @@ AS """
     if (npoints != null) {
         options.npoints = Number(npoints);
     }
-    const greatCircle = lib.transformations.greatCircle(JSON.parse(geojsonStart), JSON.parse(geojsonEnd), options);
+    const greatCircle = transformationsLib.greatCircle(JSON.parse(geojsonStart), JSON.parse(geojsonEnd), options);
     return JSON.stringify(greatCircle.geometry);
 """;
 

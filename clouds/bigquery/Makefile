@@ -49,7 +49,7 @@ build:
 build-libraries:
 	mkdir -p $(BUILD_DIR)/libs
 	$(MAKE) -C libraries/javascript build
-	cp libraries/javascript/build/index.js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT).js
+	cp -r libraries/javascript/build/* $(BUILD_DIR)/libs/
 ifdef MAKE_LIB
 	cp libraries/javascript/build/index_$(MAKE_LIB).js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT)_$(MAKE_LIB).js
 endif

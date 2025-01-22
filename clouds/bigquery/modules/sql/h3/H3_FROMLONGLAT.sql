@@ -8,11 +8,11 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     if (longitude === null || latitude === null || resolution === null) {
         return null;
     }
-    return lib.h3.geoToH3(Number(latitude), Number(longitude), Number(resolution));
+    return h3Lib.geoToH3(Number(latitude), Number(longitude), Number(resolution));
 """;

@@ -8,7 +8,7 @@ RETURNS ARRAY<INT64>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_QUADKEY_BUCKET@@"]
 )
 AS """
     if (!geojson || resolution == null) {
@@ -18,13 +18,13 @@ AS """
     let quadints = [];
     if (pol.type == 'GeometryCollection') {
         pol.geometries.forEach(function (geom) {
-            quadints = quadints.concat(lib.quadkey.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
+            quadints = quadints.concat(quadkeyLib.geojsonToQuadints(geom, {min_zoom: Number(resolution), max_zoom: Number(resolution)}));
         });
         quadints = Array.from(new Set(quadints));
     }
     else
     {
-        quadints = lib.quadkey.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
+        quadints = quadkeyLib.geojsonToQuadints(pol, {min_zoom: Number(resolution), max_zoom: Number(resolution)});
     }
     return quadints.map(String);
 """;

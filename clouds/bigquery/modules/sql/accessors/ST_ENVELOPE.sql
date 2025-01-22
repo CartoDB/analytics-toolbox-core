@@ -8,15 +8,15 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_ACCESSORS_BUCKET@@"]
 )
 AS """
     if (!geojson) {
         return null;
     }
 
-    const featuresCollection = lib.accessors.featureCollection(geojson.map(x => lib.accessors.feature(JSON.parse(x))));
-    const enveloped = lib.accessors.envelope(featuresCollection);
+    const featuresCollection = accessorsLib.featureCollection(geojson.map(x => accessorsLib.feature(JSON.parse(x))));
+    const enveloped = accessorsLib.envelope(featuresCollection);
     return JSON.stringify(enveloped.geometry);
 """;
 

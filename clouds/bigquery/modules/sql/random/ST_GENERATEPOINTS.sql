@@ -7,9 +7,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__ST_GENERATEPOINTS`
 RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library = ["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (library = ["@@BQ_LIBRARY_RANDOM_BUCKET@@"])
 AS """
-    return lib.random.generateRandomPointsInPolygon(JSON.parse(geojson), npoints);
+    return randomLib.generateRandomPointsInPolygon(JSON.parse(geojson), npoints);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_GENERATEPOINTS`

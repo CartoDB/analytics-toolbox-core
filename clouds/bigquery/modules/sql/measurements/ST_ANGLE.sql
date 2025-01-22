@@ -8,7 +8,7 @@ RETURNS FLOAT64
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_MEASUREMENTS_BUCKET@@"]
 )
 AS """
     if (!geojsonStart || !geojsonMid || !geojsonEnd) {
@@ -18,7 +18,7 @@ AS """
     if(mercator != null) {
         options.mercator = mercator;
     }
-    return lib.measurements.angle(JSON.parse(geojsonStart), JSON.parse(geojsonMid), JSON.parse(geojsonEnd), options);
+    return measurementsLib.angle(JSON.parse(geojsonStart), JSON.parse(geojsonMid), JSON.parse(geojsonEnd), options);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_ANGLE`

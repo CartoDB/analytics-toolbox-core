@@ -45,12 +45,27 @@ ifdef MAKE_LIB
 endif
 
 build-libs: build-install $(NODE_MODULES_DEV)
-	NAME=lib \
-	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	DIRS=$(LIBS_DIR) \
-	FILENAME=index.js \
-	OUTPUT=$(BUILD_DIR)/index.js \
-	rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+ifdef UNIT_TEST
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all`; do \
+		NAME=$${f}Lib \
+		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+		DIRS=$(LIBS_DIR) \
+		FILENAME=$${f}.js \
+		OUTPUT=$(BUILD_DIR)/$${f}.js \
+		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+	done
+else
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)`; do \
+		NAME=$${f}Lib \
+		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+		DIRS=$(LIBS_DIRS) \
+		FILENAME=$${f}.js \
+		OUTPUT=$(BUILD_DIR)/$${f}.js \
+		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
+	done
+endif
 
 build-install:
 	for d in $(shell echo $(LIBS_DIRS) | tr "," "\n"); do \
@@ -59,7 +74,10 @@ build-install:
 
 deploy: check build
 	echo "Deploying libraries..."
-	$(GSUTIL) cp -r $(BUILD_DIR)/index.js $(BQ_LIBRARY_BUCKET)
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)`; do \
+		$(GSUTIL) cp -r $(BUILD_DIR)/$${f}.js $(BQ_LIBRARY_BUCKET)_$${f}.js; \
+	done
 	# Provisional for WASM version of tiler
 ifdef MAKE_LIB
 	echo "Deploying tiler library..."

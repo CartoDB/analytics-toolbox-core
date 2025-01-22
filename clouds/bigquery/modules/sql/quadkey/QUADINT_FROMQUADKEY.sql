@@ -8,8 +8,8 @@ RETURNS INT64
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_QUADKEY_BUCKET@@"]
 )
 AS """
-    return lib.quadkey.quadintFromQuadkey(quadkey).toString();
+    return quadkeyLib.quadintFromQuadkey(quadkey).toString();
 """;

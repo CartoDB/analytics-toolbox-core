@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// Build the modules file based on the input filters
-// and ordered to solve the dependencies
+// List the JavaScript libraries based on the input filters to the SQL functions
+
 
 // ./build_modules.js modules --output=build --diff="clouds/bigquery/modules/sql/quadbin/QUADBIN_TOZXY.sql"
 // ./build_modules.js modules --output=build --functions=ST_TILEENVELOPE
@@ -13,26 +13,13 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
-const outputDir = argv.output || 'build';
-const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
-const libraryBucket = argv.librarybucket;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
 
-if (all) {
-    console.log('- Build all');
-} else if (diff && diff.length) {
-    console.log(`- Build diff: ${argv.diff}`);
-} else if (modulesFilter && modulesFilter.length) {
-    console.log(`- Build modules: ${argv.modules}`);
-} else if (functionsFilter && functionsFilter.length) {
-    console.log(`- Build functions: ${argv.functions}`);
-}
-
-// Convert diff to modules
+// Convert diff to modules/functions
 if (diff.length) {
     const patternsAll = [
         /\.github\/workflows\/bigquery\.yml/,
@@ -45,14 +32,12 @@ if (diff.length) {
     const patternModulesTest = /clouds\/bigquery\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
     if (diffAll) {
-        console.log('-- all');
         all = diffAll;
     } else {
         const modulesSql = [...diff.matchAll(patternModulesSql)].map(m => m[1]);
         const modulesTest = [...diff.matchAll(patternModulesTest)].map(m => m[1]);
         const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
         if (diffModulesFilter) {
-            console.log(`-- modules: ${diffModulesFilter}`);
             modulesFilter = diffModulesFilter;
         }
     }
@@ -86,13 +71,13 @@ for (let inputDir of inputDirs) {
 // Check filters
 modulesFilter.forEach(m => {
     if (!functions.map(fn => fn.module).includes(m)) {
-        console.log(`ERROR: Module not found ${m}`);
+        process.stderr.write(`ERROR: Module not found ${m}\n`);
         process.exit(1);
     }
 });
 functionsFilter.forEach(f => {
     if (!functions.map(fn => fn.name).includes(f)) {
-        console.log(`ERROR: Function not found ${f}`);
+        process.stderr.write(`ERROR: Function not found ${f}`);
         process.exit(1);
     }
 });
@@ -120,19 +105,18 @@ if (!nodeps) {
 }
 
 // Check circular dependencies
-if (!nodeps) {
-    functions.forEach(mainFunction => {
-        functions.forEach(depFunction => {
-            if (mainFunction.dependencies.includes(depFunction.name) &&
-                depFunction.dependencies.includes(mainFunction.name)) {
-                console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
-                process.exit(1);
-            }
-        });
+functions.forEach(mainFunction => {
+    functions.forEach(depFunction => {
+        if (mainFunction.dependencies.includes(depFunction.name) &&
+            depFunction.dependencies.includes(mainFunction.name)) {
+            process.stderr.write(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+            process.exit(1);
+        }
     });
-}
+});
 
-// Filter and order functions
+
+// Filter functions
 const output = [];
 function add (f, include) {
     include = include || all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
@@ -148,50 +132,8 @@ function add (f, include) {
 }
 functions.forEach(f => add(f));
 
-// Replace environment variables
-let separator;
-if (argv.production) {
-    separator = '\n';
-} else {
-    separator = '\n-->\n';  // marker to future SQL split
-}
-let content = output.map(f => f.content).join(separator);
+const content = output.map(f => f.content).join('\n');
+const libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))]
+    .map(l => l.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase());
 
-function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))];
-    for (let library of libraries) {
-        const libraryName = library.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase() + '.js';
-        const libraryPath = path.join(libsBuildDir, libraryName);
-        if (fs.existsSync(libraryPath)) {
-            const libraryBucketPath = libraryBucket + '_' + libraryName;
-            text = text.replace(new RegExp(library, 'g'), libraryBucketPath);
-        }
-        else {
-            console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
-            process.exit(1);
-        }
-    }
-    const replacements = process.env.REPLACEMENTS.split(' ');
-    for (let replacement of replacements) {
-        if (replacement) {
-            const pattern = new RegExp(`@@${replacement}@@`, 'g');
-            text = text.replace(pattern, process.env[replacement]);
-        }
-    }
-    text = text.replace(/@@SKIP_DEP@@/g, '');
-    return text;
-}
-
-if (argv.dropfirst) {
-    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
-    content = header + separator + content
-}
-
-const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
-content += separator + footer;
-
-content = apply_replacements(content);
-
-// Write modules.sql file
-fs.writeFileSync(path.join(outputDir, 'modules.sql'), content);
-console.log(`Write ${outputDir}/modules.sql`);
+process.stdout.write(libraries.join(' '));
