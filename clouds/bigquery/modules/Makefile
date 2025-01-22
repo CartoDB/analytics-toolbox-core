@@ -57,7 +57,7 @@ build: $(NODE_MODULES_DEV)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst) --librarybucket=$(BQ_LIBRARY_BUCKET)
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst) --librarybucket=$(BQ_LIBRARY_BUCKET) --makelib=$(MAKE_LIB)
 
 deploy: check build
 	echo "Deploying modules..."

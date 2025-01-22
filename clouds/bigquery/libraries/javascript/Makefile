@@ -46,8 +46,8 @@ endif
 
 build-libs: build-install $(NODE_MODULES_DEV)
 ifdef UNIT_TEST
-	$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all 1>/dev/null # Check errors
-	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all`; do \
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all --makelib=$(MAKE_LIB) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all --makelib=$(MAKE_LIB)`; do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIR) \
@@ -56,8 +56,8 @@ ifdef UNIT_TEST
 		rollup --config $(COMMON_DIR)/rollup.config.js $(BUILD_PARAMS); \
 	done
 else
-	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) 1>/dev/null # Check errors
-	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)`; do \
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB)`; do \
 		NAME=$${f}Lib \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIRS) \
@@ -74,8 +74,8 @@ build-install:
 
 deploy: check build
 	echo "Deploying libraries..."
-	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) 1>/dev/null # Check errors
-	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)`; do \
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB)`; do \
 		$(GSUTIL) cp -r $(BUILD_DIR)/$${f}.js $(BQ_LIBRARY_BUCKET)_$${f}.js; \
 	done
 	# Provisional for WASM version of tiler

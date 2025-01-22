@@ -18,6 +18,7 @@ const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 const libraryBucket = argv.librarybucket;
+const makelib = argv.makelib;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
@@ -160,7 +161,11 @@ let content = output.map(f => f.content).join(separator);
 function apply_replacements (text) {
     const libraries = [... new Set(text.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))];
     for (let library of libraries) {
-        const libraryName = library.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase() + '.js';
+        let libraryName = library.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase();
+        if (makelib == libraryName) {
+            continue;
+        }
+        libraryName += '.js';
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryBucketPath = libraryBucket + '_' + libraryName;

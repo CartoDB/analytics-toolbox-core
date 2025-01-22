@@ -50,7 +50,8 @@ build:
 build-libraries:
 	mkdir -p $(BUILD_DIR)/libs
 	$(MAKE) -C libraries/javascript build
-	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)`; do \
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB)`; do \
 		cp libraries/javascript/build/$${f}.js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT)_$${f}.js; \
 	done
 ifdef MAKE_LIB

@@ -15,6 +15,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const diff = argv.diff || [];
 const nodeps = argv.nodeps;
+const makelib = argv.makelib;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
@@ -133,7 +134,12 @@ function add (f, include) {
 functions.forEach(f => add(f));
 
 const content = output.map(f => f.content).join('\n');
-const libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))]
+let libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))]
     .map(l => l.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase());
+
+// Exclude libraries pointed by makelib as they are deployed separately
+if (makelib) {
+    libraries = libraries.filter(l => l !== makelib);
+}
 
 process.stdout.write(libraries.join(' '));
