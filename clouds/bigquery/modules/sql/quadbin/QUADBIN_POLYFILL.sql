@@ -7,7 +7,10 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_POLYFILL_INIT`
 RETURNS ARRAY<INT64>
 AS ((
     WITH __bbox AS (
-        SELECT ST_BOUNDINGBOX(geog) AS box
+        SELECT IF(ST_DIMENSION(geog) = 2,
+            ST_BOUNDINGBOX(`@@BQ_DATASET@@.ST_ENVELOPE`(ARRAY[geog])),
+            ST_BOUNDINGBOX(geog)
+        ) AS box
     ),
     __params AS (
         SELECT

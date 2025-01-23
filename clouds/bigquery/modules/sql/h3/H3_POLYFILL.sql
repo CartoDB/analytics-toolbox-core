@@ -130,7 +130,10 @@ AS ((
         IF(resolution < 0 OR resolution > 15,
             ERROR('Invalid resolution, should be between 0 and 15'), (
             WITH __bbox AS (
-                SELECT ST_BOUNDINGBOX(geog) AS box
+                SELECT IF(ST_DIMENSION(geog) = 2,
+                    ST_BOUNDINGBOX(`@@BQ_DATASET@@.ST_ENVELOPE`(ARRAY[geog])),
+                    ST_BOUNDINGBOX(geog)
+                ) AS box
             ),
             __params AS (
                 SELECT
