@@ -134,7 +134,7 @@ function add (f, include) {
 functions.forEach(f => add(f));
 
 const content = output.map(f => f.content).join('\n');
-let libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))]
+let libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_[^@]*?_BUCKET@@', 'g')))]
     .map(l => l.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase());
 
 // Exclude libraries pointed by makelib as they are deployed separately
