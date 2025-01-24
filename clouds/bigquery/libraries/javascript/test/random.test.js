@@ -1,5 +1,5 @@
-const lib = require('../build/index');
+const randomLib = require('../build/random');
 
 test('random library defined', () => {
-    expect(lib.random.generateRandomPointsInPolygon).toBeDefined();
+    expect(randomLib.generateRandomPointsInPolygon).toBeDefined();
 });

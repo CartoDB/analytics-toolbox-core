@@ -8,13 +8,13 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_TRANSFORMATIONS_BUCKET@@"]
 )
 AS """
     if (!geojson) {
         return null;
     }
-    const medianCenter = lib.transformations.centerMedian(lib.transformations.feature(JSON.parse(geojson)));
+    const medianCenter = transformationsLib.centerMedian(transformationsLib.feature(JSON.parse(geojson)));
     return JSON.stringify(medianCenter.geometry);
 """;
 

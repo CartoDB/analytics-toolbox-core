@@ -8,11 +8,11 @@ RETURNS INT64
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_S2_BUCKET@@"]
 )
 AS """
     if (!quadkey) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.s2.keyToId(quadkey);
+    return s2Lib.keyToId(quadkey);
 """;

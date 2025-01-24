@@ -9,10 +9,10 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_PLACEKEY_BUCKET@@"]
 )
 AS """
-    return lib.placekey.h3ToPlacekey(h3Index);
+    return placekeyLib.h3ToPlacekey(h3Index);
 """;
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.PLACEKEY_FROMH3`

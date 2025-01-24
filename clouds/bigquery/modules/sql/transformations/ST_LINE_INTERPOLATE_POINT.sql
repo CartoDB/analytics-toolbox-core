@@ -8,7 +8,7 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_TRANSFORMATIONS_BUCKET@@"]
 )
 AS """
     if (!geojson || distance == null) {
@@ -18,7 +18,7 @@ AS """
     if (units) {
         options.units = units;
     }
-    const along = lib.transformations.along(JSON.parse(geojson), distance, options);
+    const along = transformationsLib.along(JSON.parse(geojson), distance, options);
     return JSON.stringify(along.geometry);
 """;
 

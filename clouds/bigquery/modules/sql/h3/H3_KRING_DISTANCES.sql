@@ -8,16 +8,16 @@ RETURNS ARRAY<STRUCT<index STRING, distance INT64>>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
-    if (!lib.h3.h3IsValid(origin)) {
+    if (!h3Lib.h3IsValid(origin)) {
         throw new Error('Invalid input origin')
     }
     if (size == null || size < 0) {
         throw new Error('Invalid input size')
     }
-    const kringDistances = lib.h3.kRingDistances(origin, size);
+    const kringDistances = h3Lib.kRingDistances(origin, size);
     const output = [];
     for (let distance = 0; distance <= size; distance++) {
         const indexes = kringDistances[distance];

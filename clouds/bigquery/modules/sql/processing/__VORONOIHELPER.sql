@@ -8,7 +8,7 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_PROCESSING_BUCKET@@"]
 )
 AS """
     if (!geojson) {
@@ -26,8 +26,8 @@ AS """
         options.bbox = bbox;
     }
 
-    const featuresCollection = lib.processing.featureCollection(geojson.map(x => lib.processing.feature(JSON.parse(x))));
-    const voronoiPolygons = lib.processing.voronoi(featuresCollection, options);
+    const featuresCollection = processingLib.featureCollection(geojson.map(x => processingLib.feature(JSON.parse(x))));
+    const voronoiPolygons = processingLib.voronoi(featuresCollection, options);
 
     const returnArray = [];
 
@@ -39,7 +39,7 @@ AS """
 
     if (typeOfVoronoi === 'lines') {
         voronoiPolygons.features.forEach( function(item) {
-            let lineFeature = lib.processing.polygonToLine(item.geometry);
+            let lineFeature = processingLib.polygonToLine(item.geometry);
             returnArray.push(JSON.stringify(lineFeature.geometry));
         });
     }

@@ -8,13 +8,13 @@ RETURNS INT64
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     if (!index1 || !index2) {
         return null;
     }
-    let dist = lib.h3.h3Distance(index1, index2);
+    let dist = h3Lib.h3Distance(index1, index2);
     if (dist < 0) {
         dist = null;
     }

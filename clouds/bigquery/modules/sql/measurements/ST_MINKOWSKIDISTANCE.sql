@@ -8,7 +8,7 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_MEASUREMENTS_BUCKET@@"]
 )
 AS """
     if (!geojson) {
@@ -18,8 +18,8 @@ AS """
     if(p != null) {
         options.p = Number(p);
     }
-    const features = lib.measurements.featureCollection(geojson.map(x => lib.measurements.feature(JSON.parse(x))));
-    const distance = lib.measurements.distanceWeight(features, options);
+    const features = measurementsLib.featureCollection(geojson.map(x => measurementsLib.feature(JSON.parse(x))));
+    const distance = measurementsLib.distanceWeight(features, options);
     return distance;
 """;
 

@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__CLUSTERKMEANS`
 RETURNS ARRAY<STRUCT<cluster INT64, geom STRING>>
 DETERMINISTIC
 LANGUAGE js
-OPTIONS (library = ["@@BQ_LIBRARY_BUCKET@@"])
+OPTIONS (library = ["@@BQ_LIBRARY_CLUSTERING_BUCKET@@"])
 AS """
     if (!geojson) {
         return null;
@@ -19,8 +19,8 @@ AS """
         options.numberOfClusters = parseInt(Math.sqrt(geojson.length/2))
     }
     options.mutate = true;
-    const featuresCollection = lib.clustering.featureCollection(lib.clustering.prioritizeDistinctSort(geojson).map(x => lib.clustering.feature(JSON.parse(x))));
-    lib.clustering.clustersKmeans(featuresCollection, options);
+    const featuresCollection = clusteringLib.featureCollection(clusteringLib.prioritizeDistinctSort(geojson).map(x => clusteringLib.feature(JSON.parse(x))));
+    clusteringLib.clustersKmeans(featuresCollection, options);
     const cluster = [];
     featuresCollection.features.forEach(function(item, index, array) {
         cluster.push({cluster: item.properties.cluster, geom: JSON.stringify(item.geometry)});
