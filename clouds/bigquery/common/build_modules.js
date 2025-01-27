@@ -159,7 +159,7 @@ if (argv.production) {
 let content = output.map(f => f.content).join(separator);
 
 function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@BQ_LIBRARY_.*_BUCKET@@', 'g')))];
+    const libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_[^@]*?_BUCKET@@', 'g')))];
     for (let library of libraries) {
         let libraryName = library.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase();
         if (makelib == libraryName) {

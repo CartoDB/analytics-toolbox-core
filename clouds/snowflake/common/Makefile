@@ -38,8 +38,8 @@ endif
 ifndef SF_PASSWORD
 	$(error SF_PASSWORD is undefined)
 endif
-ifeq ($(shell echo "$(SF_ACCOUNT)" | grep -E "^([^.]+)\.([^.]+)$$"),)
-	$(error SF_ACCOUNT is not valid. Must be: <account>.<region>)
+ifndef SF_ACCOUNT
+	$(error SF_ACCOUNT is undefined)
 endif
 
 venv3:
