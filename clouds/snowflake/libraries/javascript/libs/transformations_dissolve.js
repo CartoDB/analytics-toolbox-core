@@ -72,23 +72,36 @@ function carto_dissolve(geojson) {
 }
 
 /**
- * Buffer single Feature/Geometry
+ * Dissolve single Feature/Geometry
  *
  * @private
- * @param {Feature<any>} geojson input to be buffered
- * @param {number} radius distance to draw the buffer
- * @param {string} [units='kilometers'] any of the options supported by turf units
- * @param {number} [steps=8] number of steps
- * @returns {Feature<Polygon|MultiPolygon>} buffered feature
+ * @param {Feature<any>} geojson input to be dissolved
+ * @returns {Feature<Polygon|MultiPolygon>} dissolved feature
  */
 function dissolveFeature(geojson) {
   var properties = geojson.properties || {};
   var geometry = geojson.type === "Feature" ? geojson.geometry : geojson;
   
-  const dissolved = dissolve(geometry);
+  if (geometry.type == "MultiPolygon") {
+    // Build a FeatureCollection as expected by TurfJS.dissolve - https://turfjs.org/docs/api/dissolve
+    const fc = {
+      "type": "FeatureCollection",
+      "features": geometry.coordinates.map(
+        (ring) => ({"type": "Feature", "geometry": {"type": "Polygon", "coordinates": ring}, "properties": properties})
+      )
+    }
+    const dissolved = dissolve(fc);
+    // Build a single geometry from returned FeatureCollection
+    const mp = {
+      "type": "MultiPolygon",
+      "coordinates": dissolved.features.map(
+        (feature) => (feature.geometry.coordinates)
+      )
+    }
+    return feature(mp, properties);
+  }
   
-  dissolved.extra = "All done";
-  return feature(dissolved, properties);
+  throw new Error("Unsupported geometry type: "+geometry.type)
 
   /*
   // Geometry Types faster than jsts
