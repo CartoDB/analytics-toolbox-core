@@ -14,7 +14,7 @@ AS $$
 
     @@SF_LIBRARY_TRANSFORMATIONS_DISSOLVE@@
     
-    const dissolve = transformationsDissolveLib.carto_dissolve(JSON.parse(GEOJSON));
+    const dissolve = transformationsDissolveLib.cartoDissolve(JSON.parse(GEOJSON));
     if (dissolve) {
         return JSON.stringify(dissolve.geometry);
     }
