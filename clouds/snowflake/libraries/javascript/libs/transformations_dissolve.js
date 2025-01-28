@@ -47,6 +47,17 @@ function carto_dissolve(geojson) {
   // validation
   if (!geojson) throw new Error("geojson is required");
 
+  var feature_collection = geojson;
+
+  if (geojson.type == "GeometryCollection") {
+    feature_collection = {
+      "type": "FeatureCollection",
+      "features": geojson.geometries.map(
+        (geom) => ({"type": "Feature", "properties": geojson.properties, "geometry": geom})
+      )
+    }
+  }
+
   var results = [];
   /*
   switch (geojson.type) {
@@ -68,7 +79,7 @@ function carto_dissolve(geojson) {
       return featureCollection(results);
   }
   */
-  return dissolveFeature(geojson);
+  return dissolveFeature(feature_collection);
 }
 
 /**
