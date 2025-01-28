@@ -79,6 +79,18 @@ function carto_dissolve(geojson) {
  * @returns {Feature<Polygon|MultiPolygon>} dissolved feature
  */
 function dissolveFeature(geojson) {
+  if (geojson.type == "FeatureCollection") {
+    const dissolved = dissolve(geojson);
+    // Build a single geometry from returned FeatureCollection
+    const mp = {
+      "type": "MultiPolygon",
+      "coordinates": dissolved.features.map(
+        (feature) => (feature.geometry.coordinates)
+      )
+    }
+    return feature(mp, properties);
+  }
+
   var properties = geojson.properties || {};
   var geometry = geojson.type === "Feature" ? geojson.geometry : geojson;
   
@@ -101,7 +113,7 @@ function dissolveFeature(geojson) {
     return feature(mp, properties);
   }
   
-  throw new Error("Unsupported geometry type: "+geometry.type)
+  throw new Error("Unsupported type: "+geometry.type)
 
   /*
   // Geometry Types faster than jsts
