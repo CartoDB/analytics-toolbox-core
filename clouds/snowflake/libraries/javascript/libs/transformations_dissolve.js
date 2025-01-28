@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-import center from '@turf/dissolve';
+import dissolve from '@turf/dissolve';
 
 // Importing the objects from 'turf-jsts' generates a bundle of 356.96 kB.
 // This is too big for a Snowflake UDF: Function definition too long.
@@ -16,7 +16,7 @@ import GeoJSONWriter from 'turf-jsts/src/org/locationtech/jts/io/GeoJSONWriter';
 import BufferOp from 'turf-jsts/src/org/locationtech/jts/operation/buffer/BufferOp';
 
 import { featureEach, geomEach } from '@turf/meta';
-import { geoAzimuthalEquidistant } from 'd3-geo';
+// import { geoAzimuthalEquidistant } from 'd3-geo';
 import { featureCollection, earthRadius, radiansToLength, lengthToRadians, feature } from '@turf/helpers';
 
 
@@ -43,24 +43,12 @@ import { featureCollection, earthRadius, radiansToLength, lengthToRadians, featu
  * //addToMap
  * var addToMap = [point, buffered]
  */
-function dissolve(geojson, radius, options) {
-  // Optional params
-  options = options || {};
-
-  // use user supplied options or default values
-  var units = options.units || "kilometers";
-  var steps = options.steps || 8;
-
+function carto_dissolve(geojson) {
   // validation
   if (!geojson) throw new Error("geojson is required");
-  if (typeof options !== "object") throw new Error("options must be an object");
-  if (typeof steps !== "number") throw new Error("steps must be an number");
-
-  // Allow negative buffers ("erosion") or zero-sized buffers ("repair geometry")
-  if (radius === undefined) throw new Error("radius is required");
-  if (steps <= 0) throw new Error("steps must be greater than 0");
 
   var results = [];
+  /*
   switch (geojson.type) {
     case "GeometryCollection":
       geomEach(geojson, function (geometry) {
@@ -79,7 +67,8 @@ function dissolve(geojson, radius, options) {
       });
       return featureCollection(results);
   }
-  return bufferFeature(geojson, radius, units, steps);
+  */
+  return dissolveFeature(geojson);
 }
 
 /**
@@ -92,10 +81,16 @@ function dissolve(geojson, radius, options) {
  * @param {number} [steps=8] number of steps
  * @returns {Feature<Polygon|MultiPolygon>} buffered feature
  */
-function bufferFeature(geojson, radius, units, steps) {
+function dissolveFeature(geojson) {
   var properties = geojson.properties || {};
   var geometry = geojson.type === "Feature" ? geojson.geometry : geojson;
+  
+  const dissolved = dissolve(geometry);
+  
+  dissolved.extra = "All done";
+  return feature(dissolved, properties);
 
+  /*
   // Geometry Types faster than jsts
   if (geometry.type === "GeometryCollection") {
     var results = [];
@@ -131,6 +126,7 @@ function bufferFeature(geojson, radius, units, steps) {
   };
 
   return feature(result, properties);
+  */
 }
 
 /**
@@ -189,5 +185,5 @@ function defineProjection(geojson) {
 }
 
 export default {
-    dissolve
+    carto_dissolve
 };
