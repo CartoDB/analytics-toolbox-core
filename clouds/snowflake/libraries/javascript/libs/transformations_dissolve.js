@@ -47,39 +47,76 @@ function carto_dissolve(geojson) {
   // validation
   if (!geojson) throw new Error("geojson is required");
 
-  var feature_collection = geojson;
+  const polygonGeoms = unspoolPolygons(geojson);
 
-  if (geojson.type == "GeometryCollection") {
-    feature_collection = {
+  return dissolveFeature(
+    {
       "type": "FeatureCollection",
-      "features": geojson.geometries.map(
+      "features": polygonGeoms.map(
         (geom) => ({"type": "Feature", "properties": geojson.properties, "geometry": geom})
       )
     }
+  );
+}
+
+/**
+ * Extract list of polygon geometries from GeoJSON input
+ *
+ * @private
+ * @param geojson input to be searched for polygons
+ * @returns list of GeoJSON polygon geometries
+ */
+function unspoolPolygons(geojson)
+{
+  var polygons = [];
+  // console.log("unspoolPolygons "+JSON.stringify(geojson))
+
+  switch (geojson.type) {
+    case "Polygon":
+      // Pass along simple polygons
+      polygons.push(geojson);
+      break;
+
+    case "MultiPolygon":
+      // Break multipolygons into individual polygons
+      geojson.coordinates.map(
+        function(coords) {
+          polygons.push({"type": "Polygon", "coordinates": coords});
+        }
+      )
+      break;
+
+    case "GeometryCollection":
+      // Recursively descend into geometry collections
+      geomEach(
+        geojson,
+        function(geom) {
+          var subgeoms = unspoolPolygons(geom);
+          // console.log("subgeoms "+JSON.stringify(subgeoms))
+          for (var i in subgeoms) {
+            if (subgeoms[i]) { polygons.push(subgeoms[i]) }
+          }
+        }
+      )
+      break;
+
+    case "FeatureCollection":
+      // Recursively descend into feature collections
+      featureEach(
+        geojson,
+        function(feat) {
+          var geoms = unspoolPolygons(feat.geometry);
+          // console.log("geoms "+JSON.stringify(geoms))
+          for (var i in geoms) {
+            if (geoms[i]) { polygons.push(geoms[i]) }
+          }
+        }
+      )
+      break;
   }
 
-  var results = [];
-  /*
-  switch (geojson.type) {
-    case "GeometryCollection":
-      geomEach(geojson, function (geometry) {
-        var buffered = bufferFeature(geometry, radius, units, steps);
-        if (buffered) results.push(buffered);
-      });
-      return featureCollection(results);
-    case "FeatureCollection":
-      featureEach(geojson, function (feature) {
-        var multiBuffered = bufferFeature(feature, radius, units, steps);
-        if (multiBuffered) {
-          featureEach(multiBuffered, function (buffered) {
-            if (buffered) results.push(buffered);
-          });
-        }
-      });
-      return featureCollection(results);
-  }
-  */
-  return dissolveFeature(feature_collection);
+  // console.log("polygons "+JSON.stringify(polygons))
+  return polygons;
 }
 
 /**
@@ -89,80 +126,23 @@ function carto_dissolve(geojson) {
  * @param {Feature<any>} geojson input to be dissolved
  * @returns {Feature<Polygon|MultiPolygon>} dissolved feature
  */
-function dissolveFeature(geojson) {
-  if (geojson.type == "FeatureCollection") {
-    const dissolved = dissolve(geojson);
-    // Build a single geometry from returned FeatureCollection
-    const mp = {
+function dissolveFeature(geojson)
+{
+  if (geojson.type != "FeatureCollection") throw new Error("Not a FeatureCollection");
+
+  // Pass off to TurfJS dissolve()
+  const dissolved_fc = dissolve(geojson);
+
+  // Build a single geometry from returned FeatureCollection
+  return feature(
+    {
       "type": "MultiPolygon",
-      "coordinates": dissolved.features.map(
+      "coordinates": dissolved_fc.features.map(
         (feature) => (feature.geometry.coordinates)
       )
-    }
-    return feature(mp, properties);
-  }
-
-  var properties = geojson.properties || {};
-  var geometry = geojson.type === "Feature" ? geojson.geometry : geojson;
-  
-  if (geometry.type == "MultiPolygon") {
-    // Build a FeatureCollection as expected by TurfJS.dissolve - https://turfjs.org/docs/api/dissolve
-    const fc = {
-      "type": "FeatureCollection",
-      "features": geometry.coordinates.map(
-        (ring) => ({"type": "Feature", "geometry": {"type": "Polygon", "coordinates": ring}, "properties": properties})
-      )
-    }
-    const dissolved = dissolve(fc);
-    // Build a single geometry from returned FeatureCollection
-    const mp = {
-      "type": "MultiPolygon",
-      "coordinates": dissolved.features.map(
-        (feature) => (feature.geometry.coordinates)
-      )
-    }
-    return feature(mp, properties);
-  }
-  
-  throw new Error("Unsupported type: "+geometry.type)
-
-  /*
-  // Geometry Types faster than jsts
-  if (geometry.type === "GeometryCollection") {
-    var results = [];
-    geomEach(geojson, function (geometry) {
-      var buffered = bufferFeature(geometry, radius, units, steps);
-      if (buffered) results.push(buffered);
-    });
-    return featureCollection(results);
-  }
-
-  // Project GeoJSON to Azimuthal Equidistant projection (convert to Meters)
-  var projection = defineProjection(geometry);
-  var projected = {
-    type: geometry.type,
-    coordinates: projectCoords(geometry.coordinates, projection),
-  };
-
-  // JSTS buffer operation
-  var reader = new GeoJSONReader();
-  var geom = reader.read(projected);
-  var distance = radiansToLength(lengthToRadians(radius, units), "meters");
-  var buffered = BufferOp.bufferOp(geom, distance, steps);
-  var writer = new GeoJSONWriter();
-  buffered = writer.write(buffered);
-
-  // Detect if empty geometries
-  if (coordsIsNaN(buffered.coordinates)) return undefined;
-
-  // Unproject coordinates (convert to Degrees)
-  var result = {
-    type: buffered.type,
-    coordinates: unprojectCoords(buffered.coordinates, projection),
-  };
-
-  return feature(result, properties);
-  */
+    },
+    geojson.properties
+  );
 }
 
 /**
