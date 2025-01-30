@@ -8,7 +8,7 @@ All notable commits to this project will be documented in this file.
 
 - chore: add skip dependency tag in bigquery build_modules (#538)
 - fix(h3,quadbin): H3_POLYFILL and QUADBIN_POLYFILL functions not working with holes (#542)
-- chore(bq): split JS libraries generation (#541, #543)
+- chore: split JS libraries generation (#541, #543)
 
 ## [1.2.4] - 2024-10-28
 
