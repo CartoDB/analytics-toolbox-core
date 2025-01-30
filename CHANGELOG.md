@@ -12,7 +12,7 @@ All notable commits to this project will be documented in this file.
 - docs(sf|h3): update h3_polyfill_table docs as it does not support points or lines (#539)
 - chore(deps): bump jinja2 from 3.1.3 to 3.1.5 in /clouds/databricks/common (#540)
 - fix(bq|h3,quadbin): H3_POLYFILL and QUADBIN_POLYFILL functions not working with holes (#542)
-- chores(bq): split JS libraries generation (#541, #543)
+- chore(bq): split JS libraries generation (#541, #543)
 - chore(sf): SF_ACCOUNT no longer follows "account.region" format (#544)
 
 ## 2024-10-28
