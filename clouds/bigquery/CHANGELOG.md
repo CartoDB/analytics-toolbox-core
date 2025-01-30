@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.5] - 2025-01-30
+
+- fix(h3,quadbin): H3_POLYFILL and QUADBIN_POLYFILL functions not working with holes (#542)
+
 ## [1.2.4] - 2024-10-28
 
 - chore: fix @google-cloud/bigquery to version 7.9.0 (#531)
