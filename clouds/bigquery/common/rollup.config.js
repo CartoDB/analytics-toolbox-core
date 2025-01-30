@@ -18,6 +18,11 @@ for (let dir of dirs) {
     }
 }
 
+if (!input && filename) {
+    console.log(`Error: library "${filename}" does not exist. Add it or revisit the replacement "@@BQ_LIBRARY_${path.parse(filename).name.toUpperCase()}@@" in one of your sql files.`);
+    process.exit(1);
+}
+
 // Format library name to camel case
 const name = process.env.NAME.replace(/(_\w)/g, k => k[1].toUpperCase());
 

@@ -8,8 +8,8 @@ RETURNS BOOLEAN
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_PLACEKEY_BUCKET@@"]
 )
 AS """
-    return lib.placekey.placekeyIsValid(placekey);
+    return placekeyLib.placekeyIsValid(placekey);
 """;

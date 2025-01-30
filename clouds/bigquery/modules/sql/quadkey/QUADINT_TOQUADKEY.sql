@@ -8,11 +8,11 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_QUADKEY_BUCKET@@"]
 )
 AS """
     if (quadint == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.quadkey.quadkeyFromQuadint(quadint);
+    return quadkeyLib.quadkeyFromQuadint(quadint);
 """;

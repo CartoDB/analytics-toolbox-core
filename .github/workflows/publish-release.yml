@@ -97,7 +97,6 @@ jobs:
           pr_title: Merge release into main branch
           pr_body: |
             This PR merges the release branch back into main.
-            This happens to ensure that the updates that happend on the stable branch.
       - name: Merge PR if possible
         continue-on-error: true
         env:

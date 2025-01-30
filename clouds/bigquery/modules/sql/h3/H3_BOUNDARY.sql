@@ -8,18 +8,18 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     if (!index) {
         return null;
     }
 
-    if (!lib.h3.h3IsValid(index)) {
+    if (!h3Lib.h3IsValid(index)) {
         return null;
     }
 
-    const coords = lib.h3.h3ToGeoBoundary(index, true);
+    const coords = h3Lib.h3ToGeoBoundary(index, true);
     let output = `POLYGON((`;
     for (let i = 0; i < coords.length - 1; i++) {
         output += coords[i][0] + ` ` + coords[i][1] + `,`;

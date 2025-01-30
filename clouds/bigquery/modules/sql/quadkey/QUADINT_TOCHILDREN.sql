@@ -8,12 +8,12 @@ RETURNS ARRAY<INT64>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_QUADKEY_BUCKET@@"]
 )
 AS """
     if (quadint == null || resolution == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    const quadints = lib.quadkey.toChildren(quadint, Number(resolution));
+    const quadints = quadkeyLib.toChildren(quadint, Number(resolution));
     return quadints.map(String);
 """;

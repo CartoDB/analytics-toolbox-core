@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
+MODULES_DIRS ?= $(ROOT_DIR)/modules
 ESLINTRC_DIR ?= $(ROOT_DIR)/../..
 COMMON_DIR = $(ROOT_DIR)/common
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
@@ -49,7 +50,10 @@ build:
 build-libraries:
 	mkdir -p $(BUILD_DIR)/libs
 	$(MAKE) -C libraries/javascript build
-	cp libraries/javascript/build/index.js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT).js
+	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB) 1>/dev/null # Check errors
+	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) --makelib=$(MAKE_LIB)`; do \
+		cp libraries/javascript/build/$${f}.js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT)_$${f}.js; \
+	done
 ifdef MAKE_LIB
 	cp libraries/javascript/build/index_$(MAKE_LIB).js $(BUILD_DIR)/libs/$(BQ_LIBRARY_DEFAULT)_$(MAKE_LIB).js
 endif

@@ -8,11 +8,11 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_PLACEKEY_BUCKET@@"]
 )
 AS """
-    if (!lib.placekey.placekeyIsValid(placekey))  {
+    if (!placekeyLib.placekeyIsValid(placekey))  {
         return null;
     }
-    return lib.placekey.placekeyToH3(placekey);
+    return placekeyLib.placekeyToH3(placekey);
 """;

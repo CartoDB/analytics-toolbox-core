@@ -8,7 +8,7 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_TRANSFORMATIONS_BUCKET@@"]
 )
 AS """
     if (!geojson || radius == null) {
@@ -21,7 +21,7 @@ AS """
     if (steps != null) {
         options.steps = Number(steps);
     }
-    const buffer = lib.transformations.buffer(JSON.parse(geojson), Number(radius), options);
+    const buffer = transformationsLib.buffer(JSON.parse(geojson), Number(radius), options);
     return JSON.stringify(buffer.geometry);
 """;
 

@@ -8,11 +8,11 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     if (h3Array === null) {
         return null;
     }
-    return lib.h3.compact(h3Array);
+    return h3Lib.compact(h3Array);
 """;

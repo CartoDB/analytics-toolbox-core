@@ -8,7 +8,7 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_TRANSFORMATIONS_BUCKET@@"]
 )
 AS """
     if (!geojson) {
@@ -22,25 +22,25 @@ AS """
         options.units = units;
     }
 
-    const multiPoints = lib.transformations.multiPoint(geojson.map(x => JSON.parse(x).coordinates));
-    const nonDuplicates = lib.transformations.cleanCoords(multiPoints).geometry;
+    const multiPoints = transformationsLib.multiPoint(geojson.map(x => JSON.parse(x).coordinates));
+    const nonDuplicates = transformationsLib.cleanCoords(multiPoints).geometry;
     const arrayCoordinates = nonDuplicates.coordinates;
 
     // Point
     if (arrayCoordinates.length == 1) {
-        return JSON.stringify(lib.transformations.point(arrayCoordinates[0]).geometry);
+        return JSON.stringify(transformationsLib.point(arrayCoordinates[0]).geometry);
     } 
 
     // Segment
     if (arrayCoordinates.length == 2) {
         const start = arrayCoordinates[0];
         const end = arrayCoordinates[1];
-        const lineString = lib.transformations.lineString([start, end]);
+        const lineString = transformationsLib.lineString([start, end]);
         return JSON.stringify(lineString.geometry);
     }
 
-    const featuresCollection = lib.transformations.featureCollection(arrayCoordinates.map(x => lib.transformations.point(x)));
-    const hull = lib.transformations.concave(featuresCollection, options);
+    const featuresCollection = transformationsLib.featureCollection(arrayCoordinates.map(x => transformationsLib.point(x)));
+    const hull = transformationsLib.concave(featuresCollection, options);
     return JSON.stringify(hull.geometry);
 """;
 

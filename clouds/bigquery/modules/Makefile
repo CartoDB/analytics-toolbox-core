@@ -28,7 +28,7 @@ endif
 BQ_MODULE_LABEL ?= spatial_extension_module:core
 MODULE_PERMISSIONS_BASH ?= set_module_permissions.sh
 
-REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_LIBRARY_BUCKET BQ_PROJECT BQ_REGION"
+REPLACEMENTS = "BQ_DATASET BQ_VERSION_FUNCTION BQ_PACKAGE_VERSION BQ_PROJECT BQ_REGION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -57,7 +57,7 @@ build: $(NODE_MODULES_DEV)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/build_modules.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
-		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
+		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst) --librarybucket=$(BQ_LIBRARY_BUCKET) --makelib=$(MAKE_LIB)
 
 deploy: check build
 	echo "Deploying modules..."

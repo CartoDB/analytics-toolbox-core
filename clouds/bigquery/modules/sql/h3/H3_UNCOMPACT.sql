@@ -8,11 +8,11 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     if (h3Array === null || resolution === null || resolution < 0 || resolution > 15) {
         return null;
     }
-    return lib.h3.uncompact(h3Array, Number(resolution));
+    return h3Lib.uncompact(h3Array, Number(resolution));
 """;

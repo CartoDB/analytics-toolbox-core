@@ -15,7 +15,7 @@ RETURNS ARRAY<STRUCT<id INT64, z INT64, x INT64, y INT64>>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_QUADKEY_BUCKET@@"]
 )
 AS """
     if (longitude === undefined || longitude === null || latitude === undefined || latitude === null) {
@@ -28,8 +28,8 @@ AS """
 
     const qintIdx = [];
     for (let i = zoomMin; i <= zoomMax; i += zoomStep) {
-        const key = lib.quadkey.quadintFromLocation(longitude, latitude, i + intResolution);
-        const zxy = lib.quadkey.ZXYFromQuadint(key);
+        const key = quadkeyLib.quadintFromLocation(longitude, latitude, i + intResolution);
+        const zxy = quadkeyLib.ZXYFromQuadint(key);
         qintIdx.push({ id : key.toString(), z : i, x : zxy.x  >>> intResolution, y : zxy.y  >>> intResolution});
     }
     return qintIdx;

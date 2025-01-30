@@ -15,7 +15,7 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_CONSTRUCTORS_BUCKET@@"]
 )
 AS """
     if (!geojson || xSemiAxis == null || ySemiAxis == null) {
@@ -31,7 +31,7 @@ AS """
     if (steps != null) {
         options.steps = Number(steps);
     }
-    const ellipse = lib.constructors.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
+    const ellipse = constructorsLib.ellipse(JSON.parse(geojson), Number(xSemiAxis), Number(ySemiAxis), options);
     return JSON.stringify(ellipse.geometry);
 """;
 

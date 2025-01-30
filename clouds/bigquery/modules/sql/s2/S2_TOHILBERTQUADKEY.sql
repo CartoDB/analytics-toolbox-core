@@ -8,11 +8,11 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_S2_BUCKET@@"]
 )
 AS """
     if (id == null) {
         throw new Error('NULL argument passed to UDF');
     }
-    return lib.s2.idToKey(id);
+    return s2Lib.idToKey(id);
 """;

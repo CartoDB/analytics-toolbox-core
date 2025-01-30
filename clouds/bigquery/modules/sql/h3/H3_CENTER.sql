@@ -8,18 +8,18 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     if (!index) {
         return null;
     }
 
-    if (!lib.h3.h3IsValid(index)) {
+    if (!h3Lib.h3IsValid(index)) {
         return null;
     }
 
-    const center = lib.h3.h3ToGeo(index);
+    const center = h3Lib.h3ToGeo(index);
     return `POINT(`+center[1] + ` ` + center[0] + `)`;
 """;
 

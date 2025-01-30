@@ -1,8 +1,8 @@
-const lib = require('../build/index');
+const clusteringLib = require('../build/clustering');
 
 test('clustering library defined', () => {
-    expect(lib.clustering.featureCollection).toBeDefined();
-    expect(lib.clustering.feature).toBeDefined();
-    expect(lib.clustering.clustersKmeans).toBeDefined();
-    expect(lib.clustering.prioritizeDistinctSort).toBeDefined();
+    expect(clusteringLib.featureCollection).toBeDefined();
+    expect(clusteringLib.feature).toBeDefined();
+    expect(clusteringLib.clustersKmeans).toBeDefined();
+    expect(clusteringLib.prioritizeDistinctSort).toBeDefined();
 });

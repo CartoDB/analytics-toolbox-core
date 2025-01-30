@@ -8,7 +8,7 @@ RETURNS ARRAY<STRING>
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_H3_BUCKET@@"]
 )
 AS """
     const resolution = Number(_resolution)
@@ -21,28 +21,28 @@ AS """
         case 'GeometryCollection':
             featureGeometry.geometries.forEach(function (geom) {
                 if (geom.type === 'MultiPolygon') {
-                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry
+                    var clippedGeometryA = h3Lib.bboxClip(geom, bboxA).geometry
                     polygonCoordinatesA = polygonCoordinatesA.concat(clippedGeometryA.coordinates)
-                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry
+                    var clippedGeometryB = h3Lib.bboxClip(geom, bboxB).geometry
                     polygonCoordinatesB = polygonCoordinatesB.concat(clippedGeometryB.coordinates)
                 } else if (geom.type === 'Polygon') {
-                    var clippedGeometryA = lib.h3.bboxClip(geom, bboxA).geometry
+                    var clippedGeometryA = h3Lib.bboxClip(geom, bboxA).geometry
                     polygonCoordinatesA = polygonCoordinatesA.concat([clippedGeometryA.coordinates])
-                    var clippedGeometryB = lib.h3.bboxClip(geom, bboxB).geometry
+                    var clippedGeometryB = h3Lib.bboxClip(geom, bboxB).geometry
                     polygonCoordinatesB = polygonCoordinatesB.concat([clippedGeometryB.coordinates])
                 }
             })
         break
         case 'MultiPolygon':
-            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry
+            var clippedGeometryA = h3Lib.bboxClip(featureGeometry, bboxA).geometry
             polygonCoordinatesA = clippedGeometryA.coordinates
-            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry
+            var clippedGeometryB = h3Lib.bboxClip(featureGeometry, bboxB).geometry
             polygonCoordinatesB = clippedGeometryB.coordinates
         break
         case 'Polygon':
-            var clippedGeometryA = lib.h3.bboxClip(featureGeometry, bboxA).geometry
+            var clippedGeometryA = h3Lib.bboxClip(featureGeometry, bboxA).geometry
             polygonCoordinatesA = [clippedGeometryA.coordinates]
-            var clippedGeometryB = lib.h3.bboxClip(featureGeometry, bboxB).geometry
+            var clippedGeometryB = h3Lib.bboxClip(featureGeometry, bboxB).geometry
             polygonCoordinatesB = [clippedGeometryB.coordinates]
         break
         default:
@@ -54,11 +54,11 @@ AS """
     }
 
     let hexesA = polygonCoordinatesA.reduce(
-        (acc, coordinates) => acc.concat(lib.h3.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null)
     let hexesB = polygonCoordinatesB.reduce(
-        (acc, coordinates) => acc.concat(lib.h3.polyfill(coordinates, resolution, true)),
+        (acc, coordinates) => acc.concat(h3Lib.polyfill(coordinates, resolution, true)),
         []
     ).filter(h => h != null)
     hexes = [...hexesA, ...hexesB]
@@ -130,7 +130,10 @@ AS ((
         IF(resolution < 0 OR resolution > 15,
             ERROR('Invalid resolution, should be between 0 and 15'), (
             WITH __bbox AS (
-                SELECT ST_BOUNDINGBOX(geog) AS box
+                SELECT IF(ST_DIMENSION(geog) = 2,
+                    ST_BOUNDINGBOX(`@@BQ_DATASET@@.ST_ENVELOPE`(ARRAY[geog])),
+                    ST_BOUNDINGBOX(geog)
+                ) AS box
             ),
             __params AS (
                 SELECT

@@ -8,14 +8,14 @@ RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
 OPTIONS (
-    library = ["@@BQ_LIBRARY_BUCKET@@"]
+    library = ["@@BQ_LIBRARY_S2_BUCKET@@"]
 )
 AS """
     if (id == null) {
         throw new Error('NULL argument passed to UDF');
     }
     
-    const cornerLongLat = lib.s2.FromHilbertQuadKey(lib.s2.idToKey(id)).getCornerLatLngs();
+    const cornerLongLat = s2Lib.FromHilbertQuadKey(s2Lib.idToKey(id)).getCornerLatLngs();
 
     const wkt = `POLYGON((` +
         cornerLongLat[0]['lng'] + ` ` + cornerLongLat[0]['lat'] + `, ` +
