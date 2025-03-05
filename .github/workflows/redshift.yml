@@ -15,7 +15,7 @@ on:
   workflow_call:
 
 env:
-  NODE_VERSION: 14
+  NODE_VERSION: 20
   PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.13.1
   VIRTUALENV_VERSION: 20.15.1
@@ -42,7 +42,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
@@ -112,7 +112,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
@@ -152,7 +152,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn

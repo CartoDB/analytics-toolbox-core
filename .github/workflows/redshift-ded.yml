@@ -5,7 +5,7 @@ on:
     types: [closed, unlabeled, labeled, synchronize]
 
 env:
-  NODE_VERSION: 14
+  NODE_VERSION: 20
   PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.13.1
   VIRTUALENV_VERSION: 20.15.1
