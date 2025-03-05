@@ -39,7 +39,7 @@ jobs:
           !(startsWith(github.event.pull_request.head.ref, 'release/'))
         run: echo "SF_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy

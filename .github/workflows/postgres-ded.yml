@@ -6,7 +6,7 @@ on:
 
 env:
   NODE_VERSION: 20
-  PYTHON3_VERSION: 3.13.1
+  PYTHON3_VERSION: 3.12.2
   VIRTUALENV_VERSION: 20.21.1
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
           !(startsWith(github.event.pull_request.head.ref, 'release/'))
         run: echo "PG_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup python 3

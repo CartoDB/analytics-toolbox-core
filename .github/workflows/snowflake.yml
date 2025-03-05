@@ -38,7 +38,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup python 3
@@ -80,7 +80,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
@@ -113,7 +113,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
@@ -140,7 +140,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Deploy native app package
@@ -170,7 +170,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
@@ -191,7 +191,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Auth google

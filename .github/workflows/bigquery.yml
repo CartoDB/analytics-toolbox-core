@@ -16,7 +16,7 @@ on:
 
 env:
   NODE_VERSION: 20
-  PYTHON3_VERSION: 3.13.1
+  PYTHON3_VERSION: 3.12.2
   VIRTUALENV_VERSION: 20.21.1
   GCLOUD_VERSION: 500.0.0
 
@@ -36,7 +36,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Auth google
