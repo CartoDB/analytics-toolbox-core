@@ -12,6 +12,9 @@ AS """
     if (!geojson) {
         return null;
     }
+    if (geojson.some(x => x === null)) {
+        throw new Error("No null geometries allowed in input array");
+    }
     const options = {};
     if (numberOfClusters != null) {
         options.numberOfClusters = Number(numberOfClusters);
