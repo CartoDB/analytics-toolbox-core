@@ -7,7 +7,7 @@ on:
 env:
   NODE_VERSION: 14
   PYTHON2_VERSION: 2.7.18
-  PYTHON3_VERSION: 3.8.10
+  PYTHON3_VERSION: 3.8.18
   VIRTUALENV_VERSION: 20.15.1
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       github.event.label.name == 'dedicated_redshift' ||
       (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift')) ||
       (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift'))
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container: python:2.7.18-buster
     timeout-minutes: 20
     env:
