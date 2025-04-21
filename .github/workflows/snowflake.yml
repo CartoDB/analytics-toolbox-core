@@ -23,7 +23,7 @@ env:
 jobs:
 
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       SF_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
@@ -58,7 +58,7 @@ jobs:
   deploy-internal:
     if: github.ref_name == 'main'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       matrix:
@@ -91,7 +91,7 @@ jobs:
   deploy-internal-stable:
     if: github.ref_name == 'stable'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       matrix:
@@ -124,7 +124,7 @@ jobs:
   deploy-internal-app:
     if: github.ref_name == 'main'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       APP_PACKAGE_NAME: ${{ secrets.SF_NATIVE_APP_PACKAGE_NAME_CD }}
@@ -155,7 +155,7 @@ jobs:
   deploy-share:
     if: github.ref_name == 'stable'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_SHARE }}
@@ -183,7 +183,7 @@ jobs:
   publish:
     if: github.ref_name == 'stable'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/snowflake

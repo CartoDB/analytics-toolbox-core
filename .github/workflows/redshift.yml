@@ -24,7 +24,7 @@ env:
 jobs:
 
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container: python:2.7.18-buster
     timeout-minutes: 30
     env:
@@ -75,7 +75,7 @@ jobs:
   deploy-internal:
     if: github.ref_name == 'main'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container: python:2.7.18-buster
     timeout-minutes: 20
     strategy:
@@ -142,7 +142,7 @@ jobs:
   publish:
     if: github.ref_name == 'stable'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container: python:2.7.18-buster
     timeout-minutes: 10
     env:
