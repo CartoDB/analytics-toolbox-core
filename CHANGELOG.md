@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2025-04-30
+
+- chore(bq,sf,rs|clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)
+- fix(rs): set autocommit in run_query function (#552)
+- chore: update deprecated ubuntu image for ci (#553)
+
 ## 2025-01-30
 
 - chore(sf): deploy snowflake in CARTO.CARTO when releasing (#536)
