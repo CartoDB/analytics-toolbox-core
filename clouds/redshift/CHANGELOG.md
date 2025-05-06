@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.1.3] - 2025-04-30
+
+- chore(clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)
+- fix: set autocommit in run_query function (#552)
+
 ## [1.1.2] - 2024-10-28
 
 - chore(h3,quadbin): added "geo" aliases for certain functions (#526)

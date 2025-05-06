@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.7] - 2025-04-30
+
+- chore(clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)
+
 ## [1.2.6] - 2024-10-28
 
 - chore(h3,quadbin): added "geo" aliases for certain functions (#526)

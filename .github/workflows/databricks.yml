@@ -15,8 +15,8 @@ on:
   workflow_call:
 
 env:
-  PYTHON3_VERSION: 3.8.11
-  VIRTUALENV_VERSION: 20.21.1
+  PYTHON3_VERSION: 3.8.18
+  VIRTUALENV_VERSION: 20.15.1
   GCLOUD_VERSION: 500.0.0
   GOOGLE_SECRET_MANAGER_PROJECT: ${{ secrets.GOOGLE_SECRET_MANAGER_PROJECT }}
 
@@ -24,7 +24,7 @@ jobs:
 
   test:
     if: false
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
@@ -71,7 +71,7 @@ jobs:
   deploy-internal:
     if: github.ref_name == 'main'
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       matrix:
@@ -120,7 +120,7 @@ jobs:
   publish:
     needs: test
     if: github.ref_name == 'stable'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/databricks

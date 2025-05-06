@@ -13,6 +13,7 @@ def run_query(query):
         user=os.environ['RS_USER'],
         password=os.environ['RS_PASSWORD'],
     )
+    conn.autocommit = True
     cursor = conn.cursor()
     cursor.execute(query.replace('@@RS_SCHEMA@@', os.environ['RS_SCHEMA']))
     try:
