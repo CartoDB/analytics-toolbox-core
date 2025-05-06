@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.6] - 2025-04-30
+
+- chore(clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)
+
 ## [1.2.5] - 2025-01-30
 
 - chore: add skip dependency tag in bigquery build_modules (#538)
