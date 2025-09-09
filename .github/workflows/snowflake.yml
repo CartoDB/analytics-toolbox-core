@@ -32,6 +32,7 @@ jobs:
       SF_USER: ${{ secrets.SF_USER_CI }}
       SF_PASSWORD: ${{ secrets.SF_PASSWORD_CI }}
       SF_ROLE: ${{ secrets.SF_ROLE_CI }}
+      SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
