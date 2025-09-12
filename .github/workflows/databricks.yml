@@ -28,9 +28,8 @@ jobs:
     timeout-minutes: 30
     env:
       DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
-      DB_CLUSTER_ID: ${{ secrets.DB_CLUSTER_ID_CI }}
       DB_HTTP_PATH: ${{ secrets.DB_HTTP_PATH_CI }}
-      DB_HOST: ${{ secrets.DB_HOST_CI }}
+      DB_HOST_NAME: ${{ secrets.DB_HOST_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -76,13 +75,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - cluster_id: DB_CLUSTER_ID_CD
-            http_path: DB_HTTP_PATH_CD
-            host: DB_HOST_CD
+          - http_path: DB_HTTP_PATH_CD
+            host_name: DB_HOST_CD
     env:
-      DB_CLUSTER_ID: ${{ secrets[matrix.cluster_id] }}
       DB_HTTP_PATH: ${{ secrets[matrix.http_path] }}
-      DB_HOST: ${{ secrets[matrix.host] }}
+      DB_HOST_NAME: ${{ secrets[matrix.host_name] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
