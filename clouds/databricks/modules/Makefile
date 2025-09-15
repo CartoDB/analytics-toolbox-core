@@ -32,12 +32,12 @@ lint: venv3 $(NODE_MODULES_DEV)
 
 build: venv3
 	echo "Building modules..."
-	$(VENV3_BIN)/python  $(COMMON_DIR)/python_utils/create_modules_sql.py "$(SQL_DIRS)" $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
+	$(VENV3_BIN)/python  $(COMMON_DIR)/create_modules_sql.py "$(SQL_DIRS)" $(BUILD_DIR)/modules.sql $(DB_SCHEMA)
 
 deploy: check build
 	echo "Deploying modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/python_utils/run_query.py "CREATE SCHEMA IF NOT EXISTS $(DB_SCHEMA);"
-	$(VENV3_BIN)/python $(COMMON_DIR)/python_utils/run_script.py $(BUILD_DIR)/modules.sql
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "CREATE SCHEMA IF NOT EXISTS $(DB_SCHEMA);"
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/modules.sql
 	$(MAKE) extra-deploy
 
 extra-deploy::
@@ -53,7 +53,7 @@ test: check venv3
 
 remove: venv3
 	echo "Removing modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/python_utils/run_query.py "DROP SCHEMA IF EXISTS $(DB_SCHEMA) CASCADE;"
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(DB_SCHEMA) CASCADE;"
 
 clean:
 	echo "Cleaning modules..."

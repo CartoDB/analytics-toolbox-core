@@ -14,15 +14,15 @@ Make sure you have installed the following tools:
 
 ## Environment variables
 
-The `.env` file contains the variables required to deploy and run the toolbox. Replace each `<template>` with your values. Only the cluster id is mandatory. Default schema is 'default'.
+The `.env` file contains the variables required to deploy and run the toolbox.
 
 ```
 # Databricks
 DB_PREFIX=
-DB_CATALOG=<catalog>
-DB_HOST_NAME=<host_name>
-DB_HTTP_PATH=<http_path>
-DB_TOKEN=<token>
+DB_CATALOG=
+DB_HOST_NAME=
+DB_HTTP_PATH=
+DB_TOKEN=
 ```
 
 - *Server hostname*: SQL Warehouses > Connection details

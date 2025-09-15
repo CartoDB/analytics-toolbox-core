@@ -1,4 +1,4 @@
-from python_utils.run_query import run_query
+from test_utils import run_query
 
 
 def test_version_core_success():
