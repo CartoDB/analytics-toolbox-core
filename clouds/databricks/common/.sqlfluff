@@ -11,11 +11,11 @@ templater = jinja
 # Comma separated list of rules to check, default to all
 rules = all
 # Comma separated list of rules to exclude, or None
-exclude_rules = None
-# The depth to recursively parse to (0 for unlimited)
-recurse = 0
+exclude_rules = LT01
 # Below controls SQLFluff output, see max_line_length for SQL output
 output_line_length = 80
+# Maximum line length for SQL output
+max_line_length = 200
 # Number of passes to run before admitting defeat
 runaway_limit = 20
 # Ignore errors by category (one or more of the following, separated by commas: lexing,linting,parsing,templating)
@@ -55,6 +55,8 @@ indented_ctes = False
 indented_using_on = True
 indented_on_contents = True
 template_blocks_indent = True
+tab_space_size = 4
+indent_unit = space
 
 [sqlfluff:templater]
 unwrap_wrapped_queries = True
@@ -62,66 +64,92 @@ unwrap_wrapped_queries = True
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True
 
+[sqlfluff:layout:type:comma]
+line_position = trailing
+
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
-tab_space_size = 4
-max_line_length = 200
-indent_unit = space
-comma_style = trailing
 allow_scalar = True
 single_table_references = consistent
 unquoted_identifiers_policy = all
 
-# Some rules have their own specific config
-[sqlfluff:rules:L003]
-hanging_indents = True
-
-[sqlfluff:rules:L007]
+# Layout rules
+[sqlfluff:rules:layout.operators]
 operator_new_lines = after
 
-[sqlfluff:rules:L010]
-# Keywords
+[sqlfluff:rules:layout.long_lines]
+ignore_comment_lines = False
+ignore_comment_clauses = False
+
+[sqlfluff:rules:layout.select_targets]
+wildcard_policy = single
+
+# Capitalisation rules
+[sqlfluff:rules:capitalisation.keywords]
 capitalisation_policy = upper
 # Comma separated list of words to ignore for this rule
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L011]
-# Aliasing preference for tables
-aliasing = explicit
-
-[sqlfluff:rules:L012]
-# Aliasing preference for columns
-aliasing = explicit
-
-[sqlfluff:rules:L014]
-# Unquoted identifiers
+[sqlfluff:rules:capitalisation.identifiers]
 extended_capitalisation_policy = lower
 # Comma separated list of words to ignore for this rule
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L016]
-# Line length
-ignore_comment_lines = False
-ignore_comment_clauses = False
-
-[sqlfluff:rules:L027]
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = upper
 # Comma separated list of words to ignore for this rule
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L026]
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = upper
+# Comma separated list of words to ignore for this rule
+ignore_words = None
+ignore_words_regex = None
+
+[sqlfluff:rules:capitalisation.types]
+extended_capitalisation_policy = upper
+# Comma separated list of words to ignore for this rule
+ignore_words = None
+ignore_words_regex = None
+
+# Aliasing rules
+[sqlfluff:rules:aliasing.table]
+# Aliasing preference for tables
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.column]
+# Aliasing preference for columns
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.forbid]
+# Avoid table aliases in from clauses and join conditions.
+# Disabled for some dialects (e.g. bigquery)
+force_enable = False
+
+[sqlfluff:rules:aliasing.length]
+min_alias_length = None
+max_alias_length = None
+
+# Reference rules
+[sqlfluff:rules:references.from]
 # References must be in FROM clause
 # Disabled for some dialects (e.g. bigquery)
 force_enable = False
 
-[sqlfluff:rules:L028]
+[sqlfluff:rules:references.qualification]
+# Comma separated list of words to ignore for this rule
+ignore_words = None
+ignore_words_regex = None
+
+[sqlfluff:rules:references.consistent]
 # References must be consistently used
 # Disabled for some dialects (e.g. bigquery)
 force_enable = False
 
-[sqlfluff:rules:L029]
+[sqlfluff:rules:references.keywords]
 # Keywords should not be used as identifiers.
 unquoted_identifiers_policy = aliases
 quoted_identifiers_policy = none
@@ -129,55 +157,7 @@ quoted_identifiers_policy = none
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L030]
-# Function names
-extended_capitalisation_policy = upper
-# Comma separated list of words to ignore for this rule
-ignore_words = None
-ignore_words_regex = None
-
-[sqlfluff:rules:L031]
-# Avoid table aliases in from clauses and join conditions.
-# Disabled for some dialects (e.g. bigquery)
-force_enable = False
-
-[sqlfluff:rules:L036]
-wildcard_policy = single
-
-[sqlfluff:rules:L038]
-# Trailing commas
-select_clause_trailing_comma = forbid
-
-[sqlfluff:rules:L040]
-# Null & Boolean Literals
-capitalisation_policy = upper
-# Comma separated list of words to ignore for this rule
-ignore_words = None
-ignore_words_regex = None
-
-[sqlfluff:rules:L042]
-# By default, allow subqueries in from clauses, but not join clauses
-forbid_subquery_in = join
-
-[sqlfluff:rules:L047]
-# Consistent syntax to count all rows
-prefer_count_1 = False
-prefer_count_0 = False
-
-[sqlfluff:rules:L051]
-# Fully qualify JOIN clause
-fully_qualify_join_types = inner
-
-[sqlfluff:rules:L052]
-# Semi-colon formatting approach
-multiline_newline = False
-require_final_semicolon = False
-
-[sqlfluff:rules:L054]
-# GROUP BY/ORDER BY column references
-group_by_and_order_by_style = consistent
-
-[sqlfluff:rules:L057]
+[sqlfluff:rules:references.special_chars]
 # Special characters in identifiers
 unquoted_identifiers_policy = all
 quoted_identifiers_policy = all
@@ -186,31 +166,48 @@ additional_allowed_characters = None
 ignore_words = None
 ignore_words_regex = None
 
-[sqlfluff:rules:L059]
+[sqlfluff:rules:references.quoting]
 # Policy on quoted and unquoted identifiers
 prefer_quoted_identifiers = False
 ignore_words = None
 ignore_words_regex = None
-force_enable = False
 
-[sqlfluff:rules:L062]
+# Convention rules
+[sqlfluff:rules:convention.select_trailing_comma]
+# Trailing commas
+select_clause_trailing_comma = forbid
+
+[sqlfluff:rules:convention.count_rows]
+# Consistent syntax to count all rows
+prefer_count_1 = False
+prefer_count_0 = False
+
+[sqlfluff:rules:convention.terminator]
+# Semi-colon formatting approach
+multiline_newline = False
+require_final_semicolon = False
+
+[sqlfluff:rules:convention.blocked_words]
 # Comma separated list of blocked words that should not be used
 blocked_words = None
 blocked_regex = None
 
-[sqlfluff:rules:L063]
-# Data Types
-extended_capitalisation_policy = upper
-# Comma separated list of words to ignore for this rule
-ignore_words = None
-ignore_words_regex = None
-
-[sqlfluff:rules:L064]
+[sqlfluff:rules:convention.quoted_literals]
 # Consistent usage of preferred quotes for quoted literals
 preferred_quoted_literal_style = consistent
 # Disabled for dialects that do not support single and double quotes for quoted literals (e.g. Postgres)
 force_enable = False
 
-[sqlfluff:rules:L066]
-min_alias_length = None
-max_alias_length = None
+# Structure rules
+[sqlfluff:rules:structure.subquery]
+# By default, allow subqueries in from clauses, but not join clauses
+forbid_subquery_in = join
+
+# Ambiguous rules
+[sqlfluff:rules:ambiguous.join]
+# Fully qualify JOIN clause
+fully_qualify_join_types = inner
+
+[sqlfluff:rules:ambiguous.column_references]
+# GROUP BY/ORDER BY column references
+group_by_and_order_by_style = consistent
