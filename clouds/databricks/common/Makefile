@@ -3,10 +3,8 @@
 PYTHON3_VERSION = 3
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
-NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 DB_SCHEMA_DEFAULT = carto
-COMMON_ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
-VERSION_FILE ?= $(COMMON_ROOT_DIR)/../version
+NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
