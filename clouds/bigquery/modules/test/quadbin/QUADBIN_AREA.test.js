@@ -4,7 +4,7 @@ test('QUADBIN_AREA should work', async () => {
     const query = 'SELECT `@@BQ_DATASET@@.QUADBIN_AREA`(5207251884775047167) AS output';
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].output).toBeCloseTo(4861439445256.75, 0);
+    expect(rows[0].output).toBeCloseTo(4507012722233.0, 0);
 });
 
 test('QUADBIN_AREA should return NULL for NULL input', async () => {

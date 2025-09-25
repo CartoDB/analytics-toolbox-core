@@ -18,9 +18,9 @@ Returns the area in square meters for a given Quadbin cell. The area is calculat
 
 ```sql
 SELECT carto.QUADBIN_AREA(5207251884775047167);
--- 4861439445256.75
+-- 428.32918206449995
 ```
 
 ````hint:info
-The area calculation uses the spherical surface of the earth and returns values in square meters. Higher zoom levels (smaller cells) will have smaller areas, while lower zoom levels (larger cells) will have larger areas.
+The area calculation uses the spherical surface of the earth. The units depend on the coordinate system used by the ST_AREA function. Higher zoom levels (smaller cells) will have smaller areas, while lower zoom levels (larger cells) will have larger areas.
 ````

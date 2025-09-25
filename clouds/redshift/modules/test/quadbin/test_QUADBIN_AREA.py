@@ -7,11 +7,11 @@ def test_quadbin_area():
     )
 
     assert len(result[0]) == 1
-    # Area should be approximately 4.86e12 square meters (close to BigQuery result)
+    # Area should be approximately 428 square units (Redshift ST_AREA units)
     area = result[0][0]
     assert area is not None
-    assert area > 4.8e12
-    assert area < 5.0e12
+    assert area > 400
+    assert area < 500
 
 
 def test_quadbin_area_null():

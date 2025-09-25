@@ -18,7 +18,7 @@ Returns the area in square meters for a given Quadbin cell. The area is calculat
 
 ```sql
 SELECT carto.QUADBIN_AREA(5207251884775047167);
--- 4861439445256.75
+-- 4507012722233.0
 ```
 
 ````hint:info
