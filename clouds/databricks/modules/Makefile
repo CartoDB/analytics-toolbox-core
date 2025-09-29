@@ -15,7 +15,7 @@ else
 export DB_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
 endif
 
-REPLACEMENTS = "DB_SCHEMA DB_VERSION_FUNCTION DB_PACKAGE_VERSION"
+REPLACEMENTS = "DB_SCHEMA DB_CATALOG DB_UNQUALIFIED_SCHEMA DB_VERSION_FUNCTION DB_PACKAGE_VERSION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -61,7 +61,8 @@ test: check venv3 $(NODE_MODULES_DEV)
 
 remove: venv3
 	echo "Removing modules..."
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(DB_SCHEMA) CASCADE;"
+	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
 clean:
 	echo "Cleaning modules..."

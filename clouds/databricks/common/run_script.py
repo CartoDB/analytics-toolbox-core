@@ -16,6 +16,8 @@ def apply_replacements(text):
             if replacement:
                 pattern = re.compile(f'@@{replacement}@@', re.MULTILINE)
                 text = pattern.sub(os.environ.get(replacement, ''), text)
+    # Add the missing backtick unescaping (like build_modules.js line 149)
+    text = text.replace('\\`', '`')
     return text
 
 

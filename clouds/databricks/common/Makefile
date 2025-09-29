@@ -15,11 +15,22 @@ ifdef catalog
 export DB_CATALOG = $(catalog)
 endif
 
+export DB_CATALOG := \`$(DB_CATALOG)\`
+
 ifeq ($(production),1)
-export DB_SCHEMA = \`$(DB_CATALOG)\`.\`$(DB_SCHEMA_DEFAULT)\`
+export DB_SCHEMA = $(DB_CATALOG).\`$(DB_SCHEMA_DEFAULT)\`
 else
-export DB_SCHEMA = \`$(DB_CATALOG)\`.\`$(DB_PREFIX)$(DB_SCHEMA_DEFAULT)\`
+export DB_SCHEMA = $(DB_CATALOG).\`$(DB_PREFIX)$(DB_SCHEMA_DEFAULT)\`
 endif
+
+ifeq ($(production),1)
+export DB_SCHEMA = $(DB_CATALOG).\`$(DB_SCHEMA_DEFAULT)\`
+export DB_UNQUALIFIED_SCHEMA = $(DB_SCHEMA_DEFAULT)
+else
+export DB_SCHEMA = $(DB_CATALOG).\`$(DB_PREFIX)$(DB_SCHEMA_DEFAULT)\`
+export DB_UNQUALIFIED_SCHEMA = $(DB_PREFIX)$(DB_SCHEMA_DEFAULT)
+endif
+
 
 .SILENT:
 

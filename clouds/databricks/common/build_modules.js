@@ -150,10 +150,10 @@ function apply_replacements (text) {
     return text;
 }
 
-// if (argv.dropfirst) {
-//     const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
-//     content = header + content;
-// }
+if (argv.dropfirst) {
+    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
+    content = header + content;
+}
 
 const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
 content += footer;
