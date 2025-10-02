@@ -21,14 +21,17 @@ def restore_variables(content):
 
 
 def lint_error(name, error):
-    code = error['code']
-    line_no = error['line_no']
-    line_pos = error['line_pos']
-    description = error['description']
+    code = error.get('code', 'UNKNOWN')
+    line_no = error.get('line_no', 0)
+    line_pos = error.get('line_pos', 0)
+    description = error.get('description', 'Unknown error')
     print(f'{name}:{line_no}:{line_pos}: {code} {description}')
 
 
 def fix_and_lint(script):
+    if not script or not os.path.exists(script):
+        return False
+    
     name = ''
     content = ''
     with open(script, 'r') as file:
@@ -54,14 +57,13 @@ def fix_and_lint(script):
 
 
 if __name__ == '__main__' and sys.argv[1]:
-    scripts = sys.argv[1].split(' ')
-    ignored_files = sys.argv[3]
-    if ignored_files:
+    scripts = [s for s in sys.argv[1].split(' ') if s.strip()]
+    ignored_files = sys.argv[3] if len(sys.argv) > 3 else None
+    if ignored_files and os.path.exists(ignored_files):
         with open(ignored_files, 'r') as ignored_file:
-            ignored_scripts = ignored_file.read().split('\n')
+            ignored_scripts = [s.strip() for s in ignored_file.read().split('\n') if s.strip()]
         for ignored_script in ignored_scripts:
-            if ignored_script:
-                scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
+            scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
 
     pool = mp.Pool(processes=int(mp.cpu_count() / 2))
     output = pool.map(fix_and_lint, scripts)
