@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - quadbin_polyfill: Returns array of Quadbin indices covering a geometry
 
 ### Infrastructure
-- Python 3.11+ support
+- Python 3.10+ support (tested with 3.10-3.13)
 - CDK-free deployment (direct boto3 Lambda deployment)
 - Support for RS_PREFIX for development environments
 - Automatic schema calculation (RS_PREFIX + 'carto')

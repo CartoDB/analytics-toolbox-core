@@ -720,7 +720,7 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
 ## Installation
 
 1. **Prerequisites:**
-   - Python 3.11+
+   - Python 3.10+ (tested with 3.10-3.13)
    - AWS credentials with Lambda permissions
    - Access to a Redshift cluster
 

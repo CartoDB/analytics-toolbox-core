@@ -9,9 +9,7 @@ pytest-cov>=4.0.0
 pytest-mock>=3.10.0
 
 # Code quality - Python
-# Note: Using versions compatible with Python 3.13
-# brunette (black fork used in repo) has compatibility issues with Python 3.13
-# Using black directly instead
+# Note: Using black directly (brunette fork used in clouds has Python 3.13 issues)
 black>=23.0.0
 flake8>=6.0.0
 flake8-quotes>=3.3.0

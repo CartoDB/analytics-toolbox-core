@@ -1,7 +1,6 @@
 # Configuration
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 THIS_MAKEFILE := $(ROOT_DIR)/Makefile
-PYTHON_VERSION = 3.13
 VENV_DIR = $(ROOT_DIR)/venv
 VENV_BIN = $(VENV_DIR)/bin
 FUNCTIONS_ROOT ?= $(ROOT_DIR)/functions
@@ -49,7 +48,7 @@ help:
 
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
-		virtualenv -p python$(PYTHON_VERSION) $(VENV_DIR) -q; \
+		python3 -m venv $(VENV_DIR); \
 		rm -rf $(VENV_DIR)/lib/**/site-packages/~*; \
 		$(VENV_BIN)/pip install --upgrade pip -q; \
 		$(VENV_BIN)/pip install -r requirements.txt -q; \

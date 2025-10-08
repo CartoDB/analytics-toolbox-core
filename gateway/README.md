@@ -53,7 +53,7 @@ gateway/
 
 ### Prerequisites
 
-1. Python 3.13+
+1. Python 3.10+ (tested with Python 3.10-3.13)
 2. AWS credentials with Lambda permissions (see Required AWS Permissions below)
 3. Access to a Redshift cluster (for external function deployment)
 
