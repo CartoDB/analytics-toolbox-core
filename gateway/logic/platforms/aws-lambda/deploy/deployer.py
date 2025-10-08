@@ -1,0 +1,573 @@
+"""
+AWS Lambda deployment utilities
+Handles packaging and deploying Lambda functions
+"""
+
+import boto3
+import zipfile
+import tempfile
+import subprocess
+import sys
+import time
+from pathlib import Path
+from typing import Dict, List, Optional, Any
+import hashlib
+
+
+class LambdaDeployer:
+    """Deploys Lambda functions to AWS"""
+
+    def __init__(self, region: str = "us-east-1", profile: Optional[str] = None):
+        """
+        Initialize Lambda deployer
+
+        Args:
+            region: AWS region
+            profile: AWS profile name
+        """
+        session = boto3.Session(profile_name=profile, region_name=region)
+        self.lambda_client = session.client("lambda")
+        self.iam_client = session.client("iam")
+        self.sts_client = session.client("sts")
+        self.region = region
+        self.account_id = self.sts_client.get_caller_identity()["Account"]
+
+    def create_deployment_package(
+        self,
+        handler_file: Path,
+        requirements_file: Optional[Path] = None,
+        output_zip: Optional[Path] = None,
+        include_runtime_lib: bool = True,
+    ) -> Path:
+        """
+        Create a Lambda deployment package (zip file)
+
+        Args:
+            handler_file: Path to the handler Python file
+            requirements_file: Optional requirements.txt file
+            output_zip: Optional output path (creates temp file if None)
+            include_runtime_lib: Include core runtime library
+
+        Returns:
+            Path to created zip file
+        """
+        if output_zip is None:
+            output_zip = Path(tempfile.mktemp(suffix=".zip"))
+
+        with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as zf:
+            # Add handler file
+            zf.write(handler_file, handler_file.name)
+
+            # Add runtime library if requested (for core utilities)
+            if include_runtime_lib:
+                runtime_lib_path = Path(__file__).parent.parent / "runtime"
+                if runtime_lib_path.exists():
+                    for py_file in runtime_lib_path.glob("*.py"):
+                        if not py_file.name.startswith("_"):
+                            zf.write(
+                                py_file, f"carto_analytics_toolbox_core/{py_file.name}"
+                            )
+                    # Add __init__.py for package
+                    init_file = runtime_lib_path / "__init__.py"
+                    if init_file.exists():
+                        zf.write(init_file, "carto_analytics_toolbox_core/__init__.py")
+
+            # Install and add dependencies if requirements.txt exists
+            if requirements_file and requirements_file.exists():
+                with tempfile.TemporaryDirectory() as temp_dir:
+                    temp_path = Path(temp_dir)
+
+                    print(f"Installing dependencies from {requirements_file}...")
+                    # Install dependencies to temp directory using current Python's pip
+                    result = subprocess.run(
+                        [
+                            sys.executable,
+                            "-m",
+                            "pip",
+                            "install",
+                            "-r",
+                            str(requirements_file),
+                            "-t",
+                            str(temp_path),
+                            "--quiet",
+                            "--no-compile",
+                            "--upgrade",
+                        ],
+                        capture_output=True,
+                        text=True,
+                    )
+
+                    if result.returncode != 0:
+                        print(f"Warning: pip install had errors: {result.stderr}")
+
+                    # Add all installed packages to zip
+                    for item in temp_path.rglob("*"):
+                        if item.is_file():
+                            # Skip unnecessary files
+                            if any(
+                                skip in str(item)
+                                for skip in [
+                                    "__pycache__",
+                                    ".pyc",
+                                    ".pyo",
+                                    ".dist-info",
+                                    ".egg-info",
+                                    "tests/",
+                                    "test/",
+                                    "docs/",
+                                    "examples/",
+                                ]
+                            ):
+                                continue
+                            arcname = item.relative_to(temp_path)
+                            zf.write(item, arcname)
+
+        file_size = output_zip.stat().st_size
+        size_mb = file_size / 1024 / 1024
+        print(f"Created deployment package: {output_zip.name} ({size_mb:.2f} MB)")
+        return output_zip
+
+    def get_function_code_hash(self, zip_path: Path) -> str:
+        """
+        Calculate SHA256 hash of deployment package
+
+        Args:
+            zip_path: Path to zip file
+
+        Returns:
+            Hex-encoded SHA256 hash
+        """
+        sha256 = hashlib.sha256()
+        with open(zip_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                sha256.update(chunk)
+        return sha256.hexdigest()
+
+    def function_exists(self, function_name: str) -> bool:
+        """
+        Check if Lambda function exists
+
+        Args:
+            function_name: Name of the function
+
+        Returns:
+            True if function exists
+        """
+        try:
+            self.lambda_client.get_function(FunctionName=function_name)
+            return True
+        except self.lambda_client.exceptions.ResourceNotFoundException:
+            return False
+        except Exception as e:
+            # If we don't have GetFunction permission, assume function doesn't exist
+            # and let CreateFunction fail with a better error if it does exist
+            if "AccessDenied" in str(e) or "not authorized" in str(e):
+                print(
+                    "Warning: Cannot check if function exists "
+                    "(no GetFunction permission). Will attempt to create..."
+                )
+                return False
+            raise
+
+    def ensure_execution_role(self, role_name: str) -> str:
+        """
+        Ensure Lambda execution role exists
+
+        Args:
+            role_name: Name of the IAM role
+
+        Returns:
+            Role ARN
+        """
+        try:
+            response = self.iam_client.get_role(RoleName=role_name)
+            return response["Role"]["Arn"]
+        except self.iam_client.exceptions.NoSuchEntityException:
+            print(f"Creating Lambda execution role: {role_name}")
+
+            # Create role with trust policy
+            trust_policy = {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {"Service": "lambda.amazonaws.com"},
+                        "Action": "sts:AssumeRole",
+                    }
+                ],
+            }
+
+            response = self.iam_client.create_role(
+                RoleName=role_name,
+                AssumeRolePolicyDocument=str(trust_policy),
+                Description=(
+                    "Execution role for CARTO Analytics Toolbox Lambda functions"
+                ),
+            )
+
+            role_arn = response["Role"]["Arn"]
+
+            # Attach basic execution policy
+            policy_arn = (
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+            )
+            self.iam_client.attach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
+
+            # Wait for role to be available
+            print("Waiting for IAM role to propagate...")
+            time.sleep(10)
+
+            return role_arn
+
+    def create_function(
+        self,
+        function_name: str,
+        zip_path: Path,
+        handler: str,
+        runtime: str = "python3.11",
+        role_arn: Optional[str] = None,
+        memory_size: int = 512,
+        timeout: int = 60,
+        environment_variables: Optional[Dict[str, str]] = None,
+        description: str = "",
+        layers: Optional[List[str]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Create a new Lambda function
+
+        Args:
+            function_name: Name for the Lambda function
+            zip_path: Path to deployment package
+            handler: Handler string (e.g., 'handler.lambda_handler')
+            runtime: Python runtime version
+            role_arn: IAM role ARN for Lambda execution (creates if None)
+            memory_size: Memory in MB
+            timeout: Timeout in seconds
+            environment_variables: Environment variables
+            description: Function description
+            layers: Lambda layer ARNs
+
+        Returns:
+            CreateFunction response
+        """
+        # Ensure execution role exists
+        if not role_arn:
+            role_arn = self.ensure_execution_role("carto-at-lambda-execution-role")
+
+        with open(zip_path, "rb") as f:
+            zip_content = f.read()
+
+        params = {
+            "FunctionName": function_name,
+            "Runtime": runtime,
+            "Role": role_arn,
+            "Handler": handler,
+            "Code": {"ZipFile": zip_content},
+            "Description": description or "CARTO Analytics Toolbox function",
+            "Timeout": timeout,
+            "MemorySize": memory_size,
+            "Publish": True,
+            "PackageType": "Zip",
+        }
+
+        if environment_variables:
+            params["Environment"] = {"Variables": environment_variables}
+
+        if layers:
+            params["Layers"] = layers
+
+        return self.lambda_client.create_function(**params)
+
+    def needs_config_update(
+        self,
+        function_name: str,
+        memory_size: Optional[int] = None,
+        timeout: Optional[int] = None,
+        handler: Optional[str] = None,
+        runtime: Optional[str] = None,
+    ) -> bool:
+        """
+        Check if function configuration needs updating
+
+        Args:
+            function_name: Name of the function
+            memory_size: Desired memory size
+            timeout: Desired timeout
+            handler: Desired handler
+            runtime: Desired runtime
+
+        Returns:
+            True if any configuration differs from current
+        """
+        try:
+            response = self.lambda_client.get_function(FunctionName=function_name)
+            config = response["Configuration"]
+
+            if memory_size is not None and config.get("MemorySize") != memory_size:
+                return True
+            if timeout is not None and config.get("Timeout") != timeout:
+                return True
+            if handler is not None and config.get("Handler") != handler:
+                return True
+            if runtime is not None and config.get("Runtime") != runtime:
+                return True
+
+            return False
+        except Exception as e:
+            # If we can't check, assume update is needed
+            if "not authorized" in str(e) or "AccessDenied" in str(e):
+                return True
+            raise
+
+    def wait_for_function_active(self, function_name: str, max_wait: int = 60) -> None:
+        """
+        Wait for Lambda function to be in Active state
+
+        Args:
+            function_name: Name of the function
+            max_wait: Maximum seconds to wait
+        """
+        start_time = time.time()
+        while time.time() - start_time < max_wait:
+            try:
+                response = self.lambda_client.get_function(FunctionName=function_name)
+                state = response["Configuration"].get("State")
+                last_update_status = response["Configuration"].get("LastUpdateStatus")
+
+                if state == "Active" and last_update_status == "Successful":
+                    return
+                elif last_update_status == "Failed":
+                    reason = response["Configuration"].get(
+                        "LastUpdateStatusReason", "Unknown reason"
+                    )
+                    raise Exception(f"Function update failed: {reason}")
+
+                time.sleep(2)
+            except Exception as e:
+                if "not authorized" in str(e) or "AccessDenied" in str(e):
+                    # If we can't check status, just wait a fixed time
+                    time.sleep(5)
+                    return
+                raise
+
+        print(
+            f"Warning: Function {function_name} did not reach Active state "
+            f"within {max_wait}s"
+        )
+
+    def update_function_code(
+        self, function_name: str, zip_path: Path, publish: bool = False
+    ) -> Dict[str, Any]:
+        """
+        Update Lambda function code
+
+        Args:
+            function_name: Name of the function
+            zip_path: Path to new deployment package
+            publish: Whether to publish a new version
+
+        Returns:
+            UpdateFunctionCode response
+        """
+        with open(zip_path, "rb") as f:
+            zip_content = f.read()
+
+        return self.lambda_client.update_function_code(
+            FunctionName=function_name, ZipFile=zip_content, Publish=publish
+        )
+
+    def update_function_configuration(
+        self,
+        function_name: str,
+        memory_size: Optional[int] = None,
+        timeout: Optional[int] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        handler: Optional[str] = None,
+        runtime: Optional[str] = None,
+        max_retries: int = 10,
+    ) -> Dict[str, Any]:
+        """
+        Update Lambda function configuration
+
+        Args:
+            function_name: Name of the function
+            memory_size: Memory in MB
+            timeout: Timeout in seconds
+            environment_variables: Environment variables
+            handler: Handler string
+            runtime: Runtime version
+            max_retries: Maximum retry attempts if function is updating
+
+        Returns:
+            UpdateFunctionConfiguration response
+        """
+        params = {"FunctionName": function_name}
+
+        if memory_size is not None:
+            params["MemorySize"] = memory_size
+        if timeout is not None:
+            params["Timeout"] = timeout
+        if environment_variables is not None:
+            params["Environment"] = {"Variables": environment_variables}
+        if handler is not None:
+            params["Handler"] = handler
+        if runtime is not None:
+            params["Runtime"] = runtime
+
+        # Retry logic for ResourceConflictException
+        for attempt in range(max_retries):
+            try:
+                return self.lambda_client.update_function_configuration(**params)
+            except Exception as e:
+                if "ResourceConflictException" in str(
+                    e
+                ) or "update is in progress" in str(e):
+                    if attempt < max_retries - 1:
+                        # Exponential backoff: 3s, 6s, 9s...
+                        wait_time = 3 * (attempt + 1)
+                        print(
+                            f"Function is updating, waiting {wait_time}s "
+                            "before retry..."
+                        )
+                        time.sleep(wait_time)
+                        continue
+                raise
+
+    def deploy_function(
+        self,
+        function_name: str,
+        handler_file: Path,
+        requirements_file: Optional[Path] = None,
+        handler: str = "handler.lambda_handler",
+        runtime: str = "python3.11",
+        memory_size: int = 512,
+        timeout: int = 60,
+        description: str = "",
+        environment_variables: Optional[Dict[str, str]] = None,
+        role_arn: Optional[str] = None,
+        update_config: bool = True,
+    ) -> Dict[str, Any]:
+        """
+        Deploy or update a Lambda function
+
+        Args:
+            function_name: Name for the Lambda function
+            handler_file: Path to handler Python file
+            requirements_file: Optional requirements.txt
+            handler: Handler string
+            runtime: Runtime version
+            memory_size: Memory in MB
+            timeout: Timeout in seconds
+            description: Function description
+            environment_variables: Environment variables
+            role_arn: IAM role ARN
+            update_config: Whether to update configuration on update
+
+        Returns:
+            Deployment response
+        """
+        # Create deployment package
+        zip_path = self.create_deployment_package(handler_file, requirements_file)
+
+        try:
+            if self.function_exists(function_name):
+                # Update existing function
+                print(f"Updating Lambda function: {function_name}")
+                response = self.update_function_code(function_name, zip_path)
+
+                # Update configuration if requested and if it differs
+                if update_config:
+                    needs_update = self.needs_config_update(
+                        function_name,
+                        memory_size=memory_size,
+                        timeout=timeout,
+                        handler=handler,
+                        runtime=runtime,
+                    )
+
+                    if needs_update:
+                        # Wait for code update to complete before updating configuration
+                        print("Waiting for code update to complete...")
+                        self.wait_for_function_active(function_name)
+                        config_response = self.update_function_configuration(
+                            function_name,
+                            memory_size=memory_size,
+                            timeout=timeout,
+                            environment_variables=environment_variables,
+                            handler=handler,
+                            runtime=runtime,
+                        )
+                        print(f"✓ Updated configuration for {function_name}")
+                        return config_response
+                    else:
+                        print("✓ Configuration unchanged, skipping config update")
+                return response
+            else:
+                # Create new function
+                print(f"Creating Lambda function: {function_name}")
+                response = self.create_function(
+                    function_name,
+                    zip_path,
+                    handler=handler,
+                    runtime=runtime,
+                    role_arn=role_arn,
+                    memory_size=memory_size,
+                    timeout=timeout,
+                    environment_variables=environment_variables,
+                    description=description,
+                )
+                print(f"✓ Created Lambda function: {function_name}")
+                return response
+        finally:
+            # Clean up temporary zip file
+            if zip_path.exists():
+                zip_path.unlink()
+
+    def delete_function(self, function_name: str) -> None:
+        """
+        Delete a Lambda function
+
+        Args:
+            function_name: Name of the function to delete
+        """
+        try:
+            self.lambda_client.delete_function(FunctionName=function_name)
+            print(f"✓ Deleted Lambda function: {function_name}")
+        except self.lambda_client.exceptions.ResourceNotFoundException:
+            print(f"Function {function_name} not found, skipping deletion")
+
+    def get_function_arn(self, function_name: str) -> Optional[str]:
+        """
+        Get the ARN of a Lambda function
+
+        Args:
+            function_name: Name of the function
+
+        Returns:
+            Function ARN or None if not found
+        """
+        try:
+            response = self.lambda_client.get_function(FunctionName=function_name)
+            return response["Configuration"]["FunctionArn"]
+        except self.lambda_client.exceptions.ResourceNotFoundException:
+            return None
+
+    def list_functions(self, prefix: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        List Lambda functions
+
+        Args:
+            prefix: Optional function name prefix to filter
+
+        Returns:
+            List of function configurations
+        """
+        functions = []
+        paginator = self.lambda_client.get_paginator("list_functions")
+
+        for page in paginator.paginate():
+            for func in page["Functions"]:
+                if prefix is None or func["FunctionName"].startswith(prefix):
+                    functions.append(func)
+
+        return functions

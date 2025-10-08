@@ -1,0 +1,61 @@
+function_type: scalar
+
+# Function metadata
+author: CARTO
+description: |
+  Returns an array of Quadbin indices that cover the given geometry at a specified resolution.
+  This is useful for spatial indexing and analysis of geographic data.
+
+# Function signature
+arguments:
+  - name: geom
+    type: geometry
+    description: Input geometry to cover with quadbins
+  - name: resolution
+    type: integer
+    description: Quadbin resolution level (0-26)
+
+output:
+  name: quadbins
+  type: array<bigint>
+  description: Array of Quadbin indices covering the geometry
+
+# Examples for documentation
+examples:
+  - description: "Cover a point with quadbins"
+    arguments:
+      - "ST_POINT(-3.70325, 40.4165)"
+      - "4"
+    output: "[5209574053332910079]"
+
+  - description: "Handle null geometry"
+    arguments:
+      - "NULL"
+      - "4"
+    output: null
+
+# Cloud implementations - reference external code files
+clouds:
+  redshift:
+    type: lambda
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    external_function_template: code/redshift_external.sql
+    config:
+      memory_size: 512
+      timeout: 60
+      max_batch_rows: 1000
+      runtime: python3.11
+
+# Future cloud support (examples)
+# bigquery:
+#   type: cloud_run
+#   code_file: code/bigquery.py
+# snowflake:
+#   type: udf
+#   code_file: code/snowflake.py
+
+# Testing configuration
+test:
+  dataset: test_quadbin
+  timeout: 30

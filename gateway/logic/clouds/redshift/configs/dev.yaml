@@ -1,0 +1,59 @@
+# Development environment configuration for Redshift deployment
+
+environment: dev
+
+# AWS Configuration
+aws:
+  region: us-east-1
+  account_id: "YOUR_AWS_ACCOUNT_ID"
+  profile: default
+
+# Lambda Configuration
+lambda:
+  prefix: "carto-at-dev"
+  default_memory: 512
+  default_timeout: 60
+  default_runtime: python3.11
+  # Lambda execution role (will be created if not exists)
+  execution_role_name: "carto-at-lambda-execution-role"
+
+# Redshift Configuration
+redshift:
+  # Cluster or workgroup identifier
+  cluster_identifier: "dev-cluster"
+  # Database name
+  database: dev
+  # Schema for Analytics Toolbox functions
+  schema: carto
+  # IAM role for Redshift to invoke Lambda
+  # This role must be attached to the Redshift cluster
+  lambda_invoke_role_name: "carto-at-redshift-invoke-role"
+
+# CDK Configuration
+cdk:
+  stack_name: "CartoATRedshiftDev"
+  bootstrap_bucket_prefix: "carto-at-cdk"
+  tags:
+    Environment: dev
+    Project: CARTO Analytics Toolbox
+    ManagedBy: CDK
+
+# Deployment Options
+deployment:
+  # Deploy only modified functions (based on git diff)
+  incremental: true
+  # Clean up old Lambda versions
+  cleanup_old_versions: true
+  # Maximum number of versions to keep
+  max_versions: 3
+  # Run tests after deployment
+  run_tests: true
+
+# Testing
+testing:
+  # Test database connection string (use environment variable in production)
+  # jdbc:redshift://cluster:5439/database
+  connection_string_env: REDSHIFT_DEV_CONNECTION
+  # Test user credentials (use environment variables)
+  username_env: REDSHIFT_DEV_USER
+  password_env: REDSHIFT_DEV_PASSWORD

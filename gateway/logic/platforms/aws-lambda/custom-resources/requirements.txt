@@ -1,0 +1,2 @@
+# Requirements for custom resource Lambda
+# boto3 is provided by Lambda runtime
