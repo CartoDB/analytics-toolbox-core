@@ -923,6 +923,33 @@ def deploy_all(
         if deploy_external_functions and lambda_arns:
             logger.info("\n=== Phase 2: Creating External Functions in Redshift ===\n")
 
+            # Create schema if it doesn't exist
+            create_schema_sql = f"CREATE SCHEMA IF NOT EXISTS {rs_schema};"
+            logger.info(f"Ensuring schema exists: {rs_schema}")
+            try:
+                if rs_host and rs_user and rs_password:
+                    execute_redshift_sql_direct(
+                        sql=create_schema_sql,
+                        host=rs_host,
+                        database=rs_database,
+                        user=rs_user,
+                        password=rs_password,
+                    )
+                elif rs_cluster and (rs_user or rs_secret_arn):
+                    execute_redshift_sql_data_api(
+                        sql=create_schema_sql,
+                        cluster_identifier=rs_cluster,
+                        database=rs_database,
+                        db_user=rs_user,
+                        secret_arn=rs_secret_arn,
+                        region=aws_region,
+                    )
+                logger.info(f"✓ Schema ready: {rs_schema}\n")
+            except Exception as e:
+                logger.error(f"✗ Failed to create schema {rs_schema}: {e}")
+                logger.error("Cannot proceed with external function creation")
+                # Don't exit - still count Lambda deployments as success
+
             for func in to_deploy:
                 # Skip if Lambda deployment failed
                 if func.name not in lambda_arns:

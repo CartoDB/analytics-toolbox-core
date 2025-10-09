@@ -53,8 +53,6 @@ gateway/
 │   │   └── redshift/
 │   │       ├── __init__.py
 │   │       ├── cli.py                 # CLI for Redshift deployments
-│   │       ├── sql/
-│   │       │   └── create_schema.sql  # Schema setup script
 │   │       └── tests/unit/
 │   │           └── test_cli.py
 │   │
@@ -100,7 +98,7 @@ gateway/
 #### Clouds (`logic/clouds/`)
 - **redshift/** - Redshift-specific deployment logic
   - `cli.py` - Command-line interface (all config from .env files)
-  - `sql/` - SQL templates
+  - `tests/` - Unit tests for CLI
 
 #### Platforms (`logic/platforms/`)
 - **aws-lambda/** - Lambda deployment and runtime
