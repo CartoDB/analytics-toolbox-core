@@ -5,6 +5,12 @@ VENV_DIR = $(ROOT_DIR)/venv
 VENV_BIN = $(VENV_DIR)/bin
 FUNCTIONS_ROOT ?= $(ROOT_DIR)/functions
 LOGIC_ROOT = $(ROOT_DIR)/logic
+
+# Paths for linting, testing, validation (can be overridden by including Makefiles)
+LINT_PATHS ?= $(FUNCTIONS_ROOT) $(LOGIC_ROOT)
+TEST_PATHS ?= .
+VALIDATE_EXTRA_ARGS ?= $(EXTRA_CLI_ARGS)
+
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version 2>/dev/null || echo "dev")
@@ -53,26 +59,26 @@ install-dev: venv
 lint: install-dev
 	echo "Linting..."
 	echo "- Lint Python files"
-	$(VENV_BIN)/black $(FUNCTIONS_ROOT) $(LOGIC_ROOT) --check --line-length=88
-	$(VENV_BIN)/flake8 $(FUNCTIONS_ROOT) $(LOGIC_ROOT) \
+	$(VENV_BIN)/black $(LINT_PATHS) --check --line-length=88
+	$(VENV_BIN)/flake8 $(LINT_PATHS) \
 		--max-line-length=88 \
 		--extend-ignore=E203,W503,Q000
 
 lint-fix: install-dev
-	$(VENV_BIN)/black $(FUNCTIONS_ROOT) $(LOGIC_ROOT) --line-length=88
+	$(VENV_BIN)/black $(LINT_PATHS) --line-length=88
 
 validate: venv
 	echo "Validating functions..."
 	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py validate \
-		$(EXTRA_CLI_ARGS)
+		$(VALIDATE_EXTRA_ARGS)
 
 test-unit: install-dev
 	echo "Running unit tests..."
-	$(VENV_BIN)/python -m pytest -m "not integration" || echo "$(YELLOW)Note: Some tests may be failing$(NC)"
+	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m "not integration" || echo "$(YELLOW)Note: Some tests may be failing$(NC)"
 
 test-integration: install-dev
 	echo "Running integration tests..."
-	$(VENV_BIN)/python -m pytest -m integration || echo "$(YELLOW)Note: Some tests may be failing$(NC)"
+	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration || echo "$(YELLOW)Note: Some tests may be failing$(NC)"
 
 test: test-unit test-integration
 	echo "All tests completed"
