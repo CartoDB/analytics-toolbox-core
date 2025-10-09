@@ -676,3 +676,40 @@ class LambdaDeployer:
                     functions.append(func)
 
         return functions
+
+    def add_redshift_invoke_permission(
+        self,
+        function_name: str,
+        principal: str,
+        statement_id: str = "redshift-invoke",
+    ) -> bool:
+        """
+        Add Lambda resource policy allowing Redshift role to invoke function
+
+        This is required for Redshift external functions to invoke Lambda.
+        Works for both same-account and cross-account setups.
+
+        Args:
+            function_name: Name of the Lambda function
+            principal: IAM role ARN that Redshift uses (from RS_ROLES)
+            statement_id: Unique statement ID for the permission
+
+        Returns:
+            True if permission added, False if already exists
+        """
+        try:
+            self.lambda_client.add_permission(
+                FunctionName=function_name,
+                StatementId=statement_id,
+                Action="lambda:InvokeFunction",
+                Principal=principal,
+            )
+            print(f"✓ Added invoke permission for Redshift role to {function_name}")
+            return True
+        except self.lambda_client.exceptions.ResourceConflictException:
+            # Permission already exists
+            print(f"  Permission already exists for {function_name}")
+            return False
+        except Exception as e:
+            print(f"⚠ Could not add permission to {function_name}: {e}")
+            return False

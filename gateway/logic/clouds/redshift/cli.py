@@ -33,12 +33,13 @@ from common.utils import (  # noqa: E402
 from common.validation import run_pre_flight_checks  # noqa: E402
 from common.sql_renderer import SQLRenderer  # noqa: E402
 
-# Import LambdaDeployer
+# Import LambdaDeployer and IAMRoleManager
 platforms_path = (
     Path(__file__).parent.parent.parent / "platforms" / "aws-lambda" / "deploy"
 )
 sys.path.insert(0, str(platforms_path.parent))
 from deploy.deployer import LambdaDeployer  # noqa: E402
+from deploy.iam_manager import IAMRoleManager  # noqa: E402
 
 
 logger = setup_logger("redshift-cli")
@@ -97,6 +98,44 @@ def get_aws_credentials():
         "session_token": get_env_or_default("AWS_SESSION_TOKEN"),
         "role_arn": get_env_or_default("AWS_ASSUME_ROLE_ARN"),
     }
+
+
+def get_cluster_identifier_and_region() -> tuple:
+    """
+    Extract Redshift cluster identifier and region from configuration
+
+    Tries two methods:
+    1. RS_CLUSTER_IDENTIFIER (Data API method) - explicit cluster ID
+    2. RS_HOST (Direct connection) - parse from hostname
+
+    Returns:
+        (cluster_identifier, region) or (None, None) if not available
+
+    Examples:
+        RS_HOST=my-cluster.abc123.us-east-1.redshift.amazonaws.com
+        Returns: ("my-cluster", "us-east-1")
+
+        RS_CLUSTER_IDENTIFIER=my-cluster
+        Returns: ("my-cluster", "us-east-1")
+    """
+    # Option 1: RS_CLUSTER_IDENTIFIER explicitly set (Data API method)
+    cluster_id = get_env_or_default("RS_CLUSTER_IDENTIFIER")
+    if cluster_id:
+        region = get_env_or_default("AWS_REGION", "us-east-1")
+        return cluster_id, region
+
+    # Option 2: Parse from RS_HOST (Direct connection method)
+    rs_host = get_env_or_default("RS_HOST")
+    if rs_host:
+        # Format: cluster-name.account-hash.region.redshift.amazonaws.com
+        # Example: my-cluster.abc123xyz.us-east-1.redshift.amazonaws.com
+        parts = rs_host.split(".")
+        if len(parts) >= 5 and "redshift" in rs_host:
+            cluster_id = parts[0]
+            region = parts[2]
+            return cluster_id, region
+
+    return None, None
 
 
 def execute_redshift_sql_direct(
@@ -845,6 +884,57 @@ def deploy_all(
     # Get AWS credentials
     aws_creds = get_aws_credentials()
 
+    # Phase 0: Setup IAM role for Redshift to invoke Lambda
+    # If RS_ROLES not provided, auto-create role and attempt to attach to cluster
+    if not rs_iam_role_arn and deploy_external_functions:
+        logger.info("\n=== Phase 0: Setting up Redshift IAM Role ===\n")
+        logger.info("RS_ROLES not specified, will auto-create role for Redshift")
+
+        try:
+            iam_manager = IAMRoleManager(region=aws_region)
+
+            # Get AWS account ID
+            lambda_account_id = iam_manager.get_account_id()
+
+            # Generate role name from lambda_prefix
+            # Example: carto-at- → CartoATRedshiftInvokeRole
+            role_name = (
+                lambda_prefix.replace("-", "_")
+                .replace("_", " ")
+                .title()
+                .replace(" ", "")
+                + "RedshiftInvokeRole"
+            )
+            role_name = role_name.replace("At", "AT")  # Keep AT as acronym
+
+            logger.info(f"Creating role: {role_name}")
+
+            # Create role (same-account by default)
+            rs_iam_role_arn = iam_manager.get_or_create_redshift_invoke_role(
+                role_name=role_name,
+                lambda_account_id=lambda_account_id,
+            )
+
+            # Try to auto-attach to cluster
+            cluster_id, region = get_cluster_identifier_and_region()
+            if cluster_id:
+                logger.info(f"Detected cluster: {cluster_id} (region: {region})")
+                iam_manager.attach_role_to_cluster(cluster_id, rs_iam_role_arn)
+            else:
+                logger.info(
+                    "ℹ Could not determine cluster identifier from "
+                    "RS_HOST or RS_CLUSTER_IDENTIFIER\n"
+                    "  Please manually attach the role to your Redshift cluster:\n"
+                    "  AWS Console → Redshift → Clusters → Properties → "
+                    "Manage IAM roles\n"
+                    f"  Attach: {rs_iam_role_arn}"
+                )
+
+        except Exception as e:
+            logger.error(f"Failed to create Redshift invoke role: {e}")
+            logger.warning("Continuing with Lambda deployment only...")
+            deploy_external_functions = False
+
     # Deploy all functions
     try:
         deployer = LambdaDeployer(
@@ -912,6 +1002,14 @@ def deploy_all(
                 lambda_arns[func.name] = arn
                 logger.info(f"✓ Lambda deployed: {lambda_function_name}")
                 lambda_success += 1
+
+                # Configure Lambda resource policy for Redshift invocation
+                if rs_iam_role_arn:
+                    logger.info("  Configuring invoke permissions for Redshift...")
+                    deployer.add_redshift_invoke_permission(
+                        function_name=lambda_function_name,
+                        principal=rs_iam_role_arn,
+                    )
 
             except Exception as e:
                 logger.error(f"✗ Failed to deploy Lambda {func.name}: {e}")

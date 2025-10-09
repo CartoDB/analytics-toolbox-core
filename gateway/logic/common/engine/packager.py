@@ -291,10 +291,33 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     elif production:
         rs_prefix = ""
 
-    rs_roles = prompt_if_not_provided(  # noqa: E501
-        rs_roles,
-        "IAM Role(s) for Redshift to invoke Lambda\\n(comma-separated for role chaining, e.g., 'role1,role2')"  # noqa: E501
-    )
+    # RS_ROLES with enhanced guidance
+    if not rs_roles:
+        click.echo()
+        click.secho("Redshift IAM Role Configuration:", fg='cyan', bold=True)
+        click.echo("This role is attached to your Redshift cluster and used to invoke Lambda functions.")
+        click.echo()
+        click.echo("Options:")
+        click.echo("  1. Auto-create role (RECOMMENDED for new setups)")
+        click.echo("     - Leave empty to let the installer create and attach a role automatically")
+        click.echo("     - Role name: {Lambda Prefix}RedshiftInvokeRole")
+        click.echo(f"     - Example: {lambda_prefix.replace('-', '_').replace('_', ' ').title().replace(' ', '').replace('At', 'AT')}RedshiftInvokeRole")
+        click.echo("     - Will be auto-attached to your Redshift cluster")
+        click.echo()
+        click.echo("  2. Use existing role (for production or cross-account)")
+        click.echo("     - Provide the ARN of a role you've already created")
+        click.echo("     - Example: arn:aws:iam::123456789:role/MyRedshiftLambdaRole")
+        click.echo("     - Ensure it's attached to your Redshift cluster")
+        click.echo()
+
+        use_existing = click.confirm("Do you have an existing IAM role to use?", default=False)
+
+        if use_existing:
+            rs_roles = click.prompt("IAM Role ARN for Redshift to invoke Lambda")
+        else:
+            click.secho("✓ Will auto-create and attach IAM role during deployment", fg='green')
+            rs_roles = ""  # Empty means auto-create
+
     click.echo()
 
     # Create .env file
@@ -330,7 +353,10 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     env_lines.append(f"RS_USER={rs_user}")
     env_lines.append(f"RS_PASSWORD={rs_password}")
     env_lines.append(f"RS_PREFIX={rs_prefix}")
-    env_lines.append(f"RS_ROLES={rs_roles}")
+    if rs_roles:
+        env_lines.append(f"RS_ROLES={rs_roles}")
+    else:
+        env_lines.append("# RS_ROLES not set (will auto-create and attach role)")
 
     env_content = "\\n".join(env_lines) + "\\n"
 
@@ -351,9 +377,17 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo(f"Assume Role:         {aws_assume_role_arn}")
 
     click.echo(f"Lambda Prefix:       {lambda_prefix}")
+    if lambda_execution_role_arn:
+        click.echo(f"Lambda Exec Role:    {lambda_execution_role_arn}")
+    else:
+        click.echo(f"Lambda Exec Role:    (will auto-create)")
     click.echo(f"Redshift Host:       {rs_host}")
     click.echo(f"Redshift Database:   {rs_database}")
     click.echo(f"Schema:              {rs_prefix + 'carto' if rs_prefix else 'carto'}")
+    if rs_roles:
+        click.echo(f"Redshift IAM Role:   {rs_roles}")
+    else:
+        click.echo(f"Redshift IAM Role:   (will auto-create and attach)")
     click.echo(f"Production Mode:     {production}")
     click.echo("=" * 70)
     click.echo()
@@ -455,42 +489,69 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
    python scripts/install.py
    ```
 
-   The installer will guide you through the configuration. Alternatively, provide values via command-line:
+   The installer will guide you through the configuration. For most users, simply accept the defaults
+   and the installer will auto-create necessary IAM roles.
 
+   **Alternative: Command-line installation**
    ```bash
    python scripts/install.py \\
      --aws-region us-east-1 \\
+     --aws-profile my-profile \\
      --lambda-prefix mycompany- \\
      --rs-host cluster.redshift.amazonaws.com \\
      --rs-database mydb \\
      --rs-user myuser \\
-     --rs-roles arn:aws:iam::123456:role/RedshiftLambdaRole
+     --rs-password "***"
    ```
 
-4. **AWS Permissions:**
+4. **IAM Roles (Automatic Setup):**
 
-   Your AWS user needs Lambda permissions. **Recommended approach:**
+   The installer automatically creates and configures two IAM roles:
 
-   Pre-create the Lambda execution role to avoid needing IAM permissions:
+   **a) Lambda Execution Role** (for Lambda to run):
+   - Role name: `<LambdaPrefix>LambdaExecutionRole` (e.g., `CartoATLambdaExecutionRole`)
+   - Auto-created if not provided
+   - Attached policies: `AWSLambdaBasicExecutionRole`
+
+   **b) Redshift Invoke Role** (for Redshift to call Lambda):
+   - Role name: `<LambdaPrefix>RedshiftInvokeRole` (e.g., `CartoATRedshiftInvokeRole`)
+   - Auto-created if not provided
+   - Auto-attached to your Redshift cluster
+   - Lambda resource policies auto-configured
+
+   **For production or existing roles**, provide ARNs when prompted:
+   - `--lambda-execution-role-arn`: Existing Lambda execution role
+   - `--rs-roles`: Existing Redshift invoke role
+
+5. **Required AWS Permissions:**
+
+   **Minimal permissions needed** (if using auto-creation):
+   - `lambda:CreateFunction`, `lambda:UpdateFunctionCode`, `lambda:UpdateFunctionConfiguration`
+   - `lambda:AddPermission` (for Redshift invoke permissions)
+   - `iam:CreateRole`, `iam:PutRolePolicy`, `iam:AttachRolePolicy` (for role creation)
+   - `iam:GetRole` (to check existing roles)
+   - `redshift:ModifyClusterIamRoles` (to attach role to cluster)
+   - `redshift:DescribeClusters` (to discover cluster)
+
+   **Alternative: Pre-create roles** to avoid IAM permissions:
    ```bash
-   # Role name is derived from LAMBDA_PREFIX (carto-at- -> CartoATLambdaExecutionRole)
+   # Pre-create Lambda execution role
    aws iam create-role \\
      --role-name CartoATLambdaExecutionRole \\
-     --assume-role-policy-document '{{
-       "Version": "2012-10-17",
-       "Statement": [{{
-         "Effect": "Allow",
-         "Principal": {{"Service": "lambda.amazonaws.com"}},
-         "Action": "sts:AssumeRole"
-       }}]
-     }}'
+     --assume-role-policy-document '{{...}}'
 
-   aws iam attach-role-policy \\
-     --role-name CartoATLambdaExecutionRole \\
-     --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+   # Pre-create Redshift invoke role
+   aws iam create-role \\
+     --role-name CartoATRedshiftInvokeRole \\
+     --assume-role-policy-document '{{...}}'
+
+   # Attach to cluster
+   aws redshift modify-cluster-iam-roles \\
+     --cluster-identifier my-cluster \\
+     --add-iam-roles arn:aws:iam::123:role/CartoATRedshiftInvokeRole
    ```
 
-   Then use `--lambda-execution-role-arn` when running the installer.
+   Then provide the role ARNs during installation.
 
 ## Included Functions
 
