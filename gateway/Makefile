@@ -58,29 +58,13 @@ install-dev: venv
 
 lint: install-dev
 	echo "Linting..."
-	echo "- Lint Python files"
 	$(VENV_BIN)/black $(LINT_PATHS) --check --line-length=88
 	$(VENV_BIN)/flake8 $(LINT_PATHS) \
 		--max-line-length=88 \
 		--extend-ignore=E203,W503,Q000
-	echo "- Lint SQL files"
-	@for cloud in redshift bigquery snowflake databricks postgres; do \
-		sqlfluff_config="$(ROOT_DIR)/common/$$cloud/.sqlfluff"; \
-		if [ -f "$$sqlfluff_config" ] && find $(LINT_PATHS) -name "$$cloud.sql" 2>/dev/null | grep -q .; then \
-			echo "  Linting $$cloud SQL files..."; \
-			find $(LINT_PATHS) -name "$$cloud.sql" -exec $(VENV_BIN)/sqlfluff lint {} --config $$sqlfluff_config \; || true; \
-		fi \
-	done
 
 lint-fix: install-dev
 	$(VENV_BIN)/black $(LINT_PATHS) --line-length=88
-	@for cloud in redshift bigquery snowflake databricks postgres; do \
-		sqlfluff_config="$(ROOT_DIR)/common/$$cloud/.sqlfluff"; \
-		if [ -f "$$sqlfluff_config" ] && find $(LINT_PATHS) -name "$$cloud.sql" 2>/dev/null | grep -q .; then \
-			echo "  Fixing $$cloud SQL files..."; \
-			find $(LINT_PATHS) -name "$$cloud.sql" -exec $(VENV_BIN)/sqlfluff fix {} --config $$sqlfluff_config \; || true; \
-		fi \
-	done
 
 validate: venv
 	echo "Validating functions..."
@@ -120,7 +104,7 @@ create-package: venv
 		$(DIST_DIR) \
 		--version $(PACKAGE_VERSION) \
 		$(if $(functions),--functions=$(functions),) \
-		$(if $(production),--include-private,) \
+		$(if $(production),--production,) \
 		$(EXTRA_CLI_ARGS)
 
 clean:
