@@ -305,7 +305,6 @@ make deploy production=1 dry-run=1
 
 **What `production=1` does:**
 
-- Uses `prod.yaml` config instead of `dev.yaml`
 - Deploys to schema `carto` instead of `{RS_PREFIX}carto`
 - Matches the clouds pattern for production deployments
 - Example with `RS_PREFIX=myname_`:
@@ -503,19 +502,6 @@ make lint
 
 ## Configuration
 
-### Environment Configurations
-
-Edit configuration files in `logic/clouds/redshift/configs/`:
-
-- `dev.yaml` - Development environment
-- `prod.yaml` - Production environment
-
-Key settings:
-- AWS region and credentials
-- Lambda configuration (memory, timeout)
-- Redshift cluster details
-- IAM roles
-
 ### Function-Specific Configuration
 
 Configure per-function settings in the `function.yaml` under `clouds.redshift.config`:
@@ -534,9 +520,8 @@ clouds:
 
 The distribution package includes:
 - Lambda function code for all functions
-- CDK deployment infrastructure
-- SQL scripts for external functions
-- Installation scripts
+- Interactive installer script
+- Deployment logic (boto3-based)
 - Documentation
 
 Customers run:

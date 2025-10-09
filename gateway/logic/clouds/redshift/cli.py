@@ -721,10 +721,6 @@ def deploy_all(
     """Deploy all Lambda functions and create external functions"""
     logger.info("Deploying Analytics Toolbox to Redshift")
 
-    if config:
-        logger.info(f"Using config: {config}")
-        # TODO: Load and use config file
-
     # Load from all function roots
     all_functions = []
     if include_roots:

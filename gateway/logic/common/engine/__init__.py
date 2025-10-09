@@ -19,7 +19,6 @@ from .models import (
 )
 from .catalog_loader import CatalogLoader
 from .validator import FunctionValidator, ValidationError, validate_all_functions
-from .config_loader import ConfigLoader
 
 __all__ = [
     "Function",
@@ -38,5 +37,4 @@ __all__ = [
     "FunctionValidator",
     "ValidationError",
     "validate_all_functions",
-    "ConfigLoader",
 ]

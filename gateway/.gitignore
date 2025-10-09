@@ -48,10 +48,6 @@ htmlcov/
 .dmypy.json
 dmypy.json
 
-# CDK
-cdk.out/
-.cdk.staging/
-
 # Logs
 *.log
 

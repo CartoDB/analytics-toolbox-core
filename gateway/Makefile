@@ -23,15 +23,6 @@ endif
 # Cloud platform (can be overridden)
 cloud ?= redshift
 
-# Production flag (use production=1 for production deployments)
-ifeq ($(production),1)
-CONFIG_FILE = configs/prod.yaml
-ENV_NAME = production
-else
-CONFIG_FILE = configs/dev.yaml
-ENV_NAME = development
-endif
-
 # Colors for output
 BLUE := \033[0;34m
 GREEN := \033[0;32m
@@ -89,18 +80,16 @@ test: test-unit test-integration
 deploy: venv
 	echo "Deploying to $(cloud)..."
 	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py deploy-all \
-		--config $(CONFIG_FILE) \
-		--cloud=$(cloud) \
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
-		$(if $(diff),--diff,) \
+		$(if $(production),--production,) \
 		$(if $(dry-run),--dry-run,) \
 		$(EXTRA_CLI_ARGS)
 
 remove: venv
 	echo "Removing deployment..."
 	echo "$(YELLOW)Note: Undeploy not yet implemented$(NC)"
-	echo "To manually remove, delete the CloudFormation stack or Lambda functions"
+	echo "To manually remove, delete the Lambda functions and IAM roles"
 
 create-package: venv
 	echo "Creating distribution package..."

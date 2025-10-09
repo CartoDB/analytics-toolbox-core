@@ -38,7 +38,8 @@ gateway/
 │   │   │   ├── __init__.py
 │   │   │   ├── models.py              # Data models (Function, etc.)
 │   │   │   ├── validator.py           # YAML validation logic
-│   │   │   └── catalog_loader.py      # Function discovery
+│   │   │   ├── catalog_loader.py      # Function discovery
+│   │   │   └── packager.py            # Distribution package generation
 │   │   ├── schemas/
 │   │   │   └── function.schema.json   # JSON schema for validation
 │   │   ├── utils/
@@ -52,9 +53,6 @@ gateway/
 │   │   └── redshift/
 │   │       ├── __init__.py
 │   │       ├── cli.py                 # CLI for Redshift deployments
-│   │       ├── configs/
-│   │       │   ├── dev.yaml           # Dev environment config
-│   │       │   └── prod.yaml          # Prod environment config
 │   │       ├── sql/
 │   │       │   └── create_schema.sql  # Schema setup script
 │   │       └── tests/unit/
@@ -94,14 +92,14 @@ gateway/
   - `models.py` - Function, CloudConfig, etc.
   - `catalog_loader.py` - Discovers and loads functions
   - `validator.py` - Validates function.yaml files
+  - `packager.py` - Generates customer-installable distribution packages
 - **schemas/** - JSON schemas for validation
 - **utils/** - Logging, path utilities
 - **sql_macros/** - Reusable Jinja2 templates
 
 #### Clouds (`logic/clouds/`)
 - **redshift/** - Redshift-specific deployment logic
-  - `cli.py` - Command-line interface
-  - `configs/` - Environment configurations (dev, prod)
+  - `cli.py` - Command-line interface (all config from .env files)
   - `sql/` - SQL templates
 
 #### Platforms (`logic/platforms/`)
@@ -115,8 +113,8 @@ gateway/
 
 ## File Count by Type
 
-- Python files: 18
-- YAML files: 5
+- Python files: 17 (removed config_loader.py)
+- YAML files: 3 (removed dev.yaml, prod.yaml)
 - Markdown files: 5
 - SQL/Jinja2 templates: 3
 - JSON schema: 1
@@ -168,10 +166,10 @@ make test-all
 
 ## Next Steps
 
-1. **Implement actual deployment logic**:
-   - Complete CDK stack generation in `logic/clouds/redshift/`
-   - Implement package creation logic
-   - Build installer script for distribution packages
+1. **Expand function library**:
+   - Add more Analytics Toolbox functions
+   - Implement comprehensive test coverage
+   - Add integration tests for all functions
 
 2. **Migrate existing functions**:
    - Convert existing Redshift Python UDFs to Lambda format
