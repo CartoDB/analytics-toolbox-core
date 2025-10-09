@@ -92,15 +92,17 @@ class PackageBuilder:
         )
 
         # Copy functions directory (only selected functions)
-        functions_src = gateway_root / "functions"
         functions_dst = package_dir / "functions"
         ensure_dir(functions_dst)
 
         # Copy only the functions we're deploying
+        # Functions may come from multiple roots (core + private)
+        # Preserve the module/function structure: functions/<module>/<function_name>
         for func in functions:
             func_src = Path(func.function_path)
             if func_src.exists():
-                func_dst = functions_dst / func_src.relative_to(functions_src)
+                # Reconstruct path as: functions/<module>/<function_name>
+                func_dst = functions_dst / func.module / func.name
                 # Create parent directories
                 func_dst.parent.mkdir(parents=True, exist_ok=True)
                 # Copy entire function directory
