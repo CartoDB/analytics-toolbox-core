@@ -139,14 +139,27 @@ Best for enterprise environments using AWS IAM Identity Center.
 #### Lambda Configuration
 
 ```bash
-# Lambda function names will be: {LAMBDA_PREFIX}{function_name}
-# Include separator in prefix if desired (e.g., "myname-" or "myname_")
-LAMBDA_PREFIX=carto-at-dev-
+# LAMBDA_PREFIX: Prefix for Lambda function names (default: carto-at-)
+LAMBDA_PREFIX=carto-at-
+```
 
-# Lambda Execution Role (optional - recommended to avoid needing IAM permissions)
-# Pre-create this role with trust policy allowing lambda.amazonaws.com
-# and attach AWSLambdaBasicExecutionRole policy
-# LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/<role-name>
+**Resource Naming:**
+- Lambda functions: `{LAMBDA_PREFIX}{function_name}` (kebab-case)
+  - Example: `carto-at-quadbin_polyfill`
+- IAM execution role: `{PascalCase(LAMBDA_PREFIX)}LambdaExecutionRole` (PascalCase, AWS convention)
+  - `LAMBDA_PREFIX=carto-at-` → `CartoATLambdaExecutionRole`
+  - `LAMBDA_PREFIX=dev-carto-at-` → `DevCartoATLambdaExecutionRole`
+  - Note: 'at' is preserved as 'AT' (acronym for Analytics Toolbox)
+- Session name: `{LAMBDA_PREFIX}deployer` with underscores
+  - Example: `carto_at_deployer`
+
+**Lambda Execution Role (optional - recommended for production)**
+
+If not specified, will auto-create based on `LAMBDA_PREFIX` (default: `CartoATLambdaExecutionRole`)
+
+To avoid needing IAM create role permissions, pre-create this role:
+```bash
+LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
 #### Redshift Configuration
@@ -206,12 +219,15 @@ Attach the AWS managed policy `AWSLambda_FullAccess` to your IAM user.
 
 **Option 2: Pre-create Lambda Execution Role (Recommended for external users)**
 
-To avoid needing IAM role creation permissions, pre-create the Lambda execution role:
+To avoid needing IAM role creation permissions, pre-create the Lambda execution role.
+
+**Default (no custom prefix):**
 
 ```bash
-# Create the role
+# Create the role (name derived from LAMBDA_PREFIX in PascalCase)
+# Default LAMBDA_PREFIX=carto-at- → CartoATLambdaExecutionRole
 aws iam create-role \
-  --role-name carto-at-lambda-execution-role \
+  --role-name CartoATLambdaExecutionRole \
   --assume-role-policy-document '{
     "Version": "2012-10-17",
     "Statement": [{
@@ -223,13 +239,13 @@ aws iam create-role \
 
 # Attach basic execution policy
 aws iam attach-role-policy \
-  --role-name carto-at-lambda-execution-role \
+  --role-name CartoATLambdaExecutionRole \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 ```
 
 Then add to your `.env`:
 ```bash
-LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/carto-at-lambda-execution-role
+LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
 With this approach, your user only needs these Lambda permissions (no IAM permissions required):
@@ -334,7 +350,7 @@ If your Lambda functions are in a different AWS account than your Redshift clust
 ```bash
 # For each deployed function, run (adjust function name based on your LAMBDA_PREFIX):
 aws lambda add-permission \
-  --function-name carto-at-dev-quadbin_polyfill \
+  --function-name carto-at-quadbin_polyfill \
   --statement-id redshift-cross-account-invoke \
   --action lambda:InvokeFunction \
   --principal arn:aws:iam::ACCOUNT-B-ID:role/RedshiftLambdaRole
@@ -573,7 +589,7 @@ jobs:
           echo "REDSHIFT_CLUSTER_ID=${{ secrets.REDSHIFT_CLUSTER_ID }}" >> .env
           echo "REDSHIFT_DATABASE=${{ secrets.REDSHIFT_DATABASE }}" >> .env
           echo "REDSHIFT_SCHEMA=carto" >> .env
-          echo "LAMBDA_PREFIX=carto-at-dev" >> .env
+          echo "LAMBDA_PREFIX=dev-carto-at-" >> .env
       - name: Deploy to development
         run: make deploy diff=1
 

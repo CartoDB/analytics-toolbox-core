@@ -532,7 +532,7 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--aws-secret-access-key', help='AWS Secret Access Key (alternative to profile)')
 @click.option('--aws-session-token', help='AWS Session Token (for temporary credentials)')
 @click.option('--aws-assume-role-arn', help='IAM role ARN to assume (for cross-account)')
-@click.option('--lambda-prefix', help='Lambda function name prefix (e.g., carto-at-)')  # noqa: E501
+@click.option('--lambda-prefix', help='Lambda function name prefix (default: carto-at-)')  # noqa: E501
 @click.option('--lambda-execution-role-arn', help='Pre-created Lambda execution role ARN (optional)')  # noqa: E501
 @click.option('--rs-host', help='Redshift host endpoint')
 @click.option('--rs-database', help='Redshift database name')
@@ -646,7 +646,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo("-" * 70)
     lambda_prefix = prompt_if_not_provided(  # noqa: E501
         lambda_prefix,
-        "Lambda function prefix (e.g., 'mycompany-' or 'carto-at-')",
+        "Lambda function prefix",
         default="carto-at-"
     )
 
@@ -860,8 +860,9 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
 
    Pre-create the Lambda execution role to avoid needing IAM permissions:
    ```bash
+   # Role name is derived from LAMBDA_PREFIX (carto-at- -> CartoATLambdaExecutionRole)
    aws iam create-role \\
-     --role-name carto-at-lambda-execution-role \\
+     --role-name CartoATLambdaExecutionRole \\
      --assume-role-policy-document '{{
        "Version": "2012-10-17",
        "Statement": [{{
@@ -872,7 +873,7 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
      }}'
 
    aws iam attach-role-policy \\
-     --role-name carto-at-lambda-execution-role \\
+     --role-name CartoATLambdaExecutionRole \\
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    ```
 

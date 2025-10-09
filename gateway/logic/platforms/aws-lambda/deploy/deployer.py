@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import hashlib
+import re
 
 
 class LambdaDeployer:
@@ -25,6 +26,7 @@ class LambdaDeployer:
         secret_access_key: Optional[str] = None,
         session_token: Optional[str] = None,
         role_arn: Optional[str] = None,
+        lambda_prefix: str = "carto-at-",
     ):
         """
         Initialize Lambda deployer with flexible credential options
@@ -43,7 +45,9 @@ class LambdaDeployer:
             secret_access_key: AWS secret access key
             session_token: AWS session token (for temporary credentials)
             role_arn: IAM role ARN to assume
+            lambda_prefix: Lambda function prefix (default: "carto-at-")
         """
+        self.lambda_prefix = lambda_prefix
         session_kwargs = {"region_name": region}
 
         # Method 1: Explicit credentials (highest priority)
@@ -72,8 +76,11 @@ class LambdaDeployer:
             print(f"Assuming IAM role: {role_arn}")
             sts = session.client("sts")
             try:
+                # Session name: carto_at_deployer
+                # (replace hyphens with underscores, max 64 chars)
+                session_name = f"{self.lambda_prefix}deployer".replace("-", "_")[:64]
                 assumed_role = sts.assume_role(
-                    RoleArn=role_arn, RoleSessionName="carto-at-deployer"
+                    RoleArn=role_arn, RoleSessionName=session_name
                 )
                 credentials = assumed_role["Credentials"]
                 session = boto3.Session(
@@ -100,6 +107,30 @@ class LambdaDeployer:
             print(f"✓ AWS Account: {self.account_id}")
         except Exception as e:
             raise Exception(f"Failed to authenticate with AWS: {e}")
+
+    def _prefix_to_pascal_case(self, prefix: str) -> str:
+        """
+        Convert lambda_prefix to PascalCase for IAM role naming
+        Special handling for 'at' to preserve as 'AT' (acronym)
+        Examples:
+          carto-at- -> CartoAT
+          dev-carto-at- -> DevCartoAT
+          my-company- -> MyCompany
+        """
+        # Remove trailing hyphen/underscore
+        prefix = prefix.rstrip("-_")
+        # Split by hyphens or underscores
+        parts = re.split(r"[-_]", prefix)
+        # Capitalize each part, with special handling for 'at'
+        pascal_parts = []
+        for word in parts:
+            if word:
+                # Special case: 'at' becomes 'AT' (acronym for Analytics Toolbox)
+                if word.lower() == "at":
+                    pascal_parts.append("AT")
+                else:
+                    pascal_parts.append(word.capitalize())
+        return "".join(pascal_parts)
 
     def create_deployment_package(
         self,
@@ -321,7 +352,12 @@ class LambdaDeployer:
         """
         # Ensure execution role exists
         if not role_arn:
-            role_arn = self.ensure_execution_role("carto-at-lambda-execution-role")
+            # Convert lambda_prefix to PascalCase for IAM role (AWS convention)
+            # Examples: carto-at- -> CartoATLambdaExecutionRole
+            #           dev-carto-at- -> DevCartoATLambdaExecutionRole
+            prefix_pascal = self._prefix_to_pascal_case(self.lambda_prefix)
+            role_name = f"{prefix_pascal}LambdaExecutionRole"
+            role_arn = self.ensure_execution_role(role_name)
 
         with open(zip_path, "rb") as f:
             zip_content = f.read()

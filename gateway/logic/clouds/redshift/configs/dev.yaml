@@ -10,12 +10,13 @@ aws:
 
 # Lambda Configuration
 lambda:
-  prefix: "carto-at-dev"
+  prefix: "carto-at-"
   default_memory: 512
   default_timeout: 60
   default_runtime: python3.11
   # Lambda execution role (will be created if not exists)
-  execution_role_name: "carto-at-lambda-execution-role"
+  # Auto-generated from prefix in PascalCase: carto-at- -> CartoATLambdaExecutionRole
+  execution_role_name: "CartoATLambdaExecutionRole"
 
 # Redshift Configuration
 redshift:

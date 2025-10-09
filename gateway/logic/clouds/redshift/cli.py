@@ -614,7 +614,7 @@ def deploy_lambda(
     # Get settings from .env or use defaults
     aws_region = get_env_or_default("AWS_REGION", region)
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
-    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-dev")
+    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-")
     lambda_execution_role_arn = get_env_or_default("LAMBDA_EXECUTION_ROLE_ARN")
 
     # Get AWS credentials
@@ -640,7 +640,12 @@ def deploy_lambda(
 
     # Deploy Lambda using LambdaDeployer
     try:
-        deployer = LambdaDeployer(region=aws_region, profile=aws_prof, **aws_creds)
+        deployer = LambdaDeployer(
+            region=aws_region,
+            profile=aws_prof,
+            lambda_prefix=lambda_prefix,
+            **aws_creds,
+        )
 
         # Get paths
         function_dir = function.path
@@ -778,7 +783,7 @@ def deploy_all(
     # AWS_PROFILE is optional - boto3 will use
     # AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY from env
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
-    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-dev")
+    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-")
 
     if dry_run:
         logger.info("[DRY RUN] Would deploy:")
@@ -848,7 +853,12 @@ def deploy_all(
 
     # Deploy all functions
     try:
-        deployer = LambdaDeployer(region=aws_region, profile=aws_prof, **aws_creds)
+        deployer = LambdaDeployer(
+            region=aws_region,
+            profile=aws_prof,
+            lambda_prefix=lambda_prefix,
+            **aws_creds,
+        )
 
         lambda_success = 0
         external_success = 0
