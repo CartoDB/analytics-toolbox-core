@@ -77,7 +77,7 @@ class PackageBuilder:
 
         logger.info("Copying deployment logic...")
 
-        # Copy the entire logic directory structure
+        # Copy the entire logic directory structure (excluding tests)
         shutil.copytree(
             logic_src,
             logic_dst,
@@ -88,6 +88,8 @@ class PackageBuilder:
                 ".pytest_cache",
                 ".mypy_cache",
                 "*.egg-info",
+                "tests",  # Exclude all test directories
+                "conftest.py",  # Exclude pytest config files
             ),
         )
 
@@ -105,13 +107,19 @@ class PackageBuilder:
                 func_dst = functions_dst / func.module / func.name
                 # Create parent directories
                 func_dst.parent.mkdir(parents=True, exist_ok=True)
-                # Copy entire function directory
+                # Copy entire function directory (excluding tests and docs)
                 if func_src.is_dir():
                     shutil.copytree(
                         func_src,
                         func_dst,
                         ignore=shutil.ignore_patterns(
-                            "__pycache__", "*.pyc", "*.pyo", ".pytest_cache"
+                            "__pycache__",
+                            "*.pyc",
+                            "*.pyo",
+                            ".pytest_cache",
+                            "tests",  # Exclude test directories
+                            "README.md",  # Exclude function READMEs (package has main README)
+                            "*.md",  # Exclude all markdown files from functions
                         ),
                     )
 

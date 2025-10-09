@@ -518,17 +518,33 @@ clouds:
 
 ## Distribution Package
 
-The distribution package includes:
-- Lambda function code for all functions
-- Interactive installer script
-- Deployment logic (boto3-based)
-- Documentation
+The `make create-package` command creates a customer-installable distribution package containing only deployment essentials:
 
-Customers run:
+**What's Included:**
+- ✅ Function metadata (`function.yaml` files)
+- ✅ Lambda handler code and SQL templates (`code/` directories)
+- ✅ Deployment logic (`logic/` without tests)
+- ✅ Interactive installer script (`scripts/install.py`)
+- ✅ Main documentation (`README.md`)
+
+**What's Excluded:**
+- ❌ Test directories (`tests/`)
+- ❌ Function READMEs (development docs)
+- ❌ Development configuration files
+- ❌ Build artifacts and caches
+
+This keeps packages lightweight and focused on deployment needs.
+
+**Customer Installation:**
 
 ```bash
+# Extract and setup
+unzip carto-at-redshift-<version>.zip
+cd carto-at-redshift-<version>
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r scripts/requirements.txt
+
+# Run interactive installer
 python scripts/install.py
 ```
 
