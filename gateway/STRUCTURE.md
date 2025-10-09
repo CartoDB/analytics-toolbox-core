@@ -16,13 +16,6 @@ gateway/
 ├── STRUCTURE.md                        # This file
 ├── .env.template                       # Environment configuration template
 │
-├── common/                             # Gateway-specific configurations
-│   ├── redshift/.sqlfluff              # SQL linting config for Redshift
-│   ├── bigquery/.sqlfluff              # SQL linting config for BigQuery
-│   ├── snowflake/.sqlfluff             # SQL linting config for Snowflake
-│   ├── databricks/.sqlfluff            # SQL linting config for Databricks
-│   └── postgres/.sqlfluff              # SQL linting config for Postgres
-│
 ├── functions/                          # Function definitions by module
 │   └── quadbin/                        # Module: spatial indexing
 │       └── quadbin_polyfill/           # Example function
@@ -164,17 +157,11 @@ make test-all
 
 ### Lint code
 ```bash
-make lint              # Lint Python and SQL files
-make lint-fix          # Auto-fix Python and SQL formatting
+make lint              # Lint Python files
+make lint-fix          # Auto-fix Python formatting
 ```
 
 ## Key Features
-
-### SQL Linting with sqlfluff
-- Per-cloud `.sqlfluff` configurations in `common/{cloud}/`
-- Based on cloud-specific SQL dialects
-- Jinja2 template support for external function SQL
-- Automatic linting of `{cloud}.sql` files (e.g., `redshift.sql`)
 
 ### IAM Role Management
 - **IAM Manager** (`logic/platforms/aws-lambda/deploy/iam_manager.py`)
