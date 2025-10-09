@@ -31,7 +31,10 @@ class PackageBuilder:
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     def create_package(
-        self, functions: List[Function], output_dir: Path, include_private: bool = False
+        self,
+        functions: List[Function],
+        output_dir: Path,
+        production: bool = False,
     ) -> Path:
         """
         Create a complete distribution package
@@ -39,7 +42,7 @@ class PackageBuilder:
         Args:
             functions: List of functions to include
             output_dir: Output directory for package
-            include_private: Whether to include private functions
+            production: Whether installer should be for production mode
 
         Returns:
             Path to created package
@@ -56,8 +59,8 @@ class PackageBuilder:
 
         # Build package structure
         self._create_logic_dir(functions, package_dir)
-        self._create_scripts_dir(package_dir)
-        self._create_documentation(package_dir, functions, include_private)
+        self._create_scripts_dir(package_dir, production)
+        self._create_documentation(package_dir, functions)
 
         # Create zip file
         zip_path = output_dir / f"{package_name}.zip"
@@ -114,9 +117,17 @@ class PackageBuilder:
             f"Copied deployment logic and {len(functions)} function definitions"
         )
 
-    def _create_scripts_dir(self, package_dir: Path):
-        """Create installation scripts"""
+    def _create_scripts_dir(self, package_dir: Path, production: bool):
+        """Create installation scripts
+
+        Args:
+            package_dir: Package directory
+            production: Whether installer is for production mode
+        """
         scripts_dir = ensure_dir(package_dir / "scripts")
+
+        # Production packages skip schema prefix prompt (hard-coded to empty)
+        is_production = production
 
         # Main installer - interactive version
         installer_py = '''#!/usr/bin/env python3
@@ -153,12 +164,11 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--rs-password', help='Redshift password')
 @click.option('--rs-prefix', help='Schema prefix for dev (leave empty for production)')  # noqa: E501
 @click.option('--rs-roles', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
-@click.option('--production', is_flag=True, help='Deploy to production (schema=carto, no prefix)')  # noqa: E501
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             aws_session_token, aws_assume_role_arn, lambda_prefix,
             lambda_execution_role_arn, rs_host, rs_database, rs_user, rs_password,
-            rs_prefix, rs_roles, production, dry_run):
+            rs_prefix, rs_roles, dry_run):
     """Install CARTO Analytics Toolbox to Redshift
 
     This installer will guide you through deploying Analytics Toolbox functions
@@ -282,14 +292,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     rs_user = prompt_if_not_provided(rs_user, "Redshift User")
     rs_password = prompt_if_not_provided(rs_password, "Redshift Password", hide_input=True)
 
-    if not production and rs_prefix is None:
-        rs_prefix = click.prompt(  # noqa: E501
-            "Schema prefix for development (leave empty for none)",
-            default="",
-            show_default=False
-        )
-    elif production:
-        rs_prefix = ""
+    # Schema prefix configuration
+###SCHEMA_PREFIX_CODE###
 
     # RS_ROLES with enhanced guidance
     if not rs_roles:
@@ -417,9 +421,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         'deploy-all'
     ]
 
-    if production:
-        deploy_cmd.append('--production')
-
+###DEPLOY_PRODUCTION_CODE###
     if dry_run:
         deploy_cmd.append('--dry-run')
 
@@ -447,6 +449,31 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 if __name__ == '__main__':
     install()
 '''
+
+        # Generate code based on production vs dev configuration
+        if is_production:
+            # Production: always use empty prefix (no prompt)
+            schema_prefix_code = """    rs_prefix = ""  # Production: schema='carto'"""
+            deploy_production_code = """    deploy_cmd.append('--production')
+"""
+        else:
+            # Development: prompt for prefix
+            schema_prefix_code = """    if rs_prefix is None:
+        rs_prefix = click.prompt(  # noqa: E501
+            "Schema prefix for development (leave empty for none)",
+            default="",
+            show_default=False
+        )"""
+            deploy_production_code = ""
+
+        # Apply substitutions using replace to avoid format() issues with {braces}
+        installer_py = installer_py.replace(
+            "###SCHEMA_PREFIX_CODE###", schema_prefix_code
+        )
+        installer_py = installer_py.replace(
+            "###DEPLOY_PRODUCTION_CODE###", deploy_production_code
+        )
+
         with open(scripts_dir / "install.py", "w") as f:
             f.write(installer_py)
         (scripts_dir / "install.py").chmod(0o755)
@@ -461,9 +488,7 @@ if __name__ == '__main__':
             f.write("PyYAML>=6.0\n")
             f.write("jsonschema>=4.0.0\n")
 
-    def _create_documentation(
-        self, package_dir: Path, functions: List[Function], include_private: bool
-    ):
+    def _create_documentation(self, package_dir: Path, functions: List[Function]):
         """Create README and documentation"""
         readme_content = f"""# CARTO Analytics Toolbox for Redshift
 

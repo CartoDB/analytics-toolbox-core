@@ -1129,9 +1129,9 @@ def deploy_all(
     "--functions", help="Comma-separated list of functions to include (default: all)"
 )
 @click.option(
-    "--include-private",
+    "--production",
     is_flag=True,
-    help="Include private functions (for internal CARTO use)",
+    help="Generate installer for production (skip schema prefix prompt)",
 )
 @click.pass_context
 def create_package(
@@ -1140,7 +1140,7 @@ def create_package(
     version: str,
     include_roots: tuple,
     functions: Optional[str],
-    include_private: bool,
+    production: bool,
 ):
     """Create a distribution package for customer installation"""
     logger.info(f"Creating distribution package: version {version}")
@@ -1168,7 +1168,7 @@ def create_package(
 
     # Create package using PackageBuilder
     builder = PackageBuilder(version, CloudType.REDSHIFT)
-    package_path = builder.create_package(to_include, output_dir, include_private)
+    package_path = builder.create_package(to_include, output_dir, production)
 
     logger.info(f"✓ Package created: {package_path}")
 
