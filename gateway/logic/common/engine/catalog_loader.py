@@ -28,7 +28,7 @@ class CatalogLoader:
 
         Args:
             functions_root: Root directory or list of directories containing
-                function categories
+                function modules
         """
         if isinstance(functions_root, list):
             self.functions_roots = functions_root
@@ -64,8 +64,8 @@ class CatalogLoader:
         function_dir = yaml_path.parent
         function_name = function_dir.name
 
-        # Determine category from directory structure
-        category = self._get_category(function_dir)
+        # Determine module from directory structure
+        module = self._get_module(function_dir)
 
         # Parse arguments
         arguments = [
@@ -151,21 +151,21 @@ class CatalogLoader:
             examples=examples,
             clouds=clouds,
             test=test_config,
-            category=category,
+            module=module,
             function_path=function_dir,
         )
 
-    def _get_category(self, function_dir: Path) -> str:
+    def _get_module(self, function_dir: Path) -> str:
         """
-        Determine category from directory structure
+        Determine module from directory structure
 
         Args:
             function_dir: Path to function directory
 
         Returns:
-            Category name
+            Module name
         """
-        # Category is the parent directory of the function
+        # Module is the parent directory of the function
         # Try to find which root this function belongs to
         for root in self.functions_roots:
             try:
@@ -201,17 +201,17 @@ class CatalogLoader:
         """Get a function by name"""
         return self._catalog.get(name)
 
-    def get_functions_by_category(self, category: str) -> List[Function]:
-        """Get all functions in a category"""
-        return [f for f in self._catalog.values() if f.category == category]
+    def get_functions_by_module(self, module: str) -> List[Function]:
+        """Get all functions in a module"""
+        return [f for f in self._catalog.values() if f.module == module]
 
     def get_functions_by_cloud(self, cloud: CloudType) -> List[Function]:
         """Get all functions that support a specific cloud"""
         return [f for f in self._catalog.values() if f.supports_cloud(cloud)]
 
-    def get_categories(self) -> Set[str]:
-        """Get all unique categories"""
-        return {f.category for f in self._catalog.values()}
+    def get_modules(self) -> Set[str]:
+        """Get all unique modules"""
+        return {f.module for f in self._catalog.values()}
 
     def get_all_functions(self) -> List[Function]:
         """Get all functions"""

@@ -15,8 +15,8 @@ gateway/
 ├── requirements-dev.txt                # Development dependencies
 ├── STRUCTURE.md                        # This file
 │
-├── functions/                          # Function definitions by category
-│   └── quadbin/                        # Category: spatial indexing
+├── functions/                          # Function definitions by module
+│   └── quadbin/                        # Module: spatial indexing
 │       └── quadbin_polyfill/           # Example function
 │           ├── function.yaml           # Function metadata and config
 │           ├── README.md               # Function documentation
@@ -76,7 +76,7 @@ gateway/
 ## Key Components
 
 ### Functions (`functions/`)
-- Organized by **category** (e.g., `quadbin/`, `h3/`, `tiler/`)
+- Organized by **module** (e.g., `quadbin/`, `h3/`, `tiler/`)
 - Each function has:
   - `function.yaml` - Metadata (no inline code)
   - `code/` - Implementation files (Python, SQL templates)
@@ -155,7 +155,7 @@ make test-all
 
 ## Adding New Functions
 
-1. Create directory: `functions/<category>/<function_name>/`
+1. Create directory: `functions/<module>/<function_name>/`
 2. Add `function.yaml` with metadata
 3. Implement in `code/lambda/python/handler.py`
 4. Add SQL template in `code/redshift_external.sql.j2`
@@ -172,7 +172,7 @@ make test-all
 2. **Migrate existing functions**:
    - Convert existing Redshift Python UDFs to Lambda format
    - Create function.yaml for each
-   - Organize into categories
+   - Organize into modules
 
 3. **Extend to other clouds**:
    - Add `logic/clouds/bigquery/` for Cloud Run

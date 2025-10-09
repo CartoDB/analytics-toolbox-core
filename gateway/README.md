@@ -13,7 +13,7 @@ The Gateway system allows Analytics Toolbox functions to be deployed as:
 
 ```
 gateway/
-├── functions/              # Function definitions organized by category
+├── functions/              # Function definitions organized by module
 │   └── quadbin/
 │       └── quadbin_polyfill/
 │           ├── function.yaml              # Function metadata
@@ -381,7 +381,7 @@ The external function will be created with:
 1. **Create the directory structure:**
 
 ```bash
-mkdir -p gateway/functions/<category>/<function_name>/{code/lambda/python,tests/{unit,integration}}
+mkdir -p gateway/functions/<module>/<function_name>/{code/lambda/python,tests/{unit,integration}}
 ```
 
 2. **Create `function.yaml`:**

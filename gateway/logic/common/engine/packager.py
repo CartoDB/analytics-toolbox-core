@@ -498,16 +498,16 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
 This package includes {len(functions)} functions:
 
 """
-        # Group by category
-        by_category = {}
+        # Group by module
+        by_module = {}
         for func in functions:
-            if func.category not in by_category:
-                by_category[func.category] = []
-            by_category[func.category].append(func)
+            if func.module not in by_module:
+                by_module[func.module] = []
+            by_module[func.module].append(func)
 
-        for category in sorted(by_category.keys()):
-            readme_content += f"\n### {category.title()}\n\n"
-            for func in sorted(by_category[category], key=lambda f: f.name):
+        for module in sorted(by_module.keys()):
+            readme_content += f"\n### {module.title()}\n\n"
+            for func in sorted(by_module[module], key=lambda f: f.name):
                 readme_content += (
                     f"- **{func.name.upper()}**: {func.description.split('.')[0]}\n"
                 )

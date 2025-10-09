@@ -113,7 +113,7 @@ def render_all_external_functions(
     # Find all SQL templates
     for sql_template in functions_root.rglob("*external*.sql.j2"):
         # Extract function name from path
-        # Assuming structure: functions/{category}/{function_name}/code/{template}
+        # Assuming structure: functions/{module}/{function_name}/code/{template}
         function_dir = sql_template.parent.parent
         function_name = function_dir.name
 

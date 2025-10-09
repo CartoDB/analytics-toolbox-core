@@ -367,11 +367,11 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
             for root in function_roots:
                 try:
                     # Check if the file is within a function directory
-                    # Function structure: <root>/<category>/<function_name>/...
+                    # Function structure: <root>/<module>/<function_name>/...
                     relative = path.relative_to(root)
                     parts = relative.parts
 
-                    # Need at least category/function_name/file
+                    # Need at least module/function_name/file
                     if len(parts) >= 3:
                         function_name = parts[1]  # Second level is function name
                         modified_functions.add(function_name)
@@ -451,7 +451,7 @@ def check(
     help="Additional function roots to include (can be specified multiple times)",
 )
 @click.option("--cloud", default="redshift", help="Cloud platform (default: redshift)")
-@click.option("--modules", help="Comma-separated list of categories/modules to list")
+@click.option("--modules", help="Comma-separated list of modules to list")
 @click.option("--functions", help="Comma-separated list of functions to list")
 @click.pass_context
 def list_functions(
@@ -495,7 +495,7 @@ def list_functions(
     if modules:
         module_list = [m.strip() for m in modules.split(",")]
         filtered_functions = [
-            f for f in filtered_functions if f.category in module_list
+            f for f in filtered_functions if f.module in module_list
         ]
 
     # Apply functions filter
@@ -509,17 +509,17 @@ def list_functions(
 
     logger.info(f"\nFound {len(filtered_functions)} {cloud} functions:\n")
 
-    # Group by category
-    by_category = {}
+    # Group by module
+    by_module = {}
     for func in filtered_functions:
-        category = func.category
-        if category not in by_category:
-            by_category[category] = []
-        by_category[category].append(func)
+        module = func.module
+        if module not in by_module:
+            by_module[module] = []
+        by_module[module].append(func)
 
-    for category in sorted(by_category.keys()):
-        click.echo(f"\n[{category}]")
-        for func in sorted(by_category[category], key=lambda f: f.name):
+    for module in sorted(by_module.keys()):
+        click.echo(f"\n[{module}]")
+        for func in sorted(by_module[module], key=lambda f: f.name):
             click.echo(f"  - {func.name}")
 
 
@@ -697,7 +697,7 @@ def deploy_lambda(
 @click.option("--aws-profile", help="AWS profile to use")
 @click.option("--region", default="us-east-1", help="AWS region")
 @click.option("--cloud", default="redshift", help="Cloud platform (default: redshift)")
-@click.option("--modules", help="Comma-separated list of categories/modules to deploy")
+@click.option("--modules", help="Comma-separated list of modules to deploy")
 @click.option("--functions", help="Comma-separated list of functions to deploy")
 @click.option(
     "--diff", is_flag=True, help="Deploy only functions modified in git working tree"
@@ -747,10 +747,10 @@ def deploy_all(
 
     to_deploy = [f for f in all_functions if f.supports_cloud(cloud_type)]
 
-    # Apply modules (categories) filter
+    # Apply modules filter
     if modules:
         module_list = [m.strip() for m in modules.split(",")]
-        to_deploy = [f for f in to_deploy if f.category in module_list]
+        to_deploy = [f for f in to_deploy if f.module in module_list]
         logger.info(f"Filtering by modules: {', '.join(module_list)}")
 
     # Apply functions filter
@@ -785,7 +785,7 @@ def deploy_all(
         logger.info("[DRY RUN] Would deploy:")
         for func in to_deploy:
             lambda_name = f"{lambda_prefix}{func.name}"
-            logger.info(f"  - {lambda_name} ({func.category})")
+            logger.info(f"  - {lambda_name} ({func.module})")
         return
 
     # Get Redshift configuration (support both direct and Data API)

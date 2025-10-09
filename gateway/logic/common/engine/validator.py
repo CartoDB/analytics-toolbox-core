@@ -201,7 +201,7 @@ def validate_all_functions(
     Validate all functions in a directory
 
     Args:
-        functions_dir: Root directory containing function categories
+        functions_dir: Root directory containing function modules
         schema_path: Optional path to schema file
 
     Returns:

@@ -101,7 +101,7 @@ class Function:
     examples: List[FunctionExample]
     clouds: Dict[CloudType, CloudConfig]
     test: TestConfig
-    category: str = "general"
+    module: str = "general"
     function_path: Optional[Path] = None
 
     @property
