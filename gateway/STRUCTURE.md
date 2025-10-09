@@ -14,6 +14,14 @@ gateway/
 ├── requirements.txt                    # Python dependencies
 ├── requirements-dev.txt                # Development dependencies
 ├── STRUCTURE.md                        # This file
+├── .env.template                       # Environment configuration template
+│
+├── common/                             # Gateway-specific configurations
+│   ├── redshift/.sqlfluff              # SQL linting config for Redshift
+│   ├── bigquery/.sqlfluff              # SQL linting config for BigQuery
+│   ├── snowflake/.sqlfluff             # SQL linting config for Snowflake
+│   ├── databricks/.sqlfluff            # SQL linting config for Databricks
+│   └── postgres/.sqlfluff              # SQL linting config for Postgres
 │
 ├── functions/                          # Function definitions by module
 │   └── quadbin/                        # Module: spatial indexing
@@ -24,7 +32,7 @@ gateway/
 │           │   ├── lambda/python/
 │           │   │   ├── handler.py      # Lambda implementation
 │           │   │   └── requirements.txt
-│           │   └── redshift_external.sql.j2  # SQL template
+│           │   └── redshift.sql  # SQL template
 │           └── tests/
 │               ├── unit/
 │               │   ├── cases.yaml      # Declarative test cases
@@ -64,7 +72,8 @@ gateway/
 │           │   └── lambda_wrapper.py  # Response formatting, decorators
 │           ├── deploy/                # Deployment tools
 │           │   ├── __init__.py
-│           │   └── deployer.py        # Lambda packaging & deployment
+│           │   ├── deployer.py        # Lambda packaging & deployment
+│           │   └── iam_manager.py     # IAM role management for Redshift
 │           └── tests/unit/
 │               └── test_lambda_wrapper.py
 │
@@ -153,12 +162,38 @@ make test-integration
 make test-all
 ```
 
+### Lint code
+```bash
+make lint              # Lint Python and SQL files
+make lint-fix          # Auto-fix Python and SQL formatting
+```
+
+## Key Features
+
+### SQL Linting with sqlfluff
+- Per-cloud `.sqlfluff` configurations in `common/{cloud}/`
+- Based on cloud-specific SQL dialects
+- Jinja2 template support for external function SQL
+- Automatic linting of `{cloud}.sql` files (e.g., `redshift.sql`)
+
+### IAM Role Management
+- **IAM Manager** (`logic/platforms/aws-lambda/deploy/iam_manager.py`)
+- Auto-creates Redshift invoke role if not provided
+- Auto-attaches role to Redshift cluster
+- Configures Lambda resource policies
+- Supports both same-account and cross-account setups
+
+### SQL File Naming Convention
+- Files named by cloud: `redshift.sql`, `bigquery.sql`, etc.
+- Contains Jinja2 templates with variables: `schema`, `lambda_arn`, `iam_role_arn`
+- Copyright headers included
+
 ## Adding New Functions
 
 1. Create directory: `functions/<module>/<function_name>/`
 2. Add `function.yaml` with metadata
 3. Implement in `code/lambda/python/handler.py`
-4. Add SQL template in `code/redshift_external.sql.j2`
+4. Add SQL template in `code/redshift.sql`
 5. Write tests in `tests/unit/` and `tests/integration/`
 6. Run `make validate` and `make test`
 

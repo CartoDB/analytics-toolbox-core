@@ -22,7 +22,7 @@ gateway/
 │           │   ├── lambda/python/
 │           │   │   ├── handler.py         # Lambda implementation
 │           │   │   └── requirements.txt   # Python dependencies
-│           │   └── redshift_external.sql.j2  # SQL template
+│           │   └── redshift.sql  # SQL template
 │           └── tests/
 │               ├── unit/
 │               │   ├── cases.yaml         # Simple test cases
@@ -414,7 +414,7 @@ clouds:
     type: lambda
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift_external.sql.j2
+    external_function_template: code/redshift.sql
     config:
       memory_size: 512
       timeout: 60
