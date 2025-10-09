@@ -494,9 +494,7 @@ def list_functions(
     # Apply modules filter
     if modules:
         module_list = [m.strip() for m in modules.split(",")]
-        filtered_functions = [
-            f for f in filtered_functions if f.module in module_list
-        ]
+        filtered_functions = [f for f in filtered_functions if f.module in module_list]
 
     # Apply functions filter
     if functions:
