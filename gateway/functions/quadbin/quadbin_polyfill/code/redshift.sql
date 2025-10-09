@@ -1,6 +1,10 @@
 {# Jinja2 template for Redshift external function SQL #}
 {# Variables available: function_name, lambda_arn, iam_role_arn, schema #}
 
+----------------------------
+-- Copyright (C) 2025 CARTO
+----------------------------
+
 -- Internal external function (VARCHAR in/out)
 CREATE OR REPLACE EXTERNAL FUNCTION {{ schema }}.__QUADBIN_POLYFILL_EXFUNC(
     geom VARCHAR(MAX),

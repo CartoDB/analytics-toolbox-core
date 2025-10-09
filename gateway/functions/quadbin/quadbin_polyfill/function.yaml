@@ -40,7 +40,7 @@ clouds:
     type: lambda
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift_external.sql
+    external_function_template: code/redshift.sql
     config:
       memory_size: 512
       timeout: 60
