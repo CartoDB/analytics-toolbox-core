@@ -18,12 +18,12 @@ def get_gateway_root() -> Path:
     return Path(__file__).parent.parent.parent.parent.resolve()
 
 
-def get_functions_root() -> Path:
+def get_default_function_roots() -> Path:
     """
-    Get the functions directory
+    Get the default functions directory
 
     Returns:
-        Path to functions directory
+        Path to default functions directory
     """
     return get_gateway_root() / "functions"
 

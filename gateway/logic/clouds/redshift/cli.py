@@ -26,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from common.engine import CatalogLoader, FunctionValidator, CloudType  # noqa: E402
 from common.engine.packager import PackageBuilder  # noqa: E402
 from common.utils import (  # noqa: E402
-    get_functions_root,
+    get_default_function_roots,
     setup_logger,
     get_function_schema,
 )
@@ -439,7 +439,7 @@ def check(
 
 @cli.command()
 @click.option(
-    "--functions-root",
+    "--function-roots",
     type=click.Path(exists=True, path_type=Path),
     help="Path to functions directory",
 )
@@ -456,7 +456,7 @@ def check(
 @click.pass_context
 def list_functions(
     ctx,
-    functions_root: Optional[Path],
+    function_roots: Optional[Path],
     include_roots: tuple,
     cloud: str,
     modules: Optional[str],
@@ -464,19 +464,19 @@ def list_functions(
 ):
     """List all functions available for Redshift"""
     # Build list of function roots
-    function_roots = []
-    if functions_root:
-        function_roots.append(functions_root)
+    roots_list = []
+    if function_roots:
+        roots_list.append(function_roots)
     else:
-        function_roots.append(get_functions_root())
+        roots_list.append(get_default_function_roots())
 
     if include_roots:
-        function_roots.extend(include_roots)
+        roots_list.extend(include_roots)
         logger.info(f"Including {len(include_roots)} additional function root(s)")
 
-    logger.info(f"Loading functions from {len(function_roots)} root(s)")
+    logger.info(f"Loading functions from {len(roots_list)} root(s)")
 
-    loader = CatalogLoader(function_roots)
+    loader = CatalogLoader(roots_list)
     loader.load_catalog()
 
     # Start with cloud filter
@@ -525,7 +525,7 @@ def list_functions(
 
 @cli.command()
 @click.option(
-    "--functions-root",
+    "--function-roots",
     type=click.Path(exists=True, path_type=Path),
     help="Path to functions directory",
 )
@@ -537,17 +537,17 @@ def list_functions(
     help="Additional function roots to include (can be specified multiple times)",
 )
 @click.pass_context
-def validate(ctx, functions_root: Optional[Path], include_roots: tuple):
+def validate(ctx, function_roots: Optional[Path], include_roots: tuple):
     """Validate all function definitions"""
     # Build list of function roots
-    function_roots = []
-    if functions_root:
-        function_roots.append(functions_root)
+    roots_list = []
+    if function_roots:
+        roots_list.append(function_roots)
     else:
-        function_roots.append(get_functions_root())
+        roots_list.append(get_default_function_roots())
 
     if include_roots:
-        function_roots.extend(include_roots)
+        roots_list.extend(include_roots)
         logger.info(f"Including {len(include_roots)} additional function root(s)")
 
     schema_path = get_function_schema()
@@ -556,7 +556,7 @@ def validate(ctx, functions_root: Optional[Path], include_roots: tuple):
     errors = []
     success_count = 0
 
-    for root in function_roots:
+    for root in roots_list:
         logger.info(f"Validating functions in: {root}")
         for yaml_file in root.rglob("function.yaml"):
             function_dir = yaml_file.parent
@@ -593,8 +593,8 @@ def deploy_lambda(
     # Load environment configuration
     load_env_config()
 
-    functions_root = get_functions_root()
-    loader = CatalogLoader(functions_root)
+    function_roots = get_default_function_roots()
+    loader = CatalogLoader(function_roots)
     loader.load_catalog()
 
     function = loader.get_function(function_name)
@@ -728,7 +728,7 @@ def deploy_all(
         roots_to_load = list(include_roots)
     else:
         # Otherwise use default
-        roots_to_load = [get_functions_root()]
+        roots_to_load = [get_default_function_roots()]
 
     for root in roots_to_load:
         loader = CatalogLoader(root)
@@ -919,9 +919,9 @@ def deploy_all(
                 logger.error(f"✗ Failed to deploy Lambda {func.name}: {e}")
                 failed_functions.append(func.name)
 
-        # Phase 2: Deploy External Functions in Redshift
+        # Phase 2: Deploy external functions in Redshift
         if deploy_external_functions and lambda_arns:
-            logger.info("\n=== Phase 2: Creating External Functions in Redshift ===\n")
+            logger.info("\n=== Phase 2: Creating external functions in Redshift ===\n")
 
             # Create schema if it doesn't exist
             create_schema_sql = f"CREATE SCHEMA IF NOT EXISTS {rs_schema};"
@@ -1009,7 +1009,7 @@ def deploy_all(
         logger.info("  Lambda functions:")
         logger.info(f"    ✓ Successful: {lambda_success}/{len(to_deploy)}")
         if deploy_external_functions:
-            logger.info("  External functions:")
+            logger.info("  external functions:")
             logger.info(f"    ✓ Successful: {external_success}/{lambda_success}")
         if failed_functions:
             logger.warning(f"  ✗ Failed: {', '.join(failed_functions)}")
@@ -1050,7 +1050,7 @@ def create_package(
     logger.info(f"Creating distribution package: version {version}")
 
     # Load from all function roots
-    function_roots = [get_functions_root()]
+    function_roots = [get_default_function_roots()]
     if include_roots:
         function_roots.extend(include_roots)
         logger.info(f"Including {len(include_roots)} additional function root(s)")

@@ -5,7 +5,7 @@ Utility functions for the Analytics Toolbox Gateway
 from .logging import setup_logger, get_logger
 from .paths import (
     get_gateway_root,
-    get_functions_root,
+    get_default_function_roots,
     get_logic_root,
     get_dist_root,
     get_schemas_dir,
@@ -18,7 +18,7 @@ __all__ = [
     "setup_logger",
     "get_logger",
     "get_gateway_root",
-    "get_functions_root",
+    "get_default_function_roots",
     "get_logic_root",
     "get_dist_root",
     "get_schemas_dir",

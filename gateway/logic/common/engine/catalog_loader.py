@@ -22,18 +22,18 @@ from .models import (
 class CatalogLoader:
     """Loads and manages the function catalog"""
 
-    def __init__(self, functions_root: Union[Path, List[Path]]):
+    def __init__(self, function_roots: Union[Path, List[Path]]):
         """
         Initialize catalog loader
 
         Args:
-            functions_root: Root directory or list of directories containing
+            function_roots: Root directory or list of directories containing
                 function modules
         """
-        if isinstance(functions_root, list):
-            self.functions_roots = functions_root
+        if isinstance(function_roots, list):
+            self.function_roots = function_roots
         else:
-            self.functions_roots = [functions_root]
+            self.function_roots = [function_roots]
         self._catalog: Dict[str, Function] = {}
 
     def discover_functions(self) -> List[Path]:
@@ -44,7 +44,7 @@ class CatalogLoader:
             List of paths to function.yaml files
         """
         all_yamls = []
-        for root in self.functions_roots:
+        for root in self.function_roots:
             all_yamls.extend(root.rglob("function.yaml"))
         return all_yamls
 
@@ -167,7 +167,7 @@ class CatalogLoader:
         """
         # Module is the parent directory of the function
         # Try to find which root this function belongs to
-        for root in self.functions_roots:
+        for root in self.function_roots:
             try:
                 relative_path = function_dir.relative_to(root)
                 if len(relative_path.parts) > 1:
