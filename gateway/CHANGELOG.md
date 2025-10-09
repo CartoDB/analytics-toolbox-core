@@ -26,9 +26,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Infrastructure
 - Python 3.10+ support (tested with 3.10-3.13)
-- CDK-free deployment (direct boto3 Lambda deployment)
+- Direct boto3 Lambda deployment
 - Support for RS_PREFIX for development environments
 - Automatic schema calculation (RS_PREFIX + 'carto')
+- Dynamic IAM role naming with PascalCase conversion
 - Lambda configuration optimization (only update if changed)
 - Retry logic for Lambda update conflicts
 - Progress feedback during external function creation

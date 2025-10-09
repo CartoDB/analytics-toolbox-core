@@ -71,8 +71,6 @@ class PreFlightChecker:
         # Environment checks
         self._check_python_version()
         self._check_aws_cli()
-        self._check_cdk_cli()
-        self._check_node_version()
 
         # AWS checks
         self._check_aws_credentials(aws_profile)
@@ -174,111 +172,6 @@ class PreFlightChecker:
                 )
             )
 
-    def _check_cdk_cli(self):
-        """Check AWS CDK CLI installation"""
-        try:
-            result = subprocess.run(
-                ["cdk", "--version"],
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
-
-            if result.returncode == 0:
-                version = result.stdout.strip()
-                self.results.append(
-                    CheckResult(
-                        name="AWS CDK",
-                        status=CheckStatus.PASS,
-                        message=f"Installed ({version})",
-                    )
-                )
-            else:
-                self.results.append(
-                    CheckResult(
-                        name="AWS CDK",
-                        status=CheckStatus.WARNING,
-                        message="Not installed (optional)",
-                        details="Install: npm install -g aws-cdk",
-                    )
-                )
-        except FileNotFoundError:
-            self.results.append(
-                CheckResult(
-                    name="AWS CDK",
-                    status=CheckStatus.WARNING,
-                    message="Not installed (optional)",
-                    details="Install: npm install -g aws-cdk",
-                )
-            )
-        except Exception as e:
-            self.results.append(
-                CheckResult(
-                    name="AWS CDK",
-                    status=CheckStatus.WARNING,
-                    message="Check failed",
-                    error=e,
-                )
-            )
-
-    def _check_node_version(self):
-        """Check Node.js version (required for CDK)"""
-        try:
-            result = subprocess.run(
-                ["node", "--version"],
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
-
-            if result.returncode == 0:
-                version = result.stdout.strip()
-                # Extract major version
-                major_version = int(version.lstrip("v").split(".")[0])
-
-                if major_version >= 14:
-                    self.results.append(
-                        CheckResult(
-                            name="Node.js",
-                            status=CheckStatus.PASS,
-                            message=f"Installed ({version})",
-                        )
-                    )
-                else:
-                    self.results.append(
-                        CheckResult(
-                            name="Node.js",
-                            status=CheckStatus.WARNING,
-                            message=f"{version} - CDK requires Node.js 14+",
-                        )
-                    )
-            else:
-                self.results.append(
-                    CheckResult(
-                        name="Node.js",
-                        status=CheckStatus.WARNING,
-                        message="Not working properly",
-                    )
-                )
-        except FileNotFoundError:
-            self.results.append(
-                CheckResult(
-                    name="Node.js",
-                    status=CheckStatus.WARNING,
-                    message="Not installed (required for CDK)",
-                    details="Install from: https://nodejs.org/",
-                )
-            )
-        except Exception as e:
-            self.results.append(
-                CheckResult(
-                    name="Node.js",
-                    status=CheckStatus.WARNING,
-                    message="Check failed",
-                    error=e,
-                )
-            )
-
     def _check_aws_credentials(self, profile: Optional[str] = None):
         """Check AWS credentials are configured"""
         try:
@@ -348,7 +241,7 @@ class PreFlightChecker:
 
     def _check_package_structure(self):
         """Check package directory structure"""
-        required_dirs = ["cdk", "lambdas", "sql", "scripts"]
+        required_dirs = ["logic", "functions", "scripts"]
         current_dir = Path.cwd()
 
         missing_dirs = []
@@ -376,37 +269,38 @@ class PreFlightChecker:
 
     def _check_lambda_code(self):
         """Check Lambda function code exists"""
-        lambdas_dir = Path.cwd() / "lambdas"
+        functions_dir = Path.cwd() / "functions"
 
-        if not lambdas_dir.exists():
+        if not functions_dir.exists():
             self.results.append(
                 CheckResult(
                     name="Lambda Functions",
                     status=CheckStatus.SKIP,
-                    message="lambdas/ directory not found",
+                    message="functions/ directory not found",
                 )
             )
             return
 
-        lambda_functions = [d for d in lambdas_dir.iterdir() if d.is_dir()]
+        # Count functions by looking for function.yaml files
+        function_yamls = list(functions_dir.rglob("function.yaml"))
 
-        if not lambda_functions:
+        if not function_yamls:
             self.results.append(
                 CheckResult(
                     name="Lambda Functions",
                     status=CheckStatus.WARNING,
-                    message="No Lambda functions found",
+                    message="No functions found",
                 )
             )
             return
 
         # Check each function has handler
         invalid_functions = []
-        for func_dir in lambda_functions:
-            handler_file = func_dir / "handler.py"
-            index_file = func_dir / "index.py"
+        for yaml_file in function_yamls:
+            func_dir = yaml_file.parent
+            handler_file = func_dir / "code" / "lambda" / "python" / "handler.py"
 
-            if not handler_file.exists() and not index_file.exists():
+            if not handler_file.exists():
                 invalid_functions.append(func_dir.name)
 
         if not invalid_functions:
@@ -414,8 +308,8 @@ class PreFlightChecker:
                 CheckResult(
                     name="Lambda Functions",
                     status=CheckStatus.PASS,
-                    message=f"Found {len(lambda_functions)} function(s)",
-                    details=", ".join(f.name for f in lambda_functions),
+                    message=f"Found {len(function_yamls)} function(s)",
+                    details=", ".join(f.parent.name for f in function_yamls),
                 )
             )
         else:
