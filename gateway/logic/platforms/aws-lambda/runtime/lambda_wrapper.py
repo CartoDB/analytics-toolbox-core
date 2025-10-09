@@ -1,5 +1,5 @@
 """
-Lambda wrapper utilities for Redshift external functions
+Lambda wrapper utilities for external functions
 Provides standardized error handling and response formatting
 """
 
@@ -7,8 +7,8 @@ from typing import Dict, Any, Callable, List, Optional
 import traceback
 
 
-class RedshiftLambdaResponse:
-    """Builder for Redshift Lambda responses"""
+class ExternalFunctionResponse:
+    """Builder for external function responses (cloud-agnostic)"""
 
     @staticmethod
     def success(results: List[Any], num_records: int) -> Dict[str, Any]:
@@ -20,7 +20,7 @@ class RedshiftLambdaResponse:
             num_records: Number of records processed
 
         Returns:
-            Response dict in Redshift format
+            Response dict in external function format
         """
         return {"success": True, "num_records": num_records, "results": results}
 
@@ -34,7 +34,7 @@ class RedshiftLambdaResponse:
             num_records: Number of records (usually 0 for errors)
 
         Returns:
-            Response dict in Redshift format
+            Response dict in external function format
         """
         return {
             "success": False,
@@ -87,14 +87,14 @@ def redshift_handler(process_row_func: Callable) -> Callable:
                         print(f"Remaining time: {time_ms}ms")
                     results.append(None)
 
-            return RedshiftLambdaResponse.success(results, num_records)
+            return ExternalFunctionResponse.success(results, num_records)
 
         except Exception as e:
             # Batch-level error
             error_msg = f"Batch processing error: {str(e)}"
             print(error_msg)
             print(traceback.format_exc())
-            return RedshiftLambdaResponse.error(error_msg)
+            return ExternalFunctionResponse.error(error_msg)
 
     return lambda_handler
 
@@ -132,16 +132,16 @@ def batch_redshift_handler(process_batch_func: Callable) -> Callable:
                     f"Result count mismatch: got {len(results)}, "
                     f"expected {len(arguments)}"
                 )
-                return RedshiftLambdaResponse.error(error_msg)
+                return ExternalFunctionResponse.error(error_msg)
 
-            return RedshiftLambdaResponse.success(results, num_records)
+            return ExternalFunctionResponse.success(results, num_records)
 
         except Exception as e:
             # Batch-level error
             error_msg = f"Batch processing error: {str(e)}"
             print(error_msg)
             print(traceback.format_exc())
-            return RedshiftLambdaResponse.error(error_msg)
+            return ExternalFunctionResponse.error(error_msg)
 
     return lambda_handler
 

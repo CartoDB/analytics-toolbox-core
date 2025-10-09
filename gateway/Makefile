@@ -38,10 +38,10 @@ NC := \033[0m # No Color
 
 .SILENT:
 
-.PHONY: help lint test test-unit test-integration deploy remove clean create-package
+.PHONY: help lint test test-unit test-integration list validate deploy remove clean create-package
 
 help:
-	echo "Available targets: help lint test deploy remove clean create-package"
+	echo "Available targets: help lint lint-fix test list validate deploy remove clean create-package"
 
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
@@ -65,6 +65,13 @@ lint: install-dev
 
 lint-fix: install-dev
 	$(VENV_BIN)/black $(LINT_PATHS) --line-length=88
+
+list: venv
+	echo "Listing functions for $(cloud)..."
+	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py list-functions \
+		$(if $(modules),--modules=$(modules),) \
+		$(if $(functions),--functions=$(functions),) \
+		$(EXTRA_CLI_ARGS)
 
 validate: venv
 	echo "Validating functions..."

@@ -34,16 +34,15 @@ gateway/
 │   ├── common/             # Shared utilities
 │   │   ├── engine/         # Core models, validation, catalog
 │   │   ├── schemas/        # JSON schemas for validation
-│   │   ├── utils/          # Logging, path utilities
-│   │   └── sql_macros/     # Jinja2 SQL templates
+│   │   └── utils/          # Logging, path utilities
 │   ├── clouds/             # Cloud-specific logic
 │   │   └── redshift/
 │   │       ├── cli.py      # CLI for Redshift deployments
-│   │       ├── configs/    # Environment configurations
-│   │       └── sql/        # SQL templates
+│   │       ├── template_renderer.py  # Simple @@VARIABLE@@ template renderer
+│   │       └── validation/ # Pre-flight checks
 │   └── platforms/          # Platform-specific code
 │       └── aws-lambda/
-│           ├── runtime/    # Lambda wrapper utilities
+│           ├── runtime/    # Lambda wrapper utilities (cloud-agnostic)
 │           └── deploy/     # Deployment tools
 │
 └── dist/                   # Distribution packages (generated)
@@ -455,7 +454,32 @@ def process_row(row):
     pass
 ```
 
-4. **Add test cases** in `tests/unit/cases.yaml`:
+4. **Create SQL template** in `code/redshift.sql`:
+
+SQL templates use simple `@@VARIABLE@@` placeholders that get replaced at deployment time:
+
+```sql
+-- Template for Redshift external function SQL
+-- Variables: FUNCTION_NAME, LAMBDA_ARN, IAM_ROLE_ARN, SCHEMA
+
+-- Copyright notice...
+
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.MY_FUNCTION(
+    arg1 VARCHAR(MAX)
+)
+RETURNS VARCHAR(MAX)
+STABLE
+LAMBDA '@@LAMBDA_ARN@@'
+IAM_ROLE '@@IAM_ROLE_ARN@@';
+```
+
+**Available template variables:**
+- `@@SCHEMA@@` - Schema name (e.g., `carto` or `dev_user_carto`)
+- `@@LAMBDA_ARN@@` - ARN of the deployed Lambda function
+- `@@IAM_ROLE_ARN@@` - ARN of the IAM role for Redshift to invoke Lambda
+- `@@FUNCTION_NAME@@` - Name of the function
+
+5. **Add test cases** in `tests/unit/cases.yaml`:
 
 ```yaml
 test_cases:
@@ -630,14 +654,14 @@ The system uses `git diff` to detect changes and only redeploys affected functio
 1. **Catalog Loader** - Discovers and loads function definitions
 2. **Validator** - Validates function.yaml against schema
 3. **Lambda Deployer** - Packages and deploys Lambda functions
-4. **SQL Renderer** - Generates external function SQL from templates
+4. **Template Renderer** - Generates external function SQL from templates using @@VARIABLE@@ syntax
 5. **CLI** - Command-line interface for deployments
 
 ### Deployment Flow
 
 ```
 function.yaml → Validator → Catalog Loader → Lambda Deployer → AWS Lambda
-                                            → SQL Renderer → External Function
+                                            → Template Renderer → External Function
 ```
 
 ## Troubleshooting

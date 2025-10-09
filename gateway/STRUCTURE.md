@@ -47,13 +47,16 @@ gateway/
 │   │   │   ├── __init__.py
 │   │   │   ├── logging.py             # Logging utilities
 │   │   │   └── paths.py               # Path helpers
-│   │   └── sql_macros/
-│   │       └── geometry.j2            # Jinja2 SQL macros
 │   │
 │   ├── clouds/                         # Cloud-specific implementations
 │   │   └── redshift/
 │   │       ├── __init__.py
 │   │       ├── cli.py                 # CLI for Redshift deployments
+│   │       ├── template_renderer.py   # Simple @@VARIABLE@@ template renderer
+│   │       ├── installer_generator.py # Generates install.py for distribution packages
+│   │       ├── validation/            # Redshift-specific validation
+│   │       │   ├── __init__.py
+│   │       │   └── pre_flight_checks.py
 │   │       └── tests/unit/
 │   │           └── test_cli.py
 │   │
@@ -95,16 +98,18 @@ gateway/
   - `packager.py` - Generates customer-installable distribution packages
 - **schemas/** - JSON schemas for validation
 - **utils/** - Logging, path utilities
-- **sql_macros/** - Reusable Jinja2 templates
 
 #### Clouds (`logic/clouds/`)
 - **redshift/** - Redshift-specific deployment logic
   - `cli.py` - Command-line interface (all config from .env files)
+  - `template_renderer.py` - Simple template renderer for SQL generation (@@VARIABLE@@ syntax)
+  - `installer_generator.py` - Generates install.py script for distribution packages
+  - `validation/` - Pre-flight checks and validation
   - `tests/` - Unit tests for CLI
 
 #### Platforms (`logic/platforms/`)
 - **aws-lambda/** - Lambda deployment and runtime
-  - `runtime/` - Wrapper utilities for Redshift response format
+  - `runtime/` - Cloud-agnostic wrapper utilities (ExternalFunctionResponse)
   - `deploy/` - Packaging and deployment to AWS
 
 ### Distribution (`dist/`)
@@ -113,10 +118,10 @@ gateway/
 
 ## File Count by Type
 
-- Python files: 17 (removed config_loader.py)
+- Python files: 18 (removed config_loader.py, sql_renderer.py; added template_renderer.py, installer_generator.py)
 - YAML files: 3 (removed dev.yaml, prod.yaml)
 - Markdown files: 5
-- SQL/Jinja2 templates: 3
+- SQL templates: 3 (using @@VARIABLE@@ syntax)
 - JSON schema: 1
 - Text files: 3
 - Makefile: 1
@@ -172,7 +177,8 @@ make lint-fix          # Auto-fix Python formatting
 
 ### SQL File Naming Convention
 - Files named by cloud: `redshift.sql`, `bigquery.sql`, etc.
-- Contains Jinja2 templates with variables: `schema`, `lambda_arn`, `iam_role_arn`
+- Uses simple `@@VARIABLE@@` template syntax (e.g., `@@SCHEMA@@`, `@@LAMBDA_ARN@@`, `@@IAM_ROLE_ARN@@`)
+- No external dependencies - just string replacement
 - Copyright headers included
 
 ## Adding New Functions

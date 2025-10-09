@@ -30,8 +30,10 @@ from common.utils import (  # noqa: E402
     setup_logger,
     get_function_schema,
 )
-from common.validation import run_pre_flight_checks  # noqa: E402
-from common.sql_renderer import SQLRenderer  # noqa: E402
+
+# Redshift-specific imports (moved from common/)
+from validation.pre_flight_checks import run_pre_flight_checks  # noqa: E402
+from template_renderer import TemplateRenderer  # noqa: E402
 
 # Import LambdaDeployer and IAMRoleManager
 platforms_path = (
@@ -326,7 +328,7 @@ def deploy_external_function(
         region: AWS region
     """
     # Render SQL template
-    renderer = SQLRenderer()
+    renderer = TemplateRenderer()
     sql = renderer.render_external_function(
         template_path=sql_template_path,
         function_name=function_name,
@@ -742,6 +744,11 @@ def deploy_lambda(
 @click.option(
     "--dry-run", is_flag=True, help="Show what would be deployed without deploying"
 )
+@click.option(
+    "--production",
+    is_flag=True,
+    help="Deploy for production (use 'carto' schema instead of prefixed schema)",
+)
 @click.pass_context
 def deploy_all(
     ctx,
@@ -754,9 +761,13 @@ def deploy_all(
     functions: Optional[str],
     diff: bool,
     dry_run: bool,
+    production: bool,
 ):
     """Deploy all Lambda functions and create external functions"""
     logger.info("Deploying Analytics Toolbox to Redshift")
+
+    # Store production flag in context
+    ctx.obj["production"] = production
 
     # Load from all function roots
     all_functions = []
@@ -842,9 +853,8 @@ def deploy_all(
     # production=1: schema = "carto"
     # production=0: schema = "{prefix}carto" (e.g., "myname_carto")
     rs_schema_default = "carto"
-    # Check if we're in production mode from config (dev.yaml vs prod.yaml)
-    # For now, derive from CONFIG_FILE path
-    is_production = "prod" in str(config)
+    # Check if we're in production mode from context
+    is_production = ctx.obj.get("production", False)
     if is_production:
         rs_schema = rs_schema_default
     else:

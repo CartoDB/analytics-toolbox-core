@@ -3,7 +3,7 @@ AWS Lambda platform integration for Analytics Toolbox Gateway
 """
 
 from .runtime import (
-    RedshiftLambdaResponse,
+    ExternalFunctionResponse,
     redshift_handler,
     batch_redshift_handler,
     LambdaContext,
@@ -11,7 +11,7 @@ from .runtime import (
 from .deploy import LambdaDeployer
 
 __all__ = [
-    "RedshiftLambdaResponse",
+    "ExternalFunctionResponse",
     "redshift_handler",
     "batch_redshift_handler",
     "LambdaContext",

@@ -121,32 +121,42 @@ class Function:
 
 
 @dataclass
-class LambdaDeployment:
-    """AWS Lambda deployment configuration"""
+class PlatformDeploymentConfig:
+    """
+    Generic platform deployment configuration
+
+    Replaces platform-specific configs (LambdaDeployment, etc.)
+    Platform-specific fields go in platform_config dict
+    """
 
     function_name: str
+    platform_type: PlatformType
     handler: str
     runtime: str
-    memory_size: int
-    timeout: int
     code_path: Path
     requirements: Optional[Path] = None
+    platform_config: Dict[str, Any] = field(default_factory=dict)
     environment_variables: Dict[str, str] = field(default_factory=dict)
-    iam_role_arn: Optional[str] = None
-    layers: List[str] = field(default_factory=list)
 
 
 @dataclass
 class ExternalFunctionConfig:
-    """Configuration for creating external functions in the database"""
+    """
+    Configuration for creating external functions in cloud databases
+
+    Cloud-agnostic - works with any cloud (Redshift, BigQuery, Snowflake, etc.)
+    """
 
     function_name: str
     schema: str
     arguments: List[FunctionArgument]
     return_type: str
-    lambda_arn: str
-    iam_role_arn: str
+    platform_identifier: str  # Platform-specific ID (Lambda ARN, Cloud Run URL, etc.)
+    credentials: Dict[str, str]  # Cloud-specific auth credentials
     template_path: Path
+    additional_config: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Cloud-specific extras
 
 
 @dataclass

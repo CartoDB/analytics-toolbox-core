@@ -9,19 +9,19 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
 from lambda_wrapper import (  # noqa: E402
-    RedshiftLambdaResponse,
+    ExternalFunctionResponse,
     redshift_handler,
     batch_redshift_handler,
 )
 
 
-class TestRedshiftLambdaResponse:
-    """Test RedshiftLambdaResponse builder"""
+class TestExternalFunctionResponse:
+    """Test ExternalFunctionResponse builder"""
 
     def test_success_response(self):
         """Test creating a success response"""
         results = [1, 2, 3]
-        response = RedshiftLambdaResponse.success(results, 3)
+        response = ExternalFunctionResponse.success(results, 3)
 
         assert response["success"] is True
         assert response["num_records"] == 3
@@ -29,7 +29,7 @@ class TestRedshiftLambdaResponse:
 
     def test_error_response(self):
         """Test creating an error response"""
-        response = RedshiftLambdaResponse.error("Test error", 0)
+        response = ExternalFunctionResponse.error("Test error", 0)
 
         assert response["success"] is False
         assert response["error_msg"] == "Test error"

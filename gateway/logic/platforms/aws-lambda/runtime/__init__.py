@@ -3,14 +3,14 @@ AWS Lambda runtime utilities for Analytics Toolbox
 """
 
 from .lambda_wrapper import (
-    RedshiftLambdaResponse,
+    ExternalFunctionResponse,
     redshift_handler,
     batch_redshift_handler,
     LambdaContext,
 )
 
 __all__ = [
-    "RedshiftLambdaResponse",
+    "ExternalFunctionResponse",
     "redshift_handler",
     "batch_redshift_handler",
     "LambdaContext",
