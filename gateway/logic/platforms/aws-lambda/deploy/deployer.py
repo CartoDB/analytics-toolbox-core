@@ -17,20 +17,89 @@ import hashlib
 class LambdaDeployer:
     """Deploys Lambda functions to AWS"""
 
-    def __init__(self, region: str = "us-east-1", profile: Optional[str] = None):
+    def __init__(
+        self,
+        region: str = "us-east-1",
+        profile: Optional[str] = None,
+        access_key_id: Optional[str] = None,
+        secret_access_key: Optional[str] = None,
+        session_token: Optional[str] = None,
+        role_arn: Optional[str] = None,
+    ):
         """
-        Initialize Lambda deployer
+        Initialize Lambda deployer with flexible credential options
+
+        Credential priority order:
+        1. Explicit credentials (access_key_id + secret_access_key)
+        2. Assume role (role_arn)
+        3. AWS profile (profile)
+        4. Environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        5. IAM role (if running on EC2/ECS/Lambda)
 
         Args:
             region: AWS region
             profile: AWS profile name
+            access_key_id: AWS access key ID
+            secret_access_key: AWS secret access key
+            session_token: AWS session token (for temporary credentials)
+            role_arn: IAM role ARN to assume
         """
-        session = boto3.Session(profile_name=profile, region_name=region)
+        session_kwargs = {"region_name": region}
+
+        # Method 1: Explicit credentials (highest priority)
+        if access_key_id and secret_access_key:
+            session_kwargs["aws_access_key_id"] = access_key_id
+            session_kwargs["aws_secret_access_key"] = secret_access_key
+            if session_token:
+                session_kwargs["aws_session_token"] = session_token
+            print(
+                f"Using explicit AWS credentials (access key: {access_key_id[:8]}...)"
+            )
+
+        # Method 2: AWS Profile
+        elif profile:
+            session_kwargs["profile_name"] = profile
+            print(f"Using AWS profile: {profile}")
+
+        # Method 3: Environment variables / IAM role (boto3 handles automatically)
+        else:
+            print("Using default AWS credential chain (env vars or IAM role)")
+
+        session = boto3.Session(**session_kwargs)
+
+        # Method 4: Assume Role (if specified)
+        if role_arn:
+            print(f"Assuming IAM role: {role_arn}")
+            sts = session.client("sts")
+            try:
+                assumed_role = sts.assume_role(
+                    RoleArn=role_arn, RoleSessionName="carto-at-deployer"
+                )
+                credentials = assumed_role["Credentials"]
+                session = boto3.Session(
+                    aws_access_key_id=credentials["AccessKeyId"],
+                    aws_secret_access_key=credentials["SecretAccessKey"],
+                    aws_session_token=credentials["SessionToken"],
+                    region_name=region,
+                )
+                print(f"✓ Successfully assumed role: {role_arn}")
+            except Exception as e:
+                raise Exception(f"Failed to assume role {role_arn}: {e}")
+
         self.lambda_client = session.client("lambda")
         self.iam_client = session.client("iam")
         self.sts_client = session.client("sts")
+        self.apigateway_client = session.client("apigateway")
         self.region = region
-        self.account_id = self.sts_client.get_caller_identity()["Account"]
+
+        # Verify credentials work
+        try:
+            identity = self.sts_client.get_caller_identity()
+            self.account_id = identity["Account"]
+            print(f"✓ Authenticated as: {identity.get('Arn', 'Unknown')}")
+            print(f"✓ AWS Account: {self.account_id}")
+        except Exception as e:
+            raise Exception(f"Failed to authenticate with AWS: {e}")
 
     def create_deployment_package(
         self,

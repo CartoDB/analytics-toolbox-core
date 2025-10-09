@@ -527,8 +527,11 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 
 @click.command()
 @click.option('--aws-region', help='AWS region (e.g., us-east-1)')
-@click.option('--aws-access-key-id', help='AWS Access Key ID')
-@click.option('--aws-secret-access-key', help='AWS Secret Access Key')
+@click.option('--aws-profile', help='AWS profile name from ~/.aws/credentials')
+@click.option('--aws-access-key-id', help='AWS Access Key ID (alternative to profile)')
+@click.option('--aws-secret-access-key', help='AWS Secret Access Key (alternative to profile)')
+@click.option('--aws-session-token', help='AWS Session Token (for temporary credentials)')
+@click.option('--aws-assume-role-arn', help='IAM role ARN to assume (for cross-account)')
 @click.option('--lambda-prefix', help='Lambda function name prefix (e.g., carto-at-)')  # noqa: E501
 @click.option('--lambda-execution-role-arn', help='Pre-created Lambda execution role ARN (optional)')  # noqa: E501
 @click.option('--rs-host', help='Redshift host endpoint')
@@ -539,13 +542,21 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--rs-roles', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
 @click.option('--production', is_flag=True, help='Deploy to production (schema=carto, no prefix)')  # noqa: E501
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
-def install(aws_region, aws_access_key_id, aws_secret_access_key, lambda_prefix,
+def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
+            aws_session_token, aws_assume_role_arn, lambda_prefix,
             lambda_execution_role_arn, rs_host, rs_database, rs_user, rs_password,
             rs_prefix, rs_roles, production, dry_run):
     """Install CARTO Analytics Toolbox to Redshift
 
     This installer will guide you through deploying Analytics Toolbox functions
     as AWS Lambda functions with Redshift external functions.
+
+    Supports multiple AWS authentication methods:
+    1. AWS Profile (recommended): --aws-profile <profile-name>
+    2. Explicit Credentials: --aws-access-key-id and --aws-secret-access-key
+    3. Assume Role: --aws-assume-role-arn (requires profile or credentials first)
+    4. Environment Variables: AWS_PROFILE, AWS_ACCESS_KEY_ID, etc.
+    5. IAM Role: Automatic if running on EC2/ECS/Lambda
 
     You can provide values via command-line options or interactively.
     """
@@ -559,14 +570,76 @@ def install(aws_region, aws_access_key_id, aws_secret_access_key, lambda_prefix,
         click.secho("[DRY RUN MODE - No changes will be made]", fg='yellow', bold=True)
         click.echo()
 
-    # Interactive prompts for missing values
-    click.echo("AWS Configuration")
+    # Interactive prompts for AWS credentials
+    click.echo("AWS Credential Configuration")
     click.echo("-" * 70)
+    click.echo("Choose your authentication method:")
+    click.echo("  1. AWS Profile (recommended - uses ~/.aws/credentials)")
+    click.echo("  2. Explicit Credentials (access key + secret)")
+    click.echo("  3. Environment Variables (skip if already set)")
+    click.echo("  4. IAM Role (automatic if running on EC2/ECS/Lambda)")
+    click.echo()
+
+    auth_method = None
+    if aws_profile:
+        auth_method = "profile"
+    elif aws_access_key_id and aws_secret_access_key:
+        auth_method = "explicit"
+    elif os.getenv("AWS_PROFILE"):
+        auth_method = "env_profile"
+        aws_profile = os.getenv("AWS_PROFILE")
+    elif os.getenv("AWS_ACCESS_KEY_ID"):
+        auth_method = "env_explicit"
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+        aws_session_token = os.getenv("AWS_SESSION_TOKEN")
+    else:
+        method_choice = click.prompt(  # noqa: E501
+            "Select method",
+            type=click.Choice(["1", "2", "3", "4"], case_sensitive=False),
+            default="1"
+        )
+        if method_choice == "1":
+            auth_method = "profile"
+        elif method_choice == "2":
+            auth_method = "explicit"
+        elif method_choice == "3":
+            auth_method = "env"
+        elif method_choice == "4":
+            auth_method = "iam_role"
+
     aws_region = prompt_if_not_provided(aws_region, "AWS Region", default="us-east-1")
-    aws_access_key_id = prompt_if_not_provided(aws_access_key_id, "AWS Access Key ID")
-    aws_secret_access_key = prompt_if_not_provided(  # noqa: E501
-        aws_secret_access_key, "AWS Secret Access Key", hide_input=True
-    )
+
+    if auth_method == "profile":
+        aws_profile = prompt_if_not_provided(aws_profile, "AWS Profile", default="default")
+        click.secho(f"✓ Using AWS profile: {aws_profile}", fg="green")
+    elif auth_method == "explicit":
+        aws_access_key_id = prompt_if_not_provided(aws_access_key_id, "AWS Access Key ID")
+        aws_secret_access_key = prompt_if_not_provided(  # noqa: E501
+            aws_secret_access_key, "AWS Secret Access Key", hide_input=True
+        )
+        if not aws_session_token:
+            aws_session_token = click.prompt(  # noqa: E501
+                "AWS Session Token (optional - for temporary credentials)",
+                default="",
+                show_default=False
+            ) or None
+        click.secho("✓ Using explicit AWS credentials", fg="green")
+    elif auth_method == "env" or auth_method == "env_profile" or auth_method == "env_explicit":
+        click.secho("✓ Using AWS credentials from environment variables", fg="green")
+    elif auth_method == "iam_role":
+        click.secho("✓ Using IAM role (automatic discovery)", fg="green")
+
+    # Optional: Assume Role
+    if not aws_assume_role_arn:
+        click.echo()
+        assume_role = click.confirm(  # noqa: E501
+            "Do you need to assume an IAM role? (for cross-account deployment)",
+            default=False
+        )
+        if assume_role:
+            aws_assume_role_arn = click.prompt("IAM Role ARN to assume")
+
     click.echo()
 
     click.echo("Lambda Configuration")
@@ -612,25 +685,58 @@ def install(aws_region, aws_access_key_id, aws_secret_access_key, lambda_prefix,
     click.echo()
 
     # Create .env file
-    env_content = f"""# Auto-generated by CARTO Analytics Toolbox Installer
-AWS_REGION={aws_region}
-AWS_ACCESS_KEY_ID={aws_access_key_id}
-AWS_SECRET_ACCESS_KEY={aws_secret_access_key}
+    env_lines = ["# Auto-generated by CARTO Analytics Toolbox Installer", ""]
+    env_lines.append("# AWS Configuration")
+    env_lines.append(f"AWS_REGION={aws_region}")
 
-LAMBDA_PREFIX={lambda_prefix}
-{"LAMBDA_EXECUTION_ROLE_ARN=" + lambda_execution_role_arn if lambda_execution_role_arn else "# LAMBDA_EXECUTION_ROLE_ARN not set (will auto-create)"}
+    if auth_method == "profile" or auth_method == "env_profile":
+        env_lines.append(f"AWS_PROFILE={aws_profile}")
+    elif auth_method == "explicit" or auth_method == "env_explicit":
+        env_lines.append(f"AWS_ACCESS_KEY_ID={aws_access_key_id}")
+        env_lines.append(f"AWS_SECRET_ACCESS_KEY={aws_secret_access_key}")
+        if aws_session_token:
+            env_lines.append(f"AWS_SESSION_TOKEN={aws_session_token}")
+    elif auth_method == "iam_role":
+        env_lines.append("# Using IAM role (no explicit credentials needed)")
 
-RS_HOST={rs_host}
-RS_DATABASE={rs_database}
-RS_USER={rs_user}
-RS_PASSWORD={rs_password}
-RS_PREFIX={rs_prefix}
-RS_ROLES={rs_roles}
-"""
+    if aws_assume_role_arn:
+        env_lines.append(f"AWS_ASSUME_ROLE_ARN={aws_assume_role_arn}")
+
+    env_lines.append("")
+    env_lines.append("# Lambda Configuration")
+    env_lines.append(f"LAMBDA_PREFIX={lambda_prefix}")
+    if lambda_execution_role_arn:
+        env_lines.append(f"LAMBDA_EXECUTION_ROLE_ARN={lambda_execution_role_arn}")
+    else:
+        env_lines.append("# LAMBDA_EXECUTION_ROLE_ARN not set (will auto-create)")
+
+    env_lines.append("")
+    env_lines.append("# Redshift Configuration")
+    env_lines.append(f"RS_HOST={rs_host}")
+    env_lines.append(f"RS_DATABASE={rs_database}")
+    env_lines.append(f"RS_USER={rs_user}")
+    env_lines.append(f"RS_PASSWORD={rs_password}")
+    env_lines.append(f"RS_PREFIX={rs_prefix}")
+    env_lines.append(f"RS_ROLES={rs_roles}")
+
+    env_content = "\\n".join(env_lines) + "\\n"
 
     click.echo("Configuration Summary")
     click.echo("=" * 70)
     click.echo(f"AWS Region:          {aws_region}")
+
+    if auth_method == "profile" or auth_method == "env_profile":
+        click.echo(f"AWS Auth:            Profile ({aws_profile})")
+    elif auth_method == "explicit" or auth_method == "env_explicit":
+        click.echo(f"AWS Auth:            Explicit credentials (...{aws_access_key_id[-4:]})")
+    elif auth_method == "iam_role":
+        click.echo(f"AWS Auth:            IAM Role (automatic)")
+    elif auth_method == "env":
+        click.echo(f"AWS Auth:            Environment variables")
+
+    if aws_assume_role_arn:
+        click.echo(f"Assume Role:         {aws_assume_role_arn}")
+
     click.echo(f"Lambda Prefix:       {lambda_prefix}")
     click.echo(f"Redshift Host:       {rs_host}")
     click.echo(f"Redshift Database:   {rs_database}")

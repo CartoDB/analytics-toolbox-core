@@ -78,6 +78,27 @@ def get_env_or_default(key: str, default: any = None) -> any:
     return os.getenv(key, default)
 
 
+def get_aws_credentials():
+    """
+    Get AWS credentials from environment variables
+
+    Supports multiple authentication methods:
+    1. Explicit credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    2. AWS Profile (AWS_PROFILE)
+    3. Assume role (AWS_ASSUME_ROLE_ARN)
+    4. Session token for temporary credentials (AWS_SESSION_TOKEN)
+
+    Returns:
+        Dict with credential parameters for LambdaDeployer
+    """
+    return {
+        "access_key_id": get_env_or_default("AWS_ACCESS_KEY_ID"),
+        "secret_access_key": get_env_or_default("AWS_SECRET_ACCESS_KEY"),
+        "session_token": get_env_or_default("AWS_SESSION_TOKEN"),
+        "role_arn": get_env_or_default("AWS_ASSUME_ROLE_ARN"),
+    }
+
+
 def execute_redshift_sql_direct(
     sql: str,
     host: str,
@@ -592,11 +613,12 @@ def deploy_lambda(
 
     # Get settings from .env or use defaults
     aws_region = get_env_or_default("AWS_REGION", region)
-    # AWS_PROFILE is optional - boto3 will use
-    # AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY from env
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
     lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-dev")
     lambda_execution_role_arn = get_env_or_default("LAMBDA_EXECUTION_ROLE_ARN")
+
+    # Get AWS credentials
+    aws_creds = get_aws_credentials()
 
     # Construct Lambda function name
     lambda_function_name = f"{lambda_prefix}{function_name}"
@@ -618,7 +640,7 @@ def deploy_lambda(
 
     # Deploy Lambda using LambdaDeployer
     try:
-        deployer = LambdaDeployer(region=aws_region, profile=aws_prof)
+        deployer = LambdaDeployer(region=aws_region, profile=aws_prof, **aws_creds)
 
         # Get paths
         function_dir = function.path
@@ -821,9 +843,12 @@ def deploy_all(
     # Get Lambda execution role (optional - avoids needing IAM create role permissions)
     lambda_execution_role_arn = get_env_or_default("LAMBDA_EXECUTION_ROLE_ARN")
 
+    # Get AWS credentials
+    aws_creds = get_aws_credentials()
+
     # Deploy all functions
     try:
-        deployer = LambdaDeployer(region=aws_region, profile=aws_prof)
+        deployer = LambdaDeployer(region=aws_region, profile=aws_prof, **aws_creds)
 
         lambda_success = 0
         external_success = 0

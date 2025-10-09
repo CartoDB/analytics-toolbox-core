@@ -90,16 +90,56 @@ The gateway will:
 1. Load `.env` from core directory first (if exists)
 2. Then load `.env` from gateway directory (if exists) to override specific values
 
-Edit `.env` with your AWS and Redshift configuration:
+Edit `.env` with your AWS and Redshift configuration.
 
+#### AWS Credential Configuration
+
+The gateway supports multiple authentication methods. Choose the one that fits your setup:
+
+**Method 1: AWS Profile (Recommended)**
 ```bash
-# AWS Configuration (shared with Redshift cloud)
+AWS_PROFILE=default
+AWS_REGION=us-east-1
+```
+This uses credentials from `~/.aws/credentials`. Most secure and convenient for local development.
+
+**Method 2: Explicit Credentials (CI/CD)**
+```bash
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=<access-key-id>
 AWS_SECRET_ACCESS_KEY=<secret-access-key>
+# Optional for temporary credentials:
+# AWS_SESSION_TOKEN=<session-token>
+```
+Useful for CI/CD pipelines or when AWS CLI profiles aren't available.
 
-# Gateway-specific Lambda Configuration
-# Lambda names will be: {LAMBDA_PREFIX}{function_name}
+**Method 3: Assume Role (Cross-Account)**
+```bash
+AWS_PROFILE=default  # or use access keys
+AWS_REGION=us-east-1
+AWS_ASSUME_ROLE_ARN=arn:aws:iam::123456789:role/DeployerRole
+```
+Assumes an IAM role, useful for cross-account deployments or temporary elevated permissions.
+
+**Method 4: IAM Role (EC2/ECS/Lambda)**
+
+No configuration needed. When running on AWS infrastructure (EC2, ECS, Lambda), the SDK automatically discovers and uses the attached IAM role.
+
+**Method 5: AWS SSO (Enterprise)**
+```bash
+# First authenticate:
+aws sso login --profile my-sso-profile
+
+# Then set in .env:
+AWS_PROFILE=my-sso-profile
+AWS_REGION=us-east-1
+```
+Best for enterprise environments using AWS IAM Identity Center.
+
+#### Lambda Configuration
+
+```bash
+# Lambda function names will be: {LAMBDA_PREFIX}{function_name}
 # Include separator in prefix if desired (e.g., "myname-" or "myname_")
 LAMBDA_PREFIX=carto-at-dev-
 
@@ -107,26 +147,45 @@ LAMBDA_PREFIX=carto-at-dev-
 # Pre-create this role with trust policy allowing lambda.amazonaws.com
 # and attach AWSLambdaBasicExecutionRole policy
 # LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/<role-name>
+```
 
-# Redshift Configuration (uses RS_ prefix to match clouds)
+#### Redshift Configuration
+
+```bash
 # RS_PREFIX: Prefix for development schemas/libraries
 #   - Dev mode (default): schema = "{RS_PREFIX}carto" (e.g., "myname_carto")
 #   - Prod mode (production=1): schema = "carto" (no prefix)
 RS_PREFIX=myname_
-RS_CLUSTER_IDENTIFIER=<cluster-id>
 RS_DATABASE=<database>
 
-# Redshift Authentication (choose one method)
-# Method 1: IAM Authentication (recommended)
-RS_USER=<iam-user>
+# Redshift Connection (choose one method)
+# Method 1: Direct Connection (recommended)
+RS_HOST=<cluster>.<account>.<region>.redshift.amazonaws.com
+RS_USER=<user>
+RS_PASSWORD=<password>
 
-# Method 2: Secrets Manager (alternative)
-# RS_SECRET_ARN=arn:aws:secretsmanager:<region>:<account>:secret:<secret-name>
+# Method 2: Data API (alternative)
+# RS_CLUSTER_IDENTIFIER=<cluster-id>
+# RS_USER=<iam-user>
+# # OR
+# # RS_SECRET_ARN=arn:aws:secretsmanager:<region>:<account>:secret:<secret-name>
 
 # IAM Role(s) for Redshift to invoke Lambda (matches clouds RS_ROLES)
 # This role must be attached to your Redshift cluster
 RS_ROLES=arn:aws:iam::<account-id>:role/<role-name>
 ```
+
+**Testing Your Credentials:**
+
+After configuring your credentials, you can test them:
+
+```bash
+venv/bin/python scripts/test_credentials.py
+```
+
+This script will test all configured authentication methods and report which ones work.
+
+For detailed information about all authentication methods, see [CREDENTIAL_SETUP_GUIDE.md](CREDENTIAL_SETUP_GUIDE.md).
 
 **Deployment Process:**
 
