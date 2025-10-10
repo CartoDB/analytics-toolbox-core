@@ -7,8 +7,6 @@ import click
 import sys
 import subprocess
 import os
-import time
-import boto3
 from pathlib import Path
 from typing import Optional, List, Set, Dict
 from dotenv import load_dotenv
@@ -104,29 +102,15 @@ def get_aws_credentials():
 
 def get_cluster_identifier_and_region() -> tuple:
     """
-    Extract Redshift cluster identifier and region from configuration
-
-    Tries two methods:
-    1. RS_CLUSTER_IDENTIFIER (Data API method) - explicit cluster ID
-    2. RS_HOST (Direct connection) - parse from hostname
+    Extract Redshift cluster identifier and region from RS_HOST
 
     Returns:
         (cluster_identifier, region) or (None, None) if not available
 
-    Examples:
+    Example:
         RS_HOST=my-cluster.abc123.us-east-1.redshift.amazonaws.com
         Returns: ("my-cluster", "us-east-1")
-
-        RS_CLUSTER_IDENTIFIER=my-cluster
-        Returns: ("my-cluster", "us-east-1")
     """
-    # Option 1: RS_CLUSTER_IDENTIFIER explicitly set (Data API method)
-    cluster_id = get_env_or_default("RS_CLUSTER_IDENTIFIER")
-    if cluster_id:
-        region = get_env_or_default("AWS_REGION", "us-east-1")
-        return cluster_id, region
-
-    # Option 2: Parse from RS_HOST (Direct connection method)
     rs_host = get_env_or_default("RS_HOST")
     if rs_host:
         # Format: cluster-name.account-hash.region.redshift.amazonaws.com
@@ -183,109 +167,11 @@ def execute_redshift_sql_direct(
         conn.autocommit = True
         with conn.cursor() as cursor:
             for i, statement in enumerate(statements, 1):
-                # Show progress for long operations
-                if (
-                    "CREATE" in statement.upper()
-                    and "EXTERNAL FUNCTION" in statement.upper()
-                ):
-                    logger.info(
-                        f"Executing SQL statement {i}/{len(statements)} in Redshift..."
-                    )
-                    logger.info(
-                        "Creating external function (this may take 30-60 seconds)..."
-                    )
-                else:
-                    stmt_preview = statement[:100]
-                    logger.info(
-                        f"Executing SQL statement {i}/{len(statements)} "
-                        f"in Redshift: {stmt_preview}..."
-                    )
-
+                logger.debug(f"Executing statement {i}/{len(statements)}")
                 cursor.execute(statement)
                 logger.debug(f"Statement {i}/{len(statements)} completed")
 
-    logger.info("SQL execution completed")
-
-
-def execute_redshift_sql_data_api(
-    sql: str,
-    cluster_identifier: str,
-    database: str,
-    db_user: Optional[str] = None,
-    secret_arn: Optional[str] = None,
-    region: str = "us-east-1",
-    max_wait: int = 300,
-) -> str:
-    """
-    Execute SQL statement in Redshift using Data API
-
-    Args:
-        sql: SQL statement to execute
-        cluster_identifier: Redshift cluster identifier or workgroup name
-        database: Database name
-        db_user: Database user for IAM auth (optional)
-        secret_arn: Secret ARN for password auth (optional)
-        region: AWS region
-        max_wait: Maximum time to wait in seconds
-
-    Returns:
-        Statement ID
-
-    Raises:
-        ValueError: If neither db_user nor secret_arn is provided
-        RuntimeError: If SQL execution fails
-        TimeoutError: If execution times out
-    """
-    redshift_data = boto3.client("redshift-data", region_name=region)
-
-    # Prepare execute_statement params
-    params = {
-        "ClusterIdentifier": cluster_identifier,
-        "Database": database,
-        "Sql": sql,
-    }
-
-    # Use either IAM auth or secret auth
-    if db_user:
-        params["DbUser"] = db_user
-    elif secret_arn:
-        params["SecretArn"] = secret_arn
-    else:
-        raise ValueError("Either db_user or secret_arn must be provided")
-
-    logger.info(f"Executing SQL in Redshift (Data API): {sql[:100]}...")
-
-    # Execute statement
-    response = redshift_data.execute_statement(**params)
-    statement_id = response["Id"]
-
-    logger.debug(f"Statement submitted: {statement_id}")
-
-    # Wait for completion
-    start_time = time.time()
-
-    while True:
-        if time.time() - start_time > max_wait:
-            raise TimeoutError(
-                f"SQL execution timed out after {max_wait} seconds: {statement_id}"
-            )
-
-        response = redshift_data.describe_statement(Id=statement_id)
-        status = response["Status"]
-
-        if status == "FINISHED":
-            logger.debug(f"SQL execution completed: {statement_id}")
-            return statement_id
-
-        elif status == "FAILED":
-            error = response.get("Error", "Unknown error")
-            raise RuntimeError(f"SQL execution failed: {error}")
-
-        elif status == "ABORTED":
-            raise RuntimeError("SQL execution was aborted")
-
-        # Still running, wait and check again
-        time.sleep(2)
+    logger.debug("SQL execution completed")
 
 
 def deploy_external_function(
@@ -295,22 +181,12 @@ def deploy_external_function(
     database: str,
     schema: str,
     iam_role_arn: str,
-    # Direct connection params (like clouds)
-    host: Optional[str] = None,
-    user: Optional[str] = None,
-    password: Optional[str] = None,
-    # Data API params (alternative)
-    cluster_identifier: Optional[str] = None,
-    db_user: Optional[str] = None,
-    secret_arn: Optional[str] = None,
-    region: str = "us-east-1",
+    host: str,
+    user: str,
+    password: str,
 ) -> None:
     """
-    Deploy external function SQL to Redshift
-
-    Supports two connection methods:
-    1. Direct connection (like clouds): requires host, user, password
-    2. Data API: requires cluster_identifier and (db_user OR secret_arn)
+    Deploy external function SQL to Redshift using direct connection
 
     Args:
         function_name: Name of the function
@@ -319,13 +195,9 @@ def deploy_external_function(
         database: Database name
         schema: Schema name
         iam_role_arn: IAM role ARN for Redshift to invoke Lambda
-        host: Redshift host endpoint (for direct connection)
-        user: Database user (for direct connection)
-        password: Database password (for direct connection)
-        cluster_identifier: Redshift cluster identifier (for Data API)
-        db_user: Database user (for Data API IAM auth)
-        secret_arn: Secret ARN (for Data API secret auth)
-        region: AWS region
+        host: Redshift host endpoint
+        user: Database user
+        password: Database password
     """
     # Render SQL template
     renderer = TemplateRenderer()
@@ -337,38 +209,19 @@ def deploy_external_function(
         schema=schema,
     )
 
-    logger.info(f"Creating external function {schema}.{function_name.upper()}...")
+    logger.debug(f"Creating external function {schema}.{function_name.upper()}...")
     logger.debug(f"SQL: {sql}")
 
-    # Decide connection method based on available parameters
-    # Prefer direct connection (like clouds) if RS_HOST is available
-    if host and user and password:
-        # Use direct connection (like clouds)
-        execute_redshift_sql_direct(
-            sql=sql,
-            host=host,
-            database=database,
-            user=user,
-            password=password,
-        )
-    elif cluster_identifier and (db_user or secret_arn):
-        # Use Data API
-        execute_redshift_sql_data_api(
-            sql=sql,
-            cluster_identifier=cluster_identifier,
-            database=database,
-            db_user=db_user,
-            secret_arn=secret_arn,
-            region=region,
-        )
-    else:
-        raise ValueError(
-            "Must provide either:\n"
-            "  1. Direct connection: RS_HOST, RS_USER, RS_PASSWORD\n"
-            "  2. Data API: RS_CLUSTER_IDENTIFIER and (RS_USER or RS_SECRET_ARN)"
-        )
+    # Use direct connection
+    execute_redshift_sql_direct(
+        sql=sql,
+        host=host,
+        database=database,
+        user=user,
+        password=password,
+    )
 
-    logger.info(f"✓ External function {schema}.{function_name.upper()} created")
+    logger.debug(f"✓ External function {schema}.{function_name.upper()} created")
 
 
 def get_modified_functions(function_roots: List[Path]) -> Set[str]:
@@ -836,14 +689,12 @@ def deploy_all(
             logger.info(f"  - {lambda_name} ({func.module})")
         return
 
-    # Get Redshift configuration (support both direct and Data API)
-    rs_host = get_env_or_default("RS_HOST")  # For direct connection (like clouds)
-    rs_password = get_env_or_default("RS_PASSWORD")  # For direct connection
-    rs_cluster = get_env_or_default("RS_CLUSTER_IDENTIFIER")  # For Data API
+    # Get Redshift configuration (direct connection)
+    rs_host = get_env_or_default("RS_HOST")
+    rs_password = get_env_or_default("RS_PASSWORD")
     rs_database = get_env_or_default("RS_DATABASE")
     rs_prefix = get_env_or_default("RS_PREFIX", "")
     rs_user = get_env_or_default("RS_USER")
-    rs_secret_arn = get_env_or_default("RS_SECRET_ARN")
     # RS_ROLES can be comma-separated for role chaining (like clouds)
     # Redshift will assume roles in order: role1 assumes role2, role2 invokes Lambda
     rs_roles = get_env_or_default("RS_ROLES")
@@ -864,8 +715,6 @@ def deploy_all(
 
     # Validate Redshift configuration for external function deployment
     deploy_external_functions = True
-    has_direct_connection = rs_host and rs_user and rs_password
-    has_data_api = rs_cluster and (rs_user or rs_secret_arn)
 
     if not rs_database or not rs_iam_role_arn:
         logger.warning(
@@ -873,20 +722,12 @@ def deploy_all(
             "Will deploy Lambda functions only, not external functions."
         )
         deploy_external_functions = False
-    elif not has_direct_connection and not has_data_api:
+    elif not (rs_host and rs_user and rs_password):
         logger.warning(
-            "Redshift connection not configured. Need either:\n"
-            "  1. Direct connection (like clouds): RS_HOST, RS_USER, RS_PASSWORD\n"
-            "  2. Data API: RS_CLUSTER_IDENTIFIER and (RS_USER or RS_SECRET_ARN)\n"
+            "Redshift connection not configured. Need: RS_HOST, RS_USER, RS_PASSWORD\n"
             "Will deploy Lambda functions only, not external functions."
         )
         deploy_external_functions = False
-    else:
-        # Log which connection method will be used
-        if has_direct_connection:
-            logger.info("Using direct connection to Redshift (like clouds)")
-        else:
-            logger.info("Using Redshift Data API")
 
     # Get Lambda execution role (optional - avoids needing IAM create role permissions)
     lambda_execution_role_arn = get_env_or_default("LAMBDA_EXECUTION_ROLE_ARN")
@@ -932,8 +773,7 @@ def deploy_all(
                 iam_manager.attach_role_to_cluster(cluster_id, rs_iam_role_arn)
             else:
                 logger.info(
-                    "ℹ Could not determine cluster identifier from "
-                    "RS_HOST or RS_CLUSTER_IDENTIFIER\n"
+                    "ℹ Could not parse cluster identifier from RS_HOST\n"
                     "  Please manually attach the role to your Redshift cluster:\n"
                     "  AWS Console → Redshift → Clusters → Properties → "
                     "Manage IAM roles\n"
@@ -962,68 +802,77 @@ def deploy_all(
         # Phase 1: Deploy Lambda functions
         logger.info("\n=== Phase 1: Deploying Lambda Functions ===\n")
 
-        for func in to_deploy:
-            try:
-                lambda_function_name = f"{lambda_prefix}{func.name}"
-                logger.info(f"Deploying Lambda {lambda_function_name}...")
+        with click.progressbar(
+            to_deploy,
+            label=f"Deploying {len(to_deploy)} Lambda functions",
+            show_pos=True,
+            item_show_func=lambda f: f.name if f else None,
+        ) as bar:
+            for func in bar:
+                try:
+                    lambda_function_name = f"{lambda_prefix}{func.name}"
 
-                # Get cloud configuration
-                cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+                    # Get cloud configuration
+                    cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
 
-                # Get paths
-                handler_file = func.function_path / cloud_config.code_file
-                requirements_file = (
-                    func.function_path / cloud_config.requirements_file
-                    if cloud_config.requirements_file
-                    else func.function_path / "requirements.txt"
-                )
-
-                if not handler_file.exists():
-                    logger.error(f"  Handler file not found: {handler_file}")
-                    failed_functions.append(func.name)
-                    continue
-
-                # Get Lambda configuration
-                runtime = cloud_config.config.get("runtime", "python3.11")
-                memory_size = cloud_config.config.get("memory_size", 512)
-                timeout = cloud_config.config.get("timeout", 60)
-
-                # Deploy Lambda
-                response = deployer.deploy_function(
-                    function_name=lambda_function_name,
-                    handler_file=handler_file,
-                    requirements_file=(
-                        requirements_file if requirements_file.exists() else None
-                    ),
-                    handler=cloud_config.config.get(
-                        "handler", "handler.lambda_handler"
-                    ),
-                    runtime=runtime,
-                    memory_size=memory_size,
-                    timeout=timeout,
-                    description=func.description,
-                    role_arn=lambda_execution_role_arn,
-                )
-
-                # Strip version number from ARN (e.g., :19) to use $LATEST
-                arn = response["FunctionArn"]
-                if ":" in arn and arn.split(":")[-1].isdigit():
-                    arn = ":".join(arn.split(":")[:-1])
-                lambda_arns[func.name] = arn
-                logger.info(f"✓ Lambda deployed: {lambda_function_name}")
-                lambda_success += 1
-
-                # Configure Lambda resource policy for Redshift invocation
-                if rs_iam_role_arn:
-                    logger.info("  Configuring invoke permissions for Redshift...")
-                    deployer.add_redshift_invoke_permission(
-                        function_name=lambda_function_name,
-                        principal=rs_iam_role_arn,
+                    # Get paths
+                    handler_file = func.function_path / cloud_config.code_file
+                    requirements_file = (
+                        func.function_path / cloud_config.requirements_file
+                        if cloud_config.requirements_file
+                        else func.function_path / "requirements.txt"
                     )
 
-            except Exception as e:
-                logger.error(f"✗ Failed to deploy Lambda {func.name}: {e}")
-                failed_functions.append(func.name)
+                    if not handler_file.exists():
+                        logger.error(
+                            f"\n✗ {func.name}: Handler file not found: {handler_file}"
+                        )
+                        failed_functions.append(func.name)
+                        continue
+
+                    # Get Lambda configuration
+                    runtime = cloud_config.config.get("runtime", "python3.11")
+                    memory_size = cloud_config.config.get("memory_size", 512)
+                    timeout = cloud_config.config.get("timeout", 60)
+
+                    # Deploy Lambda
+                    response = deployer.deploy_function(
+                        function_name=lambda_function_name,
+                        handler_file=handler_file,
+                        requirements_file=(
+                            requirements_file if requirements_file.exists() else None
+                        ),
+                        handler=cloud_config.config.get(
+                            "handler", "handler.lambda_handler"
+                        ),
+                        runtime=runtime,
+                        memory_size=memory_size,
+                        timeout=timeout,
+                        description=func.description,
+                        role_arn=lambda_execution_role_arn,
+                    )
+
+                    # Strip version number from ARN (e.g., :19) to use $LATEST
+                    arn = response["FunctionArn"]
+                    if ":" in arn and arn.split(":")[-1].isdigit():
+                        arn = ":".join(arn.split(":")[:-1])
+                    lambda_arns[func.name] = arn
+                    lambda_success += 1
+
+                    # Configure Lambda resource policy for Redshift invocation
+                    if rs_iam_role_arn:
+                        # For role chaining (comma-separated roles), only the last role
+                        # in the chain invokes Lambda
+                        roles = [r.strip() for r in rs_iam_role_arn.split(",")]
+                        invoking_role = roles[-1]  # Last role invokes Lambda
+                        deployer.add_redshift_invoke_permission(
+                            function_name=lambda_function_name,
+                            principal=invoking_role,
+                        )
+
+                except Exception as e:
+                    logger.error(f"\n✗ {func.name}: {e}")
+                    failed_functions.append(func.name)
 
         # Phase 2: Deploy external functions in Redshift
         if deploy_external_functions and lambda_arns:
@@ -1033,79 +882,67 @@ def deploy_all(
             create_schema_sql = f"CREATE SCHEMA IF NOT EXISTS {rs_schema};"
             logger.info(f"Ensuring schema exists: {rs_schema}")
             try:
-                if rs_host and rs_user and rs_password:
-                    execute_redshift_sql_direct(
-                        sql=create_schema_sql,
-                        host=rs_host,
-                        database=rs_database,
-                        user=rs_user,
-                        password=rs_password,
-                    )
-                elif rs_cluster and (rs_user or rs_secret_arn):
-                    execute_redshift_sql_data_api(
-                        sql=create_schema_sql,
-                        cluster_identifier=rs_cluster,
-                        database=rs_database,
-                        db_user=rs_user,
-                        secret_arn=rs_secret_arn,
-                        region=aws_region,
-                    )
+                execute_redshift_sql_direct(
+                    sql=create_schema_sql,
+                    host=rs_host,
+                    database=rs_database,
+                    user=rs_user,
+                    password=rs_password,
+                )
                 logger.info(f"✓ Schema ready: {rs_schema}\n")
             except Exception as e:
                 logger.error(f"✗ Failed to create schema {rs_schema}: {e}")
                 logger.error("Cannot proceed with external function creation")
                 # Don't exit - still count Lambda deployments as success
 
+            # Filter functions that have external function templates
+            functions_to_deploy = []
             for func in to_deploy:
-                # Skip if Lambda deployment failed
                 if func.name not in lambda_arns:
                     continue
+                cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+                if cloud_config.external_function_template:
+                    functions_to_deploy.append(func)
 
-                try:
-                    # Get cloud configuration
-                    cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+            with click.progressbar(
+                functions_to_deploy,
+                label=f"Creating {len(functions_to_deploy)} external functions",
+                show_pos=True,
+                item_show_func=lambda f: f.name if f else None,
+            ) as bar:
+                for func in bar:
+                    try:
+                        # Get cloud configuration
+                        cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
 
-                    # Check if function has external function template
-                    template_file = cloud_config.external_function_template
-                    if not template_file:
-                        logger.warning(
-                            f"  No external function template for {func.name}, skipping"
+                        # Check if function has external function template
+                        template_file = cloud_config.external_function_template
+                        sql_template_path = func.function_path / template_file
+                        if not sql_template_path.exists():
+                            logger.error(
+                                f"\n✗ {func.name}: "
+                                f"Template not found: {sql_template_path}"
+                            )
+                            continue
+
+                        # Deploy external function
+                        deploy_external_function(
+                            function_name=func.name,
+                            lambda_arn=lambda_arns[func.name],
+                            sql_template_path=sql_template_path,
+                            database=rs_database,
+                            schema=rs_schema,
+                            iam_role_arn=rs_iam_role_arn,
+                            host=rs_host,
+                            user=rs_user,
+                            password=rs_password,
                         )
-                        continue
 
-                    sql_template_path = func.function_path / template_file
-                    if not sql_template_path.exists():
-                        logger.warning(
-                            f"  Template not found: {sql_template_path}, skipping"
-                        )
-                        continue
+                        external_success += 1
 
-                    # Deploy external function (supports both connection methods)
-                    deploy_external_function(
-                        function_name=func.name,
-                        lambda_arn=lambda_arns[func.name],
-                        sql_template_path=sql_template_path,
-                        database=rs_database,
-                        schema=rs_schema,
-                        iam_role_arn=rs_iam_role_arn,
-                        # Direct connection params (like clouds)
-                        host=rs_host,
-                        user=rs_user,
-                        password=rs_password,
-                        # Data API params
-                        cluster_identifier=rs_cluster,
-                        db_user=rs_user,  # Can be used for both methods
-                        secret_arn=rs_secret_arn,
-                        region=aws_region,
-                    )
-
-                    external_success += 1
-
-                except Exception as e:
-                    logger.error(
-                        f"✗ Failed to create external function {func.name}: {e}"
-                    )
-                    # Don't add to failed_functions since Lambda succeeded
+                    except Exception as e:
+                        logger.error(f"\n✗ {func.name}: {e}")
+                        # Don't add to failed_functions since Lambda succeeded
 
         # Summary
         separator = "=" * 50

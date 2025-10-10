@@ -13,7 +13,9 @@ VALIDATE_EXTRA_ARGS ?= $(EXTRA_CLI_ARGS)
 
 DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
-PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version 2>/dev/null || echo "dev")
+# Version is read from clouds/<cloud>/version in the core repository
+# ROOT_DIR is gateway/, so ../clouds/<cloud>/version is core/clouds/<cloud>/version
+PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../clouds/$(cloud)/version 2>/dev/null || echo "dev")
 PACKAGE_NAME ?= carto-analytics-toolbox-gateway-$(PACKAGE_VERSION)
 ENV_DIR ?= $(ROOT_DIR)/..
 

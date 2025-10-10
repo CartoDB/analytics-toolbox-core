@@ -19,6 +19,5 @@ requests>=2.28.0
 # Environment variables
 python-dotenv>=1.0.0
 
-# Redshift direct connection (optional - for direct connection like clouds)
-# Install if you want to use RS_HOST instead of RS_CLUSTER_IDENTIFIER
-# redshift_connector>=2.0.0
+# Redshift direct connection (required for deployment and integration tests)
+redshift-connector>=2.0.0

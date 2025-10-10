@@ -90,6 +90,7 @@ class PackageBuilder:
                 "*.egg-info",
                 "tests",  # Exclude all test directories
                 "conftest.py",  # Exclude pytest config files
+                "dist",  # Exclude dist directories (prevents recursive copying)
             ),
         )
 
@@ -175,19 +176,25 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
 
 ## Installation
 
-1. **Prerequisites:**
+1. **Extract Package:**
+   ```bash
+   unzip carto-at-{self.cloud.value}-{self.version}.zip
+   cd carto-at-{self.cloud.value}-{self.version}/
+   ```
+
+2. **Prerequisites:**
    - Python 3.10+ (tested with 3.10-3.13)
    - AWS credentials with Lambda permissions
    - Access to a Redshift cluster
 
-2. **Setup:**
+3. **Setup:**
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
    pip install -r scripts/requirements.txt
    ```
 
-3. **Install (Interactive):**
+4. **Install (Interactive):**
    ```bash
    python scripts/install.py
    ```
@@ -207,7 +214,7 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
      --rs-password "***"
    ```
 
-4. **IAM Roles (Automatic Setup):**
+5. **IAM Roles (Automatic Setup):**
 
    The installer automatically creates and configures two IAM roles:
 
@@ -226,7 +233,7 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
    - `--lambda-execution-role-arn`: Existing Lambda execution role
    - `--rs-roles`: Existing Redshift invoke role
 
-5. **Required AWS Permissions:**
+6. **Required AWS Permissions:**
 
    **Minimal permissions needed** (if using auto-creation):
    - `lambda:CreateFunction`, `lambda:UpdateFunctionCode`, `lambda:UpdateFunctionConfiguration`

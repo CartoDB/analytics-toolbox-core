@@ -160,12 +160,24 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     if not lambda_execution_role_arn:
         click.echo()
-        click.secho("Lambda Execution Role (optional but recommended):", fg='cyan')
-        click.echo("Pre-creating a Lambda execution role avoids needing IAM permissions.")  # noqa: E501
-        click.echo("Leave empty to auto-create (requires IAM permissions).")
-        lambda_execution_role_arn = click.prompt(  # noqa: E501
-            "Lambda Execution Role ARN", default="", show_default=False
+        click.secho("Lambda Execution Role Configuration:", fg='cyan', bold=True)
+        click.echo("This role is used by Lambda functions to execute and access AWS resources.")
+        click.echo()
+        click.echo("You can provide an existing role ARN or leave empty to auto-create:")
+        click.echo("  • Auto-create (recommended): Leave empty, requires IAM permissions")
+        click.echo("  • Existing role: Provide ARN like arn:aws:iam::123456789:role/MyLambdaRole")
+        click.echo()
+
+        lambda_execution_role_arn = click.prompt(
+            "Lambda Execution Role ARN (leave empty to auto-create)",
+            default="",
+            show_default=False
         ) or None
+
+        if lambda_execution_role_arn:
+            click.secho(f"✓ Using existing role: {lambda_execution_role_arn}", fg='green')
+        else:
+            click.secho("✓ Will auto-create Lambda execution role during deployment", fg='green')
 
     click.echo()
 
@@ -193,26 +205,21 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.secho("Redshift IAM Role Configuration:", fg='cyan', bold=True)
         click.echo("This role is attached to your Redshift cluster and used to invoke Lambda functions.")
         click.echo()
-        click.echo("Options:")
-        click.echo("  1. Auto-create role (RECOMMENDED for new setups)")
-        click.echo("     - Leave empty to let the installer create and attach a role automatically")
-        click.echo("     - Role name: {Lambda Prefix}RedshiftInvokeRole")
-        click.echo(f"     - Example: {lambda_prefix.replace('-', '_').replace('_', ' ').title().replace(' ', '').replace('At', 'AT')}RedshiftInvokeRole")
-        click.echo("     - Will be auto-attached to your Redshift cluster")
-        click.echo()
-        click.echo("  2. Use existing role (for production or cross-account)")
-        click.echo("     - Provide the ARN of a role you've already created")
-        click.echo("     - Example: arn:aws:iam::123456789:role/MyRedshiftLambdaRole")
-        click.echo("     - Ensure it's attached to your Redshift cluster")
+        click.echo("You can provide an existing role ARN or leave empty to auto-create:")
+        click.echo("  • Auto-create (recommended): Leave empty, will create and attach automatically")
+        click.echo("  • Existing role: Provide ARN like arn:aws:iam::123456789:role/MyRedshiftRole")
         click.echo()
 
-        use_existing = click.confirm("Do you have an existing IAM role to use?", default=False)
+        rs_roles = click.prompt(
+            "Redshift IAM Role ARN (leave empty to auto-create)",
+            default="",
+            show_default=False
+        ) or ""
 
-        if use_existing:
-            rs_roles = click.prompt("IAM Role ARN for Redshift to invoke Lambda")
+        if rs_roles:
+            click.secho(f"✓ Using existing role: {rs_roles}", fg='green')
         else:
             click.secho("✓ Will auto-create and attach IAM role during deployment", fg='green')
-            rs_roles = ""  # Empty means auto-create
 
     click.echo()
 
@@ -310,9 +317,15 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     # Run deployment
     click.echo("\\n" + "=" * 70)
-    click.echo("Starting Deployment")
+    click.echo("Starting Deployment (3 phases)")
     click.echo("=" * 70)
+    click.echo("  Phase 1: Deploy Lambda functions (gateway)")
+    click.echo("  Phase 2: Create external functions (gateway SQL)")
+    click.echo("  Phase 3: Deploy SQL UDFs (clouds)")
+    click.echo()
 
+    # Phase 1 & 2: Deploy gateway (Lambdas + External Functions)
+    click.echo("Phase 1-2: Deploying gateway functions...")
     deploy_cmd = [
         sys.executable,
         str(  # noqa: E501
@@ -325,8 +338,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if dry_run:
         deploy_cmd.append('--dry-run')
 
-    click.echo(f"\\nRunning: {' '.join(deploy_cmd)}")
-    click.echo()
+    click.echo(f"  Running: {' '.join(deploy_cmd)}")
 
     if not dry_run:
         result = subprocess.run(  # noqa: E501
@@ -334,17 +346,100 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             env={**os.environ, 'PYTHONPATH': str(Path(__file__).parent.parent)}
         )
 
-        if result.returncode == 0:
-            click.echo()
-            click.secho("✓ Installation complete!", fg='green', bold=True)
-            schema = rs_prefix + 'carto' if rs_prefix else 'carto'
-            click.echo(f"Functions installed in {rs_database}.{schema}")
-        else:
-            click.secho("✗ Installation failed!", fg='red', bold=True)
+        if result.returncode != 0:
+            click.secho("\\n✗ Gateway deployment failed!", fg='red', bold=True)
             sys.exit(1)
+
+        click.secho("  ✓ Gateway functions deployed", fg='green')
+    else:
+        click.secho("  [DRY RUN] Would deploy gateway", fg='yellow')
+
+    # Phase 3: Deploy clouds SQL (if exists)
+    clouds_sql_path = Path(__file__).parent.parent / 'clouds' / 'redshift' / 'modules.sql'
+
+    if clouds_sql_path.exists():
+        click.echo("\\nPhase 3: Deploying SQL UDFs (clouds)...")
+
+        if not dry_run:
+            try:
+                import redshift_connector
+
+                # Connect to Redshift
+                conn = redshift_connector.connect(
+                    host=rs_host,
+                    database=rs_database,
+                    user=rs_user,
+                    password=rs_password
+                )
+
+                # Read modules.sql
+                sql_content = clouds_sql_path.read_text()
+
+                # Determine target schema
+                schema = rs_prefix + 'carto' if rs_prefix else 'carto'
+
+                # Detect build-time schema and replace with install-time schema
+                import re
+                build_schema_pattern = re.compile(r'\\b([a-z_]+_carto)\\b')
+                matches = build_schema_pattern.findall(sql_content)
+                if matches:
+                    build_schema = max(set(matches), key=matches.count)
+                    sql_content = sql_content.replace(build_schema, schema)
+
+                # Split SQL statements using sqlparse (same as run_script.py)
+                from sqlparse import split as sql_split
+                statements = [s.strip() for s in sql_split(sql_content) if s.strip()]
+
+                # Execute with progress bar
+                cursor = conn.cursor()
+                failed_count = 0
+                with click.progressbar(
+                    length=len(statements),
+                    label=f'  Deploying {len(statements)} SQL UDFs',
+                    show_percent=False,
+                    show_pos=True,
+                    bar_template='%(label)s [%(bar)s] %(info)s'
+                ) as bar:
+                    for stmt in statements:
+                        try:
+                            cursor.execute(stmt)
+                            bar.update(1)
+                        except Exception as e:
+                            failed_count += 1
+                            bar.update(1)
+                            # Log first error for debugging
+                            if failed_count == 1:
+                                error_msg = str(e).split('\\n')[0][:200]
+                                click.echo(f"\\n  Note: Some functions may fail (this is normal if already exist)")
+                                click.echo(f"  First error: {error_msg}")
+
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                if failed_count > 0:
+                    click.secho(f"\\n  ⚠️  {failed_count} statement(s) had errors (may be normal)", fg='yellow')
+
+                click.secho("  ✓ SQL UDFs deployed", fg='green')
+            except Exception as e:
+                click.secho(f"\\n✗ SQL UDF deployment failed: {e}", fg='red', bold=True)
+                click.echo("  Gateway functions were deployed successfully")
+                click.echo("  You may need to manually deploy clouds SQL")
+                sys.exit(1)
+        else:
+            click.secho("  [DRY RUN] Would deploy SQL UDFs", fg='yellow')
+    else:
+        click.echo("\\nPhase 3: No clouds SQL found (gateway-only package)")
+
+    # Success
+    if not dry_run:
+        click.echo()
+        click.secho("✓ Installation complete!", fg='green', bold=True)
+        schema = rs_prefix + 'carto' if rs_prefix else 'carto'
+        click.echo(f"Functions installed in {rs_database}.{schema}")
     else:
         click.echo()
-        click.secho("[DRY RUN] Installation would proceed here", fg='yellow')
+        click.secho("[DRY RUN] Installation would complete here", fg='yellow')
 
 if __name__ == '__main__':
     install()
@@ -388,6 +483,7 @@ if __name__ == '__main__':
 boto3>=1.26.0
 python-dotenv>=1.0.0
 redshift-connector>=2.0.0
+sqlparse>=0.4.0
 PyYAML>=6.0
 jsonschema>=4.0.0
 """

@@ -2,6 +2,8 @@
 
 This directory contains the infrastructure for deploying Analytics Toolbox functions as Lambda functions in AWS Redshift (and potentially other clouds in the future).
 
+> **💡 RECOMMENDED WORKFLOW**: Work from the **repository root** using unified commands that deploy both gateway (Lambda functions) AND clouds (SQL UDFs) together. See [Unified Workflow](#unified-workflow-recommended) below.
+
 ## Overview
 
 The Gateway system allows Analytics Toolbox functions to be deployed as:
@@ -48,7 +50,28 @@ gateway/
 └── dist/                   # Distribution packages (generated)
 ```
 
-## Quick Start
+## Unified Workflow (Recommended)
+
+**For most users, work from the repository root** to deploy both gateway (Lambda functions) AND clouds (SQL UDFs) together:
+
+```bash
+# From repository root (e.g., analytics-toolbox/core/ or analytics-toolbox/)
+make deploy cloud=redshift           # Deploy everything
+make test cloud=redshift             # Test everything
+make lint cloud=redshift             # Lint everything
+make create-package cloud=redshift   # Package everything
+make remove cloud=redshift           # Remove everything
+```
+
+This approach ensures gateway and clouds are always deployed together, preventing inconsistencies.
+
+**When to use gateway-specific commands**: Only when you need to work with Lambda functions independently (advanced use cases). See [Gateway-Specific Workflow](#gateway-specific-workflow-advanced) below.
+
+---
+
+## Gateway-Specific Workflow (Advanced)
+
+The following sections describe how to work directly with the gateway. **Most users should use the unified workflow above instead.**
 
 ### Prerequisites
 
@@ -158,16 +181,10 @@ LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionR
 Connection credentials for your Redshift cluster.
 
 ```bash
-# Method 1: Direct Connection (recommended)
+# Direct connection to Redshift
 RS_HOST=<cluster>.<account>.<region>.redshift.amazonaws.com
 RS_USER=<user>
 RS_PASSWORD=<password>
-
-# Method 2: Data API (alternative)
-# RS_CLUSTER_IDENTIFIER=<cluster-id>
-# RS_USER=<iam-user>
-# # OR
-# # RS_SECRET_ARN=arn:aws:secretsmanager:<region>:<account>:secret:<secret-name>
 ```
 
 #### Redshift Deployment Configuration
@@ -254,17 +271,19 @@ With this approach, your user only needs these Lambda permissions (no IAM permis
 - `lambda:UpdateFunctionConfiguration`
 - `lambda:GetFunction` (optional, but recommended)
 
-### Validate Functions
+### Validate Functions (Gateway-Only)
 
 ```bash
 # List all available functions
-make list
+make list cloud=redshift
 
 # List functions in a specific module
-make list modules=quadbin
+make list cloud=redshift modules=quadbin
 ```
 
-### Deploy Functions
+### Deploy Functions (Gateway-Only)
+
+**Note**: These commands deploy **only** Lambda functions. For production use, prefer the [unified workflow](#unified-workflow-recommended) that deploys both gateway and clouds together.
 
 **Prerequisites**: Ensure your `.env` file is configured with AWS credentials and Redshift details.
 
@@ -272,35 +291,35 @@ make list modules=quadbin
 
 ```bash
 # Deploy all functions to dev environment
-make deploy
+make deploy cloud=redshift
 
 # Deploy specific modules
-make deploy modules=quadbin
+make deploy cloud=redshift modules=quadbin
 
 # Deploy specific functions
-make deploy functions=quadbin_polyfill
+make deploy cloud=redshift functions=quadbin_polyfill
 
 # Deploy only modified functions (recommended for CI/CD)
-make deploy diff=1
+make deploy cloud=redshift diff=1
 
 # Dry run to preview deployment without making changes
-make deploy dry-run=1
+make deploy cloud=redshift dry-run=1
 ```
 
 #### Deploy to Production
 
 ```bash
 # Deploy all functions to production
-make deploy production=1
+make deploy cloud=redshift production=1
 
 # Deploy specific modules to production
-make deploy modules=quadbin production=1
+make deploy cloud=redshift modules=quadbin production=1
 
 # Deploy only modified functions to production
-make deploy diff=1 production=1
+make deploy cloud=redshift diff=1 production=1
 
 # Dry run for production
-make deploy production=1 dry-run=1
+make deploy cloud=redshift production=1 dry-run=1
 ```
 
 **What `production=1` does:**
@@ -311,30 +330,34 @@ make deploy production=1 dry-run=1
   - Dev: Functions created in `myname_carto` schema
   - Prod: Functions created in `carto` schema
 
-### Development Workflow
+### Development Workflow (Gateway-Only)
 
 ```bash
 # Run linters
-make lint
+make lint cloud=redshift
 
 # Run tests
-make test
+make test cloud=redshift
 
 # Clean build artifacts
 make clean
 ```
 
-### Create Distribution Package
+**Tip**: Use the [unified workflow](#unified-workflow-recommended) from the repository root to test/lint both gateway and clouds together.
+
+### Create Distribution Package (Gateway-Only)
+
+**Note**: These commands create **gateway-only** packages (Lambda functions without SQL UDFs). For production releases, use the unified package from the repository root.
 
 ```bash
-# Create a distribution package (defaults to cloud=redshift)
-make create-package
+# Create a gateway-only distribution package
+make create-package cloud=redshift
 
 # Include only specific functions
-make create-package functions=quadbin_polyfill,quadbin_bbox
+make create-package cloud=redshift functions=quadbin_polyfill,quadbin_bbox
 
-# Include private/experimental functions
-make create-package production=1
+# Production package (exclude development functions)
+make create-package cloud=redshift production=1
 ```
 
 ### Cross-Account Deployment
@@ -733,7 +756,14 @@ When adding new functions:
 
 ## Related Documentation
 
-- [Architecture Document](../claude_instructions.md)
-- [Function Template](functions/FUNCTION_TEMPLATE.yaml) *(to be created)*
+### Gateway Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Platform-agnostic architecture guide, design principles, and best practices
+- **[STRUCTURE.md](STRUCTURE.md)** - Detailed directory structure and component organization
+- **[CREDENTIAL_SETUP_GUIDE.md](CREDENTIAL_SETUP_GUIDE.md)** - Detailed AWS credential configuration guide
+
+### External Resources
+
 - [AWS Lambda Best Practices](https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html)
 - [Redshift External Functions](https://docs.aws.amazon.com/redshift/latest/dg/external-function.html)
+- [Python Testing with Pytest](https://docs.pytest.org/)

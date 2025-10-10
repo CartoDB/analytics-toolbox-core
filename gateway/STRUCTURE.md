@@ -111,10 +111,26 @@ gateway/
 - **aws-lambda/** - Lambda deployment and runtime
   - `runtime/` - Cloud-agnostic wrapper utilities (ExternalFunctionResponse)
   - `deploy/` - Packaging and deployment to AWS
+  - `tests/` - Tests for platform code
+
+### Testing
+
+Function tests are located in `functions/<module>/<function>/tests/`:
+- **Unit tests** (`tests/unit/`) - Test business logic
+- **Integration tests** (`tests/integration/`) - End-to-end validation with actual cloud
+
+Example: `functions/quadbin/quadbin_polyfill/tests/unit/test_quadbin_polyfill.py`
 
 ### Distribution (`dist/`)
 - Generated distribution packages for customers
+- **Unified Packages**: Combine gateway (Lambda) + clouds (SQL UDFs)
 - See `PACKAGE_STRUCTURE.md` for details
+
+### Scripts (`scripts/`)
+- **add_clouds_sql.py** - Filters and adds clouds SQL to gateway packages
+  - Supports module and function filtering at build time
+  - Can append private SQL functions
+  - Copies additional SQL files (VERSION.sql, DROP_FUNCTIONS.sql)
 
 ## File Count by Type
 
@@ -128,42 +144,57 @@ gateway/
 
 ## Usage
 
-### Validate all functions
+**RECOMMENDED: Work from repository root** for all operations. The root Makefile provides unified commands that deploy both gateway (Lambda functions) and clouds (SQL UDFs) together.
+
+### From Repository Root (Recommended)
+
 ```bash
-make validate
+# Deploy everything (gateway + clouds)
+make deploy cloud=redshift
+
+# Run all tests (gateway + clouds)
+make test cloud=redshift
+
+# Lint all code (gateway + clouds)
+make lint cloud=redshift
+
+# List available functions
+make list cloud=redshift
+
+# Validate function definitions
+make validate cloud=redshift
+
+# Create unified distribution package
+make create-package cloud=redshift
+make create-package cloud=redshift modules=quadbin      # Filter by module
+make create-package cloud=redshift production=1         # Production package
+
+# Remove everything
+make remove cloud=redshift
+
+# Clean build artifacts
+make clean cloud=redshift
+
+# Show help
+make help
 ```
 
-### List functions
-```bash
-make list
-```
+### From Gateway Directory (Advanced)
 
-### Deploy to development
-```bash
-make deploy-redshift-dev
-```
+For gateway-specific operations only:
 
-### Deploy single function
 ```bash
-make deploy-function FUNCTION=quadbin_polyfill
-```
+cd gateway
 
-### Create distribution package
-```bash
-make package-redshift VERSION=1.0.0
-```
+# Gateway-only operations
+make lint cloud=redshift
+make test-unit cloud=redshift
+make validate cloud=redshift
+make deploy cloud=redshift
+make remove cloud=redshift
 
-### Run tests
-```bash
-make test
-make test-integration
-make test-all
-```
-
-### Lint code
-```bash
-make lint              # Lint Python files
-make lint-fix          # Auto-fix Python formatting
+# Create gateway-only package (without clouds SQL)
+make create-package cloud=redshift
 ```
 
 ## Key Features
@@ -190,6 +221,99 @@ make lint-fix          # Auto-fix Python formatting
 5. Write tests in `tests/unit/` and `tests/integration/`
 6. Run `make validate` and `make test`
 
+## Unified Package System
+
+### Overview
+The repository supports creating **unified distribution packages** that combine:
+- **Gateway functions** (Lambda-based external functions)
+- **Clouds SQL** (native SQL UDFs from `modules.sql`)
+
+### Build-Time vs Install-Time
+- **Build-time filtering**: Packages are pre-filtered when created using `make create-package`
+- **Install-time simplicity**: Installer deploys everything in the package (no filtering logic)
+
+### Package Creation Flow
+1. **Step 1**: Create gateway package (Lambda functions)
+2. **Step 2**: Add clouds SQL from `clouds/redshift/modules/build/modules.sql` (optional filtering)
+3. **Step 3**: Create final ZIP archive
+
+### Package Structure
+```
+carto-at-redshift-1.0.0/
+├── README.md           # Installation instructions
+├── functions/          # Function definitions
+├── logic/              # Deployment logic
+├── scripts/            # Installation scripts
+│   └── install.py     # 3-phase installer
+└── clouds/             # Native SQL UDFs
+    └── redshift/
+        ├── modules.sql         # Filtered SQL functions
+        ├── VERSION.sql         # Version info
+        └── DROP_FUNCTIONS.sql  # Cleanup script
+```
+
+### Installation Phases
+The installer (`scripts/install.py`) deploys in 3 phases:
+1. **Phase 1**: Deploy Lambda functions (gateway)
+2. **Phase 2**: Create external functions (SQL templates)
+3. **Phase 3**: Execute modules.sql (native SQL UDFs)
+
+### Repository Independence
+- **analytics-toolbox-core**: Public functions only
+- **analytics-toolbox**: Public (from core submodule) + private functions
+
+### CI/CD Integration
+GitHub Actions workflows updated to:
+- Test both gateway and clouds
+- Deploy both gateway and clouds
+- Create unified packages for releases
+
+See `.github/workflows/redshift.yml` and `.github/workflows/redshift-ded.yml`
+
+## Versioning Strategy
+
+### Cloud-Specific Versioning
+Each cloud platform maintains its own independent version in `clouds/<cloud>/version`:
+
+```
+clouds/
+├── redshift/version      # 1.1.3
+├── bigquery/version      # 1.0.0
+├── snowflake/version     # 1.0.0
+├── databricks/version    # 1.0.0
+└── postgres/version      # 1.0.0
+```
+
+### Why Cloud-Specific Versions?
+- **Independent Release Cycles**: Each cloud can have different features and release schedules
+- **Cloud-Specific Changelogs**: Each cloud maintains its own CHANGELOG with relevant changes
+- **Flexibility**: Allows for cloud-specific hotfixes without affecting other platforms
+- **Clarity**: Version numbers directly reflect what's deployed on each platform
+
+### Version File Format
+- Simple text file containing the version number (e.g., `1.1.3`)
+- No additional formatting or metadata
+- Read automatically by Makefiles during package creation
+
+### Package Creation with Versions
+When creating a package, the version is automatically read from the cloud-specific version file:
+
+```bash
+# Version is read from clouds/redshift/version
+make create-package cloud=redshift
+
+# Creates: dist/carto-at-redshift-1.1.3.zip
+```
+
+### Migration from Root VERSION Files
+The root-level `VERSION` files have been removed from both repositories. All versioning is now managed through cloud-specific version files in `clouds/<cloud>/version`.
+
+## Related Documentation
+
+- **[README.md](README.md)** - Main gateway documentation with setup and usage instructions
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Platform-agnostic architecture guide, design principles, and expandability
+- **[CREDENTIAL_SETUP_GUIDE.md](CREDENTIAL_SETUP_GUIDE.md)** - AWS credential configuration guide
+
 ## Next Steps
 
 1. **Expand function library**:
@@ -206,13 +330,3 @@ make lint-fix          # Auto-fix Python formatting
    - Add `logic/clouds/bigquery/` for Cloud Run
    - Add `logic/clouds/snowflake/` for Snowpark
    - Reuse common engine and models
-
-4. **CI/CD Integration**:
-   - Add GitHub Actions workflows
-   - Implement incremental deployment
-   - Add automatic testing
-
-5. **Documentation**:
-   - Create detailed installation guide
-   - Add troubleshooting guide
-   - Document IAM permissions required

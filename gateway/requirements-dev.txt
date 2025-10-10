@@ -8,6 +8,9 @@ pytest>=8.0.0
 pytest-cov>=4.0.0
 pytest-mock>=3.10.0
 
+# Integration testing (Redshift connection)
+redshift-connector>=2.0.0
+
 # Code quality - Python
 # Note: Using black directly (brunette fork used in clouds has Python 3.13 issues)
 black>=23.0.0
