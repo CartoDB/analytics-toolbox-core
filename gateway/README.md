@@ -153,16 +153,11 @@ To avoid needing IAM create role permissions, pre-create this role:
 LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
-#### Redshift Configuration
+#### Redshift Connection
+
+Connection credentials for your Redshift cluster.
 
 ```bash
-# RS_PREFIX: Prefix for development schemas/libraries
-#   - Dev mode (default): schema = "{RS_PREFIX}carto" (e.g., "myname_carto")
-#   - Prod mode (production=1): schema = "carto" (no prefix)
-RS_PREFIX=myname_
-RS_DATABASE=<database>
-
-# Redshift Connection (choose one method)
 # Method 1: Direct Connection (recommended)
 RS_HOST=<cluster>.<account>.<region>.redshift.amazonaws.com
 RS_USER=<user>
@@ -173,6 +168,20 @@ RS_PASSWORD=<password>
 # RS_USER=<iam-user>
 # # OR
 # # RS_SECRET_ARN=arn:aws:secretsmanager:<region>:<account>:secret:<secret-name>
+```
+
+#### Redshift Deployment Configuration
+
+Deployment-specific settings for your Redshift cluster.
+
+```bash
+# RS_DATABASE: Target database for Analytics Toolbox functions
+RS_DATABASE=<database>
+
+# RS_PREFIX: Prefix for development schemas/libraries
+#   - Dev mode (default): schema = "{RS_PREFIX}carto" (e.g., "myname_carto")
+#   - Prod mode (production=1): schema = "carto" (no prefix)
+RS_PREFIX=myname_
 
 # IAM Role(s) for Redshift to invoke Lambda (matches clouds RS_ROLES)
 # This role must be attached to your Redshift cluster
