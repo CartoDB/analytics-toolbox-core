@@ -70,9 +70,11 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     Supports multiple AWS authentication methods:
     1. AWS Profile (recommended): --aws-profile <profile-name>
     2. Explicit Credentials: --aws-access-key-id and --aws-secret-access-key
-    3. Assume Role: --aws-assume-role-arn (requires profile or credentials first)
-    4. Environment Variables: AWS_PROFILE, AWS_ACCESS_KEY_ID, etc.
-    5. IAM Role: Automatic if running on EC2/ECS/Lambda
+    3. Environment Variables: AWS_PROFILE, AWS_ACCESS_KEY_ID, etc.
+    4. IAM Role: Automatic if running on EC2/ECS/Lambda
+
+    Advanced options:
+    - Cross-account deployment: --aws-assume-role-arn (for advanced scenarios)
 
     You can provide values via command-line options or interactively.
     """
@@ -145,16 +147,6 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.secho("✓ Using AWS credentials from environment variables", fg="green")
     elif auth_method == "iam_role":
         click.secho("✓ Using IAM role (automatic discovery)", fg="green")
-
-    # Optional: Assume Role
-    if not aws_assume_role_arn:
-        click.echo()
-        assume_role = click.confirm(  # noqa: E501
-            "Do you need to assume an IAM role? (for cross-account deployment)",
-            default=False
-        )
-        if assume_role:
-            aws_assume_role_arn = click.prompt("IAM Role ARN to assume")
 
     click.echo()
 

@@ -112,19 +112,11 @@ AWS_SECRET_ACCESS_KEY=<secret-access-key>
 ```
 Useful for CI/CD pipelines or when AWS CLI profiles aren't available.
 
-**Method 3: Assume Role (Cross-Account)**
-```bash
-AWS_PROFILE=default  # or use access keys
-AWS_REGION=us-east-1
-AWS_ASSUME_ROLE_ARN=arn:aws:iam::123456789:role/DeployerRole
-```
-Assumes an IAM role, useful for cross-account deployments or temporary elevated permissions.
-
-**Method 4: IAM Role (EC2/ECS/Lambda)**
+**Method 3: IAM Role (EC2/ECS/Lambda)**
 
 No configuration needed. When running on AWS infrastructure (EC2, ECS, Lambda), the SDK automatically discovers and uses the attached IAM role.
 
-**Method 5: AWS SSO (Enterprise)**
+**Method 4: AWS SSO (Enterprise)**
 ```bash
 # First authenticate:
 aws sso login --profile my-sso-profile

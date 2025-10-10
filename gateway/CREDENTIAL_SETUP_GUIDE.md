@@ -4,13 +4,14 @@ This guide explains how to configure AWS credentials for deploying Lambda functi
 
 ## Quick Start
 
-The gateway supports 5 different authentication methods. Choose the one that best fits your environment:
+The gateway supports multiple authentication methods. Choose the one that best fits your environment:
 
 1. **AWS Profile** - Recommended for local development
 2. **Explicit Credentials** - For CI/CD pipelines
-3. **Assume Role** - For cross-account or temporary elevated access
-4. **IAM Role** - For EC2/ECS/Lambda environments
-5. **AWS SSO** - For enterprise environments
+3. **IAM Role** - For EC2/ECS/Lambda environments
+4. **AWS SSO** - For enterprise environments
+
+**Advanced:** For cross-account deployments, see Method 3: Assume Role below.
 
 ## Method 1: AWS Profile (Recommended)
 
