@@ -64,8 +64,8 @@ jobs:
           aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CD }}
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
           aws-region: ${{ secrets.RS_REGION_CD }}
-      - name: Set LAMBDA_PREFIX
-        run: echo "LAMBDA_PREFIX=ded-${{ github.event.pull_request.number }}-" >> $GITHUB_ENV
+      - name: Set RS_LAMBDA_PREFIX
+        run: echo "RS_LAMBDA_PREFIX=ded-${{ github.event.pull_request.number }}-" >> $GITHUB_ENV
       - name: Deploy unified (gateway + clouds)
         id: deploy-unified
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
@@ -82,7 +82,7 @@ jobs:
         with:
           message: |
             Dedicated ${{ env.RS_PREFIX }}carto environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
-            - Gateway functions (Lambda): ${{ env.LAMBDA_PREFIX }}*
+            - Gateway functions (Lambda): ${{ env.RS_LAMBDA_PREFIX }}*
             - Clouds functions (SQL UDFs): deployed
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR

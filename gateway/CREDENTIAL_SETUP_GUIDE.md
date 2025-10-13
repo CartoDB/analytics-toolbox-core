@@ -162,7 +162,7 @@ AWS_REGION=us-east-1
 AWS_ASSUME_ROLE_ARN=arn:aws:iam::ACCOUNT-A-ID:role/LambdaDeployerRole
 
 # Lambda will be deployed in Account A
-LAMBDA_PREFIX=carto-at-
+RS_LAMBDA_PREFIX=carto-at-
 
 # Redshift in Account B will invoke Lambda via cross-account permission
 RS_ROLES=arn:aws:iam::ACCOUNT-B-ID:role/RedshiftLambdaRole

@@ -26,7 +26,7 @@ class LambdaDeployer:
         secret_access_key: Optional[str] = None,
         session_token: Optional[str] = None,
         role_arn: Optional[str] = None,
-        lambda_prefix: str = "carto-at-",
+        rs_lambda_prefix: str = "carto-at-",
     ):
         """
         Initialize Lambda deployer with flexible credential options
@@ -45,9 +45,9 @@ class LambdaDeployer:
             secret_access_key: AWS secret access key
             session_token: AWS session token (for temporary credentials)
             role_arn: IAM role ARN to assume
-            lambda_prefix: Lambda function prefix (default: "carto-at-")
+            rs_lambda_prefix: Lambda function prefix (default: "carto-at-")
         """
-        self.lambda_prefix = lambda_prefix
+        self.rs_lambda_prefix = rs_lambda_prefix
         session_kwargs = {"region_name": region}
 
         # Method 1: Explicit credentials (highest priority)
@@ -78,7 +78,7 @@ class LambdaDeployer:
             try:
                 # Session name: carto_at_deployer
                 # (replace hyphens with underscores, max 64 chars)
-                session_name = f"{self.lambda_prefix}deployer".replace("-", "_")[:64]
+                session_name = f"{self.rs_lambda_prefix}deployer".replace("-", "_")[:64]
                 assumed_role = sts.assume_role(
                     RoleArn=role_arn, RoleSessionName=session_name
                 )
@@ -110,7 +110,7 @@ class LambdaDeployer:
 
     def _prefix_to_pascal_case(self, prefix: str) -> str:
         """
-        Convert lambda_prefix to PascalCase for IAM role naming
+        Convert rs_lambda_prefix to PascalCase for IAM role naming
         Special handling for 'at' to preserve as 'AT' (acronym)
         Examples:
           carto-at- -> CartoAT
@@ -360,10 +360,10 @@ class LambdaDeployer:
         """
         # Ensure execution role exists
         if not role_arn:
-            # Convert lambda_prefix to PascalCase for IAM role (AWS convention)
+            # Convert rs_lambda_prefix to PascalCase for IAM role (AWS convention)
             # Examples: carto-at- -> CartoATLambdaExecutionRole
             #           dev-carto-at- -> DevCartoATLambdaExecutionRole
-            prefix_pascal = self._prefix_to_pascal_case(self.lambda_prefix)
+            prefix_pascal = self._prefix_to_pascal_case(self.rs_lambda_prefix)
             role_name = f"{prefix_pascal}LambdaExecutionRole"
 
             # AWS IAM role names have a 64 character limit
@@ -372,8 +372,8 @@ class LambdaDeployer:
                     f"IAM role name too long: '{role_name}' "
                     f"({len(role_name)} chars). "
                     f"AWS IAM role names must be ≤ 64 characters. "
-                    f"Please use a shorter LAMBDA_PREFIX "
-                    f"(current: '{self.lambda_prefix}')"
+                    f"Please use a shorter RS_LAMBDA_PREFIX "
+                    f"(current: '{self.rs_lambda_prefix}')"
                 )
 
             role_arn = self.ensure_execution_role(role_name)

@@ -573,14 +573,14 @@ def deploy_lambda(
     # Get settings from .env or use defaults
     aws_region = get_env_or_default("AWS_REGION", region)
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
-    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-")
-    lambda_execution_role_arn = get_env_or_default("LAMBDA_EXECUTION_ROLE_ARN")
+    rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
+    rs_lambda_execution_role_arn = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE_ARN")
 
     # Get AWS credentials
     aws_creds = get_aws_credentials()
 
     # Construct Lambda function name
-    lambda_function_name = f"{lambda_prefix}{function_name}"
+    lambda_function_name = f"{rs_lambda_prefix}{function_name}"
 
     # Get Lambda configuration
     runtime = cloud_config.config.get("runtime", "python3.11")
@@ -602,7 +602,7 @@ def deploy_lambda(
         deployer = LambdaDeployer(
             region=aws_region,
             profile=aws_prof,
-            lambda_prefix=lambda_prefix,
+            rs_lambda_prefix=rs_lambda_prefix,
             **aws_creds,
         )
 
@@ -629,7 +629,7 @@ def deploy_lambda(
             memory_size=memory_size,
             timeout=timeout,
             description=function.description,
-            role_arn=lambda_execution_role_arn,
+            role_arn=rs_lambda_execution_role_arn,
         )
 
         logger.info(f"✓ Successfully deployed {lambda_function_name}")
@@ -752,12 +752,12 @@ def deploy_all(
     # AWS_PROFILE is optional - boto3 will use
     # AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY from env
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
-    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-")
+    rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
 
     if dry_run:
         logger.info("[DRY RUN] Would deploy:")
         for func in to_deploy:
-            lambda_name = f"{lambda_prefix}{func.name}"
+            lambda_name = f"{rs_lambda_prefix}{func.name}"
             logger.info(f"  - {lambda_name} ({func.module})")
         return
 
@@ -802,7 +802,7 @@ def deploy_all(
         deploy_external_functions = False
 
     # Get Lambda execution role (optional - avoids needing IAM create role permissions)
-    lambda_execution_role_arn = get_env_or_default("LAMBDA_EXECUTION_ROLE_ARN")
+    rs_lambda_execution_role_arn = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE_ARN")
 
     # Get AWS credentials
     aws_creds = get_aws_credentials()
@@ -819,10 +819,10 @@ def deploy_all(
             # Get AWS account ID
             lambda_account_id = iam_manager.get_account_id()
 
-            # Generate role name from lambda_prefix
+            # Generate role name from rs_lambda_prefix
             # Example: carto-at- → CartoATRedshiftInvokeRole
             role_name = (
-                lambda_prefix.replace("-", "_")
+                rs_lambda_prefix.replace("-", "_")
                 .replace("_", " ")
                 .title()
                 .replace(" ", "")
@@ -862,7 +862,7 @@ def deploy_all(
         deployer = LambdaDeployer(
             region=aws_region,
             profile=aws_prof,
-            lambda_prefix=lambda_prefix,
+            rs_lambda_prefix=rs_lambda_prefix,
             **aws_creds,
         )
 
@@ -882,7 +882,7 @@ def deploy_all(
         ) as bar:
             for func in bar:
                 try:
-                    lambda_function_name = f"{lambda_prefix}{func.name}"
+                    lambda_function_name = f"{rs_lambda_prefix}{func.name}"
 
                     # Get cloud configuration
                     cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
@@ -921,7 +921,7 @@ def deploy_all(
                         memory_size=memory_size,
                         timeout=timeout,
                         description=func.description,
-                        role_arn=lambda_execution_role_arn,
+                        role_arn=rs_lambda_execution_role_arn,
                     )
 
                     # Strip version number from ARN (e.g., :19) to use $LATEST
@@ -1136,7 +1136,7 @@ def remove_all(
     # Get settings from .env
     aws_region = get_env_or_default("AWS_REGION", region)
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
-    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-")
+    rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
 
     # Get Redshift configuration
     rs_host = get_env_or_default("RS_HOST")
@@ -1159,7 +1159,7 @@ def remove_all(
         logger.info("[DRY RUN] Would remove:")
         logger.info(f"\nLambda functions ({len(to_remove)}):")
         for func in to_remove:
-            lambda_name = f"{lambda_prefix}{func.name}"
+            lambda_name = f"{rs_lambda_prefix}{func.name}"
             logger.info(f"  - {lambda_name}")
 
         if drop_schema:
@@ -1188,7 +1188,7 @@ def remove_all(
         deployer = LambdaDeployer(
             region=aws_region,
             profile=aws_prof,
-            lambda_prefix=lambda_prefix,
+            rs_lambda_prefix=rs_lambda_prefix,
             **aws_creds,
         )
 
@@ -1334,7 +1334,7 @@ $$ LANGUAGE plpgsql"""
         ) as bar:
             for func in bar:
                 try:
-                    lambda_function_name = f"{lambda_prefix}{func.name}"
+                    lambda_function_name = f"{rs_lambda_prefix}{func.name}"
                     deployer.delete_function(lambda_function_name)
                     lambda_success += 1
                 except Exception as e:

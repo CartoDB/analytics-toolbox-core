@@ -153,27 +153,27 @@ Best for enterprise environments using AWS IAM Identity Center.
 #### Lambda Configuration
 
 ```bash
-# LAMBDA_PREFIX: Prefix for Lambda function names (default: carto-at-)
-LAMBDA_PREFIX=carto-at-
+# RS_LAMBDA_PREFIX: Prefix for Lambda function names (default: carto-at-)
+RS_LAMBDA_PREFIX=carto-at-
 ```
 
 **Resource Naming:**
-- Lambda functions: `{LAMBDA_PREFIX}{function_name}` (kebab-case)
+- Lambda functions: `{RS_LAMBDA_PREFIX}{function_name}` (kebab-case)
   - Example: `carto-at-quadbin_polyfill`
-- IAM execution role: `{PascalCase(LAMBDA_PREFIX)}LambdaExecutionRole` (PascalCase, AWS convention)
-  - `LAMBDA_PREFIX=carto-at-` → `CartoATLambdaExecutionRole`
-  - `LAMBDA_PREFIX=dev-carto-at-` → `DevCartoATLambdaExecutionRole`
+- IAM execution role: `{PascalCase(RS_LAMBDA_PREFIX)}LambdaExecutionRole` (PascalCase, AWS convention)
+  - `RS_LAMBDA_PREFIX=carto-at-` → `CartoATLambdaExecutionRole`
+  - `RS_LAMBDA_PREFIX=dev-carto-at-` → `DevCartoATLambdaExecutionRole`
   - Note: 'at' is preserved as 'AT' (acronym for Analytics Toolbox)
-- Session name: `{LAMBDA_PREFIX}deployer` with underscores
+- Session name: `{RS_LAMBDA_PREFIX}deployer` with underscores
   - Example: `carto_at_deployer`
 
 **Lambda Execution Role (optional - recommended for production)**
 
-If not specified, will auto-create based on `LAMBDA_PREFIX` (default: `CartoATLambdaExecutionRole`)
+If not specified, will auto-create based on `RS_LAMBDA_PREFIX` (default: `CartoATLambdaExecutionRole`)
 
 To avoid needing IAM create role permissions, pre-create this role:
 ```bash
-LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
+RS_LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
 #### Redshift Connection
@@ -241,8 +241,8 @@ To avoid needing IAM role creation permissions, pre-create the Lambda execution 
 **Default (no custom prefix):**
 
 ```bash
-# Create the role (name derived from LAMBDA_PREFIX in PascalCase)
-# Default LAMBDA_PREFIX=carto-at- → CartoATLambdaExecutionRole
+# Create the role (name derived from RS_LAMBDA_PREFIX in PascalCase)
+# Default RS_LAMBDA_PREFIX=carto-at- → CartoATLambdaExecutionRole
 aws iam create-role \
   --role-name CartoATLambdaExecutionRole \
   --assume-role-policy-document '{
@@ -262,7 +262,7 @@ aws iam attach-role-policy \
 
 Then add to your `.env`:
 ```bash
-LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
+RS_LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
 With this approach, your user only needs these Lambda permissions (no IAM permissions required):
@@ -370,7 +370,7 @@ If your Lambda functions are in a different AWS account than your Redshift clust
 3. Add Lambda resource policy to allow Account B to invoke:
 
 ```bash
-# For each deployed function, run (adjust function name based on your LAMBDA_PREFIX):
+# For each deployed function, run (adjust function name based on your RS_LAMBDA_PREFIX):
 aws lambda add-permission \
   --function-name carto-at-quadbin_polyfill \
   --statement-id redshift-cross-account-invoke \
@@ -638,7 +638,7 @@ jobs:
           echo "REDSHIFT_CLUSTER_ID=${{ secrets.REDSHIFT_CLUSTER_ID }}" >> .env
           echo "REDSHIFT_DATABASE=${{ secrets.REDSHIFT_DATABASE }}" >> .env
           echo "REDSHIFT_SCHEMA=carto" >> .env
-          echo "LAMBDA_PREFIX=dev-carto-at-" >> .env
+          echo "RS_LAMBDA_PREFIX=dev-carto-at-" >> .env
       - name: Deploy to development
         run: make deploy diff=1
 
@@ -655,7 +655,7 @@ jobs:
           echo "REDSHIFT_CLUSTER_ID=${{ secrets.REDSHIFT_CLUSTER_ID }}" >> .env
           echo "REDSHIFT_DATABASE=${{ secrets.REDSHIFT_DATABASE }}" >> .env
           echo "REDSHIFT_SCHEMA=carto" >> .env
-          echo "LAMBDA_PREFIX=carto-at-prod" >> .env
+          echo "RS_LAMBDA_PREFIX=carto-at-prod" >> .env
       - name: Deploy to production
         run: make deploy production=1 diff=1
 ```
@@ -685,7 +685,7 @@ When deploying from CI/CD pipelines (like GitHub Actions), use short prefixes to
     SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-8)
     SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 7)
     echo "RS_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
-    echo "LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
+    echo "RS_LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
 ```
 
 **Result:** Prefix like `ci_a1b2c3d4_678901_` (19 characters)

@@ -49,8 +49,8 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--aws-secret-access-key', help='AWS Secret Access Key (alternative to profile)')
 @click.option('--aws-session-token', help='AWS Session Token (for temporary credentials)')
 @click.option('--aws-assume-role-arn', help='IAM role ARN to assume (for cross-account)')
-@click.option('--lambda-prefix', help='Lambda function name prefix (default: carto-at-)')  # noqa: E501
-@click.option('--lambda-execution-role-arn', help='Pre-created Lambda execution role ARN (optional)')  # noqa: E501
+@click.option('--rs-lambda-prefix', help='Lambda function name prefix (default: carto-at-)')  # noqa: E501
+@click.option('--rs-lambda-execution-role-arn', help='Pre-created Lambda execution role ARN (optional)')  # noqa: E501
 @click.option('--rs-host', help='Redshift host endpoint')
 @click.option('--rs-database', help='Redshift database name')
 @click.option('--rs-user', help='Redshift user')
@@ -59,8 +59,8 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--rs-roles', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
-            aws_session_token, aws_assume_role_arn, lambda_prefix,
-            lambda_execution_role_arn, rs_host, rs_database, rs_user, rs_password,
+            aws_session_token, aws_assume_role_arn, rs_lambda_prefix,
+            rs_lambda_execution_role_arn, rs_host, rs_database, rs_user, rs_password,
             rs_prefix, rs_roles, dry_run):
     """Install CARTO Analytics Toolbox to Redshift
 
@@ -152,13 +152,13 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     click.echo("Lambda Configuration")
     click.echo("-" * 70)
-    lambda_prefix = prompt_if_not_provided(  # noqa: E501
-        lambda_prefix,
+    rs_lambda_prefix = prompt_if_not_provided(  # noqa: E501
+        rs_lambda_prefix,
         "Lambda function prefix",
         default="carto-at-"
     )
 
-    if not lambda_execution_role_arn:
+    if not rs_lambda_execution_role_arn:
         click.echo()
         click.secho("Lambda Execution Role Configuration:", fg='cyan', bold=True)
         click.echo("This role is used by Lambda functions to execute and access AWS resources.")
@@ -168,14 +168,14 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo("  • Existing role: Provide ARN like arn:aws:iam::123456789:role/MyLambdaRole")
         click.echo()
 
-        lambda_execution_role_arn = click.prompt(
+        rs_lambda_execution_role_arn = click.prompt(
             "Lambda Execution Role ARN (leave empty to auto-create)",
             default="",
             show_default=False
         ) or None
 
-        if lambda_execution_role_arn:
-            click.secho(f"✓ Using existing role: {lambda_execution_role_arn}", fg='green')
+        if rs_lambda_execution_role_arn:
+            click.secho(f"✓ Using existing role: {rs_lambda_execution_role_arn}", fg='green')
         else:
             click.secho("✓ Will auto-create Lambda execution role during deployment", fg='green')
 
@@ -246,11 +246,11 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     # 2. Lambda Configuration
     env_lines.append("")
     env_lines.append("# Lambda Configuration")
-    env_lines.append(f"LAMBDA_PREFIX={lambda_prefix}")
-    if lambda_execution_role_arn:
-        env_lines.append(f"LAMBDA_EXECUTION_ROLE_ARN={lambda_execution_role_arn}")
+    env_lines.append(f"RS_LAMBDA_PREFIX={rs_lambda_prefix}")
+    if rs_lambda_execution_role_arn:
+        env_lines.append(f"RS_LAMBDA_EXECUTION_ROLE_ARN={rs_lambda_execution_role_arn}")
     else:
-        env_lines.append("# LAMBDA_EXECUTION_ROLE_ARN not set (will auto-create)")
+        env_lines.append("# RS_LAMBDA_EXECUTION_ROLE_ARN not set (will auto-create)")
 
     # 3. Redshift Connection
     env_lines.append("")
@@ -287,9 +287,9 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if aws_assume_role_arn:
         click.echo(f"Assume Role:         {aws_assume_role_arn}")
 
-    click.echo(f"Lambda Prefix:       {lambda_prefix}")
-    if lambda_execution_role_arn:
-        click.echo(f"Lambda Exec Role:    {lambda_execution_role_arn}")
+    click.echo(f"Lambda Prefix:       {rs_lambda_prefix}")
+    if rs_lambda_execution_role_arn:
+        click.echo(f"Lambda Exec Role:    {rs_lambda_execution_role_arn}")
     else:
         click.echo(f"Lambda Exec Role:    (will auto-create)")
     click.echo(f"Redshift Host:       {rs_host}")

@@ -34,11 +34,12 @@ jobs:
       RS_PASSWORD: ${{ secrets.RS_PASSWORD_CI }}
       RS_BUCKET: ${{ secrets.RS_BUCKET_CI }}
       RS_LAMBDA: ${{ secrets.RS_LAMBDA_CI }}
+      RS_LAMBDA_EXECUTION_ROLE_ARN: ${{ secrets.RS_LAMBDA_EXECUTION_ROLE_ARN_CI }}
       RS_ROLES: ${{ secrets.RS_ROLES_CI }}
       RS_API_BASE_URL: ${{ secrets.RS_API_BASE_URL_CI }}
       RS_API_ACCESS_TOKEN: ${{ secrets.RS_API_ACCESS_TOKEN_CI }}
       RS_GATEWAY_SERVICE_MOCK: 1
-      AWS_REGION: ${{ secrets.RS_REGION_CI }}
+      AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
     steps:
@@ -51,7 +52,7 @@ jobs:
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-8)
           SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 7)
           echo "RS_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
-          echo "LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
+          echo "RS_LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}-" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -126,7 +127,7 @@ jobs:
       AWS_REGION: ${{ secrets[matrix.region] }}
       AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key_id] }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
-      LAMBDA_PREFIX: carto-at-
+      RS_LAMBDA_PREFIX: carto-at-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
