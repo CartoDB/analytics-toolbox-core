@@ -8,12 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Optional, Set, Union
 from .models import (
     Function,
-    FunctionArgument,
-    FunctionOutput,
-    FunctionExample,
     CloudConfig,
-    TestConfig,
-    FunctionType,
     CloudType,
     PlatformType,
 )
@@ -67,34 +62,6 @@ class CatalogLoader:
         # Determine module from directory structure
         module = self._get_module(function_dir)
 
-        # Parse arguments
-        arguments = [
-            FunctionArgument(
-                name=arg["name"],
-                type=arg["type"],
-                description=arg.get("description", ""),
-            )
-            for arg in data.get("arguments", [])
-        ]
-
-        # Parse output
-        output_data = data.get("output", {})
-        output = FunctionOutput(
-            name=output_data.get("name", "result"),
-            type=output_data.get("type", "unknown"),
-            description=output_data.get("description", ""),
-        )
-
-        # Parse examples
-        examples = [
-            FunctionExample(
-                description=ex.get("description", ""),
-                arguments=ex.get("arguments", []),
-                output=ex.get("output"),
-            )
-            for ex in data.get("examples", [])
-        ]
-
         # Parse cloud configurations
         clouds = {}
         for cloud_name, cloud_data in data.get("clouds", {}).items():
@@ -126,33 +93,12 @@ class CatalogLoader:
                     f"in {function_name}: {e}"
                 )
 
-        # Parse test configuration
-        test_data = data.get("test", {})
-        test_config = TestConfig(
-            dataset=test_data.get("dataset"), timeout=test_data.get("timeout", 30)
-        )
-
-        # Set test file paths
-        test_config.unit_test_cases = function_dir / "tests" / "unit" / "cases.yaml"
-        test_config.unit_test_file = (
-            function_dir / "tests" / "unit" / f"test_{function_name}.py"
-        )
-        test_config.integration_test_file = (
-            function_dir / "tests" / "integration" / f"test_{function_name}.py"
-        )
-
         return Function(
             name=function_name,
-            function_type=FunctionType(data["function_type"]),
-            author=data.get("author", "CARTO"),
-            description=data.get("description", ""),
-            arguments=arguments,
-            output=output,
-            examples=examples,
             clouds=clouds,
-            test=test_config,
             module=module,
             function_path=function_dir,
+            description=data.get("description", "CARTO Analytics Toolbox function"),
         )
 
     def _get_module(self, function_dir: Path) -> str:

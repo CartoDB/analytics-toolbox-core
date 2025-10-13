@@ -1,0 +1,2 @@
+# Requirements for CLUSTERKMEANS Lambda function
+numpy>=1.24.0,<2.0.0

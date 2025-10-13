@@ -93,78 +93,6 @@ class FunctionValidator:
                         f"Template file not found for {cloud_name}: {template_path}"
                     )
 
-    def validate_function_signature(self, yaml_data: Dict[str, Any]) -> None:
-        """
-        Validate function signature (arguments and output)
-
-        Args:
-            yaml_data: Parsed function.yaml data
-
-        Raises:
-            ValidationError: If signature is invalid
-        """
-        arguments = yaml_data.get("arguments", [])
-        output = yaml_data.get("output")
-
-        if not isinstance(arguments, list):
-            raise ValidationError("Arguments must be a list")
-
-        if not output:
-            raise ValidationError("Output specification is required")
-
-        # Validate argument names are unique
-        arg_names = [arg["name"] for arg in arguments if "name" in arg]
-        if len(arg_names) != len(set(arg_names)):
-            raise ValidationError("Argument names must be unique")
-
-    def validate_examples(self, yaml_data: Dict[str, Any]) -> None:
-        """
-        Validate examples match function signature
-
-        Args:
-            yaml_data: Parsed function.yaml data
-
-        Raises:
-            ValidationError: If examples are invalid
-        """
-        arguments = yaml_data.get("arguments", [])
-        examples = yaml_data.get("examples", [])
-
-        expected_arg_count = len(arguments)
-
-        for i, example in enumerate(examples):
-            if "arguments" not in example:
-                raise ValidationError(f"Example {i} missing 'arguments' field")
-
-            provided_args = example["arguments"]
-            if len(provided_args) != expected_arg_count:
-                raise ValidationError(
-                    f"Example {i} has {len(provided_args)} arguments, "
-                    f"expected {expected_arg_count}"
-                )
-
-    def validate_cloud_configs(self, yaml_data: Dict[str, Any]) -> None:
-        """
-        Validate cloud-specific configurations
-
-        Args:
-            yaml_data: Parsed function.yaml data
-
-        Raises:
-            ValidationError: If cloud configs are invalid
-        """
-        clouds = yaml_data.get("clouds", {})
-
-        if not clouds:
-            raise ValidationError("At least one cloud implementation is required")
-
-        for cloud_name, cloud_config in clouds.items():
-            if "type" not in cloud_config:
-                raise ValidationError(f"Cloud {cloud_name} missing 'type' field")
-
-            if "code_file" not in cloud_config:
-                raise ValidationError(f"Cloud {cloud_name} missing 'code_file' field")
-
     def validate_function(self, function_dir: Path) -> None:
         """
         Validate a complete function directory
@@ -184,13 +112,10 @@ class FunctionValidator:
         with open(yaml_path, "r") as f:
             yaml_data = yaml.safe_load(f)
 
-        # Run all validations
+        # Run validations
         if self.schema:
             self.validate_yaml_structure(yaml_data)
 
-        self.validate_function_signature(yaml_data)
-        self.validate_examples(yaml_data)
-        self.validate_cloud_configs(yaml_data)
         self.validate_code_files_exist(function_dir, yaml_data)
 
 

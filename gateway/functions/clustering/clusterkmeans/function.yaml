@@ -5,7 +5,7 @@ clouds:
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
     config:
-      memory_size: 512
-      timeout: 60
-      max_batch_rows: 1000
+      memory_size: 1024
+      timeout: 300
+      max_batch_rows: 100
       runtime: python3.10

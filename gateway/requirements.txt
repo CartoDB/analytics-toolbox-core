@@ -21,3 +21,6 @@ python-dotenv>=1.0.0
 
 # Redshift direct connection (required for deployment and integration tests)
 redshift-connector>=2.0.0
+
+# Numerical computing
+numpy>=1.26.0

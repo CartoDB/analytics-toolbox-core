@@ -9,15 +9,6 @@ from pathlib import Path
 from enum import Enum
 
 
-class FunctionType(Enum):
-    """Type of database function"""
-
-    SCALAR = "scalar"
-    AGGREGATE = "aggregate"
-    PROCEDURE = "procedure"
-    TABLE = "table"
-
-
 class CloudType(Enum):
     """Supported cloud platforms"""
 
@@ -37,33 +28,6 @@ class PlatformType(Enum):
 
 
 @dataclass
-class FunctionArgument:
-    """Function argument definition"""
-
-    name: str
-    type: str
-    description: str = ""
-
-
-@dataclass
-class FunctionOutput:
-    """Function output definition"""
-
-    name: str
-    type: str
-    description: str = ""
-
-
-@dataclass
-class FunctionExample:
-    """Example usage of a function"""
-
-    description: str
-    arguments: List[str]
-    output: Any
-
-
-@dataclass
 class CloudConfig:
     """Cloud-specific configuration for a function"""
 
@@ -75,17 +39,6 @@ class CloudConfig:
 
 
 @dataclass
-class TestConfig:
-    """Testing configuration"""
-
-    dataset: Optional[str] = None
-    timeout: int = 30
-    unit_test_cases: Optional[Path] = None
-    unit_test_file: Optional[Path] = None
-    integration_test_file: Optional[Path] = None
-
-
-@dataclass
 class Function:
     """
     Represents a function in the Analytics Toolbox Gateway
@@ -93,16 +46,12 @@ class Function:
     """
 
     name: str
-    function_type: FunctionType
-    author: str
-    description: str
-    arguments: List[FunctionArgument]
-    output: FunctionOutput
-    examples: List[FunctionExample]
     clouds: Dict[CloudType, CloudConfig]
-    test: TestConfig
     module: str = "general"
     function_path: Optional[Path] = None
+    description: str = (
+        "CARTO Analytics Toolbox function"  # Used in AWS Lambda description
+    )
 
     @property
     def yaml_path(self) -> Optional[Path]:
@@ -149,8 +98,6 @@ class ExternalFunctionConfig:
 
     function_name: str
     schema: str
-    arguments: List[FunctionArgument]
-    return_type: str
     platform_identifier: str  # Platform-specific ID (Lambda ARN, Cloud Run URL, etc.)
     credentials: Dict[str, str]  # Cloud-specific auth credentials
     template_path: Path

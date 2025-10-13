@@ -178,7 +178,10 @@ class LambdaDeployer:
                     temp_path = Path(temp_dir)
 
                     print(f"Installing dependencies from {requirements_file}...")
-                    # Install dependencies to temp directory using current Python's pip
+                    # Install dependencies using pip with Lambda-compatible flags
+                    # --platform: Target Linux x86_64 architecture
+                    # --only-binary: Use pre-built wheels only
+                    # --python-version: Match Lambda runtime version
                     result = subprocess.run(
                         [
                             sys.executable,
@@ -189,6 +192,11 @@ class LambdaDeployer:
                             str(requirements_file),
                             "-t",
                             str(temp_path),
+                            "--platform",
+                            "manylinux2014_x86_64",
+                            "--only-binary=:all:",
+                            "--python-version",
+                            "3.10",
                             "--quiet",
                             "--no-compile",
                             "--upgrade",

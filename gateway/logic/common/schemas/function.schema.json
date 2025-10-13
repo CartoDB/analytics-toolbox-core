@@ -4,7 +4,7 @@
   "title": "CARTO Analytics Toolbox Function",
   "description": "Schema for defining Analytics Toolbox functions",
   "type": "object",
-  "required": ["function_type", "author", "description", "arguments", "output", "clouds"],
+  "required": ["clouds"],
   "properties": {
     "function_type": {
       "type": "string",
