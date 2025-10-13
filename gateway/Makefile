@@ -97,6 +97,7 @@ deploy: venv
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
+		$(if $(diff),--diff,) \
 		$(if $(dry-run),--dry-run,) \
 		$(EXTRA_CLI_ARGS)
 
@@ -106,6 +107,7 @@ remove: venv
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
+		$(if $(drop-schema),--drop-schema,) \
 		$(if $(dry-run),--dry-run,) \
 		$(EXTRA_CLI_ARGS)
 

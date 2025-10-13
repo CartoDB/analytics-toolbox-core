@@ -983,6 +983,11 @@ def deploy_all(
     is_flag=True,
     help="Remove from production (use 'carto' schema instead of prefixed schema)",
 )
+@click.option(
+    "--drop-schema",
+    is_flag=True,
+    help="Drop entire schema with CASCADE (faster, removes all objects in schema)",
+)
 @click.pass_context
 def remove_all(
     ctx,
@@ -994,11 +999,15 @@ def remove_all(
     functions: Optional[str],
     dry_run: bool,
     production: bool,
+    drop_schema: bool,
 ):
     """Remove Lambda functions and external functions from Redshift
 
     NOTE: This command does NOT delete IAM roles. Roles can be reused across
     deployments and should be managed separately.
+
+    Use --drop-schema for CI environments to drop the entire schema with CASCADE.
+    This is faster and cleaner than dropping individual functions.
     """
     logger.info("Removing Analytics Toolbox from Redshift")
 
@@ -1079,16 +1088,20 @@ def remove_all(
             lambda_name = f"{lambda_prefix}{func.name}"
             logger.info(f"  - {lambda_name}")
 
-        # Count external functions
-        external_count = sum(
-            1 for f in to_remove
-            if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
-        )
-        logger.info(f"\nExternal functions in {rs_schema} ({external_count}):")
-        for func in to_remove:
-            cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
-            if cloud_config.external_function_template:
-                logger.info(f"  - {rs_schema}.{func.name.upper()}")
+        if drop_schema:
+            logger.info(f"\nSchema:")
+            logger.info(f"  - DROP SCHEMA {rs_schema} CASCADE")
+        else:
+            # Count external functions
+            external_count = sum(
+                1 for f in to_remove
+                if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
+            )
+            logger.info(f"\nExternal functions in {rs_schema} ({external_count}):")
+            for func in to_remove:
+                cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+                if cloud_config.external_function_template:
+                    logger.info(f"  - {rs_schema}.{func.name.upper()}")
 
         logger.info("\nNOTE: IAM roles will NOT be deleted (they can be reused)")
         return
@@ -1110,7 +1123,7 @@ def remove_all(
 
         # Phase 1: Drop all functions from Redshift
         if rs_host and rs_user and rs_password and rs_database:
-            logger.info("\n=== Phase 1: Dropping all functions from Redshift ===\n")
+            logger.info("\n=== Phase 1: Dropping from Redshift ===\n")
 
             # Filter functions that have external function templates
             functions_to_drop = [
@@ -1118,7 +1131,29 @@ def remove_all(
                 if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
             ]
 
-            if functions_to_drop:
+            if drop_schema:
+                # Drop entire schema with CASCADE - faster and cleaner for CI
+                try:
+                    logger.info(f"Dropping schema {rs_schema} with CASCADE...")
+                    drop_schema_sql = f"DROP SCHEMA IF EXISTS {rs_schema} CASCADE"
+
+                    with redshift_connector.connect(
+                        host=rs_host,
+                        database=rs_database,
+                        user=rs_user,
+                        password=rs_password,
+                        timeout=300,
+                    ) as conn:
+                        conn.autocommit = True
+                        with conn.cursor() as cursor:
+                            cursor.execute(drop_schema_sql)
+
+                    logger.info(f"✓ Dropped schema {rs_schema} (all objects removed)\n")
+                    external_success = len(functions_to_drop)
+                except Exception as e:
+                    logger.error(f"✗ Failed to drop schema: {e}\n")
+                    # Continue with Lambda deletion even if schema drop fails
+            elif functions_to_drop:
                 try:
                     # Drop ALL external functions (Lambda-backed) in the schema
                     # Gateway only deploys external functions, so this is safe
