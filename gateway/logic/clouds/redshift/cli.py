@@ -226,24 +226,62 @@ def deploy_external_function(
 
 def get_modified_functions(function_roots: List[Path]) -> Set[str]:
     """
-    Get list of function names that have been modified in git working tree.
+    Get list of function names that have been modified in git diff against base branch.
 
-    Looks at git diff to find modified files and extracts function names.
+    Compares current branch against origin/main (or main) to find modified files.
+    If infrastructure files (Makefiles, logic/, platforms/) are modified,
+    returns None to indicate ALL functions should be deployed.
+
     Similar to the pattern in clouds/redshift/common/list_functions.js
 
     Args:
         function_roots: List of paths to function directories
 
     Returns:
-        Set of modified function names
+        Set of modified function names, or None if infrastructure changed
+        (None means deploy ALL functions)
     """
     try:
-        # Get git diff for unstaged and staged changes
+        # Get git repository root
         result = subprocess.run(
-            ["git", "diff", "--name-only", "HEAD"],
+            ["git", "rev-parse", "--show-toplevel"],
             capture_output=True,
             text=True,
             check=True,
+        )
+        git_root = Path(result.stdout.strip())
+        logger.debug(f"Git repository root: {git_root}")
+
+        # Determine base branch to compare against
+        # Try origin/main first, fall back to main, then master
+        base_branch = None
+        for branch in ["origin/main", "main", "origin/master", "master"]:
+            result = subprocess.run(
+                ["git", "rev-parse", "--verify", branch],
+                capture_output=True,
+                text=True,
+                cwd=git_root,
+            )
+            if result.returncode == 0:
+                base_branch = branch
+                break
+
+        if not base_branch:
+            logger.warning(
+                "Could not determine base branch (tried origin/main, main). "
+                "Deploying all functions."
+            )
+            return None
+
+        logger.debug(f"Comparing against base branch: {base_branch}")
+
+        # Get git diff against base branch (run from git root)
+        result = subprocess.run(
+            ["git", "diff", "--name-only", base_branch, "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=git_root,
         )
         modified_files = result.stdout.strip().split("\n")
 
@@ -251,27 +289,54 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
             logger.warning("No modified files found in git diff")
             return set()
 
+        logger.debug(f"Found {len(modified_files)} modified files")
+
+        # Infrastructure paths that trigger full deployment
+        infrastructure_patterns = [
+            "Makefile",
+            "logic/",
+            "platforms/",
+            ".github/workflows/",
+            "requirements.txt",
+        ]
+
+        # Check if infrastructure was modified
+        for file_path in modified_files:
+            for pattern in infrastructure_patterns:
+                if pattern in file_path:
+                    logger.info(
+                        f"Infrastructure file modified: {file_path}\n"
+                        f"Deploying ALL functions (infrastructure change detected)"
+                    )
+                    return None
+
         modified_functions = set()
 
         # Check if any modified files are in function directories
-        for file_path in modified_files:
-            path = Path(file_path)
+        # Git diff returns paths relative to repo root
+        # Function roots are absolute paths
+        for file_path_str in modified_files:
+            # Convert git-relative path to absolute path
+            abs_file_path = git_root / file_path_str
 
             # Check if file is within any function root
             for root in function_roots:
                 try:
-                    # Check if the file is within a function directory
+                    # Make root absolute if it isn't already
+                    abs_root = root.resolve()
+
+                    # Check if the file is within this function root
                     # Function structure: <root>/<module>/<function_name>/...
-                    relative = path.relative_to(root)
+                    relative = abs_file_path.relative_to(abs_root)
                     parts = relative.parts
 
                     # Need at least module/function_name/file
-                    if len(parts) >= 3:
+                    if len(parts) >= 2:
                         function_name = parts[1]  # Second level is function name
                         modified_functions.add(function_name)
                         logger.debug(
                             f"Modified function detected: {function_name} "
-                            f"(from {file_path})"
+                            f"(from {file_path_str})"
                         )
                 except ValueError:
                     # Path is not relative to this root
@@ -281,10 +346,12 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
 
     except subprocess.CalledProcessError as e:
         logger.warning(f"Failed to get git diff: {e}")
-        return set()
+        logger.warning("Deploying all functions as fallback")
+        return None
     except FileNotFoundError:
         logger.warning("git command not found")
-        return set()
+        logger.warning("Deploying all functions as fallback")
+        return None
 
 
 @click.group()
@@ -663,8 +730,13 @@ def deploy_all(
     # Apply git diff filter
     if diff:
         modified_functions = get_modified_functions(roots_to_load)
-        to_deploy = [f for f in to_deploy if f.name in modified_functions]
-        logger.info(f"Filtering by git diff: {len(modified_functions)} modified")
+        if modified_functions is None:
+            # Infrastructure changed - deploy all functions
+            logger.info("Deploying ALL functions (infrastructure or fallback)")
+        else:
+            # Only deploy modified functions
+            to_deploy = [f for f in to_deploy if f.name in modified_functions]
+            logger.info(f"Filtering by git diff: {len(modified_functions)} modified")
 
     logger.info(f"Deploying {len(to_deploy)} functions")
 
