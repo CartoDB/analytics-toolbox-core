@@ -137,7 +137,7 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.RS_REGION }}
-      - name: Deploy unified (gateway + clouds)
+      - name: Run deploy
         run: |
           make deploy cloud=redshift production=1
 
@@ -175,7 +175,7 @@ jobs:
         with:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
-      - name: Create unified package
+      - name: Create package
         run: |
           make create-package cloud=redshift production=1
       - name: Publish package
