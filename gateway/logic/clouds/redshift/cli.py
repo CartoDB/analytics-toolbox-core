@@ -963,6 +963,292 @@ def deploy_all(
 
 
 @cli.command()
+@click.option(
+    "--include-root",
+    "include_roots",
+    multiple=True,
+    type=click.Path(exists=True, path_type=Path),
+    help="Additional function roots to include (can be specified multiple times)",
+)
+@click.option("--aws-profile", help="AWS profile to use")
+@click.option("--region", default="us-east-1", help="AWS region")
+@click.option("--cloud", default="redshift", help="Cloud platform (default: redshift)")
+@click.option("--modules", help="Comma-separated list of modules to remove")
+@click.option("--functions", help="Comma-separated list of functions to remove")
+@click.option(
+    "--dry-run", is_flag=True, help="Show what would be removed without removing"
+)
+@click.option(
+    "--production",
+    is_flag=True,
+    help="Remove from production (use 'carto' schema instead of prefixed schema)",
+)
+@click.pass_context
+def remove_all(
+    ctx,
+    include_roots: tuple,
+    aws_profile: Optional[str],
+    region: str,
+    cloud: str,
+    modules: Optional[str],
+    functions: Optional[str],
+    dry_run: bool,
+    production: bool,
+):
+    """Remove Lambda functions and external functions from Redshift
+
+    NOTE: This command does NOT delete IAM roles. Roles can be reused across
+    deployments and should be managed separately.
+    """
+    logger.info("Removing Analytics Toolbox from Redshift")
+
+    # Store production flag in context
+    ctx.obj["production"] = production
+
+    # Load from all function roots
+    all_functions = []
+    if include_roots:
+        roots_to_load = list(include_roots)
+    else:
+        roots_to_load = [get_default_function_roots()]
+
+    for root in roots_to_load:
+        loader = CatalogLoader(root)
+        loader.load_catalog()
+        all_functions.extend(loader.get_all_functions())
+
+    # Filter by cloud
+    try:
+        cloud_type = CloudType(cloud.lower())
+    except ValueError:
+        logger.error(
+            f"Invalid cloud type: {cloud}. "
+            f"Valid options: redshift, bigquery, snowflake, databricks"
+        )
+        sys.exit(1)
+
+    to_remove = [f for f in all_functions if f.supports_cloud(cloud_type)]
+
+    # Apply modules filter
+    if modules:
+        module_list = [m.strip() for m in modules.split(",")]
+        to_remove = [f for f in to_remove if f.module in module_list]
+        logger.info(f"Filtering by modules: {', '.join(module_list)}")
+
+    # Apply functions filter
+    if functions:
+        function_list = [f.strip() for f in functions.split(",")]
+        to_remove = [f for f in to_remove if f.name in function_list]
+        logger.info(f"Filtering by functions: {', '.join(function_list)}")
+
+    logger.info(f"Removing {len(to_remove)} functions")
+
+    if not to_remove:
+        logger.warning("No functions to remove")
+        return
+
+    # Load environment configuration
+    load_env_config()
+
+    # Get settings from .env
+    aws_region = get_env_or_default("AWS_REGION", region)
+    aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
+    lambda_prefix = get_env_or_default("LAMBDA_PREFIX", "carto-at-")
+
+    # Get Redshift configuration
+    rs_host = get_env_or_default("RS_HOST")
+    rs_password = get_env_or_default("RS_PASSWORD")
+    rs_database = get_env_or_default("RS_DATABASE")
+    rs_prefix = get_env_or_default("RS_PREFIX", "")
+    rs_user = get_env_or_default("RS_USER")
+
+    # Calculate schema
+    rs_schema_default = "carto"
+    is_production = ctx.obj.get("production", False)
+    if is_production:
+        rs_schema = rs_schema_default
+    else:
+        rs_schema = (
+            f"{rs_prefix}{rs_schema_default}" if rs_prefix else rs_schema_default
+        )
+
+    if dry_run:
+        logger.info("[DRY RUN] Would remove:")
+        logger.info(f"\nLambda functions ({len(to_remove)}):")
+        for func in to_remove:
+            lambda_name = f"{lambda_prefix}{func.name}"
+            logger.info(f"  - {lambda_name}")
+
+        # Count external functions
+        external_count = sum(
+            1 for f in to_remove
+            if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
+        )
+        logger.info(f"\nExternal functions in {rs_schema} ({external_count}):")
+        for func in to_remove:
+            cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+            if cloud_config.external_function_template:
+                logger.info(f"  - {rs_schema}.{func.name.upper()}")
+
+        logger.info("\nNOTE: IAM roles will NOT be deleted (they can be reused)")
+        return
+
+    # Get AWS credentials
+    aws_creds = get_aws_credentials()
+
+    try:
+        deployer = LambdaDeployer(
+            region=aws_region,
+            profile=aws_prof,
+            lambda_prefix=lambda_prefix,
+            **aws_creds,
+        )
+
+        lambda_success = 0
+        external_success = 0
+        failed_functions = []
+
+        # Phase 1: Drop all functions from Redshift
+        if rs_host and rs_user and rs_password and rs_database:
+            logger.info("\n=== Phase 1: Dropping all functions from Redshift ===\n")
+
+            # Filter functions that have external function templates
+            functions_to_drop = [
+                f for f in to_remove
+                if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
+            ]
+
+            if functions_to_drop:
+                try:
+                    # Drop ALL external functions (Lambda-backed) in the schema
+                    # Gateway only deploys external functions, so this is safe
+                    # Uses the same pattern as DROP_FUNCTIONS.sql in clouds
+                    create_table_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__create_drop_table_gw()
+AS $$
+DECLARE
+  row RECORD;
+BEGIN
+  DROP TABLE IF EXISTS _gw_udfs_info;
+  CREATE TEMP TABLE _gw_udfs_info (f_oid BIGINT, f_kind VARCHAR(1), f_name VARCHAR(MAX), arg_index BIGINT, f_argtype VARCHAR(MAX));
+  FOR row IN SELECT oid::BIGINT f_oid, kind::VARCHAR(1) f_kind, proname::VARCHAR(MAX) f_name, i arg_index, format_type(arg_types[i-1], null)::VARCHAR(MAX) f_argtype
+    FROM (
+      SELECT oid, kind, proname, generate_series(1, arg_count) AS i, arg_types
+      FROM (
+        SELECT p.prooid oid, p.prokind kind, proname, proargtypes arg_types, pronargs arg_count
+        FROM pg_catalog.pg_namespace n
+        JOIN PG_PROC_INFO p ON pronamespace = n.oid
+        WHERE nspname = '{rs_schema}'
+      ) t
+    ) t
+  LOOP
+    INSERT INTO _gw_udfs_info(f_oid, f_kind, f_name, arg_index, f_argtype)
+    VALUES (row.f_oid, row.f_kind, row.f_name, row.arg_index, row.f_argtype);
+  END LOOP;
+END;
+$$ LANGUAGE plpgsql"""
+
+                    drop_functions_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__drop_gateway_functions()
+AS $$
+DECLARE
+    row RECORD;
+BEGIN
+    CALL {rs_schema}.__create_drop_table_gw();
+
+    FOR row IN SELECT drop_command
+    FROM (
+        SELECT 'DROP ' || CASE f_kind WHEN 'p' THEN 'PROCEDURE' ELSE 'FUNCTION' END ||
+               ' {rs_schema}.' || f_name || '(' ||
+               listagg(f_argtype,',' ) WITHIN GROUP (ORDER BY arg_index) || ');' AS drop_command
+        FROM _gw_udfs_info
+        GROUP BY f_oid, f_name, f_kind
+    )
+    LOOP
+        EXECUTE row.drop_command;
+    END LOOP;
+
+    DROP TABLE IF EXISTS _gw_udfs_info;
+END;
+$$ LANGUAGE plpgsql"""
+
+                    with redshift_connector.connect(
+                        host=rs_host,
+                        database=rs_database,
+                        user=rs_user,
+                        password=rs_password,
+                        timeout=300,
+                    ) as conn:
+                        conn.autocommit = True
+                        with conn.cursor() as cursor:
+                            # Create helper procedure
+                            cursor.execute(create_table_proc)
+
+                            # Create main drop procedure
+                            cursor.execute(drop_functions_proc)
+
+                            # Call procedure to drop functions
+                            cursor.execute(f"CALL {rs_schema}.__drop_gateway_functions()")
+
+                            # Clean up temporary procedures
+                            cursor.execute(f"DROP PROCEDURE {rs_schema}.__create_drop_table_gw()")
+                            cursor.execute(f"DROP PROCEDURE {rs_schema}.__drop_gateway_functions()")
+
+                    logger.info(f"✓ Dropped all functions in schema {rs_schema}\n")
+                except Exception as e:
+                    logger.error(f"✗ Failed to drop functions: {e}\n")
+                    # Continue with Lambda deletion even if Redshift drop fails
+
+                external_success = len(functions_to_drop)
+            else:
+                logger.info("No external functions to drop\n")
+        else:
+            logger.warning(
+                "Redshift connection not configured. "
+                "Skipping external function removal.\n"
+            )
+
+        # Phase 2: Delete Lambda functions
+        logger.info("=== Phase 2: Deleting Lambda functions ===\n")
+
+        with click.progressbar(
+            to_remove,
+            label=f"Deleting {len(to_remove)} Lambda functions",
+            show_pos=True,
+            item_show_func=lambda f: f.name if f else None,
+        ) as bar:
+            for func in bar:
+                try:
+                    lambda_function_name = f"{lambda_prefix}{func.name}"
+                    deployer.delete_function(lambda_function_name)
+                    lambda_success += 1
+                except Exception as e:
+                    # Don't fail if function doesn't exist
+                    if "ResourceNotFoundException" not in str(e):
+                        logger.error(f"\n✗ {func.name}: {e}")
+                        if func.name not in failed_functions:
+                            failed_functions.append(func.name)
+
+        # Summary
+        separator = "=" * 50
+        logger.info(f"\n{separator}")
+        logger.info("Removal Summary:")
+        logger.info(separator)
+        logger.info("  Lambda functions:")
+        logger.info(f"    ✓ Deleted: {lambda_success}/{len(to_remove)}")
+        if rs_host and functions_to_drop:
+            logger.info("  External functions:")
+            logger.info(f"    ✓ Dropped: {external_success}/{len(functions_to_drop)}")
+        if failed_functions:
+            logger.warning(f"  ✗ Failed: {', '.join(failed_functions)}")
+
+        logger.info("\nNOTE: IAM roles were NOT deleted (they can be reused for future deployments)")
+        logger.info("      To delete roles manually, use AWS Console or AWS CLI")
+
+    except Exception as e:
+        logger.error(f"Removal failed: {e}")
+        sys.exit(1)
+
+
+@cli.command()
 @click.argument("output_dir", type=click.Path(path_type=Path))
 @click.option("--version", required=True, help="Version string for the package")
 @click.option(

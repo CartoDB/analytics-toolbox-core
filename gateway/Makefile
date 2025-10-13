@@ -102,8 +102,12 @@ deploy: venv
 
 remove: venv
 	echo "Removing deployment..."
-	echo "$(YELLOW)Note: Undeploy not yet implemented$(NC)"
-	echo "To manually remove, delete the Lambda functions and IAM roles"
+	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py remove-all \
+		$(if $(modules),--modules=$(modules),) \
+		$(if $(functions),--functions=$(functions),) \
+		$(if $(production),--production,) \
+		$(if $(dry-run),--dry-run,) \
+		$(EXTRA_CLI_ARGS)
 
 create-package: venv
 	echo "Creating distribution package..."
