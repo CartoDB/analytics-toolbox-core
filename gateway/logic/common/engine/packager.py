@@ -172,7 +172,6 @@ class PackageBuilder:
         readme_content = f"""# CARTO Analytics Toolbox for Redshift
 
 Version: {self.version}
-Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
 
 ## Installation
 
@@ -263,26 +262,6 @@ Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  # noqa: E501
 
    Then provide the role ARNs during installation.
 
-## Included Functions
-
-This package includes {len(functions)} functions:
-
-"""
-        # Group by module
-        by_module = {}
-        for func in functions:
-            if func.module not in by_module:
-                by_module[func.module] = []
-            by_module[func.module].append(func)
-
-        for module in sorted(by_module.keys()):
-            readme_content += f"\n### {module.title()}\n\n"
-            for func in sorted(by_module[module], key=lambda f: f.name):
-                readme_content += (
-                    f"- **{func.name.upper()}**: {func.description.split('.')[0]}\n"
-                )
-
-        readme_content += """
 ## Support
 
 For issues or questions:
@@ -297,13 +276,6 @@ See LICENSE file for details.
 
         with open(package_dir / "README.md", "w") as f:
             f.write(readme_content)
-
-        # Copy architecture doc if exists
-        arch_doc = (
-            Path(__file__).parent.parent.parent.parent.parent / "claude_instructions.md"
-        )
-        if arch_doc.exists():
-            shutil.copy2(arch_doc, package_dir / "ARCHITECTURE.md")
 
     def _create_zip(self, package_dir: Path, zip_path: Path):
         """Create zip file of the package"""

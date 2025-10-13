@@ -17,7 +17,7 @@ on:
   workflow_call:
 
 env:
-  NODE_VERSION: 14
+  NODE_VERSION: 20.19
   PYTHON2_VERSION: 2.7.18
   PYTHON3_VERSION: 3.8.18
   VIRTUALENV_VERSION: 20.15.1
@@ -26,9 +26,9 @@ env:
 jobs:
 
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-4cpus
     container: python:2.7.18-buster
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       RS_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       RS_HOST: ${{ secrets.RS_HOST_CI }}
@@ -36,7 +36,11 @@ jobs:
       RS_USER: ${{ secrets.RS_USER_CI }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD_CI }}
       RS_BUCKET: ${{ secrets.RS_BUCKET_CI }}
+      RS_LAMBDA: ${{ secrets.RS_LAMBDA_CI }}
       RS_ROLES: ${{ secrets.RS_ROLES_CI }}
+      RS_API_BASE_URL: ${{ secrets.RS_API_BASE_URL_CI }}
+      RS_API_ACCESS_TOKEN: ${{ secrets.RS_API_ACCESS_TOKEN_CI }}
+      RS_GATEWAY_SERVICE_MOCK: 1
       AWS_REGION: ${{ secrets.RS_REGION_CI }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
@@ -52,6 +56,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
+      - name: Fix apt sources for Debian Buster
+        run: |
+          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
           apt-get update
@@ -98,6 +107,10 @@ jobs:
             password: RS_PASSWORD_CD
             bucket: RS_BUCKET_CD
             region: RS_REGION_CD
+            lambda: RS_LAMBDA_CD
+            roles: RS_ROLES_CD
+            api_base_url: RS_API_BASE_URL_CD
+            api_access_token: RS_API_ACCESS_TOKEN_CD
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CD
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CD
           - host: RS_HOST_CI
@@ -106,6 +119,10 @@ jobs:
             password: RS_PASSWORD_CI
             bucket: RS_BUCKET_CI
             region: RS_REGION_CI
+            lambda: RS_LAMBDA_CI
+            roles: RS_ROLES_CI
+            api_base_url: RS_API_BASE_URL_CI
+            api_access_token: RS_API_ACCESS_TOKEN_CI
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CI
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CI
     env:
@@ -115,7 +132,10 @@ jobs:
       RS_PASSWORD: ${{ secrets[matrix.password] }}
       RS_BUCKET: ${{ secrets[matrix.bucket] }}
       RS_REGION: ${{ secrets[matrix.region] }}
-      RS_ROLES: ${{ secrets.RS_ROLES_PROD }}
+      RS_LAMBDA: ${{ secrets[matrix.lambda] }}
+      RS_ROLES: ${{ secrets[matrix.roles] }}
+      RS_API_BASE_URL: ${{ secrets[matrix.api_base_url] }}
+      RS_API_ACCESS_TOKEN: ${{ secrets[matrix.api_access_token] }}
       AWS_REGION: ${{ secrets[matrix.region] }}
       AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key_id] }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
@@ -131,6 +151,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
+      - name: Fix apt sources for Debian Buster
+        run: |
+          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
           apt-get update
