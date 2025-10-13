@@ -229,13 +229,13 @@ class TestLambdaHandler:
         assert result["success"] is True
         assert all(r is None for r in result["results"])
 
-    def test_invalid_geometry_type_returns_none(self):
-        """Test handler with invalid geometry type returns None"""
+    def test_invalid_geometry_type_fails_batch(self):
+        """Test handler with invalid geometry type fails batch (FAIL_FAST mode)"""
         geom_json = '{"type":"Point","coordinates":[0,0]}'
         event = {"arguments": [[geom_json, 2]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
-        assert result["success"] is True
-        # Should return None for invalid geometry type
-        assert result["results"][0] is None
+        # With FAIL_FAST (default), invalid geometry fails the batch
+        assert result["success"] is False
+        assert "must be MultiPoint" in result["error_msg"]

@@ -5,6 +5,16 @@ Provides standardized error handling and response formatting
 
 from typing import Dict, Any, Callable, List, Optional
 import traceback
+import json
+from enum import Enum
+
+
+class ErrorHandlingMode(Enum):
+    """Error handling modes for row-level errors"""
+
+    SILENT = "silent"  # Log to CloudWatch, return None
+    RETURN_ERROR = "return_error"  # Return error message as result
+    FAIL_FAST = "fail_fast"  # Fail entire batch on first error
 
 
 class ExternalFunctionResponse:
@@ -44,7 +54,10 @@ class ExternalFunctionResponse:
         }
 
 
-def redshift_handler(process_row_func: Callable) -> Callable:
+def redshift_handler(
+    process_row_func: Callable = None,
+    error_mode: ErrorHandlingMode = ErrorHandlingMode.FAIL_FAST,
+) -> Callable:
     """
     Decorator to wrap a row processing function for Redshift Lambda
 
@@ -53,6 +66,7 @@ def redshift_handler(process_row_func: Callable) -> Callable:
 
     Args:
         process_row_func: Function that processes a single row
+        error_mode: How to handle row-level errors (default: FAIL_FAST)
 
     Returns:
         Lambda handler function
@@ -65,38 +79,73 @@ def redshift_handler(process_row_func: Callable) -> Callable:
             arg1, arg2 = row[0], row[1]
             return arg1 + arg2
 
-        # Can now use process_row as lambda_handler
+        # Or with explicit error mode:
+        @redshift_handler(error_mode=ErrorHandlingMode.FAIL_FAST)
+        def process_row(row):
+            ...
     """
 
-    def lambda_handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
-        try:
-            arguments = event.get("arguments", [])
-            num_records = event.get("num_records", len(arguments))
+    def decorator(func: Callable) -> Callable:
+        def lambda_handler(
+            event: Dict[str, Any], context: Any = None
+        ) -> Dict[str, Any]:
+            try:
+                arguments = event.get("arguments", [])
+                num_records = event.get("num_records", len(arguments))
 
-            results = []
+                results = []
 
-            for row in arguments:
-                try:
-                    result = process_row_func(row)
-                    results.append(result)
-                except Exception as row_error:
-                    # Log individual row errors but continue processing
-                    print(f"Error processing row: {row_error}")
-                    if context and hasattr(context, "get_remaining_time_in_millis"):
-                        time_ms = context.get_remaining_time_in_millis()
-                        print(f"Remaining time: {time_ms}ms")
-                    results.append(None)
+                for i, row in enumerate(arguments):
+                    try:
+                        result = func(row)
+                        results.append(result)
+                    except Exception as row_error:
+                        # Log to CloudWatch
+                        error_msg = f"Error processing row {i}: {row_error}"
+                        print(error_msg)
+                        if context and hasattr(context, "get_remaining_time_in_millis"):
+                            time_ms = context.get_remaining_time_in_millis()
+                            print(f"Remaining time: {time_ms}ms")
 
-            return ExternalFunctionResponse.success(results, num_records)
+                        # Handle based on error mode
+                        if error_mode == ErrorHandlingMode.FAIL_FAST:
+                            # Fail the entire batch
+                            error_response = ExternalFunctionResponse.error(
+                                error_msg, num_records
+                            )
+                            return json.dumps(error_response)
+                        elif error_mode == ErrorHandlingMode.RETURN_ERROR:
+                            # Return error as a JSON string so user sees it
+                            error_result = json.dumps(
+                                {
+                                    "error": str(row_error),
+                                    "row_index": i,
+                                    "type": type(row_error).__name__,
+                                }
+                            )
+                            results.append(error_result)
+                        else:  # SILENT
+                            # Return None (original behavior)
+                            results.append(None)
 
-        except Exception as e:
-            # Batch-level error
-            error_msg = f"Batch processing error: {str(e)}"
-            print(error_msg)
-            print(traceback.format_exc())
-            return ExternalFunctionResponse.error(error_msg)
+                # Redshift expects JSON string response
+                response = ExternalFunctionResponse.success(results, num_records)
+                return json.dumps(response)
 
-    return lambda_handler
+            except Exception as e:
+                # Batch-level error
+                error_msg = f"Batch processing error: {str(e)}"
+                print(error_msg)
+                print(traceback.format_exc())
+                error_response = ExternalFunctionResponse.error(error_msg)
+                return json.dumps(error_response)
+
+        return lambda_handler
+
+    # Support both @redshift_handler and @redshift_handler()
+    if process_row_func is not None:
+        return decorator(process_row_func)
+    return decorator
 
 
 def batch_redshift_handler(process_batch_func: Callable) -> Callable:
@@ -132,16 +181,19 @@ def batch_redshift_handler(process_batch_func: Callable) -> Callable:
                     f"Result count mismatch: got {len(results)}, "
                     f"expected {len(arguments)}"
                 )
-                return ExternalFunctionResponse.error(error_msg)
+                error_response = ExternalFunctionResponse.error(error_msg)
+                return json.dumps(error_response)
 
-            return ExternalFunctionResponse.success(results, num_records)
+            response = ExternalFunctionResponse.success(results, num_records)
+            return json.dumps(response)
 
         except Exception as e:
             # Batch-level error
             error_msg = f"Batch processing error: {str(e)}"
             print(error_msg)
             print(traceback.format_exc())
-            return ExternalFunctionResponse.error(error_msg)
+            error_response = ExternalFunctionResponse.error(error_msg)
+            return json.dumps(error_response)
 
     return lambda_handler
 

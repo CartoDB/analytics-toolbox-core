@@ -7,6 +7,7 @@ from .lambda_wrapper import (
     redshift_handler,
     batch_redshift_handler,
     LambdaContext,
+    ErrorHandlingMode,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "redshift_handler",
     "batch_redshift_handler",
     "LambdaContext",
+    "ErrorHandlingMode",
 ]

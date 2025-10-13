@@ -6,7 +6,12 @@ This function fills a geometry with quadbin indices at a given resolution.
 """
 
 import json
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
+
+# Import lambda wrapper
+# In Lambda: packaged as carto_analytics_toolbox_core
+# In local tests: conftest.py sets up the module alias
+from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
 
 
 def quadbin_from_zxy(z: int, x: int, y: int) -> Optional[int]:
@@ -66,91 +71,35 @@ def polyfill_geometry(geom_wkt: str, resolution: int) -> List[int]:
     return [quadbin] if quadbin is not None else []
 
 
-def lambda_handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
+@redshift_handler
+def process_quadbin_polyfill_row(row):
     """
-    AWS Lambda handler for Redshift external function.
-
-    Redshift sends batches of rows in this format:
-    {
-      "request_id": "...",
-      "cluster": "...",
-      "user": "...",
-      "database": "...",
-      "external_function": "...",
-      "query_id": ...,
-      "num_records": N,
-      "arguments": [[geom1, res1], [geom2, res2], ...]
-    }
-
-    Must return (per AWS documentation):
-    {
-      "results": [result1, result2, ...]
-    }
-
-    For errors, can return:
-    {
-      "error_msg": "Error message",
-      "num_records": 0,
-      "results": []
-    }
+    Process a single quadbin polyfill request row.
 
     Args:
-        event: Event from Redshift containing arguments and num_records
-        context: Lambda context (unused)
+        row: List containing [geometry_wkt, resolution] where:
+            - geometry_wkt: WKT string representation of geometry
+            - resolution: Quadbin resolution level (0-26)
 
     Returns:
-        Response dict with results or error
+        JSON string with quadbin indices array, or None for invalid inputs
     """
-    try:
-        arguments = event.get("arguments", [])
-        num_records = event.get("num_records", len(arguments))
+    # Handle invalid row structure
+    if row is None or len(row) < 2:
+        return None
 
-        results = []
+    geom, resolution = row[0], row[1]
 
-        for i, row in enumerate(arguments):
-            try:
-                if row is None or len(row) < 2:
-                    results.append(None)
-                    continue
+    # Handle null inputs
+    if geom is None or resolution is None:
+        return None
 
-                geom, resolution = row[0], row[1]
+    # Process the geometry
+    quadbins = polyfill_geometry(str(geom), int(resolution))
+    # Return as JSON string - external function returns VARCHAR
+    result_str = json.dumps(quadbins)
+    return result_str
 
-                # Handle null inputs
-                if geom is None or resolution is None:
-                    results.append(None)
-                    continue
 
-                # Process the geometry
-                quadbins = polyfill_geometry(str(geom), int(resolution))
-                # Return as JSON string - external function returns VARCHAR
-                result_str = json.dumps(quadbins)
-                results.append(result_str)
-
-            except Exception as row_error:
-                # Log error to CloudWatch but continue processing other rows
-                print(f"Error processing row {i}: {row_error}")
-                results.append(None)
-
-        # Ensure we return exactly num_records results
-        # Pad with None if needed
-        while len(results) < num_records:
-            results.append(None)
-
-        response = {
-            "success": True,
-            "num_records": num_records,
-            "results": results[:num_records],  # Trim to exact num_records
-        }
-        # IMPORTANT: Redshift expects the response as a JSON STRING, not a dict
-        return json.dumps(response)
-
-    except Exception as e:
-        # Batch-level error
-        return json.dumps(
-            {
-                "success": False,
-                "error_msg": f"Error processing batch: {str(e)}",
-                "num_records": 0,
-                "results": [],
-            }
-        )
+# Export as lambda_handler for AWS Lambda
+lambda_handler = process_quadbin_polyfill_row

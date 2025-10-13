@@ -14,6 +14,11 @@ Returns JSON array with cluster assignments and indices.
 import json
 import numpy as np
 
+# Import lambda wrapper
+# In Lambda: packaged as carto_analytics_toolbox_core
+# In local tests: conftest.py sets up the module alias
+from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
+
 # Set random seed for consistent results
 np.random.seed(1)
 
@@ -274,82 +279,33 @@ def clusterkmeanstable(geom_json, k):
     )
 
 
-def lambda_handler(event, context=None):
+@redshift_handler
+def process_clusterkmeanstable_row(row):
     """
-    AWS Lambda handler for Redshift external function.
-
-    Redshift sends batches of rows in this format:
-    {
-      "request_id": "...",
-      "cluster": "...",
-      "user": "...",
-      "database": "...",
-      "external_function": "...",
-      "query_id": ...,
-      "num_records": N,
-      "arguments": [[geom1, k1], [geom2, k2], ...]
-    }
-
-    Must return:
-    {
-      "success": true,
-      "num_records": N,
-      "results": [result1, result2, ...]
-    }
+    Process a single clustering request row for table geometry format.
 
     Args:
-        event: Event from Redshift containing arguments and num_records
-        context: Lambda context (unused)
+        row: List containing [geometry_json, k] where:
+            - geometry_json: JSON string with _coords array (flat list of x,y pairs)
+            - k: number of clusters
 
     Returns:
-        JSON string response with results or error
+        JSON string with cluster assignments and indices, or None for invalid inputs
     """
-    try:
-        arguments = event.get("arguments", [])
-        num_records = event.get("num_records", len(arguments))
+    # Handle invalid row structure
+    if row is None or len(row) < 2:
+        return None
 
-        results = []
+    geom, k = row[0], row[1]
 
-        for i, row in enumerate(arguments):
-            try:
-                if row is None or len(row) < 2:
-                    results.append(None)
-                    continue
+    # Handle null inputs
+    if geom is None or k is None:
+        return None
 
-                geom, k = row[0], row[1]
+    # Process the clustering
+    result_json = clusterkmeanstable(str(geom), int(k))
+    return result_json
 
-                # Handle null inputs
-                if geom is None or k is None:
-                    results.append(None)
-                    continue
 
-                # Process the clustering
-                result_json = clusterkmeanstable(str(geom), int(k))
-                results.append(result_json)
-
-            except Exception as row_error:
-                # Log error to CloudWatch but continue processing other rows
-                print(f"Error processing row {i}: {row_error}")
-                results.append(None)
-
-        # Ensure we return exactly num_records results
-        while len(results) < num_records:
-            results.append(None)
-
-        response = {
-            "success": True,
-            "num_records": num_records,
-            "results": results[:num_records],
-        }
-        return json.dumps(response)
-
-    except Exception as e:
-        # Batch-level error
-        return json.dumps(
-            {
-                "success": False,
-                "error_msg": f"Error processing batch: {str(e)}",
-                "num_records": 0,
-                "results": [],
-            }
-        )
+# Export as lambda_handler for AWS Lambda
+lambda_handler = process_clusterkmeanstable_row

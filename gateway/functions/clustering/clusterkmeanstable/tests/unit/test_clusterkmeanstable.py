@@ -223,12 +223,12 @@ class TestLambdaHandler:
         assert result["success"] is True
         assert all(r is None for r in result["results"])
 
-    def test_invalid_json(self):
-        """Test handler with invalid JSON geometry"""
+    def test_invalid_json_fails_batch(self):
+        """Test handler with invalid JSON fails batch (FAIL_FAST mode)"""
         event = {"arguments": [["not valid json", 2]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
-        assert result["success"] is True
-        # Should return None for invalid input
-        assert result["results"][0] is None
+        # With FAIL_FAST (default), invalid JSON fails the batch
+        assert result["success"] is False
+        assert "Error processing row 0" in result["error_msg"]
