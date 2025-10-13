@@ -71,7 +71,7 @@ jobs:
           make lint cloud=redshift && \
           make deploy cloud=redshift diff="$GIT_DIFF" && \
           make test cloud=redshift diff="$GIT_DIFF"
-      - name: Remove deployment
+      - name: Run remove
         if: always()
         run: |
           make remove cloud=redshift drop-schema=1
