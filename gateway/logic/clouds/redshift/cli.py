@@ -1027,7 +1027,9 @@ def deploy_all(
             logger.info("  external functions:")
             logger.info(f"    ✓ Successful: {external_success}/{lambda_success}")
         if failed_functions:
-            logger.warning(f"  ✗ Failed: {', '.join(failed_functions)}")
+            logger.error(f"  ✗ Failed: {', '.join(failed_functions)}")
+            logger.error("\nDeployment failed: One or more functions failed to deploy")
+            sys.exit(1)
 
     except Exception as e:
         logger.error(f"Deployment failed: {e}")

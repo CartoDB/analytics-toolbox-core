@@ -365,6 +365,15 @@ class LambdaDeployer:
             #           dev-carto-at- -> DevCartoATLambdaExecutionRole
             prefix_pascal = self._prefix_to_pascal_case(self.lambda_prefix)
             role_name = f"{prefix_pascal}LambdaExecutionRole"
+
+            # AWS IAM role names have a 64 character limit
+            if len(role_name) > 64:
+                raise ValueError(
+                    f"IAM role name too long: '{role_name}' ({len(role_name)} chars). "
+                    f"AWS IAM role names must be ≤ 64 characters. "
+                    f"Please use a shorter LAMBDA_PREFIX (current: '{self.lambda_prefix}')"
+                )
+
             role_arn = self.ensure_execution_role(role_name)
 
         with open(zip_path, "rb") as f:
