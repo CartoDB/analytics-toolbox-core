@@ -26,7 +26,7 @@ env:
 jobs:
 
   test:
-    runs-on: ubuntu-24.04-4cpus
+    runs-on: ubuntu-24.04
     container: python:2.7.18-buster
     timeout-minutes: 40
     env:
