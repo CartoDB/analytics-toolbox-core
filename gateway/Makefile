@@ -47,10 +47,13 @@ help:
 
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
-		python3 -m venv $(VENV_DIR); \
+		echo "Creating venv with: $$(python3 --version 2>&1)"; \
+		python3 -m venv $(VENV_DIR) || exit 1; \
 		rm -rf $(VENV_DIR)/lib/**/site-packages/~*; \
-		$(VENV_BIN)/pip install --upgrade pip -q; \
-		$(VENV_BIN)/pip install -r $(ROOT_DIR)/requirements.txt -q; \
+		$(VENV_BIN)/pip install --upgrade pip || exit 1; \
+		echo "Installing dependencies from $(ROOT_DIR)/requirements.txt"; \
+		$(VENV_BIN)/pip install -r $(ROOT_DIR)/requirements.txt || exit 1; \
+		echo "✓ Venv created successfully"; \
 	fi
 
 install-dev: venv
