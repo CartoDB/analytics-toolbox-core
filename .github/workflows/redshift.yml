@@ -58,11 +58,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -143,11 +138,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -181,11 +171,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Auth google
