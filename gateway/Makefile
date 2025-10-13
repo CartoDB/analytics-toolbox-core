@@ -46,10 +46,14 @@ help:
 	echo "Available targets: help lint lint-fix test list validate deploy remove clean create-package"
 
 venv:
-	@if [ ! -d "$(VENV_DIR)" ]; then \
+	@if [ ! -d "$(VENV_DIR)" ] || [ ! -f "$(VENV_BIN)/python" ]; then \
+		echo "Creating virtual environment..."; \
+		rm -rf $(VENV_DIR); \
 		python3 -m venv $(VENV_DIR); \
-		rm -rf $(VENV_DIR)/lib/**/site-packages/~*; \
 		$(VENV_BIN)/pip install --upgrade pip -q; \
+		$(VENV_BIN)/pip install -r requirements.txt -q; \
+	elif ! $(VENV_BIN)/python -c "import click" 2>/dev/null; then \
+		echo "Dependencies missing, reinstalling..."; \
 		$(VENV_BIN)/pip install -r requirements.txt -q; \
 	fi
 
