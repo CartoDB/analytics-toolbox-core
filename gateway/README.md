@@ -671,6 +671,39 @@ make deploy diff=1
 
 The system uses `git diff` to detect changes and only redeploys affected functions.
 
+### CI/CD Resource Naming
+
+When deploying from CI/CD pipelines (like GitHub Actions), use short prefixes to avoid AWS resource name length limits (64 characters for IAM roles, Lambda functions).
+
+**Pattern:** `ci_{8-char-sha}_{6-digit-run-id}_`
+
+**Example GitHub Actions implementation:**
+
+```yaml
+- name: Generate deployment prefix
+  run: |
+    SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-8)
+    SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 7)
+    echo "RS_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
+    echo "LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
+```
+
+**Result:** Prefix like `ci_a1b2c3d4_678901_` (19 characters)
+
+**Benefits:**
+- Fits within AWS 64-char limits (Lambda: ~37 chars, IAM role: ~35 chars)
+- Maintains uniqueness per workflow run (8-char SHA + 6-digit run ID)
+- Standard Git practice (8-char short hash)
+- Handles workflow retries correctly (same prefix = updates existing resources)
+- Traceable in GitHub (SHA linkable, run ID searchable)
+
+**Resource naming examples:**
+```
+Lambda:   ci_a1b2c3d4_678901_quadbin_polyfill        (37/64 chars) ✓
+IAM Role: CiA1b2c3d4678901LambdaExecutionRole        (35/64 chars) ✓
+Schema:   ci_a1b2c3d4_678901_carto                    (26 chars) ✓
+```
+
 ## Architecture
 
 ### Components

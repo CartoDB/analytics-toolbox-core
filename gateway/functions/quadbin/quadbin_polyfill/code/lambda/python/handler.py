@@ -51,20 +51,24 @@ def polyfill_geometry(geom_wkt: str, resolution: int) -> List[int]:
 
     Returns:
         List of quadbin indices covering the geometry
-    """
-    # TODO: Implement proper WKT parsing and polyfill algorithm
-    # This is a simplified placeholder implementation
-    # In production, this would:
-    # 1. Parse WKT geometry
-    # 2. Get bounding box
-    # 3. Generate quadbins that intersect the geometry
-    # 4. Return array of quadbin indices
 
-    # For now, return a sample quadbin at the center
+    Note:
+        This is an EXAMPLE PLACEHOLDER implementation for demonstration purposes.
+        In production, replace this with proper WKT parsing and polyfill algorithm:
+        1. Parse WKT geometry (using shapely or similar)
+        2. Get geometry bounding box
+        3. Generate quadbins that intersect the geometry
+        4. Return array of quadbin indices covering the area
+
+        For reference implementations, see:
+        - quadbin-py: https://github.com/CartoDB/quadbin-py
+        - h3-py polyfill: https://github.com/uber/h3-py
+    """
     if resolution < 0 or resolution > 26:
         return []
 
-    # Sample implementation - returns a single quadbin
+    # EXAMPLE PLACEHOLDER: Returns only a single quadbin at center
+    # Replace this with actual polyfill algorithm
     center_tile = (1 << (resolution - 1)) if resolution > 0 else 0
     quadbin = quadbin_from_zxy(resolution, center_tile, center_tile)
 
