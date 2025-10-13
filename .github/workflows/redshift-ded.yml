@@ -6,8 +6,7 @@ on:
 
 env:
   NODE_VERSION: 14
-  PYTHON2_VERSION: 2.7.18
-  PYTHON3_VERSION: 3.8.18
+  PYTHON_VERSION: 3.10.13
   VIRTUALENV_VERSION: 20.15.1
 
 jobs:
@@ -18,7 +17,6 @@ jobs:
       (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift')) ||
       (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_redshift'))
     runs-on: ubuntu-24.04
-    container: python:2.7.18-buster
     timeout-minutes: 20
     env:
       RS_HOST: ${{ secrets.RS_HOST_CD }}
@@ -48,21 +46,21 @@ jobs:
           !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
           !(startsWith(github.event.pull_request.head.ref, 'release/'))
         run: echo "RS_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get -y install rsync zip unzip curl glibc-source groff less
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
-          ./aws/install
+          sudo ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -71,12 +69,6 @@ jobs:
           aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CD }}
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CD }}
           aws-region: ${{ secrets.RS_REGION_CD }}
-      - name: Setup virtualenv
-        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Install Python 3
-        run: |
-          apt-get update
-          apt-get -y install python3 python3-pip python3-venv
       - name: Set LAMBDA_PREFIX
         run: echo "LAMBDA_PREFIX=ded-${{ github.event.pull_request.number }}-" >> $GITHUB_ENV
       - name: Deploy unified (gateway + clouds)
