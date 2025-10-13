@@ -28,7 +28,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
-      RS_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       RS_HOST: ${{ secrets.RS_HOST_CI }}
       RS_DATABASE: ${{ secrets.RS_DATABASE_CI }}
       RS_USER: ${{ secrets.RS_USER_CI }}
@@ -42,12 +41,17 @@ jobs:
       AWS_REGION: ${{ secrets.RS_REGION_CI }}
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
-      LAMBDA_PREFIX: ci-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Generate deployment prefix
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-8)
+          SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 7)
+          echo "RS_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
+          echo "LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
