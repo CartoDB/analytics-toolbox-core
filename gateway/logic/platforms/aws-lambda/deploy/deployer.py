@@ -369,9 +369,11 @@ class LambdaDeployer:
             # AWS IAM role names have a 64 character limit
             if len(role_name) > 64:
                 raise ValueError(
-                    f"IAM role name too long: '{role_name}' ({len(role_name)} chars). "
+                    f"IAM role name too long: '{role_name}' "
+                    f"({len(role_name)} chars). "
                     f"AWS IAM role names must be ≤ 64 characters. "
-                    f"Please use a shorter LAMBDA_PREFIX (current: '{self.lambda_prefix}')"
+                    f"Please use a shorter LAMBDA_PREFIX "
+                    f"(current: '{self.lambda_prefix}')"
                 )
 
             role_arn = self.ensure_execution_role(role_name)
