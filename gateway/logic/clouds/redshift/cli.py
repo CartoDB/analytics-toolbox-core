@@ -1089,12 +1089,13 @@ def remove_all(
             logger.info(f"  - {lambda_name}")
 
         if drop_schema:
-            logger.info(f"\nSchema:")
+            logger.info("\nSchema:")
             logger.info(f"  - DROP SCHEMA {rs_schema} CASCADE")
         else:
             # Count external functions
             external_count = sum(
-                1 for f in to_remove
+                1
+                for f in to_remove
                 if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
             )
             logger.info(f"\nExternal functions in {rs_schema} ({external_count}):")
@@ -1127,7 +1128,8 @@ def remove_all(
 
             # Filter functions that have external function templates
             functions_to_drop = [
-                f for f in to_remove
+                f
+                for f in to_remove
                 if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
             ]
 
@@ -1158,18 +1160,18 @@ def remove_all(
                     # Drop ALL external functions (Lambda-backed) in the schema
                     # Gateway only deploys external functions, so this is safe
                     # Uses the same pattern as DROP_FUNCTIONS.sql in clouds
-                    create_table_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__create_drop_table_gw()
+                    create_table_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__create_drop_table_gw()  # noqa: E501
 AS $$
 DECLARE
   row RECORD;
 BEGIN
   DROP TABLE IF EXISTS _gw_udfs_info;
-  CREATE TEMP TABLE _gw_udfs_info (f_oid BIGINT, f_kind VARCHAR(1), f_name VARCHAR(MAX), arg_index BIGINT, f_argtype VARCHAR(MAX));
-  FOR row IN SELECT oid::BIGINT f_oid, kind::VARCHAR(1) f_kind, proname::VARCHAR(MAX) f_name, i arg_index, format_type(arg_types[i-1], null)::VARCHAR(MAX) f_argtype
+  CREATE TEMP TABLE _gw_udfs_info (f_oid BIGINT, f_kind VARCHAR(1), f_name VARCHAR(MAX), arg_index BIGINT, f_argtype VARCHAR(MAX));  # noqa: E501
+  FOR row IN SELECT oid::BIGINT f_oid, kind::VARCHAR(1) f_kind, proname::VARCHAR(MAX) f_name, i arg_index, format_type(arg_types[i-1], null)::VARCHAR(MAX) f_argtype  # noqa: E501
     FROM (
       SELECT oid, kind, proname, generate_series(1, arg_count) AS i, arg_types
       FROM (
-        SELECT p.prooid oid, p.prokind kind, proname, proargtypes arg_types, pronargs arg_count
+        SELECT p.prooid oid, p.prokind kind, proname, proargtypes arg_types, pronargs arg_count  # noqa: E501
         FROM pg_catalog.pg_namespace n
         JOIN PG_PROC_INFO p ON pronamespace = n.oid
         WHERE nspname = '{rs_schema}'
@@ -1182,7 +1184,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql"""
 
-                    drop_functions_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__drop_gateway_functions()
+                    drop_functions_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__drop_gateway_functions()  # noqa: E501
 AS $$
 DECLARE
     row RECORD;
@@ -1191,9 +1193,9 @@ BEGIN
 
     FOR row IN SELECT drop_command
     FROM (
-        SELECT 'DROP ' || CASE f_kind WHEN 'p' THEN 'PROCEDURE' ELSE 'FUNCTION' END ||
+        SELECT 'DROP ' || CASE f_kind WHEN 'p' THEN 'PROCEDURE' ELSE 'FUNCTION' END ||  # noqa: E501
                ' {rs_schema}.' || f_name || '(' ||
-               listagg(f_argtype,',' ) WITHIN GROUP (ORDER BY arg_index) || ');' AS drop_command
+               listagg(f_argtype,',' ) WITHIN GROUP (ORDER BY arg_index) || ');' AS drop_command  # noqa: E501
         FROM _gw_udfs_info
         GROUP BY f_oid, f_name, f_kind
     )
@@ -1221,11 +1223,17 @@ $$ LANGUAGE plpgsql"""
                             cursor.execute(drop_functions_proc)
 
                             # Call procedure to drop functions
-                            cursor.execute(f"CALL {rs_schema}.__drop_gateway_functions()")
+                            cursor.execute(
+                                f"CALL {rs_schema}.__drop_gateway_functions()"
+                            )
 
                             # Clean up temporary procedures
-                            cursor.execute(f"DROP PROCEDURE {rs_schema}.__create_drop_table_gw()")
-                            cursor.execute(f"DROP PROCEDURE {rs_schema}.__drop_gateway_functions()")
+                            cursor.execute(
+                                f"DROP PROCEDURE {rs_schema}.__create_drop_table_gw()"
+                            )
+                            cursor.execute(
+                                f"DROP PROCEDURE {rs_schema}.__drop_gateway_functions()"
+                            )
 
                     logger.info(f"✓ Dropped all functions in schema {rs_schema}\n")
                 except Exception as e:
@@ -1275,7 +1283,10 @@ $$ LANGUAGE plpgsql"""
         if failed_functions:
             logger.warning(f"  ✗ Failed: {', '.join(failed_functions)}")
 
-        logger.info("\nNOTE: IAM roles were NOT deleted (they can be reused for future deployments)")
+        logger.info(
+            "\nNOTE: IAM roles were NOT deleted "
+            "(they can be reused for future deployments)"  # noqa: E501
+        )
         logger.info("      To delete roles manually, use AWS Console or AWS CLI")
 
     except Exception as e:

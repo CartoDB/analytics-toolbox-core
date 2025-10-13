@@ -198,8 +198,9 @@ Version: {self.version}
    python scripts/install.py
    ```
 
-   The installer will guide you through the configuration. For most users, simply accept the defaults
-   and the installer will auto-create necessary IAM roles.
+   The installer will guide you through the configuration. For most users,
+   simply accept the defaults and the installer will auto-create necessary
+   IAM roles.
 
    **Alternative: Command-line installation**
    ```bash
@@ -235,7 +236,8 @@ Version: {self.version}
 6. **Required AWS Permissions:**
 
    **Minimal permissions needed** (if using auto-creation):
-   - `lambda:CreateFunction`, `lambda:UpdateFunctionCode`, `lambda:UpdateFunctionConfiguration`
+   - `lambda:CreateFunction`, `lambda:UpdateFunctionCode`,
+     `lambda:UpdateFunctionConfiguration`
    - `lambda:AddPermission` (for Redshift invoke permissions)
    - `iam:CreateRole`, `iam:PutRolePolicy`, `iam:AttachRolePolicy` (for role creation)
    - `iam:GetRole` (to check existing roles)
