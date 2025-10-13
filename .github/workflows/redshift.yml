@@ -32,13 +32,8 @@ jobs:
       RS_DATABASE: ${{ secrets.RS_DATABASE_CI }}
       RS_USER: ${{ secrets.RS_USER_CI }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD_CI }}
-      RS_BUCKET: ${{ secrets.RS_BUCKET_CI }}
-      RS_LAMBDA: ${{ secrets.RS_LAMBDA_CI }}
       RS_LAMBDA_EXECUTION_ROLE_ARN: ${{ secrets.RS_LAMBDA_EXECUTION_ROLE_ARN_CI }}
       RS_ROLES: ${{ secrets.RS_ROLES_CI }}
-      RS_API_BASE_URL: ${{ secrets.RS_API_BASE_URL_CI }}
-      RS_API_ACCESS_TOKEN: ${{ secrets.RS_API_ACCESS_TOKEN_CI }}
-      RS_GATEWAY_SERVICE_MOCK: 1
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
@@ -95,10 +90,7 @@ jobs:
             password: RS_PASSWORD_CD
             bucket: RS_BUCKET_CD
             region: RS_REGION_CD
-            lambda: RS_LAMBDA_CD
             roles: RS_ROLES_CD
-            api_base_url: RS_API_BASE_URL_CD
-            api_access_token: RS_API_ACCESS_TOKEN_CD
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CD
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CD
           - host: RS_HOST_CI
@@ -107,10 +99,7 @@ jobs:
             password: RS_PASSWORD_CI
             bucket: RS_BUCKET_CI
             region: RS_REGION_CI
-            lambda: RS_LAMBDA_CI
             roles: RS_ROLES_CI
-            api_base_url: RS_API_BASE_URL_CI
-            api_access_token: RS_API_ACCESS_TOKEN_CI
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CI
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CI
     env:
@@ -120,10 +109,7 @@ jobs:
       RS_PASSWORD: ${{ secrets[matrix.password] }}
       RS_BUCKET: ${{ secrets[matrix.bucket] }}
       RS_REGION: ${{ secrets[matrix.region] }}
-      RS_LAMBDA: ${{ secrets[matrix.lambda] }}
       RS_ROLES: ${{ secrets[matrix.roles] }}
-      RS_API_BASE_URL: ${{ secrets[matrix.api_base_url] }}
-      RS_API_ACCESS_TOKEN: ${{ secrets[matrix.api_access_token] }}
       AWS_REGION: ${{ secrets[matrix.region] }}
       AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key_id] }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
