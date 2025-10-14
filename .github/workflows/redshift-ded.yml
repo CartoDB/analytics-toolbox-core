@@ -23,7 +23,6 @@ jobs:
       RS_DATABASE: ${{ secrets.RS_DATABASE_CD }}
       RS_USER: ${{ secrets.RS_USER_CD }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD_CD }}
-      RS_BUCKET: ${{ secrets.RS_BUCKET_CD }}
       RS_LAMBDA_INVOKE_ROLE: ${{ secrets.RS_LAMBDA_INVOKE_ROLE_CD }}
       RS_LAMBDA_EXECUTION_ROLE_ARN: ${{ secrets.RS_LAMBDA_EXECUTION_ROLE_ARN_CD }}
       AWS_REGION: ${{ secrets.RS_REGION_CD }}

@@ -1,6 +1,6 @@
 # CARTO Analytics Toolbox for Redshift
 
-The Analytics Toolbox for Redshift contains SQL functions and Python libraries. The functions are deployed in a schema called `carto` inside a specific database. The Python libraries are installed in the Redshift cluster, so they can be used by all the databases in the cluster. An S3 bucket is required as intermediate storage to create the libraries. In Redshift, the functions can be used with tables of the same database, but different schemas.
+The Analytics Toolbox for Redshift contains SQL functions. The functions are deployed in a schema called `carto` inside a specific database. In Redshift, the functions can be used with tables of the same database, but different schemas.
 
 Note: Redshift UDFs only support Python2 but the Python Redshift connector is only available in Python3. Therefore, both Python versions are required to develop the toolbox.
 
@@ -26,7 +26,6 @@ RS_HOST=<cluster>.<account>.<region>.redshift.amazonaws.com
 RS_DATABASE=<database>
 RS_USER=<user>
 RS_PASSWORD=<password>
-RS_BUCKET=s3://<bucket> or s3://<bucket>/<folder>
 AWS_ACCESS_KEY_ID=<access-key-id>
 AWS_SECRET_ACCESS_KEY=<secret-access-key>
 ```

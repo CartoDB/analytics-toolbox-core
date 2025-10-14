@@ -32,9 +32,6 @@ endif
 ifndef RS_PASSWORD
 	$(error RS_PASSWORD is undefined)
 endif
-ifndef RS_BUCKET
-	$(error RS_BUCKET is undefined)
-endif
 ifndef AWS_ACCESS_KEY_ID
 	$(error AWS_ACCESS_KEY_ID is undefined)
 endif
@@ -43,9 +40,6 @@ ifndef AWS_SECRET_ACCESS_KEY
 endif
 ifeq ($(shell echo "$(RS_HOST)" | grep -E "^([^.]+)\.([^.]+)\.([^.]+)\.redshift(-serverless)?\.amazonaws\.com$$"),)
 	$(error RS_HOST is not valid. Must be: <cluster>.<account>.<region>.redshift(-serverless).amazonaws.com)
-endif
-ifeq ($(shell echo "$(RS_BUCKET)" | grep -E "^s3://(.+)[^/]$$"),)
-	$(error RS_BUCKET is not valid. Must be: s3://<bucket> or s3://<bucket>/<folder>)
 endif
 
 venv3:
