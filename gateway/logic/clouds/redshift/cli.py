@@ -767,10 +767,10 @@ def deploy_all(
     rs_database = get_env_or_default("RS_DATABASE")
     rs_prefix = get_env_or_default("RS_PREFIX", "")
     rs_user = get_env_or_default("RS_USER")
-    # RS_ROLES can be comma-separated for role chaining (like clouds)
+    # RS_LAMBDA_INVOKE_ROLE can be comma-separated for role chaining (like clouds)
     # Redshift will assume roles in order: role1 assumes role2, role2 invokes Lambda
-    rs_roles = get_env_or_default("RS_ROLES")
-    rs_iam_role_arn = rs_roles.strip() if rs_roles else None
+    rs_lambda_invoke_role = get_env_or_default("RS_LAMBDA_INVOKE_ROLE")
+    rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
 
     # Calculate schema based on production flag (matches clouds pattern)
     # production=1: schema = "carto"
@@ -790,7 +790,7 @@ def deploy_all(
 
     if not rs_database or not rs_iam_role_arn:
         logger.warning(
-            "Redshift configuration incomplete (RS_DATABASE, RS_ROLES). "
+            "Redshift configuration incomplete (RS_DATABASE, RS_LAMBDA_INVOKE_ROLE). "
             "Will deploy Lambda functions only, not external functions."
         )
         deploy_external_functions = False
@@ -808,10 +808,13 @@ def deploy_all(
     aws_creds = get_aws_credentials()
 
     # Phase 0: Setup IAM role for Redshift to invoke Lambda
-    # If RS_ROLES not provided, auto-create role and attempt to attach to cluster
+    # If RS_LAMBDA_INVOKE_ROLE not provided, auto-create role and attempt to
+    # attach to cluster
     if not rs_iam_role_arn and deploy_external_functions:
         logger.info("\n=== Phase 0: Setting up Redshift IAM Role ===\n")
-        logger.info("RS_ROLES not specified, will auto-create role for Redshift")
+        logger.info(
+            "RS_LAMBDA_INVOKE_ROLE not specified, will auto-create role for Redshift"
+        )
 
         try:
             iam_manager = IAMRoleManager(region=aws_region)

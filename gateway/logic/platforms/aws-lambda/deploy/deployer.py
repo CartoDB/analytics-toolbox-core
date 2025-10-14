@@ -710,7 +710,7 @@ class LambdaDeployer:
 
         Args:
             function_name: Name of the Lambda function
-            principal: IAM role ARN that Redshift uses (from RS_ROLES)
+            principal: IAM role ARN that Redshift uses (from RS_LAMBDA_INVOKE_ROLE)
             statement_id: Unique statement ID for the permission
 
         Returns:

@@ -200,9 +200,9 @@ RS_DATABASE=<database>
 #   - Prod mode (production=1): schema = "carto" (no prefix)
 RS_PREFIX=myname_
 
-# IAM Role(s) for Redshift to invoke Lambda (matches clouds RS_ROLES)
+# IAM Role(s) for Redshift to invoke Lambda (matches clouds RS_LAMBDA_INVOKE_ROLE)
 # This role must be attached to your Redshift cluster
-RS_ROLES=arn:aws:iam::<account-id>:role/<role-name>
+RS_LAMBDA_INVOKE_ROLE=arn:aws:iam::<account-id>:role/<role-name>
 ```
 
 **Testing Your Credentials:**
@@ -366,7 +366,7 @@ If your Lambda functions are in a different AWS account than your Redshift clust
 
 **Setup:**
 1. Deploy Lambda to Account A using Account A credentials in `.env`
-2. Set `RS_ROLES` to a role in Account B (Redshift's account)
+2. Set `RS_LAMBDA_INVOKE_ROLE` to a role in Account B (Redshift's account)
 3. Add Lambda resource policy to allow Account B to invoke:
 
 ```bash
@@ -378,7 +378,7 @@ aws lambda add-permission \
   --principal arn:aws:iam::ACCOUNT-B-ID:role/RedshiftLambdaRole
 ```
 
-4. Ensure the role in `RS_ROLES` has a trust policy allowing Redshift to assume it
+4. Ensure the role in `RS_LAMBDA_INVOKE_ROLE` has a trust policy allowing Redshift to assume it
 
 **Example `.env` for cross-account:**
 ```bash
@@ -390,7 +390,7 @@ AWS_SECRET_ACCESS_KEY=<account-a-secret>
 RS_HOST=cluster.account-b.region.redshift.amazonaws.com
 RS_USER=<redshift-user>
 RS_PASSWORD=<redshift-password>
-RS_ROLES=arn:aws:iam::987654321:role/RedshiftLambdaRole
+RS_LAMBDA_INVOKE_ROLE=arn:aws:iam::987654321:role/RedshiftLambdaRole
 ```
 
 The external function will be created with:

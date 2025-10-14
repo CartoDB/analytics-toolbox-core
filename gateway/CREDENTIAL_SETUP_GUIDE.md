@@ -165,7 +165,7 @@ AWS_ASSUME_ROLE_ARN=arn:aws:iam::ACCOUNT-A-ID:role/LambdaDeployerRole
 RS_LAMBDA_PREFIX=carto-at-
 
 # Redshift in Account B will invoke Lambda via cross-account permission
-RS_ROLES=arn:aws:iam::ACCOUNT-B-ID:role/RedshiftLambdaRole
+RS_LAMBDA_INVOKE_ROLE=arn:aws:iam::ACCOUNT-B-ID:role/RedshiftLambdaRole
 ```
 
 After deployment, add Lambda permission:

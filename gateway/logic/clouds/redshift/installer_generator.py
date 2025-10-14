@@ -56,12 +56,12 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--rs-user', help='Redshift user')
 @click.option('--rs-password', help='Redshift password')
 @click.option('--rs-prefix', help='Schema prefix for dev (leave empty for production)')  # noqa: E501
-@click.option('--rs-roles', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
+@click.option('--rs-lambda-invoke-role', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             aws_session_token, aws_assume_role_arn, rs_lambda_prefix,
             rs_lambda_execution_role_arn, rs_host, rs_database, rs_user, rs_password,
-            rs_prefix, rs_roles, dry_run):
+            rs_prefix, rs_lambda_invoke_role, dry_run):
     """Install CARTO Analytics Toolbox to Redshift
 
     This installer will guide you through deploying Analytics Toolbox functions
@@ -199,8 +199,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     click.echo()
 
-    # RS_ROLES with enhanced guidance
-    if not rs_roles:
+    # RS_LAMBDA_INVOKE_ROLE with enhanced guidance
+    if not rs_lambda_invoke_role:
         click.echo()
         click.secho("Redshift IAM Role Configuration:", fg='cyan', bold=True)
         click.echo("This role is attached to your Redshift cluster and used to invoke Lambda functions.")
@@ -210,14 +210,14 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo("  • Existing role: Provide ARN like arn:aws:iam::123456789:role/MyRedshiftRole")
         click.echo()
 
-        rs_roles = click.prompt(
+        rs_lambda_invoke_role = click.prompt(
             "Redshift IAM Role ARN (leave empty to auto-create)",
             default="",
             show_default=False
         ) or ""
 
-        if rs_roles:
-            click.secho(f"✓ Using existing role: {rs_roles}", fg='green')
+        if rs_lambda_invoke_role:
+            click.secho(f"✓ Using existing role: {rs_lambda_invoke_role}", fg='green')
         else:
             click.secho("✓ Will auto-create and attach IAM role during deployment", fg='green')
 
@@ -264,10 +264,10 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     env_lines.append("# Redshift Deployment Configuration")
     env_lines.append(f"RS_DATABASE={rs_database}")
     env_lines.append(f"RS_PREFIX={rs_prefix}")
-    if rs_roles:
-        env_lines.append(f"RS_ROLES={rs_roles}")
+    if rs_lambda_invoke_role:
+        env_lines.append(f"RS_LAMBDA_INVOKE_ROLE={rs_lambda_invoke_role}")
     else:
-        env_lines.append("# RS_ROLES not set (will auto-create and attach role)")
+        env_lines.append("# RS_LAMBDA_INVOKE_ROLE not set (will auto-create and attach role)")
 
     env_content = "\\n".join(env_lines) + "\\n"
 
@@ -295,8 +295,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo(f"Redshift Host:       {rs_host}")
     click.echo(f"Redshift Database:   {rs_database}")
     click.echo(f"Schema:              {rs_prefix + 'carto' if rs_prefix else 'carto'}")
-    if rs_roles:
-        click.echo(f"Redshift IAM Role:   {rs_roles}")
+    if rs_lambda_invoke_role:
+        click.echo(f"Redshift IAM Role:   {rs_lambda_invoke_role}")
     else:
         click.echo(f"Redshift IAM Role:   (will auto-create and attach)")
     click.echo(f"Production Mode:     {not bool(rs_prefix)}")
