@@ -177,7 +177,7 @@ class LambdaDeployer:
                 with tempfile.TemporaryDirectory() as temp_dir:
                     temp_path = Path(temp_dir)
 
-                    print(f"Installing dependencies from {requirements_file}...")
+                    print(f"\nInstalling dependencies from {requirements_file}...")
                     # Install dependencies using pip with Lambda-compatible flags
                     # --platform: Target Linux x86_64 architecture
                     # --only-binary: Use pre-built wheels only
@@ -232,7 +232,7 @@ class LambdaDeployer:
 
         file_size = output_zip.stat().st_size
         size_mb = file_size / 1024 / 1024
-        print(f"Created deployment package: {output_zip.name} ({size_mb:.2f} MB)")
+        print(f"  ✓ Package: {output_zip.name} ({size_mb:.2f} MB)")
         return output_zip
 
     def get_function_code_hash(self, zip_path: Path) -> str:
