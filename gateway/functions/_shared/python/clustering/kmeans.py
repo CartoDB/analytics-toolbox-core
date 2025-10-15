@@ -162,7 +162,7 @@ class KMeans(object):
             if it:
                 diff = np.abs(prev_loss - loss)
                 # Avoid division by zero when prev_loss is 0 (edge cases)
-                rel_diff = diff / prev_loss if prev_loss != 0 else float('inf')
+                rel_diff = diff / prev_loss if prev_loss != 0 else float("inf")
                 if diff < abs_tol and rel_diff < rel_tol:
                     break
             prev_loss = loss
