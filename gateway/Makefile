@@ -100,11 +100,31 @@ validate: venv
 
 test-unit: install-dev
 	echo "Running unit tests..."
-	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m "not integration"
+	@if [ -n "$(modules)" ]; then \
+		MODULE_PATHS=$$(echo "$(modules)" | tr ',' '\n' | sed 's|^|$(FUNCTIONS_ROOT)/|' | sed 's|$$|/|' | tr '\n' ' '); \
+		$(VENV_BIN)/python -m pytest $$MODULE_PATHS -m "not integration"; \
+	elif [ -n "$(functions)" ]; then \
+		FUNC_PATHS=$$(for func in $$(echo "$(functions)" | tr ',' ' '); do \
+			find $(FUNCTIONS_ROOT) -type d -name "$$func" -path "*/functions/*/$$func"; \
+		done | tr '\n' ' '); \
+		$(VENV_BIN)/python -m pytest $$FUNC_PATHS -m "not integration"; \
+	else \
+		$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m "not integration"; \
+	fi
 
 test-integration: install-dev
 	echo "Running integration tests..."
-	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration
+	@if [ -n "$(modules)" ]; then \
+		MODULE_PATHS=$$(echo "$(modules)" | tr ',' '\n' | sed 's|^|$(FUNCTIONS_ROOT)/|' | sed 's|$$|/|' | tr '\n' ' '); \
+		$(VENV_BIN)/python -m pytest $$MODULE_PATHS -m integration; \
+	elif [ -n "$(functions)" ]; then \
+		FUNC_PATHS=$$(for func in $$(echo "$(functions)" | tr ',' ' '); do \
+			find $(FUNCTIONS_ROOT) -type d -name "$$func" -path "*/functions/*/$$func"; \
+		done | tr '\n' ' '); \
+		$(VENV_BIN)/python -m pytest $$FUNC_PATHS -m integration; \
+	else \
+		$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration; \
+	fi
 
 test: test-unit test-integration
 	echo "✓ All tests passed"
