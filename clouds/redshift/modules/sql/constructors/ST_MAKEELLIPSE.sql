@@ -1,35 +1,6 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
-
-CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__MAKEELLIPSE
-(
-    center VARCHAR(MAX),
-    xSemiAxis FLOAT8,
-    ySemiAxis FLOAT8,
-    angle FLOAT8,
-    units VARCHAR(10),
-    steps INT
-)
-RETURNS VARCHAR(MAX)
-STABLE
-AS $$
-    from @@RS_LIBRARY@@.constructors import ellipse
-
-    if center is None or xSemiAxis is None or ySemiAxis is None or angle is None or units is None or steps is None:
-        return None
-
-    geom_options = {}
-    geom_options['angle'] = angle
-    geom_options['steps'] = steps
-    geom_options['units'] = units
-    return ellipse(
-        center=center,
-        x_semi_axis=xSemiAxis,
-        y_semi_axis=ySemiAxis,
-        options=geom_options,
-    )
-$$ LANGUAGE plpythonu;
+--------------------------------
+-- Copyright (C) 2021-2025 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.ST_MAKEELLIPSE
 (GEOMETRY, FLOAT8, FLOAT8)

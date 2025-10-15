@@ -1,19 +1,6 @@
-----------------------------
--- Copyright (C) 2021 CARTO
-----------------------------
-
-CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__BEZIERSPLINE
-(linestring VARCHAR(MAX), resolution INT, sharpness FLOAT8)
-RETURNS VARCHAR(MAX)
-STABLE
-AS $$
-    from @@RS_LIBRARY@@.constructors import bezier_spline
-
-    if linestring is None or resolution is None or sharpness is None:
-        return None
-
-    return bezier_spline(linestring, resolution, sharpness)
-$$ LANGUAGE plpythonu;
+--------------------------------
+-- Copyright (C) 2021-2025 CARTO
+--------------------------------
 
 CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.ST_BEZIERSPLINE
 (GEOMETRY)

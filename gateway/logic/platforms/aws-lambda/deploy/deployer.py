@@ -158,6 +158,15 @@ class LambdaDeployer:
             # Add handler file
             zf.write(handler_file, handler_file.name)
 
+            # Add any lib/ directory next to the handler (for modular code)
+            handler_dir = handler_file.parent
+            lib_dir = handler_dir / "lib"
+            if lib_dir.exists() and lib_dir.is_dir():
+                for py_file in lib_dir.rglob("*.py"):
+                    # Preserve the lib/ directory structure in the zip
+                    arcname = py_file.relative_to(handler_dir)
+                    zf.write(py_file, arcname)
+
             # Add runtime library if requested (for core utilities)
             if include_runtime_lib:
                 runtime_lib_path = Path(__file__).parent.parent / "runtime"

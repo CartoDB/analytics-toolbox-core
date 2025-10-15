@@ -61,7 +61,7 @@ class TemplateRenderer:
         variables = {
             "function_name": function_name,
             "lambda_arn": lambda_arn,
-            "iam_role_arn": iam_role_arn,
+            "iam_role_arn": iam_role_arn,  # Maps to @@IAM_ROLE_ARN@@ in SQL templates
             "schema": schema,
         }
         return TemplateRenderer.render(template_path, variables)

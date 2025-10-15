@@ -948,6 +948,9 @@ def deploy_all(
                 except Exception as e:
                     logger.error(f"\n✗ {func.name}: {e}")
                     failed_functions.append(func.name)
+                    # Fail fast - stop deployment on first error
+                    logger.error(f"\nDeployment failed for {func.name}. Stopping.")
+                    sys.exit(1)
 
         # Phase 2: Deploy external functions in Redshift
         if deploy_external_functions and lambda_arns:
@@ -1017,7 +1020,12 @@ def deploy_all(
 
                     except Exception as e:
                         logger.error(f"\n✗ {func.name}: {e}")
-                        # Don't add to failed_functions since Lambda succeeded
+                        # Fail fast - stop deployment on first error
+                        logger.error(
+                            f"\nExternal function deployment failed for "
+                            f"{func.name}. Stopping."
+                        )
+                        sys.exit(1)
 
         # Summary
         separator = "=" * 50

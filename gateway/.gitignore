@@ -12,7 +12,8 @@ dist/*
 downloads/
 eggs/
 .eggs/
-lib/
+# Ignore Python build lib/ at root level (from pip, virtualenv, etc.)
+/lib/
 lib64/
 parts/
 sdist/
