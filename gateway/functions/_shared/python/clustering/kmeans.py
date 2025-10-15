@@ -161,7 +161,9 @@ class KMeans(object):
             k = centers.shape[0]
             if it:
                 diff = np.abs(prev_loss - loss)
-                if diff < abs_tol and diff / prev_loss < rel_tol:
+                # Avoid division by zero when prev_loss is 0 (edge cases)
+                rel_diff = diff / prev_loss if prev_loss != 0 else float('inf')
+                if diff < abs_tol and rel_diff < rel_tol:
                     break
             prev_loss = loss
             if verbose:
