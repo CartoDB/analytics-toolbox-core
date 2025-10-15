@@ -3,46 +3,23 @@ Unit tests for CLUSTERKMEANSTABLE function
 """
 
 import json
-import importlib.util
-import sys
-from pathlib import Path
 import numpy as np
+from test_utils.unit import load_function_module
 
-# Get the function's Python code directory
-code_dir = Path(__file__).parent.parent.parent / "code" / "lambda" / "python"
+# Load function module and handler
+imports = load_function_module(
+    __file__,
+    {
+        "from_lib": ["clusterkmeanstable", "KMeans"],
+        "from_lib_module": {"helper": ["reorder_coords", "count_distinct_coords"]},
+    },
+)
 
-# Save and clear all lib.* modules to avoid conflicts with other functions
-_original_sys_path = sys.path.copy()
-_saved_lib_modules = {
-    k: v for k, v in sys.modules.items() if k == "lib" or k.startswith("lib.")
-}
-for key in list(_saved_lib_modules.keys()):
-    sys.modules.pop(key, None)
-
-sys.path.insert(0, str(code_dir))
-try:
-    from lib import clusterkmeanstable, KMeans  # noqa: E402
-    from lib.helper import (  # noqa: E402
-        reorder_coords,
-        count_distinct_coords,
-    )
-
-    # Load the handler module
-    handler_path = code_dir / "handler.py"
-    spec = importlib.util.spec_from_file_location(
-        "clusterkmeanstable_handler", handler_path
-    )
-    handler = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(handler)
-    lambda_handler = handler.lambda_handler
-finally:
-    # Restore sys.path and clear our lib modules
-    sys.path[:] = _original_sys_path
-    for key in list(sys.modules.keys()):
-        if key == "lib" or key.startswith("lib."):
-            sys.modules.pop(key, None)
-    # Restore saved lib modules
-    sys.modules.update(_saved_lib_modules)
+clusterkmeanstable = imports["clusterkmeanstable"]
+KMeans = imports["KMeans"]
+reorder_coords = imports["reorder_coords"]
+count_distinct_coords = imports["count_distinct_coords"]
+lambda_handler = imports["lambda_handler"]
 
 
 class TestKMeans:

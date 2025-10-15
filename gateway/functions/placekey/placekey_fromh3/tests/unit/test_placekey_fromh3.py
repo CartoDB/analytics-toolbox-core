@@ -2,40 +2,20 @@
 Unit tests for PLACEKEY_FROMH3 function
 """
 
-import sys
-from pathlib import Path
+from test_utils.unit import load_function_module
 
-# Get the code directory for this function
-function_root = Path(__file__).parent.parent.parent
-code_dir = function_root / "code" / "lambda" / "python"
+# Load function module and handler
+imports = load_function_module(
+    __file__,
+    {
+        "from_lib": ["placekey_fromh3"],
+        "from_lib_module": {"placekey": ["h3_is_valid"]},
+    },
+)
 
-# Save and clear all lib.* modules to avoid conflicts with other functions
-_original_sys_path = sys.path.copy()
-_saved_lib_modules = {
-    k: v for k, v in sys.modules.items() if k == "lib" or k.startswith("lib.")
-}
-for key in list(_saved_lib_modules.keys()):
-    sys.modules.pop(key, None)
-
-sys.path.insert(0, str(code_dir))
-try:
-    from lib import placekey_fromh3  # noqa: E402
-    from lib.placekey import h3_is_valid  # noqa: E402
-
-    # Also load handler for lambda tests
-    spec = __import__("importlib.util").util.spec_from_file_location(
-        "handler", code_dir / "handler.py"
-    )
-    handler_module = __import__("importlib.util").util.module_from_spec(spec)
-    spec.loader.exec_module(handler_module)
-    lambda_handler = handler_module.lambda_handler
-finally:
-    # Restore sys.path and clear our lib modules
-    sys.path[:] = _original_sys_path
-    for key in list(sys.modules.keys()):
-        if key == "lib" or key.startswith("lib."):
-            sys.modules.pop(key, None)
-    sys.modules.update(_saved_lib_modules)
+placekey_fromh3 = imports["placekey_fromh3"]
+h3_is_valid = imports["h3_is_valid"]
+lambda_handler = imports["lambda_handler"]
 
 
 class TestH3Library:

@@ -5,14 +5,20 @@ Complex test scenarios that require Python test code
 
 import json
 import pytest
-import sys
+import importlib.util
 from pathlib import Path
 
-# Add the handler module to the path
-handler_path = Path(__file__).parent.parent.parent / "code" / "lambda" / "python"
-sys.path.insert(0, str(handler_path))
+# Load handler directly (this function has no lib directory)
+handler_path = (
+    Path(__file__).parent.parent.parent / "code" / "lambda" / "python" / "handler.py"
+)
+spec = importlib.util.spec_from_file_location("handler", handler_path)
+handler = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(handler)
 
-from handler import quadbin_from_zxy, polyfill_geometry, lambda_handler  # noqa: E402
+quadbin_from_zxy = handler.quadbin_from_zxy
+polyfill_geometry = handler.polyfill_geometry
+lambda_handler = handler.lambda_handler
 
 
 class TestQuadbinFromZXY:

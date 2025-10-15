@@ -3,65 +3,8 @@ Integration tests for PLACEKEY_FROMH3 function
 These tests run against a real Redshift database
 """
 
-import os
 import pytest
-from pathlib import Path
-from dotenv import load_dotenv
-
-# Load .env from core root (shared with clouds)
-gateway_root = Path(__file__).parent.parent.parent.parent.parent.parent
-core_root = gateway_root.parent
-core_env = core_root / ".env"
-gateway_env = gateway_root / ".env"
-
-if core_env.exists():
-    load_dotenv(core_env)
-elif gateway_env.exists():
-    load_dotenv(gateway_env)
-
-try:
-    import redshift_connector
-
-    HAS_REDSHIFT_CONNECTOR = True
-except ImportError:
-    HAS_REDSHIFT_CONNECTOR = False
-
-
-def run_query(query):
-    """
-    Execute a query against Redshift
-    """
-    if not HAS_REDSHIFT_CONNECTOR:
-        pytest.skip("redshift_connector not installed")
-
-    host = os.getenv("RS_HOST")
-    database = os.getenv("RS_DATABASE")
-    user = os.getenv("RS_USER")
-    password = os.getenv("RS_PASSWORD")
-
-    if not all([host, database, user, password]):
-        pytest.skip(
-            "Redshift connection not configured. "
-            "Set RS_HOST, RS_DATABASE, RS_USER, RS_PASSWORD in .env"
-        )
-
-    # Calculate schema from RS_PREFIX
-    prefix = os.getenv("RS_PREFIX", "")
-    schema = f"{prefix}carto" if prefix else "carto"
-
-    conn = redshift_connector.connect(
-        host=host, database=database, user=user, password=password
-    )
-    conn.autocommit = True
-    cursor = conn.cursor()
-    cursor.execute(query.replace("@@RS_SCHEMA@@", schema))
-    try:
-        return cursor.fetchall()
-    except Exception:
-        return "No results returned"
-    finally:
-        cursor.close()
-        conn.close()
+from test_utils.integration.redshift import run_query
 
 
 @pytest.mark.integration

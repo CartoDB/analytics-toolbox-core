@@ -253,7 +253,7 @@ def encode_h3_int(h3_integer):
         )
 
     return "@" + "-".join(
-        clean_encoded_short_h3[i: i + TUPLE_LENGTH]
+        clean_encoded_short_h3[i : i + TUPLE_LENGTH]
         for i in range(0, len(clean_encoded_short_h3), TUPLE_LENGTH)
     )
 

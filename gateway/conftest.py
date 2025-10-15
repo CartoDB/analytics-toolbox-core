@@ -56,3 +56,28 @@ setup_platform_runtime(
 #     runtime_module='cloud_run_wrapper',
 #     namespace='carto_analytics_toolbox_core'
 # )
+
+
+# ============================================================================
+# Shared Test Utilities
+# ============================================================================
+#
+# NOTE: Test utilities have been moved to test_utils/ for better organization:
+#
+# Unit tests (language-specific):
+#   - test_utils/unit/python.py: Python Lambda/Cloud Run helpers
+#   - test_utils/unit/javascript.py: JavaScript/Node.js helpers (future)
+#   - test_utils/unit/go.py: Go helpers (future)
+#
+# Integration tests (cloud-specific):
+#   - test_utils/integration/redshift.py: Amazon Redshift helpers
+#   - test_utils/integration/bigquery.py: Google BigQuery helpers (future)
+#   - test_utils/integration/snowflake.py: Snowflake helpers (future)
+#   - test_utils/integration/databricks.py: Databricks helpers (future)
+#
+# This conftest.py re-exports utilities for backward compatibility.
+# New tests should import directly from test_utils.
+# ============================================================================
+
+from test_utils.unit import load_function_module  # noqa: F401
+from test_utils.integration.redshift import run_query, redshift_query  # noqa: F401
