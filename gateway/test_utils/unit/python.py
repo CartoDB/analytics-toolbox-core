@@ -98,15 +98,15 @@ def load_function_module(test_file_path, import_spec=None):
 
     try:
         # Import from lib
-        if import_spec and 'from_lib' in import_spec:
-            lib_module = __import__('lib')
-            for name in import_spec['from_lib']:
+        if import_spec and "from_lib" in import_spec:
+            lib_module = __import__("lib")
+            for name in import_spec["from_lib"]:
                 result[name] = getattr(lib_module, name)
 
         # Import from lib.submodule
-        if import_spec and 'from_lib_module' in import_spec:
-            for module_name, names in import_spec['from_lib_module'].items():
-                submodule = __import__(f'lib.{module_name}', fromlist=names)
+        if import_spec and "from_lib_module" in import_spec:
+            for module_name, names in import_spec["from_lib_module"].items():
+                submodule = __import__(f"lib.{module_name}", fromlist=names)
                 for name in names:
                     result[name] = getattr(submodule, name)
 
@@ -115,7 +115,7 @@ def load_function_module(test_file_path, import_spec=None):
         spec = importlib.util.spec_from_file_location("handler", handler_path)
         handler_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(handler_module)
-        result['lambda_handler'] = handler_module.lambda_handler
+        result["lambda_handler"] = handler_module.lambda_handler
 
     finally:
         # Restore sys.path and clear our lib modules

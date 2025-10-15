@@ -23,4 +23,5 @@ python-dotenv>=1.0.0
 redshift-connector>=2.0.0
 
 # Numerical computing
-numpy>=1.26.0
+# Note: Pinned to exact version for consistency with function requirements
+numpy==1.26.4

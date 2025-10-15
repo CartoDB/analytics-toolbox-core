@@ -26,8 +26,8 @@ def voronoi_generic(geom, bbox, voronoi_type):
     """
     # Take the type of geometry
     coords = []
-    if geom.type != 'MultiPoint':
-        raise Exception('Invalid operation: Input points parameter must be MultiPoint.')
+    if geom.type != "MultiPoint":
+        raise Exception("Invalid operation: Input points parameter must be MultiPoint.")
     else:
         coords = list(geojson.utils.coords(geom))
 
@@ -59,9 +59,9 @@ def voronoi_generic(geom, bbox, voronoi_type):
             or max_y > upper_right[1]
         ):
             raise Exception(
-                'Invalid operation: Points should be within the bounding box supplied '
+                "Invalid operation: Points should be within the bounding box supplied "
                 + str(bbox)
-                + '.'
+                + "."
             )
 
     bound_poly = [
@@ -72,7 +72,7 @@ def voronoi_generic(geom, bbox, voronoi_type):
         bottom_left,
     ]
 
-    if voronoi_type == 'poly':
+    if voronoi_type == "poly":
         # Complete the diagram with some extra points
         # to construct polygons with infinite ridges
         coords.append((-180, -85))
@@ -83,7 +83,7 @@ def voronoi_generic(geom, bbox, voronoi_type):
     vor = Voronoi(coords)
     vor_vertices = vor.vertices
 
-    if voronoi_type == 'lines':
+    if voronoi_type == "lines":
         center = vor.points.mean(axis=0)
         ptp_bound = np.ptp(vor.points, axis=0)
         lines = []

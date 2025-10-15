@@ -40,10 +40,25 @@ NC := \033[0m # No Color
 
 .SILENT:
 
-.PHONY: help lint test test-unit test-integration list validate deploy remove clean create-package
+.PHONY: help lint test test-unit test-integration list validate deploy remove clean create-package install-test-deps update-dev-requirements
 
 help:
-	echo "Available targets: help lint lint-fix test list validate deploy remove clean create-package"
+	echo "Available targets:"
+	echo "  help                    - Show this help message"
+	echo "  lint                    - Run code quality checks"
+	echo "  lint-fix                - Auto-fix code formatting issues"
+	echo "  test                    - Run all tests (unit + integration)"
+	echo "  test-unit               - Run unit tests only"
+	echo "  test-integration        - Run integration tests only"
+	echo "  list                    - List available functions"
+	echo "  validate                - Validate function definitions"
+	echo "  deploy                  - Deploy functions to cloud"
+	echo "  remove                  - Remove deployed functions"
+	echo "  create-package          - Create distribution package"
+	echo "  install-test-deps       - Install function dependencies for testing"
+	echo "  update-dev-requirements - Regenerate requirements-dev.txt from functions"
+	echo "  clean                   - Clean build artifacts and cache"
+	echo "  clean-all               - Clean everything including venv"
 
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
@@ -149,3 +164,15 @@ clean:
 
 clean-all: clean
 	rm -rf $(VENV_DIR)
+
+# Dependency management tools
+install-test-deps: venv
+	echo "Installing function test dependencies for $(cloud)..."
+	$(VENV_BIN)/python $(ROOT_DIR)/test_utils/install_test_deps.py --cloud $(cloud)
+
+update-dev-requirements: venv
+	echo "Regenerating requirements-dev.txt from function requirements..."
+	$(VENV_BIN)/python $(ROOT_DIR)/tools/generate_dev_requirements.py $(if $(cloud),--cloud $(cloud),)
+	echo ""
+	echo "✓ Updated requirements-dev.txt"
+	echo "  Review changes and run: make install-dev"
