@@ -14,12 +14,34 @@ import importlib.util
 from pathlib import Path
 
 
+def setup_shared_libraries_path():
+    """
+    Add functions/_shared/python to sys.path if not already present.
+
+    This allows tests to import shared libraries directly without noqa comments.
+    Should be called at module import time in test files.
+    """
+    # Find gateway root by looking for the functions/_shared directory
+    current = Path(__file__).resolve()
+    gateway_root = current.parent.parent.parent
+    shared_path = gateway_root / "functions" / "_shared" / "python"
+
+    if shared_path.exists() and str(shared_path) not in sys.path:
+        sys.path.insert(0, str(shared_path))
+
+
+# Automatically setup shared libraries path when this module is imported
+# This allows tests to import shared libraries at the top of the file
+setup_shared_libraries_path()
+
+
 def load_function_module(test_file_path, import_spec=None):
     """
     Load a function's lib module and handler for unit testing.
 
     This handles the complex path setup and module isolation needed to test
-    gateway functions that have lib/ subdirectories.
+    gateway functions that have lib/ subdirectories. It also handles shared
+    libraries from functions/_shared/python/.
 
     Args:
         test_file_path: Path to the test file (usually __file__ from the test)
@@ -55,6 +77,10 @@ def load_function_module(test_file_path, import_spec=None):
     function_root = test_path.parent.parent.parent
     code_dir = function_root / "code" / "lambda" / "python"
 
+    # Add _shared/python to path for shared library imports
+    gateway_root = function_root.parent.parent.parent
+    shared_path = gateway_root / "functions" / "_shared" / "python"
+
     # Save and clear all lib.* modules to avoid conflicts
     original_sys_path = sys.path.copy()
     saved_lib_modules = {
@@ -65,7 +91,11 @@ def load_function_module(test_file_path, import_spec=None):
 
     result = {}
 
+    # Add both function code dir and shared dir to path
     sys.path.insert(0, str(code_dir))
+    if shared_path.exists():
+        sys.path.insert(0, str(shared_path))
+
     try:
         # Import from lib
         if import_spec and 'from_lib' in import_spec:

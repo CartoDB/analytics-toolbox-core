@@ -125,9 +125,77 @@ class PackageBuilder:
                         ),
                     )
 
+                    # Copy shared libraries if specified in function.yaml
+                    self._copy_shared_libs(func, func_dst, gateway_root)
+
         logger.info(
             f"Copied deployment logic and {len(functions)} function definitions"
         )
+
+    def _copy_shared_libs(self, func: Function, func_dst: Path, gateway_root: Path):
+        """
+        Copy shared libraries into function's deployment package.
+
+        Shared libraries are defined in function.yaml under 'shared_libs'.
+        They are copied from functions/_shared/python/ to the function's lib/ directory.
+
+        Args:
+            func: Function object
+            func_dst: Destination directory for the function
+            gateway_root: Gateway root directory
+        """
+        # Load function.yaml to get shared_libs configuration
+        import yaml
+
+        yaml_path = func.function_path / "function.yaml"
+        if not yaml_path.exists():
+            return  # No function.yaml, nothing to do
+
+        with open(yaml_path, "r") as f:
+            config = yaml.safe_load(f)
+
+        # Check if function has shared_libs configuration for this cloud
+        cloud_config = config.get("clouds", {}).get(self.cloud.value, {})
+        shared_libs = cloud_config.get("shared_libs", [])
+
+        if not shared_libs:
+            return  # No shared libraries to copy
+
+        shared_root = gateway_root / "functions" / "_shared" / "python"
+        if not shared_root.exists():
+            logger.warning(f"Shared libraries directory not found: {shared_root}")
+            return
+
+        for lib_name in shared_libs:
+            # Handle both directory and file references
+            lib_src = shared_root / lib_name
+
+            if lib_src.is_dir():
+                # Copy entire directory (e.g., "placekey" -> lib/placekey/)
+                lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_name
+                if lib_dst.exists():
+                    shutil.rmtree(lib_dst)
+                shutil.copytree(
+                    lib_src,
+                    lib_dst,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tests"),
+                )
+                logger.debug(f"  Copied shared lib: {lib_name}/ -> lib/{lib_name}/")
+
+            elif lib_src.is_file() or (lib_src.parent / f"{lib_name}.py").is_file():
+                # Copy single file
+                # (e.g., "placekey/placekey.py" -> lib/placekey/placekey.py)
+                if not lib_src.is_file():
+                    lib_src = lib_src.parent / f"{lib_name}.py"
+
+                lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_src.name
+                lib_dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(lib_src, lib_dst)
+                logger.debug(f"  Copied shared lib: {lib_name} -> lib/{lib_src.name}")
+            else:
+                logger.warning(
+                    f"  Shared library not found: {lib_name} in {shared_root}"
+                )
 
     def _create_scripts_dir(self, package_dir: Path, production: bool):
         """

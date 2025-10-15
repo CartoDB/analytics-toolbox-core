@@ -8,4 +8,4 @@ Each language has its own module:
 """
 
 # Re-export Python utilities for convenience and backward compatibility
-from .python import load_function_module  # noqa: F401
+from .python import load_function_module, setup_shared_libraries_path  # noqa: F401

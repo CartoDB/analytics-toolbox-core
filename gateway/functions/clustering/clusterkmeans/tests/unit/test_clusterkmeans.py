@@ -7,26 +7,23 @@ import pytest
 import numpy as np
 from test_utils.unit import load_function_module
 
+# Import shared library functions directly for testing
+from clustering import KMeans
+from clustering.helper import (
+    reorder_coords,
+    count_distinct_coords,
+    extract_coords_from_geojson,
+)
+
 # Load function module and handler
 imports = load_function_module(
     __file__,
     {
-        "from_lib": ["clusterkmeans", "KMeans"],
-        "from_lib_module": {
-            "helper": [
-                "reorder_coords",
-                "count_distinct_coords",
-                "extract_coords_from_geojson",
-            ]
-        },
+        "from_lib": ["clusterkmeans"],
     },
 )
 
 clusterkmeans = imports["clusterkmeans"]
-KMeans = imports["KMeans"]
-reorder_coords = imports["reorder_coords"]
-count_distinct_coords = imports["count_distinct_coords"]
-extract_coords_from_geojson = imports["extract_coords_from_geojson"]
 lambda_handler = imports["lambda_handler"]
 
 

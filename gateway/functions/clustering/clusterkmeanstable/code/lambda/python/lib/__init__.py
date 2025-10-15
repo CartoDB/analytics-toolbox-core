@@ -1,16 +1,35 @@
 # Copyright (c) 2020, Avi Arora (Python implementation)
 # (https://analyticsarora.com/k-means-for-beginners-how-to-build-from-scratch-in-python/)
 # Copyright (c) 2021, CARTO (lint, minor fixes)
+"""
+CLUSTERKMEANSTABLE function implementation using shared clustering utilities.
+
+This module imports shared clustering utilities from either:
+- lib/clustering/ (in deployed Lambda packages - copied by packager)
+- _shared/python/clustering/ (during local testing)
+"""
 
 import json
 import numpy as np
-from .kmeans import KMeans
-from .helper import (
-    load_geom,
-    reorder_coords,
-    count_distinct_coords,
-    PRECISION,
-)
+
+try:
+    # Try importing from lib/clustering (deployed package)
+    from lib.clustering import KMeans
+    from lib.clustering.helper import (
+        load_geom,
+        reorder_coords,
+        count_distinct_coords,
+        PRECISION,
+    )
+except ImportError:
+    # Fall back to shared library (local testing)
+    from clustering import KMeans
+    from clustering.helper import (
+        load_geom,
+        reorder_coords,
+        count_distinct_coords,
+        PRECISION,
+    )
 
 
 def clusterkmeanstable(geom_json, k):

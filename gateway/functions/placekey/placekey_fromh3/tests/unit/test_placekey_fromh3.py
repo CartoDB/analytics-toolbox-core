@@ -4,17 +4,18 @@ Unit tests for PLACEKEY_FROMH3 function
 
 from test_utils.unit import load_function_module
 
+# Import shared library functions directly for testing
+from placekey import h3_is_valid
+
 # Load function module and handler
 imports = load_function_module(
     __file__,
     {
         "from_lib": ["placekey_fromh3"],
-        "from_lib_module": {"placekey": ["h3_is_valid"]},
     },
 )
 
 placekey_fromh3 = imports["placekey_fromh3"]
-h3_is_valid = imports["h3_is_valid"]
 lambda_handler = imports["lambda_handler"]
 
 

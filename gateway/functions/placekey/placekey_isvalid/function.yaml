@@ -4,6 +4,8 @@ clouds:
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
+    shared_libs:
+      - placekey  # Copies _shared/python/placekey/* to lib/placekey/
     config:
       memory_size: 256
       timeout: 30

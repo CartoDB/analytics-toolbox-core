@@ -4,6 +4,8 @@ clouds:
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
+    shared_libs:
+      - clustering  # Copies _shared/python/clustering/* to lib/clustering/
     config:
       memory_size: 1024
       timeout: 300
