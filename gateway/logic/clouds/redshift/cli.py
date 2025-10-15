@@ -630,6 +630,7 @@ def deploy_lambda(
             timeout=timeout,
             description=function.description,
             role_arn=rs_lambda_execution_role,
+            function_root=function.function_path,
         )
 
         logger.info(f"✓ Successfully deployed {lambda_function_name}")
@@ -925,6 +926,7 @@ def deploy_all(
                         timeout=timeout,
                         description=func.description,
                         role_arn=rs_lambda_execution_role,
+                        function_root=func.function_path,
                     )
 
                     # Strip version number from ARN (e.g., :19) to use $LATEST

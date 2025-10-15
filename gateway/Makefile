@@ -85,14 +85,14 @@ validate: venv
 
 test-unit: install-dev
 	echo "Running unit tests..."
-	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m "not integration" || echo "$(YELLOW)Note: Some tests may be failing$(NC)"
+	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m "not integration"
 
 test-integration: install-dev
 	echo "Running integration tests..."
-	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration || echo "$(YELLOW)Note: Some tests may be failing$(NC)"
+	$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration
 
 test: test-unit test-integration
-	echo "All tests completed"
+	echo "✓ All tests passed"
 
 deploy: venv
 	echo "Deploying to $(cloud)..."

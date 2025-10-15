@@ -132,12 +132,78 @@ class LambdaDeployer:
                     pascal_parts.append(word.capitalize())
         return "".join(pascal_parts)
 
+    def _add_shared_libraries_to_zip(
+        self, zf: zipfile.ZipFile, function_root: Path, handler_dir: Path
+    ) -> None:
+        """
+        Add shared libraries to deployment package.
+
+        Reads function.yaml to find shared_libs configuration and copies
+        shared libraries from _shared/python/ into lib/ in the zip.
+
+        Args:
+            zf: ZipFile object to add files to
+            function_root: Root directory of the function
+            handler_dir: Directory containing the handler
+        """
+        import yaml
+
+        # Load function.yaml
+        yaml_path = function_root / "function.yaml"
+        if not yaml_path.exists():
+            return
+
+        try:
+            with open(yaml_path, "r") as f:
+                config = yaml.safe_load(f)
+        except Exception:
+            return  # If we can't read the yaml, skip shared libs
+
+        # Get shared_libs for redshift cloud
+        cloud_config = config.get("clouds", {}).get("redshift", {})
+        shared_libs = cloud_config.get("shared_libs", [])
+
+        if not shared_libs:
+            return
+
+        # Find gateway root and shared libraries path
+        gateway_root = function_root.parent.parent.parent
+        shared_root = gateway_root / "functions" / "_shared" / "python"
+
+        if not shared_root.exists():
+            print(f"  Warning: Shared libraries directory not found: {shared_root}")
+            return
+
+        # Copy each shared library
+        for lib_name in shared_libs:
+            lib_src = shared_root / lib_name
+            if not lib_src.exists():
+                print(f"  Warning: Shared library not found: {lib_name}")
+                continue
+
+            if lib_src.is_dir():
+                # Copy entire directory to lib/<lib_name>/
+                for py_file in lib_src.rglob("*.py"):
+                    if "__pycache__" in str(py_file):
+                        continue
+                    # Create arcname as lib/<lib_name>/<relative_path>
+                    rel_path = py_file.relative_to(lib_src)
+                    arcname = Path("lib") / lib_name / rel_path
+                    zf.write(py_file, str(arcname))
+                print(f"  ✓ Added shared library: {lib_name}/")
+            elif lib_src.is_file():
+                # Copy single file to lib/<filename>
+                arcname = Path("lib") / lib_src.name
+                zf.write(lib_src, str(arcname))
+                print(f"  ✓ Added shared library: {lib_src.name}")
+
     def create_deployment_package(
         self,
         handler_file: Path,
         requirements_file: Optional[Path] = None,
         output_zip: Optional[Path] = None,
         include_runtime_lib: bool = True,
+        function_root: Optional[Path] = None,
     ) -> Path:
         """
         Create a Lambda deployment package (zip file)
@@ -147,6 +213,7 @@ class LambdaDeployer:
             requirements_file: Optional requirements.txt file
             output_zip: Optional output path (creates temp file if None)
             include_runtime_lib: Include core runtime library
+            function_root: Root directory of function (for finding function.yaml)
 
         Returns:
             Path to created zip file
@@ -166,6 +233,10 @@ class LambdaDeployer:
                     # Preserve the lib/ directory structure in the zip
                     arcname = py_file.relative_to(handler_dir)
                     zf.write(py_file, arcname)
+
+            # Copy shared libraries if specified in function.yaml
+            if function_root:
+                self._add_shared_libraries_to_zip(zf, function_root, handler_dir)
 
             # Add runtime library if requested (for core utilities)
             if include_runtime_lib:
@@ -579,6 +650,7 @@ class LambdaDeployer:
         environment_variables: Optional[Dict[str, str]] = None,
         role_arn: Optional[str] = None,
         update_config: bool = True,
+        function_root: Optional[Path] = None,
     ) -> Dict[str, Any]:
         """
         Deploy or update a Lambda function
@@ -595,12 +667,15 @@ class LambdaDeployer:
             environment_variables: Environment variables
             role_arn: IAM role ARN
             update_config: Whether to update configuration on update
+            function_root: Root directory of function (for shared libraries)
 
         Returns:
             Deployment response
         """
         # Create deployment package
-        zip_path = self.create_deployment_package(handler_file, requirements_file)
+        zip_path = self.create_deployment_package(
+            handler_file, requirements_file, function_root=function_root
+        )
 
         try:
             if self.function_exists(function_name):
