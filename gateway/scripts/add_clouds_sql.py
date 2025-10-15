@@ -220,7 +220,11 @@ Examples:
     print(f'Reading SQL from: {source_sql_path}')
     sql_content = source_sql_path.read_text()
 
-    if modules or functions:
+    # Check if source is from modules/build/modules.sql (already filtered by build_modules.js)
+    # If so, skip re-filtering since build_modules.js already applied filters
+    is_pre_filtered = 'modules/build/modules.sql' in str(source_sql_path)
+
+    if (modules or functions) and not is_pre_filtered:
         print(f'Filtering SQL...')
         if modules:
             print(f'  Modules: {", ".join(modules)}')
@@ -228,7 +232,10 @@ Examples:
             print(f'  Functions: {", ".join(functions)}')
         filtered_sql = filter_modules_sql(sql_content, modules, functions)
     else:
-        print(f'Including all SQL functions (no filters)')
+        if is_pre_filtered and (modules or functions):
+            print(f'Using pre-filtered SQL (already filtered by build process)')
+        else:
+            print(f'Including all SQL functions (no filters)')
         filtered_sql = sql_content
 
     # Create target directory

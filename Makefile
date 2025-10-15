@@ -68,16 +68,20 @@ endif
 .PHONY: _create-gateway-package
 _create-gateway-package:
 	@echo "Step 1/3: Creating gateway package (Lambda functions)..."
-	@cd gateway && $(MAKE) create-package \
+	@(cd gateway && $(MAKE) create-package \
 		cloud=$(cloud) \
 		PACKAGE_VERSION=$(VERSION) \
 		$(if $(modules),modules=$(modules),) \
 		$(if $(functions),functions=$(functions),) \
-		$(if $(production),production=$(production),)
+		$(if $(production),production=$(production),)) || exit 1
 	@# Extract gateway package to target location (clean first to avoid prompts)
 	@mkdir -p $(OUTPUT_DIR)
 	@rm -rf $(OUTPUT_DIR)/carto-at-$(cloud)-$(VERSION)
-	@cd gateway/dist && unzip -q carto-at-$(cloud)-$(VERSION).zip -d ../../$(OUTPUT_DIR)
+	@if [ ! -f "gateway/dist/carto-at-$(cloud)-$(VERSION).zip" ]; then \
+		echo "Error: Gateway package not found after build"; \
+		exit 1; \
+	fi
+	@(cd gateway/dist && unzip -q carto-at-$(cloud)-$(VERSION).zip -d ../../$(OUTPUT_DIR)) || exit 1
 	@echo "  ✓ Gateway package created and extracted"
 	@echo ""
 
@@ -86,15 +90,18 @@ _create-gateway-package:
 _add-clouds-sql:
 	@echo "Step 2/3: Adding clouds SQL (native UDFs)..."
 	@if [ -d "clouds/$(cloud)/modules" ]; then \
+		echo "  Building clouds SQL..."; \
+		(cd clouds/$(cloud) && $(MAKE) build-modules \
+			$(if $(production),production=1,) \
+			$(if $(modules),modules=$(modules),) \
+			$(if $(functions),functions=$(functions),)) || exit 1; \
 		python3 gateway/scripts/add_clouds_sql.py \
 			--package-dir=$(OUTPUT_DIR)/carto-at-$(cloud)-$(VERSION) \
-			--cloud=$(cloud) \
-			$(if $(modules),--modules=$(modules),) \
-			$(if $(functions),--functions=$(functions),); \
+			--cloud=$(cloud) || exit 1; \
+		echo "  ✓ Clouds SQL added"; \
 	else \
 		echo "  ⚠️  No clouds SQL found for $(cloud) (gateway-only package)"; \
 	fi
-	@echo "  ✓ Clouds SQL added"
 	@echo ""
 
 # Internal target: Create final ZIP
