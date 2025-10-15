@@ -124,6 +124,18 @@ create-package: venv
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
 		$(EXTRA_CLI_ARGS)
+	echo ""
+	echo "========================================================================"
+	echo "✓ Package created successfully"
+	echo "========================================================================"
+	echo "  Location: $(DIST_DIR)/carto-at-$(cloud)-$(PACKAGE_VERSION).zip"
+	echo ""
+	echo "To install:"
+	echo "  1. Extract: cd $(DIST_DIR) && unzip carto-at-$(cloud)-$(PACKAGE_VERSION).zip"
+	echo "  2. Setup: cd carto-at-$(cloud)-$(PACKAGE_VERSION) && python3 -m venv .venv && source .venv/bin/activate"
+	echo "  3. Install dependencies: pip install -r scripts/requirements.txt"
+	echo "  4. Run installer: python scripts/install.py"
+	echo ""
 
 clean:
 	echo "Cleaning..."

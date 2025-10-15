@@ -175,8 +175,9 @@ Version: {self.version}
 
 ## Installation
 
-1. **Extract Package:**
+1. **Extract Package** (skip if already extracted):
    ```bash
+   cd dist/
    unzip carto-at-{self.cloud.value}-{self.version}.zip
    cd carto-at-{self.cloud.value}-{self.version}/
    ```
@@ -186,7 +187,7 @@ Version: {self.version}
    - AWS credentials with Lambda permissions
    - Access to a Redshift cluster
 
-3. **Setup:**
+3. **Setup Virtual Environment:**
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
