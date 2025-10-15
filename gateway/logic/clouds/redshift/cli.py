@@ -574,7 +574,7 @@ def deploy_lambda(
     aws_region = get_env_or_default("AWS_REGION", region)
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
-    rs_lambda_execution_role_arn = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE_ARN")
+    rs_lambda_execution_role = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE")
 
     # Get AWS credentials
     aws_creds = get_aws_credentials()
@@ -629,7 +629,7 @@ def deploy_lambda(
             memory_size=memory_size,
             timeout=timeout,
             description=function.description,
-            role_arn=rs_lambda_execution_role_arn,
+            role_arn=rs_lambda_execution_role,
         )
 
         logger.info(f"✓ Successfully deployed {lambda_function_name}")
@@ -802,7 +802,7 @@ def deploy_all(
         deploy_external_functions = False
 
     # Get Lambda execution role (optional - avoids needing IAM create role permissions)
-    rs_lambda_execution_role_arn = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE_ARN")
+    rs_lambda_execution_role = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE")
 
     # Get AWS credentials
     aws_creds = get_aws_credentials()
@@ -924,7 +924,7 @@ def deploy_all(
                         memory_size=memory_size,
                         timeout=timeout,
                         description=func.description,
-                        role_arn=rs_lambda_execution_role_arn,
+                        role_arn=rs_lambda_execution_role,
                     )
 
                     # Strip version number from ARN (e.g., :19) to use $LATEST

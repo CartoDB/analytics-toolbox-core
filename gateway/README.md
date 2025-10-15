@@ -173,7 +173,7 @@ If not specified, will auto-create based on `RS_LAMBDA_PREFIX` (default: `CartoA
 
 To avoid needing IAM create role permissions, pre-create this role:
 ```bash
-RS_LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
+RS_LAMBDA_EXECUTION_ROLE=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
 #### Redshift Connection
@@ -262,7 +262,7 @@ aws iam attach-role-policy \
 
 Then add to your `.env`:
 ```bash
-RS_LAMBDA_EXECUTION_ROLE_ARN=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
+RS_LAMBDA_EXECUTION_ROLE=arn:aws:iam::<account-id>:role/CartoATLambdaExecutionRole
 ```
 
 With this approach, your user only needs these Lambda permissions (no IAM permissions required):

@@ -32,7 +32,7 @@ jobs:
       RS_DATABASE: ${{ secrets.RS_DATABASE_CI }}
       RS_USER: ${{ secrets.RS_USER_CI }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD_CI }}
-      RS_LAMBDA_EXECUTION_ROLE_ARN: ${{ secrets.RS_LAMBDA_EXECUTION_ROLE_ARN_CI }}
+      RS_LAMBDA_EXECUTION_ROLE: ${{ secrets.RS_LAMBDA_EXECUTION_ROLE_CI }}
       RS_LAMBDA_INVOKE_ROLE: ${{ secrets.RS_LAMBDA_INVOKE_ROLE_CI }}
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
