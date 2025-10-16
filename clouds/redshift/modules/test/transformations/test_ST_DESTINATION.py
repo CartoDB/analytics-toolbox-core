@@ -13,9 +13,9 @@ def test_destination_success():
             ST_MakePoint(-43.7625, -20), 150, -20, 'miles'))"""
     )
 
-    assert str(results[0][0]) == 'POINT(0.0899320363725 0)'
-    assert str(results[0][1]) == 'POINT(-3.6614678544 40.4484882583)'
-    assert str(results[0][2]) == 'POINT(-44.542881219 -17.9582789435)'
+    assert str(results[0][0]) == 'POINT(0.089932036372454 0)'
+    assert str(results[0][1]) == 'POINT(-3.66146785439614 40.4484882583202)'
+    assert str(results[0][2]) == 'POINT(-44.5428812190164 -17.9582789434816)'
 
 
 def test_destination_none():
@@ -46,7 +46,7 @@ def test_destination_default():
             ST_MakePoint(0, 0), 10, 90, 'miles'))"""
     )
 
-    assert str(results[0][0]) == 'POINT(0.0899320363725 0)'
+    assert str(results[0][0]) == 'POINT(0.089932036372454 0)'
     assert str(results[0][1]) == str(results[0][0])
     assert str(results[0][1]) != str(results[0][2])
 
@@ -78,6 +78,6 @@ def test_destination_read_from_table_success():
 
     results = cursor.fetchall()
 
-    assert str(results[0][0]) == 'POINT(0.0899320363725 0)'
-    assert str(results[1][0]) == 'POINT(-3.6614678544 40.4484882583)'
-    assert str(results[2][0]) == 'POINT(-44.542881219 -17.9582789435)'
+    assert str(results[0][0]) == 'POINT(0.089932036372454 0)'
+    assert str(results[1][0]) == 'POINT(-3.66146785439614 40.4484882583202)'
+    assert str(results[2][0]) == 'POINT(-44.5428812190164 -17.9582789434816)'

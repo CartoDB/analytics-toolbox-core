@@ -1,0 +1,17 @@
+name: st_centermedian
+description: Calculate the median center (geometric median) of a geometry
+module: transformations
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: cntrmed  # Short Lambda name to fit within 18 char limit
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    external_function_template: code/redshift.sql
+    shared_libs:
+      - transformations
+    config:
+      memory_size: 256
+      timeout: 30
+      max_batch_rows: 10000
+      runtime: python3.10

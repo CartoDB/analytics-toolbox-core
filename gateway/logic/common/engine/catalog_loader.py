@@ -80,11 +80,15 @@ class CatalogLoader:
                         function_dir / cloud_data["external_function_template"]
                     )
 
+                # Get optional lambda_name override
+                lambda_name = cloud_data.get("lambda_name")
+
                 clouds[cloud_type] = CloudConfig(
                     type=platform_type,
                     code_file=code_file,
                     requirements_file=requirements_file,
                     external_function_template=template_file,
+                    lambda_name=lambda_name,
                     config=cloud_data.get("config", {}),
                 )
             except (ValueError, KeyError) as e:

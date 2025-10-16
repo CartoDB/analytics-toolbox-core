@@ -35,6 +35,7 @@ class CloudConfig:
     code_file: Path
     requirements_file: Optional[Path] = None
     external_function_template: Optional[Path] = None
+    lambda_name: Optional[str] = None  # Override Lambda function name (without prefix)
     config: Dict[str, Any] = field(default_factory=dict)
 
 

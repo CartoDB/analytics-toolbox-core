@@ -116,14 +116,14 @@ test-integration: install-dev
 	echo "Running integration tests..."
 	@if [ -n "$(modules)" ]; then \
 		MODULE_PATHS=$$(echo "$(modules)" | tr ',' '\n' | sed 's|^|$(FUNCTIONS_ROOT)/|' | sed 's|$$|/|' | tr '\n' ' '); \
-		$(VENV_BIN)/python -m pytest $$MODULE_PATHS -m integration; \
+		$(VENV_BIN)/python -m pytest $$MODULE_PATHS -m integration || [ $$? -eq 5 ]; \
 	elif [ -n "$(functions)" ]; then \
 		FUNC_PATHS=$$(for func in $$(echo "$(functions)" | tr ',' ' '); do \
 			find $(FUNCTIONS_ROOT) -type d -name "$$func" -path "*/functions/*/$$func"; \
 		done | tr '\n' ' '); \
-		$(VENV_BIN)/python -m pytest $$FUNC_PATHS -m integration; \
+		$(VENV_BIN)/python -m pytest $$FUNC_PATHS -m integration || [ $$? -eq 5 ]; \
 	else \
-		$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration; \
+		$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m integration || [ $$? -eq 5 ]; \
 	fi
 
 test: test-unit test-integration

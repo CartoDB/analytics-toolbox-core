@@ -21,10 +21,10 @@ def test_centermean_success():
             ST_GeomFromText('{lines[3].rstrip()}')))"""
     )
 
-    assert str(results[0][0]) == 'POINT(4.84119415283 45.7580714303)'
+    assert str(results[0][0]) == 'POINT(4.84119415283203 45.7580714303037)'
     assert str(results[0][1]) == 'POINT(25 27.5)'
     assert str(results[0][2]) == 'POINT(-58.75 22.5)'
-    assert str(results[0][3]) == 'POINT(-3.79091167202 37.7810735685)'
+    assert str(results[0][3]) == 'POINT(-3.79091167201732 37.7810735684703)'
 
 
 def test_centermean_none():
@@ -62,6 +62,6 @@ def test_centermean_read_from_table_success():
 
     results = cursor.fetchall()
 
-    assert str(results[0][0]) == 'POINT(4.84119415283 45.7580714303)'
+    assert str(results[0][0]) == 'POINT(4.84119415283203 45.7580714303037)'
     assert str(results[1][0]) == 'POINT(25 27.5)'
     assert str(results[2][0]) == 'POINT(-58.75 22.5)'

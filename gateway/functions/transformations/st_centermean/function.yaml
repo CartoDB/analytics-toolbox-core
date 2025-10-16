@@ -1,0 +1,17 @@
+name: st_centermean
+description: Calculate the mean center of a geometry
+module: transformations
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: cntmean  # Short Lambda name to fit within 17 char limit
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    external_function_template: code/redshift.sql
+    shared_libs:
+      - transformations
+    config:
+      memory_size: 256
+      timeout: 30
+      max_batch_rows: 10000
+      runtime: python3.10

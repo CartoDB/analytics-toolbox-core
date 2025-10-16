@@ -579,8 +579,26 @@ def deploy_lambda(
     # Get AWS credentials
     aws_creds = get_aws_credentials()
 
-    # Construct Lambda function name
-    lambda_function_name = f"{rs_lambda_prefix}{function_name}"
+    # Construct Lambda function name (use lambda_name override if specified)
+    base_name = cloud_config.lambda_name if cloud_config.lambda_name else function_name
+    lambda_function_name = f"{rs_lambda_prefix}{base_name}"
+
+    # Validate function name length (Redshift has ~18 char limit for Lambda names)
+    # Actual limit appears to be 17-18 chars, so we use 18 to be safe
+    if len(lambda_function_name) >= 18:
+        logger.error(
+            f"Lambda function name too long: '{lambda_function_name}' "
+            f"({len(lambda_function_name)} chars)\n"
+            f"Redshift external functions have a ~18 character limit.\n"
+            f"Current: RS_LAMBDA_PREFIX='{rs_lambda_prefix}' "
+            f"({len(rs_lambda_prefix)} chars) "
+            f"+ function='{base_name}' ({len(base_name)} chars)\n"
+            f"Recommendation: Use a shorter RS_LAMBDA_PREFIX or add "
+            f"lambda_name override in function.yaml\n"
+            f"Example: lambda_name: '{base_name[:6]}' would give "
+            f"'{rs_lambda_prefix}{base_name[:6]}'"
+        )
+        sys.exit(1)
 
     # Get Lambda configuration
     runtime = cloud_config.config.get("runtime", "python3.11")
@@ -886,10 +904,39 @@ def deploy_all(
         ) as bar:
             for func in bar:
                 try:
-                    lambda_function_name = f"{rs_lambda_prefix}{func.name}"
-
-                    # Get cloud configuration
+                    # Get cloud configuration first to access lambda_name
                     cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+
+                    # Construct Lambda function name (use lambda_name override
+                    # if specified)
+                    base_name = (
+                        cloud_config.lambda_name
+                        if cloud_config.lambda_name
+                        else func.name
+                    )
+                    lambda_function_name = f"{rs_lambda_prefix}{base_name}"
+
+                    # Validate function name length (Redshift has ~18 char
+                    # limit) Actual limit appears to be 17-18 chars, so we
+                    # use 18 to be safe
+                    if len(lambda_function_name) >= 18:
+                        logger.error(
+                            f"\n✗ {func.name}: Lambda function name too long: "
+                            f"'{lambda_function_name}' "
+                            f"({len(lambda_function_name)} chars)\n"
+                            f"   Redshift external functions have a ~18 "
+                            f"character limit.\n"
+                            f"   Current: RS_LAMBDA_PREFIX="
+                            f"'{rs_lambda_prefix}' "
+                            f"({len(rs_lambda_prefix)} chars) + "
+                            f"function='{base_name}' ({len(base_name)} chars)\n"
+                            f"   Recommendation: Use shorter RS_LAMBDA_PREFIX "
+                            f"or add lambda_name override\n"
+                            f"   Example: lambda_name: '{base_name[:6]}' in "
+                            f"function.yaml"
+                        )
+                        failed_functions.append(func.name)
+                        continue
 
                     # Get paths
                     handler_file = func.function_path / cloud_config.code_file
@@ -1172,7 +1219,11 @@ def remove_all(
         logger.info("[DRY RUN] Would remove:")
         logger.info(f"\nLambda functions ({len(to_remove)}):")
         for func in to_remove:
-            lambda_name = f"{rs_lambda_prefix}{func.name}"
+            cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+            base_name = (
+                cloud_config.lambda_name if cloud_config.lambda_name else func.name
+            )
+            lambda_name = f"{rs_lambda_prefix}{base_name}"
             logger.info(f"  - {lambda_name}")
 
         if drop_schema:
@@ -1244,55 +1295,68 @@ def remove_all(
                     # Continue with Lambda deletion even if schema drop fails
             elif functions_to_drop:
                 try:
-                    # Drop ALL external functions (Lambda-backed) in the schema
-                    # Gateway only deploys external functions, so this is safe
-                    # Uses the same pattern as DROP_FUNCTIONS.sql in clouds
-                    create_table_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__create_drop_table_gw()  # noqa: E501
-AS $$
-DECLARE
-  row RECORD;
-BEGIN
-  DROP TABLE IF EXISTS _gw_udfs_info;
-  CREATE TEMP TABLE _gw_udfs_info (f_oid BIGINT, f_kind VARCHAR(1), f_name VARCHAR(MAX), arg_index BIGINT, f_argtype VARCHAR(MAX));  # noqa: E501
-  FOR row IN SELECT oid::BIGINT f_oid, kind::VARCHAR(1) f_kind, proname::VARCHAR(MAX) f_name, i arg_index, format_type(arg_types[i-1], null)::VARCHAR(MAX) f_argtype  # noqa: E501
-    FROM (
-      SELECT oid, kind, proname, generate_series(1, arg_count) AS i, arg_types
-      FROM (
-        SELECT p.prooid oid, p.prokind kind, proname, proargtypes arg_types, pronargs arg_count  # noqa: E501
-        FROM pg_catalog.pg_namespace n
-        JOIN PG_PROC_INFO p ON pronamespace = n.oid
-        WHERE nspname = '{rs_schema}'
-      ) t
-    ) t
-  LOOP
-    INSERT INTO _gw_udfs_info(f_oid, f_kind, f_name, arg_index, f_argtype)
-    VALUES (row.f_oid, row.f_kind, row.f_name, row.arg_index, row.f_argtype);
-  END LOOP;
-END;
-$$ LANGUAGE plpgsql"""
+                    logger.info(
+                        f"Dropping {len(functions_to_drop)} external "
+                        f"functions from {rs_schema}..."
+                    )
+                    logger.info(
+                        "This may take 30-60 seconds depending on " "cluster load..."
+                    )
+                    # Drop ALL external functions (Lambda-backed) in the
+                    # schema Gateway only deploys external functions, so this
+                    # is safe Uses the same pattern as DROP_FUNCTIONS.sql in
+                    # clouds
+                    # fmt: off (long lines in SQL - disable black formatter)
+                    create_table_proc = (
+                        f"CREATE OR REPLACE PROCEDURE "
+                        f"{rs_schema}.__create_drop_table_gw()\n"
+                        f"AS $$\nDECLARE\n  row RECORD;\nBEGIN\n"
+                        f"  DROP TABLE IF EXISTS _gw_udfs_info;\n"
+                        f"  CREATE TEMP TABLE _gw_udfs_info "
+                        f"(f_oid BIGINT, f_kind VARCHAR(1), "
+                        f"f_name VARCHAR(MAX), arg_index BIGINT, "
+                        f"f_argtype VARCHAR(MAX));\n"
+                        f"  FOR row IN SELECT oid::BIGINT f_oid, "
+                        f"kind::VARCHAR(1) f_kind, "
+                        f"proname::VARCHAR(MAX) f_name, i arg_index, "
+                        f"format_type(arg_types[i-1], null)::VARCHAR(MAX) "
+                        f"f_argtype\n    FROM (\n"
+                        f"      SELECT oid, kind, proname, "
+                        f"generate_series(1, arg_count) AS i, arg_types\n"
+                        f"      FROM (\n"
+                        f"        SELECT p.prooid oid, p.prokind kind, "
+                        f"proname, proargtypes arg_types, pronargs arg_count\n"
+                        f"        FROM pg_catalog.pg_namespace n\n"
+                        f"        JOIN PG_PROC_INFO p ON pronamespace = n.oid\n"
+                        f"        WHERE nspname = '{rs_schema}'\n"
+                        f"      ) t\n    ) t\n  LOOP\n"
+                        f"    INSERT INTO _gw_udfs_info(f_oid, f_kind, f_name, "
+                        f"arg_index, f_argtype)\n"
+                        f"    VALUES (row.f_oid, row.f_kind, row.f_name, "
+                        f"row.arg_index, row.f_argtype);\n"
+                        f"  END LOOP;\nEND;\n$$ LANGUAGE plpgsql"
+                    )
 
-                    drop_functions_proc = f"""CREATE OR REPLACE PROCEDURE {rs_schema}.__drop_gateway_functions()  # noqa: E501
-AS $$
-DECLARE
-    row RECORD;
-BEGIN
-    CALL {rs_schema}.__create_drop_table_gw();
-
-    FOR row IN SELECT drop_command
-    FROM (
-        SELECT 'DROP ' || CASE f_kind WHEN 'p' THEN 'PROCEDURE' ELSE 'FUNCTION' END ||  # noqa: E501
-               ' {rs_schema}.' || f_name || '(' ||
-               listagg(f_argtype,',' ) WITHIN GROUP (ORDER BY arg_index) || ');' AS drop_command  # noqa: E501
-        FROM _gw_udfs_info
-        GROUP BY f_oid, f_name, f_kind
-    )
-    LOOP
-        EXECUTE row.drop_command;
-    END LOOP;
-
-    DROP TABLE IF EXISTS _gw_udfs_info;
-END;
-$$ LANGUAGE plpgsql"""
+                    drop_functions_proc = (
+                        f"CREATE OR REPLACE PROCEDURE "
+                        f"{rs_schema}.__drop_gateway_functions()\n"
+                        f"AS $$\nDECLARE\n    row RECORD;\nBEGIN\n"
+                        f"    CALL {rs_schema}.__create_drop_table_gw();\n\n"
+                        f"    FOR row IN SELECT drop_command\n    FROM (\n"
+                        f"        SELECT 'DROP ' || CASE f_kind WHEN 'p' "
+                        f"THEN 'PROCEDURE' ELSE 'FUNCTION' END ||\n"
+                        f"               ' {rs_schema}.' || f_name || '(' ||\n"
+                        f"               listagg(f_argtype,',' ) WITHIN GROUP "
+                        f"(ORDER BY arg_index) || ');' AS drop_command\n"
+                        f"        FROM _gw_udfs_info\n"
+                        f"        GROUP BY f_oid, f_name, f_kind\n"
+                        f"    )\n    LOOP\n"
+                        f"        EXECUTE row.drop_command;\n"
+                        f"    END LOOP;\n\n"
+                        f"    DROP TABLE IF EXISTS _gw_udfs_info;\n"
+                        f"END;\n$$ LANGUAGE plpgsql"
+                    )
+                    # fmt: on
 
                     with redshift_connector.connect(
                         host=rs_host,
@@ -1304,17 +1368,23 @@ $$ LANGUAGE plpgsql"""
                         conn.autocommit = True
                         with conn.cursor() as cursor:
                             # Create helper procedure
+                            logger.info("  Creating helper procedure...")
                             cursor.execute(create_table_proc)
 
                             # Create main drop procedure
+                            logger.info("  Creating drop procedure...")
                             cursor.execute(drop_functions_proc)
 
-                            # Call procedure to drop functions
+                            # Call procedure to drop functions (this is the slow part)
+                            logger.info(
+                                "  Enumerating and dropping functions (please wait)..."
+                            )
                             cursor.execute(
                                 f"CALL {rs_schema}.__drop_gateway_functions()"
                             )
 
                             # Clean up temporary procedures
+                            logger.info("  Cleaning up...")
                             cursor.execute(
                                 f"DROP PROCEDURE {rs_schema}.__create_drop_table_gw()"
                             )
@@ -1347,7 +1417,13 @@ $$ LANGUAGE plpgsql"""
         ) as bar:
             for func in bar:
                 try:
-                    lambda_function_name = f"{rs_lambda_prefix}{func.name}"
+                    cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+                    base_name = (
+                        cloud_config.lambda_name
+                        if cloud_config.lambda_name
+                        else func.name
+                    )
+                    lambda_function_name = f"{rs_lambda_prefix}{base_name}"
                     deployer.delete_function(lambda_function_name)
                     lambda_success += 1
                 except Exception as e:

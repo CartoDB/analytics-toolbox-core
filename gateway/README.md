@@ -157,6 +157,27 @@ Best for enterprise environments using AWS IAM Identity Center.
 RS_LAMBDA_PREFIX=carto-at-
 ```
 
+**⚠️ IMPORTANT: Function Name Length Limit**
+
+Redshift external functions have an **undocumented limit of ~18 characters** for Lambda function names (not the full ARN). This is a Redshift limitation, not AWS Lambda. The actual limit appears to be between 17-20 characters, so we recommend staying under 18 to be safe.
+
+- **Recommended**: Keep total function name under **18 characters**
+- **Formula**: `len(RS_LAMBDA_PREFIX) + len(function_name) < 18`
+- **Examples**:
+  - ✓ `v-st_centermean` = 14 characters (safe)
+  - ⚠ `vd-st_centermedian` = 18 characters (at limit, may fail)
+  - ✗ `vdelacruz-st_centermean` = 23 characters (will fail with "Lambda function name too long" error)
+
+**Choosing a Prefix:**
+- **Personal dev**: Use 1-2 characters (e.g., `v-`, `vd-`) = 2-3 chars
+- **Team dev**: Use short abbreviation (e.g., `geo-`, `team-`) = 4-5 chars
+- **Production**: Use short identifier (e.g., `prod-`, `p-`) = 2-5 chars
+- **CI/CD**: Use `ci-{6-char-sha}-` pattern = ~10 chars (see CI/CD section)
+
+**Note**: Longest function name in the toolbox is `st_centermedian` (15 chars), so a 2-char prefix (`v-`) gives you the most flexibility.
+
+The deployer will validate function names and prevent deployment if they exceed 18 characters.
+
 **Resource Naming:**
 - Lambda functions: `{RS_LAMBDA_PREFIX}{function_name}` (kebab-case)
   - Example: `carto-at-quadbin_polyfill`

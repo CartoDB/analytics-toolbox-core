@@ -4,6 +4,7 @@ module: s2
 clouds:
   redshift:
     type: lambda
+    lambda_name: s2_frll  # Short Lambda name to fit within 18 char limit
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
