@@ -4,7 +4,7 @@
 # Default values
 # Version is read from clouds/<cloud>/version (clouds defines the version)
 OUTPUT_DIR ?= dist
-REPO_NAME = core
+REPO_NAME = analytics-toolbox-core
 
 # Ensure cloud parameter is provided
 .PHONY: create-package
@@ -20,7 +20,7 @@ ifndef cloud
 	@echo "Optional:"
 	@echo "  modules=<modules>    Comma-separated modules to include (default: all)"
 	@echo "  functions=<funcs>    Comma-separated functions to include (default: all)"
-	@echo "  production=1         Production mode (exclude development/private functions)"
+	@echo "  production=1         Production mode (exclude development functions)"
 	@echo "  output-dir=<dir>     Output directory (default: dist)"
 	@echo ""
 	@echo "Note: Version is read from clouds/<cloud>/version"
@@ -67,7 +67,7 @@ endif
 # Internal target: Create gateway package
 .PHONY: _create-gateway-package
 _create-gateway-package:
-	@echo "Step 1/3: Creating gateway package (Lambda functions)..."
+	@echo "Step 1/3: Creating gateway package..."
 	@(cd gateway && $(MAKE) create-package \
 		cloud=$(cloud) \
 		PACKAGE_VERSION=$(VERSION) \
@@ -124,13 +124,13 @@ endif
 	@echo "Deploying Analytics Toolbox to $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@echo "Step 1/2: Deploying gateway (Lambda functions)..."
+	@echo "Deploying gateway (Lambda functions)..."
 	@cd gateway && $(MAKE) deploy cloud=$(cloud) \
 		$(if $(modules),modules=$(modules),) \
 		$(if $(functions),functions=$(functions),) \
 		$(if $(production),production=$(production),)
 	@echo ""
-	@echo "Step 2/2: Deploying clouds (SQL UDFs)..."
+	@echo "Deploying clouds (SQL UDFs)..."
 	@if [ -d "clouds/$(cloud)" ]; then \
 		cd clouds/$(cloud) && $(MAKE) deploy \
 			$(if $(modules),modules=$(modules),) \
@@ -155,12 +155,12 @@ endif
 	@echo "Removing Analytics Toolbox from $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@echo "Step 1/2: Removing clouds (SQL UDFs)..."
+	@echo "Removing clouds..."
 	@if [ -d "clouds/$(cloud)" ]; then \
 		cd clouds/$(cloud) && $(MAKE) remove; \
 	fi
 	@echo ""
-	@echo "Step 2/2: Removing gateway (Lambda functions)..."
+	@echo "Removing gateway..."
 	@cd gateway && $(MAKE) remove cloud=$(cloud) || echo "  ⚠️  Gateway removal (best effort)"
 	@echo ""
 	@echo "========================================================================"
@@ -179,18 +179,11 @@ endif
 	@echo "Running tests for $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@echo "Step 1/4: Testing gateway (unit tests)..."
 	@cd gateway && $(MAKE) test-unit cloud=$(cloud)
-	@echo ""
-	@echo "Step 2/4: Testing gateway (integration tests)..."
 	@cd gateway && $(MAKE) test-integration cloud=$(cloud)
-	@echo ""
-	@echo "Step 3/4: Testing clouds..."
 	@if [ -d "clouds/$(cloud)" ]; then \
 		cd clouds/$(cloud) && $(MAKE) test; \
 	fi
-	@echo ""
-	@echo "Step 4/4: All tests completed"
 	@echo ""
 	@echo "========================================================================"
 	@echo "✓ Tests complete"
@@ -208,10 +201,7 @@ endif
 	@echo "Linting $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@echo "Step 1/2: Linting gateway..."
 	@cd gateway && $(MAKE) lint cloud=$(cloud) || echo "  ⚠️  Gateway lint warnings (non-blocking)"
-	@echo ""
-	@echo "Step 2/2: Linting clouds..."
 	@if [ -d "clouds/$(cloud)" ]; then \
 		cd clouds/$(cloud) && $(MAKE) lint; \
 	fi
@@ -237,10 +227,10 @@ help:
 	@echo "Analytics Toolbox Core - Build System"
 	@echo ""
 	@echo "Main targets (require cloud=<cloud>):"
-	@echo "  deploy          Deploy both gateway (Lambda) and clouds (SQL UDFs)"
-	@echo "  remove          Remove both gateway and clouds deployments"
-	@echo "  test            Run tests for gateway and clouds"
-	@echo "  lint            Lint gateway and clouds code"
+	@echo "  deploy          Deploy gateway and clouds"
+	@echo "  remove          Remove gateway and clouds deployments"
+	@echo "  test            Run tests"
+	@echo "  lint            Lint code"
 	@echo ""
 	@echo "Package targets:"
 	@echo "  create-package  Create unified distribution package (gateway + clouds)"

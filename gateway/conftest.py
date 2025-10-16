@@ -19,7 +19,7 @@ def setup_platform_runtime(platform_name: str, runtime_module: str, namespace: s
     Args:
         platform_name: Platform directory name (e.g., 'aws-lambda', 'gcp-cloud-functions')
         runtime_module: Module name to import (e.g., 'lambda_wrapper', 'cloud_run_wrapper')
-        namespace: Deployment namespace (e.g., 'carto_analytics_toolbox_core')
+        namespace: Deployment namespace (e.g., 'carto')
     """
     gateway_root = Path(__file__).parent
     runtime_path = gateway_root / "logic" / "platforms" / platform_name / "runtime"
@@ -47,14 +47,14 @@ def setup_platform_runtime(platform_name: str, runtime_module: str, namespace: s
 setup_platform_runtime(
     platform_name="aws-lambda",
     runtime_module="lambda_wrapper",
-    namespace="carto_analytics_toolbox_core",
+    namespace="carto",
 )
 
 # Setup future platforms as they're added:
 # setup_platform_runtime(
 #     platform_name='gcp-cloud-functions',
 #     runtime_module='cloud_run_wrapper',
-#     namespace='carto_analytics_toolbox_core'
+#     namespace='carto'
 # )
 
 

@@ -1,4 +1,4 @@
-from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
+from carto.lambda_wrapper import redshift_handler
 from lib import polyfill_bbox
 
 

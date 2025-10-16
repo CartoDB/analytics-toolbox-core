@@ -38,9 +38,9 @@ Lambda handler for Redshift external function
 """
 
 # Import lambda wrapper
-# In Lambda deployment: packaged as carto_analytics_toolbox_core
+# In Lambda deployment: packaged as carto
 # In local tests: conftest.py sets up the module alias
-from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
+from carto.lambda_wrapper import redshift_handler
 
 
 @redshift_handler
@@ -72,12 +72,12 @@ lambda_handler = process_row
 ### Why This Import Works Everywhere
 
 **In Lambda Deployment:**
-- Deployer packages `runtime/lambda_wrapper.py` as `carto_analytics_toolbox_core/lambda_wrapper.py`
-- Handler imports from `carto_analytics_toolbox_core.lambda_wrapper` ✓
+- Deployer packages `runtime/lambda_wrapper.py` as `carto/lambda_wrapper.py`
+- Handler imports from `carto.lambda_wrapper` ✓
 
 **In Local Tests:**
 - `conftest.py` creates module alias before tests run
-- Handler imports from `carto_analytics_toolbox_core.lambda_wrapper` ✓
+- Handler imports from `carto.lambda_wrapper` ✓
 
 **No try/except needed** - single import works in both environments!
 
@@ -86,7 +86,7 @@ lambda_handler = process_row
 The `@redshift_handler` decorator supports three error modes:
 
 ```python
-from carto_analytics_toolbox_core.lambda_wrapper import (
+from carto.lambda_wrapper import (
     redshift_handler,
     ErrorHandlingMode
 )
@@ -117,7 +117,7 @@ def process_row(row):
 For functions that benefit from batch processing:
 
 ```python
-from carto_analytics_toolbox_core.lambda_wrapper import batch_redshift_handler
+from carto.lambda_wrapper import batch_redshift_handler
 
 
 @batch_redshift_handler
@@ -152,9 +152,9 @@ CARTO Analytics Toolbox - MY_FUNCTION
 Cloud Function handler for BigQuery remote function
 """
 
-# In GCP: packaged as carto_analytics_toolbox_core
+# In GCP: packaged as carto
 # In tests: conftest.py sets up alias
-from carto_analytics_toolbox_core.cloud_run_wrapper import bigquery_handler
+from carto.cloud_run_wrapper import bigquery_handler
 
 
 @bigquery_handler
@@ -183,7 +183,7 @@ def reverse_string(s: str) -> str:
 **Handler** (platform-specific):
 ```python
 # handler.py
-from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
+from carto.lambda_wrapper import redshift_handler
 from business_logic import reverse_string
 
 
@@ -253,7 +253,7 @@ def test_lambda_handler():
 
 `conftest.py` at the gateway root automatically:
 1. Adds runtime path to `sys.path`
-2. Creates `carto_analytics_toolbox_core` module alias
+2. Creates `carto` module alias
 3. Runs before any test
 
 So handlers can use the same import in both deployment and tests!
@@ -290,7 +290,7 @@ if gcp_runtime.exists():
 
     try:
         import cloud_run_wrapper
-        sys.modules['carto_analytics_toolbox_core.cloud_run_wrapper'] = cloud_run_wrapper
+        sys.modules['carto.cloud_run_wrapper'] = cloud_run_wrapper
     except ImportError:
         pass
 ```
@@ -299,7 +299,7 @@ if gcp_runtime.exists():
 
 ```python
 # functions/my_module/my_function/code/cloud_run/python/handler.py
-from carto_analytics_toolbox_core.cloud_run_wrapper import bigquery_handler
+from carto.cloud_run_wrapper import bigquery_handler
 
 
 @bigquery_handler
@@ -318,7 +318,7 @@ main = process_row
 # logic/platforms/gcp-cloud-functions/deploy/deployer.py
 class CloudRunDeployer:
     def package_function(self, function_path, requirements_path):
-        # Package runtime as carto_analytics_toolbox_core namespace
+        # Package runtime as carto namespace
         # (same pattern as AWS Lambda deployer)
         pass
 ```

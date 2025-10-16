@@ -129,7 +129,7 @@ Example: `functions/quadbin/quadbin_polyfill/tests/unit/test_quadbin_polyfill.py
 ### Scripts (`scripts/`)
 - **add_clouds_sql.py** - Filters and adds clouds SQL to gateway packages
   - Supports module and function filtering at build time
-  - Can append private SQL functions
+  - Can append SQL functions from multiple sources
   - Copies additional SQL files (VERSION.sql, DROP_FUNCTIONS.sql)
 
 ## File Count by Type
@@ -259,8 +259,8 @@ The installer (`scripts/install.py`) deploys in 3 phases:
 3. **Phase 3**: Execute modules.sql (native SQL UDFs)
 
 ### Repository Independence
-- **analytics-toolbox-core**: Public functions only
-- **analytics-toolbox**: Public (from core submodule) + private functions
+- Functions can be organized across multiple repositories
+- Submodule pattern supports extending base functionality
 
 ### CI/CD Integration
 GitHub Actions workflows updated to:

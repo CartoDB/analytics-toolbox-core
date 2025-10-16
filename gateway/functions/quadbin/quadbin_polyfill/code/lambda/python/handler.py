@@ -9,9 +9,9 @@ import json
 from typing import List, Optional
 
 # Import lambda wrapper
-# In Lambda: packaged as carto_analytics_toolbox_core
+# In Lambda: packaged as carto
 # In local tests: conftest.py sets up the module alias
-from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
+from carto.lambda_wrapper import redshift_handler
 
 
 def quadbin_from_zxy(z: int, x: int, y: int) -> Optional[int]:

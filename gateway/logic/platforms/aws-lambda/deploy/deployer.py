@@ -238,19 +238,17 @@ class LambdaDeployer:
             if function_root:
                 self._add_shared_libraries_to_zip(zf, function_root, handler_dir)
 
-            # Add runtime library if requested (for core utilities)
+            # Add runtime library if requested
             if include_runtime_lib:
                 runtime_lib_path = Path(__file__).parent.parent / "runtime"
                 if runtime_lib_path.exists():
                     for py_file in runtime_lib_path.glob("*.py"):
                         if not py_file.name.startswith("_"):
-                            zf.write(
-                                py_file, f"carto_analytics_toolbox_core/{py_file.name}"
-                            )
+                            zf.write(py_file, f"carto/{py_file.name}")
                     # Add __init__.py for package
                     init_file = runtime_lib_path / "__init__.py"
                     if init_file.exists():
-                        zf.write(init_file, "carto_analytics_toolbox_core/__init__.py")
+                        zf.write(init_file, "carto/__init__.py")
 
             # Install and add dependencies if requirements.txt exists
             if requirements_file and requirements_file.exists():

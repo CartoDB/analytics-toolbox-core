@@ -91,12 +91,12 @@ make venv
 
 ### Configuration
 
-The gateway can use a shared `.env` file from the core directory (same as clouds) or a gateway-specific one:
+The gateway can use a shared `.env` file from the repository root directory (same as clouds) or a gateway-specific one:
 
 **Option 1: Shared .env (recommended for consistency with clouds)**
 
 ```bash
-# Create .env in the core directory (shared with clouds)
+# Create .env in the repository root directory (shared with clouds)
 cd ..
 cp gateway/.env.template .env
 ```
@@ -109,7 +109,7 @@ cp .env.template .env
 ```
 
 The gateway will:
-1. Load `.env` from core directory first (if exists)
+1. Load `.env` from repository root directory first (if exists)
 2. Then load `.env` from gateway directory (if exists) to override specific values
 
 Edit `.env` with your AWS and Redshift configuration.

@@ -8,7 +8,7 @@ Returns GeoJSON Point (if npoints=1) or MultiPoint (if npoints>1).
 """
 
 # Import lambda wrapper
-from carto_analytics_toolbox_core.lambda_wrapper import redshift_handler
+from carto.lambda_wrapper import redshift_handler
 
 # Import generatepoints implementation
 from lib.random import generatepoints
