@@ -607,7 +607,7 @@ def deploy_lambda(
         )
 
         # Get paths
-        function_dir = function.path
+        function_dir = function.function_path
         handler_file = function_dir / cloud_config.code_file
         requirements_file = (
             function_dir / cloud_config.requirements_file
