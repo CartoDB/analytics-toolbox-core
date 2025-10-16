@@ -1,0 +1,16 @@
+name: s2_boundary
+description: Get the boundary of an S2 cell as WKT polygon
+module: s2
+clouds:
+  redshift:
+    type: lambda
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    external_function_template: code/redshift.sql
+    shared_libs:
+      - s2
+    config:
+      memory_size: 256
+      timeout: 30
+      max_batch_rows: 10000
+      runtime: python3.10
