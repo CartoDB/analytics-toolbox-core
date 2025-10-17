@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 from typing import Optional, List, Set, Dict
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 try:
     import redshift_connector
@@ -885,6 +886,7 @@ def deploy_all(
             region=aws_region,
             profile=aws_prof,
             rs_lambda_prefix=rs_lambda_prefix,
+            quiet=True,  # Suppress verbose logs during batch deployment
             **aws_creds,
         )
 
@@ -896,13 +898,11 @@ def deploy_all(
         # Phase 1: Deploy Lambda functions
         logger.info("\n=== Phase 1: Deploying Lambda Functions ===\n")
 
-        with click.progressbar(
-            to_deploy,
-            label=f"Deploying {len(to_deploy)} Lambda functions",
-            show_pos=True,
-            item_show_func=lambda f: f.name if f else None,
-        ) as bar:
-            for func in bar:
+        # Use tqdm for consistent progress bar style with clouds
+        with tqdm(to_deploy, desc="Deploying", ncols=97, unit="fn") as pbar:
+            for func in pbar:
+                # Print function name above the progress bar for clean display
+                tqdm.write(f"  → {func.name}")
                 try:
                     # Get cloud configuration first to access lambda_name
                     cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
@@ -920,6 +920,7 @@ def deploy_all(
                     # limit) Actual limit appears to be 17-18 chars, so we
                     # use 18 to be safe
                     if len(lambda_function_name) >= 18:
+                        # tqdm automatically closes on exception
                         logger.error(
                             f"\n✗ {func.name}: Lambda function name too long: "
                             f"'{lambda_function_name}' "
@@ -935,8 +936,8 @@ def deploy_all(
                             f"   Example: lambda_name: '{base_name[:6]}' in "
                             f"function.yaml"
                         )
-                        failed_functions.append(func.name)
-                        continue
+                        logger.error(f"\nDeployment failed for {func.name}. Stopping.")
+                        sys.exit(1)
 
                     # Get paths
                     handler_file = func.function_path / cloud_config.code_file
@@ -947,11 +948,12 @@ def deploy_all(
                     )
 
                     if not handler_file.exists():
+                        # tqdm automatically closes on exception
                         logger.error(
                             f"\n✗ {func.name}: Handler file not found: {handler_file}"
                         )
-                        failed_functions.append(func.name)
-                        continue
+                        logger.error(f"\nDeployment failed for {func.name}. Stopping.")
+                        sys.exit(1)
 
                     # Get Lambda configuration
                     runtime = cloud_config.config.get("runtime", "python3.11")
@@ -1031,13 +1033,13 @@ def deploy_all(
                 if cloud_config.external_function_template:
                     functions_to_deploy.append(func)
 
-            with click.progressbar(
-                functions_to_deploy,
-                label=f"Creating {len(functions_to_deploy)} external functions",
-                show_pos=True,
-                item_show_func=lambda f: f.name if f else None,
-            ) as bar:
-                for func in bar:
+            # Use tqdm for consistent progress bar style with clouds
+            with tqdm(
+                functions_to_deploy, desc="Creating", ncols=97, unit="fn"
+            ) as pbar:
+                for func in pbar:
+                    # Print function name above the progress bar for clean display
+                    tqdm.write(f"  → {func.name}")
                     try:
                         # Get cloud configuration
                         cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
@@ -1046,11 +1048,12 @@ def deploy_all(
                         template_file = cloud_config.external_function_template
                         sql_template_path = func.function_path / template_file
                         if not sql_template_path.exists():
+                            # tqdm automatically closes on exception
                             logger.error(
-                                f"\n✗ {func.name}: "
+                                f"✗ {func.name}: "
                                 f"Template not found: {sql_template_path}"
                             )
-                            continue
+                            sys.exit(1)
 
                         # Deploy external function
                         deploy_external_function(
@@ -1068,10 +1071,10 @@ def deploy_all(
                         external_success += 1
 
                     except Exception as e:
-                        logger.error(f"\n✗ {func.name}: {e}")
-                        # Fail fast - stop deployment on first error
+                        # tqdm automatically closes on exception
+                        logger.error(f"✗ {func.name}: {e}")
                         logger.error(
-                            f"\nExternal function deployment failed for "
+                            f"External function deployment failed for "
                             f"{func.name}. Stopping."
                         )
                         sys.exit(1)
@@ -1253,6 +1256,7 @@ def remove_all(
             region=aws_region,
             profile=aws_prof,
             rs_lambda_prefix=rs_lambda_prefix,
+            quiet=True,  # Suppress verbose logs during batch removal
             **aws_creds,
         )
 
@@ -1409,13 +1413,11 @@ def remove_all(
         # Phase 2: Delete Lambda functions
         logger.info("=== Phase 2: Deleting Lambda functions ===\n")
 
-        with click.progressbar(
-            to_remove,
-            label=f"Deleting {len(to_remove)} Lambda functions",
-            show_pos=True,
-            item_show_func=lambda f: f.name if f else None,
-        ) as bar:
-            for func in bar:
+        # Use tqdm for consistent progress bar style with clouds
+        with tqdm(to_remove, desc="Deleting", ncols=97, unit="fn") as pbar:
+            for func in pbar:
+                # Print function name above the progress bar for clean display
+                tqdm.write(f"  → {func.name}")
                 try:
                     cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
                     base_name = (
@@ -1513,6 +1515,307 @@ def create_package(
     package_path = builder.create_package(to_include, output_dir, production)
 
     logger.info(f"✓ Package created: {package_path}")
+
+
+@cli.command()
+@click.option(
+    "--include-root",
+    "include_roots",
+    multiple=True,
+    type=click.Path(exists=True, path_type=Path),
+    help="Additional function roots to include (can be specified multiple times)",
+)
+@click.option("--aws-profile", help="AWS profile to use")
+@click.option("--region", default="us-east-1", help="AWS region")
+@click.option("--cloud", default="redshift", help="Cloud platform (default: redshift)")
+@click.option("--modules", help="Comma-separated list of modules to deploy")
+@click.option("--functions", help="Comma-separated list of functions to deploy")
+@click.option(
+    "--diff", is_flag=True, help="Deploy only functions modified in git working tree"
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Show what would be deployed without deploying"
+)
+@click.pass_context
+def deploy_lambdas(
+    ctx,
+    include_roots: tuple,
+    aws_profile: Optional[str],
+    region: str,
+    cloud: str,
+    modules: Optional[str],
+    functions: Optional[str],
+    diff: bool,
+    dry_run: bool,
+):
+    """Deploy only Lambda functions (skip external function creation)"""
+    logger.info("Deploying Lambda functions only")
+
+    # Invoke deploy_all with external functions disabled
+    # We'll temporarily set env vars to skip Redshift connection
+    import os
+
+    original_rs_host = os.environ.get("RS_HOST")
+    os.environ["RS_HOST"] = ""  # Disable external function deployment
+
+    try:
+        ctx.invoke(
+            deploy_all,
+            config=None,
+            include_roots=include_roots,
+            aws_profile=aws_profile,
+            region=region,
+            cloud=cloud,
+            modules=modules,
+            functions=functions,
+            diff=diff,
+            dry_run=dry_run,
+            production=False,
+        )
+    finally:
+        # Restore original value
+        if original_rs_host:
+            os.environ["RS_HOST"] = original_rs_host
+        elif "RS_HOST" in os.environ:
+            del os.environ["RS_HOST"]
+
+
+@cli.command()
+@click.option(
+    "--include-root",
+    "include_roots",
+    multiple=True,
+    type=click.Path(exists=True, path_type=Path),
+    help="Additional function roots to include (can be specified multiple times)",
+)
+@click.option("--cloud", default="redshift", help="Cloud platform (default: redshift)")
+@click.option("--modules", help="Comma-separated list of modules to deploy")
+@click.option("--functions", help="Comma-separated list of functions to deploy")
+@click.option(
+    "--production",
+    is_flag=True,
+    help="Deploy for production (use 'carto' schema instead of prefixed schema)",
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Show what would be deployed without deploying"
+)
+@click.pass_context
+def deploy_functions(
+    ctx,
+    include_roots: tuple,
+    cloud: str,
+    modules: Optional[str],
+    functions: Optional[str],
+    production: bool,
+    dry_run: bool,
+):
+    """Deploy only external functions in Redshift (assumes Lambdas already exist)"""
+    logger.info("Deploying external functions only (Lambdas must already exist)")
+
+    # Load environment configuration
+    load_env_config()
+
+    # Store production flag in context
+    ctx.obj["production"] = production
+
+    # Load from all function roots
+    all_functions = []
+    if include_roots:
+        roots_to_load = list(include_roots)
+    else:
+        roots_to_load = [get_default_function_roots()]
+
+    for root in roots_to_load:
+        loader = CatalogLoader(root)
+        loader.load_catalog()
+        all_functions.extend(loader.get_all_functions())
+
+    # Filter by cloud
+    try:
+        cloud_type = CloudType(cloud.lower())
+    except ValueError:
+        logger.error(
+            f"Invalid cloud type: {cloud}. "
+            f"Valid options: redshift, bigquery, snowflake, databricks"
+        )
+        sys.exit(1)
+
+    to_deploy = [f for f in all_functions if f.supports_cloud(cloud_type)]
+
+    # Apply filters
+    if modules:
+        module_list = [m.strip() for m in modules.split(",")]
+        to_deploy = [f for f in to_deploy if f.module in module_list]
+
+    if functions:
+        function_list = [f.strip() for f in functions.split(",")]
+        to_deploy = [f for f in to_deploy if f.name in function_list]
+
+    # Filter functions that have external function templates
+    to_deploy = [
+        f
+        for f in to_deploy
+        if f.get_cloud_config(CloudType.REDSHIFT).external_function_template
+    ]
+
+    logger.info(f"Deploying {len(to_deploy)} external functions")
+
+    if not to_deploy:
+        logger.warning("No external functions to deploy")
+        return
+
+    # Get Redshift configuration
+    rs_host = get_env_or_default("RS_HOST")
+    rs_password = get_env_or_default("RS_PASSWORD")
+    rs_database = get_env_or_default("RS_DATABASE")
+    rs_prefix = get_env_or_default("RS_PREFIX", "")
+    rs_user = get_env_or_default("RS_USER")
+    rs_lambda_invoke_role = get_env_or_default("RS_LAMBDA_INVOKE_ROLE")
+    rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
+    rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
+
+    # Calculate schema
+    rs_schema_default = "carto"
+    is_production = ctx.obj.get("production", False)
+    if is_production:
+        rs_schema = rs_schema_default
+    else:
+        rs_schema = (
+            f"{rs_prefix}{rs_schema_default}" if rs_prefix else rs_schema_default
+        )
+
+    # Validate configuration
+    if not rs_database or not rs_iam_role_arn:
+        logger.error(
+            "Redshift configuration incomplete. "
+            "Need: RS_DATABASE, RS_LAMBDA_INVOKE_ROLE"
+        )
+        sys.exit(1)
+
+    if not (rs_host and rs_user and rs_password):
+        logger.error(
+            "Redshift connection not configured. " "Need: RS_HOST, RS_USER, RS_PASSWORD"
+        )
+        sys.exit(1)
+
+    if dry_run:
+        logger.info("[DRY RUN] Would create external functions:")
+        for func in to_deploy:
+            logger.info(f"  - {rs_schema}.{func.name.upper()}")
+        return
+
+    # Create schema
+    create_schema_sql = f"CREATE SCHEMA IF NOT EXISTS {rs_schema};"
+    logger.info(f"Ensuring schema exists: {rs_schema}")
+    try:
+        execute_redshift_sql_direct(
+            sql=create_schema_sql,
+            host=rs_host,
+            database=rs_database,
+            user=rs_user,
+            password=rs_password,
+        )
+        logger.info(f"✓ Schema ready: {rs_schema}\n")
+    except Exception as e:
+        logger.error(f"✗ Failed to create schema {rs_schema}: {e}")
+        sys.exit(1)
+
+    # Get AWS configuration
+    aws_region = get_env_or_default("AWS_REGION", "us-east-1")
+    aws_prof = get_env_or_default("AWS_PROFILE", None)
+    aws_creds = get_aws_credentials()
+
+    # Create Lambda deployer to query existing functions
+    deployer = LambdaDeployer(
+        region=aws_region,
+        profile=aws_prof,
+        rs_lambda_prefix=rs_lambda_prefix,
+        quiet=True,  # Suppress verbose logs during batch deployment
+        **aws_creds,
+    )
+
+    # Deploy external functions
+    external_success = 0
+
+    # Use tqdm for consistent progress bar style with clouds
+    with tqdm(to_deploy, desc="Creating", ncols=97, unit="fn") as pbar:
+        for func in pbar:
+            # Print function name above the progress bar for clean display
+            tqdm.write(f"  → {func.name}")
+            try:
+                # Get cloud configuration
+                cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
+
+                # Get Lambda function name
+                base_name = (
+                    cloud_config.lambda_name if cloud_config.lambda_name else func.name
+                )
+                lambda_function_name = f"{rs_lambda_prefix}{base_name}"
+
+                # Get Lambda ARN from existing function
+                try:
+                    lambda_client = deployer.lambda_client
+                    response = lambda_client.get_function(
+                        FunctionName=lambda_function_name
+                    )
+                    lambda_arn = response["Configuration"]["FunctionArn"]
+                    # Strip version number to use $LATEST
+                    if ":" in lambda_arn and lambda_arn.split(":")[-1].isdigit():
+                        lambda_arn = ":".join(lambda_arn.split(":")[:-1])
+                except Exception as e:
+                    # tqdm automatically closes on exception
+                    logger.error(
+                        f"✗ {func.name}: Lambda function not found: "
+                        f"{lambda_function_name}"
+                    )
+                    logger.error(f"  Error: {e}")
+                    logger.error(
+                        "  Make sure to run 'make deploy-lambdas' first to create "
+                        "Lambda functions"
+                    )
+                    sys.exit(1)
+
+                # Get SQL template
+                template_file = cloud_config.external_function_template
+                sql_template_path = func.function_path / template_file
+
+                if not sql_template_path.exists():
+                    # tqdm automatically closes on exception
+                    logger.error(
+                        f"✗ {func.name}: Template not found: {sql_template_path}"
+                    )
+                    sys.exit(1)
+
+                # Deploy external function
+                deploy_external_function(
+                    function_name=func.name,
+                    lambda_arn=lambda_arn,
+                    sql_template_path=sql_template_path,
+                    database=rs_database,
+                    schema=rs_schema,
+                    iam_role_arn=rs_iam_role_arn,
+                    host=rs_host,
+                    user=rs_user,
+                    password=rs_password,
+                )
+
+                external_success += 1
+
+            except Exception as e:
+                # tqdm automatically closes on exception
+                logger.error(f"✗ {func.name}: {e}")
+                logger.error(
+                    f"External function deployment failed for {func.name}. Stopping."
+                )
+                sys.exit(1)
+
+    # Summary
+    separator = "=" * 50
+    logger.info(f"\n{separator}")
+    logger.info("Deployment Summary:")
+    logger.info(separator)
+    logger.info(f"  ✓ External functions created: {external_success}/{len(to_deploy)}")
+    logger.info(separator)
 
 
 if __name__ == "__main__":

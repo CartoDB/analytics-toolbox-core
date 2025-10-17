@@ -40,7 +40,7 @@ NC := \033[0m # No Color
 
 .SILENT:
 
-.PHONY: help lint test test-unit test-integration list validate deploy remove clean create-package install-test-deps update-dev-requirements
+.PHONY: help lint test test-unit test-integration list validate deploy deploy-lambdas deploy-functions remove clean create-package install-test-deps update-dev-requirements
 
 help:
 	echo "Available targets:"
@@ -52,7 +52,9 @@ help:
 	echo "  test-integration        - Run integration tests only"
 	echo "  list                    - List available functions"
 	echo "  validate                - Validate function definitions"
-	echo "  deploy                  - Deploy functions to cloud"
+	echo "  deploy                  - Deploy functions to cloud (Lambdas + external functions)"
+	echo "  deploy-lambdas          - Deploy only Lambda functions"
+	echo "  deploy-functions        - Deploy only external functions (Lambdas must exist)"
 	echo "  remove                  - Remove deployed functions"
 	echo "  create-package          - Create distribution package"
 	echo "  install-test-deps       - Install function dependencies for testing"
@@ -136,6 +138,24 @@ deploy: venv
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
 		$(if $(diff),--diff,) \
+		$(if $(dry-run),--dry-run,) \
+		$(EXTRA_CLI_ARGS)
+
+deploy-lambdas: venv
+	echo "Deploying Lambda functions only to $(cloud)..."
+	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py deploy-lambdas \
+		$(if $(modules),--modules=$(modules),) \
+		$(if $(functions),--functions=$(functions),) \
+		$(if $(diff),--diff,) \
+		$(if $(dry-run),--dry-run,) \
+		$(EXTRA_CLI_ARGS)
+
+deploy-functions: venv
+	echo "Deploying external functions only to $(cloud)..."
+	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py deploy-functions \
+		$(if $(modules),--modules=$(modules),) \
+		$(if $(functions),--functions=$(functions),) \
+		$(if $(production),--production,) \
 		$(if $(dry-run),--dry-run,) \
 		$(EXTRA_CLI_ARGS)
 

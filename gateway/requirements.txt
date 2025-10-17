@@ -9,6 +9,9 @@ jsonschema>=4.17.0
 # CLI framework
 click>=8.1.0
 
+# Progress bars (same as clouds for consistent visuals)
+tqdm>=4.65.0
+
 # AWS SDK
 boto3>=1.26.0
 botocore>=1.29.0

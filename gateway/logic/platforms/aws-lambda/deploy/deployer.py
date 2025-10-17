@@ -27,6 +27,7 @@ class LambdaDeployer:
         session_token: Optional[str] = None,
         role_arn: Optional[str] = None,
         rs_lambda_prefix: str = "carto-at-",
+        quiet: bool = False,
     ):
         """
         Initialize Lambda deployer with flexible credential options
@@ -46,8 +47,10 @@ class LambdaDeployer:
             session_token: AWS session token (for temporary credentials)
             role_arn: IAM role ARN to assume
             rs_lambda_prefix: Lambda function prefix (default: "carto-at-")
+            quiet: Suppress verbose output for batch operations
         """
         self.rs_lambda_prefix = rs_lambda_prefix
+        self.quiet = quiet
         session_kwargs = {"region_name": region}
 
         # Method 1: Explicit credentials (highest priority)
@@ -190,12 +193,14 @@ class LambdaDeployer:
                     rel_path = py_file.relative_to(lib_src)
                     arcname = Path("lib") / lib_name / rel_path
                     zf.write(py_file, str(arcname))
-                print(f"  ✓ Added shared library: {lib_name}/")
+                if not self.quiet:
+                    print(f"  ✓ Added shared library: {lib_name}/")
             elif lib_src.is_file():
                 # Copy single file to lib/<filename>
                 arcname = Path("lib") / lib_src.name
                 zf.write(lib_src, str(arcname))
-                print(f"  ✓ Added shared library: {lib_src.name}")
+                if not self.quiet:
+                    print(f"  ✓ Added shared library: {lib_src.name}")
 
     def create_deployment_package(
         self,
@@ -255,7 +260,8 @@ class LambdaDeployer:
                 with tempfile.TemporaryDirectory() as temp_dir:
                     temp_path = Path(temp_dir)
 
-                    print(f"\nInstalling dependencies from {requirements_file}...")
+                    if not self.quiet:
+                        print(f"\nInstalling dependencies from {requirements_file}...")
                     # Install dependencies using pip with Lambda-compatible flags
                     # --platform: Target Linux x86_64 architecture
                     # --only-binary: Use pre-built wheels only
@@ -310,7 +316,8 @@ class LambdaDeployer:
 
         file_size = output_zip.stat().st_size
         size_mb = file_size / 1024 / 1024
-        print(f"  ✓ Package: {output_zip.name} ({size_mb:.2f} MB)")
+        if not self.quiet:
+            print(f"  ✓ Package: {output_zip.name} ({size_mb:.2f} MB)")
         return output_zip
 
     def get_function_code_hash(self, zip_path: Path) -> str:
@@ -678,7 +685,8 @@ class LambdaDeployer:
         try:
             if self.function_exists(function_name):
                 # Update existing function
-                print(f"Updating Lambda function: {function_name}")
+                if not self.quiet:
+                    print(f"Updating Lambda function: {function_name}")
                 response = self.update_function_code(function_name, zip_path)
 
                 # Update configuration if requested and if it differs
@@ -693,7 +701,8 @@ class LambdaDeployer:
 
                     if needs_update:
                         # Wait for code update to complete before updating configuration
-                        print("Waiting for code update to complete...")
+                        if not self.quiet:
+                            print("Waiting for code update to complete...")
                         self.wait_for_function_active(function_name)
                         config_response = self.update_function_configuration(
                             function_name,
@@ -703,14 +712,17 @@ class LambdaDeployer:
                             handler=handler,
                             runtime=runtime,
                         )
-                        print(f"✓ Updated configuration for {function_name}")
+                        if not self.quiet:
+                            print(f"✓ Updated configuration for {function_name}")
                         return config_response
                     else:
-                        print("✓ Configuration unchanged, skipping config update")
+                        if not self.quiet:
+                            print("✓ Configuration unchanged, skipping config update")
                 return response
             else:
                 # Create new function
-                print(f"Creating Lambda function: {function_name}")
+                if not self.quiet:
+                    print(f"Creating Lambda function: {function_name}")
                 response = self.create_function(
                     function_name,
                     zip_path,
@@ -722,7 +734,8 @@ class LambdaDeployer:
                     environment_variables=environment_variables,
                     description=description,
                 )
-                print(f"✓ Created Lambda function: {function_name}")
+                if not self.quiet:
+                    print(f"✓ Created Lambda function: {function_name}")
                 return response
         finally:
             # Clean up temporary zip file
@@ -738,9 +751,11 @@ class LambdaDeployer:
         """
         try:
             self.lambda_client.delete_function(FunctionName=function_name)
-            print(f"✓ Deleted Lambda function: {function_name}")
+            if not self.quiet:
+                print(f"✓ Deleted Lambda function: {function_name}")
         except self.lambda_client.exceptions.ResourceNotFoundException:
-            print(f"Function {function_name} not found, skipping deletion")
+            if not self.quiet:
+                print(f"Function {function_name} not found, skipping deletion")
 
     def get_function_arn(self, function_name: str) -> Optional[str]:
         """
@@ -805,12 +820,15 @@ class LambdaDeployer:
                 Action="lambda:InvokeFunction",
                 Principal=principal,
             )
-            print(f"✓ Added invoke permission for Redshift role to {function_name}")
+            if not self.quiet:
+                print(f"✓ Added invoke permission for Redshift role to {function_name}")
             return True
         except self.lambda_client.exceptions.ResourceConflictException:
             # Permission already exists
-            print(f"  Permission already exists for {function_name}")
+            if not self.quiet:
+                print(f"  Permission already exists for {function_name}")
             return False
         except Exception as e:
-            print(f"⚠ Could not add permission to {function_name}: {e}")
+            if not self.quiet:
+                print(f"⚠ Could not add permission to {function_name}: {e}")
             return False
