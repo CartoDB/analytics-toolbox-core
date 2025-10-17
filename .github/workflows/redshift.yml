@@ -44,10 +44,10 @@ jobs:
         uses: technote-space/get-diff-action@v4
       - name: Generate deployment prefix
         run: |
-          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-8)
-          SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 7)
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-4)
+          SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 4)
           echo "RS_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
-          echo "RS_LAMBDA_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}-" >> $GITHUB_ENV
+          echo "RS_LAMBDA_PREFIX=ci${SHORT_SHA}${SHORT_RUN}-" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
