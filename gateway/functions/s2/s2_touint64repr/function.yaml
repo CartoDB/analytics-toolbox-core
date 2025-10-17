@@ -1,5 +1,4 @@
 name: s2_touint64repr
-description: Convert S2 cell ID to UINT64 string representation
 module: s2
 clouds:
   redshift:

@@ -27,19 +27,25 @@ def process_quadint_fromlonglat_row(row):
     if not row or len(row) < 3:
         raise Exception("NULL argument passed to UDF")
 
-    longitude = row[0]
-    latitude = row[1]
+    longitude_str = row[0]
+    latitude_str = row[1]
     resolution = row[2]
 
-    if longitude is None or latitude is None or resolution is None:
+    if longitude_str is None or latitude_str is None or resolution is None:
         raise Exception("NULL argument passed to UDF")
 
     if resolution < 0 or resolution > 29:
         raise Exception("Wrong zoom")
 
+    # Convert VARCHAR to float - preserves full precision
+    # that would be lost in FLOAT8->JSON
+    longitude = float(longitude_str)
+    latitude = float(latitude_str)
+
     lat = clip_number(latitude, -85.05, 85.05)
     tile = mercantile.tile(longitude, lat, resolution)
-    return quadint_from_zxy(resolution, tile.x, tile.y)
+    result = quadint_from_zxy(resolution, tile.x, tile.y)
+    return result
 
 
 # Export as lambda_handler for AWS Lambda

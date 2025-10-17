@@ -1,5 +1,4 @@
 name: quadkey_bbox
-description: Get the bounding box of a quadkey string as [west, south, east, north]
 module: quadkey
 clouds:
   redshift:

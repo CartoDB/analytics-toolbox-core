@@ -17,10 +17,26 @@ def process_s2_polyfill_bbox_row(row):
     if row is None or len(row) < 4:
         raise Exception("Invalid row structure")
 
-    min_lng, max_lng, min_lat, max_lat = row[0], row[1], row[2], row[3]
+    min_lng_str, max_lng_str, min_lat_str, max_lat_str = (
+        row[0],
+        row[1],
+        row[2],
+        row[3],
+    )
 
-    if min_lng is None or max_lng is None or min_lat is None or max_lat is None:
+    if (
+        min_lng_str is None
+        or max_lng_str is None
+        or min_lat_str is None
+        or max_lat_str is None
+    ):
         raise Exception("NULL argument passed to UDF")
+
+    # Convert VARCHAR to float - preserves precision
+    min_lng = float(min_lng_str)
+    max_lng = float(max_lng_str)
+    min_lat = float(min_lat_str)
+    max_lat = float(max_lat_str)
 
     # Check if resolution parameters are provided
     if len(row) >= 6:
@@ -29,17 +45,15 @@ def process_s2_polyfill_bbox_row(row):
         if min_res is None or max_res is None:
             raise Exception("NULL argument passed to UDF")
         return polyfill_bbox(
-            float(min_lng),
-            float(max_lng),
-            float(min_lat),
-            float(max_lat),
+            min_lng,
+            max_lng,
+            min_lat,
+            max_lat,
             int(min_res),
             int(max_res),
         )
     else:
-        return polyfill_bbox(
-            float(min_lng), float(max_lng), float(min_lat), float(max_lat)
-        )
+        return polyfill_bbox(min_lng, max_lng, min_lat, max_lat)
 
 
 lambda_handler = process_s2_polyfill_bbox_row

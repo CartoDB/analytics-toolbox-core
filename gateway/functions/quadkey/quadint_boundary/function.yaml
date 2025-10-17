@@ -1,5 +1,4 @@
 name: quadint_boundary
-description: Get the boundary geometry of a quadint as GeoJSON
 module: quadkey
 clouds:
   redshift:

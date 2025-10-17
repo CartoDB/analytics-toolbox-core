@@ -1,5 +1,4 @@
 name: s2_fromlonglat
-description: Convert longitude, latitude, and resolution to S2 cell ID
 module: s2
 clouds:
   redshift:

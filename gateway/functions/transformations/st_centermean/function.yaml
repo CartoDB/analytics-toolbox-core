@@ -1,5 +1,4 @@
 name: st_centermean
-description: Calculate the mean center of a geometry
 module: transformations
 clouds:
   redshift:

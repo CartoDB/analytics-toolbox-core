@@ -2,13 +2,14 @@
 -- Copyright (C) 2025 CARTO
 ----------------------------
 
+-- Internal function: Uses VARCHAR for FLOAT8 to preserve precision
 CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__MAKEELLIPSE(
-    center VARCHAR(MAX),
-    xSemiAxis FLOAT8,
-    ySemiAxis FLOAT8,
-    angle FLOAT8,
-    units VARCHAR(10),
-    steps INT
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(10),
+    INT
 )
 RETURNS VARCHAR(MAX)
 STABLE

@@ -16,12 +16,16 @@ def process_s2_fromlonglat_row(row):
     if row is None or len(row) < 3:
         raise Exception("Invalid row structure")
 
-    longitude, latitude, resolution = row[0], row[1], row[2]
+    longitude_str, latitude_str, resolution = row[0], row[1], row[2]
 
-    if longitude is None or latitude is None or resolution is None:
+    if longitude_str is None or latitude_str is None or resolution is None:
         raise Exception("NULL argument passed to UDF")
 
-    return longlat_as_int64_id(float(longitude), float(latitude), int(resolution))
+    # Convert VARCHAR to float - preserves precision
+    longitude = float(longitude_str)
+    latitude = float(latitude_str)
+
+    return longlat_as_int64_id(longitude, latitude, int(resolution))
 
 
 lambda_handler = process_s2_fromlonglat_row

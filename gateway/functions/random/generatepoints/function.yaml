@@ -1,5 +1,4 @@
 name: generatepoints
-description: Generates a specified number of random points within a polygon
 module: random
 clouds:
   redshift:

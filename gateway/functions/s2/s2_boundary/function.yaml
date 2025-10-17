@@ -1,5 +1,4 @@
 name: s2_boundary
-description: Get the boundary of an S2 cell as WKT polygon
 module: s2
 clouds:
   redshift:

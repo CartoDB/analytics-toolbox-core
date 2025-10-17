@@ -1,5 +1,4 @@
 name: quadint_toquadkey
-description: Convert a quadint to a quadkey string
 module: quadkey
 clouds:
   redshift:

@@ -1,5 +1,4 @@
 name: quadint_polyfill
-description: Convert a GeoJSON geometry into a set of quadints at the specified resolution
 module: quadkey
 clouds:
   redshift:

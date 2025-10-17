@@ -1,5 +1,4 @@
 name: s2_tohilbertquadkey
-description: Convert S2 cell ID to Hilbert quadkey string
 module: s2
 clouds:
   redshift:

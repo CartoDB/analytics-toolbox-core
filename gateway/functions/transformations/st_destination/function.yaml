@@ -1,5 +1,4 @@
 name: st_destination
-description: Calculate a destination point given distance, bearing, and units from an origin point
 module: transformations
 clouds:
   redshift:

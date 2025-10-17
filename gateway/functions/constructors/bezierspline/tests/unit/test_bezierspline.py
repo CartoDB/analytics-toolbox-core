@@ -126,7 +126,7 @@ class TestLambdaHandler:
     def test_single_valid_row(self):
         """Test handler with single valid row"""
         line_json = '{"type":"LineString","coordinates":[[0,0],[1,1],[2,0]]}'
-        event = {"arguments": [[line_json, 10000, 0.85]], "num_records": 1}
+        event = {"arguments": [[line_json, 10000, "0.85"]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -151,7 +151,7 @@ class TestLambdaHandler:
 
     def test_null_linestring(self):
         """Test handler with null linestring"""
-        event = {"arguments": [[None, 10000, 0.85]], "num_records": 1}
+        event = {"arguments": [[None, 10000, "0.85"]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -161,7 +161,7 @@ class TestLambdaHandler:
     def test_null_resolution(self):
         """Test handler with null resolution"""
         line_json = '{"type":"LineString","coordinates":[[0,0],[1,1],[2,0]]}'
-        event = {"arguments": [[line_json, None, 0.85]], "num_records": 1}
+        event = {"arguments": [[line_json, None, "0.85"]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -184,9 +184,9 @@ class TestLambdaHandler:
         line2 = '{"type":"LineString","coordinates":[[0,0],[5,5]]}'
         event = {
             "arguments": [
-                [line1, 10000, 0.85],
-                [line2, 5000, 0.5],
-                [None, 10000, 0.85],
+                [line1, 10000, "0.85"],
+                [line2, 5000, "0.5"],
+                [None, 10000, "0.85"],
             ],
             "num_records": 3,
         }

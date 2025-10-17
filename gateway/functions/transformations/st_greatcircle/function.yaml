@@ -1,5 +1,4 @@
 name: st_greatcircle
-description: Calculate a great circle line between two points
 module: transformations
 clouds:
   redshift:

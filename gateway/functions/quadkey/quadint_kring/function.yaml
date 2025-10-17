@@ -1,5 +1,4 @@
 name: quadint_kring
-description: Get all quadints within a square ring of the specified size around the origin
 module: quadkey
 clouds:
   redshift:

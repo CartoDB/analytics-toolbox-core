@@ -1,5 +1,4 @@
 name: quadint_fromlonglat
-description: Convert longitude, latitude coordinates to a quadint at the specified resolution
 module: quadkey
 clouds:
   redshift:

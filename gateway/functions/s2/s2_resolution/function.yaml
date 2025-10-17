@@ -1,5 +1,4 @@
 name: s2_resolution
-description: Get the resolution (level) of an S2 cell
 module: s2
 clouds:
   redshift:

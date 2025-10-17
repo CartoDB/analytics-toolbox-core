@@ -1,5 +1,4 @@
 name: quadint_bbox
-description: Get the bounding box of a quadint as [west, south, east, north]
 module: quadkey
 clouds:
   redshift:

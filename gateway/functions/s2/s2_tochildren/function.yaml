@@ -1,5 +1,4 @@
 name: s2_tochildren
-description: Get the children S2 cells at a specific resolution
 module: s2
 clouds:
   redshift:

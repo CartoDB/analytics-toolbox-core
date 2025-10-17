@@ -1,5 +1,4 @@
 name: quadint_kring_distances
-description: Get all quadints within a square ring with their Chebyshev distances from the origin
 module: quadkey
 clouds:
   redshift:

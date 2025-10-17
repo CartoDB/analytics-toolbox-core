@@ -52,14 +52,16 @@ def process_bezierspline_row(row):
 
     # Get sharpness parameter (with default for missing, None for NULL)
     if len(row) > 2:
-        sharpness = row[2]
-        if sharpness is None:
+        sharpness_str = row[2]
+        if sharpness_str is None:
             return None  # NULL sharpness -> NULL result
+        # Convert VARCHAR to float - preserves precision
+        sharpness = float(sharpness_str)
     else:
         sharpness = 0.85  # Missing parameter -> default
 
     # Process the bezier spline
-    result_json = bezier_spline(str(linestring), int(resolution), float(sharpness))
+    result_json = bezier_spline(str(linestring), int(resolution), sharpness)
     return result_json
 
 

@@ -1,5 +1,4 @@
 name: st_centermedian
-description: Calculate the median center (geometric median) of a geometry
 module: transformations
 clouds:
   redshift:

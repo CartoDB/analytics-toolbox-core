@@ -184,7 +184,7 @@ class TestLambdaHandler:
         """Test handler with single valid row"""
         center_json = '{"type":"Point","coordinates":[0,0]}'
         event = {
-            "arguments": [[center_json, 10, 5, 0, "kilometers", 64]],
+            "arguments": [[center_json, "10", "5", "0", "kilometers", 64]],
             "num_records": 1,
         }
         result_str = lambda_handler(event)
@@ -202,7 +202,7 @@ class TestLambdaHandler:
     def test_with_default_parameters(self):
         """Test handler with default angle, units, and steps"""
         center_json = '{"type":"Point","coordinates":[0,0]}'
-        event = {"arguments": [[center_json, 10, 5]], "num_records": 1}
+        event = {"arguments": [[center_json, "10", "5"]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -214,14 +214,17 @@ class TestLambdaHandler:
         center_json = '{"type":"Point","coordinates":[0,0]}'
 
         # With angle only
-        event = {"arguments": [[center_json, 10, 5, 45]], "num_records": 1}
+        event = {"arguments": [[center_json, "10", "5", "45"]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
         assert result["success"] is True
         assert result["results"][0] is not None
 
         # With angle and units
-        event = {"arguments": [[center_json, 10, 5, 45, "miles"]], "num_records": 1}
+        event = {
+            "arguments": [[center_json, "10", "5", "45", "miles"]],
+            "num_records": 1,
+        }
         result_str = lambda_handler(event)
         result = json.loads(result_str)
         assert result["success"] is True
@@ -229,7 +232,10 @@ class TestLambdaHandler:
 
     def test_null_center(self):
         """Test handler with null center"""
-        event = {"arguments": [[None, 10, 5, 0, "kilometers", 64]], "num_records": 1}
+        event = {
+            "arguments": [[None, "10", "5", "0", "kilometers", 64]],
+            "num_records": 1,
+        }
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -241,14 +247,14 @@ class TestLambdaHandler:
         center_json = '{"type":"Point","coordinates":[0,0]}'
 
         # Null x axis
-        event = {"arguments": [[center_json, None, 5]], "num_records": 1}
+        event = {"arguments": [[center_json, None, "5"]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
         assert result["success"] is True
         assert result["results"][0] is None
 
         # Null y axis
-        event = {"arguments": [[center_json, 10, None]], "num_records": 1}
+        event = {"arguments": [[center_json, "10", None]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
         assert result["success"] is True
@@ -258,7 +264,7 @@ class TestLambdaHandler:
         """Test handler with null angle"""
         center_json = '{"type":"Point","coordinates":[0,0]}'
         event = {
-            "arguments": [[center_json, 10, 5, None, "kilometers", 64]],
+            "arguments": [[center_json, "10", "5", None, "kilometers", 64]],
             "num_records": 1,
         }
         result_str = lambda_handler(event)
@@ -272,9 +278,9 @@ class TestLambdaHandler:
         center2 = '{"type":"Point","coordinates":[-74,40]}'
         event = {
             "arguments": [
-                [center1, 10, 5, 0, "kilometers", 64],
-                [center2, 20, 10, 45, "miles", 32],
-                [None, 10, 5, 0, "kilometers", 64],
+                [center1, "10", "5", "0", "kilometers", 64],
+                [center2, "20", "10", "45", "miles", 32],
+                [None, "10", "5", "0", "kilometers", 64],
             ],
             "num_records": 3,
         }
@@ -304,7 +310,7 @@ class TestLambdaHandler:
         """Test handler with invalid units fails batch (FAIL_FAST mode)"""
         center_json = '{"type":"Point","coordinates":[0,0]}'
         event = {
-            "arguments": [[center_json, 10, 5, 0, "invalid_unit", 64]],
+            "arguments": [[center_json, "10", "5", "0", "invalid_unit", 64]],
             "num_records": 1,
         }
         result_str = lambda_handler(event)

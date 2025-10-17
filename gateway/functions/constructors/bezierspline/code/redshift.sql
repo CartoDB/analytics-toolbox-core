@@ -2,8 +2,9 @@
 -- Copyright (C) 2025 CARTO
 ----------------------------
 
+-- Internal function: Uses VARCHAR for FLOAT8 to preserve precision
 CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__BEZIERSPLINE
-(linestring VARCHAR(MAX), resolution INT, sharpness FLOAT8)
+(VARCHAR(MAX), INT, VARCHAR(MAX))
 RETURNS VARCHAR(MAX)
 STABLE
 LAMBDA '@@LAMBDA_ARN@@'

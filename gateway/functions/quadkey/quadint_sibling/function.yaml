@@ -1,5 +1,4 @@
 name: quadint_sibling
-description: Get the sibling quadint in the specified direction (left, right, up, down)
 module: quadkey
 clouds:
   redshift:

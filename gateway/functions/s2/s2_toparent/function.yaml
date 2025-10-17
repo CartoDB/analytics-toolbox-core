@@ -1,5 +1,4 @@
 name: s2_toparent
-description: Get the parent S2 cell at a specific resolution
 module: s2
 clouds:
   redshift:

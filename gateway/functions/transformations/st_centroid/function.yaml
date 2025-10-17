@@ -1,5 +1,4 @@
 name: st_centroid
-description: Calculate the centroid of a geometry
 module: transformations
 clouds:
   redshift:

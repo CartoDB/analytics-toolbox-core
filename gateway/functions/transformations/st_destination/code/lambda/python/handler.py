@@ -29,12 +29,16 @@ def process_st_destination_row(row):
         return None
 
     geom = row[0]
-    distance = row[1]
-    bearing = row[2]
+    distance_str = row[1]
+    bearing_str = row[2]
 
     # Check for required NULL parameters
-    if geom is None or distance is None or bearing is None:
+    if geom is None or distance_str is None or bearing_str is None:
         return None
+
+    # Convert VARCHAR to float - preserves precision
+    distance = float(distance_str)
+    bearing = float(bearing_str)
 
     # Handle units parameter: use default if not provided,
     # but return None if explicitly NULL
@@ -49,7 +53,7 @@ def process_st_destination_row(row):
     geojson_geom = parse_geojson_with_precision(geom)
 
     # Calculate destination
-    result = destination(geojson_geom, float(distance), float(bearing), str(units))
+    result = destination(geojson_geom, distance, bearing, str(units))
 
     # Convert result to WKT
     geojson_str = str(result)

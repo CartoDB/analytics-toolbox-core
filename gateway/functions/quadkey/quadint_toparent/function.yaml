@@ -1,5 +1,4 @@
 name: quadint_toparent
-description: Get the parent quadint at the specified resolution
 module: quadkey
 clouds:
   redshift:

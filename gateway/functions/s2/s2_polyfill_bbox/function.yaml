@@ -1,5 +1,4 @@
 name: s2_polyfill_bbox
-description: Polyfill a bounding box with S2 cells
 module: s2
 clouds:
   redshift:

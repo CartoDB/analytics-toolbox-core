@@ -2,52 +2,70 @@
 -- Copyright (C) 2025 CARTO
 --------------------------------
 
-CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__S2_POLYFILL_BBOX(
-    min_longitude FLOAT8,
-    max_longitude FLOAT8,
-    min_latitude FLOAT8,
-    max_latitude FLOAT8,
-    min_resolution INT4,
-    max_resolution INT4
+-- Internal functions: Use VARCHAR for FLOAT8 to preserve precision
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__S2_POLYFILL_BBOX_INTERNAL(
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    INT4,
+    INT4
 )
 RETURNS VARCHAR(MAX)
 STABLE
 LAMBDA '@@LAMBDA_ARN@@'
 IAM_ROLE '@@IAM_ROLE_ARN@@';
 
-CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__S2_POLYFILL_BBOX(
-    min_longitude FLOAT8,
-    max_longitude FLOAT8,
-    min_latitude FLOAT8,
-    max_latitude FLOAT8
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__S2_POLYFILL_BBOX_INTERNAL(
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(MAX),
+    VARCHAR(MAX)
 )
 RETURNS VARCHAR(MAX)
 STABLE
 LAMBDA '@@LAMBDA_ARN@@'
 IAM_ROLE '@@IAM_ROLE_ARN@@';
 
+-- Public functions: Convert FLOAT8 to VARCHAR and parse JSON result
 CREATE OR REPLACE FUNCTION @@SCHEMA@@.S2_POLYFILL_BBOX(
-    min_longitude FLOAT8,
-    max_longitude FLOAT8,
-    min_latitude FLOAT8,
-    max_latitude FLOAT8,
-    min_resolution INT4,
-    max_resolution INT4
+    FLOAT8,
+    FLOAT8,
+    FLOAT8,
+    FLOAT8,
+    INT4,
+    INT4
 )
 RETURNS SUPER
 STABLE
 AS $$
-    SELECT json_parse(@@SCHEMA@@.__S2_POLYFILL_BBOX($1, $2, $3, $4, $5, $6))
+    SELECT json_parse(
+        @@SCHEMA@@.__S2_POLYFILL_BBOX_INTERNAL(
+            CAST($1 AS VARCHAR(MAX)),
+            CAST($2 AS VARCHAR(MAX)),
+            CAST($3 AS VARCHAR(MAX)),
+            CAST($4 AS VARCHAR(MAX)),
+            $5,
+            $6
+        )
+    )
 $$ LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION @@SCHEMA@@.S2_POLYFILL_BBOX(
-    min_longitude FLOAT8,
-    max_longitude FLOAT8,
-    min_latitude FLOAT8,
-    max_latitude FLOAT8
+    FLOAT8,
+    FLOAT8,
+    FLOAT8,
+    FLOAT8
 )
 RETURNS SUPER
 STABLE
 AS $$
-    SELECT json_parse(@@SCHEMA@@.__S2_POLYFILL_BBOX($1, $2, $3, $4))
+    SELECT json_parse(
+        @@SCHEMA@@.__S2_POLYFILL_BBOX_INTERNAL(
+            CAST($1 AS VARCHAR(MAX)),
+            CAST($2 AS VARCHAR(MAX)),
+            CAST($3 AS VARCHAR(MAX)),
+            CAST($4 AS VARCHAR(MAX))
+        )
+    )
 $$ LANGUAGE sql;

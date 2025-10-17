@@ -13,7 +13,7 @@ class TestLambdaHandler:
 
     def test_quadint_fromlonglat_basic(self):
         """Test basic quadint from lon/lat conversion"""
-        event = {"arguments": [[0.0, 0.0, 5]], "num_records": 1}
+        event = {"arguments": [["0.0", "0.0", 5]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -25,7 +25,7 @@ class TestLambdaHandler:
     def test_quadint_fromlonglat_different_resolutions(self):
         """Test at different resolutions"""
         event = {
-            "arguments": [[-45.0, 45.0, 10], [-45.0, 45.0, 15]],
+            "arguments": [["-45.0", "45.0", 10], ["-45.0", "45.0", 15]],
             "num_records": 2,
         }
         result_str = lambda_handler(event)
@@ -38,7 +38,10 @@ class TestLambdaHandler:
 
     def test_quadint_fromlonglat_clipping(self):
         """Test latitude clipping at poles"""
-        event = {"arguments": [[0.0, 85.0, 5], [0.0, 90.0, 5]], "num_records": 2}
+        event = {
+            "arguments": [["0.0", "85.0", 5], ["0.0", "90.0", 5]],
+            "num_records": 2,
+        }
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -50,7 +53,7 @@ class TestLambdaHandler:
 
     def test_quadint_fromlonglat_null(self):
         """Test NULL input handling"""
-        event = {"arguments": [[None, 0.0, 5]], "num_records": 1}
+        event = {"arguments": [[None, "0.0", 5]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
@@ -59,14 +62,14 @@ class TestLambdaHandler:
 
     def test_quadint_fromlonglat_invalid_zoom(self):
         """Test invalid zoom level"""
-        event = {"arguments": [[0.0, 0.0, -1]], "num_records": 1}
+        event = {"arguments": [["0.0", "0.0", -1]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 
         assert result["success"] is False
         assert "Wrong zoom" in result["error_msg"]
 
-        event = {"arguments": [[0.0, 0.0, 30]], "num_records": 1}
+        event = {"arguments": [["0.0", "0.0", 30]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
 

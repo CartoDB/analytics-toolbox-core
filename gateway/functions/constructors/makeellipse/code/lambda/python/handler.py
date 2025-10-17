@@ -39,18 +39,23 @@ def process_makeellipse_row(row):
         return None
 
     center = row[0]
-    x_semi_axis = row[1]
-    y_semi_axis = row[2]
+    x_semi_axis_str = row[1]
+    y_semi_axis_str = row[2]
 
     # Handle null required inputs
-    if center is None or x_semi_axis is None or y_semi_axis is None:
+    if center is None or x_semi_axis_str is None or y_semi_axis_str is None:
         return None
+
+    # Convert VARCHAR to float - preserves precision
+    x_semi_axis = float(x_semi_axis_str)
+    y_semi_axis = float(y_semi_axis_str)
 
     # Get angle parameter (with default for missing, None for NULL)
     if len(row) > 3:
-        angle = row[3]
-        if angle is None:
+        angle_str = row[3]
+        if angle_str is None:
             return None  # NULL angle -> NULL result
+        angle = float(angle_str)
     else:
         angle = 0  # Missing parameter -> default
 
@@ -68,7 +73,7 @@ def process_makeellipse_row(row):
 
     # Prepare options
     geom_options = {
-        "angle": float(angle),
+        "angle": angle,
         "units": str(units),
         "steps": int(steps),
     }
@@ -76,8 +81,8 @@ def process_makeellipse_row(row):
     # Process the ellipse
     result_json = ellipse(
         center=str(center),
-        x_semi_axis=float(x_semi_axis),
-        y_semi_axis=float(y_semi_axis),
+        x_semi_axis=x_semi_axis,
+        y_semi_axis=y_semi_axis,
         options=geom_options,
     )
     return result_json

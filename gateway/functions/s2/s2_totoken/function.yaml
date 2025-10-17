@@ -1,5 +1,4 @@
 name: s2_totoken
-description: Convert S2 cell ID to token string
 module: s2
 clouds:
   redshift:

@@ -1,5 +1,4 @@
 name: quadint_tochildren
-description: Get all children quadints at the specified resolution
 module: quadkey
 clouds:
   redshift:
