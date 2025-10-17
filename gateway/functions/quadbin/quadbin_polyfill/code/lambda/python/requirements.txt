@@ -1,6 +1,0 @@
-# Requirements for QUADBIN_POLYFILL Lambda function
-# Add any Python dependencies needed for this function
-
-# Example dependencies (uncomment as needed):
-# shapely==2.0.2
-# numpy==1.24.3

@@ -1,0 +1,20 @@
+--------------------------------
+-- Copyright (C) 2025 CARTO
+--------------------------------
+
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__QUADKEY_BBOX_INTERNAL
+(VARCHAR(MAX))
+-- (quadkey)
+RETURNS VARCHAR(MAX)
+STABLE
+LAMBDA '@@LAMBDA_ARN@@'
+IAM_ROLE '@@IAM_ROLE_ARN@@';
+
+CREATE OR REPLACE FUNCTION @@SCHEMA@@.__QUADKEY_BBOX
+(VARCHAR(MAX))
+-- (quadkey)
+RETURNS SUPER
+STABLE
+AS $$
+    SELECT json_parse(@@SCHEMA@@.__QUADKEY_BBOX_INTERNAL($1))
+$$ LANGUAGE sql;

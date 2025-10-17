@@ -1,0 +1,20 @@
+--------------------------------
+-- Copyright (C) 2025 CARTO
+--------------------------------
+
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__QUADINT_BBOX
+(BIGINT)
+-- (quadint)
+RETURNS VARCHAR(MAX)
+STABLE
+LAMBDA '@@LAMBDA_ARN@@'
+IAM_ROLE '@@IAM_ROLE_ARN@@';
+
+CREATE OR REPLACE FUNCTION @@SCHEMA@@.QUADINT_BBOX
+(BIGINT)
+-- (quadint)
+RETURNS SUPER
+STABLE
+AS $$
+    SELECT json_parse(@@SCHEMA@@.__QUADINT_BBOX($1))
+$$ LANGUAGE sql;

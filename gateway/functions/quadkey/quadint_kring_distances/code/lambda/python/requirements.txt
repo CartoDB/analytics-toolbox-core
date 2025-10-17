@@ -1,0 +1,1 @@
+# No external dependencies - uses shared quadkey library
