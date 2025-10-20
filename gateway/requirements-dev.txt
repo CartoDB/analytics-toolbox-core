@@ -27,7 +27,13 @@ boto3-stubs[lambda,iam,s3]>=1.26.0
 
 # Function dependencies needed for unit testing
 # These allow tests to import function code without installing each function's requirements
-geojson==3.1.0  # Used by: bezierspline, clusterkmeans, clusterkmeanstable, delaunaygeneric, makeellipse, voronoigeneric (redshift)
-numpy==1.26.4  # Used by: clusterkmeans, clusterkmeanstable, delaunaygeneric, voronoigeneric (redshift)
+geojson==3.1.0  # Used by: bezierspline, clusterkmeans, clusterkmeanstable, delaunaygeneric, generatepoints, makeellipse, st_centermean, st_centermedian, st_centroid, st_destination, st_greatcircle, voronoigeneric (redshift)
+mercantile==1.2.1  # Used by: quadint_bbox, quadint_boundary, quadint_fromlonglat, quadint_fromquadkey, quadint_polyfill, quadint_toquadkey, quadkey_bbox (redshift)
+# WARNING: Version conflict for numpy: {'==1.24.3', '==1.26.4'}
+# numpy  # Used by: clusterkmeans, clusterkmeanstable, delaunaygeneric, generatepoints, quadbin_toquadkey, st_greatcircle, voronoigeneric (redshift)
+numpy  # CONFLICT - manual resolution needed
+pygc==1.3.0  # Used by: st_greatcircle (redshift)
+quadbin==0.2.2  # Used by: __quadbin_fromquadint, quadbin_bbox, quadbin_boundary, quadbin_center, quadbin_fromlonglat, quadbin_fromquadkey, quadbin_fromzxy, quadbin_isvalid, quadbin_kring, quadbin_kring_distances, quadbin_polyfill, quadbin_sibling, quadbin_tochildren, quadbin_toquadkey (redshift)
+s2sphere==0.2.5  # Used by: s2_boundary, s2_fromhilbertquadkey, s2_fromlonglat, s2_fromtoken, s2_fromuint64repr, s2_polyfill_bbox, s2_resolution, s2_tochildren, s2_tohilbertquadkey, s2_toparent, s2_totoken, s2_touint64repr (redshift)
 scipy==1.15.3  # Used by: delaunaygeneric, voronoigeneric (redshift)
 shapely==2.0.6  # Used by: voronoigeneric (redshift)

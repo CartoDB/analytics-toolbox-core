@@ -899,7 +899,7 @@ def deploy_all(
         logger.info("\n=== Phase 1: Deploying Lambda Functions ===\n")
 
         # Use tqdm for consistent progress bar style with clouds
-        with tqdm(to_deploy, desc="Deploying", ncols=97, unit="fn") as pbar:
+        with tqdm(to_deploy, desc="Deploying", ncols=80, unit="fn") as pbar:
             for func in pbar:
                 # Print function name above the progress bar for clean display
                 tqdm.write(f"  → {func.name}")
@@ -1035,7 +1035,7 @@ def deploy_all(
 
             # Use tqdm for consistent progress bar style with clouds
             with tqdm(
-                functions_to_deploy, desc="Creating", ncols=97, unit="fn"
+                functions_to_deploy, desc="Creating", ncols=80, unit="fn"
             ) as pbar:
                 for func in pbar:
                     # Print function name above the progress bar for clean display
@@ -1414,7 +1414,7 @@ def remove_all(
         logger.info("=== Phase 2: Deleting Lambda functions ===\n")
 
         # Use tqdm for consistent progress bar style with clouds
-        with tqdm(to_remove, desc="Deleting", ncols=97, unit="fn") as pbar:
+        with tqdm(to_remove, desc="Deleting", ncols=80, unit="fn") as pbar:
             for func in pbar:
                 # Print function name above the progress bar for clean display
                 tqdm.write(f"  → {func.name}")
@@ -1738,7 +1738,7 @@ def deploy_functions(
     external_success = 0
 
     # Use tqdm for consistent progress bar style with clouds
-    with tqdm(to_deploy, desc="Creating", ncols=97, unit="fn") as pbar:
+    with tqdm(to_deploy, desc="Creating", ncols=80, unit="fn") as pbar:
         for func in pbar:
             # Print function name above the progress bar for clean display
             tqdm.write(f"  → {func.name}")
