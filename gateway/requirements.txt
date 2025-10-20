@@ -28,3 +28,6 @@ redshift-connector>=2.0.0
 # Numerical computing
 # Note: Pinned to exact version for consistency with function requirements
 numpy==1.26.4
+
+# Packaging utilities (for parsing requirements)
+packaging>=21.0

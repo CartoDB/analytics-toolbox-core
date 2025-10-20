@@ -40,7 +40,7 @@ NC := \033[0m # No Color
 
 .SILENT:
 
-.PHONY: help lint test test-unit test-integration list validate build deploy deploy-lambdas deploy-functions remove clean create-package update-dev-requirements
+.PHONY: help lint test test-unit test-integration list validate build deploy deploy-lambdas deploy-functions remove clean create-package install-function-deps
 
 help:
 	echo "Available targets:"
@@ -58,9 +58,10 @@ help:
 	echo "  deploy-functions        - Deploy only external functions (Lambdas must exist)"
 	echo "  remove                  - Remove deployed functions"
 	echo "  create-package          - Create distribution package"
-	echo "  update-dev-requirements - Regenerate requirements-dev.txt from functions"
 	echo "  clean                   - Clean build artifacts and cache"
 	echo "  clean-all               - Clean everything including venv"
+	echo ""
+	echo "Note: Function dependencies are installed automatically by build/test targets"
 
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
@@ -100,9 +101,17 @@ validate: venv
 	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py validate \
 		$(VALIDATE_EXTRA_ARGS)
 
-build: venv
+install-function-deps: venv
+	@echo "Installing function dependencies for testing..."
+	@$(VENV_BIN)/python $(ROOT_DIR)/tools/install_function_deps.py \
+		$(if $(cloud),--cloud $(cloud),) \
+		$(if $(modules),--modules=$(modules),) \
+		$(if $(functions),--functions=$(functions),) \
+		$(EXTRA_CLI_ARGS)
+
+build: venv install-function-deps
 	echo "Building functions with shared libraries..."
-	$(VENV_BIN)/python $(ROOT_DIR)/tools/build_functions.py --cloud $(cloud)
+	$(VENV_BIN)/python $(ROOT_DIR)/tools/build_functions.py --cloud $(cloud) $(EXTRA_CLI_ARGS)
 
 test-unit: install-dev build
 	echo "Running unit tests..."
@@ -207,11 +216,3 @@ clean:
 	rm -rf $(DIST_DIR) $(BUILD_DIR) $(VENV_DIR)
 
 clean-all: clean
-
-# Dependency management tools
-update-dev-requirements: venv
-	echo "Regenerating requirements-dev.txt from function requirements..."
-	$(VENV_BIN)/python $(ROOT_DIR)/tools/generate_dev_requirements.py $(if $(cloud),--cloud $(cloud),)
-	echo ""
-	echo "✓ Updated requirements-dev.txt"
-	echo "  Review changes and run: make install-dev"

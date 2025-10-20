@@ -75,7 +75,7 @@ The following sections describe how to work directly with the gateway. **Most us
 
 ### Prerequisites
 
-1. Python 3.10+ (tested with Python 3.10-3.13)
+1. Python 3.10+ (Python 3.10 recommended to match Lambda runtime)
 2. AWS credentials with Lambda permissions (see Required AWS Permissions below)
 3. Access to a Redshift cluster (for external function deployment)
 
@@ -88,6 +88,71 @@ make venv
 # Install development dependencies (for linting/testing)
 # This happens automatically when running make lint or make test
 ```
+
+### Requirements Management
+
+The gateway uses a **minimal requirements-dev.txt strategy** to keep development dependencies clean and scalable:
+
+**Development Dependencies (`requirements-dev.txt`):**
+- Contains **only** development tools: pytest, black, flake8, mypy, type stubs
+- Does **not** include function-specific dependencies (numpy, pandas, etc.)
+- Keeps the dev environment lightweight and fast to set up
+
+**Function Dependencies:**
+- Each function declares its own dependencies in `code/lambda/python/requirements.txt`
+- **At deployment**: Each Lambda function gets its own isolated package with only its requirements
+- **During testing**: Dependencies are installed on-demand into the test environment
+- Supports filtering by cloud, module, or specific functions
+
+**Important: Lambda Isolation vs Testing Environment**
+
+Each Lambda function is **completely isolated** at deployment:
+- ✅ `function_a` with `numpy==1.24.3` → Deploys with numpy 1.24.3
+- ✅ `function_b` with `numpy==1.26.4` → Deploys with numpy 1.26.4
+- ✅ Functions run independently in separate Lambda containers
+- ✅ Each function's package contains **only** its declared dependencies
+
+**However, during local testing**, all tests run in ONE Python environment, which cannot have conflicting versions installed simultaneously. To prevent test failures, the system **detects version conflicts** and requires you to fix them before testing:
+
+```
+❌ Version conflicts detected in function requirements:
+
+  Package: numpy
+    numpy==1.26.4
+      - clustering/clusterkmeans
+    numpy==1.24.3
+      - transformations/st_greatcircle
+
+Please update the function requirements files to use consistent versions.
+```
+
+**Why enforce consistency for testing?**
+1. Tests would fail or behave unpredictably with conflicting versions
+2. Having different versions is usually a mistake anyway (forgotten updates)
+3. It's simpler to maintain one version across functions
+4. Deployment remains isolated - the restriction is only for local testing
+
+**How It Works:**
+```bash
+# Build automatically installs function dependencies
+make build cloud=redshift modules=statistics
+# → Scans functions/statistics/*/code/lambda/python/requirements.txt
+# → Installs numpy, quadbin, etc. into venv
+# → Builds functions with shared libraries
+
+# Test automatically installs and builds
+make test cloud=redshift modules=statistics
+# → Installs function deps → Builds → Runs tests
+```
+
+**Benefits:**
+- ✅ Clean separation: dev tools vs. function runtime deps
+- ✅ No duplication: function requirements only in function directories
+- ✅ Scalable: adding functions doesn't change requirements-dev.txt
+- ✅ Filtered: only installs deps for functions you're working on
+- ✅ Private gateway support: discovers functions from multiple repositories
+
+**Note**: Dependencies are installed automatically by `make build` and `make test`. You should not need to install them manually.
 
 ### Configuration
 

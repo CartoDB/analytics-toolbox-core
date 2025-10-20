@@ -32,7 +32,7 @@ def copy_shared_libs(func, func_dst: Path, gateway_root: Path):
     Args:
         func: Function object with function.yaml configuration
         func_dst: Destination directory for the function in build/
-        gateway_root: Gateway root directory
+        gateway_root: Gateway root directory (fallback, may not be used)
     """
     import yaml
 
@@ -56,7 +56,11 @@ def copy_shared_libs(func, func_dst: Path, gateway_root: Path):
     if not shared_libs:
         return  # No shared libraries to copy
 
-    shared_root = gateway_root / "functions" / "_shared" / "python"
+    # Determine shared_root from function path
+    # Function path: .../gateway/functions/<module>/<function_name>
+    # Shared root: .../gateway/functions/_shared/python
+    func_gateway_root = func.function_path.parent.parent.parent
+    shared_root = func_gateway_root / "functions" / "_shared" / "python"
     if not shared_root.exists():
         logger.warning(f"Shared libraries directory not found: {shared_root}")
         return
@@ -92,13 +96,14 @@ def copy_shared_libs(func, func_dst: Path, gateway_root: Path):
             logger.warning(f"    ✗ Shared library not found: {lib_name} in {shared_root}")
 
 
-def build_functions(cloud: CloudType, clean: bool = False):
+def build_functions(cloud: CloudType, clean: bool = False, include_roots: list = None):
     """
     Build functions directory with shared libraries copied.
 
     Args:
         cloud: Cloud platform to build for
         clean: If True, remove build directory first
+        include_roots: Additional function root directories to include
     """
     gateway_root = get_default_function_roots().parent
     build_dir = gateway_root / "build"
@@ -109,9 +114,15 @@ def build_functions(cloud: CloudType, clean: bool = False):
         logger.info(f"Cleaning build directory: {build_dir}")
         shutil.rmtree(build_dir)
 
+    # Determine function roots to load from
+    if include_roots:
+        function_roots = [Path(r).resolve() for r in include_roots]
+    else:
+        function_roots = [get_default_function_roots()]
+
     # Load catalog
     logger.info(f"Loading functions for {cloud.value}...")
-    loader = CatalogLoader(get_default_function_roots())
+    loader = CatalogLoader(function_roots)
     loader.load_catalog()
 
     functions = loader.get_functions_by_cloud(cloud)
@@ -199,6 +210,12 @@ def main():
         action="store_true",
         help="Clean build directory before building"
     )
+    parser.add_argument(
+        "--include-root",
+        action="append",
+        dest="include_roots",
+        help="Additional function root directories to scan (can be specified multiple times)"
+    )
 
     args = parser.parse_args()
 
@@ -209,7 +226,7 @@ def main():
         logger.error("Valid options: redshift, bigquery, snowflake, databricks")
         sys.exit(1)
 
-    build_functions(cloud, clean=args.clean)
+    build_functions(cloud, clean=args.clean, include_roots=args.include_roots)
     logger.info("✓ Build complete")
 
 

@@ -4,162 +4,223 @@ This directory contains automation tools for the Analytics Toolbox Gateway.
 
 ## Dependency Management
 
-The gateway uses an automated approach to managing function dependencies for testing:
+The gateway uses a **minimal requirements strategy** to keep development dependencies clean and scalable.
 
 ### Architecture
 
-- **`requirements.txt`**: Core gateway dependencies only (CLI, AWS SDK, etc.)
-- **`requirements-dev.txt`**: Auto-generated file with all function dependencies needed for testing
-- **Function-specific `requirements.txt`**: Each function has its own requirements for Lambda deployment
+- **`requirements.txt`**: Core gateway dependencies (CLI, AWS SDK, YAML, etc.) and shared function libraries (numpy, packaging)
+- **`requirements-dev.txt`**: Development tools only (pytest, black, flake8, mypy, type stubs)
+- **Function-specific `requirements.txt`**: Each function declares its own runtime dependencies
 
 ### Why This Approach?
 
-This architecture solves several problems:
+This architecture provides several benefits:
 
-1. **Cloud-agnostic**: Each cloud can have different function implementations with different dependencies
-2. **Zero maintenance**: New functions automatically discovered, no manual updates needed
-3. **Conflict detection**: Automatically warns about version conflicts between functions
-4. **Clean separation**: Core dependencies vs function dependencies are clearly separated
-5. **No dependency bloat**: Each Lambda only gets the dependencies it needs
+1. **Clean separation**: Development tools vs runtime dependencies are clearly separated
+2. **Scalability**: Don't need to consolidate 100+ function dependencies into one file
+3. **On-demand installation**: Only install dependencies for functions you're testing
+4. **Flexibility**: Easy to filter by cloud, module, or specific functions
+5. **Conflict detection**: Automatically detects and fails on version conflicts
 
 ### Tools
 
-#### `generate_dev_requirements.py`
+#### `install_function_deps.py`
 
-Scans all function directories and consolidates their requirements into `requirements-dev.txt`.
+Scans function directories and installs their dependencies on-demand for testing.
 
 **Usage:**
 ```bash
-# Generate requirements-dev.txt for all clouds
-python tools/generate_dev_requirements.py
+# Install dependencies for all Redshift functions
+python tools/install_function_deps.py --cloud redshift
 
-# Generate requirements-dev.txt for a specific cloud
-python tools/generate_dev_requirements.py --cloud redshift
+# Install dependencies for specific modules
+python tools/install_function_deps.py --cloud redshift --modules clustering,quadbin
 
-# Or use Make
-make update-dev-requirements
-make update-dev-requirements cloud=bigquery
-```
+# Install dependencies for specific functions
+python tools/install_function_deps.py --cloud redshift --functions clusterkmeans,quadbin_fromlonglat
 
-**Output example:**
-```
-# Function dependencies needed for unit testing
-# These allow tests to import function code without installing each function's requirements
-geojson==3.1.0  # Used by: bezierspline, clusterkmeans, delaunaygeneric (redshift)
-numpy>=1.24.0,<2.0.0  # Used by: clusterkmeans, delaunaygeneric, voronoigeneric (redshift)
-scipy==1.11.4  # Used by: delaunaygeneric, voronoigeneric (redshift)
+# Include additional function directories (for private gateway)
+python tools/install_function_deps.py --cloud redshift --include-root /path/to/extra/functions
+
+# Or use Make (automatically called by make build and make test)
+make install-function-deps cloud=redshift
+make install-function-deps cloud=redshift modules=clustering
 ```
 
 **Features:**
-- Detects and warns about version conflicts
-- Shows which functions use each dependency
-- Cloud-aware (shows which clouds each function supports)
-- Preserves version constraints from original requirements
+- **Conflict detection**: Fails immediately if functions have incompatible versions (testing-only restriction)
+- **Cloud-aware**: Only installs dependencies for functions that support the target cloud
+- **Module/function filtering**: Install only what you need
+- **Multi-repo support**: Can scan multiple function directories (core + private)
 
-#### `install_test_deps.py`
+**Important: Conflict Detection is for Testing Only**
 
-Dynamically installs function dependencies for a specific cloud platform.
+Each Lambda function is **completely isolated at deployment**:
+- Each function gets its own package with only its declared dependencies
+- Functions can have different versions of the same library
+- No dependency sharing between Lambda functions
+
+**However**, during local testing, all tests run in one Python environment. We cannot have both `numpy==1.24.3` and `numpy==1.26.4` installed simultaneously. Therefore, the script detects conflicts and requires you to standardize versions **for testing purposes only**.
+
+Example: If `statistics/morans_i` uses `numpy==1.26.4` but doesn't use `mercantile`, its Lambda package will contain:
+- ✅ `numpy==1.26.4`
+- ✅ `quadbin==0.2.2`
+- ❌ `mercantile` (not included - not in its requirements.txt)
+
+**Version conflict detection:**
+
+When the script detects incompatible versions, it fails with a clear error:
+
+```
+❌ Version conflicts detected in function requirements:
+
+  Package: numpy
+    numpy==1.26.4
+      - clustering/clusterkmeans
+      - processing/delaunaygeneric
+    numpy==1.24.3
+      - transformations/st_greatcircle
+
+Please update the function requirements files to use consistent versions.
+All functions should use the same version for each package.
+```
+
+This ensures consistency and prevents silent issues at runtime.
+
+#### `build_functions.py`
+
+Builds Lambda deployment packages with proper directory structure and shared libraries.
 
 **Usage:**
 ```bash
-# Install all Redshift function dependencies
-python test_utils/install_test_deps.py --cloud redshift
+# Build all functions for Redshift
+python tools/build_functions.py --cloud redshift
 
-# Install to a specific directory (useful for packaging)
-python test_utils/install_test_deps.py --cloud redshift --target ./lib
+# Build specific modules
+python tools/build_functions.py --cloud redshift --modules clustering,quadbin
 
-# Dry run (see what would be installed)
-python test_utils/install_test_deps.py --cloud redshift --dry-run
+# Include additional function directories
+python tools/build_functions.py --cloud redshift --include-root /path/to/extra/functions
 
 # Or use Make
-make install-test-deps
-make install-test-deps cloud=bigquery
+make build cloud=redshift
+make build cloud=redshift modules=clustering
 ```
 
-**Use cases:**
-- CI/CD environments where you only want dependencies for one cloud
-- Creating distribution packages
-- Isolating test environments
+**Features:**
+- Copies function code to build directory
+- Installs function-specific dependencies
+- Includes shared libraries from `functions/_shared/python/`
+- Creates proper package structure for Lambda deployment
 
 ### Workflow
 
 #### Adding a New Function
 
-1. Create function with its own `requirements.txt` in `functions/module/function_name/code/lambda/python/requirements.txt`
-2. Run `make update-dev-requirements` to regenerate `requirements-dev.txt`
-3. Run `make install-dev` to install updated dependencies
-4. Run tests: `make test-unit`
+1. Create function with its own `requirements.txt`:
+   ```
+   functions/module/function_name/code/lambda/python/requirements.txt
+   ```
 
-**No manual editing of `requirements-dev.txt` needed!**
+2. Ensure the version matches other functions:
+   ```bash
+   # Check for similar dependencies
+   grep -r "numpy" functions/*/code/lambda/python/requirements.txt
+   ```
+
+3. Run tests (dependencies installed automatically):
+   ```bash
+   make test cloud=redshift
+   ```
+
+**No manual editing of requirements-dev.txt needed!**
 
 #### Resolving Version Conflicts
 
-When the generator detects a conflict:
+When you get a conflict error:
 
 ```
-# WARNING: Version conflict for numpy: {'==1.26.4', '>=1.24.0,<2.0.0'}
-# numpy  # Used by: clusterkmeans, delaunaygeneric (redshift)
-numpy  # CONFLICT - manual resolution needed
+❌ Version conflicts detected in function requirements:
+
+  Package: numpy
+    numpy==1.26.4
+      - clustering/clusterkmeans
+      - processing/delaunaygeneric
+    numpy==1.24.3
+      - transformations/st_greatcircle
 ```
 
 **Resolution steps:**
 
-1. Find the conflicting requirements files
-2. Standardize on a compatible version range
-3. Re-run `make update-dev-requirements`
+1. Find the conflicting requirements files shown in the error
+2. Update them to use the same version (typically the highest compatible version)
+3. Re-run tests to verify
 
 **Example fix:**
 
 ```bash
-# Before (conflict)
-functions/clustering/clusterkmeans/.../requirements.txt:  numpy>=1.24.0,<2.0.0
-functions/processing/delaunaygeneric/.../requirements.txt: numpy==1.26.4
+# Update the outdated version
+echo "numpy==1.26.4" > functions/transformations/st_greatcircle/code/lambda/python/requirements.txt
 
-# After (resolved)
-functions/clustering/clusterkmeans/.../requirements.txt:  numpy>=1.24.0,<2.0.0
-functions/processing/delaunaygeneric/.../requirements.txt: numpy>=1.24.0,<2.0.0
+# Or if one has no version, add it
+echo "numpy==1.26.4" > functions/quadbin/quadbin_toquadkey/code/lambda/python/requirements.txt
+
+# Verify fix
+make test cloud=redshift
 ```
 
 #### CI/CD Integration
 
-**Option 1: Use requirements-dev.txt (standard, fast)**
+**Standard approach (recommended):**
 ```yaml
 - name: Install dependencies
   run: |
+    pip install -r requirements.txt
     pip install -r requirements-dev.txt
-    pytest functions/ -m "not integration"
+
+- name: Run tests
+  run: make test cloud=redshift
 ```
 
-**Option 2: Use dynamic discovery (cloud-specific)**
+The `make test` target automatically:
+1. Creates/activates virtual environment
+2. Installs function dependencies via `install_function_deps.py`
+3. Builds functions
+4. Runs unit tests
+
+**Manual control (advanced):**
 ```yaml
-- name: Install Redshift function dependencies
+- name: Install dependencies
   run: |
     pip install -r requirements.txt
-    python test_utils/install_test_deps.py --cloud redshift
-    pytest functions/ -m "not integration"
+    pip install -r requirements-dev.txt
+    python tools/install_function_deps.py --cloud redshift --modules clustering
+
+- name: Run tests
+  run: pytest functions/clustering/ -m "not integration"
 ```
 
 ### Best Practices
 
-1. **Don't manually edit `requirements-dev.txt`** - it's auto-generated
-2. **Use version ranges** in function requirements when possible (e.g., `>=1.24.0,<2.0.0` not `==1.26.4`)
-3. **Run `make update-dev-requirements`** after adding/modifying functions
-4. **Check for conflicts** - the generator will warn you
-5. **Commit both** the function requirements and updated requirements-dev.txt
+1. **Use consistent versions** across all functions for the same package
+2. **Pin exact versions** for runtime dependencies (e.g., `numpy==1.26.4` not `numpy>=1.26`)
+3. **Let Make handle installation** - `make build` and `make test` automatically install function deps
+4. **Check for conflicts early** - the script fails fast if versions don't match
+5. **Use filtering** when working on specific modules: `make test cloud=redshift modules=clustering`
 
 ### Troubleshooting
 
 **Problem: Tests failing with import errors**
 
 ```bash
-# Regenerate and reinstall dependencies
-make update-dev-requirements
-make install-dev
+# Clean and rebuild
+make clean
+make test cloud=redshift
 ```
 
-**Problem: Version conflict warnings**
+**Problem: Version conflict errors**
 
-See "Resolving Version Conflicts" above.
+See "Resolving Version Conflicts" above. The error message shows exactly which files to update.
 
 **Problem: New function not detected**
 
@@ -168,34 +229,46 @@ Ensure:
 2. Requirements file is at `functions/module/name/code/lambda/python/requirements.txt`
 3. Not inside a `tests/` directory
 
-**Problem: Dependencies not installing in CI**
+**Problem: Packaging library not found**
 
-Ensure CI workflow installs from `requirements-dev.txt` or uses `install_test_deps.py`.
+```bash
+# Install packaging (needed for conflict detection)
+pip install packaging>=21.0
+```
 
 ### Implementation Details
 
-**How `generate_dev_requirements.py` works:**
+**How `install_function_deps.py` works:**
 
 1. Scans `functions/` directory for all `requirements.txt` files
 2. Skips test requirements (paths containing `tests/`)
 3. Parses `function.yaml` to determine cloud support
-4. Consolidates all requirements with version tracking
-5. Detects conflicts (multiple different versions of same package)
-6. Generates formatted output with documentation
+4. Filters based on --cloud, --modules, --functions arguments
+5. **Checks for version conflicts** (fails if found)
+6. Consolidates all requirements and installs in one pip call
+7. Shows clear progress and error messages
 
-**How `install_test_deps.py` works:**
+**Key difference from old approach:**
 
-1. Scans `functions/` directory for all `requirements.txt` files
-2. Parses each `function.yaml` to check cloud support
-3. Filters to only functions supporting the target cloud
-4. Installs each requirements file using pip
+- Old: Consolidated all deps into `requirements-dev.txt` (became huge and hard to maintain)
+- New: Minimal `requirements-dev.txt` with only dev tools, function deps installed on-demand
 
-### Future Enhancements
+**Conflict detection:**
 
-Possible improvements:
+Uses the `packaging` library to parse requirement specifications and detect when multiple functions require different versions of the same package. This prevents subtle runtime issues and forces consistency.
 
-- Pre-commit hook to auto-regenerate `requirements-dev.txt`
-- Automated conflict resolution with semantic versioning
-- Dependency graph visualization
-- Per-module test dependency subsets
-- Integration with dependency security scanning
+### Migration Notes
+
+If you're coming from the old `generate_dev_requirements.py` approach:
+
+**What changed:**
+- `requirements-dev.txt` is now minimal (only dev tools, no function deps)
+- Function dependencies installed automatically by Make targets
+- Conflicts cause immediate failure instead of warnings
+- No need to regenerate `requirements-dev.txt` after adding functions
+
+**Benefits:**
+- Faster setup (don't install deps for functions you're not testing)
+- Clearer separation between dev tools and runtime deps
+- Scales better as function count grows
+- Catches version conflicts early
