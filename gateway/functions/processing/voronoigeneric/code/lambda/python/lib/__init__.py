@@ -2,20 +2,13 @@
 """
 VORONOIGENERIC function implementation using shared processing utilities.
 
-This module imports shared processing utilities from either:
-- lib/processing/ (in deployed Lambda packages - copied by packager)
-- _shared/python/processing/ (during local testing)
+This module imports shared utilities from lib/
 """
 
 import json
 import geojson
 
-try:
-    # Try importing from lib/processing (deployed package)
-    from lib.processing import voronoi_generic, PRECISION
-except ImportError:
-    # Fall back to shared library (local testing)
-    from processing import voronoi_generic, PRECISION
+from lib.processing import voronoi_generic, PRECISION
 
 
 def voronoigeneric(points, bbox, voronoi_type):

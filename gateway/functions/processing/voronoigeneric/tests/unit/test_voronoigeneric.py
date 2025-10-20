@@ -5,19 +5,21 @@ Unit tests for VORONOIGENERIC function
 import json
 from test_utils.unit import load_function_module
 
-# Import shared library functions directly for testing
-from processing import polygon_polygon_intersection, clip_segment_bbox
-
 # Load function module and handler
 imports = load_function_module(
     __file__,
     {
         "from_lib": ["voronoigeneric"],
+        "from_lib_module": {
+            "processing": ["polygon_polygon_intersection", "clip_segment_bbox"],
+        },
     },
 )
 
 voronoigeneric = imports["voronoigeneric"]
 lambda_handler = imports["lambda_handler"]
+polygon_polygon_intersection = imports["polygon_polygon_intersection"]
+clip_segment_bbox = imports["clip_segment_bbox"]
 
 
 class TestProcessingHelpers:

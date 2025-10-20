@@ -4,17 +4,15 @@ Unit tests for ST_DESTINATION
 Basic unit tests for destination function from clouds library.
 """
 
+import geojson
+from test_utils.unit import load_function_module
+
 
 def test_st_destination_basic():
     """Test ST_DESTINATION basic functionality"""
-    import sys
-    import os
-
-    lib_path = os.path.join(os.path.dirname(__file__), "../../code/lambda/python/lib")
-    sys.path.insert(0, os.path.abspath(lib_path))
-
-    from destination import destination
-    import geojson
+    # Load function module from build directory
+    imports = load_function_module(__file__, {"from_lib": ["destination"]})
+    destination = imports["destination"]
 
     # Test basic destination calculation
     point = geojson.Point((0, 0))

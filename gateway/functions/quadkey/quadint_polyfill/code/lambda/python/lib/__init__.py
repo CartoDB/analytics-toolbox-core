@@ -1,19 +1,11 @@
 """
 QUADINT_POLYFILL function implementation using shared quadkey utilities.
 
-This module imports shared quadkey utilities from either:
-- lib/quadkey/ (in deployed Lambda packages - copied by packager)
-- quadkey/ (during local testing from _shared/python/)
+This module imports shared utilities from lib/
 """
 
-try:
-    # Try importing from lib/quadkey (deployed package)
-    from lib.quadkey import quadint_from_zxy
-    import lib.quadkey.tilecover as tilecover
-except ImportError:
-    # Fall back to shared library (local testing)
-    from quadkey import quadint_from_zxy
-    import quadkey.tilecover as tilecover
+from lib.quadkey import quadint_from_zxy
+import lib.quadkey.tilecover as tilecover
 
 
 __all__ = ["quadint_from_zxy", "tilecover"]

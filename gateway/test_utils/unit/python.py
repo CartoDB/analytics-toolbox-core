@@ -14,34 +14,17 @@ import importlib.util
 from pathlib import Path
 
 
-def setup_shared_libraries_path():
-    """
-    Add functions/_shared/python to sys.path if not already present.
-
-    This allows tests to import shared libraries directly without noqa comments.
-    Should be called at module import time in test files.
-    """
-    # Find gateway root by looking for the functions/_shared directory
-    current = Path(__file__).resolve()
-    gateway_root = current.parent.parent.parent
-    shared_path = gateway_root / "functions" / "_shared" / "python"
-
-    if shared_path.exists() and str(shared_path) not in sys.path:
-        sys.path.insert(0, str(shared_path))
-
-
-# Automatically setup shared libraries path when this module is imported
-# This allows tests to import shared libraries at the top of the file
-setup_shared_libraries_path()
+# Note: setup_shared_libraries_path() has been removed.
+# Tests now use the build/ directory which mirrors the actual deployment structure.
+# Run `make build` before running tests.
 
 
 def load_function_module(test_file_path, import_spec=None):
     """
     Load a function's lib module and handler for unit testing.
 
-    This handles the complex path setup and module isolation needed to test
-    gateway functions that have lib/ subdirectories. It also handles shared
-    libraries from functions/_shared/python/.
+    This loads the function from the build/ directory which mirrors the actual
+    deployment structure with shared libraries already copied into lib/.
 
     Args:
         test_file_path: Path to the test file (usually __file__ from the test)
@@ -74,12 +57,28 @@ def load_function_module(test_file_path, import_spec=None):
         lambda_handler = imports['lambda_handler']
     """
     test_path = Path(test_file_path)
+    # Original function root (in source)
     function_root = test_path.parent.parent.parent
-    code_dir = function_root / "code" / "lambda" / "python"
 
-    # Add _shared/python to path for shared library imports
+    # Find gateway root and build directory
     gateway_root = function_root.parent.parent.parent
-    shared_path = gateway_root / "functions" / "_shared" / "python"
+    build_root = gateway_root / "build"
+
+    # Determine function module and name from path
+    # Path structure: functions/<module>/<function_name>/tests/unit/test_*.py
+    parts = test_path.parts
+    functions_idx = parts.index("functions")
+    module_name = parts[functions_idx + 1]
+    function_name = parts[functions_idx + 2]
+
+    # Use build directory - it must exist (run `make build` first)
+    code_dir = build_root / "functions" / module_name / function_name / "code" / "lambda" / "python"
+
+    if not code_dir.exists():
+        raise FileNotFoundError(
+            f"Build directory not found: {code_dir}\n"
+            f"Run 'make build' before running tests to create the build directory."
+        )
 
     # Save and clear all lib.* modules to avoid conflicts
     original_sys_path = sys.path.copy()
@@ -91,10 +90,8 @@ def load_function_module(test_file_path, import_spec=None):
 
     result = {}
 
-    # Add both function code dir and shared dir to path
+    # Add function code dir to path (shared libs already in lib/)
     sys.path.insert(0, str(code_dir))
-    if shared_path.exists():
-        sys.path.insert(0, str(shared_path))
 
     try:
         # Import from lib

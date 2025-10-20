@@ -4,10 +4,7 @@ import pygc
 import geojson
 from numpy import linspace
 
-try:
-    from lib.transformations import PRECISION
-except ImportError:
-    from transformations import PRECISION
+from lib.transformations import PRECISION
 
 
 def great_circle(start_point, end_point, n_points):

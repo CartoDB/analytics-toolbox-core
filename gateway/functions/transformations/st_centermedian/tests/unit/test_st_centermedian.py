@@ -4,17 +4,15 @@ Unit tests for ST_CENTERMEDIAN
 Basic unit tests for center_median function from clouds library.
 """
 
+import geojson
+from test_utils.unit import load_function_module
+
 
 def test_st_centermedian_basic():
     """Test ST_CENTERMEDIAN basic functionality"""
-    import sys
-    import os
-
-    lib_path = os.path.join(os.path.dirname(__file__), "../../code/lambda/python/lib")
-    sys.path.insert(0, os.path.abspath(lib_path))
-
-    from center_lib.center_median import center_median
-    import geojson
+    # Load function module from build directory
+    imports = load_function_module(__file__, {"from_lib": ["center_median"]})
+    center_median = imports["center_median"]
 
     # Test with a simple polygon
     polygon = geojson.Polygon([[(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)]])

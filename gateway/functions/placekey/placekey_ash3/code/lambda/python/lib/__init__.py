@@ -1,17 +1,10 @@
 """
 PLACEKEY_ASH3 function implementation.
 
-This module imports shared placekey utilities from either:
-- lib/placekey/ (in deployed Lambda packages - copied by packager)
-- _shared/python/placekey/ (during local testing)
+This module imports shared utilities from lib/
 """
 
-try:
-    # Try importing from lib/placekey (deployed package)
-    from lib.placekey import placekey_to_h3, placekey_is_valid
-except ImportError:
-    # Fall back to shared library (local testing)
-    from placekey import placekey_to_h3, placekey_is_valid
+from lib.placekey import placekey_to_h3, placekey_is_valid
 
 
 def placekey_ash3(placekey):

@@ -40,13 +40,14 @@ NC := \033[0m # No Color
 
 .SILENT:
 
-.PHONY: help lint test test-unit test-integration list validate deploy deploy-lambdas deploy-functions remove clean create-package install-test-deps update-dev-requirements
+.PHONY: help lint test test-unit test-integration list validate build deploy deploy-lambdas deploy-functions remove clean create-package update-dev-requirements
 
 help:
 	echo "Available targets:"
 	echo "  help                    - Show this help message"
 	echo "  lint                    - Run code quality checks"
 	echo "  lint-fix                - Auto-fix code formatting issues"
+	echo "  build                   - Build functions with shared libraries (required for testing)"
 	echo "  test                    - Run all tests (unit + integration)"
 	echo "  test-unit               - Run unit tests only"
 	echo "  test-integration        - Run integration tests only"
@@ -57,7 +58,6 @@ help:
 	echo "  deploy-functions        - Deploy only external functions (Lambdas must exist)"
 	echo "  remove                  - Remove deployed functions"
 	echo "  create-package          - Create distribution package"
-	echo "  install-test-deps       - Install function dependencies for testing"
 	echo "  update-dev-requirements - Regenerate requirements-dev.txt from functions"
 	echo "  clean                   - Clean build artifacts and cache"
 	echo "  clean-all               - Clean everything including venv"
@@ -100,7 +100,11 @@ validate: venv
 	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py validate \
 		$(VALIDATE_EXTRA_ARGS)
 
-test-unit: install-dev
+build: venv
+	echo "Building functions with shared libraries..."
+	$(VENV_BIN)/python $(ROOT_DIR)/tools/build_functions.py --cloud $(cloud)
+
+test-unit: install-dev build
 	echo "Running unit tests..."
 	@if [ -n "$(modules)" ]; then \
 		MODULE_PATHS=$$(echo "$(modules)" | tr ',' '\n' | sed 's|^|$(FUNCTIONS_ROOT)/|' | sed 's|$$|/|' | tr '\n' ' '); \
@@ -114,7 +118,7 @@ test-unit: install-dev
 		$(VENV_BIN)/python -m pytest $(TEST_PATHS) -m "not integration" || [ $$? -eq 5 ]; \
 	fi
 
-test-integration: install-dev
+test-integration: install-dev build
 	echo "Running integration tests..."
 	@if [ -n "$(modules)" ]; then \
 		MODULE_PATHS=$$(echo "$(modules)" | tr ',' '\n' | sed 's|^|$(FUNCTIONS_ROOT)/|' | sed 's|$$|/|' | tr '\n' ' '); \
@@ -205,10 +209,6 @@ clean:
 clean-all: clean
 
 # Dependency management tools
-install-test-deps: venv
-	echo "Installing function test dependencies for $(cloud)..."
-	$(VENV_BIN)/python $(ROOT_DIR)/test_utils/install_test_deps.py --cloud $(cloud)
-
 update-dev-requirements: venv
 	echo "Regenerating requirements-dev.txt from function requirements..."
 	$(VENV_BIN)/python $(ROOT_DIR)/tools/generate_dev_requirements.py $(if $(cloud),--cloud $(cloud),)

@@ -4,10 +4,7 @@
 from __future__ import division
 import geojson
 
-try:
-    from lib.transformations import PRECISION, euclidean_distance, coords_mean
-except ImportError:
-    from transformations import PRECISION, euclidean_distance, coords_mean
+from lib.transformations import PRECISION, euclidean_distance, coords_mean
 
 
 def centroid_polygon(coords):

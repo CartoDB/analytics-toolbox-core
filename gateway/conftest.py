@@ -79,8 +79,5 @@ setup_platform_runtime(
 # New tests should import directly from test_utils.
 # ============================================================================
 
-from test_utils.unit import (  # noqa: F401
-    load_function_module,
-    setup_shared_libraries_path,
-)
+from test_utils.unit import load_function_module  # noqa: F401
 from test_utils.integration.redshift import run_query, redshift_query  # noqa: F401

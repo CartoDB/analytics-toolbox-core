@@ -5,21 +5,14 @@ Tests the clouds library function remove_end_polygon_point
 """
 
 import geojson
+from test_utils.unit import load_function_module
 
 
 def test_remove_end_polygon_point():
     """Test remove_end_polygon_point helper function (from shared library)"""
-    import sys
-    import os
-
-    # Add both shared library and function's lib to path
-    shared_path = os.path.join(
-        os.path.dirname(__file__), "../../../../../_shared/python"
-    )
-    sys.path.insert(0, os.path.abspath(shared_path))
-
-    # Import directly from shared transformations library
-    from transformations import remove_end_polygon_point
+    # Load function module from build directory
+    imports = load_function_module(__file__, {"from_lib": ["remove_end_polygon_point"]})
+    remove_end_polygon_point = imports["remove_end_polygon_point"]
 
     feature1 = (
         '{"type":"Polygon","coordinates":[[[30,10],[40,40],[20,40],[10,20],[30,10]]]}'

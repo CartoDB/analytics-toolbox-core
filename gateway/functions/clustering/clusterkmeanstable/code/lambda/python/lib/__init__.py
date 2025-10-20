@@ -4,32 +4,21 @@
 """
 CLUSTERKMEANSTABLE function implementation using shared clustering utilities.
 
-This module imports shared clustering utilities from either:
-- lib/clustering/ (in deployed Lambda packages - copied by packager)
-- _shared/python/clustering/ (during local testing)
+This module imports shared clustering utilities from lib/clustering/
+which is populated during the build step from functions/_shared/python/clustering/
 """
 
 import json
 import numpy as np
 
-try:
-    # Try importing from lib/clustering (deployed package)
-    from lib.clustering import KMeans
-    from lib.clustering.helper import (
-        load_geom,
-        reorder_coords,
-        count_distinct_coords,
-        PRECISION,
-    )
-except ImportError:
-    # Fall back to shared library (local testing)
-    from clustering import KMeans
-    from clustering.helper import (
-        load_geom,
-        reorder_coords,
-        count_distinct_coords,
-        PRECISION,
-    )
+# Import from lib/clustering (copied during build/deploy)
+from lib.clustering import (
+    KMeans,
+    PRECISION,
+    load_geom,
+    reorder_coords,
+    count_distinct_coords,
+)
 
 
 def clusterkmeanstable(geom_json, k):

@@ -4,10 +4,7 @@
 from __future__ import division
 import geojson
 
-try:
-    from lib.transformations import PRECISION, euclidean_distance, center_mean
-except ImportError:
-    from transformations import PRECISION, euclidean_distance, center_mean
+from lib.transformations import PRECISION, euclidean_distance, center_mean
 
 
 def numer_sum(first_median, coords):

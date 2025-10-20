@@ -15,14 +15,12 @@ def test_st_greatcircle_basic():
     except ImportError:
         pytest.skip("pygc not available in test environment")
 
-    import sys
-    import os
-
-    lib_path = os.path.join(os.path.dirname(__file__), "../../code/lambda/python/lib")
-    sys.path.insert(0, os.path.abspath(lib_path))
-
-    from great_circle import great_circle
+    from test_utils.unit import load_function_module
     import geojson
+
+    # Load function module from build directory
+    imports = load_function_module(__file__, {"from_lib": ["great_circle"]})
+    great_circle = imports["great_circle"]
 
     # Test basic great circle calculation
     start = geojson.Point((0, 0))

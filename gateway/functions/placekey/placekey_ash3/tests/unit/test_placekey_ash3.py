@@ -4,19 +4,20 @@ Unit tests for PLACEKEY_ASH3 function
 
 from test_utils.unit import load_function_module
 
-# Import shared library functions directly for testing
-from placekey import placekey_is_valid
-
 # Load function module and handler
 imports = load_function_module(
     __file__,
     {
         "from_lib": ["placekey_ash3"],
+        "from_lib_module": {
+            "placekey": ["placekey_is_valid"],
+        },
     },
 )
 
 placekey_ash3 = imports["placekey_ash3"]
 lambda_handler = imports["lambda_handler"]
+placekey_is_valid = imports["placekey_is_valid"]
 
 
 class TestPlacekeyLibrary:

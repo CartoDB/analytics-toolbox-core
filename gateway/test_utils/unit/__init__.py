@@ -7,5 +7,5 @@ Each language has its own module:
 - go.py: Go function utilities (future)
 """
 
-# Re-export Python utilities for convenience and backward compatibility
-from .python import load_function_module, setup_shared_libraries_path  # noqa: F401
+# Re-export Python utilities for convenience
+from .python import load_function_module  # noqa: F401

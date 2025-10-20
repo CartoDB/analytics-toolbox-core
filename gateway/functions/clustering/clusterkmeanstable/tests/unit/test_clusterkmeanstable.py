@@ -6,20 +6,20 @@ import json
 import numpy as np
 from test_utils.unit import load_function_module
 
-# Import shared library functions directly for testing
-from clustering import KMeans
-from clustering.helper import (
-    reorder_coords,
-    count_distinct_coords,
-)
-
 # Load function module and handler
 imports = load_function_module(
     __file__,
     {
         "from_lib": ["clusterkmeanstable"],
+        "from_lib_module": {
+            "clustering": ["KMeans", "reorder_coords", "count_distinct_coords"],
+        },
     },
 )
+
+KMeans = imports["KMeans"]
+reorder_coords = imports["reorder_coords"]
+count_distinct_coords = imports["count_distinct_coords"]
 
 clusterkmeanstable = imports["clusterkmeanstable"]
 lambda_handler = imports["lambda_handler"]

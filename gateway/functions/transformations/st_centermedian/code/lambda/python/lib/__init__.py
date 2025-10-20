@@ -10,18 +10,11 @@ Imports:
 from .center_lib.center_median import center_median
 
 # Import shared transformations utilities
-try:
-    from lib.transformations import (
-        PRECISION,
-        wkt_from_geojson,
-        parse_geojson_with_precision,
-    )
-except ImportError:
-    from transformations import (
-        PRECISION,
-        wkt_from_geojson,
-        parse_geojson_with_precision,
-    )
+from lib.transformations import (
+    PRECISION,
+    wkt_from_geojson,
+    parse_geojson_with_precision,
+)
 
 
 __all__ = [

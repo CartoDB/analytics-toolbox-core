@@ -351,6 +351,13 @@ class LambdaDeployer:
             return True
         except self.lambda_client.exceptions.ResourceNotFoundException:
             return False
+        except self.lambda_client.exceptions.ServiceException as e:
+            # Handle AWS service exceptions (throttling, unavailable, etc.)
+            if "ServiceUnavailable" in str(type(e).__name__):
+                # For ServiceUnavailable, assume function doesn't exist
+                # and let create/update handle retries with exponential backoff
+                return False
+            raise
         except Exception as e:
             # If we don't have GetFunction permission, assume function doesn't exist
             # and let CreateFunction fail with a better error if it does exist

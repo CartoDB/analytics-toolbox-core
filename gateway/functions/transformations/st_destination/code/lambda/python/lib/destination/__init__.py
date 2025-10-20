@@ -4,10 +4,7 @@
 from .helper import length_to_radians
 from math import radians, asin, cos, sin, atan2, degrees
 
-try:
-    from lib.transformations import PRECISION
-except ImportError:
-    from transformations import PRECISION
+from lib.transformations import PRECISION
 import geojson
 
 
