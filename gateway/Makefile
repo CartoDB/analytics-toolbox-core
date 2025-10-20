@@ -200,10 +200,9 @@ clean:
 	find . -type f -name "*.pyo" -delete
 	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
-	rm -rf $(DIST_DIR) $(BUILD_DIR)
+	rm -rf $(DIST_DIR) $(BUILD_DIR) $(VENV_DIR)
 
 clean-all: clean
-	rm -rf $(VENV_DIR)
 
 # Dependency management tools
 install-test-deps: venv
