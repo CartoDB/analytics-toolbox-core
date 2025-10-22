@@ -66,7 +66,7 @@ clean-modules:
 
 create-package:
 	echo "Creating package..."
-	$(MAKE) build production=1 catalog=carto
+	$(MAKE) build production=1 dropfirst=1 catalog=carto
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
