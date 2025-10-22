@@ -10,11 +10,11 @@
     "@mapbox/tile-cover": "3.0.2",
     "@mapbox/tilebelt": "1.0.2",
     "long": "4.0.0",
-    "@turf/turf": "6.3.0",
+    "@turf/turf": "7.2.0",
     "h3-js": "3.7.2",
     "@placekey/placekey": "1.0.3"
   },
   "resolutions": {
-    "@turf/bbox": "6.5.0"
+    "@turf/bbox": "7.2.0"
   }
 }
