@@ -24,7 +24,7 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       SF_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CI }}
