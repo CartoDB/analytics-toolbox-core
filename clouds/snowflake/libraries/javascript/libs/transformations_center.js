@@ -3,7 +3,7 @@ import {
     centerMean,
     centerMedian,
     centerOfMass,
-    pointOnSurface
+    pointOnFeature
 } from '@turf/turf';
 
 export default {
@@ -11,5 +11,5 @@ export default {
     centerMean,
     centerMedian,
     centerOfMass,
-    pointOnSurface
+    pointOnSurface: pointOnFeature  // Renamed from pointOnSurface in turf 7.x
 };
