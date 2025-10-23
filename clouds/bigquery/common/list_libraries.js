@@ -27,7 +27,8 @@ if (diff.length) {
         /clouds\/bigquery\/common\/.+/,
         /clouds\/bigquery\/libraries\/.+/,
         /clouds\/bigquery\/.*Makefile/,
-        /clouds\/bigquery\/version/
+        /clouds\/bigquery\/version/,
+        /clouds\/bigquery\/.*package\.json/
     ];
     const patternModulesSql = /clouds\/bigquery\/modules\/sql\/([^\s]*?)\//g;
     const patternModulesTest = /clouds\/bigquery\/modules\/test\/([^\s]*?)\//g;
