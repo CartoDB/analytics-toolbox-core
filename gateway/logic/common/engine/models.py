@@ -1,0 +1,119 @@
+"""
+Data models for the Analytics Toolbox Gateway
+Represents functions, deployments, and configurations
+"""
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Any
+from pathlib import Path
+from enum import Enum
+
+
+class CloudType(Enum):
+    """Supported cloud platforms"""
+
+    REDSHIFT = "redshift"
+    BIGQUERY = "bigquery"
+    SNOWFLAKE = "snowflake"
+    DATABRICKS = "databricks"
+
+
+class PlatformType(Enum):
+    """Deployment platform for function runtime"""
+
+    LAMBDA = "lambda"
+    CLOUD_RUN = "cloud_run"
+    SNOWPARK = "snowpark"
+    UDF = "udf"
+
+
+@dataclass
+class CloudConfig:
+    """Cloud-specific configuration for a function"""
+
+    type: PlatformType
+    code_file: Path
+    requirements_file: Optional[Path] = None
+    external_function_template: Optional[Path] = None
+    lambda_name: Optional[str] = None  # Override Lambda function name (without prefix)
+    config: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class Function:
+    """
+    Represents a function in the Analytics Toolbox Gateway
+    Maps to a function.yaml file
+    """
+
+    name: str
+    clouds: Dict[CloudType, CloudConfig]
+    module: str = "general"
+    function_path: Optional[Path] = None
+    description: str = (
+        "CARTO Analytics Toolbox function"  # Used in AWS Lambda description
+    )
+
+    @property
+    def yaml_path(self) -> Optional[Path]:
+        """Get the path to the function.yaml file"""
+        if self.function_path:
+            return self.function_path / "function.yaml"
+        return None
+
+    def supports_cloud(self, cloud: CloudType) -> bool:
+        """Check if function supports a specific cloud"""
+        return cloud in self.clouds
+
+    def get_cloud_config(self, cloud: CloudType) -> Optional[CloudConfig]:
+        """Get configuration for a specific cloud"""
+        return self.clouds.get(cloud)
+
+
+@dataclass
+class PlatformDeploymentConfig:
+    """
+    Generic platform deployment configuration
+
+    Replaces platform-specific configs (LambdaDeployment, etc.)
+    Platform-specific fields go in platform_config dict
+    """
+
+    function_name: str
+    platform_type: PlatformType
+    handler: str
+    runtime: str
+    code_path: Path
+    requirements: Optional[Path] = None
+    platform_config: Dict[str, Any] = field(default_factory=dict)
+    environment_variables: Dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
+class ExternalFunctionConfig:
+    """
+    Configuration for creating external functions in cloud databases
+
+    Cloud-agnostic - works with any cloud (Redshift, BigQuery, Snowflake, etc.)
+    """
+
+    function_name: str
+    schema: str
+    platform_identifier: str  # Platform-specific ID (Lambda ARN, Cloud Run URL, etc.)
+    credentials: Dict[str, str]  # Cloud-specific auth credentials
+    template_path: Path
+    additional_config: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Cloud-specific extras
+
+
+@dataclass
+class DistributionPackage:
+    """Configuration for a distribution package"""
+
+    name: str
+    version: str
+    cloud: CloudType
+    functions: List[Function]
+    output_path: Path
+    metadata: Dict[str, Any] = field(default_factory=dict)

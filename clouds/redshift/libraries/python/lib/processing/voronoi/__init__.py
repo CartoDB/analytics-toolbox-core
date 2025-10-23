@@ -3,7 +3,7 @@
 from __future__ import division
 from scipy.spatial import Voronoi
 from ..helper import PRECISION
-import helper as lib
+from . import helper as lib
 import numpy as np
 import geojson
 
@@ -85,7 +85,7 @@ def voronoi_generic(geom, bbox, voronoi_type):
 
     if voronoi_type == 'lines':
         center = vor.points.mean(axis=0)
-        ptp_bound = vor.points.ptp(axis=0)
+        ptp_bound = np.ptp(vor.points, axis=0)
         lines = []
         for pointidx, simplex in zip(vor.ridge_points, vor.ridge_vertices):
             simplex = np.asarray(simplex)

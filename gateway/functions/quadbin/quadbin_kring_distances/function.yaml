@@ -1,0 +1,14 @@
+name: quadbin_kring_distances
+module: quadbin
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: qb_krd
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    external_function_template: code/redshift.sql
+    config:
+      memory_size: 256
+      timeout: 30
+      max_batch_rows: 10000
+      runtime: python3.10

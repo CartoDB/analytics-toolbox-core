@@ -1,0 +1,20 @@
+--------------------------------
+-- Copyright (C) 2025 CARTO
+--------------------------------
+
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__QUADBIN_TOCHILDREN
+(BIGINT, INT)
+-- (quadbin, resolution)
+RETURNS VARCHAR(MAX)
+STABLE
+LAMBDA '@@LAMBDA_ARN@@'
+IAM_ROLE '@@IAM_ROLE_ARN@@';
+
+CREATE OR REPLACE FUNCTION @@SCHEMA@@.QUADBIN_TOCHILDREN
+(BIGINT, INT)
+-- (quadbin, resolution)
+RETURNS SUPER
+STABLE
+AS $$
+    SELECT JSON_PARSE(@@SCHEMA@@.__QUADBIN_TOCHILDREN($1, $2))
+$$ LANGUAGE sql;
