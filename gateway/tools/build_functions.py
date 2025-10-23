@@ -141,8 +141,32 @@ def build_functions(cloud: CloudType, clean: bool = False, include_roots: list =
         # Reconstruct path as: build/functions/<module>/<function_name>
         func_dst = functions_build / func.module / func.name
 
+        # Check if function has shared libraries (do this BEFORE skip check)
+        import yaml
+        yaml_path = func.function_path / "function.yaml"
+        has_shared_libs = False
+        if yaml_path.exists():
+            with open(yaml_path, "r") as f:
+                config = yaml.safe_load(f)
+
+            # Check for shared_libs in any cloud config
+            for cloud_config in config.get("clouds", {}).values():
+                if isinstance(cloud_config, dict) and cloud_config.get("shared_libs"):
+                    has_shared_libs = True
+                    functions_with_shared_libs += 1
+                    break
+
         # Skip if already built (unless clean was requested)
         if func_dst.exists() and not clean:
+            # Still copy shared libraries even if function exists
+            # This ensures shared lib changes are picked up on incremental builds
+            if has_shared_libs:
+                copy_shared_libs(func, func_dst, gateway_root)
+                # Count libs copied by checking lib directory
+                lib_dir = func_dst / "code" / "lambda" / "python" / "lib"
+                if lib_dir.exists():
+                    lib_count = len([d for d in lib_dir.iterdir() if d.is_dir() or d.suffix == '.py'])
+                    total_libs_copied += lib_count
             continue
 
         # Copy function directory
@@ -162,30 +186,16 @@ def build_functions(cloud: CloudType, clean: bool = False, include_roots: list =
             ),
         )
 
-        # Check if function has shared libraries
-        import yaml
-        yaml_path = func.function_path / "function.yaml"
-        if yaml_path.exists():
-            with open(yaml_path, "r") as f:
-                config = yaml.safe_load(f)
-
-            # Check for shared_libs in any cloud config
-            has_shared_libs = False
-            for cloud_config in config.get("clouds", {}).values():
-                if isinstance(cloud_config, dict) and cloud_config.get("shared_libs"):
-                    has_shared_libs = True
-                    functions_with_shared_libs += 1
-                    break
-
-            if has_shared_libs:
-                # Copy shared libraries
-                before_count = total_libs_copied
-                copy_shared_libs(func, func_dst, gateway_root)
-                # Count libs copied by checking lib directory
-                lib_dir = func_dst / "code" / "lambda" / "python" / "lib"
-                if lib_dir.exists():
-                    lib_count = len([d for d in lib_dir.iterdir() if d.is_dir() or d.suffix == '.py'])
-                    total_libs_copied += lib_count
+        # Copy shared libraries for newly built functions
+        if has_shared_libs:
+            # Copy shared libraries
+            before_count = total_libs_copied
+            copy_shared_libs(func, func_dst, gateway_root)
+            # Count libs copied by checking lib directory
+            lib_dir = func_dst / "code" / "lambda" / "python" / "lib"
+            if lib_dir.exists():
+                lib_count = len([d for d in lib_dir.iterdir() if d.is_dir() or d.suffix == '.py'])
+                total_libs_copied += lib_count
 
     logger.info(f"\n{'='*60}")
     logger.info(f"Build Summary:")
