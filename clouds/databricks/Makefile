@@ -12,7 +12,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test remove clean create-package
 
 help:
 	echo "Available targets: help lint build deploy test remove clean"
