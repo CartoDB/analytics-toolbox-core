@@ -8,6 +8,10 @@ COMMON_DIR = $(ROOT_DIR)/common
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
 PACKAGE_NAME ?= carto-analytics-toolbox-core-databricks-$(PACKAGE_VERSION)
 
+# Prevent Make from trying to build files mentioned in GIT_DIFF or command line as targets
+# This catches any file path that Make might interpret as a target
+%:: ;
+
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
