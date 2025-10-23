@@ -29,7 +29,7 @@ def run_queries(queries):
         access_token=os.getenv('DB_TOKEN'),
     ) as conn:
         with conn.cursor() as cursor:
-            for i in trange(len(queries), ncols=97):
+            for i in trange(len(queries), dynamic_ncols=True, leave=True, position=0):
                 query = apply_replacements(queries[i])
                 pattern = os.environ['DB_SCHEMA'] + '.(.*?)[(|\n]'
                 result = re.search(pattern, query)

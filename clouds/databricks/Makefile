@@ -8,11 +8,15 @@ COMMON_DIR = $(ROOT_DIR)/common
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
 PACKAGE_NAME ?= carto-analytics-toolbox-core-databricks-$(PACKAGE_VERSION)
 
+# Prevent Make from trying to build files mentioned in GIT_DIFF or command line as targets
+# This catches any file path that Make might interpret as a target
+%:: ;
+
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean
+.PHONY: help lint build deploy test remove clean create-package
 
 help:
 	echo "Available targets: help lint build deploy test remove clean"
@@ -66,7 +70,7 @@ clean-modules:
 
 create-package:
 	echo "Creating package..."
-	$(MAKE) build production=1 catalog=carto
+	$(MAKE) build production=1 dropfirst=1 catalog=carto
 
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
@@ -75,8 +79,6 @@ create-package:
 	$(MAKE) extra-package
 
 	cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip . && cd ..
-
-	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/modules.sql
 
 	echo '{"latest_version": "$(PACKAGE_VERSION)"}' > $(DIST_DIR)/metadata.json
 
