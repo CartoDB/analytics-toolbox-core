@@ -78,7 +78,7 @@ jobs:
 
   publish:
     name: "Publish: Create & Upload Package"
-    if: github.ref_name == 'stable'
+    # if: github.ref_name == 'stable'
     needs: test
     runs-on: ubuntu-24.04
     timeout-minutes: 10
