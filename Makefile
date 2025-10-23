@@ -179,10 +179,10 @@ endif
 	@echo "Running tests for $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@cd gateway && $(MAKE) test-unit cloud=$(cloud)
-	@cd gateway && $(MAKE) test-integration cloud=$(cloud)
+	@(cd gateway && $(MAKE) test-unit cloud=$(cloud))
+	@(cd gateway && $(MAKE) test-integration cloud=$(cloud))
 	@if [ -d "clouds/$(cloud)" ]; then \
-		cd clouds/$(cloud) && $(MAKE) test; \
+		(cd clouds/$(cloud) && $(MAKE) test); \
 	fi
 	@echo ""
 	@echo "========================================================================"
