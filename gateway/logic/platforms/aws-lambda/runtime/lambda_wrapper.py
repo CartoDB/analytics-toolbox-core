@@ -90,8 +90,16 @@ def redshift_handler(
             event: Dict[str, Any], context: Any = None
         ) -> Dict[str, Any]:
             try:
-                arguments = event.get("arguments", [])
-                num_records = event.get("num_records", len(arguments))
+                arguments = event.get("arguments")
+                num_records = event.get("num_records", 0)
+
+                # Handle null arguments by creating empty rows based on num_records
+                if arguments is None:
+                    arguments = [[]] * num_records if num_records > 0 else []
+
+                # Fallback to using length of arguments if num_records not provided
+                if num_records == 0 and arguments:
+                    num_records = len(arguments)
 
                 results = []
 
@@ -170,8 +178,16 @@ def batch_redshift_handler(process_batch_func: Callable) -> Callable:
 
     def lambda_handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
         try:
-            arguments = event.get("arguments", [])
-            num_records = event.get("num_records", len(arguments))
+            arguments = event.get("arguments")
+            num_records = event.get("num_records", 0)
+
+            # Handle null arguments by creating empty rows based on num_records
+            if arguments is None:
+                arguments = [[]] * num_records if num_records > 0 else []
+
+            # Fallback to using length of arguments if num_records not provided
+            if num_records == 0 and arguments:
+                num_records = len(arguments)
 
             results = process_batch_func(arguments)
 

@@ -184,6 +184,59 @@ class TestRedshiftHandler:
         assert "error" in error_result
         assert error_result["row_index"] == 0
 
+    def test_null_arguments_with_num_records(self):
+        """Test decorator handles null arguments with num_records (no-param functions)"""
+
+        @redshift_handler
+        def process_row(row):
+            # Function with no parameters - ignores row
+            return "constant_value"
+
+        # When Redshift calls a function with no parameters like __UUID()
+        # it sends arguments: null and num_records: N
+        event = {"arguments": None, "num_records": 3}
+
+        response_str = process_row(event)
+        response = json.loads(response_str)
+
+        assert response["success"] is True
+        assert response["num_records"] == 3
+        assert response["results"] == ["constant_value", "constant_value", "constant_value"]
+
+    def test_empty_arguments_list(self):
+        """Test decorator handles empty arguments list with num_records"""
+
+        @redshift_handler
+        def process_row(row):
+            return "result"
+
+        # Edge case: empty arguments but num_records > 0
+        event = {"arguments": [], "num_records": 0}
+
+        response_str = process_row(event)
+        response = json.loads(response_str)
+
+        assert response["success"] is True
+        assert response["num_records"] == 0
+        assert response["results"] == []
+
+    def test_arguments_without_num_records(self):
+        """Test decorator handles arguments without num_records field"""
+
+        @redshift_handler
+        def process_row(row):
+            return sum(row)
+
+        # num_records not provided - should use len(arguments)
+        event = {"arguments": [[1, 2], [3, 4]]}
+
+        response_str = process_row(event)
+        response = json.loads(response_str)
+
+        assert response["success"] is True
+        assert response["num_records"] == 2
+        assert response["results"] == [3, 7]
+
 
 class TestBatchRedshiftHandler:
     """Test batch_redshift_handler decorator"""
@@ -219,3 +272,20 @@ class TestBatchRedshiftHandler:
 
         assert response["success"] is False
         assert "mismatch" in response["error_msg"].lower()
+
+    def test_null_arguments_batch(self):
+        """Test batch decorator handles null arguments with num_records"""
+
+        @batch_redshift_handler
+        def process_batch(rows):
+            # Return a constant for each row
+            return ["result"] * len(rows)
+
+        event = {"arguments": None, "num_records": 2}
+
+        response_str = process_batch(event)
+        response = json.loads(response_str)
+
+        assert response["success"] is True
+        assert response["num_records"] == 2
+        assert response["results"] == ["result", "result"]
