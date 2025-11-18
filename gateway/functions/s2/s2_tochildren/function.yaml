@@ -3,14 +3,11 @@ module: s2
 clouds:
   redshift:
     type: lambda
-    lambda_name: s2_chld  # Short Lambda name to fit within 17 char limit
+    lambda_name: s2_chld
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
     shared_libs:
-      - s2
+    - s2
     config:
-      memory_size: 256
-      timeout: 30
-      max_batch_rows: 1000
-      runtime: python3.10
+      max_batch_rows: 10000

@@ -3,12 +3,9 @@ module: random
 clouds:
   redshift:
     type: lambda
-    lambda_name: genpts  # Short Lambda name to fit within 18 char limit
+    lambda_name: genpts
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
     config:
-      memory_size: 512
-      timeout: 60
-      max_batch_rows: 100
-      runtime: python3.10
+      max_batch_rows: 10000

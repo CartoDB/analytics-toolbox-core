@@ -215,6 +215,7 @@ def deploy_external_function(
     user: str,
     password: str,
     package_version: str = "0.0.0",
+    max_batch_rows: int = None,
 ) -> None:
     """
     Deploy external function SQL to Redshift using direct connection
@@ -230,6 +231,7 @@ def deploy_external_function(
         user: Database user
         password: Database password
         package_version: Package version for @@PACKAGE_VERSION@@ template variable
+        max_batch_rows: Maximum rows per Lambda batch invocation
     """
     # Render SQL template
     renderer = TemplateRenderer()
@@ -240,6 +242,7 @@ def deploy_external_function(
         iam_role_arn=iam_role_arn,
         schema=schema,
         package_version=package_version,
+        max_batch_rows=max_batch_rows,
     )
 
     logger.debug(f"Creating external function {schema}.{function_name.upper()}...")
@@ -633,10 +636,11 @@ def deploy_lambda(
         )
         sys.exit(1)
 
-    # Get Lambda configuration
-    runtime = cloud_config.config.get("runtime", "python3.11")
-    memory_size = cloud_config.config.get("memory_size", 512)
-    timeout = cloud_config.config.get("timeout", 60)
+    # Get Lambda configuration with sensible defaults
+    # These can be overridden in function.yaml under clouds.redshift.config
+    runtime = cloud_config.config.get("runtime", "python3.10")
+    memory_size = cloud_config.config.get("memory_size", 256)  # MB
+    timeout = cloud_config.config.get("timeout", 300)
 
     if dry_run:
         logger.info("[DRY RUN] Would deploy Lambda function:")
@@ -988,9 +992,9 @@ def deploy_all(
                         sys.exit(1)
 
                     # Get Lambda configuration
-                    runtime = cloud_config.config.get("runtime", "python3.11")
-                    memory_size = cloud_config.config.get("memory_size", 512)
-                    timeout = cloud_config.config.get("timeout", 60)
+                    runtime = cloud_config.config.get("runtime", "python3.10")
+                    memory_size = cloud_config.config.get("memory_size", 512)  # MB
+                    timeout = cloud_config.config.get("timeout", 300)  # seconds
 
                     # Deploy Lambda
                     response = deployer.deploy_function(
@@ -1090,6 +1094,9 @@ def deploy_all(
                             )
                             sys.exit(1)
 
+                        # Get max_batch_rows from config (default: 1)
+                        max_batch_rows = cloud_config.config.get("max_batch_rows", 1)
+
                         # Deploy external function
                         deploy_external_function(
                             function_name=func.name,
@@ -1102,6 +1109,7 @@ def deploy_all(
                             user=rs_user,
                             password=rs_password,
                             package_version=package_version,
+                            max_batch_rows=max_batch_rows,
                         )
 
                         external_success += 1
@@ -1825,6 +1833,9 @@ def deploy_functions(
                     )
                     sys.exit(1)
 
+                # Get max_batch_rows from config (default: 1)
+                max_batch_rows = cloud_config.config.get("max_batch_rows", 1)
+
                 # Deploy external function
                 deploy_external_function(
                     function_name=func.name,
@@ -1837,6 +1848,7 @@ def deploy_functions(
                     user=rs_user,
                     password=rs_password,
                     package_version=package_version,
+                    max_batch_rows=max_batch_rows,
                 )
 
                 external_success += 1

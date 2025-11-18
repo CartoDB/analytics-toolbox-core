@@ -185,7 +185,10 @@ class TestRedshiftHandler:
         assert error_result["row_index"] == 0
 
     def test_null_arguments_with_num_records(self):
-        """Test decorator handles null arguments with num_records (no-param functions)"""
+        """Test decorator handles null arguments with num_records.
+
+        Tests no-param functions.
+        """
 
         @redshift_handler
         def process_row(row):
@@ -201,7 +204,11 @@ class TestRedshiftHandler:
 
         assert response["success"] is True
         assert response["num_records"] == 3
-        assert response["results"] == ["constant_value", "constant_value", "constant_value"]
+        assert response["results"] == [
+            "constant_value",
+            "constant_value",
+            "constant_value",
+        ]
 
     def test_empty_arguments_list(self):
         """Test decorator handles empty arguments list with num_records"""

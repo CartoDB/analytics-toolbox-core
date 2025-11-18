@@ -33,7 +33,18 @@ class TemplateRenderer:
         # Replace @@VARIABLE@@ with actual values
         for var_name, var_value in variables.items():
             placeholder = f"@@{var_name.upper()}@@"
-            template = template.replace(placeholder, var_value)
+
+            # Special handling for empty values: remove the entire line
+            if var_value == "":
+                lines = template.split("\n")
+                new_lines = []
+                for line in lines:
+                    if placeholder not in line:
+                        new_lines.append(line)
+                    # Skip lines containing placeholders with empty values
+                template = "\n".join(new_lines)
+            else:
+                template = template.replace(placeholder, var_value)
 
         return template
 
@@ -45,6 +56,7 @@ class TemplateRenderer:
         iam_role_arn: str,
         schema: str,
         package_version: str = "0.0.0",
+        max_batch_rows: int = None,
     ) -> str:
         """
         Convenience method for rendering external function templates
@@ -56,6 +68,7 @@ class TemplateRenderer:
             iam_role_arn: ARN of the IAM role for Redshift
             schema: Schema name (e.g., 'carto', 'dev_username')
             package_version: Package version (e.g., '1.11.2') for @@PACKAGE_VERSION@@
+            max_batch_rows: Maximum rows per batch (for @@MAX_BATCH_ROWS@@)
 
         Returns:
             Rendered SQL string
@@ -67,4 +80,13 @@ class TemplateRenderer:
             "schema": schema,
             "package_version": package_version,  # Maps to @@PACKAGE_VERSION@@
         }
+
+        # Add MAX_BATCH_ROWS value if specified, otherwise empty string
+        # SQL template has "MAX_BATCH_ROWS @@MAX_BATCH_ROWS@@;"
+        # so we just replace the value
+        if max_batch_rows is not None:
+            variables["max_batch_rows"] = str(max_batch_rows)
+        else:
+            variables["max_batch_rows"] = ""
+
         return TemplateRenderer.render(template_path, variables)

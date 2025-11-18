@@ -1,14 +1,12 @@
 clouds:
   redshift:
     type: lambda
-    lambda_name: clustkm  # Short Lambda name to fit within 18 char limit
+    lambda_name: clustkm
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
     external_function_template: code/redshift.sql
     shared_libs:
-      - clustering  # Copies _shared/python/clustering/* to lib/clustering/
+    - clustering
     config:
       memory_size: 1024
-      timeout: 300
       max_batch_rows: 100
-      runtime: python3.10
