@@ -44,6 +44,7 @@ class TemplateRenderer:
         lambda_arn: str,
         iam_role_arn: str,
         schema: str,
+        package_version: str = "0.0.0",
     ) -> str:
         """
         Convenience method for rendering external function templates
@@ -54,6 +55,7 @@ class TemplateRenderer:
             lambda_arn: ARN of the Lambda function
             iam_role_arn: ARN of the IAM role for Redshift
             schema: Schema name (e.g., 'carto', 'dev_username')
+            package_version: Package version (e.g., '1.11.2') for @@PACKAGE_VERSION@@
 
         Returns:
             Rendered SQL string
@@ -63,5 +65,6 @@ class TemplateRenderer:
             "lambda_arn": lambda_arn,
             "iam_role_arn": iam_role_arn,  # Maps to @@IAM_ROLE_ARN@@ in SQL templates
             "schema": schema,
+            "package_version": package_version,  # Maps to @@PACKAGE_VERSION@@
         }
         return TemplateRenderer.render(template_path, variables)

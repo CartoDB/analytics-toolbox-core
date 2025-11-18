@@ -101,6 +101,35 @@ def get_aws_credentials():
     }
 
 
+def get_package_version() -> str:
+    """
+    Read package version from clouds/redshift/version file
+
+    Returns:
+        Version string (e.g., '1.11.2'), or '0.0.0' if file not found
+    """
+    # cli.py is in: core/gateway/logic/clouds/redshift/cli.py
+    # Version file is in: analytics-toolbox-root/clouds/redshift/version
+    # From cli.py: go up 5 levels to get to core/, then up 1 more to analytics-toolbox/
+    current_file = Path(__file__).resolve()
+    # current_file: .../core/gateway/logic/clouds/redshift/cli.py
+    analytics_toolbox_root = current_file.parent.parent.parent.parent.parent.parent
+    version_file = analytics_toolbox_root / "clouds" / "redshift" / "version"
+
+    if version_file.exists():
+        try:
+            with open(version_file, "r") as f:
+                version = f.readline().strip()
+                logger.debug(f"Read package version from {version_file}: {version}")
+                return version
+        except Exception as e:
+            logger.warning(f"Failed to read version from {version_file}: {e}")
+            return "0.0.0"
+    else:
+        logger.warning(f"Version file not found: {version_file}")
+        return "0.0.0"
+
+
 def get_cluster_identifier_and_region() -> tuple:
     """
     Extract Redshift cluster identifier and region from RS_HOST
@@ -185,6 +214,7 @@ def deploy_external_function(
     host: str,
     user: str,
     password: str,
+    package_version: str = "0.0.0",
 ) -> None:
     """
     Deploy external function SQL to Redshift using direct connection
@@ -199,6 +229,7 @@ def deploy_external_function(
         host: Redshift host endpoint
         user: Database user
         password: Database password
+        package_version: Package version for @@PACKAGE_VERSION@@ template variable
     """
     # Render SQL template
     renderer = TemplateRenderer()
@@ -208,6 +239,7 @@ def deploy_external_function(
         lambda_arn=lambda_arn,
         iam_role_arn=iam_role_arn,
         schema=schema,
+        package_version=package_version,
     )
 
     logger.debug(f"Creating external function {schema}.{function_name.upper()}...")
@@ -1007,6 +1039,9 @@ def deploy_all(
         if deploy_external_functions and lambda_arns:
             logger.info("\n=== Phase 2: Creating external functions in Redshift ===\n")
 
+            # Get package version for template replacement
+            package_version = get_package_version()
+
             # Create schema if it doesn't exist
             create_schema_sql = f"CREATE SCHEMA IF NOT EXISTS {rs_schema};"
             logger.info(f"Ensuring schema exists: {rs_schema}")
@@ -1066,6 +1101,7 @@ def deploy_all(
                             host=rs_host,
                             user=rs_user,
                             password=rs_password,
+                            package_version=package_version,
                         )
 
                         external_success += 1
@@ -1737,6 +1773,9 @@ def deploy_functions(
     # Deploy external functions
     external_success = 0
 
+    # Get package version for template replacement
+    package_version = get_package_version()
+
     # Use tqdm for consistent progress bar style with clouds
     with tqdm(to_deploy, desc="Creating", ncols=80, unit="fn") as pbar:
         for func in pbar:
@@ -1797,6 +1836,7 @@ def deploy_functions(
                     host=rs_host,
                     user=rs_user,
                     password=rs_password,
+                    package_version=package_version,
                 )
 
                 external_success += 1
