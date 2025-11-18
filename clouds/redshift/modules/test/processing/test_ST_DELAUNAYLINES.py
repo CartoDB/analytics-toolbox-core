@@ -56,4 +56,9 @@ def test_delaunay_lines_geom_too_long():
                 ST_GeomFromText('{lines[2].rstrip()}'))"""
         )
 
-    assert 'Value too long for character type' in str(excinfo.value)
+    error_msg = str(excinfo.value)
+    # Accept either error message format (Redshift version dependent)
+    assert (
+        'Value too long for character type' in error_msg
+        or 'String value exceeds the max size' in error_msg
+    )
