@@ -29,6 +29,10 @@ def copy_shared_libs(func, func_dst: Path, gateway_root: Path):
     """
     Copy shared libraries into function's lib directory.
 
+    Supports two formats:
+    1. Module name: "data" - copies entire _shared/python/data/ directory
+    2. File paths: "data/_utils.py", "data/utils/" - copies specific files/folders
+
     Args:
         func: Function object with function.yaml configuration
         func_dst: Destination directory for the function in build/
@@ -67,33 +71,107 @@ def copy_shared_libs(func, func_dst: Path, gateway_root: Path):
 
     logger.debug(f"  Copying shared libs for {func.name}: {shared_libs}")
 
+    # Track which files have been added per module (to ensure __init__.py)
+    modules_with_files = set()
+    init_files_added = set()
+
     for lib_name in shared_libs:
-        # Handle both directory and file references
-        lib_src = shared_root / lib_name
+        # Check if this is a path (contains /)
+        if "/" in lib_name:
+            # Path format: "data/_utils.py" (file) or "data/utils/" (folder)
+            parts = lib_name.split("/", 1)
+            module_name = parts[0]
+            sub_path = parts[1] if len(parts) > 1 else ""
 
-        if lib_src.is_dir():
-            # Copy entire directory (e.g., "clustering" -> lib/clustering/)
-            lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_name
-            if lib_dst.exists():
-                shutil.rmtree(lib_dst)
-            shutil.copytree(
-                lib_src,
-                lib_dst,
-                ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tests"),
-            )
-            logger.debug(f"    ✓ {lib_name}/ -> lib/{lib_name}/")
+            modules_with_files.add(module_name)
 
-        elif lib_src.is_file() or (lib_src.parent / f"{lib_name}.py").is_file():
-            # Copy single file (e.g., "quadkey/helper.py" -> lib/helper.py)
-            if not lib_src.is_file():
-                lib_src = lib_src.parent / f"{lib_name}.py"
+            lib_src = shared_root / lib_name
+            if not lib_src.exists():
+                logger.warning(f"    ✗ Shared library path not found: {lib_name}")
+                continue
 
-            lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_src.name
-            lib_dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(lib_src, lib_dst)
-            logger.debug(f"    ✓ {lib_name} -> lib/{lib_src.name}")
+            if lib_src.is_file():
+                # Copy single file: data/_utils.py -> lib/data/_utils.py
+                # Construct path explicitly by splitting on "/" for proper subdirectory handling
+                lib_base = func_dst / "code" / "lambda" / "python" / "lib"
+
+                # Build path from parts to ensure proper directory nesting
+                lib_dst = lib_base
+                for part in lib_name.split("/"):
+                    lib_dst = lib_dst / part
+
+                # Ensure parent directory exists
+                lib_dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(lib_src, lib_dst)
+
+                # Track if this was __init__.py
+                if sub_path == "__init__.py":
+                    init_files_added.add(module_name)
+
+                logger.debug(f"    ✓ {lib_name} -> lib/{lib_name}")
+
+            elif lib_src.is_dir():
+                # Copy entire subdirectory: data/utils/ -> lib/data/utils/
+                # Construct path explicitly by splitting on "/" for proper subdirectory handling
+                lib_base = func_dst / "code" / "lambda" / "python" / "lib"
+
+                # Build path from parts to ensure proper directory nesting
+                lib_dst = lib_base
+                for part in lib_name.split("/"):
+                    lib_dst = lib_dst / part
+
+                if lib_dst.exists():
+                    shutil.rmtree(lib_dst)
+                shutil.copytree(
+                    lib_src,
+                    lib_dst,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tests"),
+                )
+                logger.debug(f"    ✓ {lib_name} -> lib/{lib_name}")
+            else:
+                logger.warning(f"    ✗ {lib_name} is neither a file nor directory")
+
         else:
-            logger.warning(f"    ✗ Shared library not found: {lib_name} in {shared_root}")
+            # Module name format: "data" - copy entire directory (backward compatible)
+            lib_src = shared_root / lib_name
+
+            if lib_src.is_dir():
+                # Copy entire directory (e.g., "clustering" -> lib/clustering/)
+                lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_name
+                if lib_dst.exists():
+                    shutil.rmtree(lib_dst)
+                shutil.copytree(
+                    lib_src,
+                    lib_dst,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tests"),
+                )
+                logger.debug(f"    ✓ {lib_name}/ -> lib/{lib_name}/")
+                # Mark __init__.py as added for this module
+                init_files_added.add(lib_name)
+
+            elif lib_src.is_file() or (lib_src.parent / f"{lib_name}.py").is_file():
+                # Copy single file
+                if not lib_src.is_file():
+                    lib_src = lib_src.parent / f"{lib_name}.py"
+
+                lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_src.name
+                lib_dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(lib_src, lib_dst)
+                logger.debug(f"    ✓ {lib_name} -> lib/{lib_src.name}")
+            else:
+                logger.warning(f"    ✗ Shared library not found: {lib_name} in {shared_root}")
+
+    # Ensure __init__.py is present for modules that had individual files added
+    for module_name in modules_with_files:
+        if module_name not in init_files_added:
+            init_src = shared_root / module_name / "__init__.py"
+            if init_src.exists():
+                # Construct path explicitly for proper subdirectory handling
+                lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / module_name / "__init__.py"
+
+                lib_dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(init_src, lib_dst)
+                logger.debug(f"    ✓ Added required __init__.py for {module_name}/")
 
 
 def build_functions(cloud: CloudType, clean: bool = False, include_roots: list = None):

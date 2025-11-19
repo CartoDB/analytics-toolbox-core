@@ -141,6 +141,10 @@ class LambdaDeployer:
         """
         Add shared libraries to deployment package.
 
+        Supports two formats:
+        1. Module name: "data" - copies entire _shared/python/data/ directory
+        2. File paths: "data/_utils.py", "data/__init__.py" - copies only specified files
+
         Reads function.yaml to find shared_libs configuration and copies
         shared libraries from _shared/python/ into lib/ in the zip.
 
@@ -177,30 +181,97 @@ class LambdaDeployer:
             print(f"  Warning: Shared libraries directory not found: {shared_root}")
             return
 
+        # Track which files have been added per module (to ensure __init__.py)
+        modules_with_files = set()
+        init_files_added = set()
+
         # Copy each shared library
         for lib_name in shared_libs:
-            lib_src = shared_root / lib_name
-            if not lib_src.exists():
-                print(f"  Warning: Shared library not found: {lib_name}")
-                continue
+            # Check if this is a path (contains /)
+            if "/" in lib_name:
+                # Path format: "data/_utils.py" (file) or "data/utils/" (folder)
+                parts = lib_name.split("/", 1)
+                module_name = parts[0]
+                sub_path = parts[1] if len(parts) > 1 else ""
 
-            if lib_src.is_dir():
-                # Copy entire directory to lib/<lib_name>/
-                for py_file in lib_src.rglob("*.py"):
-                    if "__pycache__" in str(py_file):
-                        continue
-                    # Create arcname as lib/<lib_name>/<relative_path>
-                    rel_path = py_file.relative_to(lib_src)
-                    arcname = Path("lib") / lib_name / rel_path
-                    zf.write(py_file, str(arcname))
-                if not self.quiet:
-                    print(f"  ✓ Added shared library: {lib_name}/")
-            elif lib_src.is_file():
-                # Copy single file to lib/<filename>
-                arcname = Path("lib") / lib_src.name
-                zf.write(lib_src, str(arcname))
-                if not self.quiet:
-                    print(f"  ✓ Added shared library: {lib_src.name}")
+                modules_with_files.add(module_name)
+
+                lib_src = shared_root / lib_name
+                if not lib_src.exists():
+                    print(f"  Warning: Shared library path not found: {lib_name}")
+                    continue
+
+                if lib_src.is_file():
+                    # Copy single file: data/_utils.py -> lib/data/_utils.py
+                    # Construct path explicitly by splitting on "/" for proper subdirectory handling
+                    arcname = Path("lib")
+                    for part in lib_name.split("/"):
+                        arcname = arcname / part
+                    zf.write(lib_src, str(arcname))
+
+                    # Track if this was __init__.py
+                    if sub_path == "__init__.py":
+                        init_files_added.add(module_name)
+
+                    if not self.quiet:
+                        print(f"  ✓ Added shared library file: {lib_name}")
+
+                elif lib_src.is_dir():
+                    # Copy entire subdirectory: data/utils/ -> lib/data/utils/
+                    for py_file in lib_src.rglob("*.py"):
+                        if "__pycache__" in str(py_file):
+                            continue
+                        # Maintain structure: data/utils/helpers.py -> lib/data/utils/helpers.py
+                        rel_to_shared = py_file.relative_to(shared_root)
+                        # Build path explicitly
+                        arcname = Path("lib")
+                        for part in str(rel_to_shared).split("/"):
+                            arcname = arcname / part
+                        zf.write(py_file, str(arcname))
+
+                    if not self.quiet:
+                        print(f"  ✓ Added shared library folder: {lib_name}")
+                else:
+                    print(f"  Warning: {lib_name} is neither a file nor directory")
+
+            else:
+                # Module name format: "data" - copy entire directory (backward compatible)
+                lib_src = shared_root / lib_name
+                if not lib_src.exists():
+                    print(f"  Warning: Shared library not found: {lib_name}")
+                    continue
+
+                if lib_src.is_dir():
+                    # Copy entire directory to lib/<lib_name>/
+                    for py_file in lib_src.rglob("*.py"):
+                        if "__pycache__" in str(py_file):
+                            continue
+                        # Create arcname as lib/<lib_name>/<relative_path>
+                        rel_path = py_file.relative_to(lib_src)
+                        arcname = Path("lib") / lib_name / rel_path
+                        zf.write(py_file, str(arcname))
+                    if not self.quiet:
+                        print(f"  ✓ Added shared library: {lib_name}/")
+                    # Mark __init__.py as added for this module
+                    init_files_added.add(lib_name)
+
+                elif lib_src.is_file():
+                    # Copy single file to lib/<filename>
+                    arcname = Path("lib") / lib_src.name
+                    zf.write(lib_src, str(arcname))
+                    if not self.quiet:
+                        print(f"  ✓ Added shared library: {lib_src.name}")
+
+        # Ensure __init__.py is present for modules that had individual files added
+        for module_name in modules_with_files:
+            if module_name not in init_files_added:
+                init_src = shared_root / module_name / "__init__.py"
+                if init_src.exists():
+                    # Construct path explicitly for proper subdirectory handling
+                    arcname = Path("lib") / module_name / "__init__.py"
+                    zf.write(init_src, str(arcname))
+                    if not self.quiet:
+                        print(f"  ✓ Added required __init__.py for {module_name}/")
 
     def create_deployment_package(
         self,
@@ -227,11 +298,12 @@ class LambdaDeployer:
             output_zip = Path(tempfile.mktemp(suffix=".zip"))
 
         with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-            # Add handler file
-            zf.write(handler_file, handler_file.name)
+            # Add handler file and all other Python files in the same directory
+            handler_dir = handler_file.parent
+            for py_file in handler_dir.glob("*.py"):
+                zf.write(py_file, py_file.name)
 
             # Add any lib/ directory next to the handler (for modular code)
-            handler_dir = handler_file.parent
             lib_dir = handler_dir / "lib"
             if lib_dir.exists() and lib_dir.is_dir():
                 for py_file in lib_dir.rglob("*.py"):
