@@ -1,11 +1,16 @@
-name: quadbin_sibling
-module: quadbin
 clouds:
   redshift:
     type: lambda
     lambda_name: qb_sib
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     config:
       max_batch_rows: 10000
+parameters:
+- name: param_1
+  type: bigint
+- name: param_2
+  type: VARCHAR(MAX))
+- name: param_3
+  type: direction
+returns: bigint

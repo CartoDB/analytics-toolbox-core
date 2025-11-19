@@ -4,7 +4,9 @@ Replaces Jinja2 dependency with a straightforward string replacement approach
 """
 
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
+from ...common.engine.models import Function, CloudType
+from .sql_template_generator import RedshiftSQLTemplateGenerator
 
 
 class TemplateRenderer:
@@ -90,3 +92,90 @@ class TemplateRenderer:
             variables["max_batch_rows"] = ""
 
         return TemplateRenderer.render(template_path, variables)
+
+    @staticmethod
+    def render_external_function_with_metadata(
+        function: Function,
+        lambda_arn: str,
+        iam_role_arn: str,
+        schema: str,
+        package_version: str = "0.0.0",
+        max_batch_rows: Optional[int] = None,
+        template_path: Optional[Path] = None,
+    ) -> str:
+        """
+        Render external function SQL with auto-generation support
+
+        If template_path is provided, uses existing template.
+        Otherwise, auto-generates SQL from function metadata.
+
+        Args:
+            function: Function object with metadata
+            lambda_arn: ARN of the Lambda function
+            iam_role_arn: ARN of the IAM role for Redshift
+            schema: Schema name (e.g., 'carto', 'dev_username')
+            package_version: Package version (e.g., '1.11.2')
+            max_batch_rows: Maximum rows per batch
+            template_path: Optional path to existing SQL template
+
+        Returns:
+            Rendered SQL string
+
+        Raises:
+            ValueError: If neither template nor metadata available
+        """
+        # If template exists, use traditional rendering
+        if template_path and template_path.exists():
+            return TemplateRenderer.render_external_function(
+                template_path=template_path,
+                function_name=function.name,
+                lambda_arn=lambda_arn,
+                iam_role_arn=iam_role_arn,
+                schema=schema,
+                package_version=package_version,
+                max_batch_rows=max_batch_rows,
+            )
+
+        # Auto-generate from metadata
+        if RedshiftSQLTemplateGenerator.can_generate(function, CloudType.REDSHIFT):
+            parameters = function.get_resolved_parameters(CloudType.REDSHIFT)
+            return_type = function.get_resolved_return_type(CloudType.REDSHIFT)
+
+            # Generate template
+            template_sql = RedshiftSQLTemplateGenerator.generate(
+                function=function,
+                parameters=parameters,
+                return_type=return_type,
+                max_batch_rows=max_batch_rows,
+            )
+
+            # Apply variable substitution
+            variables = {
+                "schema": schema,
+                "lambda_arn": lambda_arn,
+                "iam_role_arn": iam_role_arn,
+                "package_version": package_version,
+                "max_batch_rows": str(max_batch_rows) if max_batch_rows else "",
+            }
+
+            # Manual substitution on generated template
+            for var_name, var_value in variables.items():
+                placeholder = f"@@{var_name.upper()}@@"
+
+                if var_value == "":
+                    # Remove lines with empty placeholders
+                    lines = template_sql.split("\n")
+                    template_sql = "\n".join(
+                        line for line in lines if placeholder not in line
+                    )
+                else:
+                    template_sql = template_sql.replace(placeholder, var_value)
+
+            return template_sql
+
+        # Neither template nor metadata available
+        raise ValueError(
+            f"Function {function.name} has no SQL template and insufficient metadata "
+            f"for auto-generation. Provide either external_function_template or "
+            f"parameters/returns in function.yaml."
+        )

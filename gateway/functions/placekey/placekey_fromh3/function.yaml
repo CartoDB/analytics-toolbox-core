@@ -4,8 +4,11 @@ clouds:
     lambda_name: pk_frh3
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     shared_libs:
     - placekey
     config:
       max_batch_rows: 10000
+parameters:
+- name: h3_index
+  type: string
+returns: string

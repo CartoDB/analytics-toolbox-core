@@ -11,6 +11,7 @@ from .models import (
     CloudConfig,
     CloudType,
     PlatformType,
+    FunctionParameter,
 )
 
 
@@ -62,6 +63,10 @@ class CatalogLoader:
         # Determine module from directory structure
         module = self._get_module(function_dir)
 
+        # Parse top-level parameters and return type (generic definitions)
+        generic_parameters = self._parse_parameters(data.get("parameters"))
+        generic_return_type = data.get("returns")
+
         # Parse cloud configurations
         clouds = {}
         for cloud_name, cloud_data in data.get("clouds", {}).items():
@@ -69,7 +74,11 @@ class CatalogLoader:
                 cloud_type = CloudType(cloud_name)
                 platform_type = PlatformType(cloud_data["type"])
 
-                code_file = function_dir / cloud_data["code_file"]
+                # code_file is now optional (for SQL-only functions)
+                code_file = None
+                if "code_file" in cloud_data:
+                    code_file = function_dir / cloud_data["code_file"]
+
                 requirements_file = None
                 if "requirements_file" in cloud_data:
                     requirements_file = function_dir / cloud_data["requirements_file"]
@@ -83,12 +92,18 @@ class CatalogLoader:
                 # Get optional lambda_name override
                 lambda_name = cloud_data.get("lambda_name")
 
+                # Parse cloud-specific parameters and return type (overrides)
+                cloud_parameters = self._parse_parameters(cloud_data.get("parameters"))
+                cloud_return_type = cloud_data.get("returns")
+
                 clouds[cloud_type] = CloudConfig(
                     type=platform_type,
                     code_file=code_file,
                     requirements_file=requirements_file,
                     external_function_template=template_file,
                     lambda_name=lambda_name,
+                    parameters=cloud_parameters,
+                    returns=cloud_return_type,
                     config=cloud_data.get("config", {}),
                 )
             except (ValueError, KeyError) as e:
@@ -97,13 +112,82 @@ class CatalogLoader:
                     f"in {function_name}: {e}"
                 )
 
-        return Function(
+        function = Function(
             name=function_name,
             clouds=clouds,
             module=module,
             function_path=function_dir,
             description=data.get("description", "CARTO Analytics Toolbox function"),
+            parameters=generic_parameters,
+            returns=generic_return_type,
         )
+
+        # Validate function configuration
+        self._validate_function(function)
+
+        return function
+
+    def _parse_parameters(
+        self, params_data: Optional[List[Dict]]
+    ) -> Optional[List[FunctionParameter]]:
+        """
+        Parse parameter definitions from YAML
+
+        Args:
+            params_data: List of parameter dictionaries from YAML
+
+        Returns:
+            List of FunctionParameter objects, or None if no parameters
+        """
+        if not params_data:
+            return None
+
+        parameters = []
+        for param in params_data:
+            parameters.append(
+                FunctionParameter(
+                    name=param["name"],
+                    type=param["type"],
+                    description=param.get("description"),
+                )
+            )
+        return parameters
+
+    def _validate_function(self, function: Function) -> None:
+        """
+        Validate function configuration
+
+        Ensures function has either:
+        - SQL template file (legacy), OR
+        - Parameters and return type (for auto-generation)
+
+        Args:
+            function: Function to validate
+
+        Raises:
+            ValueError: If function configuration is invalid
+        """
+        for cloud, cloud_config in function.clouds.items():
+            # Get resolved parameters and return type
+            parameters = function.get_resolved_parameters(cloud)
+            return_type = function.get_resolved_return_type(cloud)
+
+            # Check if function has SQL template
+            has_template = (
+                cloud_config.external_function_template is not None
+                and cloud_config.external_function_template.exists()
+            )
+
+            # Check if function has metadata for auto-generation
+            has_metadata = parameters is not None and return_type is not None
+
+            # At least one must be true
+            if not has_template and not has_metadata:
+                print(
+                    f"Warning: Function {function.name} ({cloud.value}) has neither "
+                    f"SQL template nor parameters/returns metadata. "
+                    f"Provide either external_function_template or parameters/returns."
+                )
 
     def _get_module(self, function_dir: Path) -> str:
         """

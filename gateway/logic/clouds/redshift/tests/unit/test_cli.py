@@ -4,13 +4,9 @@ Unit tests for Redshift CLI
 
 import pytest
 from click.testing import CliRunner
-from pathlib import Path
-import sys
 
-# Add CLI to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-
-from cli import cli  # noqa: E402
+# Import CLI using relative imports (proper package structure)
+from ...cli import cli
 
 
 class TestRedshiftCLI:

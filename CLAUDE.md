@@ -189,7 +189,7 @@ gateway/functions/<module>/<function_name>/
         └── test_*.py          # Integration tests
 ```
 
-### function.yaml Example
+### function.yaml Example (Legacy with SQL Template)
 
 ```yaml
 name: quadbin_polyfill
@@ -209,6 +209,61 @@ clouds:
       max_batch_rows: 50
       runtime: python3.10
 ```
+
+### Hybrid Function Definitions (NEW)
+
+**For simple functions, you can now eliminate the SQL template file entirely!**
+
+Define function parameters and return type directly in function.yaml:
+
+```yaml
+name: s2_fromtoken
+module: s2
+
+# Generic type definitions (auto-mapped to cloud-specific types)
+parameters:
+  - name: token
+    type: string      # Maps to VARCHAR(MAX) in Redshift, STRING in BigQuery, etc.
+  - name: resolution
+    type: int         # Maps to INT in Redshift, INT64 in BigQuery, etc.
+returns: bigint       # Maps to INT8 in Redshift, INT64 in BigQuery, etc.
+
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: s2_ftok
+    code_file: code/lambda/python/handler.py
+    # NO external_function_template needed - SQL auto-generated!
+    config:
+      max_batch_rows: 1000
+```
+
+For cloud-specific types, use overrides:
+
+```yaml
+name: complex_function
+module: statistics
+
+# Generic types for most parameters
+parameters:
+  - name: value
+    type: float
+
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: complex
+    code_file: code/lambda/python/handler.py
+    # Override with Redshift-specific types
+    parameters:
+      - name: data
+        type: SUPER         # Redshift-specific type
+      - name: value
+        type: float         # Uses generic mapping
+    returns: SUPER          # Redshift-specific type
+```
+
+**See `gateway/HYBRID_FUNCTION_DEFINITIONS.md` for complete documentation and examples.**
 
 ### Lambda Handler Pattern
 

@@ -4,6 +4,19 @@ clouds:
     lambda_name: ellipse
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     config:
       max_batch_rows: 10000
+parameters:
+- name: param_1
+  type: string
+- name: param_2
+  type: string
+- name: param_3
+  type: string
+- name: param_4
+  type: string
+- name: param_5
+  type: string
+- name: param_6
+  type: int
+returns: string

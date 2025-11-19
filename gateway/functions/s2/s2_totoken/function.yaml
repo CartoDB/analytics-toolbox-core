@@ -1,13 +1,14 @@
-name: s2_totoken
-module: s2
 clouds:
   redshift:
     type: lambda
     lambda_name: s2_tok
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     shared_libs:
     - s2
     config:
       max_batch_rows: 10000
+parameters:
+- name: id
+  type: bigint
+returns: string

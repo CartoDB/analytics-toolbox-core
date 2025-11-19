@@ -1,5 +1,3 @@
-name: quadint_kring_distances
-module: quadkey
 clouds:
   redshift:
     type: lambda

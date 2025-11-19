@@ -5,6 +5,7 @@ VENV_DIR = $(ROOT_DIR)/venv
 VENV_BIN = $(VENV_DIR)/bin
 FUNCTIONS_ROOT ?= $(ROOT_DIR)/functions
 LOGIC_ROOT = $(ROOT_DIR)/logic
+CLOUD_MODULE_PATH = logic.clouds
 
 # Paths for linting, testing, validation (can be overridden by including Makefiles)
 LINT_PATHS ?= $(FUNCTIONS_ROOT) $(LOGIC_ROOT)
@@ -91,14 +92,14 @@ lint-fix: install-dev
 
 list: venv
 	echo "Listing functions for $(cloud)..."
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py list-functions \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli list-functions \
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(EXTRA_CLI_ARGS)
 
 validate: venv
 	echo "Validating functions..."
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py validate \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli validate \
 		$(VALIDATE_EXTRA_ARGS)
 
 install-function-deps: venv
@@ -146,7 +147,7 @@ test: test-unit test-integration
 
 deploy: venv
 	echo "Deploying to $(cloud)..."
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py deploy-all \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli deploy-all \
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
@@ -156,7 +157,7 @@ deploy: venv
 
 deploy-lambdas: venv
 	echo "Deploying Lambda functions only to $(cloud)..."
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py deploy-lambdas \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli deploy-lambdas \
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(diff),--diff,) \
@@ -165,7 +166,7 @@ deploy-lambdas: venv
 
 deploy-functions: venv
 	echo "Deploying external functions only to $(cloud)..."
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py deploy-functions \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli deploy-functions \
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
@@ -174,7 +175,7 @@ deploy-functions: venv
 
 remove: venv
 	echo "Removing deployment..."
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py remove-all \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli remove-all \
 		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
@@ -186,7 +187,7 @@ create-package: venv
 	echo "Creating distribution package..."
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)
-	cd $(LOGIC_ROOT)/clouds/$(cloud) && $(VENV_BIN)/python cli.py create-package \
+	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli create-package \
 		$(DIST_DIR) \
 		--version $(PACKAGE_VERSION) \
 		$(if $(functions),--functions=$(functions),) \

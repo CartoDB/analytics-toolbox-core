@@ -1,5 +1,3 @@
-name: quadbin_bbox
-module: quadbin
 clouds:
   redshift:
     type: lambda

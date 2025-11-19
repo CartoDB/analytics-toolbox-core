@@ -1,11 +1,20 @@
-name: quadbin_fromzxy
-module: quadbin
 clouds:
   redshift:
     type: lambda
     lambda_name: qb_fzxy
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     config:
       max_batch_rows: 10000
+parameters:
+- name: param_1
+  type: bigint
+- name: param_2
+  type: bigint
+- name: param_3
+  type: BIGINT)
+- name: param_4
+  type: x
+- name: param_5
+  type: y
+returns: bigint

@@ -1,13 +1,18 @@
-name: quadint_toparent
-module: quadkey
 clouds:
   redshift:
     type: lambda
     lambda_name: qi_par
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     shared_libs:
     - quadkey
     config:
       max_batch_rows: 10000
+parameters:
+- name: param_1
+  type: bigint
+- name: param_2
+  type: INT)
+- name: param_3
+  type: resolution
+returns: bigint

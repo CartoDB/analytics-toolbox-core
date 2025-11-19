@@ -100,8 +100,10 @@ class FunctionValidator:
         Validate that all referenced shared libraries exist
 
         Supports two formats:
-        1. Module name: "data" - validates _shared/python/data/ directory exists
-        2. File paths: "data/_utils.py" - validates _shared/python/data/_utils.py file exists
+        1. Module name: "data" - validates _shared/python/data/ directory
+           exists
+        2. File paths: "data/_utils.py" - validates
+           _shared/python/data/_utils.py file exists
 
         Args:
             function_dir: Directory containing the function
@@ -110,7 +112,8 @@ class FunctionValidator:
         Raises:
             ValidationError: If shared libraries are missing
         """
-        # Find the gateway root (function_dir is at gateway/functions/<module>/<function>)
+        # Find the gateway root
+        # (function_dir is at gateway/functions/<module>/<function>)
         gateway_root = function_dir.parent.parent.parent
         shared_root = gateway_root / "functions" / "_shared" / "python"
 
@@ -126,16 +129,19 @@ class FunctionValidator:
 
             for lib_name in shared_libs:
                 if "/" in lib_name:
-                    # Path format: "data/_utils.py" (file) or "data/utils/" (folder)
+                    # Path format: "data/_utils.py" (file) or
+                    # "data/utils/" (folder)
                     lib_path = shared_root / lib_name
                     if not lib_path.exists():
                         raise ValidationError(
-                            f"Shared library path not found for {cloud_name}: {lib_name} "
+                            f"Shared library path not found for "
+                            f"{cloud_name}: {lib_name} "
                             f"(expected at {lib_path})"
                         )
                     if not lib_path.is_file() and not lib_path.is_dir():
                         raise ValidationError(
-                            f"Shared library path is neither file nor directory for {cloud_name}: "
+                            f"Shared library path is neither file nor "
+                            f"directory for {cloud_name}: "
                             f"{lib_name} (at {lib_path})"
                         )
 
@@ -145,20 +151,22 @@ class FunctionValidator:
                     init_path = shared_root / module_name / "__init__.py"
                     if not init_path.exists():
                         raise ValidationError(
-                            f"Shared library module missing __init__.py for {cloud_name}: "
-                            f"{module_name}/ (required when using paths)"
+                            f"Shared library module missing __init__.py "
+                            f"for {cloud_name}: {module_name}/ "
+                            f"(required when using paths)"
                         )
                 else:
                     # Module name format: "data" - validate directory exists
                     lib_path = shared_root / lib_name
                     if not lib_path.exists():
                         raise ValidationError(
-                            f"Shared library not found for {cloud_name}: {lib_name} "
-                            f"(expected at {lib_path})"
+                            f"Shared library not found for {cloud_name}: "
+                            f"{lib_name} (expected at {lib_path})"
                         )
                     if not lib_path.is_dir():
                         raise ValidationError(
-                            f"Shared library path is not a directory for {cloud_name}: {lib_name} "
+                            f"Shared library path is not a directory "
+                            f"for {cloud_name}: {lib_name} "
                             f"(at {lib_path})"
                         )
 

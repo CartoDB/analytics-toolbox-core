@@ -1,5 +1,3 @@
-name: s2_polyfill_bbox
-module: s2
 clouds:
   redshift:
     type: lambda

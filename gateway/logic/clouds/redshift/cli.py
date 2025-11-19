@@ -19,22 +19,23 @@ try:
 except ImportError:
     HAS_REDSHIFT_CONNECTOR = False
 
-# Add parent directories to path
+# Add logic root to path for clean imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from common.engine import CatalogLoader, FunctionValidator, CloudType  # noqa: E402
-from common.engine.packager import PackageBuilder  # noqa: E402
-from common.utils import (  # noqa: E402
+# Use relative imports within the package
+from ...common.engine import CatalogLoader, FunctionValidator, CloudType  # noqa: E402
+from ...common.engine.packager import PackageBuilder  # noqa: E402
+from ...common.utils import (  # noqa: E402
     get_default_function_roots,
     setup_logger,
     get_function_schema,
 )
 
-# Redshift-specific imports (moved from common/)
-from validation.pre_flight_checks import run_pre_flight_checks  # noqa: E402
-from template_renderer import TemplateRenderer  # noqa: E402
+# Redshift-specific imports (relative)
+from .validation.pre_flight_checks import run_pre_flight_checks  # noqa: E402
+from .template_renderer import TemplateRenderer  # noqa: E402
 
-# Import LambdaDeployer and IAMRoleManager
+# Import LambdaDeployer (sys.path needed for aws-lambda hyphen directory)  # noqa: E402
 platforms_path = (
     Path(__file__).parent.parent.parent / "platforms" / "aws-lambda" / "deploy"
 )

@@ -1,5 +1,3 @@
-name: quadbin_fromlonglat
-module: quadbin
 clouds:
   redshift:
     type: lambda

@@ -1,5 +1,3 @@
-name: quadbin_polyfill
-module: quadbin
 clouds:
   redshift:
     type: lambda

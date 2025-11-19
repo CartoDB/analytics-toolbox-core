@@ -1,5 +1,3 @@
-name: quadint_tochildren
-module: quadkey
 clouds:
   redshift:
     type: lambda

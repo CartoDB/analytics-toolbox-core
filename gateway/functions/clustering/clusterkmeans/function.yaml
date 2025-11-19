@@ -4,9 +4,14 @@ clouds:
     lambda_name: clustkm
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     shared_libs:
     - clustering
     config:
       memory_size: 1024
       max_batch_rows: 100
+parameters:
+- name: geom
+  type: string
+- name: number_of_clusters
+  type: int
+returns: string

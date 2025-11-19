@@ -142,8 +142,10 @@ class LambdaDeployer:
         Add shared libraries to deployment package.
 
         Supports two formats:
-        1. Module name: "data" - copies entire _shared/python/data/ directory
-        2. File paths: "data/_utils.py", "data/__init__.py" - copies only specified files
+        1. Module name: "data" - copies entire _shared/python/data/
+           directory
+        2. File paths: "data/_utils.py", "data/__init__.py" - copies
+           only specified files
 
         Reads function.yaml to find shared_libs configuration and copies
         shared libraries from _shared/python/ into lib/ in the zip.
@@ -203,7 +205,8 @@ class LambdaDeployer:
 
                 if lib_src.is_file():
                     # Copy single file: data/_utils.py -> lib/data/_utils.py
-                    # Construct path explicitly by splitting on "/" for proper subdirectory handling
+                    # Construct path explicitly by splitting on "/" for
+                    # proper subdirectory handling
                     arcname = Path("lib")
                     for part in lib_name.split("/"):
                         arcname = arcname / part
@@ -221,7 +224,8 @@ class LambdaDeployer:
                     for py_file in lib_src.rglob("*.py"):
                         if "__pycache__" in str(py_file):
                             continue
-                        # Maintain structure: data/utils/helpers.py -> lib/data/utils/helpers.py
+                        # Maintain structure:
+                        # data/utils/helpers.py -> lib/data/utils/helpers.py
                         rel_to_shared = py_file.relative_to(shared_root)
                         # Build path explicitly
                         arcname = Path("lib")
@@ -235,7 +239,8 @@ class LambdaDeployer:
                     print(f"  Warning: {lib_name} is neither a file nor directory")
 
             else:
-                # Module name format: "data" - copy entire directory (backward compatible)
+                # Module name format: "data" - copy entire directory
+                # (backward compatible)
                 lib_src = shared_root / lib_name
                 if not lib_src.exists():
                     print(f"  Warning: Shared library not found: {lib_name}")

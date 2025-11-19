@@ -137,8 +137,10 @@ class PackageBuilder:
         Copy shared libraries into function's deployment package.
 
         Supports two formats:
-        1. Module name: "data" - copies entire _shared/python/data/ directory
-        2. File paths: "data/_utils.py", "data/__init__.py" - copies only specified files
+        1. Module name: "data" - copies entire _shared/python/data/
+           directory
+        2. File paths: "data/_utils.py", "data/__init__.py" - copies
+           only specified files
 
         Shared libraries are defined in function.yaml under 'shared_libs'.
         They are copied from functions/_shared/python/ to the function's lib/ directory.
@@ -200,7 +202,8 @@ class PackageBuilder:
 
                 if lib_src.is_file():
                     # Copy single file: data/_utils.py -> lib/data/_utils.py
-                    # Construct path explicitly by splitting on "/" for proper subdirectory handling
+                    # Construct path explicitly by splitting on "/" for
+                    # proper subdirectory handling
                     lib_base = func_dst / "code" / "lambda" / "python" / "lib"
 
                     # Build path from parts to ensure proper directory nesting
@@ -220,7 +223,8 @@ class PackageBuilder:
 
                 elif lib_src.is_dir():
                     # Copy entire subdirectory: data/utils/ -> lib/data/utils/
-                    # Construct path explicitly by splitting on "/" for proper subdirectory handling
+                    # Construct path explicitly by splitting on "/" for
+                    # proper subdirectory handling
                     lib_base = func_dst / "code" / "lambda" / "python" / "lib"
 
                     # Build path from parts to ensure proper directory nesting
@@ -240,7 +244,8 @@ class PackageBuilder:
                     logger.warning(f"  {lib_name} is neither a file nor directory")
 
             else:
-                # Module name format: "data" - copy entire directory (backward compatible)
+                # Module name format: "data" - copy entire directory
+                # (backward compatible)
                 lib_src = shared_root / lib_name
 
                 if lib_src.is_dir():
@@ -263,10 +268,14 @@ class PackageBuilder:
                     if not lib_src.is_file():
                         lib_src = lib_src.parent / f"{lib_name}.py"
 
-                    lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / lib_src.name
+                    lib_dst = (
+                        func_dst / "code" / "lambda" / "python" / "lib" / lib_src.name
+                    )
                     lib_dst.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(lib_src, lib_dst)
-                    logger.debug(f"  Copied shared lib: {lib_name} -> lib/{lib_src.name}")
+                    logger.debug(
+                        f"  Copied shared lib: {lib_name} -> lib/{lib_src.name}"
+                    )
                 else:
                     logger.warning(
                         f"  Shared library not found: {lib_name} in {shared_root}"
@@ -278,7 +287,15 @@ class PackageBuilder:
                 init_src = shared_root / module_name / "__init__.py"
                 if init_src.exists():
                     # Construct path explicitly for proper subdirectory handling
-                    lib_dst = func_dst / "code" / "lambda" / "python" / "lib" / module_name / "__init__.py"
+                    lib_dst = (
+                        func_dst
+                        / "code"
+                        / "lambda"
+                        / "python"
+                        / "lib"
+                        / module_name
+                        / "__init__.py"
+                    )
 
                     lib_dst.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(init_src, lib_dst)

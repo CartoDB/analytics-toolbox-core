@@ -1,5 +1,3 @@
-name: s2_tochildren
-module: s2
 clouds:
   redshift:
     type: lambda

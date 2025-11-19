@@ -1,13 +1,18 @@
-name: st_greatcircle
-module: transformations
 clouds:
   redshift:
     type: lambda
     lambda_name: grtcirc
     code_file: code/lambda/python/handler.py
     requirements_file: code/lambda/python/requirements.txt
-    external_function_template: code/redshift.sql
     shared_libs:
     - transformations
     config:
       max_batch_rows: 10000
+parameters:
+- name: start_point
+  type: string
+- name: end_point
+  type: string
+- name: n_points
+  type: int
+returns: string
