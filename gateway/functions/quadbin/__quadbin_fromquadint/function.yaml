@@ -7,6 +7,6 @@ clouds:
     config:
       max_batch_rows: 10000
 parameters:
-- name: param_1
-  type: BIGINT)
+- name: quadint
+  type: bigint
 returns: bigint

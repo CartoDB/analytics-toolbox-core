@@ -7,10 +7,8 @@ clouds:
     config:
       max_batch_rows: 10000
 parameters:
-- name: param_1
+- name: quadbin
   type: bigint
-- name: param_2
-  type: VARCHAR(MAX))
-- name: param_3
-  type: direction
+- name: direction
+  type: string
 returns: bigint

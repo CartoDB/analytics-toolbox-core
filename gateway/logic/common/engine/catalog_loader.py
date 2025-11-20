@@ -129,7 +129,7 @@ class CatalogLoader:
 
     def _parse_parameters(
         self, params_data: Optional[List[Dict]]
-    ) -> Optional[List[FunctionParameter]]:
+    ) -> List[FunctionParameter]:
         """
         Parse parameter definitions from YAML
 
@@ -137,10 +137,10 @@ class CatalogLoader:
             params_data: List of parameter dictionaries from YAML
 
         Returns:
-            List of FunctionParameter objects, or None if no parameters
+            List of FunctionParameter objects, or empty list if no parameters
         """
         if not params_data:
-            return None
+            return []
 
         parameters = []
         for param in params_data:
@@ -168,8 +168,7 @@ class CatalogLoader:
             ValueError: If function configuration is invalid
         """
         for cloud, cloud_config in function.clouds.items():
-            # Get resolved parameters and return type
-            parameters = function.get_resolved_parameters(cloud)
+            # Get resolved return type
             return_type = function.get_resolved_return_type(cloud)
 
             # Check if function has SQL template
@@ -179,7 +178,8 @@ class CatalogLoader:
             )
 
             # Check if function has metadata for auto-generation
-            has_metadata = parameters is not None and return_type is not None
+            # Only return_type is required; parameters can be empty list
+            has_metadata = return_type is not None
 
             # At least one must be true
             if not has_template and not has_metadata:

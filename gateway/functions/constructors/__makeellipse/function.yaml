@@ -7,16 +7,16 @@ clouds:
     config:
       max_batch_rows: 10000
 parameters:
-- name: param_1
+- name: center
   type: string
-- name: param_2
+- name: xSemiAxis
   type: string
-- name: param_3
+- name: ySemiAxis
   type: string
-- name: param_4
+- name: angle
   type: string
-- name: param_5
+- name: units
   type: string
-- name: param_6
+- name: steps
   type: int
 returns: string

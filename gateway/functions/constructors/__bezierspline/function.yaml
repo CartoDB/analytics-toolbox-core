@@ -7,10 +7,10 @@ clouds:
     config:
       max_batch_rows: 10000
 parameters:
-- name: param_1
+- name: linestring_json
   type: string
-- name: param_2
+- name: resolution
   type: int
-- name: param_3
+- name: sharpness
   type: string
 returns: string

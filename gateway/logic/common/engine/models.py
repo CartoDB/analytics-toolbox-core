@@ -91,9 +91,7 @@ class Function:
         """Get configuration for a specific cloud"""
         return self.clouds.get(cloud)
 
-    def get_resolved_parameters(
-        self, cloud: CloudType
-    ) -> Optional[List[FunctionParameter]]:
+    def get_resolved_parameters(self, cloud: CloudType) -> List[FunctionParameter]:
         """
         Get resolved parameters for a specific cloud
 
@@ -103,12 +101,13 @@ class Function:
             cloud: Target cloud platform
 
         Returns:
-            Cloud-specific parameters if defined, otherwise generic parameters
+            Cloud-specific parameters if defined, otherwise generic parameters,
+            or empty list if no parameters defined
         """
         cloud_config = self.get_cloud_config(cloud)
         if cloud_config and cloud_config.parameters:
             return cloud_config.parameters
-        return self.parameters
+        return self.parameters or []
 
     def get_resolved_return_type(self, cloud: CloudType) -> Optional[str]:
         """

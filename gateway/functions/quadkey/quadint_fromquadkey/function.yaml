@@ -9,6 +9,6 @@ clouds:
     config:
       max_batch_rows: 10000
 parameters:
-- name: param_1
-  type: VARCHAR)
+- name: quadkey
+  type: string
 returns: bigint

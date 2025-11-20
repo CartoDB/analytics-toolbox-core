@@ -28,6 +28,7 @@ class RedshiftSQLTemplateGenerator:
         parameters: List[FunctionParameter],
         return_type: str,
         max_batch_rows: Optional[int] = None,
+        volatility: str = "STABLE",
     ) -> str:
         """
         Generate CREATE EXTERNAL FUNCTION SQL statement
@@ -39,6 +40,8 @@ class RedshiftSQLTemplateGenerator:
             return_type: Return type (already resolved: generic or
                         cloud-specific)
             max_batch_rows: Optional max batch rows configuration
+            volatility: Function volatility: IMMUTABLE, STABLE, or VOLATILE
+                       (default: STABLE)
 
         Returns:
             Generated SQL template string with @@VARIABLE@@ placeholders
@@ -67,7 +70,7 @@ class RedshiftSQLTemplateGenerator:
             [
                 ")",
                 f"RETURNS {mapped_return}",
-                "STABLE",
+                volatility.upper(),
                 "LAMBDA '@@LAMBDA_ARN@@'",
                 "IAM_ROLE '@@IAM_ROLE_ARN@@'",
             ]
@@ -173,7 +176,7 @@ class RedshiftSQLTemplateGenerator:
             return False
 
         # Check if we have enough metadata to generate
-        parameters = function.get_resolved_parameters(cloud)
+        # Only return_type is required; parameters can be empty list
         return_type = function.get_resolved_return_type(cloud)
 
-        return parameters is not None and return_type is not None
+        return return_type is not None

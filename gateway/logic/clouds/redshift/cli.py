@@ -7,6 +7,7 @@ import click
 import sys
 import subprocess
 import os
+import tempfile
 from pathlib import Path
 from typing import Optional, List, Set, Dict
 from dotenv import load_dotenv
@@ -34,6 +35,7 @@ from ...common.utils import (  # noqa: E402
 # Redshift-specific imports (relative)
 from .validation.pre_flight_checks import run_pre_flight_checks  # noqa: E402
 from .template_renderer import TemplateRenderer  # noqa: E402
+from .sql_template_generator import RedshiftSQLTemplateGenerator  # noqa: E402
 
 # Import LambdaDeployer (sys.path needed for aws-lambda hyphen directory)  # noqa: E402
 platforms_path = (
@@ -1064,13 +1066,21 @@ def deploy_all(
                 logger.error("Cannot proceed with external function creation")
                 # Don't exit - still count Lambda deployments as success
 
-            # Filter functions that have external function templates
+            # Filter functions with templates OR hybrid definitions
             functions_to_deploy = []
             for func in to_deploy:
                 if func.name not in lambda_arns:
                     continue
                 cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
-                if cloud_config.external_function_template:
+                # Include functions with either:
+                # 1. Explicit SQL template, OR
+                # 2. Hybrid definition (parameters + returns)
+                has_template = cloud_config.external_function_template is not None
+                has_hybrid_def = (
+                    func.get_resolved_parameters(CloudType.REDSHIFT) is not None
+                    and func.get_resolved_return_type(CloudType.REDSHIFT) is not None
+                )
+                if has_template or has_hybrid_def:
                     functions_to_deploy.append(func)
 
             # Use tqdm for consistent progress bar style with clouds
@@ -1084,19 +1094,66 @@ def deploy_all(
                         # Get cloud configuration
                         cloud_config = func.get_cloud_config(CloudType.REDSHIFT)
 
-                        # Check if function has external function template
-                        template_file = cloud_config.external_function_template
-                        sql_template_path = func.function_path / template_file
-                        if not sql_template_path.exists():
-                            # tqdm automatically closes on exception
-                            logger.error(
-                                f"✗ {func.name}: "
-                                f"Template not found: {sql_template_path}"
-                            )
-                            sys.exit(1)
-
                         # Get max_batch_rows from config (default: 1)
                         max_batch_rows = cloud_config.config.get("max_batch_rows", 1)
+
+                        # Determine SQL template path (existing or auto-generated)
+                        sql_template_path = None
+                        temp_sql_file = None  # Track temp file for cleanup
+
+                        if cloud_config.external_function_template:
+                            # Use existing template file
+                            template_file = cloud_config.external_function_template
+                            sql_template_path = func.function_path / template_file
+                            if not sql_template_path.exists():
+                                # tqdm automatically closes on exception
+                                logger.error(
+                                    f"✗ {func.name}: "
+                                    f"Template not found: {sql_template_path}"
+                                )
+                                sys.exit(1)
+                        else:
+                            # Auto-generate SQL from hybrid definition
+                            parameters = func.get_resolved_parameters(
+                                CloudType.REDSHIFT
+                            )
+                            return_type = func.get_resolved_return_type(
+                                CloudType.REDSHIFT
+                            )
+
+                            # Default to empty list if no parameters
+                            if parameters is None:
+                                parameters = []
+
+                            if return_type is None:
+                                logger.error(
+                                    f"✗ {func.name}: Cannot auto-generate SQL - "
+                                    "missing return type"
+                                )
+                                sys.exit(1)
+
+                            # Get volatility from config (default: STABLE)
+                            volatility = cloud_config.config.get("volatility", "STABLE")
+
+                            # Generate SQL using template generator
+                            generated_sql = RedshiftSQLTemplateGenerator.generate(
+                                function=func,
+                                parameters=parameters,
+                                return_type=return_type,
+                                max_batch_rows=max_batch_rows,
+                                volatility=volatility,
+                            )
+
+                            # Write to temporary file
+                            temp_sql_file = tempfile.NamedTemporaryFile(
+                                mode="w",
+                                suffix=".sql",
+                                delete=False,
+                                prefix=f"{func.name}_",
+                            )
+                            temp_sql_file.write(generated_sql)
+                            temp_sql_file.close()
+                            sql_template_path = Path(temp_sql_file.name)
 
                         # Deploy external function
                         deploy_external_function(
@@ -1123,6 +1180,47 @@ def deploy_all(
                             f"{func.name}. Stopping."
                         )
                         sys.exit(1)
+                    finally:
+                        # Clean up temporary SQL file if it was created
+                        if (
+                            temp_sql_file
+                            and sql_template_path
+                            and sql_template_path.exists()
+                        ):
+                            try:
+                                os.unlink(sql_template_path)
+                            except Exception:
+                                pass  # Ignore cleanup errors
+
+        # Validate Lambda vs External Function counts
+        if deploy_external_functions and lambda_success > 0:
+            if external_success != lambda_success:
+                separator = "=" * 50
+                logger.error(f"\n{separator}")
+                logger.error("DEPLOYMENT MISMATCH DETECTED")
+                logger.error(separator)
+                logger.error(f"  Lambda functions deployed: {lambda_success}")
+                logger.error(f"  External functions created: {external_success}")
+                logger.error(
+                    f"  Missing external functions: {lambda_success - external_success}"
+                )
+                logger.error("")
+                logger.error(
+                    "This indicates functions with missing SQL templates or "
+                    "parameters/returns."
+                )
+                logger.error(
+                    "All Lambda functions must have corresponding external "
+                    "functions."
+                )
+                logger.error("")
+                logger.error("To fix: Ensure each function has either:")
+                logger.error("  1. external_function_template defined in function.yaml")
+                logger.error(
+                    "  2. OR both 'parameters' and 'returns' metadata for "
+                    "auto-generation"
+                )
+                sys.exit(1)
 
         # Summary
         separator = "=" * 50

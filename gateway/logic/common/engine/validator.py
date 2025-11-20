@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 import jsonschema
 
+from .type_mapper import GenericType
+
 
 class ValidationError(Exception):
     """Raised when validation fails"""
@@ -170,6 +172,56 @@ class FunctionValidator:
                             f"(at {lib_path})"
                         )
 
+    def validate_parameter_types(self, yaml_data: Dict[str, Any]) -> None:
+        """
+        Validate that generic parameter types are valid
+
+        Generic parameters (top-level) must use recognized types from GenericType.
+        Cloud-specific parameter overrides can use any type name.
+
+        Args:
+            yaml_data: Parsed function.yaml data
+
+        Raises:
+            ValidationError: If invalid generic types are found
+        """
+        # Get valid generic type values (lowercase for comparison)
+        valid_types = {t.value.lower() for t in GenericType}
+
+        # Validate top-level generic parameters
+        parameters = yaml_data.get("parameters", [])
+        if parameters:
+            for i, param in enumerate(parameters):
+                if not isinstance(param, dict):
+                    continue
+
+                param_type = param.get("type", "")
+                param_name = param.get("name", f"parameter {i}")
+
+                # Check if it's a valid generic type (case-insensitive)
+                if param_type.lower() not in valid_types:
+                    raise ValidationError(
+                        f"Invalid generic type '{param_type}' for parameter "
+                        f"'{param_name}'. Generic types must be one of: "
+                        f"{', '.join(sorted(valid_types))}. "
+                        f"For cloud-specific types, define them under "
+                        f"'clouds.<cloud>.parameters'"
+                    )
+
+        # Validate top-level generic return type
+        returns = yaml_data.get("returns")
+        if returns and isinstance(returns, str):
+            if returns.lower() not in valid_types:
+                raise ValidationError(
+                    f"Invalid generic return type '{returns}'. "
+                    f"Generic types must be one of: "
+                    f"{', '.join(sorted(valid_types))}. "
+                    f"For cloud-specific types, define them under "
+                    f"'clouds.<cloud>.returns'"
+                )
+
+        # Cloud-specific types are allowed any value (no validation needed)
+
     def validate_function(self, function_dir: Path) -> None:
         """
         Validate a complete function directory
@@ -193,6 +245,7 @@ class FunctionValidator:
         if self.schema:
             self.validate_yaml_structure(yaml_data)
 
+        self.validate_parameter_types(yaml_data)
         self.validate_code_files_exist(function_dir, yaml_data)
         self.validate_shared_libs_exist(function_dir, yaml_data)
 

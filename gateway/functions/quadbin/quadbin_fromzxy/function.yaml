@@ -7,14 +7,10 @@ clouds:
     config:
       max_batch_rows: 10000
 parameters:
-- name: param_1
+- name: z
   type: bigint
-- name: param_2
+- name: x
   type: bigint
-- name: param_3
-  type: BIGINT)
-- name: param_4
-  type: x
-- name: param_5
-  type: y
+- name: y
+  type: bigint
 returns: bigint

@@ -110,7 +110,7 @@ install-function-deps: venv
 		$(if $(functions),--functions=$(functions),) \
 		$(EXTRA_CLI_ARGS)
 
-build: venv install-function-deps
+build: venv install-function-deps validate
 	echo "Building functions with shared libraries..."
 	$(VENV_BIN)/python $(ROOT_DIR)/tools/build_functions.py --cloud $(cloud) $(EXTRA_CLI_ARGS)
 
