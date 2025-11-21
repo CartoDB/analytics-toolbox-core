@@ -210,60 +210,283 @@ clouds:
       runtime: python3.10
 ```
 
-### Hybrid Function Definitions (NEW)
+### Hybrid Function Definitions (Auto-Generated SQL)
 
-**For simple functions, you can now eliminate the SQL template file entirely!**
+**For simple functions, you can now eliminate the SQL template file entirely!** The system can auto-generate SQL from function metadata.
 
-Define function parameters and return type directly in function.yaml:
+#### Key Features
+
+- **Convention over configuration**: Function name and module inferred from directory structure
+- **Generic type mapping**: Define parameters once with generic types (`string`, `int`, `bigint`, etc.)
+- **Cloud-specific overrides**: Override types for specific clouds when needed (e.g., Redshift's `SUPER`)
+- **Automatic SQL generation**: SQL templates generated automatically from metadata
+- **Backward compatible**: Existing functions with SQL templates continue to work
+
+#### Function Naming Convention
+
+**Function name and module are automatically inferred from directory structure:**
+
+```
+functions/
+  <module>/
+    <function_name>/
+      function.yaml
+```
+
+- **Function name**: From directory name (e.g., `s2_fromtoken`)
+- **Module**: From parent directory name (e.g., `s2`)
+- **SQL function name**: Uppercase version (e.g., `S2_FROMTOKEN`)
+
+**Important**: Do NOT include `name` or `module` fields in `function.yaml` unless the function name needs to differ from the folder name.
+
+#### Supported Generic Types
+
+| Generic Type | Redshift | BigQuery | Snowflake | Databricks | Postgres |
+|-------------|----------|----------|-----------|------------|----------|
+| `string` | `VARCHAR(MAX)` | `STRING` | `VARCHAR` | `STRING` | `TEXT` |
+| `int` | `INT` | `INT64` | `INT` | `INT` | `INTEGER` |
+| `bigint` | `INT8` | `INT64` | `BIGINT` | `BIGINT` | `BIGINT` |
+| `float` | `FLOAT4` | `FLOAT64` | `FLOAT` | `FLOAT` | `REAL` |
+| `double` | `FLOAT8` | `FLOAT64` | `DOUBLE` | `DOUBLE` | `DOUBLE PRECISION` |
+| `boolean` | `BOOLEAN` | `BOOL` | `BOOLEAN` | `BOOLEAN` | `BOOLEAN` |
+| `bytes` | `VARBYTE` | `BYTES` | `BINARY` | `BINARY` | `BYTEA` |
+| `object` | `SUPER` | `JSON` | `VARIANT` | `STRING` | `JSONB` |
+| `geometry` | `GEOMETRY` | `GEOGRAPHY` | `GEOMETRY` | `STRING` | `GEOMETRY` |
+| `geography` | `GEOGRAPHY` | `GEOGRAPHY` | `GEOGRAPHY` | `STRING` | `GEOGRAPHY` |
+
+You can also use cloud-specific types directly (e.g., `VARCHAR(MAX)`, `SUPER`), which are passed through unchanged.
+
+#### Usage Patterns
+
+**Pattern 1: Simple Function with Generic Types**
+
+For straightforward functions, define parameters and return type at the top level. **No SQL file needed!**
 
 ```yaml
-name: s2_fromtoken
-module: s2
+# No 'name' or 'module' fields - inferred from directory structure
+# Function: functions/s2/s2_fromtoken/
 
-# Generic type definitions (auto-mapped to cloud-specific types)
 parameters:
   - name: token
-    type: string      # Maps to VARCHAR(MAX) in Redshift, STRING in BigQuery, etc.
-  - name: resolution
-    type: int         # Maps to INT in Redshift, INT64 in BigQuery, etc.
-returns: bigint       # Maps to INT8 in Redshift, INT64 in BigQuery, etc.
+    type: string      # Maps to VARCHAR(MAX) in Redshift
+returns: bigint       # Maps to INT8 in Redshift
 
 clouds:
   redshift:
     type: lambda
     lambda_name: s2_ftok
     code_file: code/lambda/python/handler.py
-    # NO external_function_template needed - SQL auto-generated!
+    # NO external_function_template needed!
     config:
-      max_batch_rows: 1000
+      max_batch_rows: 10000
 ```
 
-For cloud-specific types, use overrides:
+**Generated SQL (Redshift):**
+
+```sql
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.S2_FROMTOKEN(
+    token VARCHAR(MAX)
+)
+RETURNS INT8
+STABLE
+LAMBDA '@@LAMBDA_ARN@@'
+IAM_ROLE '@@IAM_ROLE_ARN@@'
+MAX_BATCH_ROWS 10000;
+```
+
+**Pattern 2: Cloud-Specific Type Overrides**
+
+For functions that need cloud-specific types (e.g., Redshift's `SUPER`), define types under the cloud section:
 
 ```yaml
-name: complex_function
-module: statistics
-
-# Generic types for most parameters
-parameters:
-  - name: value
-    type: float
+# Function: functions/statistics/getis_ord_quadbin/
 
 clouds:
   redshift:
     type: lambda
-    lambda_name: complex
+    lambda_name: getisord
     code_file: code/lambda/python/handler.py
-    # Override with Redshift-specific types
+    shared_libs:
+      - statistics
+    # Cloud-specific parameter types
     parameters:
       - name: data
-        type: SUPER         # Redshift-specific type
-      - name: value
-        type: float         # Uses generic mapping
-    returns: SUPER          # Redshift-specific type
+        type: SUPER        # Redshift-specific type
+      - name: k_neighbors
+        type: INT
+    returns: SUPER
+    config:
+      memory_size: 1024
+      max_batch_rows: 50
 ```
 
-**See `gateway/HYBRID_FUNCTION_DEFINITIONS.md` for complete documentation and examples.**
+**Pattern 3: Hybrid (Generic + Cloud-Specific Overrides)**
+
+Define generic types at top level for most clouds, then override specific clouds:
+
+```yaml
+# Generic types for most clouds
+parameters:
+  - name: input_data
+    type: object      # Maps to SUPER, JSON, VARIANT, etc.
+  - name: value
+    type: float
+returns: object
+
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: ex_hybrid
+    code_file: code/lambda/python/handler.py
+    # Override for Redshift (use SUPER instead of generic object)
+    parameters:
+      - name: input_data
+        type: SUPER
+      - name: value
+        type: float
+    returns: SUPER
+
+  bigquery:
+    type: cloud_run
+    # Uses generic types (object → JSON, float → FLOAT64)
+    code_file: code/cloud_run/main.py
+```
+
+**Pattern 4: Legacy (SQL Template)**
+
+Existing functions with SQL templates continue to work unchanged:
+
+```yaml
+name: example_legacy
+module: example
+
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: ex_legacy
+    code_file: code/lambda/python/handler.py
+    external_function_template: code/redshift.sql  # Uses existing template
+```
+
+#### Migration Guide
+
+To convert an existing function from SQL template to YAML definition:
+
+1. **Identify simple functions**: Functions with straightforward SQL templates (no wrappers, no complex logic)
+
+2. **Extract parameter types**: Copy parameter names and types from SQL template
+
+3. **Update function.yaml**:
+
+   **Before (with SQL template):**
+   ```yaml
+   clouds:
+     redshift:
+       external_function_template: code/redshift.sql  # Delete this line
+   ```
+
+   **After (with metadata):**
+   ```yaml
+   parameters:
+     - name: token
+       type: string
+   returns: bigint
+   ```
+
+4. **Test**: Deploy and verify auto-generated SQL matches original
+
+5. **Delete SQL file** (optional): Once verified, remove old SQL template
+
+#### When to Use Each Pattern
+
+| Pattern | Use When |
+|---------|----------|
+| **Simple (Generic Types)** | Function has standard types (string, int) and works same across clouds |
+| **Cloud-Specific Overrides** | Function needs proprietary types (SUPER, VARIANT) or cloud-specific syntax |
+| **Hybrid** | Most clouds use generic types, but one cloud needs special handling |
+| **Legacy (SQL Template)** | Function has complex SQL (wrappers, multiple statements, conditional logic) |
+
+#### Best Practices
+
+1. **Start with generic types**: Use generic types by default for maximum portability
+2. **Override only when needed**: Only add cloud-specific overrides when absolutely necessary
+3. **Use descriptive parameter names**: Parameter names appear in both SQL and documentation
+4. **Add descriptions**: Include parameter descriptions for better documentation
+   ```yaml
+   parameters:
+     - name: resolution
+       type: int
+       description: Quadbin resolution level (0-26)
+   ```
+
+#### Validation
+
+The system validates function configurations at load time:
+
+- **Error**: Function has neither SQL template nor parameters/returns metadata
+- **Warning**: Function has both SQL template and metadata (template takes precedence)
+- **OK**: Function has either SQL template or complete metadata (parameters + returns)
+
+#### Implementation Architecture
+
+The architecture follows a **Registry Pattern** for cloud-agnostic type mapping:
+
+**Components:**
+- **TypeMapperRegistry** (`logic/common/engine/type_mapper.py`): Cloud-agnostic registry (NO cloud-specific logic)
+- **RedshiftTypeMappings** (`logic/clouds/redshift/type_mappings.py`): Redshift-specific mappings (auto-registers on import)
+- **SQLTemplateGenerator** (`logic/clouds/redshift/sql_template_generator.py`): Generates SQL from metadata
+- **CatalogLoader** (`logic/common/engine/catalog_loader.py`): Parses function.yaml and validates
+
+**Resolution Order:**
+1. Check if `external_function_template` exists → use SQL file
+2. Check if function has `parameters` and `returns` → auto-generate
+3. Error if neither available
+
+**Cloud Override Resolution:**
+1. Check if cloud has `parameters` or `returns` defined → use cloud-specific
+2. Otherwise, use top-level (generic) definitions
+3. Map types using TypeMapper
+
+#### Adding Support for New Clouds
+
+To add a new cloud:
+
+1. **Create type mappings file** (`logic/clouds/{cloud}/type_mappings.py`):
+
+```python
+from ...common.engine.type_mapper import TypeMapperRegistry
+
+class BigQueryTypeMappings:
+    """BigQuery-specific type mapping provider"""
+
+    TYPE_MAPPINGS = {
+        "string": "STRING",
+        "int": "INT64",
+        "bigint": "INT64",
+        "object": "JSON",
+        # ... add all mappings
+    }
+
+    def map_type(self, generic_type: str) -> str:
+        generic_lower = generic_type.lower()
+        if generic_lower in self.TYPE_MAPPINGS:
+            return self.TYPE_MAPPINGS[generic_lower]
+        return generic_type
+
+    def is_generic_type(self, type_str: str) -> bool:
+        return type_str.lower() in self.TYPE_MAPPINGS
+
+    def get_supported_generic_types(self) -> list[str]:
+        return list(self.TYPE_MAPPINGS.keys())
+
+# Auto-register
+TypeMapperRegistry.register("bigquery", BigQueryTypeMappings())
+```
+
+2. **Create SQL template generator** (if auto-generation desired)
+3. **Write tests** (`logic/clouds/{cloud}/tests/unit/test_type_mappings.py`)
+
+That's it! The common engine automatically uses your cloud's mapper.
 
 ### Lambda Handler Pattern
 
@@ -459,3 +682,309 @@ Cloud codes: `bq` (BigQuery), `sf` (Snowflake), `rs` (Redshift), `pg` (Postgres)
 - **Shared libraries are copied during build**: Changes to `_shared/` require rebuilding
 - **Lambda names must be short**: Use `lambda_name` field to keep under 18 chars total
 - **Two parallel systems**: Gateway (Lambda) and Clouds (native SQL) are deployed independently but packaged together
+
+---
+
+## Gateway Architecture Deep Dive
+
+### Cloud and Platform Agnosticism
+
+The gateway deployment engine in `gateway/logic/` is designed to be cloud and platform agnostic:
+
+**Architecture Layers:**
+
+1. **Common Engine** (`gateway/logic/common/engine/`):
+   - `catalog_loader.py`: Discovers and loads function definitions
+   - `models.py`: Cloud-agnostic data models (CloudType, PlatformType, CloudConfig)
+   - `type_mapper.py`: Generic type mapping system with cloud-specific registrations
+   - `validators.py`: Function configuration validation
+   - `packagers.py`: Package creation for distribution
+
+2. **Platform Layer** (`gateway/logic/platforms/`):
+   - `aws-lambda/`: AWS Lambda-specific deployment logic
+   - Extensible for other platforms (GCP Cloud Run, Snowflake Snowpark, etc.)
+
+3. **Cloud Layer** (`gateway/logic/clouds/`):
+   - `redshift/`: Redshift-specific SQL generation and deployment
+   - `sql_template_generator.py`: Auto-generates SQL from function metadata
+   - Extensible for other clouds (BigQuery, Snowflake, Databricks)
+
+**Key Design Principles:**
+
+- Functions are defined once in `function.yaml` with cloud-agnostic parameters
+- Type mapping system converts generic types to cloud-specific types
+- SQL templates use `@@VARIABLE@@` placeholders for cloud-specific values
+- Platform deployers handle platform-specific deployment details
+
+### Shared vs Function-Specific Libraries
+
+**Critical Rule**: Only create shared libraries when code is used by **multiple functions**.
+
+**Shared Libraries** (`gateway/functions/_shared/python/`):
+
+- **Purpose**: Code used by multiple functions
+- **Location**: `_shared/python/<module_name>/`
+- **Reference**: Listed in function.yaml `shared_libs` field
+- **Build**: Copied to each function's `lib/<module_name>/` during `make build`
+- **Import**: `from lib.<module_name> import ...`
+
+**Function-Specific Libraries** (`<function>/code/lambda/python/lib/`):
+
+- **Purpose**: Code used by **only one function**
+- **Location**: `code/lambda/python/lib/` within function directory
+- **Reference**: Not in function.yaml (automatically included)
+- **Build**: Included directly in function package
+- **Import**: `from lib.<module> import ...`
+
+**Why This Matters:**
+- Provides **isolation** and **independent versioning** per function
+- Prevents coupling between unrelated functions
+- Allows different functions to evolve independently
+
+### Build System Details
+
+**What happens during `make build cloud=redshift`:**
+
+1. **Discovery Phase**:
+   ```python
+   # Scans for function.yaml files in:
+   gateway/functions/**/function.yaml
+   ```
+
+2. **Validation Phase**:
+   ```python
+   # Validates each function.yaml:
+   - Required fields present
+   - Lambda name ≤18 chars
+   - Shared libs exist
+   - Code files exist
+   ```
+
+3. **Copy Phase**:
+   ```python
+   # For each function with shared_libs:
+   for lib in function.shared_libs:
+       copy _shared/python/{lib}/ to {function}/code/lambda/python/lib/{lib}/
+   ```
+
+4. **Package Phase**:
+   ```python
+   # Creates deployment package for each function:
+   - Copy function code
+   - Install requirements.txt dependencies
+   - Include shared libraries
+   - Create .zip for Lambda deployment
+   ```
+
+**Why build is required before tests:**
+- Tests import from `lib.*` which doesn't exist until build copies shared libraries
+- Each test runs against the actual Lambda deployment structure
+- Ensures tests match production behavior
+
+### Function Configuration Deep Dive
+
+**function.yaml Complete Reference:**
+
+```yaml
+name: function_name
+module: module_name
+
+# Generic type definitions (hybrid functions - NEW)
+parameters:
+  - name: input_data
+    type: string                    # Generic type (maps to VARCHAR(MAX))
+  - name: size
+    type: int                       # Generic type (maps to INT)
+returns: string                     # Return type
+
+clouds:
+  redshift:
+    type: lambda                    # Platform type
+    lambda_name: shortname          # ≤18 chars (with prefix)
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt  # Optional
+    external_function_template: code/redshift.sql  # Optional (auto-generated if omitted)
+    shared_libs:                    # Optional - list of _shared/python/ modules
+      - quadbin
+      - utils
+    config:
+      memory_size: 512              # MB (128-10240, default 512)
+      timeout: 300                  # Seconds (3-900, default 300)
+      max_batch_rows: 100           # Batch size (default 100)
+      runtime: python3.10           # Python runtime
+```
+
+**Generic Type Mapping** (auto-converts to cloud-specific):
+
+| Generic Type | Redshift | BigQuery | Snowflake |
+|--------------|----------|----------|-----------|
+| `string` | `VARCHAR(MAX)` | `STRING` | `VARCHAR` |
+| `int` | `INT` | `INT64` | `INTEGER` |
+| `bigint` | `INT8` | `INT64` | `BIGINT` |
+| `float` | `FLOAT8` | `FLOAT64` | `FLOAT` |
+| `boolean` | `BOOLEAN` | `BOOL` | `BOOLEAN` |
+
+### Deployment Flow
+
+**Complete Deployment Process:**
+
+```
+1. Load Function Catalog (gateway/logic/common/engine/catalog_loader.py)
+   ├─> Scan gateway/functions/
+   └─> Parse all function.yaml files
+
+2. Validate Functions (gateway/logic/common/engine/validators.py)
+   ├─> Check required fields
+   ├─> Validate lambda_name length
+   ├─> Verify shared_libs exist
+   └─> Validate code files exist
+
+3. Package Functions (gateway/logic/common/engine/packagers.py)
+   ├─> Copy function code
+   ├─> Copy shared libraries (if specified)
+   ├─> Install requirements (if specified)
+   └─> Create deployment package (.zip)
+
+4. Deploy to Lambda (gateway/logic/platforms/aws-lambda/)
+   ├─> Upload Lambda package to AWS
+   ├─> Set memory, timeout, runtime config
+   ├─> Configure IAM role
+   └─> Get Lambda ARN
+
+5. Create External Functions (gateway/logic/clouds/redshift/)
+   ├─> Generate SQL from template or auto-generate
+   ├─> Replace @@VARIABLES@@ with actual values
+   ├─> Execute SQL on Redshift
+   └─> Link external function to Lambda ARN
+
+6. Verify Deployment
+   ├─> Test Lambda invocation
+   └─> Test external function call
+```
+
+### Key Architectural Decisions
+
+**1. Dual Architecture (Gateway + Clouds)**
+- **Why**: Flexibility to use native SQL UDFs where possible, Lambda for complex Python logic
+- **When to use Gateway**: Complex algorithms, external API calls, Python libraries
+- **When to use Clouds**: Simple SQL operations, native cloud optimizations
+
+**2. Build-Time Dependency Copying**
+- **Why**: Lambda deployment packages must be self-contained
+- **Alternative rejected**: Layers (limited to 5 per function, size limits)
+- **Benefit**: Each function is independent and deployable
+
+**3. Short Lambda Names**
+- **Why**: AWS Lambda name limit (64 chars) with CI/CD prefixes
+- **Pattern**: `{prefix}_{shortname}` (e.g., `ci_a1b2c3d4_123456_getisord`)
+- **Benefit**: Supports long CI/CD prefixes
+
+**4. Function-Specific vs Shared Libraries**
+- **Why**: Balance between code reuse and isolation
+- **Shared**: Used by multiple functions
+- **Function-specific**: Used by one function
+- **Benefit**: Prevents unnecessary coupling
+
+**5. Generic Type System**
+- **Why**: Write function definitions once, deploy to multiple clouds
+- **How**: Generic types mapped to cloud-specific types at deployment
+- **Benefit**: Cloud-agnostic function definitions
+
+**6. Auto-Generated SQL Templates**
+- **Why**: Reduce boilerplate for simple functions
+- **How**: Use `parameters` and `returns` in function.yaml
+- **Fallback**: Manual SQL template for complex cases
+- **Benefit**: Faster development, fewer errors
+
+### Testing Best Practices
+
+**Unit Test Structure:**
+
+```python
+# gateway/functions/module/function/tests/unit/test_function.py
+
+import pytest
+from unittest.mock import Mock, patch
+
+# Import from built structure
+from lib.quadbin import to_geojson
+
+
+def test_process_row_valid_input(handler_module):
+    """Test handler with valid input."""
+    row = ["quadbin_string", 5]
+    result = handler_module.process_row(row)
+    assert result is not None
+
+
+def test_process_row_invalid_input(handler_module):
+    """Test handler with invalid input."""
+    row = []
+    result = handler_module.process_row(row)
+    assert result is None
+
+
+@pytest.fixture
+def handler_module():
+    """Load handler module."""
+    import sys
+    sys.path.insert(0, "code/lambda/python")
+    import handler
+    return handler
+```
+
+### Troubleshooting Guide
+
+**Common Issues:**
+
+1. **Import Error: `ModuleNotFoundError: No module named 'lib'`**
+   - **Cause**: Build not run before tests
+   - **Fix**: `make build cloud=redshift`
+
+2. **Lambda Deploy Fails: `ResourceName too long`**
+   - **Cause**: lambda_name + prefix > 64 chars
+   - **Fix**: Shorten lambda_name in function.yaml to ≤18 chars
+
+3. **Test Import Error: `No module named 'lib.quadbin'`**
+   - **Cause**: shared_libs not specified in function.yaml
+   - **Fix**: Add `shared_libs: [quadbin]` to function.yaml, rebuild
+
+4. **Function Not Found During Deploy**
+   - **Cause**: function.yaml missing or invalid
+   - **Fix**: Validate function.yaml structure, check required fields
+
+5. **External Function Error: `Permission denied for Lambda`**
+   - **Cause**: RS_LAMBDA_INVOKE_ROLE not set or incorrect
+   - **Fix**: Verify IAM role ARN in .env file
+
+6. **Build Copies Wrong Library Version**
+   - **Cause**: Old build artifacts
+   - **Fix**: `make clean && make build cloud=redshift`
+
+### Future Development Guidelines
+
+**When adding new functions:**
+
+1. Determine if code should be shared or function-specific
+2. Use shared library only if used by 2+ functions
+3. Keep lambda_name ≤18 characters
+4. Add comprehensive unit tests
+5. Use generic types in function.yaml when possible
+6. Follow existing handler patterns
+7. Build and test before committing
+
+**When modifying shared libraries:**
+
+1. Consider impact on all dependent functions
+2. Run tests for all dependent functions
+3. Avoid breaking changes
+4. Update shared library documentation
+5. Rebuild all dependent functions
+
+**When refactoring:**
+
+1. Maintain backward compatibility
+2. Keep function signatures unchanged
+3. Update tests to match changes
+4. Verify deployment after refactoring
+5. Document architectural decisions
