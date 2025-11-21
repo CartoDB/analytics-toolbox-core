@@ -11,9 +11,10 @@ import center from '@turf/center';
 
 // Importing the objects from the source file generates a bundle of 234.15 kB.
 // This file size fits in a Snowflake UDF \o/
-import GeoJSONReader from 'turf-jsts/src/org/locationtech/jts/io/GeoJSONReader';
-import GeoJSONWriter from 'turf-jsts/src/org/locationtech/jts/io/GeoJSONWriter';
-import BufferOp from 'turf-jsts/src/org/locationtech/jts/operation/buffer/BufferOp';
+// Note: turf 7.x uses @turf/jsts which wraps jsts package
+import GeoJSONReader from 'jsts/org/locationtech/jts/io/GeoJSONReader';
+import GeoJSONWriter from 'jsts/org/locationtech/jts/io/GeoJSONWriter';
+import BufferOp from 'jsts/org/locationtech/jts/operation/buffer/BufferOp';
 
 import { featureEach, geomEach } from '@turf/meta';
 import { geoAzimuthalEquidistant } from 'd3-geo';

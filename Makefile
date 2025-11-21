@@ -6,6 +6,9 @@
 OUTPUT_DIR ?= dist
 REPO_NAME = analytics-toolbox-core
 
+# Supported clouds (validation list)
+VALID_CLOUDS := redshift bigquery snowflake databricks postgres
+
 # Ensure cloud parameter is provided
 .PHONY: create-package
 create-package:
@@ -15,7 +18,7 @@ ifndef cloud
 	@echo "Usage: make create-package cloud=<cloud> [options]"
 	@echo ""
 	@echo "Required:"
-	@echo "  cloud=<name>         Cloud platform (redshift, bigquery, snowflake, databricks)"
+	@echo "  cloud=<name>         Cloud platform ($(VALID_CLOUDS))"
 	@echo ""
 	@echo "Optional:"
 	@echo "  modules=<modules>    Comma-separated modules to include (default: all)"
@@ -32,6 +35,12 @@ ifndef cloud
 	@echo "  make create-package cloud=redshift production=1"
 	@exit 1
 endif
+	@# Validate cloud parameter
+	@if ! echo "$(VALID_CLOUDS)" | grep -wq "$(cloud)"; then \
+		echo "Error: Invalid cloud '$(cloud)'"; \
+		echo "Valid options: $(VALID_CLOUDS)"; \
+		exit 1; \
+	fi
 	@# Read version from clouds/<cloud>/version (clouds defines the version)
 	@if [ ! -f "clouds/$(cloud)/version" ]; then \
 		echo "Error: clouds/$(cloud)/version file not found"; \
@@ -118,8 +127,15 @@ deploy:
 ifndef cloud
 	@echo "Error: cloud parameter required"
 	@echo "Usage: make deploy cloud=<cloud> [options]"
+	@echo "Valid clouds: $(VALID_CLOUDS)"
 	@exit 1
 endif
+	@# Validate cloud parameter
+	@if ! echo "$(VALID_CLOUDS)" | grep -wq "$(cloud)"; then \
+		echo "Error: Invalid cloud '$(cloud)'"; \
+		echo "Valid options: $(VALID_CLOUDS)"; \
+		exit 1; \
+	fi
 	@echo "========================================================================"
 	@echo "Deploying Analytics Toolbox to $(cloud)"
 	@echo "========================================================================"
@@ -149,8 +165,15 @@ remove:
 ifndef cloud
 	@echo "Error: cloud parameter required"
 	@echo "Usage: make remove cloud=<cloud>"
+	@echo "Valid clouds: $(VALID_CLOUDS)"
 	@exit 1
 endif
+	@# Validate cloud parameter
+	@if ! echo "$(VALID_CLOUDS)" | grep -wq "$(cloud)"; then \
+		echo "Error: Invalid cloud '$(cloud)'"; \
+		echo "Valid options: $(VALID_CLOUDS)"; \
+		exit 1; \
+	fi
 	@echo "========================================================================"
 	@echo "Removing Analytics Toolbox from $(cloud)"
 	@echo "========================================================================"
@@ -173,8 +196,15 @@ test:
 ifndef cloud
 	@echo "Error: cloud parameter required"
 	@echo "Usage: make test cloud=<cloud>"
+	@echo "Valid clouds: $(VALID_CLOUDS)"
 	@exit 1
 endif
+	@# Validate cloud parameter
+	@if ! echo "$(VALID_CLOUDS)" | grep -wq "$(cloud)"; then \
+		echo "Error: Invalid cloud '$(cloud)'"; \
+		echo "Valid options: $(VALID_CLOUDS)"; \
+		exit 1; \
+	fi
 	@echo "========================================================================"
 	@echo "Running tests for $(cloud)"
 	@echo "========================================================================"
@@ -195,8 +225,15 @@ lint:
 ifndef cloud
 	@echo "Error: cloud parameter required"
 	@echo "Usage: make lint cloud=<cloud>"
+	@echo "Valid clouds: $(VALID_CLOUDS)"
 	@exit 1
 endif
+	@# Validate cloud parameter
+	@if ! echo "$(VALID_CLOUDS)" | grep -wq "$(cloud)"; then \
+		echo "Error: Invalid cloud '$(cloud)'"; \
+		echo "Valid options: $(VALID_CLOUDS)"; \
+		exit 1; \
+	fi
 	@echo "========================================================================"
 	@echo "Linting $(cloud)"
 	@echo "========================================================================"
@@ -225,6 +262,10 @@ clean:
 .PHONY: help
 help:
 	@echo "Analytics Toolbox Core - Build System"
+	@echo ""
+	@echo "Usage: make <target> cloud=<cloud> [parameters]"
+	@echo ""
+	@echo "Supported clouds: $(VALID_CLOUDS)"
 	@echo ""
 	@echo "Main targets (require cloud=<cloud>):"
 	@echo "  deploy          Deploy gateway and clouds"

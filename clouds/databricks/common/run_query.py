@@ -7,9 +7,8 @@ def run_query(query):
         server_hostname=os.getenv('DB_HOST_NAME'),
         http_path=os.getenv('DB_HTTP_PATH'),
         access_token=os.getenv('DB_TOKEN'),
-    ) as connection:
-
-        with connection.cursor() as cursor:
+    ) as conn:
+        with conn.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchall()
 
