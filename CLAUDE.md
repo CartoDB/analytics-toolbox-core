@@ -402,7 +402,7 @@ To convert an existing function from SQL template to YAML definition:
 | Pattern | Use When |
 |---------|----------|
 | **Simple (Generic Types)** | Function has standard types (string, int) and works same across clouds |
-| **Cloud-Specific Overrides** | Function needs proprietary types (SUPER, VARIANT) or cloud-specific syntax |
+| **Cloud-Specific Overrides** | Function needs cloud-specific types (SUPER, VARIANT) or cloud-specific syntax |
 | **Hybrid** | Most clouds use generic types, but one cloud needs special handling |
 | **Legacy (SQL Template)** | Function has complex SQL (wrappers, multiple statements, conditional logic) |
 

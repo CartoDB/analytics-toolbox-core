@@ -6,7 +6,7 @@ The *CARTO Analytics Toolbox* is a set of UDFs and Stored Procedures to unlock S
 |:--------:|:---------:|:--------:|:--------:|:----------:|
 |<img src="./clouds/bigquery/common/analytics-toolbox-bigquery.png" width=80 height=80>|<img src="./clouds/snowflake/common/analytics-toolbox-snowflake.png" width=80 height=80>|<img src="./clouds/redshift/common/analytics-toolbox-redshift.png" width=80 height=80>|<img src="./clouds/postgres/common/analytics-toolbox-postgres.png" width=80 height=80>|<img src="./clouds/databricks/common/analytics-toolbox-databricks.png" width=80 height=80>|
 
-This repo contains the core open-source modules of the toolbox. CARTO offers proprietary modules that extend this core functionality.
+This repo contains the core open-source modules of the toolbox. CARTO offers a set of premium modules that are available for CARTO users.
 
 ## Repository Structure
 
