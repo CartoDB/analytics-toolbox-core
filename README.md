@@ -21,10 +21,6 @@ The Analytics Toolbox has two parallel components:
 
 ## Getting Started
 
-### Using Functions (End Users)
-
-Using the functions depends on the cloud you're using. In BigQuery and Snowflake you can access them directly as shared resources without installation.
-
 #### BigQuery
 
 You can use the functions directly as they're globally shared in the US region:
@@ -43,15 +39,17 @@ If you need to install them in your own VPC or a different region, see the cloud
 
 #### Snowflake
 
-Install through the [Snowflake Marketplace](https://www.snowflake.com/datasets/carto-analytics-toolbox/):
+The easiest way to start using these functions is to add them to your Datawarehouse through the [Snowflake Marketplace](https://www.snowflake.com/datasets/carto-analytics-toolbox/). Go there and install it using the regular methods. After that you should be able to use them on the location you have installed them. For example try:
 
 ```sql
 SELECT carto_os.carto.H3_FROMGEOGPOINT(ST_POINT(-3.7038, 40.4168), 4)
 ```
 
-#### Redshift
+If you need to install them directly, not through the data share process, follow the instructions later on.
 
-For Redshift, you need to install the toolbox directly on your cluster. See the deployment section below.
+### Redshift
+
+Right now the only way to get access the Analytics toolbox is by installing it directly on your database. Follow the instructions later on.
 
 ## Documentation
 
