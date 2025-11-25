@@ -27,8 +27,14 @@ class TestLambdaHandler:
         assert kring[0]["distance"] == 0
 
     def test_quadint_kring_distances_size_1(self):
-        """Test kring distances with size 1"""
+        """Test kring distances with size 1 - verify exact expected values"""
         # Size 1 should return 9 cells with distances 0-1
+        # Expected from original test:
+        # [{'index': 2, 'distance': 1}, {'index': 34, 'distance': 1},
+        #  {'index': 66, 'distance': 1}, {'index': 130, 'distance': 1},
+        #  {'index': 162, 'distance': 0}, {'index': 194, 'distance': 1},
+        #  {'index': 258, 'distance': 1}, {'index': 290, 'distance': 1},
+        #  {'index': 322, 'distance': 1}]
         event = {"arguments": [[162, 1]], "num_records": 1}
         result_str = lambda_handler(event)
         result = json.loads(result_str)
@@ -38,18 +44,22 @@ class TestLambdaHandler:
         assert isinstance(kring, list)
         assert len(kring) == 9
 
-        # Check all have index and distance fields
-        for item in kring:
-            assert "index" in item
-            assert "distance" in item
-            assert isinstance(item["index"], int)
-            assert isinstance(item["distance"], int)
-            assert 0 <= item["distance"] <= 1
+        # Convert to dict for easier verification
+        kring_dict = {item["index"]: item["distance"] for item in kring}
 
-        # Check origin has distance 0
-        origin_items = [item for item in kring if item["index"] == 162]
-        assert len(origin_items) == 1
-        assert origin_items[0]["distance"] == 0
+        # Verify exact expected values
+        expected = {
+            2: 1,
+            34: 1,
+            66: 1,
+            130: 1,
+            162: 0,  # origin
+            194: 1,
+            258: 1,
+            290: 1,
+            322: 1,
+        }
+        assert kring_dict == expected
 
     def test_quadint_kring_distances_size_2(self):
         """Test kring distances with size 2"""
