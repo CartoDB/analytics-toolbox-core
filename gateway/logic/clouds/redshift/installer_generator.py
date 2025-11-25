@@ -10,17 +10,17 @@ class RedshiftInstallerGenerator:
     """Generates Redshift-specific installer scripts"""
 
     @staticmethod
-    def generate_installer_py(production: bool) -> str:
+    def generate_installer_py(production: bool = False) -> str:
         """
         Generate install.py content for Redshift
 
         Args:
-            production: Whether installer is for production mode
+            production: Deprecated - no longer used. Schema is always
+                prompted interactively.
 
         Returns:
             Python code for install.py
         """
-        is_production = production
 
         # Main installer - interactive version (Redshift-specific)
         installer_py = '''#!/usr/bin/env python3
@@ -34,12 +34,12 @@ import sys
 import os
 from pathlib import Path
 
-def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
+def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, show_default=True):
     """Prompt for value if not provided via CLI argument"""
     if value:
         return value
     return click.prompt(  # noqa: E501
-        prompt_text, default=default, hide_input=hide_input, show_default=True
+        prompt_text, default=default, hide_input=hide_input, show_default=show_default
     )
 
 @click.command()
@@ -55,13 +55,14 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False):
 @click.option('--rs-database', help='Redshift database name')
 @click.option('--rs-user', help='Redshift user')
 @click.option('--rs-password', help='Redshift password')
-@click.option('--rs-prefix', help='Schema prefix for dev (leave empty for production)')  # noqa: E501
+@click.option('--rs-schema', help='Schema name for Analytics Toolbox functions (default: carto)')  # noqa: E501
 @click.option('--rs-lambda-invoke-role', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
+@click.option('--rs-lambda-override/--no-rs-lambda-override', default=None, help='Override existing Lambda functions (default: yes if not specified)')  # noqa: E501
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             aws_session_token, aws_assume_role_arn, rs_lambda_prefix,
             rs_lambda_execution_role, rs_host, rs_database, rs_user, rs_password,
-            rs_prefix, rs_lambda_invoke_role, dry_run):
+            rs_schema, rs_lambda_invoke_role, rs_lambda_override, dry_run):
     """Install CARTO Analytics Toolbox to Redshift
 
     This installer will guide you through deploying Analytics Toolbox functions
@@ -126,10 +127,16 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         elif method_choice == "4":
             auth_method = "iam_role"
 
-    aws_region = prompt_if_not_provided(aws_region, "AWS Region", default="us-east-1")
+    aws_region = prompt_if_not_provided(
+        aws_region, "AWS Region (leave empty for 'us-east-1')",
+        default="us-east-1", show_default=False
+    )
 
     if auth_method == "profile":
-        aws_profile = prompt_if_not_provided(aws_profile, "AWS Profile", default="default")
+        aws_profile = prompt_if_not_provided(
+            aws_profile, "AWS Profile (leave empty for 'default')",
+            default="default", show_default=False
+        )
         click.secho(f"✓ Using AWS profile: {aws_profile}", fg="green")
     elif auth_method == "explicit":
         aws_access_key_id = prompt_if_not_provided(aws_access_key_id, "AWS Access Key ID")
@@ -152,10 +159,11 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     click.echo("Lambda Configuration")
     click.echo("-" * 70)
-    rs_lambda_prefix = prompt_if_not_provided(  # noqa: E501
+    rs_lambda_prefix = prompt_if_not_provided(
         rs_lambda_prefix,
-        "Lambda function prefix",
-        default="carto-at-"
+        "Lambda function prefix (leave empty for 'carto-at-')",
+        default="carto-at-",
+        show_default=False
     )
 
     if not rs_lambda_execution_role:
@@ -179,6 +187,9 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         else:
             click.secho("✓ Will auto-create Lambda execution role during deployment", fg='green')
 
+    # Lambda override configuration
+###LAMBDA_OVERRIDE_CODE###
+
     click.echo()
 
     # Redshift Connection
@@ -194,7 +205,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo("-" * 70)
     rs_database = prompt_if_not_provided(rs_database, "Redshift Database")
 
-    # Schema prefix configuration
+    # Schema configuration
 ###SCHEMA_PREFIX_CODE###
 
     click.echo()
@@ -263,7 +274,10 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     env_lines.append("")
     env_lines.append("# Redshift Deployment Configuration")
     env_lines.append(f"RS_DATABASE={rs_database}")
-    env_lines.append(f"RS_PREFIX={rs_prefix}")
+    env_lines.append(f"RS_SCHEMA={rs_schema}")
+    # rs_lambda_override is set via CLI flag or interactive prompt
+    override_value = '1' if rs_lambda_override else '0'
+    env_lines.append(f"RS_LAMBDA_OVERRIDE={override_value}")
     if rs_lambda_invoke_role:
         env_lines.append(f"RS_LAMBDA_INVOKE_ROLE={rs_lambda_invoke_role}")
     else:
@@ -294,12 +308,12 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo(f"Lambda Exec Role:    (will auto-create)")
     click.echo(f"Redshift Host:       {rs_host}")
     click.echo(f"Redshift Database:   {rs_database}")
-    click.echo(f"Schema:              {rs_prefix + 'carto' if rs_prefix else 'carto'}")
+    click.echo(f"Schema:              {rs_schema}")
     if rs_lambda_invoke_role:
         click.echo(f"Redshift IAM Role:   {rs_lambda_invoke_role}")
     else:
         click.echo(f"Redshift IAM Role:   (will auto-create and attach)")
-    click.echo(f"Production Mode:     {not bool(rs_prefix)}")
+    click.echo(f"Override Lambdas:    {'yes' if rs_lambda_override else 'no'}")
     click.echo("=" * 70)
     click.echo()
 
@@ -334,7 +348,6 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         'deploy-all'
     ]
 
-###DEPLOY_PRODUCTION_CODE###
     if dry_run:
         deploy_cmd.append('--dry-run')
 
@@ -376,7 +389,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
                 sql_content = clouds_sql_path.read_text()
 
                 # Determine target schema
-                schema = rs_prefix + 'carto' if rs_prefix else 'carto'
+                schema = rs_schema
 
                 # Detect build-time schema and replace with install-time schema
                 import re
@@ -435,8 +448,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if not dry_run:
         click.echo()
         click.secho("✓ Installation complete!", fg='green', bold=True)
-        schema = rs_prefix + 'carto' if rs_prefix else 'carto'
-        click.echo(f"Functions installed in {rs_database}.{schema}")
+        click.echo(f"Functions installed in {rs_database}.{rs_schema}")
     else:
         click.echo()
         click.secho("[DRY RUN] Installation would complete here", fg='yellow')
@@ -445,28 +457,67 @@ if __name__ == '__main__':
     install()
 '''
 
-        # Generate code based on production vs dev configuration
-        if is_production:
-            # Production: always use empty prefix (no prompt)
-            schema_prefix_code = """    rs_prefix = ''  # Production: schema='carto'"""
-            deploy_production_code = """    deploy_cmd.append('--production')
+        # Generate schema name prompt (always prompt, no production distinction)
+        schema_name_code = """    # Schema configuration
+    def validate_schema_name(name):
+        import re
+        pattern = r'^[a-zA-Z_][a-zA-Z0-9_]*$'
+        if not name or not re.match(pattern, name) or len(name) > 127:
+            return False
+        return True
+
+    if rs_schema is None:
+        while True:
+            rs_schema = click.prompt(
+                "Redshift Schema (leave empty for 'carto')",
+                default='carto',
+                show_default=False
+            )
+            if validate_schema_name(rs_schema):
+                break
+            click.echo(
+                'Invalid schema name. Must start with letter/underscore, '
+                'contain only alphanumeric/underscores, max 127 chars.',
+                err=True
+            )
+    else:
+        click.echo(f"Using schema: {rs_schema}")
+
+    click.echo()
 """
-        else:
-            # Development: prompt for prefix
-            schema_prefix_code = """    if rs_prefix is None:
-        rs_prefix = click.prompt(  # noqa: E501
-            'Schema prefix for development (leave empty for none)',
-            default='',
-            show_default=False
-        )"""
-            deploy_production_code = ""
+
+        # Generate lambda override prompt
+        lambda_override_code = """
+    # Lambda override configuration
+    if rs_lambda_override is None:
+        while True:
+            rs_lambda_override_str = click.prompt(
+                'Override existing Lambda functions? (yes/no)'
+            )
+            # Validate input - require explicit yes or no
+            override_values = ['yes', 'y']
+            reject_values = ['no', 'n']
+            if rs_lambda_override_str.lower() in override_values:
+                rs_lambda_override = True
+                break
+            elif rs_lambda_override_str.lower() in reject_values:
+                rs_lambda_override = False
+                break
+            else:
+                click.echo("Please enter 'yes' or 'no'", err=True)
+    else:
+        override_status = 'yes' if rs_lambda_override else 'no'
+        click.echo(f"Override existing Lambdas: {override_status}")
+
+    click.echo()
+"""
 
         # Apply substitutions using replace to avoid format() issues with {braces}
         installer_py = installer_py.replace(
-            "###SCHEMA_PREFIX_CODE###", schema_prefix_code
+            "###SCHEMA_PREFIX_CODE###", schema_name_code
         )
         installer_py = installer_py.replace(
-            "###DEPLOY_PRODUCTION_CODE###", deploy_production_code
+            "###LAMBDA_OVERRIDE_CODE###", lambda_override_code
         )
 
         return installer_py
@@ -489,13 +540,14 @@ jsonschema>=4.0.0
 """
 
     @staticmethod
-    def create_installer_scripts(scripts_dir: Path, production: bool):
+    def create_installer_scripts(scripts_dir: Path, production: bool = False):
         """
         Create all Redshift installer scripts in the given directory
 
         Args:
             scripts_dir: Directory to create scripts in
-            production: Whether installer is for production mode
+            production: Deprecated - no longer used. Schema is always
+                prompted interactively.
         """
         # Create install.py
         installer_py = RedshiftInstallerGenerator.generate_installer_py(production)

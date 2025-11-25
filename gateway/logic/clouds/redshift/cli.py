@@ -824,25 +824,30 @@ def deploy_all(
     rs_host = get_env_or_default("RS_HOST")
     rs_password = get_env_or_default("RS_PASSWORD")
     rs_database = get_env_or_default("RS_DATABASE")
-    rs_prefix = get_env_or_default("RS_PREFIX", "")
     rs_user = get_env_or_default("RS_USER")
     # RS_LAMBDA_INVOKE_ROLE can be comma-separated for role chaining (like clouds)
     # Redshift will assume roles in order: role1 assumes role2, role2 invokes Lambda
     rs_lambda_invoke_role = get_env_or_default("RS_LAMBDA_INVOKE_ROLE")
     rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
 
-    # Calculate schema based on production flag (matches clouds pattern)
-    # production=1: schema = "carto"
-    # production=0: schema = "{prefix}carto" (e.g., "myname_carto")
-    rs_schema_default = "carto"
-    # Check if we're in production mode from context
-    is_production = ctx.obj.get("production", False)
-    if is_production:
-        rs_schema = rs_schema_default
+    # Backward compatibility: support RS_SCHEMA (new) and RS_PREFIX (deprecated)
+    rs_schema = get_env_or_default("RS_SCHEMA", None)
+    if rs_schema is None:
+        # Fall back to old RS_PREFIX behavior for backward compatibility
+        rs_prefix = get_env_or_default("RS_PREFIX", "")
+        if rs_prefix:
+            # Old behavior: concatenate prefix with "carto"
+            rs_schema = f"{rs_prefix}carto"
+            logger.warning(
+                f"RS_PREFIX is deprecated. Please use RS_SCHEMA='{rs_schema}' instead. "
+                f"Currently using schema: {rs_schema}"
+            )
+        else:
+            # No prefix, use default
+            rs_schema = "carto"
     else:
-        rs_schema = (
-            f"{rs_prefix}{rs_schema_default}" if rs_prefix else rs_schema_default
-        )
+        # New behavior: use RS_SCHEMA directly
+        logger.info(f"Using schema: {rs_schema}")
 
     # Validate Redshift configuration for external function deployment
     deploy_external_functions = True
@@ -937,6 +942,11 @@ def deploy_all(
         # Phase 1: Deploy Lambda functions
         logger.info("\n=== Phase 1: Deploying Lambda Functions ===\n")
 
+        # Read lambda override flag
+        rs_lambda_override = get_env_or_default("RS_LAMBDA_OVERRIDE", "1") == "1"
+        if not rs_lambda_override:
+            logger.info("Lambda override disabled - will skip existing functions\n")
+
         # Use tqdm for consistent progress bar style with clouds
         with tqdm(to_deploy, desc="Deploying", ncols=80, unit="fn") as pbar:
             for func in pbar:
@@ -999,26 +1009,47 @@ def deploy_all(
                     memory_size = cloud_config.config.get("memory_size", 512)  # MB
                     timeout = cloud_config.config.get("timeout", 300)  # seconds
 
-                    # Deploy Lambda
-                    response = deployer.deploy_function(
-                        function_name=lambda_function_name,
-                        handler_file=handler_file,
-                        requirements_file=(
-                            requirements_file if requirements_file.exists() else None
-                        ),
-                        handler=cloud_config.config.get(
-                            "handler", "handler.lambda_handler"
-                        ),
-                        runtime=runtime,
-                        memory_size=memory_size,
-                        timeout=timeout,
-                        description=func.description,
-                        role_arn=rs_lambda_execution_role,
-                        function_root=func.function_path,
-                    )
-
-                    # Strip version number from ARN (e.g., :19) to use $LATEST
-                    arn = response["FunctionArn"]
+                    # Check if should skip existing Lambda
+                    if not rs_lambda_override and deployer.function_exists(
+                        lambda_function_name
+                    ):
+                        tqdm.write(
+                            f"    Skipping existing function: {lambda_function_name}"
+                        )
+                        # Get ARN for external function deployment
+                        arn = deployer.get_function_arn(lambda_function_name)
+                        if not arn:
+                            logger.error(
+                                f"\n✗ {func.name}: Could not get ARN for "
+                                f"{lambda_function_name}. Function may not exist. "
+                                f"Use RS_LAMBDA_OVERRIDE=1 to create it."
+                            )
+                            logger.error(
+                                f"\nDeployment failed for {func.name}. Stopping."
+                            )
+                            sys.exit(1)
+                    else:
+                        # Deploy Lambda (create or update)
+                        response = deployer.deploy_function(
+                            function_name=lambda_function_name,
+                            handler_file=handler_file,
+                            requirements_file=(
+                                requirements_file
+                                if requirements_file.exists()
+                                else None
+                            ),
+                            handler=cloud_config.config.get(
+                                "handler", "handler.lambda_handler"
+                            ),
+                            runtime=runtime,
+                            memory_size=memory_size,
+                            timeout=timeout,
+                            description=func.description,
+                            role_arn=rs_lambda_execution_role,
+                            function_root=func.function_path,
+                        )
+                        # Strip version number from ARN (e.g., :19) to use $LATEST
+                        arn = response["FunctionArn"]
                     if ":" in arn and arn.split(":")[-1].isdigit():
                         arn = ":".join(arn.split(":")[:-1])
                     lambda_arns[func.name] = arn
@@ -1348,18 +1379,26 @@ def remove_all(
     rs_host = get_env_or_default("RS_HOST")
     rs_password = get_env_or_default("RS_PASSWORD")
     rs_database = get_env_or_default("RS_DATABASE")
-    rs_prefix = get_env_or_default("RS_PREFIX", "")
     rs_user = get_env_or_default("RS_USER")
 
-    # Calculate schema
-    rs_schema_default = "carto"
-    is_production = ctx.obj.get("production", False)
-    if is_production:
-        rs_schema = rs_schema_default
+    # Backward compatibility: support RS_SCHEMA (new) and RS_PREFIX (deprecated)
+    rs_schema = get_env_or_default("RS_SCHEMA", None)
+    if rs_schema is None:
+        # Fall back to old RS_PREFIX behavior for backward compatibility
+        rs_prefix = get_env_or_default("RS_PREFIX", "")
+        if rs_prefix:
+            # Old behavior: concatenate prefix with "carto"
+            rs_schema = f"{rs_prefix}carto"
+            logger.warning(
+                f"RS_PREFIX is deprecated. Please use RS_SCHEMA='{rs_schema}' instead. "
+                f"Currently using schema: {rs_schema}"
+            )
+        else:
+            # No prefix, use default
+            rs_schema = "carto"
     else:
-        rs_schema = (
-            f"{rs_prefix}{rs_schema_default}" if rs_prefix else rs_schema_default
-        )
+        # New behavior: use RS_SCHEMA directly
+        logger.info(f"Using schema: {rs_schema}")
 
     if dry_run:
         logger.info("[DRY RUN] Would remove:")
@@ -1811,21 +1850,29 @@ def deploy_functions(
     rs_host = get_env_or_default("RS_HOST")
     rs_password = get_env_or_default("RS_PASSWORD")
     rs_database = get_env_or_default("RS_DATABASE")
-    rs_prefix = get_env_or_default("RS_PREFIX", "")
     rs_user = get_env_or_default("RS_USER")
     rs_lambda_invoke_role = get_env_or_default("RS_LAMBDA_INVOKE_ROLE")
     rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
 
-    # Calculate schema
-    rs_schema_default = "carto"
-    is_production = ctx.obj.get("production", False)
-    if is_production:
-        rs_schema = rs_schema_default
+    # Backward compatibility: support RS_SCHEMA (new) and RS_PREFIX (deprecated)
+    rs_schema = get_env_or_default("RS_SCHEMA", None)
+    if rs_schema is None:
+        # Fall back to old RS_PREFIX behavior for backward compatibility
+        rs_prefix = get_env_or_default("RS_PREFIX", "")
+        if rs_prefix:
+            # Old behavior: concatenate prefix with "carto"
+            rs_schema = f"{rs_prefix}carto"
+            logger.warning(
+                f"RS_PREFIX is deprecated. Please use RS_SCHEMA='{rs_schema}' instead. "
+                f"Currently using schema: {rs_schema}"
+            )
+        else:
+            # No prefix, use default
+            rs_schema = "carto"
     else:
-        rs_schema = (
-            f"{rs_prefix}{rs_schema_default}" if rs_prefix else rs_schema_default
-        )
+        # New behavior: use RS_SCHEMA directly
+        logger.info(f"Using schema: {rs_schema}")
 
     # Validate configuration
     if not rs_database or not rs_iam_role_arn:
