@@ -54,11 +54,12 @@ AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=<your-key>
 AWS_SECRET_ACCESS_KEY=<your-secret>
 
-# Lambda Configuration (keep short: len(prefix + function_name) < 18)
-RS_LAMBDA_PREFIX=yourname-     # 2-5 chars recommended
+# Lambda Configuration
+RS_LAMBDA_PREFIX=yourname-at-  # Prefix for Lambda functions (max 46 chars, total name ≤64)
+RS_LAMBDA_OVERRIDE=1           # Override existing Lambdas (1=yes, 0=no)
 
-# Redshift Configuration
-RS_PREFIX=yourname_            # Dev prefix for schemas
+# Redshift Gateway Configuration
+RS_SCHEMA=yourname_carto       # Schema name for gateway functions
 RS_HOST=<cluster>.redshift.amazonaws.com
 RS_DATABASE=<database>
 RS_USER=<user>
@@ -559,14 +560,13 @@ Place reusable code in `gateway/functions/_shared/python/<lib_name>/` and refere
 
 SQL templates use `@@VARIABLE@@` placeholders replaced during deployment.
 
-### Dev vs Production Modes
+### Gateway Deployment
 
-- **Dev mode** (default): Adds prefixes
-  - Schema: `{RS_PREFIX}carto` (e.g., `yourname_carto`)
-  - Lambda: `{RS_LAMBDA_PREFIX}function_name` (e.g., `yourname-qb_polyfill`)
-- **Production mode** (`production=1`): No prefixes
-  - Schema: `carto`
-  - Lambda: `{RS_LAMBDA_PREFIX}function_name` (prefix still applied)
+**Gateway functions always use `RS_SCHEMA` directly:**
+- Schema name is used exactly as specified in `RS_SCHEMA` (e.g., `yourname_carto` or `carto`)
+- Lambda functions use `RS_LAMBDA_PREFIX` (e.g., `yourname-at-qb_polyfill`)
+- No production mode distinction - same behavior for dev and production
+- Control Lambda updates with `RS_LAMBDA_OVERRIDE` (1=update existing, 0=skip existing)
 
 ## Cloud SQL Function Development
 

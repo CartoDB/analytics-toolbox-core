@@ -38,10 +38,11 @@ AWS_REGION=us-east-1
 AWS_PROFILE=my-profile           # Or use AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY
 
 # Lambda settings
-RS_LAMBDA_PREFIX=yourname-       # Short prefix for dev (leave empty for production)
+RS_LAMBDA_PREFIX=yourname-at-    # Prefix for Lambda functions (max 46 chars, total name ≤64)
+RS_LAMBDA_OVERRIDE=1             # Override existing Lambdas (1=yes, 0=no)
 
 # Redshift settings
-RS_PREFIX=yourname_              # Schema prefix for dev (leave empty for production)
+RS_SCHEMA=yourname_carto         # Schema name for gateway functions
 RS_HOST=<your-cluster>.redshift.amazonaws.com
 RS_DATABASE=<database>
 RS_USER=<user>
