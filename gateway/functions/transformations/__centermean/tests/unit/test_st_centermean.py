@@ -1,11 +1,21 @@
 """
-Unit tests for ST_CENTERMEAN
+Unit tests for __centermean function.
 
-Tests the clouds library function remove_end_polygon_point
+This file contains:
+- Function Logic Tests: Validate ST_CENTERMEAN
+
+Tests the clouds library  remove_end_polygon_point
 """
 
+# Copyright (c) 2025, CARTO
+
 import geojson
+
 from test_utils.unit import load_function_module
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
 
 
 def test_remove_end_polygon_point():

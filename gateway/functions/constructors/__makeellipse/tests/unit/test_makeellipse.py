@@ -1,11 +1,18 @@
 """
-Unit tests for ST_MAKEELLIPSE function
+Unit tests for __makeellipse function.
+
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+- Function Logic Tests: Validate ST_MAKEELLIPSE
 """
 
+# Copyright (c) 2025, CARTO
+
+import geojson
 import json
 import os
 import pytest
-import geojson
+
 from test_utils.unit import load_function_module
 
 # Load function module and handler
@@ -16,155 +23,14 @@ imports = load_function_module(
         "from_lib_module": {"helper": ["load_geom", "get_coord"]},
     },
 )
-
 ellipse = imports["ellipse"]
 load_geom = imports["load_geom"]
 get_coord = imports["get_coord"]
 lambda_handler = imports["lambda_handler"]
 
-
-class TestHelperFunctions:
-    """Test helper functions"""
-
-    def test_load_geom(self):
-        """Test loading geometry from JSON"""
-        geom_json = '{"type":"Point","coordinates":[1,2]}'
-        geom = load_geom(geom_json)
-        assert geom["type"] == "Point"
-        assert geom["coordinates"] == [1, 2]
-
-    def test_get_coord_from_array(self):
-        """Test getting coordinates from array"""
-        coords = get_coord([1.5, 2.5])
-        assert coords == [1.5, 2.5]
-
-    def test_get_coord_from_geojson_point(self):
-        """Test getting coordinates from geojson Point object"""
-        import geojson
-
-        point = geojson.Point([3, 4])
-        coords = get_coord(point)
-        assert coords == [3, 4]
-
-    def test_get_coord_invalid(self):
-        """Test get_coord with invalid input"""
-        with pytest.raises(Exception, match="coord is required"):
-            get_coord(None)
-
-
-class TestEllipse:
-    """Test the ellipse function"""
-
-    def test_basic_ellipse_kilometers(self):
-        """Test basic ellipse creation in kilometers"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-        result_str = ellipse(
-            center_json, 10, 5, {"units": "kilometers", "steps": 64, "angle": 0}
-        )
-        result = json.loads(result_str)
-
-        assert result["type"] == "Polygon"
-        assert len(result["coordinates"]) == 1
-        # Should have 65 points (64 steps + closing point)
-        assert len(result["coordinates"][0]) == 65
-        # First and last point should be the same (closed polygon)
-        assert result["coordinates"][0][0] == result["coordinates"][0][-1]
-
-    def test_ellipse_with_angle(self):
-        """Test ellipse with rotation angle"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-        result_no_rotation = ellipse(
-            center_json, 10, 5, {"units": "kilometers", "angle": 0}
-        )
-        result_rotated = ellipse(
-            center_json, 10, 5, {"units": "kilometers", "angle": 45}
-        )
-
-        coords_no_rotation = json.loads(result_no_rotation)["coordinates"][0]
-        coords_rotated = json.loads(result_rotated)["coordinates"][0]
-
-        # Rotated ellipse should have different coordinates
-        assert coords_no_rotation[0] != coords_rotated[0]
-
-    def test_ellipse_different_units(self):
-        """Test ellipse with different units"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-
-        result_km = ellipse(center_json, 10, 5, {"units": "kilometers"})
-        result_miles = ellipse(center_json, 10, 5, {"units": "miles"})
-
-        # Different units should produce different sized ellipses
-        assert result_km != result_miles
-
-    def test_ellipse_degrees(self):
-        """Test ellipse with degrees units"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-        result_str = ellipse(
-            center_json, 0.1, 0.05, {"units": "degrees", "steps": 64, "angle": 0}
-        )
-        result = json.loads(result_str)
-
-        assert result["type"] == "Polygon"
-        assert len(result["coordinates"][0]) == 65
-
-    def test_ellipse_custom_steps(self):
-        """Test ellipse with custom number of steps"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-
-        result_few = ellipse(center_json, 10, 5, {"units": "kilometers", "steps": 8})
-        result_many = ellipse(center_json, 10, 5, {"units": "kilometers", "steps": 128})
-
-        coords_few = json.loads(result_few)["coordinates"][0]
-        coords_many = json.loads(result_many)["coordinates"][0]
-
-        # More steps should give more points
-        assert len(coords_many) > len(coords_few)
-
-    def test_circle_equal_axes(self):
-        """Test that equal axes produce a circle-like shape"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-        result_str = ellipse(center_json, 10, 10, {"units": "kilometers", "steps": 64})
-        result = json.loads(result_str)
-
-        assert result["type"] == "Polygon"
-        # Circle should be symmetric
-
-    def test_invalid_units(self):
-        """Test ellipse with invalid units"""
-        center_json = '{"type":"Point","coordinates":[0,0]}'
-        with pytest.raises(Exception, match="non valid units"):
-            ellipse(center_json, 10, 5, {"units": "invalid"})
-
-    def test_ellipse_at_different_center(self):
-        """Test ellipse centered at non-origin point"""
-        center_json = '{"type":"Point","coordinates":[-74.0,40.7]}'
-        result_str = ellipse(center_json, 10, 5, {"units": "kilometers"})
-        result = json.loads(result_str)
-
-        assert result["type"] == "Polygon"
-        # Coordinates should be near the center point
-        coords = result["coordinates"][0]
-        avg_x = sum(c[0] for c in coords) / len(coords)
-        avg_y = sum(c[1] for c in coords) / len(coords)
-        assert abs(avg_x - (-74.0)) < 1
-        assert abs(avg_y - 40.7) < 1
-
-    def test_ellipse_from_clouds(self):
-        """Test ellipse with exact fixture from clouds test"""
-        here = os.path.dirname(__file__)
-        with open(f"{here}/fixtures/ellipse_out.txt", "r") as fixture_file:
-            lines = fixture_file.readlines()
-
-        center_str = (
-            '{"geometry": {"type": "Point", "coordinates": [-73.9385, 40.6643]}}'
-        )
-        result = ellipse(
-            center=center_str,
-            x_semi_axis=5,
-            y_semi_axis=3,
-            options={"angle": -30, "units": "miles", "steps": 20},
-        )
-        assert geojson.loads(result) == geojson.loads(lines[0].rstrip())
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
 
 
 class TestLambdaHandler:
@@ -319,3 +185,152 @@ class TestLambdaHandler:
         # With FAIL_FAST (default), invalid units fails the batch
         assert result["success"] is False
         assert "non valid units" in result["error_msg"]
+
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
+
+
+class TestHelperFunctions:
+    """Test helper functions"""
+
+    def test_load_geom(self):
+        """Test loading geometry from JSON"""
+        geom_json = '{"type":"Point","coordinates":[1,2]}'
+        geom = load_geom(geom_json)
+        assert geom["type"] == "Point"
+        assert geom["coordinates"] == [1, 2]
+
+    def test_get_coord_from_array(self):
+        """Test getting coordinates from array"""
+        coords = get_coord([1.5, 2.5])
+        assert coords == [1.5, 2.5]
+
+    def test_get_coord_from_geojson_point(self):
+        """Test getting coordinates from geojson Point object"""
+        import geojson
+
+        point = geojson.Point([3, 4])
+        coords = get_coord(point)
+        assert coords == [3, 4]
+
+    def test_get_coord_invalid(self):
+        """Test get_coord with invalid input"""
+        with pytest.raises(Exception, match="coord is required"):
+            get_coord(None)
+
+
+class TestEllipse:
+    """Test the ellipse function"""
+
+    def test_basic_ellipse_kilometers(self):
+        """Test basic ellipse creation in kilometers"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+        result_str = ellipse(
+            center_json, 10, 5, {"units": "kilometers", "steps": 64, "angle": 0}
+        )
+        result = json.loads(result_str)
+
+        assert result["type"] == "Polygon"
+        assert len(result["coordinates"]) == 1
+        # Should have 65 points (64 steps + closing point)
+        assert len(result["coordinates"][0]) == 65
+        # First and last point should be the same (closed polygon)
+        assert result["coordinates"][0][0] == result["coordinates"][0][-1]
+
+    def test_ellipse_with_angle(self):
+        """Test ellipse with rotation angle"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+        result_no_rotation = ellipse(
+            center_json, 10, 5, {"units": "kilometers", "angle": 0}
+        )
+        result_rotated = ellipse(
+            center_json, 10, 5, {"units": "kilometers", "angle": 45}
+        )
+
+        coords_no_rotation = json.loads(result_no_rotation)["coordinates"][0]
+        coords_rotated = json.loads(result_rotated)["coordinates"][0]
+
+        # Rotated ellipse should have different coordinates
+        assert coords_no_rotation[0] != coords_rotated[0]
+
+    def test_ellipse_different_units(self):
+        """Test ellipse with different units"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+
+        result_km = ellipse(center_json, 10, 5, {"units": "kilometers"})
+        result_miles = ellipse(center_json, 10, 5, {"units": "miles"})
+
+        # Different units should produce different sized ellipses
+        assert result_km != result_miles
+
+    def test_ellipse_degrees(self):
+        """Test ellipse with degrees units"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+        result_str = ellipse(
+            center_json, 0.1, 0.05, {"units": "degrees", "steps": 64, "angle": 0}
+        )
+        result = json.loads(result_str)
+
+        assert result["type"] == "Polygon"
+        assert len(result["coordinates"][0]) == 65
+
+    def test_ellipse_custom_steps(self):
+        """Test ellipse with custom number of steps"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+
+        result_few = ellipse(center_json, 10, 5, {"units": "kilometers", "steps": 8})
+        result_many = ellipse(center_json, 10, 5, {"units": "kilometers", "steps": 128})
+
+        coords_few = json.loads(result_few)["coordinates"][0]
+        coords_many = json.loads(result_many)["coordinates"][0]
+
+        # More steps should give more points
+        assert len(coords_many) > len(coords_few)
+
+    def test_circle_equal_axes(self):
+        """Test that equal axes produce a circle-like shape"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+        result_str = ellipse(center_json, 10, 10, {"units": "kilometers", "steps": 64})
+        result = json.loads(result_str)
+
+        assert result["type"] == "Polygon"
+        # Circle should be symmetric
+
+    def test_invalid_units(self):
+        """Test ellipse with invalid units"""
+        center_json = '{"type":"Point","coordinates":[0,0]}'
+        with pytest.raises(Exception, match="non valid units"):
+            ellipse(center_json, 10, 5, {"units": "invalid"})
+
+    def test_ellipse_at_different_center(self):
+        """Test ellipse centered at non-origin point"""
+        center_json = '{"type":"Point","coordinates":[-74.0,40.7]}'
+        result_str = ellipse(center_json, 10, 5, {"units": "kilometers"})
+        result = json.loads(result_str)
+
+        assert result["type"] == "Polygon"
+        # Coordinates should be near the center point
+        coords = result["coordinates"][0]
+        avg_x = sum(c[0] for c in coords) / len(coords)
+        avg_y = sum(c[1] for c in coords) / len(coords)
+        assert abs(avg_x - (-74.0)) < 1
+        assert abs(avg_y - 40.7) < 1
+
+    def test_ellipse_from_clouds(self):
+        """Test ellipse with exact fixture from clouds test"""
+        here = os.path.dirname(__file__)
+        with open(f"{here}/fixtures/ellipse_out.txt", "r") as fixture_file:
+            lines = fixture_file.readlines()
+
+        center_str = (
+            '{"geometry": {"type": "Point", "coordinates": [-73.9385, 40.6643]}}'
+        )
+        result = ellipse(
+            center=center_str,
+            x_semi_axis=5,
+            y_semi_axis=3,
+            options={"angle": -30, "units": "miles", "steps": 20},
+        )
+        assert geojson.loads(result) == geojson.loads(lines[0].rstrip())

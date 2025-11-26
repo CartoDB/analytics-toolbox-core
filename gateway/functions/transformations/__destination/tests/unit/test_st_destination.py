@@ -1,11 +1,21 @@
 """
-Unit tests for ST_DESTINATION
+Unit tests for __destination function.
 
-Basic unit tests for destination function from clouds library.
+This file contains:
+- Function Logic Tests: Validate ST_DESTINATION
+
+Basic unit tests for destination  from clouds library.
 """
 
+# Copyright (c) 2025, CARTO
+
 import geojson
+
 from test_utils.unit import load_function_module
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
 
 
 def test_st_destination_basic():

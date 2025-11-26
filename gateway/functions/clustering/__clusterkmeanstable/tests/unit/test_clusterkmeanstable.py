@@ -1,9 +1,16 @@
 """
-Unit tests for CLUSTERKMEANSTABLE function
+Unit tests for __clusterkmeanstable function.
+
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+- Function Logic Tests: Validate CLUSTERKMEANSTABLE
 """
+
+# Copyright (c) 2025, CARTO
 
 import json
 import numpy as np
+
 from test_utils.unit import load_function_module
 
 # Load function module and handler
@@ -16,13 +23,106 @@ imports = load_function_module(
         },
     },
 )
-
 KMeans = imports["KMeans"]
 reorder_coords = imports["reorder_coords"]
 count_distinct_coords = imports["count_distinct_coords"]
-
 clusterkmeanstable = imports["clusterkmeanstable"]
 lambda_handler = imports["lambda_handler"]
+
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
+
+
+class TestLambdaHandler:
+    """Test the Lambda handler function"""
+
+    def test_empty_event(self):
+        """Test handler with empty event"""
+        event = {"arguments": [], "num_records": 0}
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        assert result["success"] is True
+        assert result["num_records"] == 0
+        assert result["results"] == []
+
+    def test_single_valid_row(self):
+        """Test handler with single valid row"""
+        geom_json = '{"_coords":[0.0,0.0,1.0,1.0,5.0,5.0,6.0,6.0]}'
+        event = {"arguments": [[geom_json, 2]], "num_records": 1}
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        assert result["success"] is True
+        assert result["num_records"] == 1
+        assert len(result["results"]) == 1
+        assert result["results"][0] is not None
+
+        # Verify the result is valid JSON
+        cluster_result = json.loads(result["results"][0])
+        assert len(cluster_result) == 4
+
+    def test_null_geometry(self):
+        """Test handler with null geometry"""
+        event = {"arguments": [[None, 2]], "num_records": 1}
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        assert result["success"] is True
+        assert result["results"][0] is None
+
+    def test_null_k(self):
+        """Test handler with null k"""
+        geom_json = '{"_coords":[0.0,0.0,1.0,1.0]}'
+        event = {"arguments": [[geom_json, None]], "num_records": 1}
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        assert result["success"] is True
+        assert result["results"][0] is None
+
+    def test_batch_processing(self):
+        """Test handler with multiple rows"""
+        geom1 = '{"_coords":[0.0,0.0,1.0,1.0,5.0,5.0,6.0,6.0]}'
+        geom2 = '{"_coords":[0.0,0.0,1.0,1.0]}'
+        event = {
+            "arguments": [[geom1, 2], [geom2, 1], [None, 2]],
+            "num_records": 3,
+        }
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        assert result["success"] is True
+        assert result["num_records"] == 3
+        assert len(result["results"]) == 3
+        assert result["results"][0] is not None
+        assert result["results"][1] is not None
+        assert result["results"][2] is None
+
+    def test_malformed_row(self):
+        """Test handler with malformed row"""
+        event = {"arguments": [None, ["single_value"], []], "num_records": 3}
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        assert result["success"] is True
+        assert all(r is None for r in result["results"])
+
+    def test_invalid_json_fails_batch(self):
+        """Test handler with invalid JSON fails batch (FAIL_FAST mode)"""
+        event = {"arguments": [["not valid json", 2]], "num_records": 1}
+        result_str = lambda_handler(event)
+        result = json.loads(result_str)
+
+        # With FAIL_FAST (default), invalid JSON fails the batch
+        assert result["success"] is False
+        assert "Error processing row 0" in result["error_msg"]
+
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
 
 
 class TestKMeans:
@@ -146,89 +246,3 @@ class TestClusterKMeansTable:
 
         indices = [item["i"] for item in result]
         assert indices == [1, 2, 3]
-
-
-class TestLambdaHandler:
-    """Test the Lambda handler function"""
-
-    def test_empty_event(self):
-        """Test handler with empty event"""
-        event = {"arguments": [], "num_records": 0}
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        assert result["success"] is True
-        assert result["num_records"] == 0
-        assert result["results"] == []
-
-    def test_single_valid_row(self):
-        """Test handler with single valid row"""
-        geom_json = '{"_coords":[0.0,0.0,1.0,1.0,5.0,5.0,6.0,6.0]}'
-        event = {"arguments": [[geom_json, 2]], "num_records": 1}
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        assert result["success"] is True
-        assert result["num_records"] == 1
-        assert len(result["results"]) == 1
-        assert result["results"][0] is not None
-
-        # Verify the result is valid JSON
-        cluster_result = json.loads(result["results"][0])
-        assert len(cluster_result) == 4
-
-    def test_null_geometry(self):
-        """Test handler with null geometry"""
-        event = {"arguments": [[None, 2]], "num_records": 1}
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        assert result["success"] is True
-        assert result["results"][0] is None
-
-    def test_null_k(self):
-        """Test handler with null k"""
-        geom_json = '{"_coords":[0.0,0.0,1.0,1.0]}'
-        event = {"arguments": [[geom_json, None]], "num_records": 1}
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        assert result["success"] is True
-        assert result["results"][0] is None
-
-    def test_batch_processing(self):
-        """Test handler with multiple rows"""
-        geom1 = '{"_coords":[0.0,0.0,1.0,1.0,5.0,5.0,6.0,6.0]}'
-        geom2 = '{"_coords":[0.0,0.0,1.0,1.0]}'
-        event = {
-            "arguments": [[geom1, 2], [geom2, 1], [None, 2]],
-            "num_records": 3,
-        }
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        assert result["success"] is True
-        assert result["num_records"] == 3
-        assert len(result["results"]) == 3
-        assert result["results"][0] is not None
-        assert result["results"][1] is not None
-        assert result["results"][2] is None
-
-    def test_malformed_row(self):
-        """Test handler with malformed row"""
-        event = {"arguments": [None, ["single_value"], []], "num_records": 3}
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        assert result["success"] is True
-        assert all(r is None for r in result["results"])
-
-    def test_invalid_json_fails_batch(self):
-        """Test handler with invalid JSON fails batch (FAIL_FAST mode)"""
-        event = {"arguments": [["not valid json", 2]], "num_records": 1}
-        result_str = lambda_handler(event)
-        result = json.loads(result_str)
-
-        # With FAIL_FAST (default), invalid JSON fails the batch
-        assert result["success"] is False
-        assert "Error processing row 0" in result["error_msg"]

@@ -1,10 +1,19 @@
 """
-Unit tests for ST_CENTROID
+Unit tests for __centroid function.
 
-Tests the clouds library centroid helper functions.
+This file contains:
+- Function Logic Tests: Validate ST_CENTROID
+
+Tests the clouds library centroid helper s.
 """
 
+# Copyright (c) 2025, CARTO
+
 from test_utils.unit import load_function_module
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
 
 
 def test_centroid_linestring_helper():

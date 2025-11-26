@@ -1,11 +1,23 @@
-"""Unit tests for QUADINT_FROMQUADKEY function"""
+"""
+Unit tests for quadint_fromquadkey function.
+
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+"""
+
+# Copyright (c) 2025, CARTO
 
 import json
+
 from test_utils.unit import load_function_module
 
-# Load the function module with lib imports
+# Load function module and handler
 imports = load_function_module(__file__)
 lambda_handler = imports["lambda_handler"]
+
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
 
 
 class TestLambdaHandler:
@@ -57,4 +69,4 @@ class TestLambdaHandler:
 
         assert result["success"] is True
         assert result["num_records"] == 1
-        assert result["results"][0] == 0  # Empty quadkey = quadint 0
+        assert result["results"][0] == 0

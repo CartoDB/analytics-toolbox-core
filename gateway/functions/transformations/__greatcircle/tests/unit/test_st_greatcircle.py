@@ -1,10 +1,19 @@
 """
-Unit tests for ST_GREATCIRCLE
+Unit tests for __greatcircle function.
 
-Basic unit tests for great_circle function from clouds library.
+This file contains:
+- Function Logic Tests: Validate ST_GREATCIRCLE
+
+Basic unit tests for great_circle  from clouds library.
 """
 
+# Copyright (c) 2025, CARTO
+
 import pytest
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
 
 
 def test_st_greatcircle_basic():

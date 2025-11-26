@@ -1,11 +1,21 @@
 """
-Unit tests for ST_CENTERMEDIAN
+Unit tests for __centermedian function.
 
-Basic unit tests for center_median function from clouds library.
+This file contains:
+- Function Logic Tests: Validate ST_CENTERMEDIAN
+
+Basic unit tests for center_median  from clouds library.
 """
 
+# Copyright (c) 2025, CARTO
+
 import geojson
+
 from test_utils.unit import load_function_module
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
 
 
 def test_st_centermedian_basic():

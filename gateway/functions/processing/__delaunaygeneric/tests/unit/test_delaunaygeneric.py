@@ -1,9 +1,16 @@
 """
-Unit tests for DELAUNAYGENERIC function
+Unit tests for __delaunaygeneric function.
+
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+- Function Logic Tests: Validate DELAUNAYGENERIC
 """
+
+# Copyright (c) 2025, CARTO
 
 import json
 import pytest
+
 from test_utils.unit import load_function_module
 
 # Load function module and handler
@@ -13,95 +20,12 @@ imports = load_function_module(
         "from_lib": ["delaunaygeneric"],
     },
 )
-
 delaunaygeneric = imports["delaunaygeneric"]
 lambda_handler = imports["lambda_handler"]
 
-
-class TestDelaunayGeneric:
-    """Test the delaunaygeneric function"""
-
-    def test_simple_triangle_lines(self):
-        """Test basic triangle with 'lines' output"""
-        # Three points forming a triangle
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
-        result_str = delaunaygeneric(geom_json, "lines")
-        result = json.loads(result_str)
-
-        assert result["type"] == "MultiLineString"
-        assert len(result["coordinates"]) == 1  # One triangle
-        assert len(result["coordinates"][0]) == 4  # Closed triangle (4 points)
-        # First and last point should be the same (closed)
-        assert result["coordinates"][0][0] == result["coordinates"][0][3]
-
-    def test_simple_triangle_poly(self):
-        """Test basic triangle with 'poly' output"""
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
-        result_str = delaunaygeneric(geom_json, "poly")
-        result = json.loads(result_str)
-
-        assert result["type"] == "MultiPolygon"
-        assert len(result["coordinates"]) == 1  # One triangle
-        assert len(result["coordinates"][0]) == 1  # One ring
-        assert len(result["coordinates"][0][0]) == 4  # Closed triangle
-
-    def test_four_points_lines(self):
-        """Test four points creating multiple triangles with 'lines'"""
-        # Four points that should create 2 triangles
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[1,1],[0,1]]}'
-        result_str = delaunaygeneric(geom_json, "lines")
-        result = json.loads(result_str)
-
-        assert result["type"] == "MultiLineString"
-        # Should have 2 triangles
-        assert len(result["coordinates"]) == 2
-
-    def test_four_points_poly(self):
-        """Test four points creating multiple triangles with 'poly'"""
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[1,1],[0,1]]}'
-        result_str = delaunaygeneric(geom_json, "poly")
-        result = json.loads(result_str)
-
-        assert result["type"] == "MultiPolygon"
-        assert len(result["coordinates"]) == 2  # Two triangles
-
-    def test_null_points(self):
-        """Test with null points input"""
-        result = delaunaygeneric(None, "lines")
-        assert result is None
-
-    def test_invalid_delaunay_type(self):
-        """Test with invalid delaunay_type"""
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
-        result = delaunaygeneric(geom_json, "invalid")
-        assert result is None
-
-    def test_invalid_geometry_type(self):
-        """Test that non-MultiPoint raises error"""
-        geom_json = '{"type":"Point","coordinates":[0,0]}'
-        with pytest.raises(ValueError, match="must be MultiPoint"):
-            delaunaygeneric(geom_json, "lines")
-
-    def test_precision(self):
-        """Test that output uses correct precision"""
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
-        result_str = delaunaygeneric(geom_json, "lines")
-
-        # Should have precision field (geojson library handles precision)
-        assert result_str is not None
-
-    def test_collinear_points(self):
-        """Test with collinear points (should fail or degenerate)"""
-        # Three collinear points - scipy.spatial.Delaunay should handle this
-        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[2,0]]}'
-        try:
-            result_str = delaunaygeneric(geom_json, "lines")
-            # If it succeeds, result might be empty or degenerate
-            result = json.loads(result_str)
-            assert result["type"] == "MultiLineString"
-        except Exception:
-            # Collinear points may raise an error from scipy
-            pass
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
 
 
 class TestLambdaHandler:
@@ -202,3 +126,94 @@ class TestLambdaHandler:
         # With FAIL_FAST (default), invalid geometry fails the batch
         assert result["success"] is False
         assert "must be MultiPoint" in result["error_msg"]
+
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
+
+
+class TestDelaunayGeneric:
+    """Test the delaunaygeneric function"""
+
+    def test_simple_triangle_lines(self):
+        """Test basic triangle with 'lines' output"""
+        # Three points forming a triangle
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
+        result_str = delaunaygeneric(geom_json, "lines")
+        result = json.loads(result_str)
+
+        assert result["type"] == "MultiLineString"
+        assert len(result["coordinates"]) == 1  # One triangle
+        assert len(result["coordinates"][0]) == 4  # Closed triangle (4 points)
+        # First and last point should be the same (closed)
+        assert result["coordinates"][0][0] == result["coordinates"][0][3]
+
+    def test_simple_triangle_poly(self):
+        """Test basic triangle with 'poly' output"""
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
+        result_str = delaunaygeneric(geom_json, "poly")
+        result = json.loads(result_str)
+
+        assert result["type"] == "MultiPolygon"
+        assert len(result["coordinates"]) == 1  # One triangle
+        assert len(result["coordinates"][0]) == 1  # One ring
+        assert len(result["coordinates"][0][0]) == 4  # Closed triangle
+
+    def test_four_points_lines(self):
+        """Test four points creating multiple triangles with 'lines'"""
+        # Four points that should create 2 triangles
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[1,1],[0,1]]}'
+        result_str = delaunaygeneric(geom_json, "lines")
+        result = json.loads(result_str)
+
+        assert result["type"] == "MultiLineString"
+        # Should have 2 triangles
+        assert len(result["coordinates"]) == 2
+
+    def test_four_points_poly(self):
+        """Test four points creating multiple triangles with 'poly'"""
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[1,1],[0,1]]}'
+        result_str = delaunaygeneric(geom_json, "poly")
+        result = json.loads(result_str)
+
+        assert result["type"] == "MultiPolygon"
+        assert len(result["coordinates"]) == 2  # Two triangles
+
+    def test_null_points(self):
+        """Test with null points input"""
+        result = delaunaygeneric(None, "lines")
+        assert result is None
+
+    def test_invalid_delaunay_type(self):
+        """Test with invalid delaunay_type"""
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
+        result = delaunaygeneric(geom_json, "invalid")
+        assert result is None
+
+    def test_invalid_geometry_type(self):
+        """Test that non-MultiPoint raises error"""
+        geom_json = '{"type":"Point","coordinates":[0,0]}'
+        with pytest.raises(ValueError, match="must be MultiPoint"):
+            delaunaygeneric(geom_json, "lines")
+
+    def test_precision(self):
+        """Test that output uses correct precision"""
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[0.5,1]]}'
+        result_str = delaunaygeneric(geom_json, "lines")
+
+        # Should have precision field (geojson library handles precision)
+        assert result_str is not None
+
+    def test_collinear_points(self):
+        """Test with collinear points (should fail or degenerate)"""
+        # Three collinear points - scipy.spatial.Delaunay should handle this
+        geom_json = '{"type":"MultiPoint","coordinates":[[0,0],[1,0],[2,0]]}'
+        try:
+            result_str = delaunaygeneric(geom_json, "lines")
+            # If it succeeds, result might be empty or degenerate
+            result = json.loads(result_str)
+            assert result["type"] == "MultiLineString"
+        except Exception:
+            # Collinear points may raise an error from scipy
+            pass

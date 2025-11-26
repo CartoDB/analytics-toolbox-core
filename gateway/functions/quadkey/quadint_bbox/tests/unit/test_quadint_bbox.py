@@ -1,12 +1,24 @@
-"""Unit tests for QUADINT_BBOX function"""
+"""
+Unit tests for quadint_bbox function.
 
-import pytest
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+"""
+
+# Copyright (c) 2025, CARTO
+
 import json
+import pytest
+
 from test_utils.unit import load_function_module
 
-# Load the function module with lib imports
+# Load function module and handler
 imports = load_function_module(__file__)
 lambda_handler = imports["lambda_handler"]
+
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
 
 
 class TestLambdaHandler:

@@ -624,12 +624,84 @@ SELECT @@RS_SCHEMA@@.H3_POLYFILL(geom, 5)
 
 ## Testing
 
-### Unit Tests (Gateway)
+### Test Structure Standards
 
-- Import from built structure: `from lib.quadbin import ...`
-- Test the handler decorator: `@redshift_handler`
-- Mock external dependencies
-- Use `conftest.py` fixtures
+All gateway function tests follow a standardized structure with clear separation:
+
+**File Structure:**
+```python
+"""
+Unit tests for function_name function.
+
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+- Function Logic Tests: Validate internal algorithms and helpers (if complex)
+"""
+
+# Copyright (c) 2025, CARTO
+
+import json
+from test_utils.unit import load_function_module
+
+# Load handler and functions
+imports = load_function_module(__file__)
+lambda_handler = imports["lambda_handler"]
+
+# For functions with internal helpers to test:
+imports = load_function_module(
+    __file__,
+    {
+        "from_lib": ["function_from_lib"],              # From lib/__init__.py
+        "from_lib_module": {                            # From lib/submodule.py
+            "module_name": ["helper_func"]
+        },
+        "from_handler": ["internal_func"]              # From handler.py itself
+    }
+)
+
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
+
+class TestLambdaHandler:
+    """Test the Lambda handler interface."""
+    # Tests: empty events, null inputs, batch processing
+
+# ============================================================================
+# FUNCTION LOGIC TESTS (only for complex functions)
+# ============================================================================
+
+class TestHelperFunction:
+    """Test helper_function directly."""
+    # Direct tests of algorithms, edge cases, mathematical correctness
+```
+
+**Testing Tiers:**
+- **Tier 1** (Handler only): Simple functions - validate Lambda interface
+- **Tier 2** (Handler + Logic): Complex functions - also test internal algorithms directly
+- **Tier 3** (Integration): Functions requiring database state validation
+
+**Key Utilities:**
+- `load_function_module(__file__)` - Loads from build directory with shared libs
+- `from_handler` parameter - Access internal functions from handler.py for testing
+
+### Running Tests
+
+```bash
+cd gateway
+
+# Build before testing (required)
+make build cloud=redshift
+
+# Run unit tests
+make test-unit cloud=redshift
+
+# Run integration tests
+make test-integration cloud=redshift
+
+# Run linter
+make lint
+```
 
 ### Integration Tests
 

@@ -1,4 +1,15 @@
+"""
+Unit tests for generatepoints function.
+
+This file contains:
+- Handler Interface Tests: Validate Lambda handler and batch processing
+- Function Logic Tests: Validate generatepoints function
+"""
+
+# Copyright (c) 2025, CARTO
+
 import json
+
 from test_utils.unit import load_function_module
 
 # Load function module and handler
@@ -8,57 +19,12 @@ imports = load_function_module(
         "from_lib": ["generatepoints"],
     },
 )
-
 generatepoints = imports["generatepoints"]
 lambda_handler = imports["lambda_handler"]
 
-
-class TestGeneratePoints:
-    """Tests for the generatepoints core function"""
-
-    def test_generatepoints_simple_polygon(self):
-        """Test generating points in a simple square polygon"""
-        geom = (
-            '{"type": "Polygon", "coordinates": '
-            "[[[0, 0], [0, 2], [2, 2], [2, 0], [0, 0]]]}"
-        )
-        result = generatepoints(geom, 10)
-        result_json = json.loads(result)
-
-        assert result_json["type"] == "MultiPoint"
-        assert len(result_json["coordinates"]) == 10
-
-        # Verify all points are within bounds [0, 2] x [0, 2]
-        for coord in result_json["coordinates"]:
-            assert 0 <= coord[0] <= 2
-            assert 0 <= coord[1] <= 2
-
-    def test_generatepoints_single_point(self):
-        """Test generating a single point returns Point not MultiPoint"""
-        geom = (
-            '{"type": "Polygon", "coordinates": '
-            "[[[0, 0], [0, 2], [2, 2], [2, 0], [0, 0]]]}"
-        )
-        result = generatepoints(geom, 1)
-        result_json = json.loads(result)
-
-        assert result_json["type"] == "Point"
-        assert len(result_json["coordinates"]) == 2
-
-        # Verify point is within bounds
-        assert 0 <= result_json["coordinates"][0] <= 2
-        assert 0 <= result_json["coordinates"][1] <= 2
-
-    def test_generatepoints_triangle(self):
-        """Test generating points in a triangular polygon"""
-        geom = (
-            '{"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [0.5, 1], [0, 0]]]}'
-        )
-        result = generatepoints(geom, 5)
-        result_json = json.loads(result)
-
-        assert result_json["type"] == "MultiPoint"
-        assert len(result_json["coordinates"]) == 5
+# ============================================================================
+# HANDLER INTERFACE TESTS
+# ============================================================================
 
 
 class TestLambdaHandler:
@@ -131,3 +97,56 @@ class TestLambdaHandler:
         assert result["results"][0] is not None
         assert result["results"][1] is not None
         assert result["results"][2] is None
+
+
+# ============================================================================
+# FUNCTION LOGIC TESTS
+# ============================================================================
+
+
+class TestGeneratePoints:
+    """Tests for the generatepoints core function"""
+
+    def test_generatepoints_simple_polygon(self):
+        """Test generating points in a simple square polygon"""
+        geom = (
+            '{"type": "Polygon", "coordinates": '
+            "[[[0, 0], [0, 2], [2, 2], [2, 0], [0, 0]]]}"
+        )
+        result = generatepoints(geom, 10)
+        result_json = json.loads(result)
+
+        assert result_json["type"] == "MultiPoint"
+        assert len(result_json["coordinates"]) == 10
+
+        # Verify all points are within bounds [0, 2] x [0, 2]
+        for coord in result_json["coordinates"]:
+            assert 0 <= coord[0] <= 2
+            assert 0 <= coord[1] <= 2
+
+    def test_generatepoints_single_point(self):
+        """Test generating a single point returns Point not MultiPoint"""
+        geom = (
+            '{"type": "Polygon", "coordinates": '
+            "[[[0, 0], [0, 2], [2, 2], [2, 0], [0, 0]]]}"
+        )
+        result = generatepoints(geom, 1)
+        result_json = json.loads(result)
+
+        assert result_json["type"] == "Point"
+        assert len(result_json["coordinates"]) == 2
+
+        # Verify point is within bounds
+        assert 0 <= result_json["coordinates"][0] <= 2
+        assert 0 <= result_json["coordinates"][1] <= 2
+
+    def test_generatepoints_triangle(self):
+        """Test generating points in a triangular polygon"""
+        geom = (
+            '{"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [0.5, 1], [0, 0]]]}'
+        )
+        result = generatepoints(geom, 5)
+        result_json = json.loads(result)
+
+        assert result_json["type"] == "MultiPoint"
+        assert len(result_json["coordinates"]) == 5
