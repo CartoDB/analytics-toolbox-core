@@ -24,12 +24,13 @@ class FunctionParameter:
 
 
 class CloudType(Enum):
-    """Supported cloud platforms"""
+    """Supported cloud platforms
+
+    Note: Currently only Redshift is implemented. Other clouds (BigQuery,
+    Snowflake, Databricks) can be added here when support is implemented.
+    """
 
     REDSHIFT = "redshift"
-    BIGQUERY = "bigquery"
-    SNOWFLAKE = "snowflake"
-    DATABRICKS = "databricks"
 
 
 class PlatformType(Enum):

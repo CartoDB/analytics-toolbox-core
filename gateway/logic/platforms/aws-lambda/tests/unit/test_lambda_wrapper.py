@@ -9,6 +9,7 @@ import json
 # Add runtime to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
+# E402: Import after sys.path modification (required to import from runtime/)
 from lambda_wrapper import (  # noqa: E402
     ExternalFunctionResponse,
     redshift_handler,

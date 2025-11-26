@@ -23,7 +23,7 @@ except ImportError:
 # Add logic root to path for clean imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-# Use relative imports within the package
+# E402: Imports after sys.path modification (required for package structure)
 from ...common.engine import CatalogLoader, FunctionValidator, CloudType  # noqa: E402
 from ...common.engine.packager import PackageBuilder  # noqa: E402
 from ...common.utils import (  # noqa: E402
@@ -37,7 +37,7 @@ from .validation.pre_flight_checks import run_pre_flight_checks  # noqa: E402
 from .template_renderer import TemplateRenderer  # noqa: E402
 from .sql_template_generator import RedshiftSQLTemplateGenerator  # noqa: E402
 
-# Import LambdaDeployer (sys.path needed for aws-lambda hyphen directory)  # noqa: E402
+# E402: Import from aws-lambda directory (hyphen requires sys.path)
 platforms_path = (
     Path(__file__).parent.parent.parent / "platforms" / "aws-lambda" / "deploy"
 )
