@@ -59,7 +59,10 @@ RS_LAMBDA_PREFIX=yourname-at-  # Prefix for Lambda functions (max 46 chars, tota
 RS_LAMBDA_OVERRIDE=1           # Override existing Lambdas (1=yes, 0=no)
 
 # Redshift Gateway Configuration
-RS_SCHEMA=yourname_carto       # Schema name for gateway functions
+RS_SCHEMA=yourname_carto       # Schema name for gateway functions (use directly)
+# OR use RS_PREFIX (automatically concatenated with "carto")
+RS_PREFIX=yourname_            # Schema prefix (e.g., "yourname_" → "yourname_carto")
+                               # Note: RS_SCHEMA takes priority if both are set
 RS_HOST=<cluster>.redshift.amazonaws.com
 RS_DATABASE=<database>
 RS_USER=<user>
@@ -562,10 +565,12 @@ SQL templates use `@@VARIABLE@@` placeholders replaced during deployment.
 
 ### Gateway Deployment
 
-**Gateway functions always use `RS_SCHEMA` directly:**
-- Schema name is used exactly as specified in `RS_SCHEMA` (e.g., `yourname_carto` or `carto`)
+**Gateway functions support flexible schema configuration:**
+- **RS_SCHEMA**: Use directly as schema name (e.g., `RS_SCHEMA=yourname_carto` → "yourname_carto")
+- **RS_PREFIX**: Concatenate with "carto" (e.g., `RS_PREFIX=yourname_` → "yourname_carto")
+- **Priority**: `RS_SCHEMA` takes precedence if both are set
+- **Consistency**: Using `RS_PREFIX` matches clouds behavior for consistent naming
 - Lambda functions use `RS_LAMBDA_PREFIX` (e.g., `yourname-at-qb_polyfill`)
-- No production mode distinction - same behavior for dev and production
 - Control Lambda updates with `RS_LAMBDA_OVERRIDE` (1=update existing, 0=skip existing)
 
 ## Cloud SQL Function Development

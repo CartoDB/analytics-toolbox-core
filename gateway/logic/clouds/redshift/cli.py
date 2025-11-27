@@ -83,6 +83,46 @@ def get_env_or_default(key: str, default: any = None) -> any:
     return os.getenv(key, default)
 
 
+def resolve_redshift_schema() -> str:
+    """
+    Resolve Redshift schema name from environment variables
+
+    Priority (highest to lowest):
+    1. RS_SCHEMA - Use directly if provided (e.g., "dev_carto", "carto")
+    2. RS_PREFIX - Concatenate with "carto" (e.g., "dev_" -> "dev_carto")
+    3. Default - "carto"
+
+    This matches the behavior in clouds/redshift where:
+    - RS_SCHEMA takes priority if set
+    - RS_PREFIX + "carto" is used otherwise
+    - Defaults to "carto" if neither is set
+
+    Returns:
+        Schema name to use for deployment
+
+    Example:
+        RS_SCHEMA="my_schema" -> "my_schema"
+        RS_PREFIX="dev_" -> "dev_carto"
+        (none set) -> "carto"
+    """
+    # Priority 1: RS_SCHEMA (use directly)
+    rs_schema = get_env_or_default("RS_SCHEMA", None)
+    if rs_schema:
+        logger.info(f"Using schema from RS_SCHEMA: {rs_schema}")
+        return rs_schema
+
+    # Priority 2: RS_PREFIX (concatenate with "carto")
+    rs_prefix = get_env_or_default("RS_PREFIX", None)
+    if rs_prefix:
+        schema = f"{rs_prefix}carto"
+        logger.info(f"Using schema from RS_PREFIX: {schema}")
+        return schema
+
+    # Priority 3: Default
+    logger.info("Using default schema: carto")
+    return "carto"
+
+
 def get_aws_credentials():
     """
     Get AWS credentials from environment variables
@@ -830,24 +870,8 @@ def deploy_all(
     rs_lambda_invoke_role = get_env_or_default("RS_LAMBDA_INVOKE_ROLE")
     rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
 
-    # Backward compatibility: support RS_SCHEMA (new) and RS_PREFIX (deprecated)
-    rs_schema = get_env_or_default("RS_SCHEMA", None)
-    if rs_schema is None:
-        # Fall back to old RS_PREFIX behavior for backward compatibility
-        rs_prefix = get_env_or_default("RS_PREFIX", "")
-        if rs_prefix:
-            # Old behavior: concatenate prefix with "carto"
-            rs_schema = f"{rs_prefix}carto"
-            logger.warning(
-                f"RS_PREFIX is deprecated. Please use RS_SCHEMA='{rs_schema}' instead. "
-                f"Currently using schema: {rs_schema}"
-            )
-        else:
-            # No prefix, use default
-            rs_schema = "carto"
-    else:
-        # New behavior: use RS_SCHEMA directly
-        logger.info(f"Using schema: {rs_schema}")
+    # Resolve schema name (RS_SCHEMA has priority, then RS_PREFIX + "carto")
+    rs_schema = resolve_redshift_schema()
 
     # Validate Redshift configuration for external function deployment
     deploy_external_functions = True
@@ -1381,24 +1405,8 @@ def remove_all(
     rs_database = get_env_or_default("RS_DATABASE")
     rs_user = get_env_or_default("RS_USER")
 
-    # Backward compatibility: support RS_SCHEMA (new) and RS_PREFIX (deprecated)
-    rs_schema = get_env_or_default("RS_SCHEMA", None)
-    if rs_schema is None:
-        # Fall back to old RS_PREFIX behavior for backward compatibility
-        rs_prefix = get_env_or_default("RS_PREFIX", "")
-        if rs_prefix:
-            # Old behavior: concatenate prefix with "carto"
-            rs_schema = f"{rs_prefix}carto"
-            logger.warning(
-                f"RS_PREFIX is deprecated. Please use RS_SCHEMA='{rs_schema}' instead. "
-                f"Currently using schema: {rs_schema}"
-            )
-        else:
-            # No prefix, use default
-            rs_schema = "carto"
-    else:
-        # New behavior: use RS_SCHEMA directly
-        logger.info(f"Using schema: {rs_schema}")
+    # Resolve schema name (RS_SCHEMA has priority, then RS_PREFIX + "carto")
+    rs_schema = resolve_redshift_schema()
 
     if dry_run:
         logger.info("[DRY RUN] Would remove:")
@@ -1855,24 +1863,8 @@ def deploy_functions(
     rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
 
-    # Backward compatibility: support RS_SCHEMA (new) and RS_PREFIX (deprecated)
-    rs_schema = get_env_or_default("RS_SCHEMA", None)
-    if rs_schema is None:
-        # Fall back to old RS_PREFIX behavior for backward compatibility
-        rs_prefix = get_env_or_default("RS_PREFIX", "")
-        if rs_prefix:
-            # Old behavior: concatenate prefix with "carto"
-            rs_schema = f"{rs_prefix}carto"
-            logger.warning(
-                f"RS_PREFIX is deprecated. Please use RS_SCHEMA='{rs_schema}' instead. "
-                f"Currently using schema: {rs_schema}"
-            )
-        else:
-            # No prefix, use default
-            rs_schema = "carto"
-    else:
-        # New behavior: use RS_SCHEMA directly
-        logger.info(f"Using schema: {rs_schema}")
+    # Resolve schema name (RS_SCHEMA has priority, then RS_PREFIX + "carto")
+    rs_schema = resolve_redshift_schema()
 
     # Validate configuration
     if not rs_database or not rs_iam_role_arn:
