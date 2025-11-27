@@ -4,6 +4,15 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.8] - 2025-11-26
+
+## 2025-11-26
+
+- chore: increase test timeout from 40000 to 50000 (#558)
+- chore: update node version (#559)
+- chore: allow slow tests in snowflake (#561)
+- fix: update turf version (#564)
+
 ## [1.2.7] - 2025-04-30
 
 - chore(clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)
