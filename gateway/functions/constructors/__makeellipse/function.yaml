@@ -1,0 +1,22 @@
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: ellipse
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    config:
+      max_batch_rows: 10000
+parameters:
+- name: center
+  type: string
+- name: xSemiAxis
+  type: string
+- name: ySemiAxis
+  type: string
+- name: angle
+  type: string
+- name: units
+  type: string
+- name: steps
+  type: int
+returns: string

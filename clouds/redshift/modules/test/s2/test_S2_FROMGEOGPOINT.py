@@ -55,7 +55,7 @@ def test_s2_fromgeogpoint_success():
 def test_s2_fromgeogpoint_invalid_resolution_failure():
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query('SELECT @@RS_SCHEMA@@.S2_FROMGEOGPOINT(ST_POINT(100, 100), 32)')
-    assert 'InvalidResolution' in str(excinfo.value)
+    assert 'Resolution must be between 0 and 30' in str(excinfo.value)
     with pytest.raises(redshift_connector.error.ProgrammingError) as excinfo:
         run_query('SELECT @@RS_SCHEMA@@.S2_FROMGEOGPOINT(ST_POINT(100, 100), -1)')
-    assert 'InvalidResolution' in str(excinfo.value)
+    assert 'Resolution must be between 0 and 30' in str(excinfo.value)

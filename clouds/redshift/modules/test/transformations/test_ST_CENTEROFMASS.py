@@ -21,10 +21,10 @@ def test_centerofmass_success():
             ST_GeomFromText('{lines[3].rstrip()}')))"""
     )
 
-    assert str(results[0][0]) == 'POINT(4.84072896514 45.7558120999)'
-    assert str(results[0][1]) == 'POINT(25.4545454545 26.9696969697)'
-    assert str(results[0][2]) == 'POINT(-50.197740113 19.1525423729)'
-    assert str(results[0][3]) == 'POINT(-3.79060166354 37.7788081595)'
+    assert str(results[0][0]) == 'POINT(4.84072896513506 45.755812099945)'
+    assert str(results[0][1]) == 'POINT(25.4545454545455 26.969696969697)'
+    assert str(results[0][2]) == 'POINT(-50.1977401129944 19.1525423728814)'
+    assert str(results[0][3]) == 'POINT(-3.79060166354288 37.7788081595167)'
 
 
 def test_centerofmass_none():
@@ -62,6 +62,6 @@ def test_centerofmass_read_from_table_success():
 
     results = cursor.fetchall()
 
-    assert str(results[0][0]) == 'POINT(4.84072896514 45.7558120999)'
-    assert str(results[1][0]) == 'POINT(25.4545454545 26.9696969697)'
-    assert str(results[2][0]) == 'POINT(-50.197740113 19.1525423729)'
+    assert str(results[0][0]) == 'POINT(4.84072896513506 45.755812099945)'
+    assert str(results[1][0]) == 'POINT(25.4545454545455 26.969696969697)'
+    assert str(results[2][0]) == 'POINT(-50.1977401129944 19.1525423728814)'

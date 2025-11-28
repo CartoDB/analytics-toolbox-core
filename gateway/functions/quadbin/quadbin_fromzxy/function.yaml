@@ -1,0 +1,16 @@
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: qb_fzxy
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    config:
+      max_batch_rows: 10000
+parameters:
+- name: z
+  type: bigint
+- name: x
+  type: bigint
+- name: y
+  type: bigint
+returns: bigint

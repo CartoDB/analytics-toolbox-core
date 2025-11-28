@@ -1,0 +1,3 @@
+# Requirements for CLUSTERKMEANSTABLE Lambda function
+geojson==3.1.0
+numpy==1.26.4
