@@ -58,11 +58,14 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, s
 @click.option('--rs-schema', help='Schema name for Analytics Toolbox functions (default: carto)')  # noqa: E501
 @click.option('--rs-lambda-invoke-role', help='IAM role(s) for Redshift to invoke Lambda (comma-separated for role chaining)')  # noqa: E501
 @click.option('--rs-lambda-override/--no-rs-lambda-override', default=None, help='Override existing Lambda functions (default: yes if not specified)')  # noqa: E501
+@click.option('--modules', help='Comma-separated list of modules to deploy (default: all)')
+@click.option('--functions', help='Comma-separated list of functions to deploy (default: all)')
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             aws_session_token, aws_assume_role_arn, rs_lambda_prefix,
             rs_lambda_execution_role, rs_host, rs_database, rs_user, rs_password,
-            rs_schema, rs_lambda_invoke_role, rs_lambda_override, dry_run):
+            rs_schema, rs_lambda_invoke_role, rs_lambda_override, modules, functions,
+            dry_run):
     """Install CARTO Analytics Toolbox to Redshift
 
     This installer will guide you through deploying Analytics Toolbox functions
@@ -342,11 +345,16 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo("Phase 1-2: Deploying gateway functions...")
     deploy_cmd = [
         sys.executable,
-        str(  # noqa: E501
-            Path(__file__).parent.parent / 'logic' / 'clouds' / 'redshift' / 'cli.py'
-        ),
+        '-m',
+        'logic.clouds.redshift.cli',
         'deploy-all'
     ]
+
+    if modules:
+        deploy_cmd.extend(['--modules', modules])
+
+    if functions:
+        deploy_cmd.extend(['--functions', functions])
 
     if dry_run:
         deploy_cmd.append('--dry-run')
@@ -537,6 +545,7 @@ redshift-connector>=2.0.0
 sqlparse>=0.4.0
 PyYAML>=6.0
 jsonschema>=4.0.0
+tqdm>=4.65.0
 """
 
     @staticmethod

@@ -820,10 +820,10 @@ def deploy_all(
         to_deploy = [f for f in to_deploy if f.module in module_list]
         logger.info(f"Filtering by modules: {', '.join(module_list)}")
 
-    # Apply functions filter
+    # Apply functions filter (case-insensitive)
     if functions:
-        function_list = [f.strip() for f in functions.split(",")]
-        to_deploy = [f for f in to_deploy if f.name in function_list]
+        function_list = [f.strip().lower() for f in functions.split(",")]
+        to_deploy = [f for f in to_deploy if f.name.lower() in function_list]
         logger.info(f"Filtering by functions: {', '.join(function_list)}")
 
     # Apply git diff filter
@@ -1660,6 +1660,9 @@ def remove_all(
     help="Additional function roots to include (can be specified multiple times)",
 )
 @click.option(
+    "--modules", help="Comma-separated list of modules to include (default: all)"
+)
+@click.option(
     "--functions", help="Comma-separated list of functions to include (default: all)"
 )
 @click.option(
@@ -1673,6 +1676,7 @@ def create_package(
     output_dir: Path,
     version: str,
     include_roots: tuple,
+    modules: Optional[str],
     functions: Optional[str],
     production: bool,
 ):
@@ -1689,12 +1693,19 @@ def create_package(
     loader.load_catalog()
 
     # Get functions to include
+    to_include = loader.get_functions_by_cloud(CloudType.REDSHIFT)
+
+    # Apply modules filter
+    if modules:
+        module_list = [m.strip() for m in modules.split(",")]
+        to_include = [f for f in to_include if f.module in module_list]
+        logger.info(f"Filtering by modules: {', '.join(module_list)}")
+
+    # Apply functions filter
     if functions:
-        function_names = [f.strip() for f in functions.split(",")]
-        to_include = [loader.get_function(name) for name in function_names]
-        to_include = [f for f in to_include if f is not None]
-    else:
-        to_include = loader.get_functions_by_cloud(CloudType.REDSHIFT)
+        function_names = [f.strip().lower() for f in functions.split(",")]
+        to_include = [f for f in to_include if f.name.lower() in function_names]
+        logger.info(f"Filtering by functions: {', '.join(function_names)}")
 
     logger.info(f"Including {len(to_include)} functions")
 

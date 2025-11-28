@@ -180,6 +180,13 @@ class LambdaDeployer:
         shared_root = gateway_root / "functions" / "_shared" / "python"
 
         if not shared_root.exists():
+            # In distribution packages, shared libs are already in lib/
+            # Check if the function already has a lib directory with content
+            lib_dir = handler_dir / "lib"
+            if lib_dir.exists() and any(lib_dir.iterdir()):
+                # Shared libraries already present, skip silently
+                return
+            # Otherwise warn - might be a misconfiguration
             print(f"  Warning: Shared libraries directory not found: {shared_root}")
             return
 

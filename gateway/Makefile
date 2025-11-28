@@ -190,6 +190,7 @@ create-package: venv
 	cd $(ROOT_DIR) && $(VENV_BIN)/python -m $(CLOUD_MODULE_PATH).$(cloud).cli create-package \
 		$(DIST_DIR) \
 		--version $(PACKAGE_VERSION) \
+		$(if $(modules),--modules=$(modules),) \
 		$(if $(functions),--functions=$(functions),) \
 		$(if $(production),--production,) \
 		$(EXTRA_CLI_ARGS)
