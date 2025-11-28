@@ -15,7 +15,7 @@ on:
   workflow_call:
 
 env:
-  NODE_VERSION: 18.16
+  NODE_VERSION: 20.19
   PYTHON3_VERSION: 3.8.18
   VIRTUALENV_VERSION: 20.15.1
   GCLOUD_VERSION: 500.0.0
@@ -24,7 +24,7 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       SF_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CI }}

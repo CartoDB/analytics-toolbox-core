@@ -63,6 +63,6 @@ java/*dll
 metastore_db
 derby.log
 
-# Deploy 
+# Deploy
 submit-run.json
 dropUDF.sql

@@ -26,6 +26,8 @@ else
 BAIL=--bail
 endif
 
+SLOW_NAMING_REGEX ?= \.slow\.test\.js$$
+
 REPLACEMENTS = "SF_SCHEMA SF_VERSION_FUNCTION SF_PACKAGE_VERSION SF_SHARE APP_ROLE"
 NATIVE_APP_REPLACEMENTS = "SF_APP_SCHEMA APP_ROLE"
 
@@ -33,10 +35,10 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test remove remove-functions remove-share clean
+.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test test-fast test-slow remove remove-share clean
 
 help:
-	echo "Available targets: lint build deploy test remove remove-functions clean"
+	echo "Available targets: lint build deploy test remove clean"
 
 lint: $(NODE_MODULES_DEV) venv3
 	echo "Linting modules..."
@@ -97,12 +99,36 @@ deploy-share: check build-share
 
 test: check $(NODE_MODULES_DEV)
 	echo "Testing modules..."
+	$(MAKE) test-fast
+	$(MAKE) test-slow
+
+test-fast: check $(NODE_MODULES_DEV)
 	for m in $(shell ls $(TEST_DIR)); do \
 		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 		if [ ! -z "$$TESTS" ]; then \
-			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=40000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS \
-			     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
+			FLAGS=`echo "$$TESTS" | tr ' ' '\n' | grep '^--global' | tr '\n' ' '`; \
+			TEST_FILES=`echo "$$TESTS" | tr ' ' '\n' | grep '\.test\.js$$'`; \
+			FAST_TESTS=`echo "$$TEST_FILES" | grep -Ev "$(SLOW_NAMING_REGEX)" | tr '\n' ' '`; \
+			if [ ! -z "$$FAST_TESTS" ]; then \
+				PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+				jest --testTimeout=50000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$FAST_TESTS $$FLAGS \
+				     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
+			fi; \
+		fi; \
+	done;
+
+test-slow: check $(NODE_MODULES_DEV)
+	for m in $(shell ls $(TEST_DIR)); do \
+		TESTS=`$(COMMON_DIR)/list_functions.js $$m --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
+		if [ ! -z "$$TESTS" ]; then \
+			FLAGS=`echo "$$TESTS" | tr ' ' '\n' | grep '^--global' | tr '\n' ' '`; \
+			TEST_FILES=`echo "$$TESTS" | tr ' ' '\n' | grep '\.test\.js$$'`; \
+			SLOW_TESTS=`echo "$$TEST_FILES" | grep -E "$(SLOW_NAMING_REGEX)" | tr '\n' ' '`; \
+			if [ ! -z "$$SLOW_TESTS" ]; then \
+				PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+				jest --runInBand --testTimeout=150000 $(BAIL) --verbose --slowTestThreshold=20 $$SLOW_TESTS $$FLAGS \
+				     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
+			fi; \
 		fi; \
 	done;
 
@@ -111,10 +137,6 @@ remove: $(NODE_MODULES_DEV)
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
-remove-functions: $(NODE_MODULES_DEV)
-	echo "Removing functions..."
-	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
 
 remove-share: $(NODE_MODULES_DEV)
 	echo "Removing share..."

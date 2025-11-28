@@ -8,7 +8,6 @@ Make sure you have installed the following tools:
 
 - `make`: <https://www.gnu.org/software/make/>
 - `Python3`: <https://www.python.org/downloads/release/python-3811> (v3.8.11)
-- `jq`: <https://stedolan.github.io/jq/> (v1.6)
 - `virtualenv`: <https://virtualenv.pypa.io/en/latest/> (v20.11)
 
 ### Python version issue with Numpy
