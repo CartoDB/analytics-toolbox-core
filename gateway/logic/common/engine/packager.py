@@ -59,8 +59,8 @@ class PackageBuilder:
 
         # Build package structure
         self._create_logic_dir(functions, package_dir)
-        self._create_scripts_dir(package_dir, production)
         self._create_documentation(package_dir, functions)
+        self._apply_extra_customizations(package_dir, production, functions)
 
         # Create zip file
         zip_path = output_dir / f"{package_name}.zip"
@@ -303,7 +303,7 @@ class PackageBuilder:
 
     def _create_scripts_dir(self, package_dir: Path, production: bool):
         """
-        Create installation scripts using cloud-specific installer generator
+        Create installation scripts using core installer generator
 
         Args:
             package_dir: Package directory
@@ -333,11 +333,89 @@ class PackageBuilder:
                 )
 
             RedshiftInstallerGenerator.create_installer_scripts(scripts_dir, production)
+            logger.info("Using core installer")
         else:
             # Future clouds can add their own installer generators here
             raise NotImplementedError(
                 f"Installer generation not implemented for {self.cloud.value}"
             )
+
+    def _find_package_customizer(self, cloud: str):
+        """
+        Look for extra packager customization function in extended repository.
+
+        Uses convention-based path: ../../gateway/logic/clouds/{cloud}/packager.py
+        Expects function: customize_package(package_dir, production, functions)
+
+        Returns:
+            Callable if found, None otherwise
+        """
+        try:
+            import importlib.util
+
+            # Calculate path to potential extra packager
+            # From: core/gateway/logic/common/engine/packager.py
+            # To: gateway/logic/clouds/{cloud}/packager.py
+            repo_root = get_gateway_root().parent.parent
+            extra_packager_path = (
+                repo_root / "gateway" / "logic" / "clouds" / cloud / "packager.py"
+            )
+
+            if not extra_packager_path.exists():
+                logger.debug(f"No extra packager at: {extra_packager_path}")
+                return None
+
+            # Load module from file
+            spec = importlib.util.spec_from_file_location(
+                "extra_packager", str(extra_packager_path)
+            )
+            extra_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(extra_module)
+
+            # Look for standard function name
+            if hasattr(extra_module, "customize_package"):
+                logger.debug(f"Found extra packager at: {extra_packager_path}")
+                return extra_module.customize_package
+
+            logger.warning(
+                f"Extra packager missing customize_package(): {extra_packager_path}"
+            )
+            return None
+
+        except Exception as e:
+            logger.debug(f"Error loading extra packager: {e}")
+            return None
+
+    def _apply_extra_customizations(
+        self, package_dir: Path, production: bool, functions: List[Function]
+    ):
+        """
+        Apply extra customizations to package if available
+
+        Looks for extra packager override that can customize package contents
+        (scripts, README, etc.). Falls back to core scripts-only behavior if
+        no extra packager found.
+
+        Args:
+            package_dir: Root directory of the package to customize
+            production: Whether package is for production mode
+            functions: List of functions being packaged
+        """
+        if self.cloud == CloudType.REDSHIFT:
+            customization_applied = False
+            extra_customizer = self._find_package_customizer("redshift")
+
+            if extra_customizer:
+                try:
+                    extra_customizer(package_dir, production, functions)
+                    logger.info("Using extra packager")
+                    customization_applied = True
+                except Exception as e:
+                    logger.warning(f"Extra packager failed: {e}, using core")
+
+            if not customization_applied:
+                # Fall back to core behavior: just create scripts
+                self._create_scripts_dir(package_dir, production)
 
     def _create_documentation(self, package_dir: Path, functions: List[Function]):
         """Create README and documentation"""
