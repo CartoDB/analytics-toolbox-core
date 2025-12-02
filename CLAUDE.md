@@ -573,6 +573,129 @@ SQL templates use `@@VARIABLE@@` placeholders replaced during deployment.
 - Lambda functions use `RS_LAMBDA_PREFIX` (e.g., `yourname-at-qb_polyfill`)
 - Control Lambda updates with `RS_LAMBDA_OVERRIDE` (1=update existing, 0=skip existing)
 
+### Package Customization (Extensibility Pattern)
+
+Core's packaging system supports extensibility through a **try/except import pattern** that allows external repositories (like premium) to customize packages without modifying core code.
+
+**How Core Enables Extension:**
+
+The core packager (`gateway/logic/clouds/redshift/packager.py`) includes an extension point:
+
+```python
+def create_package(...):
+    """Create base package with core functions."""
+    # ... create base package ...
+
+    # Extension point: Allow external customization
+    try:
+        # Import premium packager if available
+        from gateway.logic.clouds.redshift.packager import customize_package
+        customize_package(package_dir, production, functions)
+    except ImportError:
+        # No premium packager - core-only package
+        pass
+```
+
+**External Customization Interface:**
+
+External repositories can create `gateway/logic/clouds/redshift/packager.py` with:
+
+```python
+def customize_package(package_dir: str, production: bool, functions: dict) -> None:
+    """Customize package with external-specific content.
+
+    Args:
+        package_dir: Path to package directory (full access)
+        production: Whether this is a production build
+        functions: Dictionary of all functions being packaged
+
+    Example use cases:
+        - Add proprietary setup scripts
+        - Generate additional configuration files
+        - Modify package structure for deployment requirements
+    """
+    # Full access to modify package_dir
+    pass
+```
+
+**Key Benefits:**
+- **Core remains generic**: No premium-specific code in open-source core
+- **Convention-based**: Core automatically detects and uses external packager if present
+- **Clean separation**: Extension point is clearly defined and documented
+- **Full flexibility**: External packager has complete access to package directory
+
+**Files Involved:**
+- Core packager: `gateway/logic/clouds/redshift/packager.py` (defines extension point)
+- External packager: Created by external repository at same path
+- Activated during: `make create-package`
+
+### Diff Parameter Handling in Makefiles
+
+When passing file lists through Make targets, **proper quoting is critical** to prevent Make from interpreting space-separated filenames as multiple targets.
+
+**Problem:**
+```makefile
+# WRONG - Each filename becomes a separate target
+$(if $(diff),diff=$(diff),)
+
+# If diff=".github/workflows/redshift.yml Makefile README.md"
+# Make interprets this as three separate targets and fails with:
+# make: *** No rule to make target '.github/workflows/redshift.yml'
+```
+
+**Solution:**
+```makefile
+# CORRECT - Entire string passed as single quoted value
+$(if $(diff),diff='$(diff)',)
+
+# Properly passes: diff='.github/workflows/redshift.yml Makefile README.md'
+```
+
+**Where This Matters:**
+
+1. **Core Root Makefile** (`Makefile`, line 148):
+   ```makefile
+   cd gateway && $(MAKE) deploy cloud=$(cloud) \
+       $(if $(diff),diff='$(diff)',)
+   ```
+
+2. **Gateway Makefile** (`gateway/Makefile`, lines 154, 163):
+   ```makefile
+   # Converts to boolean flag (not the value)
+   $(if $(diff),--diff,)
+   ```
+
+**Architecture Flow:**
+
+```
+CI Workflow / External Caller
+  ↓ diff="file1 file2 file3"
+Core Root Makefile
+  ↓ diff='$(diff)' (quoted!)
+Gateway Makefile
+  ↓ --diff (flag only)
+Python CLI (gateway/logic/clouds/redshift/cli.py)
+  ↓ reads $GIT_DIFF from environment
+  ↓ detects infrastructure changes
+  ↓ decides: deploy ALL or deploy CHANGED
+```
+
+**Infrastructure Change Detection:**
+
+The Python CLI automatically detects infrastructure changes and deploys all functions when these paths are modified:
+- `.github/workflows/` - CI/CD configuration
+- `Makefile` - Build system changes
+- `logic/` - Deployment logic changes
+- `platforms/` - Platform code changes
+- `requirements.txt` - Dependency changes
+
+**Key Points:**
+- Root Makefile must quote: `diff='$(diff)'`
+- Gateway Makefile uses flag: `--diff` (no value)
+- Python CLI reads `$GIT_DIFF` environment variable directly
+- Infrastructure files trigger full deployment automatically
+- Clouds Makefiles don't use diff (always deploy all SQL UDFs)
+
 ## Cloud SQL Function Development
 
 ### Structure (Redshift Example)
