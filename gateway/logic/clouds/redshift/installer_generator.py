@@ -504,21 +504,10 @@ if __name__ == '__main__':
         lambda_override_code = """
     # Lambda override configuration
     if rs_lambda_override is None:
-        while True:
-            rs_lambda_override_str = click.prompt(
-                'Override existing Lambda functions? (yes/no)'
-            )
-            # Validate input - require explicit yes or no
-            override_values = ['yes', 'y']
-            reject_values = ['no', 'n']
-            if rs_lambda_override_str.lower() in override_values:
-                rs_lambda_override = True
-                break
-            elif rs_lambda_override_str.lower() in reject_values:
-                rs_lambda_override = False
-                break
-            else:
-                click.echo("Please enter 'yes' or 'no'", err=True)
+        rs_lambda_override = click.confirm(
+            'Override existing Lambda functions?',
+            default=True
+        )
     else:
         override_status = 'yes' if rs_lambda_override else 'no'
         click.echo(f"Override existing Lambdas: {override_status}")
