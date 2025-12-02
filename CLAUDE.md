@@ -561,7 +561,64 @@ Place reusable code in `gateway/functions/_shared/python/<lib_name>/` and refere
 
 ### Template Variables
 
-SQL templates use `@@VARIABLE@@` placeholders replaced during deployment.
+SQL templates use `@@VARIABLE@@` syntax that gets replaced at different stages:
+
+**Available Variables:**
+- `@@RS_SCHEMA@@`: Schema name (e.g., `dev_carto` or `carto`)
+- `@@RS_LAMBDA_ARN@@`: Lambda function ARN
+- `@@RS_LAMBDA_INVOKE_ROLE@@`: IAM role for Lambda invocation
+- `@@RS_VERSION_FUNCTION@@`: Version function name (e.g., `VERSION_CORE`)
+- `@@RS_PACKAGE_VERSION@@`: Package version (e.g., `1.1.3`)
+
+**When Variables Are Replaced:**
+
+**Package Generation Time** (fixed for the package):
+- `@@RS_VERSION_FUNCTION@@` → Replaced with function name during build
+- `@@RS_PACKAGE_VERSION@@` → Replaced with version number during build
+
+**Installation Time** (user-specific):
+- `@@RS_SCHEMA@@` → Preserved in packages, replaced during installation with user's schema
+- Gateway variables (`@@RS_LAMBDA_ARN@@`, etc.) → Replaced during deployment
+
+**How RS_SCHEMA Preservation Works:**
+
+When creating packages, the build system passes `RS_SCHEMA='@@RS_SCHEMA@@'` to preserve the template:
+
+```makefile
+# Makefile - Package creation
+(cd clouds/redshift && RS_SCHEMA='@@RS_SCHEMA@@' $(MAKE) build-modules ...)
+```
+
+This ensures packages contain `@@RS_SCHEMA@@` as a literal template, which the installer then replaces with the user's chosen schema name.
+
+**SQL Wrapper Pattern for Lambda Functions:**
+
+For Lambda functions that need to reference the schema in error messages, use a SQL wrapper that passes the schema as a parameter:
+
+```sql
+-- Internal Lambda function (accepts carto_schema as parameter)
+CREATE OR REPLACE EXTERNAL FUNCTION @@SCHEMA@@.__FUNCTION_NAME_LAMBDA(
+    -- ... other parameters ...
+    carto_schema VARCHAR(MAX)
+)
+RETURNS VARCHAR(MAX)
+LAMBDA '@@LAMBDA_ARN@@'
+IAM_ROLE '@@IAM_ROLE_ARN@@';
+
+-- Public wrapper function (injects @@SCHEMA@@ at deployment time)
+CREATE OR REPLACE FUNCTION @@SCHEMA@@.__FUNCTION_NAME(
+    -- ... other parameters ...
+)
+RETURNS VARCHAR(MAX)
+AS $$
+    SELECT @@SCHEMA@@.__FUNCTION_NAME_LAMBDA(
+        -- ... other parameters ...
+        '@@SCHEMA@@'
+    )
+$$ LANGUAGE sql;
+```
+
+The Lambda Python code receives the schema name as a parameter and can use it in error messages.
 
 ### Gateway Deployment
 
