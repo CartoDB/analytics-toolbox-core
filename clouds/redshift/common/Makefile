@@ -12,9 +12,9 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 endif
 
 ifeq ($(production),1)
-export RS_SCHEMA = $(RS_SCHEMA_DEFAULT)
+export RS_SCHEMA ?= $(RS_SCHEMA_DEFAULT)
 else
-export RS_SCHEMA = $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
+export RS_SCHEMA ?= $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
 endif
 
 .PHONY: check venv3 $(NODE_MODULES_DEV)

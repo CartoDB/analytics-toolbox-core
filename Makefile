@@ -100,7 +100,7 @@ _add-clouds-sql:
 	@echo "Step 2/3: Adding clouds SQL (native UDFs)..."
 	@if [ -d "clouds/$(cloud)/modules" ]; then \
 		echo "  Building clouds SQL..."; \
-		(cd clouds/$(cloud) && $(MAKE) build-modules \
+		(cd clouds/$(cloud) && RS_SCHEMA='@@RS_SCHEMA@@' $(MAKE) build-modules \
 			$(if $(production),production=1,) \
 			$(if $(modules),modules=$(modules),) \
 			$(if $(functions),functions=$(functions),)) || exit 1; \

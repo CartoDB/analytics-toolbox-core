@@ -399,13 +399,19 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
                 # Determine target schema
                 schema = rs_schema
 
-                # Detect build-time schema and replace with install-time schema
+                # Replace template variables with install-time schema
+                sql_content = sql_content.replace('@@RS_SCHEMA@@', schema)
+
+                # Fallback: Detect build-time schema pattern (for backward compatibility)
+                # This handles packages built before preserve-templates was added
                 import re
                 build_schema_pattern = re.compile(r'\\b([a-z_]+_carto)\\b')
                 matches = build_schema_pattern.findall(sql_content)
                 if matches:
                     build_schema = max(set(matches), key=matches.count)
-                    sql_content = sql_content.replace(build_schema, schema)
+                    # Only replace if different from target schema (avoid double replacement)
+                    if build_schema != schema:
+                        sql_content = sql_content.replace(build_schema, schema)
 
                 # Split SQL statements using sqlparse (same as run_script.py)
                 from sqlparse import split as sql_split
