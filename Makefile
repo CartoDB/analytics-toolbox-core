@@ -144,7 +144,8 @@ endif
 	@cd gateway && $(MAKE) deploy cloud=$(cloud) \
 		$(if $(modules),modules=$(modules),) \
 		$(if $(functions),functions=$(functions),) \
-		$(if $(production),production=$(production),)
+		$(if $(production),production=$(production),) \
+		$(if $(diff),diff='$(diff)',)
 	@echo ""
 	@echo "Deploying clouds (SQL UDFs)..."
 	@if [ -d "clouds/$(cloud)" ]; then \
