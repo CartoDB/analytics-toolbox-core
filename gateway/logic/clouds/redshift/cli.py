@@ -1648,7 +1648,7 @@ def remove_all(
             )
 
         # Phase 2: Delete Lambda functions
-        logger.info("=== Phase 2: Deleting Lambda functions ===\n")
+        logger.info("\n=== Phase 2: Deleting Lambda functions ===\n")
 
         # Use tqdm for consistent progress bar style with clouds
         with tqdm(to_remove, desc="Deleting", ncols=80, unit="fn") as pbar:

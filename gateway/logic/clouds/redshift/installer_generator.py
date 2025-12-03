@@ -61,11 +61,18 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, s
 @click.option('--modules', help='Comma-separated list of modules to deploy (default: all)')
 @click.option('--functions', help='Comma-separated list of functions to deploy (default: all)')
 @click.option('--dry-run', is_flag=True, help='Show what would be deployed')
+@click.option('--setup-gateway', is_flag=True, help='Configure gateway services (LDS, IMPORT, HTTP_REQUEST)')
+@click.option('--gateway-lambda', help='Gateway Lambda function name or ARN')
+@click.option('--gateway-roles', help='IAM role ARN(s) for gateway (comma-separated)')
+@click.option('--gateway-api-base-url', help='CARTO API base URL')
+@click.option('--gateway-api-access-token', help='CARTO API access token')
+@click.option('--non-interactive', '-y', is_flag=True, help='Non-interactive mode (requires all parameters)')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             aws_session_token, aws_assume_role_arn, rs_lambda_prefix,
             rs_lambda_execution_role, rs_host, rs_database, rs_user, rs_password,
             rs_schema, rs_lambda_invoke_role, rs_lambda_override, modules, functions,
-            dry_run):
+            dry_run, setup_gateway, gateway_lambda, gateway_roles,
+            gateway_api_base_url, gateway_api_access_token, non_interactive):
     """Install CARTO Analytics Toolbox to Redshift
 
     This installer will guide you through deploying Analytics Toolbox functions
@@ -92,15 +99,56 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.secho("[DRY RUN MODE - No changes will be made]", fg='yellow', bold=True)
         click.echo()
 
+    # Validate non-interactive mode requirements
+    if non_interactive:
+        click.secho("[Non-interactive mode]", fg='cyan')
+        click.echo()
+
+        # Check for required AWS authentication
+        has_aws_auth = (
+            aws_profile or
+            (aws_access_key_id and aws_secret_access_key) or
+            os.getenv("AWS_PROFILE") or
+            os.getenv("AWS_ACCESS_KEY_ID")
+        )
+
+        # Check for required Redshift parameters
+        missing_params = []
+        if not has_aws_auth:
+            missing_params.append(
+                "AWS authentication (--aws-profile or "
+                "--aws-access-key-id + --aws-secret-access-key)"
+            )
+        if not rs_host:
+            missing_params.append("--rs-host")
+        if not rs_database:
+            missing_params.append("--rs-database")
+        if not rs_user:
+            missing_params.append("--rs-user")
+        if not rs_password:
+            missing_params.append("--rs-password")
+
+        if missing_params:
+            click.secho("ERROR: Non-interactive mode requires all parameters", fg='red', bold=True)
+            click.echo()
+            click.echo("Missing required parameters:")
+            for param in missing_params:
+                click.echo(f"  • {param}")
+            click.echo()
+            click.echo("Run without --non-interactive for interactive mode,")
+            click.echo("or run with --help to see all available options.")
+            sys.exit(1)
+
     # Interactive prompts for AWS credentials
-    click.echo("AWS Credential Configuration")
-    click.echo("-" * 70)
-    click.echo("Choose your authentication method:")
-    click.echo("  1. AWS Profile (recommended - uses ~/.aws/credentials)")
-    click.echo("  2. Explicit Credentials (access key + secret)")
-    click.echo("  3. Environment Variables (skip if already set)")
-    click.echo("  4. IAM Role (automatic if running on EC2/ECS/Lambda)")
-    click.echo()
+    if not non_interactive:
+        click.echo("AWS Credential Configuration")
+        click.echo("-" * 70)
+        click.echo("Choose your authentication method:")
+        click.echo("  1. AWS Profile (recommended - uses ~/.aws/credentials)")
+        click.echo("  2. Explicit Credentials (access key + secret)")
+        click.echo("  3. Environment Variables (skip if already set)")
+        click.echo("  4. IAM Role (automatic if running on EC2/ECS/Lambda)")
+        click.echo()
 
     auth_method = None
     if aws_profile:
@@ -115,7 +163,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
         aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
         aws_session_token = os.getenv("AWS_SESSION_TOKEN")
-    else:
+    elif not non_interactive:
         method_choice = click.prompt(  # noqa: E501
             "Select method",
             type=click.Choice(["1", "2", "3", "4"], case_sensitive=False),
@@ -129,29 +177,43 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             auth_method = "env"
         elif method_choice == "4":
             auth_method = "iam_role"
+    else:
+        # Non-interactive with no auth - assume IAM role
+        auth_method = "iam_role"
 
-    aws_region = prompt_if_not_provided(
-        aws_region, "AWS Region (leave empty for 'us-east-1')",
-        default="us-east-1", show_default=False
-    )
+    # Set defaults in non-interactive mode
+    if non_interactive:
+        aws_region = aws_region or "us-east-1"
+        if auth_method == "profile":
+            aws_profile = aws_profile or "default"
+        rs_lambda_prefix = rs_lambda_prefix or "carto-at-"
+    else:
+        aws_region = prompt_if_not_provided(
+            aws_region, "AWS Region (leave empty for 'us-east-1')",
+            default="us-east-1", show_default=False
+        )
 
-    if auth_method == "profile":
+    if auth_method == "profile" and not non_interactive:
         aws_profile = prompt_if_not_provided(
             aws_profile, "AWS Profile (leave empty for 'default')",
             default="default", show_default=False
         )
+    if auth_method == "profile":
         click.secho(f"✓ Using AWS profile: {aws_profile}", fg="green")
     elif auth_method == "explicit":
-        aws_access_key_id = prompt_if_not_provided(aws_access_key_id, "AWS Access Key ID")
-        aws_secret_access_key = prompt_if_not_provided(  # noqa: E501
-            aws_secret_access_key, "AWS Secret Access Key", hide_input=True
-        )
-        if not aws_session_token:
-            aws_session_token = click.prompt(  # noqa: E501
-                "AWS Session Token (optional - for temporary credentials)",
-                default="",
-                show_default=False
-            ) or None
+        if not non_interactive:
+            aws_access_key_id = prompt_if_not_provided(
+                aws_access_key_id, "AWS Access Key ID"
+            )
+            aws_secret_access_key = prompt_if_not_provided(  # noqa: E501
+                aws_secret_access_key, "AWS Secret Access Key", hide_input=True
+            )
+            if not aws_session_token:
+                aws_session_token = click.prompt(  # noqa: E501
+                    "AWS Session Token (optional - for temporary credentials)",
+                    default="",
+                    show_default=False
+                ) or None
         click.secho("✓ Using explicit AWS credentials", fg="green")
     elif auth_method == "env" or auth_method == "env_profile" or auth_method == "env_explicit":
         click.secho("✓ Using AWS credentials from environment variables", fg="green")
@@ -160,16 +222,17 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     click.echo()
 
-    click.echo("Lambda Configuration")
-    click.echo("-" * 70)
-    rs_lambda_prefix = prompt_if_not_provided(
-        rs_lambda_prefix,
-        "Lambda function prefix (leave empty for 'carto-at-')",
-        default="carto-at-",
-        show_default=False
-    )
+    if not non_interactive:
+        click.echo("Lambda Configuration")
+        click.echo("-" * 70)
+        rs_lambda_prefix = prompt_if_not_provided(
+            rs_lambda_prefix,
+            "Lambda function prefix (leave empty for 'carto-at-')",
+            default="carto-at-",
+            show_default=False
+        )
 
-    if not rs_lambda_execution_role:
+    if not rs_lambda_execution_role and not non_interactive:
         click.echo()
         click.secho("Lambda Execution Role Configuration:", fg='cyan', bold=True)
         click.echo("This role is used by Lambda functions to execute and access AWS resources.")
@@ -185,10 +248,10 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             show_default=False
         ) or None
 
-        if rs_lambda_execution_role:
-            click.secho(f"✓ Using existing role: {rs_lambda_execution_role}", fg='green')
-        else:
-            click.secho("✓ Will auto-create Lambda execution role during deployment", fg='green')
+    if rs_lambda_execution_role:
+        click.secho(f"✓ Using existing role: {rs_lambda_execution_role}", fg='green')
+    elif not non_interactive:
+        click.secho("✓ Will auto-create Lambda execution role during deployment", fg='green')
 
     # Lambda override configuration
 ###LAMBDA_OVERRIDE_CODE###
@@ -196,17 +259,20 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo()
 
     # Redshift Connection
-    click.echo("Redshift Connection")
-    click.echo("-" * 70)
-    rs_host = prompt_if_not_provided(rs_host, "Redshift Host")
-    rs_user = prompt_if_not_provided(rs_user, "Redshift User")
-    rs_password = prompt_if_not_provided(rs_password, "Redshift Password", hide_input=True)
+    if not non_interactive:
+        click.echo("Redshift Connection")
+        click.echo("-" * 70)
+        rs_host = prompt_if_not_provided(rs_host, "Redshift Host")
+        rs_user = prompt_if_not_provided(rs_user, "Redshift User")
+        rs_password = prompt_if_not_provided(
+            rs_password, "Redshift Password", hide_input=True
+        )
 
-    click.echo()
+        click.echo()
 
-    click.echo("Redshift Deployment Configuration")
-    click.echo("-" * 70)
-    rs_database = prompt_if_not_provided(rs_database, "Redshift Database")
+        click.echo("Redshift Deployment Configuration")
+        click.echo("-" * 70)
+        rs_database = prompt_if_not_provided(rs_database, "Redshift Database")
 
     # Schema configuration
 ###SCHEMA_PREFIX_CODE###
@@ -214,7 +280,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo()
 
     # RS_LAMBDA_INVOKE_ROLE with enhanced guidance
-    if not rs_lambda_invoke_role:
+    if not rs_lambda_invoke_role and not non_interactive:
         click.echo()
         click.secho("Redshift IAM Role Configuration:", fg='cyan', bold=True)
         click.echo("This role is attached to your Redshift cluster and used to invoke Lambda functions.")
@@ -230,10 +296,10 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             show_default=False
         ) or ""
 
-        if rs_lambda_invoke_role:
-            click.secho(f"✓ Using existing role: {rs_lambda_invoke_role}", fg='green')
-        else:
-            click.secho("✓ Will auto-create and attach IAM role during deployment", fg='green')
+    if rs_lambda_invoke_role:
+        click.secho(f"✓ Using existing role: {rs_lambda_invoke_role}", fg='green')
+    elif not non_interactive:
+        click.secho("✓ Will auto-create and attach IAM role during deployment", fg='green')
 
     click.echo()
 
@@ -340,7 +406,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo("=" * 70)
     click.echo()
 
-    if not dry_run:
+    if not dry_run and not non_interactive:
         if not click.confirm("Proceed with installation?", default=True):
             click.echo("Installation cancelled.")
             return
@@ -353,12 +419,9 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             f.write(env_content)
 
     # Run deployment
-    click.echo("\\n" + "=" * 70)
-    click.echo("Starting Deployment (3 phases)")
-    click.echo("=" * 70)
-    click.echo("  Phase 1: Deploy Lambda functions (gateway)")
-    click.echo("  Phase 2: Create external functions (gateway SQL)")
-    click.echo("  Phase 3: Deploy SQL UDFs (clouds)")
+    click.secho("\\n" + "=" * 70, fg='cyan', bold=True)
+    click.secho("Starting Deployment", fg='cyan', bold=True)
+    click.secho("=" * 70, fg='cyan', bold=True)
     click.echo()
 
     # Phase 1 & 2: Deploy gateway (Lambdas + External Functions)
@@ -430,7 +493,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     clouds_sql_path = Path(__file__).parent.parent / 'clouds' / 'redshift' / 'modules.sql'
 
     if clouds_sql_path.exists():
-        click.echo("\\nPhase 3: Deploying SQL UDFs (clouds)...")
+        click.echo("\\n=== Phase 3: Deploying SQL UDFs (clouds) ===\\n")
 
         if not dry_run:
             try:
@@ -518,7 +581,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         else:
             click.secho("  [DRY RUN] Would deploy SQL UDFs", fg='yellow')
     else:
-        click.echo("\\nPhase 3: No clouds SQL found (gateway-only package)")
+        click.echo("\\n=== Phase 3: No clouds SQL found (gateway-only package) ===\\n")
 
     # Success
     if not dry_run:
@@ -566,15 +629,20 @@ if __name__ == '__main__':
         lambda_override_code = """
     # Lambda override configuration
     if rs_lambda_override is None:
-        rs_lambda_override = click.confirm(
-            'Override existing Lambda functions?',
-            default=True
-        )
-    else:
+        if non_interactive:
+            rs_lambda_override = True  # Default to yes in non-interactive mode
+        else:
+            rs_lambda_override = click.confirm(
+                'Override existing Lambda functions?',
+                default=True
+            )
+
+    if rs_lambda_override is not None and not non_interactive:
         override_status = 'yes' if rs_lambda_override else 'no'
         click.echo(f"Override existing Lambdas: {override_status}")
 
-    click.echo()
+    if not non_interactive:
+        click.echo()
 """
 
         # Apply substitutions using replace to avoid format() issues with {braces}

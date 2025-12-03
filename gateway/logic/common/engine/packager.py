@@ -423,108 +423,220 @@ class PackageBuilder:
 
 Version: {self.version}
 
-## Installation
+## Quick Start
 
-1. **Extract Package** (skip if already extracted):
-   ```bash
-   cd dist/
-   unzip carto-at-{self.cloud.value}-{self.version}.zip
-   cd carto-at-{self.cloud.value}-{self.version}/
-   ```
+```bash
+# 1. Extract and setup
+cd dist && unzip carto-at-{self.cloud.value}-{self.version}.zip
+cd carto-at-{self.cloud.value}-{self.version}
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r scripts/requirements.txt
 
-2. **Prerequisites:**
-   - Python 3.10+ (tested with 3.10-3.13)
-   - AWS credentials with Lambda permissions
-   - Access to a Redshift cluster
+# 2. Run interactive installer
+python scripts/install.py
+```
 
-3. **Setup Virtual Environment:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
-   pip install -r scripts/requirements.txt
-   ```
+## Prerequisites
 
-4. **Install (Interactive):**
-   ```bash
-   python scripts/install.py
-   ```
+- **Python**: 3.10+ (tested with 3.10-3.13)
+- **AWS**: Account with Lambda and IAM permissions
+- **Redshift**: Cluster with admin access
 
-   The installer will guide you through the configuration. For most users,
-   simply accept the defaults and the installer will auto-create necessary
-   IAM roles.
+## Installation Methods
 
-   **Alternative: Command-line installation**
-   ```bash
-   python scripts/install.py \\
-     --aws-region us-east-1 \\
-     --aws-profile my-profile \\
-     --lambda-prefix mycompany- \\
-     --rs-host cluster.redshift.amazonaws.com \\
-     --rs-database mydb \\
-     --rs-user myuser \\
-     --rs-password "***"
-   ```
+### Option 1: Interactive Installation (Recommended)
 
-5. **IAM Roles (Automatic Setup):**
+The installer guides you through configuration with prompts:
 
-   The installer automatically creates and configures two IAM roles:
+```bash
+python scripts/install.py
+```
 
-   **a) Lambda Execution Role** (for Lambda to run):
-   - Role name: `<LambdaPrefix>LambdaExecutionRole` (e.g., `CartoATLambdaExecutionRole`)
-   - Auto-created if not provided
-   - Attached policies: `AWSLambdaBasicExecutionRole`
+**Deployment Phases:**
+- **Phase 0** (if needed): Auto-creates IAM roles (Lambda execution + Redshift invoke)
+- **Phase 1**: Deploys Lambda functions to AWS
+- **Phase 2**: Creates external functions in Redshift
+- **Phase 3**: Deploys native SQL UDFs
 
-   **b) Redshift Invoke Role** (for Redshift to call Lambda):
-   - Role name: `<LambdaPrefix>RedshiftInvokeRole` (e.g., `CartoATRedshiftInvokeRole`)
-   - Auto-created if not provided
-   - Auto-attached to your Redshift cluster
-   - Lambda resource policies auto-configured
+### Option 2: Non-Interactive Installation
 
-   **For production or existing roles**, provide ARNs when prompted:
-   - `--lambda-execution-role-arn`: Existing Lambda execution role
-   - `--rs-roles`: Existing Redshift invoke role
+For automated deployments (CI/CD, scripts), use the `--non-interactive` flag:
 
-6. **Required AWS Permissions:**
+```bash
+python scripts/install.py \\
+  --non-interactive \\
+  --aws-region us-east-1 \\
+  --aws-access-key-id AKIAXXXX \\
+  --aws-secret-access-key XXXX \\
+  --rs-lambda-prefix mycompany- \\
+  --rs-host cluster.region.redshift.amazonaws.com \\
+  --rs-database mydb \\
+  --rs-user myuser \\
+  --rs-password "secret" \\
+  --rs-schema myschema
+```
 
-   **Minimal permissions needed** (if using auto-creation):
-   - `lambda:CreateFunction`, `lambda:UpdateFunctionCode`,
-     `lambda:UpdateFunctionConfiguration`
-   - `lambda:AddPermission` (for Redshift invoke permissions)
-   - `iam:CreateRole`, `iam:PutRolePolicy`, `iam:AttachRolePolicy` (for role creation)
-   - `iam:GetRole` (to check existing roles)
-   - `redshift:ModifyClusterIamRoles` (to attach role to cluster)
-   - `redshift:DescribeClusters` (to discover cluster)
+**Important**: The `--non-interactive` (or `-y`) flag is **required** to skip prompts.
+Without it, the installer will always prompt interactively, even if all parameters
+are provided via command line.
 
-   **Alternative: Pre-create roles** to avoid IAM permissions:
-   ```bash
-   # Pre-create Lambda execution role
-   aws iam create-role \\
-     --role-name CartoATLambdaExecutionRole \\
-     --assume-role-policy-document '{{...}}'
+### Get Help
 
-   # Pre-create Redshift invoke role
-   aws iam create-role \\
-     --role-name CartoATRedshiftInvokeRole \\
-     --assume-role-policy-document '{{...}}'
+See all available options:
 
-   # Attach to cluster
-   aws redshift modify-cluster-iam-roles \\
-     --cluster-identifier my-cluster \\
-     --add-iam-roles arn:aws:iam::123:role/CartoATRedshiftInvokeRole
-   ```
+```bash
+python scripts/install.py --help
+```
 
-   Then provide the role ARNs during installation.
+## CLI Parameters Reference
+
+### AWS Authentication (Choose one method)
+
+**Method 1: AWS Profile** (Recommended)
+```bash
+--aws-profile default
+```
+
+**Method 2: Explicit Credentials**
+```bash
+--aws-access-key-id AKIAXXXX
+--aws-secret-access-key XXXX
+--aws-session-token XXXX  # Optional, for temporary credentials
+```
+
+**Method 3: IAM Role** (No parameters needed - automatic on EC2/ECS)
+
+**Method 4: Assume Role** (Cross-account)
+```bash
+--aws-assume-role-arn arn:aws:iam::ACCOUNT:role/ROLE
+```
+
+### AWS Configuration
+
+- `--aws-region TEXT`: AWS region (default: us-east-1)
+
+### Lambda Configuration
+
+- `--rs-lambda-prefix TEXT`: Lambda name prefix (default: carto-at-)
+  - Example: `mycompany-` → Functions named `mycompany-function_name`
+  - Role names: `MycompanyLambdaExecutionRole`, `MycompanyRedshiftInvokeRole`
+- `--rs-lambda-execution-role TEXT`: Existing Lambda execution role ARN (optional)
+  - If not provided, will auto-create during Phase 0
+- `--rs-lambda-override / --no-rs-lambda-override`: Override existing Lambdas
+  (default: yes)
+
+### Redshift Configuration
+
+- `--rs-host TEXT`: Redshift host endpoint (**required**)
+  - Example: `cluster.abc123.us-east-1.redshift.amazonaws.com`
+- `--rs-database TEXT`: Redshift database name (**required**)
+- `--rs-user TEXT`: Redshift username (**required**)
+- `--rs-password TEXT`: Redshift password (**required**)
+- `--rs-schema TEXT`: Schema for Analytics Toolbox functions (default: carto)
+  - Functions will be created in this schema
+- `--rs-lambda-invoke-role TEXT`: Existing Redshift IAM role ARN (optional)
+  - If not provided, will auto-create and attach to cluster during Phase 0
+  - Can be comma-separated for role chaining
+
+## IAM Roles
+
+When IAM role ARNs are not provided, the installer will automatically create
+them during Phase 0.
+
+### Lambda Execution Role
+
+- **Purpose**: Allows Lambda functions to execute and log
+- **Name**: `<Prefix>LambdaExecutionRole` (e.g., `CartoATLambdaExecutionRole`)
+- **Trust Policy**: Trusts `lambda.amazonaws.com`
+- **Permissions**: `AWSLambdaBasicExecutionRole` (CloudWatch Logs)
+
+### Redshift Invoke Role
+
+- **Purpose**: Allows Redshift to invoke Lambda functions
+- **Name**: `<Prefix>RedshiftInvokeRole` (e.g., `CartoATRedshiftInvokeRole`)
+- **Trust Policy**: Trusts `redshift.amazonaws.com`
+- **Permissions**: `lambda:InvokeFunction` on all Lambda functions
+- **Auto-attached**: To Redshift cluster (if permissions available)
+
+### Using Existing Roles
+
+To use pre-created roles instead of auto-creation:
+
+```bash
+python scripts/install.py \\
+  --rs-lambda-execution-role arn:aws:iam::ACCOUNT:role/MyLambdaRole \\
+  --rs-lambda-invoke-role arn:aws:iam::ACCOUNT:role/MyRedshiftRole \\
+  ...
+```
+
+## Required AWS Permissions
+
+**For Auto-Creation (Full Install)**:
+- `lambda:CreateFunction`, `lambda:UpdateFunctionCode`,
+  `lambda:UpdateFunctionConfiguration`
+- `lambda:GetFunction`, `lambda:AddPermission`
+- `iam:CreateRole`, `iam:GetRole`, `iam:PutRolePolicy`, `iam:AttachRolePolicy`
+- `redshift:DescribeClusters`, `redshift:ModifyClusterIamRoles`
+
+**For Existing Roles (Minimal)**:
+- `lambda:CreateFunction`, `lambda:UpdateFunctionCode`,
+  `lambda:UpdateFunctionConfiguration`
+- `lambda:GetFunction`, `lambda:AddPermission`
+
+## Examples
+
+**Interactive Mode** (default - with prompts):
+```bash
+python scripts/install.py
+```
+
+**Non-Interactive with Auto-Created Roles**:
+```bash
+python scripts/install.py \\
+  --non-interactive \\
+  --aws-profile dev \\
+  --rs-lambda-prefix mycompany- \\
+  --rs-host cluster.region.redshift.amazonaws.com \\
+  --rs-database mydb \\
+  --rs-user myuser \\
+  --rs-password "secret" \\
+  --rs-schema myschema
+```
+
+**Non-Interactive with Existing Roles**:
+```bash
+python scripts/install.py \\
+  --non-interactive \\
+  --aws-profile prod \\
+  --rs-lambda-prefix carto-at- \\
+  --rs-lambda-execution-role arn:aws:iam::123:role/ProdLambdaRole \\
+  --rs-lambda-invoke-role arn:aws:iam::123:role/ProdRedshiftRole \\
+  --rs-host cluster.region.redshift.amazonaws.com \\
+  --rs-database prod_db \\
+  --rs-user produser \\
+  --rs-password "secret" \\
+  --rs-schema carto
+```
+
+**Non-Interactive with Explicit Credentials**:
+```bash
+python scripts/install.py \\
+  --non-interactive \\
+  --aws-access-key-id $AWS_ACCESS_KEY_ID \\
+  --aws-secret-access-key $AWS_SECRET_ACCESS_KEY \\
+  --rs-lambda-prefix myprefix- \\
+  --rs-host $REDSHIFT_HOST \\
+  --rs-database $REDSHIFT_DB \\
+  --rs-user $REDSHIFT_USER \\
+  --rs-password "$REDSHIFT_PASSWORD" \\
+  --rs-schema myschema
+```
 
 ## Support
 
-For issues or questions:
-- Documentation: https://docs.carto.com/analytics-toolbox
-- Support: support@carto.com
-- GitHub: https://github.com/CartoDB/analytics-toolbox
-
-## License
-
-See LICENSE file for details.
+- **Documentation**: https://docs.carto.com/analytics-toolbox
+- **Support**: support@carto.com
+- **GitHub**: https://github.com/CartoDB/analytics-toolbox
 """
 
         with open(package_dir / "README.md", "w") as f:
