@@ -187,18 +187,31 @@ python scripts/install.py
 ```
 
 **Deployment phases:**
-1. **Phase 0**: Auto-create IAM roles (Lambda execution + Redshift invoke)
+1. **Phase 0**: Auto-create IAM roles (Lambda execution + Redshift invoke) - if needed
 2. **Phase 1**: Deploy Lambda functions
 3. **Phase 2**: Create external SQL functions
 4. **Phase 3**: Deploy native SQL UDFs
 
-**CLI Parameters:**
+**Interactive Mode (default):**
+```bash
+python scripts/install.py  # Prompts for all configuration
+```
+
+**Non-Interactive Mode:**
+
+**IMPORTANT**: Use `--non-interactive` flag to skip all prompts (required for automation/CI/CD):
+
 ```bash
 python scripts/install.py \
+  --non-interactive \
   --aws-region us-east-1 \
+  --aws-access-key-id AKIAXXXX \
+  --aws-secret-access-key XXXX \
   --rs-lambda-prefix myprefix- \
   --rs-host cluster.redshift.amazonaws.com \
   --rs-database mydb \
+  --rs-user admin \
+  --rs-password secret \
   --rs-schema myschema
 ```
 
