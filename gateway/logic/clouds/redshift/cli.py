@@ -876,9 +876,10 @@ def deploy_all(
     # Validate Redshift configuration for external function deployment
     deploy_external_functions = True
 
-    if not rs_database or not rs_iam_role_arn:
+    # RS_LAMBDA_INVOKE_ROLE is optional - auto-created in Phase 0 if not provided
+    if not rs_database:
         logger.warning(
-            "Redshift configuration incomplete (RS_DATABASE, RS_LAMBDA_INVOKE_ROLE). "
+            "Redshift configuration incomplete (RS_DATABASE required). "
             "Will deploy Lambda functions only, not external functions."
         )
         deploy_external_functions = False
@@ -889,64 +890,110 @@ def deploy_all(
         )
         deploy_external_functions = False
 
-    # Get Lambda execution role (optional - avoids needing IAM create role permissions)
+    # Get Lambda execution role (optional - auto-created in Phase 0 if needed)
     rs_lambda_execution_role = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE")
 
     # Get AWS credentials
     aws_creds = get_aws_credentials()
 
-    # Phase 0: Setup IAM role for Redshift to invoke Lambda
-    # If RS_LAMBDA_INVOKE_ROLE not provided, auto-create role and attempt to
-    # attach to cluster
-    if not rs_iam_role_arn and deploy_external_functions:
-        logger.info("\n=== Phase 0: Setting up Redshift IAM Role ===\n")
-        logger.info(
-            "RS_LAMBDA_INVOKE_ROLE not specified, will auto-create role for Redshift"
-        )
+    # Phase 0: Setup IAM roles (Lambda execution + Redshift invoke)
+    # Auto-create any missing roles before deployment begins
+    if (
+        not rs_lambda_execution_role or not rs_iam_role_arn
+    ) and deploy_external_functions:
+        logger.info("\n=== Phase 0: Setting up IAM Roles ===\n")
 
-        try:
-            iam_manager = IAMRoleManager(region=aws_region)
-
-            # Get AWS account ID
-            lambda_account_id = iam_manager.get_account_id()
-
-            # Generate role name from rs_lambda_prefix
-            # Example: carto-at- → CartoATRedshiftInvokeRole
-            role_name = (
-                rs_lambda_prefix.replace("-", "_")
-                .replace("_", " ")
-                .title()
-                .replace(" ", "")
-                + "RedshiftInvokeRole"
-            )
-            role_name = role_name.replace("At", "AT")  # Keep AT as acronym
-
-            logger.info(f"Creating role: {role_name}")
-
-            # Create role (same-account by default)
-            rs_iam_role_arn = iam_manager.get_or_create_redshift_invoke_role(
-                role_name=role_name,
-                lambda_account_id=lambda_account_id,
+        # Create Lambda execution role if not provided
+        if not rs_lambda_execution_role:
+            logger.info(
+                "RS_LAMBDA_EXECUTION_ROLE not specified, "
+                "will auto-create role for Lambda"
             )
 
-            # Try to auto-attach to cluster
-            cluster_id, region = get_cluster_identifier_and_region()
-            if cluster_id:
-                logger.info(f"Detected cluster: {cluster_id} (region: {region})")
-                iam_manager.attach_role_to_cluster(cluster_id, rs_iam_role_arn)
-            else:
-                logger.info(
-                    "ℹ Could not parse cluster identifier from RS_HOST\n"
-                    "  Please manually attach the role to your Redshift cluster:\n"
-                    "  AWS Console → Redshift → Clusters → Properties → "
-                    "Manage IAM roles\n"
-                    f"  Attach: {rs_iam_role_arn}"
+            try:
+                # Create temporary deployer just to create the execution role
+                # (LambdaDeployer is already imported at top of file)
+                temp_deployer = LambdaDeployer(
+                    region=aws_region,
+                    rs_lambda_prefix=rs_lambda_prefix,
+                    quiet=True,
+                    **aws_creds,
                 )
 
-        except Exception as e:
-            logger.error(f"Failed to create Redshift invoke role: {e}")
-            logger.warning("Continuing with Lambda deployment only...")
-            deploy_external_functions = False
+                # Generate role name (same logic as deployer)
+                role_name = (
+                    rs_lambda_prefix.replace("-", "_")
+                    .replace("_", " ")
+                    .title()
+                    .replace(" ", "")
+                    + "LambdaExecutionRole"
+                )
+                role_name = role_name.replace("At", "AT")  # Keep AT as acronym
+
+                logger.info(f"Creating Lambda execution role: {role_name}")
+                rs_lambda_execution_role = temp_deployer.ensure_execution_role(
+                    role_name
+                )
+                logger.info(
+                    f"✓ Created Lambda execution role: {rs_lambda_execution_role}\n"
+                )
+
+            except Exception as e:
+                logger.error(f"Failed to create Lambda execution role: {e}")
+                logger.warning(
+                    "Lambda deployment may fail if IAM permissions are insufficient"
+                )
+
+        # Create Redshift invoke role if not provided
+        if not rs_iam_role_arn:
+            logger.info(
+                "RS_LAMBDA_INVOKE_ROLE not specified, "
+                "will auto-create role for Redshift"
+            )
+
+            try:
+                iam_manager = IAMRoleManager(region=aws_region)
+
+                # Get AWS account ID
+                lambda_account_id = iam_manager.get_account_id()
+
+                # Generate role name from rs_lambda_prefix
+                # Example: carto-at- → CartoATRedshiftInvokeRole
+                role_name = (
+                    rs_lambda_prefix.replace("-", "_")
+                    .replace("_", " ")
+                    .title()
+                    .replace(" ", "")
+                    + "RedshiftInvokeRole"
+                )
+                role_name = role_name.replace("At", "AT")  # Keep AT as acronym
+
+                logger.info(f"Creating role: {role_name}")
+
+                # Create role (same-account by default)
+                rs_iam_role_arn = iam_manager.get_or_create_redshift_invoke_role(
+                    role_name=role_name,
+                    lambda_account_id=lambda_account_id,
+                )
+
+                # Try to auto-attach to cluster
+                cluster_id, region = get_cluster_identifier_and_region()
+                if cluster_id:
+                    logger.info(f"Detected cluster: {cluster_id} (region: {region})")
+                    iam_manager.attach_role_to_cluster(cluster_id, rs_iam_role_arn)
+                else:
+                    logger.info(
+                        "ℹ Could not parse cluster identifier from RS_HOST\n"
+                        "  Please manually attach the role to your Redshift cluster:\n"
+                        "  AWS Console → Redshift → Clusters → Properties → "
+                        "Manage IAM roles\n"
+                        f"  Attach: {rs_iam_role_arn}"
+                    )
+
+            except Exception as e:
+                logger.error(f"Failed to create Redshift invoke role: {e}")
+                logger.warning("Continuing with Lambda deployment only...")
+                deploy_external_functions = False
 
     # Deploy all functions
     try:

@@ -288,6 +288,26 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     env_content = "\\n".join(env_lines) + "\\n"
 
+    # Generate role names for display (same logic as deployer and IAM manager)
+    def prefix_to_pascal_case(prefix: str) -> str:
+        """Convert rs_lambda_prefix to PascalCase for IAM role naming"""
+        import re
+        prefix = prefix.rstrip("-_")
+        parts = re.split(r"[-_]", prefix)
+        pascal_parts = []
+        for word in parts:
+            if word:
+                # Special case: 'at' becomes 'AT' (acronym)
+                if word.lower() == "at":
+                    pascal_parts.append("AT")
+                else:
+                    pascal_parts.append(word.capitalize())
+        return "".join(pascal_parts)
+
+    pascal_prefix = prefix_to_pascal_case(rs_lambda_prefix)
+    lambda_exec_role_name = f"{pascal_prefix}LambdaExecutionRole"
+    redshift_invoke_role_name = f"{pascal_prefix}RedshiftInvokeRole"
+
     click.echo("Configuration Summary")
     click.echo("=" * 70)
     click.echo(f"AWS Region:          {aws_region}")
@@ -308,14 +328,14 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if rs_lambda_execution_role:
         click.echo(f"Lambda Exec Role:    {rs_lambda_execution_role}")
     else:
-        click.echo(f"Lambda Exec Role:    (will auto-create)")
+        click.echo(f"Lambda Exec Role:    {lambda_exec_role_name} (will auto-create)")
     click.echo(f"Redshift Host:       {rs_host}")
     click.echo(f"Redshift Database:   {rs_database}")
     click.echo(f"Schema:              {rs_schema}")
     if rs_lambda_invoke_role:
         click.echo(f"Redshift IAM Role:   {rs_lambda_invoke_role}")
     else:
-        click.echo(f"Redshift IAM Role:   (will auto-create and attach)")
+        click.echo(f"Redshift IAM Role:   {redshift_invoke_role_name} (will auto-create and attach)")
     click.echo(f"Override Lambdas:    {'yes' if rs_lambda_override else 'no'}")
     click.echo("=" * 70)
     click.echo()
@@ -362,9 +382,40 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.echo(f"  Running: {' '.join(deploy_cmd)}")
 
     if not dry_run:
+        # Build environment with all configuration variables
+        deploy_env = {**os.environ, 'PYTHONPATH': str(Path(__file__).parent.parent)}
+
+        # AWS Configuration
+        deploy_env['AWS_REGION'] = aws_region
+        if aws_profile:
+            deploy_env['AWS_PROFILE'] = aws_profile
+        if aws_access_key_id:
+            deploy_env['AWS_ACCESS_KEY_ID'] = aws_access_key_id
+        if aws_secret_access_key:
+            deploy_env['AWS_SECRET_ACCESS_KEY'] = aws_secret_access_key
+        if aws_session_token:
+            deploy_env['AWS_SESSION_TOKEN'] = aws_session_token
+        if aws_assume_role_arn:
+            deploy_env['AWS_ASSUME_ROLE_ARN'] = aws_assume_role_arn
+
+        # Lambda Configuration
+        deploy_env['RS_LAMBDA_PREFIX'] = rs_lambda_prefix
+        deploy_env['RS_LAMBDA_OVERRIDE'] = '1' if rs_lambda_override else '0'
+        if rs_lambda_execution_role:
+            deploy_env['RS_LAMBDA_EXECUTION_ROLE'] = rs_lambda_execution_role
+
+        # Redshift Configuration
+        deploy_env['RS_HOST'] = rs_host
+        deploy_env['RS_DATABASE'] = rs_database
+        deploy_env['RS_USER'] = rs_user
+        deploy_env['RS_PASSWORD'] = rs_password
+        deploy_env['RS_SCHEMA'] = rs_schema
+        if rs_lambda_invoke_role:
+            deploy_env['RS_LAMBDA_INVOKE_ROLE'] = rs_lambda_invoke_role
+
         result = subprocess.run(  # noqa: E501
             deploy_cmd,
-            env={**os.environ, 'PYTHONPATH': str(Path(__file__).parent.parent)}
+            env=deploy_env
         )
 
         if result.returncode != 0:
@@ -393,6 +444,18 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
                     password=rs_password
                 )
 
+                # Create cursor for all database operations
+                cursor = conn.cursor()
+
+                # Create schema if it doesn't exist (in case Phase 2 was skipped)
+                create_schema_sql = f"CREATE SCHEMA IF NOT EXISTS {rs_schema};"
+                try:
+                    cursor.execute(create_schema_sql)
+                    conn.commit()
+                    click.echo(f"  ✓ Schema ready: {rs_schema}")
+                except Exception as e:
+                    click.secho(f"  ⚠ Schema creation warning: {e}", fg='yellow')
+
                 # Read modules.sql
                 sql_content = clouds_sql_path.read_text()
 
@@ -418,7 +481,6 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
                 statements = [s.strip() for s in sql_split(sql_content) if s.strip()]
 
                 # Execute with progress bar
-                cursor = conn.cursor()
                 failed_count = 0
                 with click.progressbar(
                     length=len(statements),

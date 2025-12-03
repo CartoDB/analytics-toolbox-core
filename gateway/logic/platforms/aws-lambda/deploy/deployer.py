@@ -4,6 +4,7 @@ Handles packaging and deploying Lambda functions
 """
 
 import boto3
+import json
 import zipfile
 import tempfile
 import subprocess
@@ -483,7 +484,7 @@ class LambdaDeployer:
 
             response = self.iam_client.create_role(
                 RoleName=role_name,
-                AssumeRolePolicyDocument=str(trust_policy),
+                AssumeRolePolicyDocument=json.dumps(trust_policy),
                 Description=(
                     "Execution role for CARTO Analytics Toolbox Lambda functions"
                 ),
