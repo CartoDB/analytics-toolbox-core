@@ -75,7 +75,7 @@ jobs:
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
-          make remove cloud=redshift || echo "Removal (best effort)"
+          make remove cloud=redshift drop-schema=1 || echo "Removal (best effort)"
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
         uses: thollander/actions-comment-pull-request@v1
