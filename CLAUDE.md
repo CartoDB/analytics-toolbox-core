@@ -173,6 +173,43 @@ make create-package cloud=redshift production=1
 make create-package cloud=redshift modules=quadbin
 ```
 
+### Installing Packages
+
+**Redshift Gateway Functions:**
+
+Redshift packages include an interactive installer (`scripts/install.py`) for deploying gateway Lambda functions:
+
+```bash
+cd dist/carto-at-redshift-1.1.3
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r scripts/requirements.txt
+python scripts/install.py
+```
+
+**Deployment phases:**
+1. **Phase 0**: Auto-create IAM roles (Lambda execution + Redshift invoke)
+2. **Phase 1**: Deploy Lambda functions
+3. **Phase 2**: Create external SQL functions
+4. **Phase 3**: Deploy native SQL UDFs
+
+**CLI Parameters:**
+```bash
+python scripts/install.py \
+  --aws-region us-east-1 \
+  --rs-lambda-prefix myprefix- \
+  --rs-host cluster.redshift.amazonaws.com \
+  --rs-database mydb \
+  --rs-schema myschema
+```
+
+**Other Clouds (SQL UDFs only):**
+- **BigQuery**: `cd clouds/bigquery && make deploy`
+- **Snowflake**: `cd clouds/snowflake && make deploy`
+- **Databricks**: `cd clouds/databricks && make deploy`
+- **Postgres**: `cd clouds/postgres && make deploy`
+
+These clouds deploy native SQL UDFs directly without Lambda or installer.
+
 ## Gateway Function Development
 
 ### Directory Structure
