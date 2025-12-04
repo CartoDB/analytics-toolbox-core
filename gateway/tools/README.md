@@ -12,16 +12,6 @@ The gateway uses a **minimal requirements strategy** to keep development depende
 - **`requirements-dev.txt`**: Development tools only (pytest, black, flake8, mypy, type stubs)
 - **Function-specific `requirements.txt`**: Each function declares its own runtime dependencies
 
-### Why This Approach?
-
-This architecture provides several benefits:
-
-1. **Clean separation**: Development tools vs runtime dependencies are clearly separated
-2. **Scalability**: Don't need to consolidate 100+ function dependencies into one file
-3. **On-demand installation**: Only install dependencies for functions you're testing
-4. **Flexibility**: Easy to filter by cloud, module, or specific functions
-5. **Conflict detection**: Automatically detects and fails on version conflicts
-
 ### Tools
 
 #### `install_function_deps.py`
@@ -53,21 +43,7 @@ make install-function-deps cloud=redshift modules=clustering
 - **Module/function filtering**: Install only what you need
 - **Multi-repo support**: Can scan multiple function directories (core + private)
 
-**Important: Conflict Detection is for Testing Only**
-
-Each Lambda function is **completely isolated at deployment**:
-- Each function gets its own package with only its declared dependencies
-- Functions can have different versions of the same library
-- No dependency sharing between Lambda functions
-
-**However**, during local testing, all tests run in one Python environment. We cannot have both `numpy==1.24.3` and `numpy==1.26.4` installed simultaneously. Therefore, the script detects conflicts and requires you to standardize versions **for testing purposes only**.
-
-Example: If `statistics/morans_i` uses `numpy==1.26.4` but doesn't use `mercantile`, its Lambda package will contain:
-- ✅ `numpy==1.26.4`
-- ✅ `quadbin==0.2.2`
-- ❌ `mercantile` (not included - not in its requirements.txt)
-
-**Version conflict detection:**
+**Conflict detection:** During local testing, functions with different versions of the same package will cause conflicts since all tests share one Python environment.
 
 When the script detects incompatible versions, it fails with a clear error:
 
@@ -247,28 +223,3 @@ pip install packaging>=21.0
 5. **Checks for version conflicts** (fails if found)
 6. Consolidates all requirements and installs in one pip call
 7. Shows clear progress and error messages
-
-**Key difference from old approach:**
-
-- Old: Consolidated all deps into `requirements-dev.txt` (became huge and hard to maintain)
-- New: Minimal `requirements-dev.txt` with only dev tools, function deps installed on-demand
-
-**Conflict detection:**
-
-Uses the `packaging` library to parse requirement specifications and detect when multiple functions require different versions of the same package. This prevents subtle runtime issues and forces consistency.
-
-### Migration Notes
-
-If you're coming from the old `generate_dev_requirements.py` approach:
-
-**What changed:**
-- `requirements-dev.txt` is now minimal (only dev tools, no function deps)
-- Function dependencies installed automatically by Make targets
-- Conflicts cause immediate failure instead of warnings
-- No need to regenerate `requirements-dev.txt` after adding functions
-
-**Benefits:**
-- Faster setup (don't install deps for functions you're not testing)
-- Clearer separation between dev tools and runtime deps
-- Scales better as function count grows
-- Catches version conflicts early

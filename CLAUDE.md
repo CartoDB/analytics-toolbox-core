@@ -422,57 +422,6 @@ clouds:
     external_function_template: code/redshift.sql  # Uses existing template
 ```
 
-#### Migration Guide
-
-To convert an existing function from SQL template to YAML definition:
-
-1. **Identify simple functions**: Functions with straightforward SQL templates (no wrappers, no complex logic)
-
-2. **Extract parameter types**: Copy parameter names and types from SQL template
-
-3. **Update function.yaml**:
-
-   **Before (with SQL template):**
-   ```yaml
-   clouds:
-     redshift:
-       external_function_template: code/redshift.sql  # Delete this line
-   ```
-
-   **After (with metadata):**
-   ```yaml
-   parameters:
-     - name: token
-       type: string
-   returns: bigint
-   ```
-
-4. **Test**: Deploy and verify auto-generated SQL matches original
-
-5. **Delete SQL file** (optional): Once verified, remove old SQL template
-
-#### When to Use Each Pattern
-
-| Pattern | Use When |
-|---------|----------|
-| **Simple (Generic Types)** | Function has standard types (string, int) and works same across clouds |
-| **Cloud-Specific Overrides** | Function needs cloud-specific types (SUPER, VARIANT) or cloud-specific syntax |
-| **Hybrid** | Most clouds use generic types, but one cloud needs special handling |
-| **Legacy (SQL Template)** | Function has complex SQL (wrappers, multiple statements, conditional logic) |
-
-#### Best Practices
-
-1. **Start with generic types**: Use generic types by default for maximum portability
-2. **Override only when needed**: Only add cloud-specific overrides when absolutely necessary
-3. **Use descriptive parameter names**: Parameter names appear in both SQL and documentation
-4. **Add descriptions**: Include parameter descriptions for better documentation
-   ```yaml
-   parameters:
-     - name: resolution
-       type: int
-       description: Quadbin resolution level (0-26)
-   ```
-
 #### Validation
 
 The system validates function configurations at load time:
@@ -480,67 +429,6 @@ The system validates function configurations at load time:
 - **Error**: Function has neither SQL template nor parameters/returns metadata
 - **Warning**: Function has both SQL template and metadata (template takes precedence)
 - **OK**: Function has either SQL template or complete metadata (parameters + returns)
-
-#### Implementation Architecture
-
-The architecture follows a **Registry Pattern** for cloud-agnostic type mapping:
-
-**Components:**
-- **TypeMapperRegistry** (`logic/common/engine/type_mapper.py`): Cloud-agnostic registry (NO cloud-specific logic)
-- **RedshiftTypeMappings** (`logic/clouds/redshift/type_mappings.py`): Redshift-specific mappings (auto-registers on import)
-- **SQLTemplateGenerator** (`logic/clouds/redshift/sql_template_generator.py`): Generates SQL from metadata
-- **CatalogLoader** (`logic/common/engine/catalog_loader.py`): Parses function.yaml and validates
-
-**Resolution Order:**
-1. Check if `external_function_template` exists → use SQL file
-2. Check if function has `parameters` and `returns` → auto-generate
-3. Error if neither available
-
-**Cloud Override Resolution:**
-1. Check if cloud has `parameters` or `returns` defined → use cloud-specific
-2. Otherwise, use top-level (generic) definitions
-3. Map types using TypeMapper
-
-#### Adding Support for New Clouds
-
-To add a new cloud:
-
-1. **Create type mappings file** (`logic/clouds/{cloud}/type_mappings.py`):
-
-```python
-from ...common.engine.type_mapper import TypeMapperRegistry
-
-class BigQueryTypeMappings:
-    """BigQuery-specific type mapping provider"""
-
-    TYPE_MAPPINGS = {
-        "string": "STRING",
-        "int": "INT64",
-        "bigint": "INT64",
-        "object": "JSON",
-        # ... add all mappings
-    }
-
-    def map_type(self, generic_type: str) -> str:
-        generic_lower = generic_type.lower()
-        if generic_lower in self.TYPE_MAPPINGS:
-            return self.TYPE_MAPPINGS[generic_lower]
-        return generic_type
-
-    def is_generic_type(self, type_str: str) -> bool:
-        return type_str.lower() in self.TYPE_MAPPINGS
-
-    def get_supported_generic_types(self) -> list[str]:
-        return list(self.TYPE_MAPPINGS.keys())
-
-# Auto-register
-TypeMapperRegistry.register("bigquery", BigQueryTypeMappings())
-```
-
-2. **Create SQL template generator** (if auto-generation desired)
-3. **Write tests** (`logic/clouds/{cloud}/tests/unit/test_type_mappings.py`)
-
-That's it! The common engine automatically uses your cloud's mapper.
 
 ### Lambda Handler Pattern
 
@@ -1168,40 +1056,6 @@ clouds:
    ├─> Test Lambda invocation
    └─> Test external function call
 ```
-
-### Key Architectural Decisions
-
-**1. Dual Architecture (Gateway + Clouds)**
-- **Why**: Flexibility to use native SQL UDFs where possible, Lambda for complex Python logic
-- **When to use Gateway**: Complex algorithms, external API calls, Python libraries
-- **When to use Clouds**: Simple SQL operations, native cloud optimizations
-
-**2. Build-Time Dependency Copying**
-- **Why**: Lambda deployment packages must be self-contained
-- **Alternative rejected**: Layers (limited to 5 per function, size limits)
-- **Benefit**: Each function is independent and deployable
-
-**3. Short Lambda Names**
-- **Why**: AWS Lambda name limit (64 chars) with CI/CD prefixes
-- **Pattern**: `{prefix}_{shortname}` (e.g., `ci_a1b2c3d4_123456_getisord`)
-- **Benefit**: Supports long CI/CD prefixes
-
-**4. Function-Specific vs Shared Libraries**
-- **Why**: Balance between code reuse and isolation
-- **Shared**: Used by multiple functions
-- **Function-specific**: Used by one function
-- **Benefit**: Prevents unnecessary coupling
-
-**5. Generic Type System**
-- **Why**: Write function definitions once, deploy to multiple clouds
-- **How**: Generic types mapped to cloud-specific types at deployment
-- **Benefit**: Cloud-agnostic function definitions
-
-**6. Auto-Generated SQL Templates**
-- **Why**: Reduce boilerplate for simple functions
-- **How**: Use `parameters` and `returns` in function.yaml
-- **Fallback**: Manual SQL template for complex cases
-- **Benefit**: Faster development, fewer errors
 
 ### Testing Best Practices
 
