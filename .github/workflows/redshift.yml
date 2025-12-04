@@ -66,11 +66,12 @@ jobs:
           aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
           aws-region: ${{ secrets.RS_REGION_CI }}
-      - name: Run linter, deploy and test
-        run: |
-          make lint cloud=redshift && \
-          make deploy cloud=redshift diff="$GIT_DIFF" && \
-          make test cloud=redshift diff="$GIT_DIFF"
+      - name: Run linter
+        run: make lint cloud=redshift
+      - name: Run deploy
+        run: make deploy cloud=redshift diff="$GIT_DIFF"
+      - name: Run test
+        run: make test cloud=redshift diff="$GIT_DIFF"
       - name: Run remove
         if: always()
         run: |
