@@ -904,13 +904,6 @@ The gateway deployment engine in `gateway/logic/` is designed to be cloud and pl
    - `sql_template_generator.py`: Auto-generates SQL from function metadata
    - Extensible for other clouds (BigQuery, Snowflake, Databricks)
 
-**Key Design Principles:**
-
-- Functions are defined once in `function.yaml` with cloud-agnostic parameters
-- Type mapping system converts generic types to cloud-specific types
-- SQL templates use `@@VARIABLE@@` placeholders for cloud-specific values
-- Platform deployers handle platform-specific deployment details
-
 ### Shared vs Function-Specific Libraries
 
 **Critical Rule**: Only create shared libraries when code is used by **multiple functions**.

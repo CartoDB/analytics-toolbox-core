@@ -9,25 +9,11 @@ test_utils/
 ├── __init__.py
 ├── unit/                        # Language-specific unit test helpers
 │   ├── __init__.py
-│   ├── python.py               # Python Lambda/Cloud Run utilities
-│   ├── javascript.py           # JavaScript/Node.js utilities (future)
-│   └── go.py                   # Go utilities (future)
-├── integration/                 # Cloud-specific integration test helpers
-│   ├── __init__.py
-│   ├── redshift.py             # Amazon Redshift utilities
-│   ├── bigquery.py             # Google BigQuery utilities (future)
-│   ├── snowflake.py            # Snowflake utilities (future)
-│   └── databricks.py           # Databricks utilities (future)
-└── README.md                    # This file
+│   └── python.py               # Python Lambda/Cloud Run utilities
+└── integration/                 # Cloud-specific integration test helpers
+    ├── __init__.py
+    └── redshift.py             # Amazon Redshift utilities
 ```
-
-## Design Principles
-
-1. **Language-specific unit tests**: Each language (Python, JavaScript, Go) has its own utilities
-2. **Cloud-specific integration tests**: Each cloud platform has its own integration module
-3. **Platform-agnostic organization**: A Python function can target any cloud (Redshift, BigQuery, etc.)
-4. **Centralized maintenance**: Common patterns are maintained in one place
-5. **Simple test files**: Developers focus on test logic, not boilerplate
 
 ## Usage
 
@@ -64,24 +50,6 @@ class TestMyFunction:
         assert result == "expected"
 ```
 
-### Unit Tests (JavaScript - Future)
-
-For testing JavaScript/Node.js functions:
-
-```javascript
-// Future: test_utils/unit/javascript.js will provide similar helpers
-// for loading and testing Node.js Lambda/Cloud Run functions
-```
-
-### Unit Tests (Go - Future)
-
-For testing Go functions:
-
-```go
-// Future: test_utils/unit/go.go will provide similar helpers
-// for loading and testing Go Lambda/Cloud Run functions
-```
-
 ### Integration Tests (Redshift)
 
 For testing deployed functions against a real Redshift database:
@@ -109,21 +77,6 @@ The `run_query` helper automatically:
 - Calculates schema from `RS_PREFIX` environment variable
 - Replaces `@@RS_SCHEMA@@` placeholder in queries
 - Manages database connection lifecycle
-
-### Integration Tests (Other Clouds)
-
-As we add support for other clouds, similar patterns will be available:
-
-```python
-# BigQuery (future)
-from test_utils.integration.bigquery import run_query
-
-# Snowflake (future)
-from test_utils.integration.snowflake import run_query
-
-# Databricks (future)
-from test_utils.integration.databricks import run_query
-```
 
 ## Backward Compatibility
 

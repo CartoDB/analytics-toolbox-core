@@ -6,13 +6,11 @@ This directory contains shared code libraries used by multiple gateway functions
 
 ```
 _shared/
-├── python/
-│   ├── placekey/        # Placekey/H3 conversion utilities
-│   ├── clustering/      # Shared clustering algorithms (KMeans, etc.)
-│   ├── geospatial/      # Common geospatial utilities
-│   └── helpers/         # Generic helper functions
-├── javascript/          # Future: Shared JS libraries
-└── go/                  # Future: Shared Go libraries
+└── python/
+    ├── placekey/        # Placekey/H3 conversion utilities
+    ├── clustering/      # Shared clustering algorithms (KMeans, etc.)
+    ├── geospatial/      # Common geospatial utilities
+    └── helpers/         # Generic helper functions
 ```
 
 ## Usage in Functions
