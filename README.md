@@ -21,6 +21,8 @@ The Analytics Toolbox has two parallel components:
 
 ## Getting Started
 
+Using the functions on this project depends on the Datawarehouse you are using. In BigQuery and Snowflake you can access them directly as a shared resources without having to install them, for the rest you will have to install them locally on your database.
+
 #### BigQuery
 
 You can use the functions directly as they're globally shared in the US region:
@@ -29,7 +31,7 @@ You can use the functions directly as they're globally shared in the US region:
 SELECT `carto-os.carto.H3_CENTER`('84390cbffffffff')
 ```
 
-For the Europe region:
+If you need to use them from the Europe region use:
 
 ```sql
 SELECT `carto-os-eu.carto.H3_CENTER`('84390cbffffffff')
@@ -121,8 +123,7 @@ make test-unit cloud=redshift
 make test-integration cloud=redshift
 
 # Deploy
-make deploy cloud=redshift              # Dev environment
-make deploy cloud=redshift production=1 # Production
+make deploy cloud=redshift
 
 # Lint
 make lint
