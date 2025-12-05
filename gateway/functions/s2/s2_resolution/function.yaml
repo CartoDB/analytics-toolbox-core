@@ -1,0 +1,14 @@
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: s2_res
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    shared_libs:
+    - s2
+    config:
+      max_batch_rows: 10000
+parameters:
+- name: id
+  type: bigint
+returns: int
