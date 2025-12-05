@@ -60,9 +60,7 @@ class LambdaDeployer:
             session_kwargs["aws_secret_access_key"] = secret_access_key
             if session_token:
                 session_kwargs["aws_session_token"] = session_token
-            print(
-                f"Using explicit AWS credentials (access key: {access_key_id[:8]}...)"
-            )
+            print("Using explicit AWS credentials")
 
         # Method 2: AWS Profile
         elif profile:

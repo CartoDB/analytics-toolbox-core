@@ -258,6 +258,15 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
 
     click.echo()
 
+    # Validation function for SQL identifiers (prevent SQL injection)
+    def validate_sql_identifier(name, identifier_type="identifier"):
+        """Validate SQL identifier to prevent SQL injection"""
+        import re
+        pattern = r'^[a-zA-Z_][a-zA-Z0-9_]*$'
+        if not name or not re.match(pattern, name) or len(name) > 127:
+            return False
+        return True
+
     # Redshift Connection
     if not non_interactive:
         click.echo("Redshift Connection")
@@ -273,6 +282,15 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo("Redshift Deployment Configuration")
         click.echo("-" * 70)
         rs_database = prompt_if_not_provided(rs_database, "Redshift Database")
+
+    # Validate database name (prevent SQL injection)
+    if rs_database and not validate_sql_identifier(rs_database, "database name"):
+        click.secho(
+            f"ERROR: Invalid database name '{rs_database}'. "
+            "Must start with letter/underscore, contain only alphanumeric/underscores, max 127 chars.",
+            fg='red', bold=True
+        )
+        sys.exit(1)
 
     # Schema configuration
 ###SCHEMA_PREFIX_CODE###
@@ -381,7 +399,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if auth_method == "profile" or auth_method == "env_profile":
         click.echo(f"AWS Auth:            Profile ({aws_profile})")
     elif auth_method == "explicit" or auth_method == "env_explicit":
-        click.echo(f"AWS Auth:            Explicit credentials (...{aws_access_key_id[-4:]})")
+        click.echo(f"AWS Auth:            Explicit credentials")
     elif auth_method == "iam_role":
         click.echo(f"AWS Auth:            IAM Role (automatic)")
     elif auth_method == "env":
@@ -597,14 +615,7 @@ if __name__ == '__main__':
 '''
 
         # Generate schema name prompt (always prompt, no production distinction)
-        schema_name_code = """    # Schema configuration
-    def validate_schema_name(name):
-        import re
-        pattern = r'^[a-zA-Z_][a-zA-Z0-9_]*$'
-        if not name or not re.match(pattern, name) or len(name) > 127:
-            return False
-        return True
-
+        schema_name_code = """    # Schema configuration and validation
     if rs_schema is None:
         while True:
             rs_schema = click.prompt(
@@ -612,14 +623,23 @@ if __name__ == '__main__':
                 default='carto',
                 show_default=False
             )
-            if validate_schema_name(rs_schema):
+            if validate_sql_identifier(rs_schema, "schema name"):
                 break
-            click.echo(
-                'Invalid schema name. Must start with letter/underscore, '
+            click.secho(
+                'ERROR: Invalid schema name. Must start with letter/underscore, '
                 'contain only alphanumeric/underscores, max 127 chars.',
-                err=True
+                fg='red', err=True
             )
     else:
+        # Validate schema name provided via CLI (prevent SQL injection)
+        if not validate_sql_identifier(rs_schema, "schema name"):
+            click.secho(
+                f"ERROR: Invalid schema name '{rs_schema}'. "
+                "Must start with letter/underscore, contain only "
+                "alphanumeric/underscores, max 127 chars.",
+                fg='red', bold=True
+            )
+            sys.exit(1)
         click.echo(f"Using schema: {rs_schema}")
 
     click.echo()

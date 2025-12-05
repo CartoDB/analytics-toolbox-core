@@ -83,6 +83,37 @@ def get_env_or_default(key: str, default: any = None) -> any:
     return os.getenv(key, default)
 
 
+def validate_sql_identifier(
+    identifier: str, identifier_type: str = "identifier"
+) -> bool:
+    """
+    Validate SQL identifier to prevent SQL injection
+
+    Args:
+        identifier: The identifier to validate
+        identifier_type: Type of identifier (for error messages)
+
+    Returns:
+        True if valid, False otherwise
+
+    Valid SQL identifiers:
+    - Start with letter or underscore
+    - Contain only alphanumeric characters and underscores
+    - Maximum 127 characters
+    """
+    import re
+
+    pattern = r"^[a-zA-Z_][a-zA-Z0-9_]*$"
+    if not identifier or not re.match(pattern, identifier) or len(identifier) > 127:
+        logger.error(
+            f"Invalid {identifier_type} '{identifier}'. "
+            "Must start with letter/underscore, "
+            "contain only alphanumeric/underscores, max 127 chars."
+        )
+        return False
+    return True
+
+
 def resolve_redshift_schema() -> str:
     """
     Resolve Redshift schema name from environment variables
@@ -100,6 +131,9 @@ def resolve_redshift_schema() -> str:
     Returns:
         Schema name to use for deployment
 
+    Raises:
+        SystemExit: If schema name is invalid (SQL injection prevention)
+
     Example:
         RS_SCHEMA="my_schema" -> "my_schema"
         RS_PREFIX="dev_" -> "dev_carto"
@@ -108,6 +142,9 @@ def resolve_redshift_schema() -> str:
     # Priority 1: RS_SCHEMA (use directly)
     rs_schema = get_env_or_default("RS_SCHEMA", None)
     if rs_schema:
+        if not validate_sql_identifier(rs_schema, "schema name (RS_SCHEMA)"):
+            logger.error("Invalid RS_SCHEMA value. Aborting for security.")
+            sys.exit(1)
         logger.info(f"Using schema from RS_SCHEMA: {rs_schema}")
         return rs_schema
 
@@ -115,6 +152,12 @@ def resolve_redshift_schema() -> str:
     rs_prefix = get_env_or_default("RS_PREFIX", None)
     if rs_prefix:
         schema = f"{rs_prefix}carto"
+        if not validate_sql_identifier(schema, "schema name (from RS_PREFIX)"):
+            logger.error(
+                f"Invalid RS_PREFIX value '{rs_prefix}' "
+                f"(results in schema '{schema}'). Aborting for security."
+            )
+            sys.exit(1)
         logger.info(f"Using schema from RS_PREFIX: {schema}")
         return schema
 
