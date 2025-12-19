@@ -53,8 +53,8 @@ jobs:
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |-
-            databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME }}
-            databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME }}
+            databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CI }}
+            databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CI }}
       - name: Get Databricks OAuth token
         run: |
           RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \
