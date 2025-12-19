@@ -1,0 +1,77 @@
+name: Postgres dedicated env
+
+on:
+  pull_request:
+    types: [closed, unlabeled, labeled, synchronize]
+
+env:
+  NODE_VERSION: 14
+  PYTHON3_VERSION: 3.8.18
+  VIRTUALENV_VERSION: 20.15.1
+
+jobs:
+
+  dedicated:
+    if: |
+      github.event.label.name == 'dedicated_postgres' ||
+      (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres')) ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_postgres'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PG_HOST: ${{ secrets.PG_HOST_CD }}
+      PG_DATABASE: ${{ secrets.PG_DATABASE_CD }}
+      PG_USER: ${{ secrets.PG_USER_CD }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_CD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set PG_PREFIX for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          echo "PG_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set PG_PREFIX for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          echo "PG_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set PG_PREFIX for regular deploys
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "PG_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Run deploy
+        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        id: deploy
+        run: |
+          cd clouds/postgres
+          make deploy
+      - name: Run remove
+        if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        id: remove
+        run: |
+          cd clouds/postgres
+          make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.PG_PREFIX }}carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment removed
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
