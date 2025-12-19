@@ -20,16 +20,33 @@
 // -- Check if a given app exists. This is checked in order to create an app or launch an upgrade
 // ./native-app-utils.js CHECK_APP_EXISTENCE=1 APP_NAME=$(APP_NAME)
 
+const crypto = require('crypto');
 const snowflake = require('snowflake-sdk');
 
 snowflake.configure({ insecureConnect: true });
 
-const connection = snowflake.createConnection({
+const connectionOptions = {
     account: process.env.SF_ACCOUNT,
     username: process.env.SF_USER,
-    password: process.env.SF_PASSWORD,
     role: process.env.SF_ROLE
-});
+};
+
+if (process.env.SF_PASSWORD) {
+    connectionOptions.password = process.env.SF_PASSWORD;
+} else if (process.env.SF_RSA_KEY) {
+    const privateKeyObject = crypto.createPrivateKey({
+        key: process.env.SF_RSA_KEY,
+        format: 'pem',
+        passphrase: process.env.SF_RSA_KEY_PASSWORD
+    });
+    connectionOptions.authenticator = 'SNOWFLAKE_JWT';
+    connectionOptions.privateKey = privateKeyObject.export({
+        format: 'pem',
+        type: 'pkcs8'
+    });
+}
+
+const connection = snowflake.createConnection(connectionOptions);
 
 connection.connect((err) => {
     if (err) {
