@@ -47,14 +47,14 @@ jobs:
       - name: Authenticate with Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.CARTODB_ON_GCP_TERRAFORM_CI_CD_SERVICE_ACCOUNT_KEY }}
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
       - name: Get Databricks secrets
         id: secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |-
-            databricks-client-id:projects/${{ secrets.GOOGLE_SECRET_MANAGER_PROJECT }}/secrets/databricks-gcp-sp-carto-ci-sp-user-client-id
-            databricks-client-secret:projects/${{ secrets.GOOGLE_SECRET_MANAGER_PROJECT }}/secrets/databricks-gcp-sp-carto-ci-sp-user-secret
+            databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME }}
+            databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME }}
       - name: Get Databricks OAuth token
         run: |
           RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \

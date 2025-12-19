@@ -35,10 +35,11 @@ endif
 ifndef SF_USER
 	$(error SF_USER is undefined)
 endif
-ifndef SF_PASSWORD
 ifndef SF_RSA_KEY
-	$(error SF_PASSWORD or SF_RSA_KEY/SF_RSA_KEY_PASSWORD is undefined)
+	$(error SF_RSA_KEY is undefined)
 endif
+ifndef SF_RSA_KEY_PASSWORD
+	$(error SF_RSA_KEY_PASSWORD is undefined)
 endif
 ifndef SF_ACCOUNT
 	$(error SF_ACCOUNT is undefined)

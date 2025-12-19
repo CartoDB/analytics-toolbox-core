@@ -30,13 +30,23 @@ jobs:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CI }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_CI }}
       SF_USER: ${{ secrets.SF_USER_CI }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CI }}
       SF_ROLE: ${{ secrets.SF_ROLE_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -48,6 +58,9 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Run linter and tests
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make lint && \
@@ -60,30 +73,35 @@ jobs:
     needs: test
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    strategy:
-      matrix:
-        include:
-          - account: SF_ACCOUNT_CD
-            database: SF_DATABASE_CD
-            user: SF_USER_CD
-            password: SF_PASSWORD_CD
-            role: SF_ROLE_CD
     env:
-      SF_ACCOUNT: ${{ secrets[matrix.account] }}
-      SF_DATABASE: ${{ secrets[matrix.database] }}
-      SF_USER: ${{ secrets[matrix.user] }}
-      SF_PASSWORD: ${{ secrets[matrix.password] }}
-      SF_ROLE: ${{ secrets[matrix.role] }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
+      SF_USER: ${{ secrets.SF_USER_CD }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy diff="$GIT_DIFF" production=1
@@ -93,30 +111,35 @@ jobs:
     needs: test
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    strategy:
-      matrix:
-        include:
-          - account: SF_ACCOUNT_CD
-            database: SF_DATABASE_STABLE_CD
-            user: SF_USER_CD
-            password: SF_PASSWORD_CD
-            role: SF_ROLE_CD
     env:
-      SF_ACCOUNT: ${{ secrets[matrix.account] }}
-      SF_DATABASE: ${{ secrets[matrix.database] }}
-      SF_USER: ${{ secrets[matrix.user] }}
-      SF_PASSWORD: ${{ secrets[matrix.password] }}
-      SF_ROLE: ${{ secrets[matrix.role] }}
+      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
+      SF_DATABASE: ${{ secrets.SF_DATABASE_STABLE_CD }}
+      SF_USER: ${{ secrets.SF_USER_CD }}
+      SF_ROLE: ${{ secrets.SF_ROLE_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy diff="$GIT_DIFF" production=1
@@ -132,22 +155,38 @@ jobs:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_NATIVE_APP }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_NATIVE_APP }}
       SF_USER: ${{ secrets.SF_USER_NATIVE_APP }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_NATIVE_APP }}
       SF_ROLE: ${{ secrets.SF_ROLE_NATIVE_APP }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Deploy native app package
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy-native-app-package production=1
       - name: Deploy native app locally
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy-native-app production=1
@@ -161,7 +200,6 @@ jobs:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_SHARE }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_SHARE }}
       SF_USER: ${{ secrets.SF_USER_SHARE }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_SHARE }}
       SF_ROLE: ${{ secrets.SF_ROLE_SHARE }}
       SF_SHARE: ${{ secrets.SF_SHARE }}
     steps:
@@ -169,11 +207,25 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v4
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run deploy
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy diff="$GIT_DIFF" production=1

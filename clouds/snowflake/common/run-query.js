@@ -5,28 +5,24 @@ const snowflake = require('snowflake-sdk');
 
 snowflake.configure({ insecureConnect: true });
 
-// Support both RSA key (CI) and password (local dev) authentication
+// RSA key authentication (required)
+const privateKeyObject = crypto.createPrivateKey({
+    key: process.env.SF_RSA_KEY,
+    format: 'pem',
+    passphrase: process.env.SF_RSA_KEY_PASSWORD
+});
+
 const connectionOptions = {
     account: process.env.SF_ACCOUNT,
     username: process.env.SF_USER,
     role: process.env.SF_ROLE,
-    warehouse: process.env.SF_WAREHOUSE
-};
-
-if (process.env.SF_RSA_KEY) {
-    const privateKeyObject = crypto.createPrivateKey({
-        key: process.env.SF_RSA_KEY,
-        format: 'pem',
-        passphrase: process.env.SF_RSA_KEY_PASSWORD
-    });
-    connectionOptions.authenticator = 'SNOWFLAKE_JWT';
-    connectionOptions.privateKey = privateKeyObject.export({
+    warehouse: process.env.SF_WAREHOUSE,
+    authenticator: 'SNOWFLAKE_JWT',
+    privateKey: privateKeyObject.export({
         format: 'pem',
         type: 'pkcs8'
-    });
-} else {
-    connectionOptions.password = process.env.SF_PASSWORD;
-}
+    })
+};
 
 const connection = snowflake.createConnection(connectionOptions);
 

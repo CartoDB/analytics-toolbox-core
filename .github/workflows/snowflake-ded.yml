@@ -20,7 +20,6 @@ jobs:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
       SF_USER: ${{ secrets.SF_USER_CD }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
       SF_ROLE: ${{ secrets.SF_ROLE_CD }}
     steps:
       - name: Checkout repo
@@ -38,6 +37,17 @@ jobs:
           !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
           !(startsWith(github.event.pull_request.head.ref, 'release/'))
         run: echo "SF_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -45,12 +55,18 @@ jobs:
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy
       - name: Run remove
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make remove
