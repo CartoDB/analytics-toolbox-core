@@ -1,0 +1,16 @@
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: qi_par
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    shared_libs:
+    - quadkey
+    config:
+      max_batch_rows: 10000
+parameters:
+- name: quadint
+  type: bigint
+- name: resolution
+  type: int
+returns: bigint
