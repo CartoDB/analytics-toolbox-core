@@ -46,6 +46,12 @@ if (diff.length) {
     }
 }
 
+// Debug output
+process.stderr.write(`DEBUG: diff="${diff}"\n`);
+process.stderr.write(`DEBUG: modulesFilter=${JSON.stringify(modulesFilter)}\n`);
+process.stderr.write(`DEBUG: modulesFromDiff=${modulesFromDiff}\n`);
+process.stderr.write(`DEBUG: all=${all}\n`);
+
 // Extract functions
 const functions = [];
 const testdir = path.join(inputDir, 'test');
@@ -67,6 +73,9 @@ modules.forEach(module => {
         });
     }
 });
+
+process.stderr.write(`DEBUG: Found ${functions.length} test functions\n`);
+process.stderr.write(`DEBUG: Test modules found: ${[...new Set(functions.map(f => f.module))].join(', ')}\n`);
 
 // Check filters
 // Only validate explicitly requested modules (not modules from diff)
@@ -96,4 +105,5 @@ function filter (f) {
 }
 functions.forEach(f => filter(f));
 
+process.stderr.write(`DEBUG: Outputting ${output.length} test files\n`);
 process.stdout.write(output.join(' '));
