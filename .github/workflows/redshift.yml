@@ -40,7 +40,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
+        with:
+          FORMAT: json
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -110,7 +112,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
+        with:
+          FORMAT: json
       - name: Setup node
         uses: actions/setup-node@v1
         with:

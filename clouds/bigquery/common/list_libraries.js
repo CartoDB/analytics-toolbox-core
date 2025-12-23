@@ -13,7 +13,25 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
-const diff = argv.diff || [];
+let diff = argv.diff || [];
+
+// Parse JSON format from get-diff-action v6
+if (typeof diff === 'string' && diff.length > 0) {
+    try {
+        const trimmed = diff.trim();
+        if (trimmed.startsWith('[')) {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+                // Convert JSON array to space-separated string (existing format)
+                diff = parsed.join(' ');
+            }
+        }
+    } catch (e) {
+        // If JSON parsing fails, treat as legacy string format
+        // This maintains backward compatibility
+    }
+}
+
 const nodeps = argv.nodeps;
 const makelib = argv.makelib;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];

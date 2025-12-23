@@ -15,7 +15,25 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
-const diff = argv.diff || [];
+let diff = argv.diff || [];
+
+// Parse JSON format from get-diff-action v6
+if (typeof diff === 'string' && diff.length > 0) {
+    try {
+        const trimmed = diff.trim();
+        if (trimmed.startsWith('[')) {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+                // Convert JSON array to space-separated string (existing format)
+                diff = parsed.join(' ');
+            }
+        }
+    } catch (e) {
+        // If JSON parsing fails, treat as legacy string format
+        // This maintains backward compatibility
+    }
+}
+
 const nodeps = argv.nodeps;
 const libraryBucket = argv.librarybucket;
 const makelib = argv.makelib;
