@@ -37,7 +37,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0
       - name: Check changed files
-        uses: technote-space/get-diff-action@v6
+        uses: technote-space/get-diff-action@v4
       - name: Setup Python
         uses: actions/setup-python@v2
         with:

@@ -14,11 +14,16 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
-const diff = argv.diff || [];
+const diff = argv.diff || '';
 const nodeps = argv.nodeps;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
+
+// Track if modules came from diff (not explicitly requested)
+// Modules from diff may not have SQL files (e.g., infrastructure modules like gateway)
+// Explicitly requested modules should be validated
+let modulesFromDiff = false;
 
 if (all) {
     console.log('- Build all');
@@ -52,6 +57,7 @@ if (diff.length) {
         if (diffModulesFilter) {
             console.log(`-- modules: ${diffModulesFilter}`);
             modulesFilter = diffModulesFilter;
+            modulesFromDiff = true;
         }
     }
 }
@@ -82,15 +88,19 @@ for (let inputDir of inputDirs) {
 }
 
 // Check filters
-modulesFilter.forEach(m => {
-    if (!functions.map(fn => fn.module).includes(m)) {
-        console.log(`ERROR: Module not found ${m}`);
-        process.exit(1);
-    }
-});
+// Only validate explicitly requested modules (not modules from diff)
+// Modules from diff may be infrastructure modules without SQL files (e.g., gateway)
+if (!modulesFromDiff) {
+    modulesFilter.forEach(m => {
+        if (!functions.map(fn => fn.module).includes(m)) {
+            process.stderr.write(`ERROR: Module not found ${m}\n`);
+            process.exit(1);
+        }
+    });
+}
 functionsFilter.forEach(f => {
     if (!functions.map(fn => fn.name).includes(f)) {
-        console.log(`ERROR: Function not found ${f}`);
+        process.stderr.write(`ERROR: Function not found ${f}\n`);
         process.exit(1);
     }
 });
