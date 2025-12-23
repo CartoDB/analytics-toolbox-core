@@ -16,18 +16,35 @@ let diff = argv.diff || [];
 
 // Parse JSON format from get-diff-action v6
 if (typeof diff === 'string' && diff.length > 0) {
-    try {
-        const trimmed = diff.trim();
-        if (trimmed.startsWith('[')) {
+    const trimmed = diff.trim();
+
+    // Debug: Show what format we received
+    if (process.env.DEBUG_DIFF) {
+        console.error('[DEBUG] Raw diff input:', JSON.stringify(diff));
+        console.error('[DEBUG] After trim:', JSON.stringify(trimmed));
+        console.error('[DEBUG] Starts with [?:', trimmed.startsWith('['));
+    }
+
+    if (trimmed.startsWith('[')) {
+        try {
             const parsed = JSON.parse(trimmed);
             if (Array.isArray(parsed)) {
-                // Convert JSON array to space-separated string (existing format)
+                const original = diff;
                 diff = parsed.join(' ');
+
+                if (process.env.DEBUG_DIFF) {
+                    console.error('[DEBUG] Parsed as JSON array, length:', parsed.length);
+                    console.error('[DEBUG] Converted to:', JSON.stringify(diff));
+                }
+            } else {
+                console.error('[WARN] JSON parsed but not an array:', typeof parsed);
             }
+        } catch (e) {
+            console.error('[WARN] JSON parse failed:', e.message);
+            // Continue with legacy string format
         }
-    } catch (e) {
-        // If JSON parsing fails, treat as legacy string format
-        // This maintains backward compatibility
+    } else if (process.env.DEBUG_DIFF) {
+        console.error('[DEBUG] Not JSON format, using as-is');
     }
 }
 
