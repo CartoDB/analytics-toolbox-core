@@ -55,9 +55,8 @@ extra-deploy::
 
 test: check venv3 $(NODE_MODULES_DEV)
 	echo "Testing modules..."
-	TEST_FILES=$$($(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)) || exit 1; \
-	if [ ! -z "$$TEST_FILES" ]; then \
-		$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv $$TEST_FILES; \
+	if [ ! -z "`$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`" ]; then \
+		$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv `$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 	fi;
 
 remove: venv3
