@@ -11,7 +11,8 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDir = '.';
-const diff = argv.diff || [];
+// Strip quotes from diff paths (get-diff-action@v4 adds quotes around paths)
+const diff = (argv.diff || '').replace(/'/g, '');
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
