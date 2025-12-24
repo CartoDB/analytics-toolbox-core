@@ -18,12 +18,8 @@ let diff = argv.diff || [];
 if (typeof diff === 'string' && diff.length > 0) {
     const trimmed = diff.trim();
 
-    // Debug: Show what format we received
-    if (process.env.DEBUG_DIFF) {
-        console.error('[DEBUG] Raw diff input:', JSON.stringify(diff));
-        console.error('[DEBUG] After trim:', JSON.stringify(trimmed));
-        console.error('[DEBUG] Starts with [?:', trimmed.startsWith('['));
-    }
+    // Always log diff input for debugging (will help identify issues)
+    console.error('[DIFF-DEBUG] Input type:', typeof diff, '| length:', diff.length, '| first 100 chars:', diff.substring(0, 100));
 
     if (trimmed.startsWith('[')) {
         try {
@@ -31,21 +27,20 @@ if (typeof diff === 'string' && diff.length > 0) {
             if (Array.isArray(parsed)) {
                 const original = diff;
                 diff = parsed.join(' ');
-
-                if (process.env.DEBUG_DIFF) {
-                    console.error('[DEBUG] Parsed as JSON array, length:', parsed.length);
-                    console.error('[DEBUG] Converted to:', JSON.stringify(diff));
-                }
+                console.error('[DIFF-DEBUG] Parsed JSON array with', parsed.length, 'files → converted to space-separated string');
             } else {
                 console.error('[WARN] JSON parsed but not an array:', typeof parsed);
             }
         } catch (e) {
-            console.error('[WARN] JSON parse failed:', e.message);
-            // Continue with legacy string format
+            console.error('[WARN] JSON parse failed:', e.message, '| treating as legacy format');
         }
-    } else if (process.env.DEBUG_DIFF) {
-        console.error('[DEBUG] Not JSON format, using as-is');
+    } else {
+        console.error('[DIFF-DEBUG] Not JSON format (doesn\'t start with [), using as legacy format');
     }
+} else if (diff === '') {
+    console.error('[DIFF-DEBUG] Empty diff - will build all');
+} else {
+    console.error('[DIFF-DEBUG] No diff provided (type:', typeof diff, ') - will build all');
 }
 
 const fileExtension = argv.fileExtension || '.test.js';
@@ -66,16 +61,22 @@ if (diff.length) {
     const patternModulesSql = /clouds\/bigquery\/modules\/sql\/([^\s]*?)\//g;
     const patternModulesTest = /clouds\/bigquery\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
+
+    console.error('[DIFF-DEBUG] Checking patterns against diff...');
     if (diffAll) {
+        console.error('[DIFF-DEBUG] ✓ Matched "build all" pattern - will test ALL modules');
         all = diffAll;
     } else {
         const modulesSql = [...diff.matchAll(patternModulesSql)].map(m => m[1]);
         const modulesTest = [...diff.matchAll(patternModulesTest)].map(m => m[1]);
         const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
+        console.error('[DIFF-DEBUG] Extracted modules from diff:', diffModulesFilter.length > 0 ? diffModulesFilter.join(', ') : '(none)');
         if (diffModulesFilter) {
             modulesFilter = diffModulesFilter;
         }
     }
+} else {
+    console.error('[DIFF-DEBUG] Diff is empty, will test ALL modules');
 }
 
 // Extract functions
