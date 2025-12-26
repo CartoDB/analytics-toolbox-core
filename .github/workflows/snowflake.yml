@@ -36,8 +36,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
-        with:
-          FORMAT: json
       - name: Auth google
         uses: google-github-actions/auth@v2
         with:
@@ -86,8 +84,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
-        with:
-          FORMAT: json
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -113,8 +109,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
-        with:
-          FORMAT: json
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -142,8 +136,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
-        with:
-          FORMAT: json
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -174,8 +166,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
-        with:
-          FORMAT: json
       - name: Setup node
         uses: actions/setup-node@v1
         with:
