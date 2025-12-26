@@ -31,8 +31,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Check diff
-        uses: technote-space/get-diff-action@v4
       - name: Set RS_PREFIX for releases
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
@@ -52,6 +50,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
+      - name: Fix apt sources for Debian Buster
+        run: |
+          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
           apt-get update

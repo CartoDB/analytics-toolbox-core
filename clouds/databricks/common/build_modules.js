@@ -14,7 +14,7 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
-const diff = argv.diff || '';
+const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
