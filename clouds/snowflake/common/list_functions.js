@@ -12,7 +12,7 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const modulename = argv._[0];
 const moduledir = path.resolve('test', modulename);
-let diff = argv.diff || [];
+const diff = argv.diff || [];
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);

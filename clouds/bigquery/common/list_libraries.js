@@ -13,7 +13,7 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
-let diff = argv.diff || [];
+const diff = argv.diff || [];
 const nodeps = argv.nodeps;
 const makelib = argv.makelib;
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];

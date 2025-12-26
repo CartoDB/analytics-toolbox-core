@@ -11,7 +11,7 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDir = '.';
-let diff = argv.diff || [];
+const diff = argv.diff || [];
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
