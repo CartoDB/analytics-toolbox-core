@@ -16,31 +16,19 @@ let diff = argv.diff || [];
 
 // Parse JSON format from get-diff-action v6
 if (typeof diff === 'string' && diff.length > 0) {
-    const trimmed = diff.trim();
-
-    // Always log diff input for debugging (will help identify issues)
-    console.error('[DIFF-DEBUG] Input type:', typeof diff, '| length:', diff.length, '| first 100 chars:', diff.substring(0, 100));
-
-    if (trimmed.startsWith('[')) {
-        try {
+    try {
+        const trimmed = diff.trim();
+        if (trimmed.startsWith('[')) {
             const parsed = JSON.parse(trimmed);
             if (Array.isArray(parsed)) {
-                const original = diff;
+                // Convert JSON array to space-separated string (existing format)
                 diff = parsed.join(' ');
-                console.error('[DIFF-DEBUG] Parsed JSON array with', parsed.length, 'files → converted to space-separated string');
-            } else {
-                console.error('[WARN] JSON parsed but not an array:', typeof parsed);
             }
-        } catch (e) {
-            console.error('[WARN] JSON parse failed:', e.message, '| treating as legacy format');
         }
-    } else {
-        console.error('[DIFF-DEBUG] Not JSON format (doesn\'t start with [), using as legacy format');
+    } catch (e) {
+        // If JSON parsing fails, treat as legacy string format
+        // This maintains backward compatibility
     }
-} else if (diff === '') {
-    console.error('[DIFF-DEBUG] Empty diff - will build all');
-} else {
-    console.error('[DIFF-DEBUG] No diff provided (type:', typeof diff, ') - will build all');
 }
 
 const fileExtension = argv.fileExtension || '.test.js';
@@ -61,22 +49,16 @@ if (diff.length) {
     const patternModulesSql = /clouds\/bigquery\/modules\/sql\/([^\s]*?)\//g;
     const patternModulesTest = /clouds\/bigquery\/modules\/test\/([^\s]*?)\//g;
     const diffAll = patternsAll.some(p => diff.match(p));
-
-    console.error('[DIFF-DEBUG] Checking patterns against diff...');
     if (diffAll) {
-        console.error('[DIFF-DEBUG] ✓ Matched "build all" pattern - will test ALL modules');
         all = diffAll;
     } else {
         const modulesSql = [...diff.matchAll(patternModulesSql)].map(m => m[1]);
         const modulesTest = [...diff.matchAll(patternModulesTest)].map(m => m[1]);
         const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
-        console.error('[DIFF-DEBUG] Extracted modules from diff:', diffModulesFilter.length > 0 ? diffModulesFilter.join(', ') : '(none)');
         if (diffModulesFilter) {
             modulesFilter = diffModulesFilter;
         }
     }
-} else {
-    console.error('[DIFF-DEBUG] Diff is empty, will test ALL modules');
 }
 
 // Extract functions
