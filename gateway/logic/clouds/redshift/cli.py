@@ -191,16 +191,22 @@ def get_package_version() -> str:
     """
     Read package version from clouds/redshift/version file
 
+    Handles two directory structures:
+    1. Development: analytics-toolbox/core/gateway/logic/clouds/redshift/cli.py
+                    analytics-toolbox/clouds/redshift/version
+    2. Package:     carto-at-redshift-X.Y.Z/logic/clouds/redshift/cli.py
+                    carto-at-redshift-X.Y.Z/clouds/redshift/version
+
     Returns:
         Version string (e.g., '1.11.2'), or '0.0.0' if file not found
     """
-    # cli.py is in: core/gateway/logic/clouds/redshift/cli.py
-    # Version file is in: analytics-toolbox-root/clouds/redshift/version
-    # From cli.py: go up 5 levels to get to core/, then up 1 more to analytics-toolbox/
     current_file = Path(__file__).resolve()
-    # current_file: .../core/gateway/logic/clouds/redshift/cli.py
-    analytics_toolbox_root = current_file.parent.parent.parent.parent.parent.parent
-    version_file = analytics_toolbox_root / "clouds" / "redshift" / "version"
+    # current_file: .../logic/clouds/redshift/cli.py
+
+    # Try package structure first (3 levels up from cli.py)
+    # logic/clouds/redshift/cli.py -> package_root
+    package_root = current_file.parent.parent.parent.parent
+    version_file = package_root / "clouds" / "redshift" / "version"
 
     if version_file.exists():
         try:
@@ -211,9 +217,25 @@ def get_package_version() -> str:
         except Exception as e:
             logger.warning(f"Failed to read version from {version_file}: {e}")
             return "0.0.0"
-    else:
-        logger.warning(f"Version file not found: {version_file}")
-        return "0.0.0"
+
+    # Try development structure (6 levels up from cli.py)
+    # core/gateway/logic/clouds/redshift/cli.py -> analytics-toolbox-root
+    dev_root = current_file.parent.parent.parent.parent.parent.parent
+    version_file = dev_root / "clouds" / "redshift" / "version"
+
+    if version_file.exists():
+        try:
+            with open(version_file, "r") as f:
+                version = f.readline().strip()
+                logger.debug(f"Read package version from {version_file}: {version}")
+                return version
+        except Exception as e:
+            logger.warning(f"Failed to read version from {version_file}: {e}")
+            return "0.0.0"
+
+    # Not found in either location
+    logger.debug(f"Version file not found in package or development structure")
+    return "0.0.0"
 
 
 def get_cluster_identifier_and_region() -> tuple:

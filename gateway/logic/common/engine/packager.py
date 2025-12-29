@@ -59,6 +59,7 @@ class PackageBuilder:
 
         # Build package structure
         self._create_logic_dir(functions, package_dir)
+        self._create_version_file(package_dir)
         self._create_documentation(package_dir, functions)
         self._apply_extra_customizations(package_dir, production, functions)
 
@@ -300,6 +301,25 @@ class PackageBuilder:
                     lib_dst.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(init_src, lib_dst)
                     logger.debug(f"  Copied required __init__.py for {module_name}/")
+
+    def _create_version_file(self, package_dir: Path):
+        """
+        Create version file in package for version tracking.
+
+        Creates clouds/{cloud}/version file so the CLI can read package version
+        even if the package ZIP file is renamed by users.
+
+        Args:
+            package_dir: Package directory
+        """
+        # Create clouds/redshift/version (or other cloud)
+        version_dir = ensure_dir(package_dir / "clouds" / self.cloud.value)
+        version_file = version_dir / "version"
+
+        with open(version_file, "w") as f:
+            f.write(f"{self.version}\n")
+
+        logger.info(f"Created version file: {self.version}")
 
     def _create_scripts_dir(self, package_dir: Path, production: bool):
         """
