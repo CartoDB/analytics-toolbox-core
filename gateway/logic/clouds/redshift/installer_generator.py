@@ -151,18 +151,14 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo()
 
     auth_method = None
+
+    # Priority 1: CLI arguments (highest priority)
     if aws_profile:
         auth_method = "profile"
     elif aws_access_key_id and aws_secret_access_key:
         auth_method = "explicit"
-    elif os.getenv("AWS_PROFILE"):
-        auth_method = "env_profile"
-        aws_profile = os.getenv("AWS_PROFILE")
-    elif os.getenv("AWS_ACCESS_KEY_ID"):
-        auth_method = "env_explicit"
-        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
-        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-        aws_session_token = os.getenv("AWS_SESSION_TOKEN")
+
+    # Priority 2: Interactive mode - ALWAYS prompt (even if env vars exist)
     elif not non_interactive:
         method_choice = click.prompt(  # noqa: E501
             "Select method",
@@ -175,8 +171,27 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             auth_method = "explicit"
         elif method_choice == "3":
             auth_method = "env"
+            # Read from environment variables if available
+            if os.getenv("AWS_PROFILE"):
+                aws_profile = os.getenv("AWS_PROFILE")
+                auth_method = "env_profile"
+            elif os.getenv("AWS_ACCESS_KEY_ID"):
+                aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+                aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+                aws_session_token = os.getenv("AWS_SESSION_TOKEN")
+                auth_method = "env_explicit"
         elif method_choice == "4":
             auth_method = "iam_role"
+
+    # Priority 3: Non-interactive mode - check env vars, then fallback to IAM
+    elif os.getenv("AWS_PROFILE"):
+        auth_method = "env_profile"
+        aws_profile = os.getenv("AWS_PROFILE")
+    elif os.getenv("AWS_ACCESS_KEY_ID"):
+        auth_method = "env_explicit"
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+        aws_session_token = os.getenv("AWS_SESSION_TOKEN")
     else:
         # Non-interactive with no auth - assume IAM role
         auth_method = "iam_role"
