@@ -446,15 +446,21 @@ Version: {self.version}
 ## Quick Start
 
 ```bash
-# 1. Extract and setup
-cd dist && unzip carto-at-{self.cloud.value}-{self.version}.zip
+# 1. Extract the package (if not auto-extracted by your browser)
+unzip carto-at-{self.cloud.value}-{self.version}.zip
+
+# 2. Navigate to package directory
 cd carto-at-{self.cloud.value}-{self.version}
+
+# 3. Setup Python environment
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r scripts/requirements.txt
 
-# 2. Run interactive installer
+# 4. Run interactive installer
 python scripts/install.py
 ```
+
+**Note**: On macOS, browsers may auto-extract the ZIP. If the folder already exists, skip step 1.
 
 ## Prerequisites
 
