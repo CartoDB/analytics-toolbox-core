@@ -34,13 +34,40 @@ import sys
 import os
 from pathlib import Path
 
-def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, show_default=True):
-    """Prompt for value if not provided via CLI argument"""
+def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, show_default=True, required=True):
+    """
+    Prompt for value if not provided via CLI argument.
+
+    Args:
+        value: Pre-provided value (from CLI args)
+        prompt_text: Text to display in prompt
+        default: Default value if user enters nothing
+        hide_input: Hide input (for passwords)
+        show_default: Show default value in prompt
+        required: If True, re-prompt until non-empty value provided
+
+    Returns:
+        Trimmed string value (never has leading/trailing whitespace)
+    """
+    # If value already provided via CLI, trim and return
     if value:
-        return value
-    return click.prompt(  # noqa: E501
-        prompt_text, default=default, hide_input=hide_input, show_default=show_default
-    )
+        return value.strip()
+
+    # Interactive prompt with validation
+    while True:
+        result = click.prompt(  # noqa: E501
+            prompt_text, default=default, hide_input=hide_input, show_default=show_default
+        )
+
+        # Always trim the result
+        result = result.strip() if result else ""
+
+        # Validate non-empty if required
+        if required and not result:
+            click.secho("  ✗ This field is required. Please enter a value.", fg='red')
+            continue
+
+        return result
 
 @click.command()
 @click.option('--aws-region', help='AWS region (e.g., us-east-1)')
@@ -205,13 +232,13 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     else:
         aws_region = prompt_if_not_provided(
             aws_region, "AWS Region (leave empty for 'us-east-1')",
-            default="us-east-1", show_default=False
+            default="us-east-1", show_default=False, required=False
         )
 
     if auth_method == "profile" and not non_interactive:
         aws_profile = prompt_if_not_provided(
             aws_profile, "AWS Profile (leave empty for 'default')",
-            default="default", show_default=False
+            default="default", show_default=False, required=False
         )
     if auth_method == "profile":
         click.secho(f"✓ Using AWS profile: {aws_profile}", fg="green")
@@ -228,7 +255,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
                     "AWS Session Token (optional - for temporary credentials)",
                     default="",
                     show_default=False
-                ) or None
+                )
+                aws_session_token = aws_session_token.strip() if aws_session_token else None
         click.secho("✓ Using explicit AWS credentials", fg="green")
     elif auth_method == "env" or auth_method == "env_profile" or auth_method == "env_explicit":
         click.secho("✓ Using AWS credentials from environment variables", fg="green")
@@ -244,7 +272,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             rs_lambda_prefix,
             "Lambda function prefix (leave empty for 'carto-at-')",
             default="carto-at-",
-            show_default=False
+            show_default=False,
+            required=False
         )
 
     if not rs_lambda_execution_role and not non_interactive:
@@ -261,7 +290,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             "Lambda Execution Role ARN (leave empty to auto-create)",
             default="",
             show_default=False
-        ) or None
+        )
+        rs_lambda_execution_role = rs_lambda_execution_role.strip() if rs_lambda_execution_role else None
 
     if rs_lambda_execution_role:
         click.secho(f"✓ Using existing role: {rs_lambda_execution_role}", fg='green')
@@ -327,7 +357,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             "Redshift IAM Role ARN (leave empty to auto-create)",
             default="",
             show_default=False
-        ) or ""
+        )
+        rs_lambda_invoke_role = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else ""
 
     if rs_lambda_invoke_role:
         click.secho(f"✓ Using existing role: {rs_lambda_invoke_role}", fg='green')
@@ -638,6 +669,7 @@ if __name__ == '__main__':
                 default='carto',
                 show_default=False
             )
+            rs_schema = rs_schema.strip() if rs_schema else 'carto'
             if validate_sql_identifier(rs_schema, "schema name"):
                 break
             click.secho(
