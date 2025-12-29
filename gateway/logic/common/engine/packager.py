@@ -460,7 +460,8 @@ pip install -r scripts/requirements.txt
 python scripts/install.py
 ```
 
-**Note**: On macOS, browsers may auto-extract the ZIP. If the folder already exists, skip step 1.
+**Note**: On macOS, browsers may auto-extract the ZIP. If the folder already
+exists, skip step 1.
 
 ## Prerequisites
 

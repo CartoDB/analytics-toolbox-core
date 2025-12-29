@@ -234,7 +234,7 @@ def get_package_version() -> str:
             return "0.0.0"
 
     # Not found in either location
-    logger.debug(f"Version file not found in package or development structure")
+    logger.debug("Version file not found in package or development structure")
     return "0.0.0"
 
 
