@@ -5,19 +5,20 @@ on:
     branches:
       - main
     paths:
+      - "gateway/**"
       - "clouds/redshift/**"
       - ".github/workflows/redshift.yml"
   pull_request:
     paths:
+      - "gateway/**"
       - "clouds/redshift/**"
       - ".github/workflows/redshift.yml"
   workflow_dispatch:
   workflow_call:
 
 env:
-  NODE_VERSION: 14
-  PYTHON2_VERSION: 2.7.18
-  PYTHON3_VERSION: 3.8.18
+  NODE_VERSION: 20.19
+  PYTHON_VERSION: 3.10.13
   VIRTUALENV_VERSION: 20.15.1
   GCLOUD_VERSION: 500.0.0
 
@@ -25,15 +26,15 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
-    container: python:2.7.18-buster
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
-      RS_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
       RS_HOST: ${{ secrets.RS_HOST_CI }}
       RS_DATABASE: ${{ secrets.RS_DATABASE_CI }}
       RS_USER: ${{ secrets.RS_USER_CI }}
       RS_PASSWORD: ${{ secrets.RS_PASSWORD_CI }}
-      RS_BUCKET: ${{ secrets.RS_BUCKET_CI }}
+      RS_LAMBDA_EXECUTION_ROLE: ${{ secrets.RS_LAMBDA_EXECUTION_ROLE_CI }}
+      RS_LAMBDA_INVOKE_ROLE: ${{ secrets.RS_LAMBDA_INVOKE_ROLE_CI }}
+      AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
     steps:
@@ -41,6 +42,16 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
+      - name: Generate deployment prefix
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-4)
+          SHORT_RUN=$(echo ${{ github.run_id }} | tail -c 4)
+          echo "RS_PREFIX=ci_${SHORT_SHA}_${SHORT_RUN}_" >> $GITHUB_ENV
+          echo "RS_LAMBDA_PREFIX=ci${SHORT_SHA}${SHORT_RUN}-" >> $GITHUB_ENV
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -49,18 +60,18 @@ jobs:
         run: npm install -g yarn
       - name: Fix apt sources for Debian Buster
         run: |
-          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
-          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
-          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+          sudo sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sudo sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' | sudo tee /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get -y install rsync zip unzip curl glibc-source groff less
+          sudo apt-get update
+          sudo apt-get -y install rsync zip unzip curl glibc-source groff less
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
-          ./aws/install
+          sudo ./aws/install --update
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -69,19 +80,21 @@ jobs:
           aws-access-key-id: ${{ secrets.RS_AWS_ACCESS_KEY_ID_CI }}
           aws-secret-access-key: ${{ secrets.RS_AWS_SECRET_ACCESS_KEY_CI }}
           aws-region: ${{ secrets.RS_REGION_CI }}
-      - name: Run linter and tests
+      - name: Run linter
+        run: make lint cloud=redshift
+      - name: Run deploy
+        run: make deploy cloud=redshift diff="$GIT_DIFF"
+      - name: Run test
+        run: make test cloud=redshift diff="$GIT_DIFF"
+      - name: Run remove
+        if: always()
         run: |
-          cd clouds/redshift
-          make lint && \
-          make deploy diff="$GIT_DIFF" && \
-          make test diff="$GIT_DIFF" && \
-          make remove
+          make remove cloud=redshift drop-schema=1
 
   deploy-internal:
     if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-24.04
-    container: python:2.7.18-buster
     timeout-minutes: 20
     strategy:
       matrix:
@@ -90,16 +103,16 @@ jobs:
             database: RS_DATABASE_CD
             user: RS_USER_CD
             password: RS_PASSWORD_CD
-            bucket: RS_BUCKET_CD
             region: RS_REGION_CD
+            roles: RS_ROLES_CD
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CD
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CD
           - host: RS_HOST_CI
             database: RS_DATABASE_CI
             user: RS_USER_CI
             password: RS_PASSWORD_CI
-            bucket: RS_BUCKET_CI
             region: RS_REGION_CI
+            roles: RS_ROLES_CI
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CI
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CI
     env:
@@ -107,15 +120,21 @@ jobs:
       RS_DATABASE: ${{ secrets[matrix.database] }}
       RS_USER: ${{ secrets[matrix.user] }}
       RS_PASSWORD: ${{ secrets[matrix.password] }}
-      RS_BUCKET: ${{ secrets[matrix.bucket] }}
       RS_REGION: ${{ secrets[matrix.region] }}
+      RS_ROLES: ${{ secrets[matrix.roles] }}
+      AWS_REGION: ${{ secrets[matrix.region] }}
       AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key_id] }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
+      RS_LAMBDA_PREFIX: carto-at-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -124,18 +143,18 @@ jobs:
         run: npm install -g yarn
       - name: Fix apt sources for Debian Buster
         run: |
-          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
-          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
-          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+          sudo sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sudo sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' | sudo tee /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get -y install rsync zip unzip curl glibc-source groff less
+          sudo apt-get update
+          sudo apt-get -y install rsync zip unzip curl glibc-source groff less
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
-          ./aws/install
+          sudo ./aws/install --update
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -146,14 +165,12 @@ jobs:
           aws-region: ${{ env.RS_REGION }}
       - name: Run deploy
         run: |
-          cd clouds/redshift
-          make deploy diff="$GIT_DIFF" production=1
+          make deploy cloud=redshift production=1
 
   publish:
     if: github.ref_name == 'stable'
     needs: test
     runs-on: ubuntu-24.04
-    container: python:2.7.18-buster
     timeout-minutes: 10
     env:
       PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/redshift
@@ -161,6 +178,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -171,18 +192,18 @@ jobs:
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Fix apt sources for Debian Buster
         run: |
-          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
-          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
-          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+          sudo sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sudo sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' | sudo tee /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get -y install rsync zip unzip curl glibc-source groff less
+          sudo apt-get update
+          sudo apt-get -y install rsync zip unzip curl glibc-source groff less
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
-          ./aws/install
+          sudo ./aws/install --update
       - name: Auth google
         uses: google-github-actions/auth@v2
         with:
@@ -196,12 +217,8 @@ jobs:
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
       - name: Create package
         run: |
-          cd clouds/redshift
-          make create-package
+          make create-package cloud=redshift production=1
       - name: Publish package
         run: |
-          cd clouds/redshift
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-redshift-latest.zip
-          gsutil -h "Content-Type:application/zip" -m cp build/libs/*.zip ${{ env.PACKAGE_BUCKET }}/latest/libs/
-          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/carto-at-redshift-*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-redshift-latest.zip

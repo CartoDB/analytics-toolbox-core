@@ -8,13 +8,24 @@ The *CARTO Analytics Toolbox* is a set of UDFs and Stored Procedures to unlock S
 
 This repo contains the core open-source modules of the toolbox. CARTO offers a set of premium modules that are available for CARTO users.
 
-## Getting started
+## Repository Structure
+
+The Analytics Toolbox has two parallel components:
+
+1. **Gateway** (`gateway/`): Lambda-based Python functions deployed to AWS Lambda
+   - All deployment logic in `gateway/logic/`
+   - Open-source functions in `gateway/functions/`
+
+2. **Clouds** (`clouds/{cloud}/`): Native SQL UDFs specific to each cloud platform
+   - BigQuery, Snowflake, Redshift, Postgres, Databricks
+
+## Getting Started
 
 Using the functions on this project depends on the Datawarehouse you are using. In BigQuery and Snowflake you can access them directly as a shared resources without having to install them, for the rest you will have to install them locally on your database.
 
-### BigQuery
+#### BigQuery
 
-You can use directly the functions as they are globally shared in the US region.
+You can use the functions directly as they're globally shared in the US region:
 
 ```sql
 SELECT `carto-os.carto.H3_CENTER`('84390cbffffffff')
@@ -26,11 +37,11 @@ If you need to use them from the Europe region use:
 SELECT `carto-os-eu.carto.H3_CENTER`('84390cbffffffff')
 ```
 
-If you need to install them on your own VPC or in a different region, follow the instructions later on.
+If you need to install them in your own VPC or a different region, see the cloud-specific documentation below.
 
-### Snowflake
+#### Snowflake
 
-The easiest way to start using these functions is to add them to your Datawarehouse through the [Snowflake Marketplace](https://www.snowflake.com/datasets/carto-analytics-toolbox/). Go there and install it using theregular methods. After that you should be able to use them on the location you have installed them. For example try:
+The easiest way to start using these functions is to add them to your Datawarehouse through the [Snowflake Marketplace](https://www.snowflake.com/datasets/carto-analytics-toolbox/). Go there and install it using the regular methods. After that you should be able to use them on the location you have installed them. For example try:
 
 ```sql
 SELECT carto_os.carto.H3_FROMGEOGPOINT(ST_POINT(-3.7038, 40.4168), 4)
@@ -54,7 +65,42 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 
 ## Development
 
-| Cloud | Development |
+### Gateway Functions (Lambda-based)
+
+For developing and deploying Lambda-based Python functions:
+
+**Documentation:**
+- **[gateway/README.md](gateway/README.md)** - User-friendly guide for creating functions
+- **[CLAUDE.md](CLAUDE.md)** - Complete technical documentation
+
+**Quick Start:**
+
+```bash
+cd gateway
+
+# Setup
+make venv
+cp .env.template .env
+# Edit .env with your credentials
+
+# Build and test
+make build cloud=redshift
+make test-unit cloud=redshift
+
+# Deploy
+make deploy cloud=redshift
+```
+
+**All deployment logic lives in `gateway/logic/`:**
+- `logic/common/engine/` - Catalog, validators, packagers
+- `logic/clouds/redshift/` - Redshift CLI and SQL generation
+- `logic/platforms/aws-lambda/` - Lambda deployment
+
+### Cloud Functions (Native SQL)
+
+For cloud-specific native SQL UDFs, see the cloud-specific READMEs:
+
+| Cloud | Development Guide |
 |---|---|
 | BigQuery | [README.md](./clouds/bigquery/README.md) |
 | Snowflake | [README.md](./clouds/snowflake/README.md) |
@@ -62,11 +108,36 @@ Right now the only way to get access the Analytics toolbox is by installing it d
 | Postgres | [README.md](./clouds/postgres/README.md) |
 | Databricks | [README.md](./clouds/databricks/README.md) |
 
-### Useful make commands
+### Useful Commands
 
-To run tests, switch to a specific cloud directory. For example, Showflake: `cd clouds/snowflake`.  
+**Gateway functions:**
 
+```bash
+cd gateway
+
+# Build functions (required before testing)
+make build cloud=redshift
+
+# Run tests
+make test-unit cloud=redshift
+make test-integration cloud=redshift
+
+# Deploy
+make deploy cloud=redshift
+
+# Lint
+make lint
+make lint-fix
+
+# Create distribution package
+make create-package cloud=redshift
 ```
+
+**Cloud functions:**
+
+Switch to a specific cloud directory (e.g., `cd clouds/snowflake`):
+
+```bash
 # All tests
 make test
 
@@ -77,8 +148,15 @@ make test modules=h3,transformations
 # Specific function(s)
 make test functions=H3_POLYFILL
 make test functions=H3_POLYFILL,ST_BUFFER
+
+# Deploy
+make deploy
 ```
 
 ## Contribute
 
-This project is public. We are more than happy of receiving feedback and contributions. Feel free to open a ticket with a bug, a doubt or a discussion, or open a pull request with a fix or a new feature.
+This project is open source. We're happy to receive feedback and contributions! Feel free to:
+- Open a ticket with a bug report, question, or discussion
+- Submit a pull request with a fix or new feature
+
+For technical details and architecture, see [CLAUDE.md](CLAUDE.md).

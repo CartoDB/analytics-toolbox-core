@@ -21,10 +21,10 @@ def test_centermedian_success():
             ST_GeomFromText('{lines[3].rstrip()}')))"""
     )
 
-    assert str(results[0][0]) == 'POINT(4.82410599215 45.7653117302)'
-    assert str(results[0][1]) == 'POINT(26.3841869726 19.0088147377)'
-    assert str(results[0][2]) == 'POINT(-92.2112940392 33.5479292546)'
-    assert str(results[0][3]) == 'POINT(-3.79058763366 37.781928957)'
+    assert str(results[0][0]) == 'POINT(4.82410599214598 45.7653117301782)'
+    assert str(results[0][1]) == 'POINT(26.3841869726432 19.008814737733)'
+    assert str(results[0][2]) == 'POINT(-92.2112940392043 33.5479292546488)'
+    assert str(results[0][3]) == 'POINT(-3.79058763366227 37.7819289570441)'
 
 
 def test_centermedian_none():
@@ -62,6 +62,6 @@ def test_centermedian_read_from_table_success():
 
     results = cursor.fetchall()
 
-    assert str(results[0][0]) == 'POINT(4.82410599215 45.7653117302)'
-    assert str(results[1][0]) == 'POINT(26.3841869726 19.0088147377)'
-    assert str(results[2][0]) == 'POINT(-92.2112940392 33.5479292546)'
+    assert str(results[0][0]) == 'POINT(4.82410599214598 45.7653117301782)'
+    assert str(results[1][0]) == 'POINT(26.3841869726432 19.008814737733)'
+    assert str(results[2][0]) == 'POINT(-92.2112940392043 33.5479292546488)'
