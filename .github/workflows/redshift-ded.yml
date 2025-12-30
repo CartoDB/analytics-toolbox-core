@@ -56,18 +56,18 @@ jobs:
         run: npm install -g yarn
       - name: Fix apt sources for Debian Buster
         run: |
-          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
-          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
-          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+          sudo sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sudo sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' | sudo tee /etc/apt/apt.conf.d/99no-check-valid
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get -y install rsync zip unzip curl glibc-source groff less
+          sudo apt-get update
+          sudo apt-get -y install rsync zip unzip curl glibc-source groff less
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
-          ./aws/install
+          sudo ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
