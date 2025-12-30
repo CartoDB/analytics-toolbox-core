@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.0] - 2025-12-30
+
+- chore: update get diff version (#570)
+- feat: python udf deprecation scaffolding (#563, #571, #572)
+
 ## [1.1.3] - 2025-04-30
 
 - chore(clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)

@@ -4,6 +4,13 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2025-12-30
+
+- chore(sf): update Snowflake authentication to use RSA key pair [sc-527122] (#568)
+- fix(db): handle diff modules without tests and fix diff parsing (#569)
+- chore(bq,sf,rs,pg,db): update get diff version (#570)
+- feat(rs): python udf deprecation scaffolding (#563, #571, #572)
+
 ## 2025-11-26
 
 - chore(sf): increase test timeout from 40000 to 50000 (#558)
