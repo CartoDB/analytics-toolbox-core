@@ -386,48 +386,60 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
         (None means deploy ALL functions)
     """
     try:
-        # Get git repository root
-        result = subprocess.run(
-            ["git", "rev-parse", "--show-toplevel"],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        git_root = Path(result.stdout.strip())
-        logger.debug(f"Git repository root: {git_root}")
-
-        # Determine base branch to compare against
-        # Try origin/main first, fall back to main, then master
-        base_branch = None
-        for branch in ["origin/main", "main", "origin/master", "master"]:
+        # Check if GIT_DIFF environment variable is set (from GitHub Actions)
+        git_diff_env = os.getenv("GIT_DIFF", "").strip()
+        if git_diff_env:
+            logger.debug("Using GIT_DIFF environment variable")
+            # GIT_DIFF contains space-separated file paths (may have quotes)
+            # Remove quotes and split by spaces
+            modified_files = [
+                f.strip().strip("'\"")
+                for f in git_diff_env.split()
+                if f.strip().strip("'\"")
+            ]
+            logger.debug(f"Found {len(modified_files)} files in GIT_DIFF")
+            git_root = None  # Will be determined if needed
+        else:
+            # Fallback: Run git diff command
+            # Get git repository root
             result = subprocess.run(
-                ["git", "rev-parse", "--verify", branch],
+                ["git", "rev-parse", "--show-toplevel"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            git_root = Path(result.stdout.strip())
+            logger.debug(f"Git repository root: {git_root}")
+
+            # Determine base branch from environment or default
+            base_branch = os.getenv("BASE_BRANCH", "origin/main")
+
+            # Verify branch exists
+            result = subprocess.run(
+                ["git", "rev-parse", "--verify", base_branch],
                 capture_output=True,
                 text=True,
                 cwd=git_root,
             )
-            if result.returncode == 0:
-                base_branch = branch
-                break
 
-        if not base_branch:
-            logger.warning(
-                "Could not determine base branch (tried origin/main, main). "
-                "Deploying all functions."
+            if result.returncode != 0:
+                logger.warning(
+                    f"Base branch '{base_branch}' not found. "
+                    "Deploying all functions."
+                )
+                return None
+
+            logger.debug(f"Comparing against base branch: {base_branch}")
+
+            # Get git diff against base branch (run from git root)
+            result = subprocess.run(
+                ["git", "diff", "--name-only", base_branch, "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=git_root,
             )
-            return None
-
-        logger.debug(f"Comparing against base branch: {base_branch}")
-
-        # Get git diff against base branch (run from git root)
-        result = subprocess.run(
-            ["git", "diff", "--name-only", base_branch, "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True,
-            cwd=git_root,
-        )
-        modified_files = result.stdout.strip().split("\n")
+            modified_files = result.stdout.strip().split("\n")
 
         if not modified_files or modified_files == [""]:
             logger.warning("No modified files found in git diff")
@@ -455,6 +467,17 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
                     return None
 
         modified_functions = set()
+
+        # Get git root if not already set (needed for path resolution)
+        if git_root is None:
+            result = subprocess.run(
+                ["git", "rev-parse", "--show-toplevel"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            git_root = Path(result.stdout.strip())
+            logger.debug(f"Git repository root: {git_root}")
 
         # Check if any modified files are in function directories
         # Git diff returns paths relative to repo root
