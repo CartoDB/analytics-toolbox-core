@@ -107,6 +107,8 @@ jobs:
             roles: RS_ROLES_CD
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CD
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CD
+            lambda_execution_role: RS_LAMBDA_EXECUTION_ROLE_CD
+            lambda_invoke_role: RS_LAMBDA_INVOKE_ROLE_CD
           - host: RS_HOST_CI
             database: RS_DATABASE_CI
             user: RS_USER_CI
@@ -115,6 +117,8 @@ jobs:
             roles: RS_ROLES_CI
             aws_access_key_id: RS_AWS_ACCESS_KEY_ID_CI
             aws_secret_access_key: RS_AWS_SECRET_ACCESS_KEY_CI
+            lambda_execution_role: RS_LAMBDA_EXECUTION_ROLE_CI
+            lambda_invoke_role: RS_LAMBDA_INVOKE_ROLE_CI
     env:
       RS_HOST: ${{ secrets[matrix.host] }}
       RS_DATABASE: ${{ secrets[matrix.database] }}
@@ -126,6 +130,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key_id] }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
       RS_LAMBDA_PREFIX: carto-at-
+      RS_LAMBDA_EXECUTION_ROLE: ${{ secrets[matrix.lambda_execution_role] }}
+      RS_LAMBDA_INVOKE_ROLE: ${{ secrets[matrix.lambda_invoke_role] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
