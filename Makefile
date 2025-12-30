@@ -140,17 +140,15 @@ endif
 	@echo "Deploying Analytics Toolbox to $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@echo "Deploying gateway (Lambda functions)..."
 	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
+		echo "Deploying gateway (Lambda functions)..."; \
 		cd gateway && $(MAKE) deploy cloud=$(cloud) \
 			$(if $(modules),modules=$(modules),) \
 			$(if $(functions),functions=$(functions),) \
 			$(if $(production),production=$(production),) \
 			$(if $(diff),diff='$(diff)',); \
-	else \
-		echo "  ⓘ Skipping gateway (not supported for $(cloud))"; \
+		echo ""; \
 	fi
-	@echo ""
 	@echo "Deploying clouds (SQL UDFs)..."
 	@if [ -d "clouds/$(cloud)" ]; then \
 		cd clouds/$(cloud) && $(MAKE) deploy \
@@ -187,10 +185,14 @@ endif
 	@if [ -d "clouds/$(cloud)" ]; then \
 		cd clouds/$(cloud) && $(MAKE) remove; \
 	fi
-	@echo ""
-	@echo "Removing gateway..."
-	@cd gateway && $(MAKE) remove cloud=$(cloud) || echo "  ⚠️  Gateway removal (best effort)"
-	@echo ""
+	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
+		echo ""; \
+		echo "Removing gateway..."; \
+		cd gateway && $(MAKE) remove cloud=$(cloud) || echo "  ⚠️  Gateway removal (best effort)"; \
+		echo ""; \
+	else \
+		echo ""; \
+	fi
 	@echo "========================================================================"
 	@echo "✓ Removal complete"
 	@echo "========================================================================"
@@ -214,9 +216,14 @@ endif
 	@echo "Running tests for $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@(cd gateway && $(MAKE) test-unit cloud=$(cloud))
-	@(cd gateway && $(MAKE) test-integration cloud=$(cloud))
+	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
+		echo "Running gateway tests..."; \
+		(cd gateway && $(MAKE) test-unit cloud=$(cloud)); \
+		(cd gateway && $(MAKE) test-integration cloud=$(cloud)); \
+		echo ""; \
+	fi
 	@if [ -d "clouds/$(cloud)" ]; then \
+		echo "Running clouds tests..."; \
 		(cd clouds/$(cloud) && $(MAKE) test); \
 	fi
 	@echo ""
@@ -243,8 +250,13 @@ endif
 	@echo "Linting $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@cd gateway && $(MAKE) lint cloud=$(cloud) || echo "  ⚠️  Gateway lint warnings (non-blocking)"
+	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
+		echo "Linting gateway..."; \
+		cd gateway && $(MAKE) lint cloud=$(cloud) || echo "  ⚠️  Gateway lint warnings (non-blocking)"; \
+		echo ""; \
+	fi
 	@if [ -d "clouds/$(cloud)" ]; then \
+		echo "Linting clouds..."; \
 		cd clouds/$(cloud) && $(MAKE) lint; \
 	fi
 	@echo ""
