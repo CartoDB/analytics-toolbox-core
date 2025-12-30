@@ -141,11 +141,15 @@ endif
 	@echo "========================================================================"
 	@echo ""
 	@echo "Deploying gateway (Lambda functions)..."
-	@cd gateway && $(MAKE) deploy cloud=$(cloud) \
-		$(if $(modules),modules=$(modules),) \
-		$(if $(functions),functions=$(functions),) \
-		$(if $(production),production=$(production),) \
-		$(if $(diff),diff='$(diff)',)
+	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
+		cd gateway && $(MAKE) deploy cloud=$(cloud) \
+			$(if $(modules),modules=$(modules),) \
+			$(if $(functions),functions=$(functions),) \
+			$(if $(production),production=$(production),) \
+			$(if $(diff),diff='$(diff)',); \
+	else \
+		echo "  ⓘ Skipping gateway (not supported for $(cloud))"; \
+	fi
 	@echo ""
 	@echo "Deploying clouds (SQL UDFs)..."
 	@if [ -d "clouds/$(cloud)" ]; then \
