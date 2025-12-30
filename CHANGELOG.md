@@ -4,6 +4,15 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2025-11-26
+
+- chore(sf): increase test timeout from 40000 to 50000 (#558)
+- chore(sf): update node version (#559)
+- chore(sf): allow slow tests in snowflake (#561)
+- feat(db): Reimplement ATC/AT Databricks scaffolding [sc-512318] (#562)
+- fix(sf): update turf version (#564)
+- chore(db): update ci/cd env for databricks (#565)
+
 ## 2025-04-30
 
 - chore(bq,sf,rs|clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)

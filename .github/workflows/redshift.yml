@@ -41,7 +41,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
       - name: Generate deployment prefix
         run: |
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-4)
@@ -58,6 +58,20 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
+      - name: Fix apt sources for Debian Buster
+        run: |
+          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get -y install rsync zip unzip curl glibc-source groff less
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -116,7 +130,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -127,6 +141,20 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
         run: npm install -g yarn
+      - name: Fix apt sources for Debian Buster
+        run: |
+          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get -y install rsync zip unzip curl glibc-source groff less
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Configure AWS Credentials
@@ -162,6 +190,20 @@ jobs:
         run: npm install -g yarn
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Fix apt sources for Debian Buster
+        run: |
+          sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
+          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get -y install rsync zip unzip curl glibc-source groff less
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
       - name: Auth google
         uses: google-github-actions/auth@v2
         with:
