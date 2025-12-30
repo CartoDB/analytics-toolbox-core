@@ -370,9 +370,11 @@ def deploy_external_function(
 
 def get_modified_functions(function_roots: List[Path]) -> Set[str]:
     """
-    Get list of function names that have been modified in git diff against base branch.
+    Get list of function names that have been modified.
 
-    Compares current branch against origin/main (or main) to find modified files.
+    Reads from GIT_DIFF environment variable (set by CI/CD workflows or Makefile).
+    If GIT_DIFF is not set, returns None to deploy ALL functions.
+
     If infrastructure files (Makefiles, logic/, platforms/) are modified,
     returns None to indicate ALL functions should be deployed.
 
@@ -386,51 +388,23 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
         (None means deploy ALL functions)
     """
     try:
-        # Get git repository root
-        result = subprocess.run(
-            ["git", "rev-parse", "--show-toplevel"],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        git_root = Path(result.stdout.strip())
-        logger.debug(f"Git repository root: {git_root}")
-
-        # Determine base branch to compare against
-        # Try origin/main first, fall back to main, then master
-        base_branch = None
-        for branch in ["origin/main", "main", "origin/master", "master"]:
-            result = subprocess.run(
-                ["git", "rev-parse", "--verify", branch],
-                capture_output=True,
-                text=True,
-                cwd=git_root,
-            )
-            if result.returncode == 0:
-                base_branch = branch
-                break
-
-        if not base_branch:
-            logger.warning(
-                "Could not determine base branch (tried origin/main, main). "
-                "Deploying all functions."
-            )
+        # Read GIT_DIFF environment variable (set by CI workflows or Makefile)
+        git_diff_env = os.getenv("GIT_DIFF", "").strip()
+        if not git_diff_env:
+            logger.debug("GIT_DIFF not set, deploying all functions")
             return None
 
-        logger.debug(f"Comparing against base branch: {base_branch}")
+        logger.debug("Using GIT_DIFF environment variable")
+        # GIT_DIFF contains space-separated file paths (may have quotes)
+        # Remove quotes and split by spaces
+        modified_files = [
+            f.strip().strip("'\"")
+            for f in git_diff_env.split()
+            if f.strip().strip("'\"")
+        ]
 
-        # Get git diff against base branch (run from git root)
-        result = subprocess.run(
-            ["git", "diff", "--name-only", base_branch, "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True,
-            cwd=git_root,
-        )
-        modified_files = result.stdout.strip().split("\n")
-
-        if not modified_files or modified_files == [""]:
-            logger.warning("No modified files found in git diff")
+        if not modified_files:
+            logger.warning("No modified files found in GIT_DIFF")
             return set()
 
         logger.debug(f"Found {len(modified_files)} modified files")
@@ -455,6 +429,16 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
                     return None
 
         modified_functions = set()
+
+        # Get git root for path resolution
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        git_root = Path(result.stdout.strip())
+        logger.debug(f"Git repository root: {git_root}")
 
         # Check if any modified files are in function directories
         # Git diff returns paths relative to repo root
@@ -489,7 +473,7 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
         return modified_functions
 
     except subprocess.CalledProcessError as e:
-        logger.warning(f"Failed to get git diff: {e}")
+        logger.warning(f"Failed to get git root: {e}")
         logger.warning("Deploying all functions as fallback")
         return None
     except FileNotFoundError:
