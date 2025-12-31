@@ -1,0 +1,9 @@
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: qb_pf
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    external_function_template: code/redshift.sql
+    config:
+      max_batch_rows: 10000

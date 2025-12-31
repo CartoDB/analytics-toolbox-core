@@ -16,6 +16,11 @@ let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
 
+// Track if modules came from diff (not explicitly requested)
+// Modules from diff may not have tests (e.g., infrastructure modules like gateway)
+// Explicitly requested modules should be validated
+let modulesFromDiff = false;
+
 // Convert diff to modules/functions
 if (diff.length) {
     const patternsAll = [
@@ -36,6 +41,7 @@ if (diff.length) {
         const diffModulesFilter = [...new Set(modulesSql.concat(modulesTest))];
         if (diffModulesFilter) {
             modulesFilter = diffModulesFilter;
+            modulesFromDiff = true;
         }
     }
 }
@@ -63,12 +69,16 @@ modules.forEach(module => {
 });
 
 // Check filters
-modulesFilter.forEach(m => {
-    if (!functions.map(fn => fn.module).includes(m)) {
-        process.stderr.write(`ERROR: Module not found ${m}\n`);
-        process.exit(1);
-    }
-});
+// Only validate explicitly requested modules (not modules from diff)
+// Modules from diff may be infrastructure modules without tests (e.g., gateway)
+if (!modulesFromDiff) {
+    modulesFilter.forEach(m => {
+        if (!functions.map(fn => fn.module).includes(m)) {
+            process.stderr.write(`ERROR: Module not found ${m}\n`);
+            process.exit(1);
+        }
+    });
+}
 functionsFilter.forEach(f => {
     if (!functions.map(fn => fn.name).includes(f)) {
         process.stderr.write(`ERROR: Function not found ${f}\n`);

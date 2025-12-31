@@ -1,0 +1,19 @@
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: voronoi
+    code_file: code/lambda/python/handler.py
+    requirements_file: code/lambda/python/requirements.txt
+    shared_libs:
+    - processing
+    config:
+      max_batch_rows: 1000
+      timeout: 120
+parameters:
+- name: points
+  type: string
+- name: bbox
+  type: string
+- name: voronoi_type
+  type: string
+returns: string

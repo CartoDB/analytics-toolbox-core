@@ -1,6 +1,6 @@
 # CARTO Analytics Toolbox for Redshift
 
-The Analytics Toolbox for Redshift contains SQL functions and Python libraries. The functions are deployed in a schema called `carto` inside a specific database. The Python libraries are installed in the Redshift cluster, so they can be used by all the databases in the cluster. An S3 bucket is required as intermediate storage to create the libraries. In Redshift, the functions can be used with tables of the same database, but different schemas.
+The Analytics Toolbox for Redshift contains SQL functions. The functions are deployed in a schema called `carto` inside a specific database. In Redshift, the functions can be used with tables of the same database, but different schemas.
 
 Note: Redshift UDFs only support Python2 but the Python Redshift connector is only available in Python3. Therefore, both Python versions are required to develop the toolbox.
 
@@ -26,18 +26,13 @@ RS_HOST=<cluster>.<account>.<region>.redshift.amazonaws.com
 RS_DATABASE=<database>
 RS_USER=<user>
 RS_PASSWORD=<password>
-RS_BUCKET=s3://<bucket> or s3://<bucket>/<folder>
 AWS_ACCESS_KEY_ID=<access-key-id>
 AWS_SECRET_ACCESS_KEY=<secret-access-key>
 ```
 
 ## Structure
 
-- `common`
-- `libraries`
-  - `python`: Python library
-    - `lib`: contains the Python code
-    - `test`: contains the library tests
+- `common`: Common build scripts and utilities
 - `modules`
   - `doc`: contains the functions' documentation
   - `sql`: contains the functions' SQL code
@@ -47,18 +42,15 @@ AWS_SECRET_ACCESS_KEY=<secret-access-key>
 
 - `make help`: shows the commands available in the Makefile
 - `make lint`: runs a linter (flake8) and fixes the trivial issues (brunette)
-- `make build`: builds the final SQL scripts and libraries (zip)
-- `make deploy`: builds and deploys the libraries in the Redshift cluster, and SQL scripts in the Redshift database
-- `make test`: runs the library tests locally and the modules tests with the Redshift database (pytest)
-- `make remove`: removes all the libraries and SQL scripts from the Redshift cluster and database
+- `make build-modules`: builds the final SQL scripts
+- `make deploy`: builds and deploys SQL scripts to the Redshift database
+- `make test`: runs the modules tests with the Redshift database (pytest)
+- `make remove`: removes SQL functions from the Redshift database
 - `make clean`: cleans the installed dependencies and generated files locally
-- `make create-package`: creates the installation package in the dist folder (zip)
-
-Make commands can be run also inside `libraries/python` and `modules` folders, or be called like `make ***-libraries` and `make ***-modules`, respectively.
 
 **Filtering**
 
-Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-modules`, `deploy-modules`, and `test-modules` can be filtered by the following. All the filters are additive:
 
 - `diff`: list of changed files
 - `modules`: list of modules to filter
@@ -70,22 +62,4 @@ Example:
 make build-modules diff=modules/sql/quadbin/QUADBIN_RESOLUTION.sql
 make deploy-modules modules=quadbin,constructors
 make test-modules functions=ST_MAKEENVELOPE
-make create-package modules=quadbin
-```
-
-Command `deploy-libraries` can be filtered with `library=carto` to deploy only the carto Python library and skip the dependencies, which don't change as often.
-
-Example:
-
-```
-make deploy-libraries library=carto
-```
-
-Command `test-libraries` can be filtered by setting the `test` variable with a path of the test file. It supports passing the name of the test.
-
-Example:
-
-```
-make test-libraries test=test_constructors.py
-make test-libraries test=test_processing.py::test_check_polygon_intersection
 ```

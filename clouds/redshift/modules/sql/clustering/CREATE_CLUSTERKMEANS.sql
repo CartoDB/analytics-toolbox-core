@@ -1,17 +1,6 @@
-----------------------------
--- Copyright (C) 2022 CARTO
-----------------------------
-
-CREATE OR REPLACE FUNCTION @@RS_SCHEMA@@.__CLUSTERKMEANSTABLE
-(geom VARCHAR(MAX), numberofClusters INT)
-RETURNS VARCHAR(MAX)
-STABLE
-AS $$
-    from @@RS_LIBRARY@@.clustering import clusterkmeanstable
-    if geom is None:
-        return None
-    return clusterkmeanstable(geom, numberofClusters)
-$$ LANGUAGE plpythonu;
+--------------------------------
+-- Copyright (C) 2022-2025 CARTO
+--------------------------------
 
 CREATE OR REPLACE PROCEDURE @@RS_SCHEMA@@.CREATE_CLUSTERKMEANS
 (

@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://carto.com/schemas/analytics-toolbox/function.schema.json",
+  "title": "CARTO Analytics Toolbox Function",
+  "description": "Schema for defining Analytics Toolbox functions",
+  "type": "object",
+  "required": ["clouds"],
+  "properties": {
+    "function_type": {
+      "type": "string",
+      "enum": ["scalar", "aggregate", "procedure", "table"],
+      "description": "Type of database function"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author or team name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what the function does"
+    },
+    "arguments": {
+      "type": "array",
+      "description": "Function input arguments",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Argument name"
+          },
+          "type": {
+            "type": "string",
+            "description": "Argument data type"
+          },
+          "description": {
+            "type": "string",
+            "description": "Argument description"
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["name", "type"],
+      "description": "Function output specification",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Output name"
+        },
+        "type": {
+          "type": "string",
+          "description": "Output data type"
+        },
+        "description": {
+          "type": "string",
+          "description": "Output description"
+        }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "description": "Usage examples",
+      "items": {
+        "type": "object",
+        "required": ["description", "arguments", "output"],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "arguments": {
+            "type": "array"
+          },
+          "output": {}
+        }
+      }
+    },
+    "clouds": {
+      "type": "object",
+      "description": "Cloud-specific implementations",
+      "minProperties": 1,
+      "patternProperties": {
+        "^(redshift|bigquery|snowflake|databricks)$": {
+          "type": "object",
+          "required": ["type", "code_file"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["lambda", "cloud_run", "snowpark", "udf"],
+              "description": "Platform type for this cloud"
+            },
+            "code_file": {
+              "type": "string",
+              "description": "Path to implementation code file"
+            },
+            "requirements_file": {
+              "type": "string",
+              "description": "Path to requirements/dependencies file"
+            },
+            "external_function_template": {
+              "type": "string",
+              "description": "Path to SQL template for external function"
+            },
+            "config": {
+              "type": "object",
+              "description": "Platform-specific configuration"
+            }
+          }
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "description": "Testing configuration",
+      "properties": {
+        "dataset": {
+          "type": "string",
+          "description": "Test dataset name"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Test timeout in seconds"
+        }
+      }
+    }
+  }
+}
