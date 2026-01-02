@@ -108,7 +108,9 @@ jobs:
             version: ${{ env.GCLOUD_VERSION }}
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
       - name: Create distribution package
-        run: make create-package cloud=databricks
+        run: |
+          cd clouds/databricks
+          make create-package
       - name: Publish package to storage
         run: |
           cd clouds/databricks
