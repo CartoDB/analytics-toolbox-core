@@ -661,9 +661,8 @@ python scripts/install.py \\
 
 ## Support
 
-- **Documentation**: https://docs.carto.com/analytics-toolbox
+- **Documentation**: https://docs.carto.com/analytics-toolbox-redshift
 - **Support**: support@carto.com
-- **GitHub**: https://github.com/CartoDB/analytics-toolbox
 """
 
         with open(package_dir / "README.md", "w") as f:
