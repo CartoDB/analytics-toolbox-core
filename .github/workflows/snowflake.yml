@@ -76,15 +76,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - environment: CD
-            account: SF_ACCOUNT_CD
+          - account: SF_ACCOUNT_CD
             database: SF_DATABASE_CD
             user: SF_USER_CD
             password: SF_PASSWORD_CD
             role: SF_ROLE_CD
             use_rsa_key: false
-          - environment: CI
-            account: SF_ACCOUNT_CI
+          - account: SF_ACCOUNT_CI
             database: SF_DATABASE_CI
             user: SF_USER_CI
             role: SF_ROLE_CI
