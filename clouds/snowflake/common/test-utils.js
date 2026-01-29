@@ -2,6 +2,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const snowflake = require('snowflake-sdk');
+const truncate = require('@turf/truncate').default;
+const booleanEqual = require('@turf/boolean-equal').default;
 
 snowflake.configure({ insecureConnect: true });
 
@@ -134,6 +136,15 @@ function arrayDictsKeysToLower (array) {
     });
 }
 
+function isGeometryCloseTo(actual, expected, precision = 6) {
+    // Normalize both geometries to the same precision
+    const normalizedActual = truncate(actual, { precision, mutate: false });
+    const normalizedExpected = truncate(expected, { precision, mutate: false });
+
+    // Use Turf's boolean-equal for geometric comparison
+    return booleanEqual(normalizedActual, normalizedExpected);
+}
+
 module.exports = {
     runQuery,
     createTable,
@@ -145,5 +156,6 @@ module.exports = {
     readJSONFixture,
     writeJSONFixture,
     writeNDJSONFixture,
-    arrayDictsKeysToLower
+    arrayDictsKeysToLower,
+    isGeometryCloseTo
 }
