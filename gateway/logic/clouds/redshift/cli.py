@@ -448,18 +448,13 @@ def get_modified_functions(
         # Pattern: clouds/<cloud>/modules/test/<module>/
         # If ANY SQL modules changed, deploy ALL Lambdas
         # (avoids cross-module dependency issues)
-        pattern_modules_sql = re.compile(
-            rf"clouds/{cloud}/modules/sql/([^/]+)/"
-        )
-        pattern_modules_test = re.compile(
-            rf"clouds/{cloud}/modules/test/([^/]+)/"
-        )
+        pattern_modules_sql = re.compile(rf"clouds/{cloud}/modules/sql/([^/]+)/")
+        pattern_modules_test = re.compile(rf"clouds/{cloud}/modules/test/([^/]+)/")
 
         for file_path in modified_files:
             # Check SQL module changes
-            if (
-                pattern_modules_sql.search(file_path)
-                or pattern_modules_test.search(file_path)
+            if pattern_modules_sql.search(file_path) or pattern_modules_test.search(
+                file_path
             ):
                 logger.info(
                     f"SQL module file modified: {file_path}\n"
