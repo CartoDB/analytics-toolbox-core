@@ -443,36 +443,32 @@ def get_modified_functions(
                     )
                     return (None, set())
 
-        # Extract module names from SQL and test paths (mirrors build_modules.js logic)
+        # Check for SQL module changes (mirrors build_modules.js logic)
         # Pattern: clouds/<cloud>/modules/sql/<module>/
         # Pattern: clouds/<cloud>/modules/test/<module>/
-        changed_modules = set()
-        pattern_modules_sql = re.compile(rf"clouds/{cloud}/modules/sql/([^/]+)/")
-        pattern_modules_test = re.compile(rf"clouds/{cloud}/modules/test/([^/]+)/")
+        # If ANY SQL modules changed, deploy ALL Lambdas
+        # (avoids cross-module dependency issues)
+        pattern_modules_sql = re.compile(
+            rf"clouds/{cloud}/modules/sql/([^/]+)/"
+        )
+        pattern_modules_test = re.compile(
+            rf"clouds/{cloud}/modules/test/([^/]+)/"
+        )
 
         for file_path in modified_files:
             # Check SQL module changes
-            match = pattern_modules_sql.search(file_path)
-            if match:
-                module_name = match.group(1)
-                changed_modules.add(module_name)
-                logger.debug(f"Detected changed module from SQL: {module_name}")
-                continue
+            if (
+                pattern_modules_sql.search(file_path)
+                or pattern_modules_test.search(file_path)
+            ):
+                logger.info(
+                    f"SQL module file modified: {file_path}\n"
+                    f"Deploying ALL Lambda functions "
+                    f"(SQL module change detected)"
+                )
+                return (None, set())
 
-            # Check test module changes
-            match = pattern_modules_test.search(file_path)
-            if match:
-                module_name = match.group(1)
-                changed_modules.add(module_name)
-                logger.debug(f"Detected changed module from test: {module_name}")
-
-        # Always include 'gateway' module (shared infrastructure Lambdas)
-        if changed_modules:
-            changed_modules.add("gateway")
-            logger.info(
-                f"Detected changes in modules: {', '.join(sorted(changed_modules))}\n"
-                f"Will deploy Lambda functions for these modules only"
-            )
+        changed_modules = set()
 
         modified_functions = set()
 
