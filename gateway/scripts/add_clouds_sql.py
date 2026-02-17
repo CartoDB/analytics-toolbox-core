@@ -127,7 +127,11 @@ def should_include_function(
 
 def copy_additional_files(source_cloud_dir: Path, target_cloud_dir: Path):
     """
-    Copy additional SQL files (VERSION.sql, DROP_FUNCTIONS.sql, etc.)
+    Copy additional SQL files from common/ directory
+
+    Note: DROP_FUNCTIONS.sql and VERSION.sql are already included in modules.sql
+    (prepended and appended by build_modules.js), so we skip copying them as
+    standalone files to avoid redundancy.
 
     Args:
         source_cloud_dir: Source clouds directory (e.g., clouds/redshift/)
@@ -137,7 +141,14 @@ def copy_additional_files(source_cloud_dir: Path, target_cloud_dir: Path):
     if not common_dir.exists():
         return
 
+    # Skip files that are already included in modules.sql
+    skip_files = {'DROP_FUNCTIONS.sql', 'VERSION.sql'}
+
     for sql_file in common_dir.glob('*.sql'):
+        if sql_file.name in skip_files:
+            print(f'  ⓘ Skipping {sql_file.name} (already in modules.sql)')
+            continue
+
         target_file = target_cloud_dir / sql_file.name
         target_file.write_text(sql_file.read_text())
         print(f'  ✓ Copied {sql_file.name}')

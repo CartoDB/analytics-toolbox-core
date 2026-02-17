@@ -10,8 +10,7 @@ class TestQuadintToparentIntegration:
 
     def test_toparent_success(self):
         """Test that parent matches expected parent at lower resolution"""
-        result = run_query(
-            """WITH zoomContext AS(
+        result = run_query("""WITH zoomContext AS(
                 SELECT 1 AS zoom, -150 AS long, 60 AS lat UNION ALL
                 SELECT 2, 150, 60 UNION ALL
                 SELECT 3, -150, -60 UNION ALL
@@ -55,8 +54,7 @@ class TestQuadintToparentIntegration:
                 ) AS parent
                 FROM zoomContext
             )
-            WHERE parent != expectedParent;"""
-        )
+            WHERE parent != expectedParent;""")
 
         assert result == ()
 

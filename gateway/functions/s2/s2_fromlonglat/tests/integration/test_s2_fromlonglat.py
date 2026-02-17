@@ -8,8 +8,7 @@ here = os.path.dirname(__file__)
 @pytest.mark.integration
 def test_s2_fromlonglat():
     """Test S2_FROMLONGLAT with various coordinates and resolutions"""
-    results = run_query(
-        """WITH resContext AS(
+    results = run_query("""WITH resContext AS(
             SELECT 0 AS res, -150 AS long, 60 AS lat UNION ALL
             SELECT 1, -150, 60 UNION ALL
             SELECT 2, 150, 60 UNION ALL
@@ -43,8 +42,7 @@ def test_s2_fromlonglat():
             SELECT 30, -3, 40
         )
         SELECT @@RS_SCHEMA@@.S2_FROMLONGLAT(long, lat, res) as ids
-            FROM resContext;"""
-    )
+            FROM resContext;""")
 
     fixture_path = os.path.join(here, "fixtures/s2_fromlonglat_out.txt")
     with open(fixture_path, "r") as fixture_file:

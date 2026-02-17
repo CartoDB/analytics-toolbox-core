@@ -223,7 +223,7 @@ jobs:
             project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
       - name: Create package
         run: |
-          make create-package cloud=redshift production=1
+          make create-package cloud=redshift production=1 dropfirst=1
       - name: Publish package
         run: |
           gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/

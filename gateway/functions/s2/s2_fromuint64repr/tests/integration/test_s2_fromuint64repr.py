@@ -8,8 +8,7 @@ here = os.path.dirname(__file__)
 @pytest.mark.integration
 def test_s2_fromuint64repr():
     """Test S2_FROMUINT64REPR converts UINT64 string to cell IDs"""
-    results = run_query(
-        """WITH context AS(
+    results = run_query("""WITH context AS(
             SELECT '10376293541461622784' AS uint64_id UNION ALL
             SELECT '10664523917613334528' UNION ALL
             SELECT '10592466323575406592' UNION ALL
@@ -21,8 +20,7 @@ def test_s2_fromuint64repr():
             SELECT '10603566992969433088'
         )
         SELECT @@RS_SCHEMA@@.S2_FROMUINT64REPR(uint64_id) AS id
-        FROM context;"""
-    )
+        FROM context;""")
 
     fixture_path = os.path.join(here, "fixtures/s2_fromuint64repr_out.txt")
     with open(fixture_path, "r") as fixture_file:

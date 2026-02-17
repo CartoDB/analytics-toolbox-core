@@ -14,7 +14,6 @@ from lib.transformations import (
     remove_end_polygon_point,
 )
 
-
 __all__ = [
     "center_mean",
     "PRECISION",
