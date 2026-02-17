@@ -129,9 +129,9 @@ def copy_additional_files(source_cloud_dir: Path, target_cloud_dir: Path):
     """
     Copy additional SQL files from common/ directory
 
-    Note: DROP_FUNCTIONS.sql and VERSION.sql are already included in modules.sql
-    (prepended and appended by build_modules.js), so we skip copying them as
-    standalone files to avoid redundancy.
+    Note: VERSION.sql is already included in modules.sql (appended by build_modules.js),
+    so we skip copying it as a standalone file to avoid redundancy.
+    DROP_FUNCTIONS.sql is included as a standalone file for Phase 0.5 of the installer.
 
     Args:
         source_cloud_dir: Source clouds directory (e.g., clouds/redshift/)
@@ -142,7 +142,7 @@ def copy_additional_files(source_cloud_dir: Path, target_cloud_dir: Path):
         return
 
     # Skip files that are already included in modules.sql
-    skip_files = {'DROP_FUNCTIONS.sql', 'VERSION.sql'}
+    skip_files = {'VERSION.sql'}
 
     for sql_file in common_dir.glob('*.sql'):
         if sql_file.name in skip_files:

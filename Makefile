@@ -24,7 +24,7 @@ ifndef cloud
 	@echo "  modules=<modules>    Comma-separated modules to include (default: all)"
 	@echo "  functions=<funcs>    Comma-separated functions to include (default: all)"
 	@echo "  production=1         Production mode (exclude development functions)"
-	@echo "  dropfirst=1          Prepend DROP_FUNCTIONS to SQL (recommended for production)"
+	@echo "  dropfirst=1          Prepend DROP_FUNCTIONS to SQL (for development/testing)"
 	@echo "  output-dir=<dir>     Output directory (default: dist)"
 	@echo ""
 	@echo "Note: Version is read from clouds/<cloud>/version"
@@ -33,7 +33,7 @@ ifndef cloud
 	@echo "  make create-package cloud=redshift"
 	@echo "  make create-package cloud=redshift modules=quadbin"
 	@echo "  make create-package cloud=redshift functions=QUADBIN_POLYFILL,QUADBIN_KRING"
-	@echo "  make create-package cloud=redshift production=1 dropfirst=1"
+	@echo "  make create-package cloud=redshift production=1"
 	@exit 1
 endif
 	@# Validate cloud parameter

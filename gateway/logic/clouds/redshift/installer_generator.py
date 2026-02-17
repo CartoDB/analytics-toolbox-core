@@ -539,8 +539,70 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.secho("=" * 70, fg='cyan', bold=True)
     click.echo()
 
+    # Phase 0.5: Drop existing functions (if DROP_FUNCTIONS.sql exists)
+    drop_functions_path = Path(__file__).parent.parent / 'clouds' / 'redshift' / 'DROP_FUNCTIONS.sql'
+
+    if drop_functions_path.exists():
+        click.echo("\\n=== Phase 0.5: Preparing Schema (Dropping Existing Functions) ===\\n")
+
+        if not dry_run:
+            try:
+                import redshift_connector
+
+                # Connect to Redshift
+                host = rs_host
+                port = rs_port if rs_port else 5439
+                if ':' in rs_host:
+                    host_parts = rs_host.split(':')
+                    host = host_parts[0]
+                    port = int(host_parts[1])
+
+                conn = redshift_connector.connect(
+                    host=host,
+                    port=port,
+                    database=rs_database,
+                    user=rs_user,
+                    password=rs_password,
+                    ssl=rs_ssl if rs_ssl is not None else True
+                )
+
+                cursor = conn.cursor()
+
+                # Read DROP_FUNCTIONS.sql
+                drop_sql_content = drop_functions_path.read_text()
+
+                # Replace @@RS_SCHEMA@@ with user-provided schema
+                drop_sql_content = drop_sql_content.replace('@@RS_SCHEMA@@', rs_schema)
+
+                # Split and execute SQL statements
+                from sqlparse import split as sql_split
+                statements = [s.strip() for s in sql_split(drop_sql_content) if s.strip()]
+
+                click.echo(f"  Dropping existing functions in schema '{rs_schema}'...")
+
+                for stmt in statements:
+                    try:
+                        cursor.execute(stmt)
+                    except Exception as e:
+                        # Ignore errors (schema might not exist yet, no functions to drop)
+                        pass
+
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                click.secho("  ✓ Schema prepared (existing functions dropped)", fg='green')
+            except Exception as e:
+                # Non-fatal: schema might not exist yet, or no functions to drop
+                click.secho(f"  ⓘ Schema preparation skipped: {str(e)[:100]}", fg='yellow')
+                click.echo("     (This is normal for first-time installations)")
+        else:
+            click.secho("  [DRY RUN] Would drop existing functions", fg='yellow')
+    else:
+        click.echo("\\n=== Phase 0.5: No DROP_FUNCTIONS.sql found (skipping) ===\\n")
+
     # Phase 1 & 2: Deploy gateway (Lambdas + External Functions)
-    click.echo("Phase 1-2: Deploying gateway functions...")
+    click.echo("\\n=== Phase 1-2: Deploying Gateway Functions ===\\n")
     deploy_cmd = [
         sys.executable,
         '-m',
@@ -557,7 +619,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if dry_run:
         deploy_cmd.append('--dry-run')
 
-    click.echo(f"  Running: {' '.join(deploy_cmd)}")
+    click.echo(f"Running: {' '.join(deploy_cmd)}")
 
     if not dry_run:
         # Build environment with all configuration variables
@@ -600,9 +662,9 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             click.secho("\\n✗ Gateway deployment failed!", fg='red', bold=True)
             sys.exit(1)
 
-        click.secho("  ✓ Gateway functions deployed", fg='green')
+        click.secho("\\n✓ Gateway functions deployed", fg='green')
     else:
-        click.secho("  [DRY RUN] Would deploy gateway", fg='yellow')
+        click.secho("[DRY RUN] Would deploy gateway", fg='yellow')
 
     # Phase 3: Deploy clouds SQL (if exists)
     clouds_sql_path = Path(__file__).parent.parent / 'clouds' / 'redshift' / 'modules.sql'
