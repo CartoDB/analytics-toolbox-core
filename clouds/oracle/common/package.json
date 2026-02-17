@@ -1,0 +1,8 @@
+{
+    "license": "BSD-3-Clause",
+    "devDependencies": {
+        "eslint": "^8.22.0",
+        "markdownlint-cli": "^0.32.2",
+        "minimist": "1.2.6"
+    }
+}
