@@ -24,7 +24,6 @@ ifndef cloud
 	@echo "  modules=<modules>    Comma-separated modules to include (default: all)"
 	@echo "  functions=<funcs>    Comma-separated functions to include (default: all)"
 	@echo "  production=1         Production mode (exclude development functions)"
-	@echo "  dropfirst=1          Prepend DROP_FUNCTIONS to SQL (for development/testing)"
 	@echo "  output-dir=<dir>     Output directory (default: dist)"
 	@echo ""
 	@echo "Note: Version is read from clouds/<cloud>/version"
@@ -56,7 +55,6 @@ endif
 	echo "  Modules:     $(if $(modules),$(modules),all)"; \
 	echo "  Functions:   $(if $(functions),$(functions),all)"; \
 	echo "  Production:  $(if $(production),yes,no)"; \
-	echo "  Drop First:  $(if $(dropfirst),yes,no)"; \
 	echo "  Output:      $(OUTPUT_DIR)"; \
 	echo ""; \
 	$(MAKE) --no-print-directory _create-gateway-package VERSION=$$VERSION; \
@@ -104,7 +102,6 @@ _add-clouds-sql:
 		echo "  Building clouds SQL..."; \
 		(cd clouds/$(cloud) && RS_SCHEMA='@@RS_SCHEMA@@' $(MAKE) build-modules \
 			$(if $(production),production=1,) \
-			$(if $(dropfirst),dropfirst=1,) \
 			$(if $(modules),modules=$(modules),) \
 			$(if $(functions),functions=$(functions),)) || exit 1; \
 		python3 gateway/scripts/add_clouds_sql.py \
