@@ -46,7 +46,6 @@ sys.path.insert(0, str(platforms_path.parent))
 from deploy.deployer import LambdaDeployer  # noqa: E402
 from deploy.iam_manager import IAMRoleManager  # noqa: E402
 
-
 logger = setup_logger("redshift-cli")
 
 
@@ -741,6 +740,18 @@ def deploy_lambda(
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
     rs_lambda_execution_role = get_env_or_default("RS_LAMBDA_EXECUTION_ROLE")
 
+    # Validate Lambda prefix length upfront (before deployment starts)
+    # Redshift has a character limit for Lambda function names
+    if rs_lambda_prefix and len(rs_lambda_prefix) > 10:
+        prefix_len = len(rs_lambda_prefix)
+        logger.error(
+            f"\n✗ Lambda prefix too long: '{rs_lambda_prefix}' "
+            f"({prefix_len} chars)\n"
+            f"  Current prefix: {prefix_len} chars\n"
+            f"  Maximum allowed: 10 chars"
+        )
+        sys.exit(1)
+
     # Get AWS credentials
     aws_creds = get_aws_credentials()
 
@@ -955,6 +966,18 @@ def deploy_all(
     # AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY from env
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
+
+    # Validate Lambda prefix length upfront (before deployment starts)
+    # Redshift has a character limit for Lambda function names
+    if rs_lambda_prefix and len(rs_lambda_prefix) > 10:
+        prefix_len = len(rs_lambda_prefix)
+        logger.error(
+            f"\n✗ Lambda prefix too long: '{rs_lambda_prefix}' "
+            f"({prefix_len} chars)\n"
+            f"  Current prefix: {prefix_len} chars\n"
+            f"  Maximum allowed: 10 chars"
+        )
+        sys.exit(1)
 
     if dry_run:
         logger.info("[DRY RUN] Would deploy:")
@@ -1549,6 +1572,18 @@ def remove_all(
     aws_prof = get_env_or_default("AWS_PROFILE", aws_profile) if aws_profile else None
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
 
+    # Validate Lambda prefix length upfront
+    # Redshift has a character limit for Lambda function names
+    if rs_lambda_prefix and len(rs_lambda_prefix) > 10:
+        prefix_len = len(rs_lambda_prefix)
+        logger.error(
+            f"\n✗ Lambda prefix too long: '{rs_lambda_prefix}' "
+            f"({prefix_len} chars)\n"
+            f"  Current prefix: {prefix_len} chars\n"
+            f"  Maximum allowed: 10 chars"
+        )
+        sys.exit(1)
+
     # Get Redshift configuration
     rs_host = get_env_or_default("RS_HOST")
     rs_password = get_env_or_default("RS_PASSWORD")
@@ -2023,6 +2058,18 @@ def deploy_functions(
     rs_lambda_invoke_role = get_env_or_default("RS_LAMBDA_INVOKE_ROLE")
     rs_iam_role_arn = rs_lambda_invoke_role.strip() if rs_lambda_invoke_role else None
     rs_lambda_prefix = get_env_or_default("RS_LAMBDA_PREFIX", "carto-at-")
+
+    # Validate Lambda prefix length upfront (before deployment starts)
+    # Redshift has a character limit for Lambda function names
+    if rs_lambda_prefix and len(rs_lambda_prefix) > 10:
+        prefix_len = len(rs_lambda_prefix)
+        logger.error(
+            f"\n✗ Lambda prefix too long: '{rs_lambda_prefix}' "
+            f"({prefix_len} chars)\n"
+            f"  Current prefix: {prefix_len} chars\n"
+            f"  Maximum allowed: 10 chars"
+        )
+        sys.exit(1)
 
     # Resolve schema name (RS_SCHEMA has priority, then RS_PREFIX + "carto")
     rs_schema = resolve_redshift_schema()

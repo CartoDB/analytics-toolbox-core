@@ -19,7 +19,7 @@ def bbox(geometry):
 
 def generatepoints(geom, npoints):
     geom = load_geom(geom)
-    (x_min, x_max, y_min, y_max) = bbox(geom)
+    x_min, x_max, y_min, y_max = bbox(geom)
     degtorad = math.pi / 180.0
     radtodeg = 180.0 / math.pi
     siny_min = math.sin(y_min * degtorad)
