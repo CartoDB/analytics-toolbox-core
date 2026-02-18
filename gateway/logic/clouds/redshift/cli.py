@@ -7,9 +7,10 @@ import click
 import sys
 import subprocess
 import os
+import re
 import tempfile
 from pathlib import Path
-from typing import Optional, List, Set, Dict
+from typing import Optional, List, Set, Dict, Tuple
 from dotenv import load_dotenv
 from tqdm import tqdm
 
@@ -368,31 +369,40 @@ def deploy_external_function(
     logger.debug(f"✓ External function {schema}.{function_name.upper()} created")
 
 
-def get_modified_functions(function_roots: List[Path]) -> Set[str]:
+def get_modified_functions(
+    function_roots: List[Path], cloud: str
+) -> Tuple[Optional[Set[str]], Set[str]]:
     """
-    Get list of function names that have been modified.
+    Get list of function names and modules that have been modified.
 
     Reads from GIT_DIFF environment variable (set by CI/CD workflows or Makefile).
-    If GIT_DIFF is not set, returns None to deploy ALL functions.
+    If GIT_DIFF is not set, returns (None, set()) to deploy ALL functions.
 
     If infrastructure files (Makefiles, logic/, platforms/) are modified,
-    returns None to indicate ALL functions should be deployed.
+    returns (None, set()) to indicate ALL functions should be deployed.
 
-    Similar to the pattern in clouds/redshift/common/list_functions.js
+    Otherwise returns (modified_function_names, changed_module_names) where:
+    - modified_function_names: Lambda functions directly modified in gateway/functions/
+    - changed_module_names: Modules with SQL changes (e.g., 'lds', 'import')
+      'gateway' module is always included when any SQL module changes
+
+    Mirrors the logic in clouds/redshift/common/build_modules.js
 
     Args:
         function_roots: List of paths to function directories
+        cloud: Cloud platform name (e.g., 'redshift', 'snowflake', 'bigquery')
 
     Returns:
-        Set of modified function names, or None if infrastructure changed
-        (None means deploy ALL functions)
+        Tuple of (function_names, module_names):
+        - function_names: Set of function names or None (None means deploy ALL)
+        - module_names: Set of module names that changed
     """
     try:
         # Read GIT_DIFF environment variable (set by CI workflows or Makefile)
         git_diff_env = os.getenv("GIT_DIFF", "").strip()
         if not git_diff_env:
             logger.debug("GIT_DIFF not set, deploying all functions")
-            return None
+            return (None, set())
 
         logger.debug("Using GIT_DIFF environment variable")
         # GIT_DIFF contains space-separated file paths (may have quotes)
@@ -405,17 +415,22 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
 
         if not modified_files:
             logger.warning("No modified files found in GIT_DIFF")
-            return set()
+            return (set(), set())
 
         logger.debug(f"Found {len(modified_files)} modified files")
 
-        # Infrastructure paths that trigger full deployment
+        # Infrastructure paths that trigger full deployment (mirrors build_modules.js)
+        # These are global/shared infrastructure files
         infrastructure_patterns = [
             "Makefile",
             "logic/",
             "platforms/",
             ".github/workflows/",
             "requirements.txt",
+            f"clouds/{cloud}/common/",  # Shared utilities like build_modules.js
+            f"clouds/{cloud}/libraries/",  # Shared libraries
+            f"clouds/{cloud}/.*Makefile",  # Cloud Makefiles
+            f"clouds/{cloud}/version",  # Version changes
         ]
 
         # Check if infrastructure was modified
@@ -426,7 +441,29 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
                         f"Infrastructure file modified: {file_path}\n"
                         f"Deploying ALL functions (infrastructure change detected)"
                     )
-                    return None
+                    return (None, set())
+
+        # Check for SQL module changes (mirrors build_modules.js logic)
+        # Pattern: clouds/<cloud>/modules/sql/<module>/
+        # Pattern: clouds/<cloud>/modules/test/<module>/
+        # If ANY SQL modules changed, deploy ALL Lambdas
+        # (avoids cross-module dependency issues)
+        pattern_modules_sql = re.compile(rf"clouds/{cloud}/modules/sql/([^/]+)/")
+        pattern_modules_test = re.compile(rf"clouds/{cloud}/modules/test/([^/]+)/")
+
+        for file_path in modified_files:
+            # Check SQL module changes
+            if pattern_modules_sql.search(file_path) or pattern_modules_test.search(
+                file_path
+            ):
+                logger.info(
+                    f"SQL module file modified: {file_path}\n"
+                    f"Deploying ALL Lambda functions "
+                    f"(SQL module change detected)"
+                )
+                return (None, set())
+
+        changed_modules = set()
 
         modified_functions = set()
 
@@ -470,16 +507,16 @@ def get_modified_functions(function_roots: List[Path]) -> Set[str]:
                     # Path is not relative to this root
                     continue
 
-        return modified_functions
+        return (modified_functions, changed_modules)
 
     except subprocess.CalledProcessError as e:
         logger.warning(f"Failed to get git root: {e}")
         logger.warning("Deploying all functions as fallback")
-        return None
+        return (None, set())
     except FileNotFoundError:
         logger.warning("git command not found")
         logger.warning("Deploying all functions as fallback")
-        return None
+        return (None, set())
 
 
 @click.group()
@@ -877,14 +914,31 @@ def deploy_all(
 
     # Apply git diff filter
     if diff:
-        modified_functions = get_modified_functions(roots_to_load)
+        modified_functions, changed_modules = get_modified_functions(
+            roots_to_load, cloud
+        )
         if modified_functions is None:
             # Infrastructure changed - deploy all functions
             logger.info("Deploying ALL functions (infrastructure or fallback)")
         else:
-            # Only deploy modified functions
-            to_deploy = [f for f in to_deploy if f.name in modified_functions]
-            logger.info(f"Filtering by git diff: {len(modified_functions)} modified")
+            # Filter by:
+            # 1. Functions that were directly modified (in gateway/functions/)
+            # 2. Functions that belong to changed modules (from clouds/*/modules/sql/)
+            to_deploy = [
+                f
+                for f in to_deploy
+                if f.name in modified_functions or f.module in changed_modules
+            ]
+            if modified_functions:
+                logger.info(
+                    f"Filtering by git diff: {len(modified_functions)} "
+                    f"function(s) directly modified"
+                )
+            if changed_modules:
+                logger.info(
+                    f"Filtering by git diff: {len(changed_modules)} "
+                    f"module(s) changed: {', '.join(sorted(changed_modules))}"
+                )
 
     logger.info(f"Deploying {len(to_deploy)} functions")
 
