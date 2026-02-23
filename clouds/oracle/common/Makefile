@@ -10,27 +10,27 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-# ORACLE_SCHEMA is required - no default value
+# ORA_SCHEMA is required - no default value
 # Oracle schemas are tied to users (pre-created), so explicit naming is required
-export ORACLE_SCHEMA
+export ORA_SCHEMA
 
 .PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
-ifndef ORACLE_SCHEMA
-	$(error ORACLE_SCHEMA is undefined. Set in .env file (e.g., ORACLE_SCHEMA=DEV_CARTO or ORACLE_SCHEMA=CARTO))
+ifndef ORA_SCHEMA
+	$(error ORA_SCHEMA is undefined. Set in .env file (e.g., ORA_SCHEMA=DEV_CARTO or ORA_SCHEMA=CARTO))
 endif
-ifndef ORACLE_USER
-	$(error ORACLE_USER is undefined. Set in .env file)
+ifndef ORA_USER
+	$(error ORA_USER is undefined. Set in .env file)
 endif
-ifndef ORACLE_PASSWORD
-	$(error ORACLE_PASSWORD is undefined. Set in .env file)
+ifndef ORA_PASSWORD
+	$(error ORA_PASSWORD is undefined. Set in .env file)
 endif
-ifndef ORACLE_WALLET_ZIP
-	$(error ORACLE_WALLET_ZIP is undefined. Set base64-encoded wallet ZIP in .env file)
+ifndef ORA_WALLET_ZIP
+	$(error ORA_WALLET_ZIP is undefined. Set base64-encoded wallet ZIP in .env file)
 endif
-ifndef ORACLE_WALLET_PASSWORD
-	$(error ORACLE_WALLET_PASSWORD is undefined. Set wallet password in .env file)
+ifndef ORA_WALLET_PASSWORD
+	$(error ORA_WALLET_PASSWORD is undefined. Set wallet password in .env file)
 endif
 
 venv3:

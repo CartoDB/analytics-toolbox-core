@@ -26,11 +26,11 @@ jobs:
     runs-on: ubuntu-24.04-4cpus
     timeout-minutes: 55
     env:
-      ORACLE_SCHEMA: CI_${{ github.run_id }}_${{ github.run_attempt }}
-      ORACLE_USER: ${{ secrets.ORACLE_USER_CI }}
-      ORACLE_PASSWORD: ${{ secrets.ORACLE_PASSWORD_CI }}
-      ORACLE_WALLET_ZIP: ${{ secrets.ORACLE_WALLET_ZIP_CI }}
-      ORACLE_WALLET_PASSWORD: ${{ secrets.ORACLE_WALLET_PASSWORD_CI }}
+      ORA_SCHEMA: CI_${{ github.run_id }}_${{ github.run_attempt }}
+      ORA_USER: ${{ secrets.ORA_USER_CI }}
+      ORA_PASSWORD: ${{ secrets.ORA_PASSWORD_CI }}
+      ORA_WALLET_ZIP: ${{ secrets.ORA_WALLET_ZIP_CI }}
+      ORA_WALLET_PASSWORD: ${{ secrets.ORA_WALLET_PASSWORD_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -79,19 +79,19 @@ jobs:
     strategy:
       matrix:
         include:
-          - user: ORACLE_USER_CD
-            password: ORACLE_PASSWORD_CD
-            wallet_zip: ORACLE_WALLET_ZIP_CD
-            wallet_password: ORACLE_WALLET_PASSWORD_CD
-          - user: ORACLE_USER_CI
-            password: ORACLE_PASSWORD_CI
-            wallet_zip: ORACLE_WALLET_ZIP_CI
-            wallet_password: ORACLE_WALLET_PASSWORD_CI
+          - user: ORA_USER_CD
+            password: ORA_PASSWORD_CD
+            wallet_zip: ORA_WALLET_ZIP_CD
+            wallet_password: ORA_WALLET_PASSWORD_CD
+          - user: ORA_USER_CI
+            password: ORA_PASSWORD_CI
+            wallet_zip: ORA_WALLET_ZIP_CI
+            wallet_password: ORA_WALLET_PASSWORD_CI
     env:
-      ORACLE_USER: ${{ secrets[matrix.user] }}
-      ORACLE_PASSWORD: ${{ secrets[matrix.password] }}
-      ORACLE_WALLET_ZIP: ${{ secrets[matrix.wallet_zip] }}
-      ORACLE_WALLET_PASSWORD: ${{ secrets[matrix.wallet_password] }}
+      ORA_USER: ${{ secrets[matrix.user] }}
+      ORA_PASSWORD: ${{ secrets[matrix.password] }}
+      ORA_WALLET_ZIP: ${{ secrets[matrix.wallet_zip] }}
+      ORA_WALLET_PASSWORD: ${{ secrets[matrix.wallet_password] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

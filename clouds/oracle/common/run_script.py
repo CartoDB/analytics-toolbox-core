@@ -88,17 +88,17 @@ def parse_statement_info(statement):
 def execute_script(script_path):
     """Execute SQL script against Oracle."""
     # Get credentials from environment
-    user = os.getenv('ORACLE_USER')
-    password = os.getenv('ORACLE_PASSWORD')
-    wallet_zip = os.getenv('ORACLE_WALLET_ZIP')
-    wallet_password = os.getenv('ORACLE_WALLET_PASSWORD')
-    schema = os.getenv('ORACLE_SCHEMA', 'ADMIN')
+    user = os.getenv('ORA_USER')
+    password = os.getenv('ORA_PASSWORD')
+    wallet_zip = os.getenv('ORA_WALLET_ZIP')
+    wallet_password = os.getenv('ORA_WALLET_PASSWORD')
+    schema = os.getenv('ORA_SCHEMA', 'ADMIN')
 
     if not all([user, password, wallet_zip, wallet_password]):
         print(
             'ERROR: Missing Oracle credentials. '
-            'Set ORACLE_USER, ORACLE_PASSWORD, '
-            'ORACLE_WALLET_ZIP, ORACLE_WALLET_PASSWORD'
+            'Set ORA_USER, ORA_PASSWORD, '
+            'ORA_WALLET_ZIP, ORA_WALLET_PASSWORD'
         )
         sys.exit(1)
 
@@ -125,9 +125,9 @@ def execute_script(script_path):
         # Replace variables
         # Note: These are set by Makefile from version file and exports
         variables = {
-            'ORACLE_SCHEMA': schema,
-            'PACKAGE_VERSION': os.getenv('ORACLE_PACKAGE_VERSION'),
-            'VERSION_FUNCTION': os.getenv('ORACLE_VERSION_FUNCTION'),
+            'ORA_SCHEMA': schema,
+            'PACKAGE_VERSION': os.getenv('ORA_PACKAGE_VERSION'),
+            'VERSION_FUNCTION': os.getenv('ORA_VERSION_FUNCTION'),
         }
         sql = replace_variables(sql, variables)
 

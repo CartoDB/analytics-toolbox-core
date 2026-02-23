@@ -18,7 +18,7 @@ Future option: Uncomment the CARTO_ filter to only drop CARTO-prefixed objects.
 */
 
 -- Create procedure to drop all functions and procedures in schema
-CREATE OR REPLACE PROCEDURE @@ORACLE_SCHEMA@@.INTERNAL_DROP_FUNCTIONS
+CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS
 IS
     v_drop_command VARCHAR2(500);
     v_object_count NUMBER := 0;
@@ -26,7 +26,7 @@ IS
     v_error_count NUMBER := 0;
 BEGIN
     DBMS_OUTPUT.PUT_LINE('=== Dropping Analytics Toolbox Functions and Procedures ===');
-    DBMS_OUTPUT.PUT_LINE('Schema: @@ORACLE_SCHEMA@@');
+    DBMS_OUTPUT.PUT_LINE('Schema: @@ORA_SCHEMA@@');
     DBMS_OUTPUT.PUT_LINE('');
 
     -- Loop through all functions and procedures in the schema
@@ -34,7 +34,7 @@ BEGIN
     FOR rec IN (
         SELECT object_name, object_type
         FROM all_objects
-        WHERE owner = '@@ORACLE_SCHEMA@@'
+        WHERE owner = '@@ORA_SCHEMA@@'
           AND object_type IN ('FUNCTION', 'PROCEDURE')
           -- Future: Uncomment the following line to only drop CARTO-prefixed objects
           -- AND object_name LIKE 'CARTO_%'
@@ -46,7 +46,7 @@ BEGIN
         v_object_count := v_object_count + 1;
 
         BEGIN
-            v_drop_command := 'DROP ' || rec.object_type || ' @@ORACLE_SCHEMA@@.' || rec.object_name;
+            v_drop_command := 'DROP ' || rec.object_type || ' @@ORA_SCHEMA@@.' || rec.object_name;
             EXECUTE IMMEDIATE v_drop_command;
 
             v_success_count := v_success_count + 1;
@@ -68,7 +68,7 @@ BEGIN
 
     IF v_object_count = 0 THEN
         DBMS_OUTPUT.PUT_LINE('');
-        DBMS_OUTPUT.PUT_LINE('No Analytics Toolbox objects found in schema @@ORACLE_SCHEMA@@');
+        DBMS_OUTPUT.PUT_LINE('No Analytics Toolbox objects found in schema @@ORA_SCHEMA@@');
     END IF;
 END INTERNAL_DROP_FUNCTIONS;
 /
@@ -76,7 +76,7 @@ END INTERNAL_DROP_FUNCTIONS;
 -- Execute the procedure (drops all functions/procedures including itself)
 -- Pattern matches BigQuery: CALL `dataset.INTERNAL_DROP_FUNCTIONS`()
 BEGIN
-    @@ORACLE_SCHEMA@@.INTERNAL_DROP_FUNCTIONS;
+    @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS;
 END;
 /
 

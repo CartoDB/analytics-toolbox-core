@@ -8,10 +8,10 @@ SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
-export ORACLE_VERSION_FUNCTION ?= VERSION_CORE
-export ORACLE_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+export ORA_VERSION_FUNCTION ?= VERSION_CORE
+export ORA_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
-REPLACEMENTS = "ORACLE_SCHEMA ORACLE_VERSION_FUNCTION ORACLE_PACKAGE_VERSION"
+REPLACEMENTS = "ORA_SCHEMA ORA_VERSION_FUNCTION ORA_PACKAGE_VERSION"
 
 include $(COMMON_DIR)/Makefile
 
@@ -76,7 +76,7 @@ test: check venv3 $(NODE_MODULES_DEV)
 remove: venv3
 	echo "Removing Oracle modules..."
 ifdef drop-schema
-	echo "Dropping schema $(ORACLE_SCHEMA) with CASCADE..."
+	echo "Dropping schema $(ORA_SCHEMA) with CASCADE..."
 	$(VENV3_BIN)/python $(COMMON_DIR)/drop_schema.py
 else
 	echo "Dropping Analytics Toolbox functions only..."

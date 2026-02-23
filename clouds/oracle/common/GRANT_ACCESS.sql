@@ -12,28 +12,28 @@ so this helper procedure automates the granting process.
 Usage:
     -- Grant to a role (recommended)
     CREATE ROLE carto_analytics_user;
-    CALL @@ORACLE_SCHEMA@@.GRANT_CARTO_ACCESS('carto_analytics_user');
+    CALL @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS('carto_analytics_user');
     GRANT carto_analytics_user TO app_user;
 
     -- Grant to a specific user
-    CALL @@ORACLE_SCHEMA@@.GRANT_CARTO_ACCESS('app_user');
+    CALL @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS('app_user');
 
     -- Revoke existing grants first, then re-grant
-    CALL @@ORACLE_SCHEMA@@.GRANT_CARTO_ACCESS('carto_analytics_user', 'TRUE');
+    CALL @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS('carto_analytics_user', 'TRUE');
 
 Parameters:
     p_grantee        - Role or username to grant permissions to
     p_revoke_first   - 'TRUE' to revoke existing grants first, 'FALSE' otherwise (default: 'FALSE')
 
 Notes:
-    - Grants EXECUTE permission on all PROCEDURES and FUNCTIONS in @@ORACLE_SCHEMA@@
+    - Grants EXECUTE permission on all PROCEDURES and FUNCTIONS in @@ORA_SCHEMA@@
     - Excludes GRANT_CARTO_ACCESS itself (users don't need to grant permissions)
     - Uses dynamic SQL to iterate through all AT objects
     - Follows Oracle best practices for role-based access control
     - Requires ADMIN or sufficient privileges to grant permissions
 */
 
-CREATE OR REPLACE PROCEDURE @@ORACLE_SCHEMA@@.GRANT_CARTO_ACCESS(
+CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS(
     p_grantee VARCHAR2,
     p_revoke_first VARCHAR2 DEFAULT 'FALSE'
 )
@@ -46,7 +46,7 @@ IS
     v_revoke BOOLEAN := (UPPER(p_revoke_first) = 'TRUE');
 BEGIN
     DBMS_OUTPUT.PUT_LINE('=== Granting Analytics Toolbox Access ===');
-    DBMS_OUTPUT.PUT_LINE('Schema: @@ORACLE_SCHEMA@@');
+    DBMS_OUTPUT.PUT_LINE('Schema: @@ORA_SCHEMA@@');
     DBMS_OUTPUT.PUT_LINE('Grantee: ' || p_grantee);
     DBMS_OUTPUT.PUT_LINE('');
 
@@ -57,11 +57,11 @@ BEGIN
             SELECT table_name
             FROM dba_tab_privs
             WHERE grantee = UPPER(p_grantee)
-              AND owner = '@@ORACLE_SCHEMA@@'
+              AND owner = '@@ORA_SCHEMA@@'
               AND privilege = 'EXECUTE'
         ) LOOP
             BEGIN
-                v_sql := 'REVOKE EXECUTE ON @@ORACLE_SCHEMA@@.' || obj.table_name || ' FROM ' || p_grantee;
+                v_sql := 'REVOKE EXECUTE ON @@ORA_SCHEMA@@.' || obj.table_name || ' FROM ' || p_grantee;
                 EXECUTE IMMEDIATE v_sql;
                 v_revoke_count := v_revoke_count + 1;
             EXCEPTION
@@ -74,18 +74,18 @@ BEGIN
     END IF;
 
     -- Grant EXECUTE on all schema procedures and functions
-    DBMS_OUTPUT.PUT_LINE('Granting EXECUTE on @@ORACLE_SCHEMA@@ objects...');
+    DBMS_OUTPUT.PUT_LINE('Granting EXECUTE on @@ORA_SCHEMA@@ objects...');
     FOR obj IN (
         SELECT object_name, object_type
         FROM all_objects
-        WHERE owner = '@@ORACLE_SCHEMA@@'
+        WHERE owner = '@@ORA_SCHEMA@@'
           AND object_type IN ('PROCEDURE', 'FUNCTION')
           AND status = 'VALID'
           AND object_name != 'GRANT_CARTO_ACCESS'  -- Don't grant on this helper itself
         ORDER BY object_type, object_name
     ) LOOP
         BEGIN
-            v_sql := 'GRANT EXECUTE ON @@ORACLE_SCHEMA@@.' || obj.object_name || ' TO ' || p_grantee;
+            v_sql := 'GRANT EXECUTE ON @@ORA_SCHEMA@@.' || obj.object_name || ' TO ' || p_grantee;
             EXECUTE IMMEDIATE v_sql;
             v_grant_count := v_grant_count + 1;
             DBMS_OUTPUT.PUT_LINE('  [OK] ' || RPAD(obj.object_type, 10) || ' ' || obj.object_name);

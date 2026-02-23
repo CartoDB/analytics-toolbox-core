@@ -12,11 +12,11 @@ Usage:
     python create_schema.py
 
 Environment Variables:
-    ORACLE_USER            - Admin user with CREATE USER privilege
-    ORACLE_PASSWORD        - Admin user password
-    ORACLE_WALLET_ZIP      - Base64-encoded Oracle wallet ZIP
-    ORACLE_WALLET_PASSWORD - Oracle wallet password
-    ORACLE_SCHEMA          - Schema name to create (e.g., CI_12345678_123456)
+    ORA_USER            - Admin user with CREATE USER privilege
+    ORA_PASSWORD        - Admin user password
+    ORA_WALLET_ZIP      - Base64-encoded Oracle wallet ZIP
+    ORA_WALLET_PASSWORD - Oracle wallet password
+    ORA_SCHEMA          - Schema name to create (e.g., CI_12345678_123456)
 """
 
 import os
@@ -64,16 +64,16 @@ def extract_wallet(wallet_zip_b64, wallet_password):
 def create_schema(schema_name):
     """Create Oracle schema (user with NO AUTHENTICATION)."""
     # Get credentials from environment
-    user = os.getenv('ORACLE_USER')
-    password = os.getenv('ORACLE_PASSWORD')
-    wallet_zip = os.getenv('ORACLE_WALLET_ZIP')
-    wallet_password = os.getenv('ORACLE_WALLET_PASSWORD')
+    user = os.getenv('ORA_USER')
+    password = os.getenv('ORA_PASSWORD')
+    wallet_zip = os.getenv('ORA_WALLET_ZIP')
+    wallet_password = os.getenv('ORA_WALLET_PASSWORD')
 
     if not all([user, password, wallet_zip, wallet_password, schema_name]):
         print(
             'ERROR: Missing Oracle credentials or schema name. '
-            'Set ORACLE_USER, ORACLE_PASSWORD, '
-            'ORACLE_WALLET_ZIP, ORACLE_WALLET_PASSWORD, ORACLE_SCHEMA'
+            'Set ORA_USER, ORA_PASSWORD, '
+            'ORA_WALLET_ZIP, ORA_WALLET_PASSWORD, ORA_SCHEMA'
         )
         sys.exit(1)
 
@@ -143,11 +143,11 @@ def create_schema(schema_name):
 
 
 if __name__ == '__main__':
-    schema_name = os.getenv('ORACLE_SCHEMA')
+    schema_name = os.getenv('ORA_SCHEMA')
 
     if not schema_name:
-        print('ERROR: ORACLE_SCHEMA environment variable not set')
-        print('Usage: ORACLE_SCHEMA=CI_12345678_123456 python create_schema.py')
+        print('ERROR: ORA_SCHEMA environment variable not set')
+        print('Usage: ORA_SCHEMA=CI_12345678_123456 python create_schema.py')
         sys.exit(1)
 
     create_schema(schema_name)

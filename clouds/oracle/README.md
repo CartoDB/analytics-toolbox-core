@@ -20,14 +20,14 @@ The `.env` file contains the variables required to deploy and run the toolbox. R
 
 ```
 # Oracle
-ORACLE_SCHEMA=<schema-name>
-ORACLE_USER=<database-user>
-ORACLE_PASSWORD=<user-password>
-ORACLE_WALLET_ZIP=<base64-encoded-wallet-zip>
-ORACLE_WALLET_PASSWORD=<wallet-password>
+ORA_SCHEMA=<schema-name>
+ORA_USER=<database-user>
+ORA_PASSWORD=<user-password>
+ORA_WALLET_ZIP=<base64-encoded-wallet-zip>
+ORA_WALLET_PASSWORD=<wallet-password>
 ```
 
-**ORACLE_SCHEMA** (required)
+**ORA_SCHEMA** (required)
 
 The Oracle schema name to deploy Analytics Toolbox functions. Unlike other clouds where schemas can be created dynamically, Oracle schemas are tied to database users and typically pre-created.
 
@@ -35,20 +35,20 @@ The Oracle schema name to deploy Analytics Toolbox functions. Unlike other cloud
 
 Examples:
 
-- Development: `ORACLE_SCHEMA=DEV_CARTO` or `ORACLE_SCHEMA=MYNAME_CARTO`
-- CI/CD: `ORACLE_SCHEMA=CI_USER_12345678`
-- Production: `ORACLE_SCHEMA=CARTO`
-- Testing: `ORACLE_SCHEMA=ADMIN`
+- Development: `ORA_SCHEMA=DEV_CARTO` or `ORA_SCHEMA=MYNAME_CARTO`
+- CI/CD: `ORA_SCHEMA=CI_USER_12345678`
+- Production: `ORA_SCHEMA=CARTO`
+- Testing: `ORA_SCHEMA=ADMIN`
 
-**ORACLE_USER**
+**ORA_USER**
 
 The Oracle database user with privileges to create functions and procedures in the target schema. This could be `ADMIN` for Autonomous Database, or any user with appropriate privileges.
 
-**ORACLE_PASSWORD**
+**ORA_PASSWORD**
 
 The password for the Oracle database user.
 
-**ORACLE_WALLET_ZIP**
+**ORA_WALLET_ZIP**
 
 Base64-encoded Oracle wallet ZIP file. To generate:
 
@@ -62,7 +62,7 @@ base64 -i Wallet_YourDB.zip | tr -d '\n' > wallet_base64.txt
 
 Then copy the contents of `wallet_base64.txt` to this variable.
 
-**ORACLE_WALLET_PASSWORD**
+**ORA_WALLET_PASSWORD**
 
 The password you set when downloading the Oracle wallet ZIP file.
 
@@ -117,11 +117,11 @@ Oracle Autonomous Database uses wallet-based authentication. The deployment scri
 
 ### Schema Naming
 
-Oracle schemas are directly specified via `ORACLE_SCHEMA` environment variable:
+Oracle schemas are directly specified via `ORA_SCHEMA` environment variable:
 
-- Set `ORACLE_SCHEMA=DEV_CARTO` for development
-- Set `ORACLE_SCHEMA=CI_USER_12345678` for CI/CD
-- Set `ORACLE_SCHEMA=CARTO` for production
+- Set `ORA_SCHEMA=DEV_CARTO` for development
+- Set `ORA_SCHEMA=CI_USER_12345678` for CI/CD
+- Set `ORA_SCHEMA=CARTO` for production
 - Defaults to `CARTO` if not specified
 
 **Note**: Unlike Snowflake/BigQuery where schemas can be created on-the-fly, Oracle schemas are tied to database users and must be pre-created.
