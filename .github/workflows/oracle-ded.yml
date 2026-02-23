@@ -1,0 +1,85 @@
+name: Oracle dedicated env
+
+on:
+  pull_request:
+    types: [closed, unlabeled, labeled, synchronize]
+
+env:
+  NODE_VERSION: 20.19
+  PYTHON3_VERSION: 3.10.13
+  VIRTUALENV_VERSION: 20.15.1
+
+jobs:
+
+  dedicated:
+    if: |
+      github.event.label.name == 'dedicated_oracle' ||
+      (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_oracle')) ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_oracle'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ORA_USER: ${{ secrets.ORA_USER_CD }}
+      ORA_PASSWORD: ${{ secrets.ORA_PASSWORD_CD }}
+      ORA_WALLET_ZIP: ${{ secrets.ORA_WALLET_ZIP_CD }}
+      ORA_WALLET_PASSWORD: ${{ secrets.ORA_WALLET_PASSWORD_CD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set ORA_SCHEMA for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          echo "ORA_SCHEMA=DEDICATED_RELEASE_${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+      - name: Set ORA_SCHEMA for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          echo "ORA_SCHEMA=DEDICATED_HOTFIX_${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+      - name: Set ORA_SCHEMA for regular deploys
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "ORA_SCHEMA=DEDICATED_${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup yarn
+        run: npm install -g yarn
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Create dedicated schema
+        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        run: |
+          cd clouds/oracle
+          make venv3
+          venv3/bin/python ../common/create_schema.py
+      - name: Run deploy
+        id: deploy
+        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        run: |
+          cd clouds/oracle
+          make deploy
+      - name: Run remove
+        id: remove
+        if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        run: |
+          cd clouds/oracle
+          make remove drop-schema=1
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.ORA_SCHEMA }} schema deployed in Oracle Autonomous Database
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment removed
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
