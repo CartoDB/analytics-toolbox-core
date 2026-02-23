@@ -6,5 +6,4 @@ This module imports shared utilities from lib/
 
 from lib.quadkey import sibling
 
-
 __all__ = ["sibling"]

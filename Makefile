@@ -151,11 +151,11 @@ endif
 	fi
 	@echo "Deploying clouds (SQL UDFs)..."
 	@if [ -d "clouds/$(cloud)" ]; then \
-		cd clouds/$(cloud) && $(MAKE) deploy \
+		cd clouds/$(cloud) && $(MAKE) deploy diff='$(diff)' \
 			$(if $(modules),modules=$(modules),) \
 			$(if $(functions),functions=$(functions),); \
 	else \
-		echo "  ⚠️  No clouds directory for $(cloud)"; \
+		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi
 	@echo ""
 	@echo "========================================================================"
@@ -183,12 +183,15 @@ endif
 	@echo ""
 	@echo "Removing clouds..."
 	@if [ -d "clouds/$(cloud)" ]; then \
-		cd clouds/$(cloud) && $(MAKE) remove; \
+		cd clouds/$(cloud) && $(MAKE) remove || true; \
+	else \
+		echo "  ⓘ No clouds/$(cloud) directory - nothing to remove"; \
 	fi
 	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
 		echo ""; \
 		echo "Removing gateway..."; \
-		cd gateway && $(MAKE) remove cloud=$(cloud) || echo "  ⚠️  Gateway removal (best effort)"; \
+		cd gateway && $(MAKE) remove cloud=$(cloud) \
+			$(if $(drop-schema),drop-schema=$(drop-schema),) || echo "  ⚠️  Gateway removal (best effort)"; \
 		echo ""; \
 	else \
 		echo ""; \
@@ -218,13 +221,23 @@ endif
 	@echo ""
 	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
 		echo "Running gateway tests..."; \
-		(cd gateway && $(MAKE) test-unit cloud=$(cloud)); \
-		(cd gateway && $(MAKE) test-integration cloud=$(cloud)); \
+		(cd gateway && $(MAKE) test-unit cloud=$(cloud) \
+			$(if $(modules),modules=$(modules),) \
+			$(if $(functions),functions=$(functions),) \
+			$(if $(diff),diff='$(diff)',)); \
+		(cd gateway && $(MAKE) test-integration cloud=$(cloud) \
+			$(if $(modules),modules=$(modules),) \
+			$(if $(functions),functions=$(functions),) \
+			$(if $(diff),diff='$(diff)',)); \
 		echo ""; \
 	fi
 	@if [ -d "clouds/$(cloud)" ]; then \
 		echo "Running clouds tests..."; \
-		(cd clouds/$(cloud) && $(MAKE) test); \
+		(cd clouds/$(cloud) && $(MAKE) test diff='$(diff)' \
+			$(if $(modules),modules=$(modules),) \
+			$(if $(functions),functions=$(functions),)); \
+	else \
+		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi
 	@echo ""
 	@echo "========================================================================"
@@ -257,7 +270,9 @@ endif
 	fi
 	@if [ -d "clouds/$(cloud)" ]; then \
 		echo "Linting clouds..."; \
-		cd clouds/$(cloud) && $(MAKE) lint; \
+		cd clouds/$(cloud) && $(MAKE) lint || echo "  ⚠️  Clouds lint warnings (non-blocking)"; \
+	else \
+		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi
 	@echo ""
 	@echo "========================================================================"

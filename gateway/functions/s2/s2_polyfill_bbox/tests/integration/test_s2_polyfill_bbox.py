@@ -8,8 +8,7 @@ here = os.path.dirname(__file__)
 @pytest.mark.integration
 def test_s2_polyfill_bbox():
     """Test S2_POLYFILL_BBOX fills bounding boxes with S2 cells"""
-    results = run_query(
-        """WITH resContext AS(
+    results = run_query("""WITH resContext AS(
             SELECT
               -3.69 AS min_lng,
               -3.68 AS max_lng,
@@ -28,8 +27,7 @@ def test_s2_polyfill_bbox():
         SELECT @@RS_SCHEMA@@.S2_POLYFILL_BBOX(
             min_lng, max_lng, min_lat, max_lat, min_res, max_res
         ) as ids
-        FROM resContext;"""
-    )
+        FROM resContext;""")
 
     fixture_path = os.path.join(here, "fixtures/s2_polyfill_bbox_out.txt")
     with open(fixture_path, "r") as fixture_file:

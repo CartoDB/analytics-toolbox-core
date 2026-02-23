@@ -16,7 +16,6 @@ from lib.transformations import (
     parse_geojson_with_precision,
 )
 
-
 __all__ = [
     "center_median",
     "PRECISION",

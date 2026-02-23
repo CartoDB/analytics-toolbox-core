@@ -79,6 +79,8 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, s
 @click.option('--rs-lambda-prefix', help='Lambda function name prefix (default: carto-at-)')  # noqa: E501
 @click.option('--rs-lambda-execution-role', help='Pre-created Lambda execution role ARN (optional)')  # noqa: E501
 @click.option('--rs-host', help='Redshift host endpoint')
+@click.option('--rs-port', help='Redshift port (default: 5439)', type=int)
+@click.option('--rs-ssl/--no-rs-ssl', default=None, help='Use SSL for Redshift connection (default: yes)')
 @click.option('--rs-database', help='Redshift database name')
 @click.option('--rs-user', help='Redshift user')
 @click.option('--rs-password', help='Redshift password')
@@ -96,7 +98,7 @@ def prompt_if_not_provided(value, prompt_text, default=None, hide_input=False, s
 @click.option('--non-interactive', '-y', is_flag=True, help='Non-interactive mode (requires all parameters)')
 def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             aws_session_token, aws_assume_role_arn, rs_lambda_prefix,
-            rs_lambda_execution_role, rs_host, rs_database, rs_user, rs_password,
+            rs_lambda_execution_role, rs_host, rs_port, rs_ssl, rs_database, rs_user, rs_password,
             rs_schema, rs_lambda_invoke_role, rs_lambda_override, modules, functions,
             dry_run, setup_gateway, gateway_lambda, gateway_roles,
             gateway_api_base_url, gateway_api_access_token, non_interactive):
@@ -229,6 +231,10 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         if auth_method == "profile":
             aws_profile = aws_profile or "default"
         rs_lambda_prefix = rs_lambda_prefix or "carto-at-"
+        if rs_port is None:
+            rs_port = 5439
+        if rs_ssl is None:
+            rs_ssl = True
     else:
         aws_region = prompt_if_not_provided(
             aws_region, "AWS Region (leave empty for 'us-east-1')",
@@ -268,13 +274,39 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if not non_interactive:
         click.echo("Lambda Configuration")
         click.echo("-" * 70)
-        rs_lambda_prefix = prompt_if_not_provided(
-            rs_lambda_prefix,
-            "Lambda function prefix (leave empty for 'carto-at-')",
-            default="carto-at-",
-            show_default=False,
-            required=False
+        # Loop until we get a valid prefix
+        while True:
+            rs_lambda_prefix = prompt_if_not_provided(
+                rs_lambda_prefix,
+                "Lambda function prefix (10 chars max, leave empty for 'carto-at-')",
+                default="carto-at-",
+                show_default=False,
+                required=False
+            )
+            # Validate prefix length (max 10 chars)
+            if rs_lambda_prefix and len(rs_lambda_prefix) > 10:
+                click.echo(f"  Current prefix: {len(rs_lambda_prefix)} chars")
+                click.echo(f"  Maximum allowed: 10 chars")
+                click.echo()
+                # Reset to None to re-prompt
+                rs_lambda_prefix = None
+                continue
+            break  # Valid prefix, exit loop
+
+    # Set default in non-interactive mode
+    if non_interactive and not rs_lambda_prefix:
+        rs_lambda_prefix = "carto-at-"
+
+    # Validate Lambda prefix length upfront (before deployment starts)
+    # Redshift has a character limit for Lambda function names
+    if rs_lambda_prefix and len(rs_lambda_prefix) > 10:
+        click.secho(
+            f"\\n✗ Lambda prefix too long: '{rs_lambda_prefix}' ({len(rs_lambda_prefix)} chars)",
+            fg='red', bold=True
         )
+        click.echo(f"  Current prefix: {len(rs_lambda_prefix)} chars")
+        click.echo(f"  Maximum allowed: 10 chars")
+        sys.exit(1)
 
     if not rs_lambda_execution_role and not non_interactive:
         click.echo()
@@ -317,6 +349,23 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
         click.echo("Redshift Connection")
         click.echo("-" * 70)
         rs_host = prompt_if_not_provided(rs_host, "Redshift Host")
+
+        # Port (with default)
+        if rs_port is None:
+            rs_port = click.prompt(
+                "Redshift Port (leave empty for 5439)",
+                default=5439,
+                type=int,
+                show_default=False
+            )
+
+        # SSL (with default)
+        if rs_ssl is None:
+            rs_ssl = click.confirm(
+                "Use SSL for Redshift connection?",
+                default=True
+            )
+
         rs_user = prompt_if_not_provided(rs_user, "Redshift User")
         rs_password = prompt_if_not_provided(
             rs_password, "Redshift Password", hide_input=True
@@ -400,6 +449,8 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     env_lines.append("")
     env_lines.append("# Redshift Connection")
     env_lines.append(f"RS_HOST={rs_host}")
+    env_lines.append(f"RS_PORT={rs_port if rs_port else 5439}")
+    env_lines.append(f"RS_SSL={'true' if rs_ssl else 'false'}")
     env_lines.append(f"RS_USER={rs_user}")
     env_lines.append(f"RS_PASSWORD={rs_password}")
 
@@ -488,8 +539,70 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     click.secho("=" * 70, fg='cyan', bold=True)
     click.echo()
 
+    # Phase 0.5: Drop existing functions (if DROP_FUNCTIONS.sql exists)
+    drop_functions_path = Path(__file__).parent.parent / 'clouds' / 'redshift' / 'DROP_FUNCTIONS.sql'
+
+    if drop_functions_path.exists():
+        click.echo("\\n=== Phase 0.5: Preparing Schema (Dropping Existing Functions) ===\\n")
+
+        if not dry_run:
+            try:
+                import redshift_connector
+
+                # Connect to Redshift
+                host = rs_host
+                port = rs_port if rs_port else 5439
+                if ':' in rs_host:
+                    host_parts = rs_host.split(':')
+                    host = host_parts[0]
+                    port = int(host_parts[1])
+
+                conn = redshift_connector.connect(
+                    host=host,
+                    port=port,
+                    database=rs_database,
+                    user=rs_user,
+                    password=rs_password,
+                    ssl=rs_ssl if rs_ssl is not None else True
+                )
+
+                cursor = conn.cursor()
+
+                # Read DROP_FUNCTIONS.sql
+                drop_sql_content = drop_functions_path.read_text()
+
+                # Replace @@RS_SCHEMA@@ with user-provided schema
+                drop_sql_content = drop_sql_content.replace('@@RS_SCHEMA@@', rs_schema)
+
+                # Split and execute SQL statements
+                from sqlparse import split as sql_split
+                statements = [s.strip() for s in sql_split(drop_sql_content) if s.strip()]
+
+                click.echo(f"  Dropping existing functions in schema '{rs_schema}'...")
+
+                for stmt in statements:
+                    try:
+                        cursor.execute(stmt)
+                    except Exception as e:
+                        # Ignore errors (schema might not exist yet, no functions to drop)
+                        pass
+
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                click.secho("  ✓ Schema prepared (existing functions dropped)", fg='green')
+            except Exception as e:
+                # Non-fatal: schema might not exist yet, or no functions to drop
+                click.secho(f"  ⓘ Schema preparation skipped: {str(e)[:100]}", fg='yellow')
+                click.echo("     (This is normal for first-time installations)")
+        else:
+            click.secho("  [DRY RUN] Would drop existing functions", fg='yellow')
+    else:
+        click.echo("\\n=== Phase 0.5: No DROP_FUNCTIONS.sql found (skipping) ===\\n")
+
     # Phase 1 & 2: Deploy gateway (Lambdas + External Functions)
-    click.echo("Phase 1-2: Deploying gateway functions...")
+    click.echo("\\n=== Phase 1-2: Deploying Gateway Functions ===\\n")
     deploy_cmd = [
         sys.executable,
         '-m',
@@ -506,7 +619,7 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
     if dry_run:
         deploy_cmd.append('--dry-run')
 
-    click.echo(f"  Running: {' '.join(deploy_cmd)}")
+    click.echo(f"Running: {' '.join(deploy_cmd)}")
 
     if not dry_run:
         # Build environment with all configuration variables
@@ -549,9 +662,9 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
             click.secho("\\n✗ Gateway deployment failed!", fg='red', bold=True)
             sys.exit(1)
 
-        click.secho("  ✓ Gateway functions deployed", fg='green')
+        click.secho("\\n✓ Gateway functions deployed", fg='green')
     else:
-        click.secho("  [DRY RUN] Would deploy gateway", fg='yellow')
+        click.secho("[DRY RUN] Would deploy gateway", fg='yellow')
 
     # Phase 3: Deploy clouds SQL (if exists)
     clouds_sql_path = Path(__file__).parent.parent / 'clouds' / 'redshift' / 'modules.sql'
@@ -564,11 +677,21 @@ def install(aws_region, aws_profile, aws_access_key_id, aws_secret_access_key,
                 import redshift_connector
 
                 # Connect to Redshift
+                # Parse host and port (support host:port format)
+                host = rs_host
+                port = rs_port if rs_port else 5439
+                if ':' in rs_host:
+                    host_parts = rs_host.split(':')
+                    host = host_parts[0]
+                    port = int(host_parts[1])
+
                 conn = redshift_connector.connect(
-                    host=rs_host,
+                    host=host,
+                    port=port,
                     database=rs_database,
                     user=rs_user,
-                    password=rs_password
+                    password=rs_password,
+                    ssl=rs_ssl if rs_ssl is not None else True
                 )
 
                 # Create cursor for all database operations

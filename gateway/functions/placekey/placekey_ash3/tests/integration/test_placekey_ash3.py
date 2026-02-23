@@ -13,8 +13,7 @@ class TestPlacekeyAsh3Integration:
 
     def test_placekey_ash3_valid(self):
         """Test PLACEKEY_ASH3 with valid placekeys"""
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('@c6z-c2g-dgk')
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('@63m-vc4-z75')
@@ -30,8 +29,7 @@ class TestPlacekeyAsh3Integration:
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('@hvb-5d7-92k')
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('@ab2-k43-xqz')
-        """
-        )
+        """)
 
         assert result[0][0] == "8a62e9d08a1ffff"
         assert result[1][0] == "8a2a9c580577fff"
@@ -44,8 +42,7 @@ class TestPlacekeyAsh3Integration:
 
     def test_placekey_ash3_invalid(self):
         """Test PLACEKEY_ASH3 with invalid inputs"""
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3(NULL)
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('@abc')
@@ -61,8 +58,7 @@ class TestPlacekeyAsh3Integration:
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('bcd-345@')
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_ASH3('22-zzz@abc-234-xyz')
-        """
-        )
+        """)
 
         assert result[0][0] is None
         assert result[1][0] is None
