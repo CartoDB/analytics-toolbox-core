@@ -9,7 +9,11 @@ COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
 export ORA_VERSION_FUNCTION ?= VERSION_CORE
+ifeq ($(production),1)
 export ORA_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+else
+export ORA_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
+endif
 
 REPLACEMENTS = "ORA_SCHEMA ORA_VERSION_FUNCTION ORA_PACKAGE_VERSION"
 
