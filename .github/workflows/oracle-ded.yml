@@ -26,19 +26,19 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Set ORA_SCHEMA for releases
+      - name: Set ORA_PREFIX for releases
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
-          echo "ORA_SCHEMA=DEDICATED_RELEASE_${{ github.event.pull_request.number }}" >> $GITHUB_ENV
-      - name: Set ORA_SCHEMA for hotfixes
+          echo "ORA_PREFIX=DEDICATED_RELEASE_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set ORA_PREFIX for hotfixes
         if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
         run: |
-          echo "ORA_SCHEMA=DEDICATED_HOTFIX_${{ github.event.pull_request.number }}" >> $GITHUB_ENV
-      - name: Set ORA_SCHEMA for regular deploys
+          echo "ORA_PREFIX=DEDICATED_HOTFIX_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set ORA_PREFIX for regular deploys
         if: |
           !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
           !(startsWith(github.event.pull_request.head.ref, 'release/'))
-        run: echo "ORA_SCHEMA=DEDICATED_${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+        run: echo "ORA_PREFIX=DEDICATED_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -74,7 +74,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.ORA_SCHEMA }} schema deployed in Oracle Autonomous Database
+            Dedicated ${{ env.ORA_PREFIX }}CARTO schema deployed in Oracle Autonomous Database
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR
         if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')

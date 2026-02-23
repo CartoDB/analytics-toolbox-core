@@ -20,25 +20,23 @@ The `.env` file contains the variables required to deploy and run the toolbox. R
 
 ```
 # Oracle
-ORA_SCHEMA=<schema-name>
+ORA_PREFIX=
 ORA_USER=<database-user>
 ORA_PASSWORD=<user-password>
 ORA_WALLET_ZIP=<base64-encoded-wallet-zip>
 ORA_WALLET_PASSWORD=<wallet-password>
 ```
 
-**ORA_SCHEMA** (required)
+**ORA_PREFIX**
 
-The Oracle schema name to deploy Analytics Toolbox functions. Unlike other clouds where schemas can be created dynamically, Oracle schemas are tied to database users and typically pre-created.
+The prefix for the Oracle schema name. The final schema name will be `{ORA_PREFIX}CARTO`.
 
-**This variable is required** - deployment will fail if not set.
+- Development: `ORA_PREFIX=DEV_` → schema `DEV_CARTO`
+- Development: `ORA_PREFIX=MYNAME_` → schema `MYNAME_CARTO`
+- CI/CD: `ORA_PREFIX=CI_12345678_` → schema `CI_12345678_CARTO`
+- Production: Leave empty or use `production=1` → schema `CARTO`
 
-Examples:
-
-- Development: `ORA_SCHEMA=DEV_CARTO` or `ORA_SCHEMA=MYNAME_CARTO`
-- CI/CD: `ORA_SCHEMA=CI_USER_12345678`
-- Production: `ORA_SCHEMA=CARTO`
-- Testing: `ORA_SCHEMA=ADMIN`
+**Note**: You can also set `ORA_SCHEMA` directly to override this behavior (e.g., `ORA_SCHEMA=CUSTOM_SCHEMA`)
 
 **ORA_USER**
 
@@ -117,12 +115,12 @@ Oracle Autonomous Database uses wallet-based authentication. The deployment scri
 
 ### Schema Naming
 
-Oracle schemas are directly specified via `ORA_SCHEMA` environment variable:
+Oracle schemas follow the PREFIX pattern used by other clouds:
 
-- Set `ORA_SCHEMA=DEV_CARTO` for development
-- Set `ORA_SCHEMA=CI_USER_12345678` for CI/CD
-- Set `ORA_SCHEMA=CARTO` for production
-- Defaults to `CARTO` if not specified
+- Set `ORA_PREFIX=DEV_` for development → schema `DEV_CARTO`
+- Set `ORA_PREFIX=CI_12345678_` for CI/CD → schema `CI_12345678_CARTO`
+- Production: Leave `ORA_PREFIX` empty or use `production=1` → schema `CARTO`
+- Override: Set `ORA_SCHEMA=CUSTOM_NAME` directly to use any schema name
 
 **Note**: Unlike Snowflake/BigQuery where schemas can be created on-the-fly, Oracle schemas are tied to database users and must be pre-created.
 

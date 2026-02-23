@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-24.04-4cpus
     timeout-minutes: 55
     env:
-      ORA_SCHEMA: CI_${{ github.run_id }}_${{ github.run_attempt }}
+      ORA_PREFIX: CI_${{ github.run_id }}_${{ github.run_attempt }}_
       ORA_USER: ${{ secrets.ORA_USER_CI }}
       ORA_PASSWORD: ${{ secrets.ORA_PASSWORD_CI }}
       ORA_WALLET_ZIP: ${{ secrets.ORA_WALLET_ZIP_CI }}

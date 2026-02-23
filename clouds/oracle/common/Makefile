@@ -4,22 +4,27 @@ PYTHON3_VERSION = 3
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
+ORA_SCHEMA_DEFAULT ?= CARTO
 
 ifneq (,$(wildcard $(ENV_DIR)/.env))
     include $(ENV_DIR)/.env
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-# ORA_SCHEMA is required - no default value
-# Oracle schemas are tied to users (pre-created), so explicit naming is required
+# Set ORA_SCHEMA only if not already set (allows override from outside)
+ifeq ($(ORA_SCHEMA),)
+  ifeq ($(production),1)
+    ORA_SCHEMA = $(ORA_SCHEMA_DEFAULT)
+  else
+    ORA_SCHEMA = $(ORA_PREFIX)$(ORA_SCHEMA_DEFAULT)
+  endif
+endif
+
 export ORA_SCHEMA
 
 .PHONY: check venv3 $(NODE_MODULES_DEV)
 
 check:
-ifndef ORA_SCHEMA
-	$(error ORA_SCHEMA is undefined. Set in .env file (e.g., ORA_SCHEMA=DEV_CARTO or ORA_SCHEMA=CARTO))
-endif
 ifndef ORA_USER
 	$(error ORA_USER is undefined. Set in .env file)
 endif
