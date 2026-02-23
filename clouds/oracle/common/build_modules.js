@@ -155,10 +155,10 @@ if (argv.dropfirst) {
 }
 
 // Add GRANT_ACCESS helper procedure (before VERSION)
-const grantAccess = fs.readFileSync(path.resolve(__dirname, 'GRANT_ACCESS.sql')).toString();
+const grantAccess = fs.readFileSync(path.resolve(__dirname, 'GRANT_ACCESS.sql')).toString().replace(/--.*\n/g, '');
 content += grantAccess;
 
-const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
+const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString().replace(/--.*\n/g, '');
 content += footer;
 
 content = apply_replacements(content);

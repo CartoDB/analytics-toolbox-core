@@ -124,12 +124,7 @@ def create_schema(schema_name):
         cursor.close()
         connection.close()
 
-        print(f'\n✓ Schema {schema_name} ready for Analytics Toolbox deployment')
-        print(f'\nNote: Schema-only user (NO AUTHENTICATION)')
-        print(f'      - Cannot log in directly')
-        print(f'      - Has privileges to create procedures, functions, and tables')
-        print(f'      - Other users can access via: {schema_name}.FUNCTION_NAME()')
-        print(f'      - Existing objects in schema (if any) are preserved')
+        print(f'✓ Schema {schema_name} ready for Analytics Toolbox deployment')
 
     finally:
         # Cleanup wallet directory
