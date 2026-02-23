@@ -48,13 +48,28 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Run linter and tests
+      - name: Create CI schema
         run: |
           cd clouds/oracle
-          make lint && \
-          make deploy diff="$GIT_DIFF" && \
-          make test diff="$GIT_DIFF" && \
-          make remove
+          make venv3
+          venv3/bin/python ../common/create_schema.py
+      - name: Run linter
+        run: |
+          cd clouds/oracle
+          make lint
+      - name: Run deploy
+        run: |
+          cd clouds/oracle
+          make deploy diff="$GIT_DIFF"
+      - name: Run test
+        run: |
+          cd clouds/oracle
+          make test diff="$GIT_DIFF"
+      - name: Run remove
+        if: always()
+        run: |
+          cd clouds/oracle
+          make remove drop-schema=1
 
   deploy-internal:
     if: github.ref_name == 'main'

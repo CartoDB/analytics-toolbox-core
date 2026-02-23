@@ -150,9 +150,13 @@ function apply_replacements (text) {
 }
 
 if (argv.dropfirst) {
-    const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
+    const header = fs.readFileSync(path.resolve(__dirname, 'INTERNAL_DROP_FUNCTIONS.sql')).toString();
     content = header + content;
 }
+
+// Add GRANT_ACCESS helper procedure (before VERSION)
+const grantAccess = fs.readFileSync(path.resolve(__dirname, 'GRANT_ACCESS.sql')).toString();
+content += grantAccess;
 
 const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
 content += footer;

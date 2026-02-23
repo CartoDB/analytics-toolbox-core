@@ -9,7 +9,7 @@ This script removes all AT functions and procedures from the specified schema.
 Used by: make remove
 
 Pattern matches BigQuery/Snowflake/Redshift:
-- Creates DROP_AT_FUNCTIONS procedure
+- Creates INTERNAL_DROP_FUNCTIONS procedure
 - Calls it (drops all functions/procedures including itself)
 - Procedure drops itself during execution (same as BigQuery pattern)
 
@@ -18,7 +18,7 @@ Future option: Uncomment the CARTO_ filter to only drop CARTO-prefixed objects.
 */
 
 -- Create procedure to drop all functions and procedures in schema
-CREATE OR REPLACE PROCEDURE @@ORACLE_SCHEMA@@.DROP_AT_FUNCTIONS
+CREATE OR REPLACE PROCEDURE @@ORACLE_SCHEMA@@.INTERNAL_DROP_FUNCTIONS
 IS
     v_drop_command VARCHAR2(500);
     v_object_count NUMBER := 0;
@@ -30,7 +30,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
 
     -- Loop through all functions and procedures in the schema
-    -- Note: Includes DROP_AT_FUNCTIONS itself (will be dropped during loop)
+    -- Note: Includes INTERNAL_DROP_FUNCTIONS itself (will be dropped during loop)
     FOR rec IN (
         SELECT object_name, object_type
         FROM all_objects
@@ -70,13 +70,13 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('');
         DBMS_OUTPUT.PUT_LINE('No Analytics Toolbox objects found in schema @@ORACLE_SCHEMA@@');
     END IF;
-END DROP_AT_FUNCTIONS;
+END INTERNAL_DROP_FUNCTIONS;
 /
 
 -- Execute the procedure (drops all functions/procedures including itself)
--- Pattern matches BigQuery: CALL `dataset.DROP_FUNCTIONS`()
+-- Pattern matches BigQuery: CALL `dataset.INTERNAL_DROP_FUNCTIONS`()
 BEGIN
-    @@ORACLE_SCHEMA@@.DROP_AT_FUNCTIONS;
+    @@ORACLE_SCHEMA@@.INTERNAL_DROP_FUNCTIONS;
 END;
 /
 

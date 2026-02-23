@@ -75,8 +75,14 @@ test: check venv3 $(NODE_MODULES_DEV)
 
 remove: venv3
 	echo "Removing Oracle modules..."
+ifdef drop-schema
+	echo "Dropping schema $(ORACLE_SCHEMA) with CASCADE..."
+	$(VENV3_BIN)/python $(COMMON_DIR)/drop_schema.py
+else
+	echo "Dropping Analytics Toolbox functions only..."
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
-	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(COMMON_DIR)/DROP_FUNCTIONS.sql
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(COMMON_DIR)/INTERNAL_DROP_FUNCTIONS.sql
+endif
 
 clean:
 	echo "Cleaning Oracle modules..."
