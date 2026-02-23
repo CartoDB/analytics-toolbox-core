@@ -62,6 +62,9 @@ build: $(NODE_MODULES_DEV)
 
 deploy: check venv3 build
 	echo "Deploying Oracle modules..."
+	echo "Ensuring schema $(ORA_SCHEMA) exists..."
+	$(VENV3_BIN)/python $(COMMON_DIR)/create_schema.py
+	echo "Deploying SQL modules..."
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(BUILD_DIR)/modules.sql
 	$(MAKE) extra-deploy
 

@@ -112,14 +112,10 @@ def create_schema(schema_name):
 
         # Grant necessary privileges for Analytics Toolbox deployment
         # These grants are REQUIRED for the schema to create AT objects:
-        # - CREATE PROCEDURE: Allows creating procedures (SETUP, INTERNAL_CREATE_BUILDER_MAP, etc.)
-        # - CREATE FUNCTION: Allows creating functions (VERSION_CORE, INTERNAL_ENDPOINT, etc.)
+        # - CREATE PROCEDURE: Allows creating procedures AND functions (covers both)
         # - UNLIMITED TABLESPACE: Allows storing procedure/function definitions and tables
         cursor.execute(f'GRANT CREATE PROCEDURE TO {schema_name}')
-        print(f'  ✓ Granted CREATE PROCEDURE')
-
-        cursor.execute(f'GRANT CREATE FUNCTION TO {schema_name}')
-        print(f'  ✓ Granted CREATE FUNCTION')
+        print(f'  ✓ Granted CREATE PROCEDURE (covers procedures and functions)')
 
         cursor.execute(f'GRANT UNLIMITED TABLESPACE TO {schema_name}')
         print(f'  ✓ Granted UNLIMITED TABLESPACE')

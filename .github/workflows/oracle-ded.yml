@@ -51,12 +51,6 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Create dedicated schema
-        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
-        run: |
-          cd clouds/oracle
-          make venv3
-          venv3/bin/python ../common/create_schema.py
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'

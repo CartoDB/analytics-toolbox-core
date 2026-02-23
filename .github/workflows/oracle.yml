@@ -48,11 +48,6 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Create CI schema
-        run: |
-          cd clouds/oracle
-          make venv3
-          venv3/bin/python ../common/create_schema.py
       - name: Run linter
         run: |
           cd clouds/oracle
