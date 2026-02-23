@@ -1,37 +1,6 @@
----------------------------------
+----------------------------
 -- Copyright (C) 2025 CARTO
----------------------------------
-
-/*
-Grants EXECUTE permission on all Analytics Toolbox functions and procedures
-to a specified role or user.
-
-Oracle lacks a "GRANT EXECUTE ON ALL PROCEDURES IN SCHEMA X TO role Y" command,
-so this helper procedure automates the granting process.
-
-Usage:
-    -- Grant to a role (recommended)
-    CREATE ROLE carto_analytics_user;
-    CALL @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS('carto_analytics_user');
-    GRANT carto_analytics_user TO app_user;
-
-    -- Grant to a specific user
-    CALL @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS('app_user');
-
-    -- Revoke existing grants first, then re-grant
-    CALL @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS('carto_analytics_user', 'TRUE');
-
-Parameters:
-    p_grantee        - Role or username to grant permissions to
-    p_revoke_first   - 'TRUE' to revoke existing grants first, 'FALSE' otherwise (default: 'FALSE')
-
-Notes:
-    - Grants EXECUTE permission on all PROCEDURES and FUNCTIONS in @@ORA_SCHEMA@@
-    - Excludes GRANT_CARTO_ACCESS itself (users don't need to grant permissions)
-    - Uses dynamic SQL to iterate through all AT objects
-    - Follows Oracle best practices for role-based access control
-    - Requires ADMIN or sufficient privileges to grant permissions
-*/
+----------------------------
 
 CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS(
     p_grantee VARCHAR2,

@@ -1,23 +1,7 @@
----------------------------------
+----------------------------
 -- Copyright (C) 2025 CARTO
----------------------------------
+----------------------------
 
-/*
-Drop all Oracle Analytics Toolbox functions and procedures.
-
-This script removes all AT functions and procedures from the specified schema.
-Used by: make remove
-
-Pattern matches BigQuery/Snowflake/Redshift:
-- Creates INTERNAL_DROP_FUNCTIONS procedure
-- Calls it (drops all functions/procedures including itself)
-- Procedure drops itself during execution (same as BigQuery pattern)
-
-Current behavior: Drops ALL functions and procedures in the schema.
-Future option: Uncomment the CARTO_ filter to only drop CARTO-prefixed objects.
-*/
-
--- Create procedure to drop all functions and procedures in schema
 CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS
 IS
     v_drop_command VARCHAR2(500);
@@ -73,15 +57,7 @@ BEGIN
 END INTERNAL_DROP_FUNCTIONS;
 /
 
--- Execute the procedure (drops all functions/procedures including itself)
--- Pattern matches BigQuery: CALL `dataset.INTERNAL_DROP_FUNCTIONS`()
 BEGIN
     @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS;
 END;
 /
-
--- Note: The procedure drops itself during execution (same as BigQuery/Snowflake)
--- If you need to only drop CARTO-prefixed functions in the future:
--- 1. Uncomment the line: AND object_name LIKE 'CARTO_%'
--- 2. This is useful when the schema contains other non-CARTO functions
--- 3. The current implementation drops ALL functions/procedures in the schema

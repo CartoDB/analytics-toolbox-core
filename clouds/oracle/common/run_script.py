@@ -8,6 +8,7 @@ SQL scripts with variable replacement support.
 
 import os
 import sys
+import io
 import oracledb
 import base64
 import tempfile
@@ -190,7 +191,5 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Usage: run_script.py <script.sql>')
         sys.exit(1)
-
-    import io  # Add missing import
 
     execute_script(sys.argv[1])
