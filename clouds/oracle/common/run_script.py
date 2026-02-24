@@ -8,45 +8,9 @@ SQL scripts with variable replacement support.
 
 import os
 import sys
-import io
-import oracledb
-import base64
-import tempfile
-import zipfile
-from pathlib import Path
+import shutil
 from tqdm import tqdm
-
-
-def extract_wallet(wallet_zip_b64, wallet_password):
-    """Extract Oracle wallet from base64-encoded ZIP."""
-    # Decode base64 ZIP
-    zip_data = base64.b64decode(wallet_zip_b64)
-
-    # Create temporary directory for wallet
-    wallet_dir = tempfile.mkdtemp(prefix='oracle_wallet_')
-
-    # Extract ZIP to wallet directory
-    with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
-        z.extractall(wallet_dir)
-
-    # Update sqlnet.ora to point to wallet directory
-    sqlnet_path = Path(wallet_dir) / 'sqlnet.ora'
-    if sqlnet_path.exists():
-        content = sqlnet_path.read_text()
-        content = content.replace('?/network/admin', wallet_dir)
-        sqlnet_path.write_text(content)
-
-    # Extract connection string from tnsnames.ora
-    tnsnames_path = Path(wallet_dir) / 'tnsnames.ora'
-    if tnsnames_path.exists():
-        content = tnsnames_path.read_text()
-        # Extract first connection name
-        for line in content.split('\n'):
-            if '=' in line and not line.strip().startswith('#'):
-                conn_name = line.split('=')[0].strip()
-                return wallet_dir, conn_name
-
-    raise Exception('Could not extract connection string from tnsnames.ora')
+from oracle_db import get_connection
 
 
 def replace_variables(sql, variables):
@@ -88,37 +52,12 @@ def parse_statement_info(statement):
 
 def execute_script(script_path):
     """Execute SQL script against Oracle."""
-    # Get credentials from environment
-    user = os.getenv('ORA_USER')
-    password = os.getenv('ORA_PASSWORD')
-    wallet_zip = os.getenv('ORA_WALLET_ZIP')
-    wallet_password = os.getenv('ORA_WALLET_PASSWORD')
     schema = os.getenv('ORA_SCHEMA', 'ADMIN')
 
-    if not all([user, password, wallet_zip, wallet_password]):
-        print(
-            'ERROR: Missing Oracle credentials. '
-            'Set ORA_USER, ORA_PASSWORD, '
-            'ORA_WALLET_ZIP, ORA_WALLET_PASSWORD'
-        )
-        sys.exit(1)
-
-    # Extract wallet and get connection string
-    wallet_dir, conn_string = extract_wallet(wallet_zip, wallet_password)
+    # Get connection from shared module
+    connection, wallet_dir = get_connection()
 
     try:
-        # Set TNS_ADMIN environment variable
-        os.environ['TNS_ADMIN'] = wallet_dir
-
-        # Initialize Oracle client (if not already initialized)
-        try:
-            oracledb.init_oracle_client(config_dir=wallet_dir)
-        except Exception:
-            pass  # Already initialized
-
-        # Connect to Oracle
-        connection = oracledb.connect(user=user, password=password, dsn=conn_string)
-
         # Read SQL script
         with open(script_path, 'r') as f:
             sql = f.read()
@@ -182,8 +121,6 @@ def execute_script(script_path):
 
     finally:
         # Cleanup wallet directory
-        import shutil
-
         shutil.rmtree(wallet_dir, ignore_errors=True)
 
 
