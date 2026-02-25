@@ -101,44 +101,60 @@ def execute_script(script_path):
 
                             # Validate compilation for procedures and functions
                             if obj_type in ('procedure', 'function'):
-                                # Check object status using all_objects (not user_objects)
-                                # because we may be deploying to a different schema
-                                cursor.execute("""
+                                # Check object status using all_objects
+                                # (not user_objects) because we may be
+                                # deploying to a different schema
+                                cursor.execute(
+                                    """
                                     SELECT status
                                     FROM all_objects
                                     WHERE owner = :schema
                                     AND object_name = :obj_name
                                     AND object_type = :obj_type
-                                """, {
-                                    'schema': schema.upper(),
-                                    'obj_name': obj_name.upper(),
-                                    'obj_type': obj_type.upper()
-                                })
+                                """,
+                                    {
+                                        'schema': schema.upper(),
+                                        'obj_name': obj_name.upper(),
+                                        'obj_type': obj_type.upper(),
+                                    },
+                                )
 
                                 result = cursor.fetchone()
                                 if result and result[0] == 'INVALID':
-                                    # Object is invalid, get compilation errors from all_errors
-                                    cursor.execute("""
+                                    # Object is invalid, get compilation
+                                    # errors from all_errors
+                                    cursor.execute(
+                                        """
                                         SELECT line, position, text
                                         FROM all_errors
                                         WHERE owner = :schema
                                         AND name = :obj_name
                                         AND type = :obj_type
                                         ORDER BY sequence
-                                    """, {
-                                        'schema': schema.upper(),
-                                        'obj_name': obj_name.upper(),
-                                        'obj_type': obj_type.upper()
-                                    })
+                                    """,
+                                        {
+                                            'schema': schema.upper(),
+                                            'obj_name': obj_name.upper(),
+                                            'obj_type': obj_type.upper(),
+                                        },
+                                    )
 
                                     errors = cursor.fetchall()
                                     tqdm.write(f'  ✗ COMPILATION ERRORS in {obj_name}:')
                                     if errors:
                                         for line, pos, text in errors:
-                                            tqdm.write(f'      Line {line}, Position {pos}: {text}')
+                                            tqdm.write(
+                                                f'      Line {line}, '
+                                                f'Position {pos}: {text}'
+                                            )
                                     else:
-                                        tqdm.write(f'      Object is INVALID but no errors in all_errors')
-                                    raise Exception(f'Compilation failed for {obj_type} {obj_name}')
+                                        tqdm.write(
+                                            '      Object is INVALID but no '
+                                            'errors in all_errors'
+                                        )
+                                    raise Exception(
+                                        f'Compilation failed for {obj_type} {obj_name}'
+                                    )
                     else:
                         # Fallback for statements we can't parse
                         first_words = ' '.join(statement.split()[:5])
