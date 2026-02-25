@@ -7,7 +7,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from oracle_db import get_connection  # noqa: E402
 from oracledb.exceptions import DatabaseError  # noqa: E402
 
-__all__ = ['DatabaseError']
+__all__ = ['DatabaseError', 'quote_table_name']
+
+
+def quote_table_name(table_name):
+    """Quote table name for Oracle queries (handles underscore-prefixed names)."""
+    if '.' in table_name:
+        schema, table = table_name.rsplit('.', 1)
+        return f'{schema}."{table.upper()}"'
+    return f'"{table_name.upper()}"'
 
 
 def run_query(query):
@@ -19,8 +27,8 @@ def run_query(query):
     # Replace schema placeholder
     query = query.replace('@@ORA_SCHEMA@@', os.environ['ORA_SCHEMA'])
 
+    cursor.execute(query)
     try:
-        cursor.execute(query)
         return cursor.fetchall()
     except Exception:
         return 'No results returned'
@@ -36,12 +44,12 @@ def run_queries(queries):
     conn.autocommit = True
     cursor = conn.cursor()
 
-    try:
-        for query in queries:
-            # Replace schema placeholder
-            query = query.replace('@@ORA_SCHEMA@@', os.environ['ORA_SCHEMA'])
-            cursor.execute(query)
+    for query in queries:
+        # Replace schema placeholder
+        query = query.replace('@@ORA_SCHEMA@@', os.environ['ORA_SCHEMA'])
+        cursor.execute(query)
 
+    try:
         return cursor.fetchall()
     except Exception:
         return 'No results returned'

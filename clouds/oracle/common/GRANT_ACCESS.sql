@@ -24,9 +24,9 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Revoking existing grants...');
         FOR obj IN (
             SELECT table_name
-            FROM dba_tab_privs
+            FROM all_tab_privs
             WHERE grantee = UPPER(p_grantee)
-              AND owner = '@@ORA_SCHEMA@@'
+              AND table_schema = '@@ORA_SCHEMA@@'
               AND privilege = 'EXECUTE'
         ) LOOP
             BEGIN
