@@ -8,6 +8,11 @@ deployments in CI/CD environments. Schema-only users:
 - Can own objects (procedures, functions, tables)
 - Can be accessed by other users via cross-schema calls with GRANT permissions
 
+Grants:
+- CREATE PROCEDURE (includes functions)
+- UNLIMITED TABLESPACE
+- Network ACL permissions (connect, resolve) for AT Gateway features
+
 Usage:
     python create_schema.py
 
@@ -111,14 +116,40 @@ def create_schema(schema_name):
             print(f'  ✓ Created schema {schema_name}')
 
         # Grant necessary privileges for Analytics Toolbox deployment
-        # These grants are REQUIRED for the schema to create AT objects:
+        # These grants are REQUIRED for the schema to create and use AT objects:
         # - CREATE PROCEDURE: Allows creating procedures AND functions (covers both)
         # - UNLIMITED TABLESPACE: Allows storing procedure/function definitions and tables
+        # - Network ACL: Allows HTTP/HTTPS requests for gateway features (granted below)
         cursor.execute(f'GRANT CREATE PROCEDURE TO {schema_name}')
         print(f'  ✓ Granted CREATE PROCEDURE (covers procedures and functions)')
 
         cursor.execute(f'GRANT UNLIMITED TABLESPACE TO {schema_name}')
         print(f'  ✓ Granted UNLIMITED TABLESPACE')
+
+        # Grant network ACL permissions for AT Gateway features
+        # Required for UTL_HTTP calls (INTERNAL_GENERIC_HTTP, gateway functions)
+        try:
+            cursor.execute(
+                """
+                BEGIN
+                    DBMS_NETWORK_ACL_ADMIN.APPEND_HOST_ACE(
+                        host => '*',
+                        ace  => xs$ace_type(
+                            privilege_list => xs$name_list('connect', 'resolve'),
+                            principal_name => :schema_name,
+                            principal_type => xs_acl.ptype_db
+                        )
+                    );
+                END;
+                """,
+                schema_name=schema_name.upper()
+            )
+            print(f'  ✓ Granted network ACL permissions (connect, resolve)')
+        except Exception as e:
+            # ACL grants might fail if user doesn't have EXECUTE on DBMS_NETWORK_ACL_ADMIN
+            # This is OK - SETUP will validate and provide a helpful error
+            print(f'  ⚠ Could not grant network ACL permissions: {e}')
+            print(f'    Gateway features will require manual ACL grant by DBA')
 
         connection.commit()
         cursor.close()
