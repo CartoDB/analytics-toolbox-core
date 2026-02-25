@@ -1,6 +1,4 @@
-import pytest
-
-from test_utils import run_query, DatabaseError
+from test_utils import run_query
 
 
 def test_add_one_success():

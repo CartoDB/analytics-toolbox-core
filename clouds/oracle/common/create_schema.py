@@ -103,7 +103,7 @@ def create_schema(schema_name):
 
         # Check if user/schema already exists
         cursor.execute(
-            "SELECT COUNT(*) FROM dba_users WHERE username = :username",
+            'SELECT COUNT(*) FROM dba_users WHERE username = :username',
             username=schema_name.upper(),
         )
         exists = cursor.fetchone()[0] > 0
@@ -118,13 +118,13 @@ def create_schema(schema_name):
         # Grant necessary privileges for Analytics Toolbox deployment
         # These grants are REQUIRED for the schema to create and use AT objects:
         # - CREATE PROCEDURE: Allows creating procedures AND functions (covers both)
-        # - UNLIMITED TABLESPACE: Allows storing procedure/function definitions and tables
-        # - Network ACL: Allows HTTP/HTTPS requests for gateway features (granted below)
+        # - UNLIMITED TABLESPACE: Allows storing procedure/function definitions
+        # - Network ACL: Allows HTTP/HTTPS requests (granted below)
         cursor.execute(f'GRANT CREATE PROCEDURE TO {schema_name}')
-        print(f'  ✓ Granted CREATE PROCEDURE (covers procedures and functions)')
+        print('  ✓ Granted CREATE PROCEDURE (covers procedures and functions)')
 
         cursor.execute(f'GRANT UNLIMITED TABLESPACE TO {schema_name}')
-        print(f'  ✓ Granted UNLIMITED TABLESPACE')
+        print('  ✓ Granted UNLIMITED TABLESPACE')
 
         # Grant network ACL permissions for AT Gateway features
         # Required for UTL_HTTP calls (INTERNAL_GENERIC_HTTP, gateway functions)
@@ -142,14 +142,14 @@ def create_schema(schema_name):
                     );
                 END;
                 """,
-                schema_name=schema_name.upper()
+                schema_name=schema_name.upper(),
             )
-            print(f'  ✓ Granted network ACL permissions (connect, resolve)')
+            print('  ✓ Granted network ACL permissions (connect, resolve)')
         except Exception as e:
-            # ACL grants might fail if user doesn't have EXECUTE on DBMS_NETWORK_ACL_ADMIN
-            # This is OK - SETUP will validate and provide a helpful error
+            # ACL grants might fail if user doesn't have EXECUTE on
+            # DBMS_NETWORK_ACL_ADMIN. SETUP will validate and error.
             print(f'  ⚠ Could not grant network ACL permissions: {e}')
-            print(f'    Gateway features will require manual ACL grant by DBA')
+            print('    Gateway features will require manual ACL grant by DBA')
 
         connection.commit()
         cursor.close()

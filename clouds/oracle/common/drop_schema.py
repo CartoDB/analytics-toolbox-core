@@ -98,7 +98,7 @@ def drop_schema(schema_name):
 
         # Check if user/schema exists
         cursor.execute(
-            "SELECT COUNT(*) FROM dba_users WHERE username = :username",
+            'SELECT COUNT(*) FROM dba_users WHERE username = :username',
             username=schema_name.upper(),
         )
         exists = cursor.fetchone()[0] > 0
