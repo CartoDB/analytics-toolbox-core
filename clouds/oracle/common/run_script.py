@@ -7,6 +7,7 @@ SQL scripts with variable replacement support.
 """
 
 import os
+import re
 import sys
 import shutil
 from tqdm import tqdm
@@ -22,11 +23,9 @@ def replace_variables(sql, variables):
 
 def parse_statement_info(statement):
     """Extract information about what SQL statement is doing."""
-    import re
-
-    # Remove comments and normalize whitespace
-    clean = re.sub(r'--.*$', '', statement, flags=re.MULTILINE)
-    clean = re.sub(r'/\*.*?\*/', '', clean, flags=re.DOTALL)
+    # Normalize whitespace (line comments already removed by build_modules.js)
+    # Remove block comments (/* ... */) if any remain
+    clean = re.sub(r'/\*.*?\*/', '', statement, flags=re.DOTALL)
     clean = ' '.join(clean.split()).upper()
 
     # Try to extract object type and name
@@ -71,21 +70,18 @@ def execute_script(script_path):
         }
         sql = replace_variables(sql, variables)
 
+        # Remove line comments
+        sql = re.sub(r'--.*\n', '\n', sql)
+
         # Execute SQL (split by statement terminator)
         cursor = connection.cursor()
         statements = sql.split('/\n')  # Oracle uses / as statement terminator
-
-        # Filter out empty and comment-only statements to get accurate count
-        valid_statements = [
-            s.strip()
-            for s in statements
-            if s.strip() and not s.strip().startswith('--')
-        ]
+        statements = [s.strip() for s in statements if s.strip()]
 
         executed_count = 0
 
         # Use tqdm for consistent progress bar style with gateway
-        with tqdm(valid_statements, desc='Deploying', ncols=80, unit='stmt') as pbar:
+        with tqdm(statements, desc='Deploying', ncols=80, unit='stmt') as pbar:
             for statement in pbar:
                 try:
                     # Parse what we're doing

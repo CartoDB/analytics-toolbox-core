@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2025 CARTO
+-- Copyright (C) 2026 CARTO
 ----------------------------
 
 CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS

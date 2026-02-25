@@ -1,5 +1,5 @@
 ----------------------------
--- Copyright (C) 2025 CARTO
+-- Copyright (C) 2026 CARTO
 ----------------------------
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.SUM_RANGE(start_num NUMBER, end_num NUMBER)
