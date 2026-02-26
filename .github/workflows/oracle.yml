@@ -23,7 +23,7 @@ env:
 jobs:
 
   test:
-    runs-on: ubuntu-24.04-4cpus
+    runs-on: ubuntu-24.04
     timeout-minutes: 55
     env:
       ORA_PREFIX: CI_${{ github.run_id }}_${{ github.run_attempt }}_
