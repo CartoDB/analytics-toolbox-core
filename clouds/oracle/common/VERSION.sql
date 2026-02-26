@@ -1,0 +1,11 @@
+----------------------------
+-- Copyright (C) 2026 CARTO
+----------------------------
+
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.@@ORA_VERSION_FUNCTION@@
+RETURN VARCHAR2
+IS
+BEGIN
+    RETURN '@@ORA_PACKAGE_VERSION@@';
+END @@ORA_VERSION_FUNCTION@@;
+/

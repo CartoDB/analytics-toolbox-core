@@ -1,0 +1,9 @@
+# Python dependencies for Oracle Analytics Toolbox build/deploy
+oracledb>=2.0.0
+pytest>=7.0.0
+pytest-xdist>=3.0.0
+brunette>=0.2.8
+flake8>=6.0.0
+flake8-quotes>=3.3.2
+sqlfluff>=2.0.0
+tqdm>=4.0.0

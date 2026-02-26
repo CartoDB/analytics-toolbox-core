@@ -1,0 +1,110 @@
+name: Oracle CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "clouds/oracle/**"
+      - ".github/workflows/oracle.yml"
+  pull_request:
+    paths:
+      - "clouds/oracle/**"
+      - ".github/workflows/oracle.yml"
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  NODE_VERSION: 20.19
+  PYTHON3_VERSION: 3.10.13
+  VIRTUALENV_VERSION: 20.15.1
+  GCLOUD_VERSION: 500.0.0
+
+jobs:
+
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      ORA_PREFIX: CI_${{ github.run_id }}_${{ github.run_attempt }}_
+      ORA_USER: ${{ secrets.ORA_USER_CI }}
+      ORA_PASSWORD: ${{ secrets.ORA_PASSWORD_CI }}
+      ORA_WALLET_ZIP: ${{ secrets.ORA_WALLET_ZIP_CI }}
+      ORA_WALLET_PASSWORD: ${{ secrets.ORA_WALLET_PASSWORD_CI }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v6
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup yarn
+        run: npm install -g yarn
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Run linter
+        run: |
+          cd clouds/oracle
+          make lint
+      - name: Run deploy
+        run: |
+          cd clouds/oracle
+          make deploy diff="$GIT_DIFF"
+      - name: Run test
+        run: |
+          cd clouds/oracle
+          make test diff="$GIT_DIFF"
+      - name: Run remove
+        if: always()
+        run: |
+          cd clouds/oracle
+          make remove drop-schema=1
+
+  deploy-internal:
+    if: github.ref_name == 'main'
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - user: ORA_USER_CD
+            password: ORA_PASSWORD_CD
+            wallet_zip: ORA_WALLET_ZIP_CD
+            wallet_password: ORA_WALLET_PASSWORD_CD
+          - user: ORA_USER_CI
+            password: ORA_PASSWORD_CI
+            wallet_zip: ORA_WALLET_ZIP_CI
+            wallet_password: ORA_WALLET_PASSWORD_CI
+    env:
+      ORA_USER: ${{ secrets[matrix.user] }}
+      ORA_PASSWORD: ${{ secrets[matrix.password] }}
+      ORA_WALLET_ZIP: ${{ secrets[matrix.wallet_zip] }}
+      ORA_WALLET_PASSWORD: ${{ secrets[matrix.wallet_password] }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Check diff
+        uses: technote-space/get-diff-action@v6
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup yarn
+        run: npm install -g yarn
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON3_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Run deploy
+        run: |
+          cd clouds/oracle
+          make deploy
