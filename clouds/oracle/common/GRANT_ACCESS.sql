@@ -2,7 +2,7 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
-CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.GRANT_CARTO_ACCESS(
+CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.GRANT_ACCESS(
     p_grantee VARCHAR2,
     p_revoke_first VARCHAR2 DEFAULT 'FALSE'
 )
@@ -50,7 +50,7 @@ BEGIN
         WHERE owner = '@@ORA_SCHEMA@@'
           AND object_type IN ('PROCEDURE', 'FUNCTION')
           AND status = 'VALID'
-          AND object_name != 'GRANT_CARTO_ACCESS'  -- Don't grant on this helper itself
+          AND object_name != 'GRANT_ACCESS'  -- Don't grant on this helper itself
         ORDER BY object_type, object_name
     ) LOOP
         BEGIN
@@ -77,5 +77,5 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('');
         DBMS_OUTPUT.PUT_LINE('[WARNING] No Analytics Toolbox objects found. Has the toolbox been deployed?');
     END IF;
-END GRANT_CARTO_ACCESS;
+END GRANT_ACCESS;
 /
