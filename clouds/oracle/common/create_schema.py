@@ -10,7 +10,10 @@ deployments in CI/CD environments. Schema-only users:
 
 Grants:
 - CREATE PROCEDURE (includes functions)
+- CREATE TABLE (for map, statistics, tiler modules)
+- CREATE VIEW (for LDS and data modules)
 - UNLIMITED TABLESPACE
+- INHERIT PRIVILEGES ON USER (for AUTHID CURRENT_USER procedures)
 - Network ACL permissions (connect, resolve) for AT Gateway features
 
 Usage:
@@ -137,6 +140,19 @@ def create_schema(schema_name):
 
         cursor.execute(f'GRANT UNLIMITED TABLESPACE TO {schema_name}')
         print('  ✓ Granted UNLIMITED TABLESPACE')
+
+        # Grant INHERIT PRIVILEGES to allow AUTHID CURRENT_USER procedures
+        # This is required for procedures like INTERNAL_CREATE_BUILDER_MAP
+        # that use AUTHID CURRENT_USER and need to execute with caller's privileges
+        try:
+            cursor.execute(f'GRANT INHERIT PRIVILEGES ON USER {user} TO {schema_name}')
+            print(f'  ✓ Granted INHERIT PRIVILEGES ON USER {user}')
+        except Exception as e:
+            # INHERIT PRIVILEGES might fail if user doesn't have the privilege
+            # or if it's already granted. This is critical for AUTHID CURRENT_USER procedures.
+            print(f'  ⚠ Could not grant INHERIT PRIVILEGES: {e}')
+            print(f'    AUTHID CURRENT_USER procedures may fail without this grant')
+            print(f'    Manual grant required: GRANT INHERIT PRIVILEGES ON USER {user} TO {schema_name};')
 
         # Grant network ACL permissions for AT Gateway features
         # Required for UTL_HTTP calls (INTERNAL_GENERIC_HTTP, gateway functions)
