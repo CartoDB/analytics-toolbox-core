@@ -98,7 +98,6 @@ create-package:
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
 	cp $(BUILD_DIR)/modules.sql $(DIST_DIR)/$(PACKAGE_NAME)/
-	cp $(ROOT_DIR)/INSTALL.md $(DIST_DIR)/$(PACKAGE_NAME)/README.md
 
 	$(MAKE) extra-package
 
