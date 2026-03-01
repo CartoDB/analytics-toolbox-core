@@ -3,7 +3,7 @@ flake8-quotes==3.2.0
 flake8-docstrings==1.6.0
 pep8-naming==0.12.1
 brunette==0.2.0
-sqlparse==0.5.0
+sqlparse==0.5.4
 sqlfluff==3.3.1
 databricks-sql-connector==2.0.2
 pytest==7.1.2
