@@ -27,15 +27,25 @@ jobs:
     timeout-minutes: 55
     env:
       ORA_PREFIX: CI_${{ github.run_id }}_${{ github.run_attempt }}_
-      ORA_USER: ${{ secrets.ORA_USER_CI }}
-      ORA_PASSWORD: ${{ secrets.ORA_PASSWORD_CI }}
-      ORA_WALLET_ZIP: ${{ secrets.ORA_WALLET_ZIP_CI }}
-      ORA_WALLET_PASSWORD: ${{ secrets.ORA_WALLET_PASSWORD_CI }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            ORA_USER:${{ secrets.ORA_USER_NAME_CI }}
+            ORA_PASSWORD:${{ secrets.ORA_PASSWORD_NAME_CI }}
+            ORA_WALLET_ZIP:${{ secrets.ORA_WALLET_ZIP_NAME_CI }}
+            ORA_WALLET_PASSWORD:${{ secrets.ORA_WALLET_PASSWORD_NAME_CI }}
+            ORA_CONNECTION_STRING:${{ secrets.ORA_CONNECTION_STRING_NAME_CI }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -53,15 +63,33 @@ jobs:
           cd clouds/oracle
           make lint
       - name: Run deploy
+        env:
+          ORA_USER: ${{ steps.get-gcp-secrets.outputs.ORA_USER }}
+          ORA_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_PASSWORD }}
+          ORA_WALLET_ZIP: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_ZIP }}
+          ORA_WALLET_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_PASSWORD }}
+          ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING }}
         run: |
           cd clouds/oracle
           make deploy diff="$GIT_DIFF"
       - name: Run test
+        env:
+          ORA_USER: ${{ steps.get-gcp-secrets.outputs.ORA_USER }}
+          ORA_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_PASSWORD }}
+          ORA_WALLET_ZIP: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_ZIP }}
+          ORA_WALLET_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_PASSWORD }}
+          ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING }}
         run: |
           cd clouds/oracle
           make test diff="$GIT_DIFF"
       - name: Run remove
         if: always()
+        env:
+          ORA_USER: ${{ steps.get-gcp-secrets.outputs.ORA_USER }}
+          ORA_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_PASSWORD }}
+          ORA_WALLET_ZIP: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_ZIP }}
+          ORA_WALLET_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_PASSWORD }}
+          ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING }}
         run: |
           cd clouds/oracle
           make remove drop-schema=1
@@ -74,14 +102,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - user: ORA_USER_CD
+          - target: cd
+            user: ORA_USER_CD
             password: ORA_PASSWORD_CD
             wallet_zip: ORA_WALLET_ZIP_CD
             wallet_password: ORA_WALLET_PASSWORD_CD
-          - user: ORA_USER_CI
-            password: ORA_PASSWORD_CI
-            wallet_zip: ORA_WALLET_ZIP_CI
-            wallet_password: ORA_WALLET_PASSWORD_CI
+          - target: ci
     env:
       ORA_USER: ${{ secrets[matrix.user] }}
       ORA_PASSWORD: ${{ secrets[matrix.password] }}
@@ -92,6 +118,22 @@ jobs:
         uses: actions/checkout@v2
       - name: Check diff
         uses: technote-space/get-diff-action@v6
+      - name: Auth google (CI only)
+        if: matrix.target == 'ci'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets (CI only)
+        if: matrix.target == 'ci'
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            ORA_USER:${{ secrets.ORA_USER_NAME_CI }}
+            ORA_PASSWORD:${{ secrets.ORA_PASSWORD_NAME_CI }}
+            ORA_WALLET_ZIP:${{ secrets.ORA_WALLET_ZIP_NAME_CI }}
+            ORA_WALLET_PASSWORD:${{ secrets.ORA_WALLET_PASSWORD_NAME_CI }}
+            ORA_CONNECTION_STRING:${{ secrets.ORA_CONNECTION_STRING_NAME_CI }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -105,6 +147,12 @@ jobs:
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Run deploy
+        env:
+          ORA_USER: ${{ steps.get-gcp-secrets.outputs.ORA_USER || secrets[matrix.user] }}
+          ORA_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_PASSWORD || secrets[matrix.password] }}
+          ORA_WALLET_ZIP: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_ZIP || secrets[matrix.wallet_zip] }}
+          ORA_WALLET_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_PASSWORD || secrets[matrix.wallet_password] }}
+          ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING }}
         run: |
           cd clouds/oracle
           make deploy
