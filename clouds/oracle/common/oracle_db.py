@@ -51,6 +51,7 @@ def get_connection():
     password = os.getenv('ORA_PASSWORD')
     wallet_zip = os.getenv('ORA_WALLET_ZIP')
     wallet_password = os.getenv('ORA_WALLET_PASSWORD')
+    conn_string_override = os.getenv('ORA_CONNECTION_STRING')
 
     if not all([user, password, wallet_zip, wallet_password]):
         print(
@@ -60,6 +61,9 @@ def get_connection():
         sys.exit(1)
 
     wallet_dir, conn_string = extract_wallet(wallet_zip, wallet_password)
+
+    if conn_string_override:
+        conn_string = conn_string_override
 
     os.environ['TNS_ADMIN'] = wallet_dir
     try:

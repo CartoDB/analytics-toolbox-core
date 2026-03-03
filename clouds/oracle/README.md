@@ -23,9 +23,12 @@ ORA_USER=<database-user>
 ORA_PASSWORD=<user-password>
 ORA_WALLET_ZIP=<base64-encoded-wallet-zip>
 ORA_WALLET_PASSWORD=<wallet-password>
+ORA_CONNECTION_STRING=<tns-alias>  # optional
 ```
 
 Note: `ORA_WALLET_ZIP` is the base64-encoded content of the Oracle wallet ZIP file (`base64 -i Wallet_YourDB.zip | tr -d '\n'`). `ORA_PREFIX` sets the schema name prefix, e.g. `DEV_` → schema `DEV_CARTO`. Leave empty or use `production=1` for schema `CARTO`.
+
+`ORA_CONNECTION_STRING` is optional. If set, it overrides the TNS alias auto-detected from the wallet's `tnsnames.ora`. Use it to select a specific service level, e.g. `cartoci_high`, `cartoci_medium`, or `cartoci_low`.
 
 ## Structure
 
