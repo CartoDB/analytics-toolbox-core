@@ -49,7 +49,6 @@ BEGIN
         FROM all_objects
         WHERE owner = '@@ORA_SCHEMA@@'
           AND object_type IN ('PROCEDURE', 'FUNCTION')
-          AND status = 'VALID'
           AND object_name != 'GRANT_ACCESS'  -- Don't grant on this helper itself
         ORDER BY object_type, object_name
     ) LOOP
