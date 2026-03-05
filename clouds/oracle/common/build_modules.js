@@ -60,6 +60,9 @@ if (diff.length) {
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
+    if (!fs.existsSync(sqldir)) {
+        continue;
+    }
     const modules = fs.readdirSync(sqldir);
     modules.forEach(module => {
         const moduledir = path.join(sqldir, module);
