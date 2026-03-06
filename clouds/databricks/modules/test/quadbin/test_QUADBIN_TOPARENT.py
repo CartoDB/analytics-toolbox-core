@@ -5,6 +5,9 @@ from test_utils import run_query
 
 QUADBIN_INDEX = 5209574053332910079
 
+# Resolution-26 quadbin from the FROMLONGLAT highest-resolution test
+QUADBIN_RES26 = 5306319089810035706
+
 
 def test_quadbin_toparent():
     result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_INDEX}, 3)')
@@ -35,3 +38,22 @@ def test_quadbin_toparent_resolution_overflow():
     result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_INDEX}, 27)')
 
     assert result[0][0] is None
+
+
+def test_quadbin_toparent_resolution_larger_than_index():
+    """Resolution larger than the index's own resolution returns NULL."""
+    # QUADBIN_INDEX is at resolution 4; requesting parent at resolution 5 is invalid
+    result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_INDEX}, 5)')
+
+    assert result[0][0] is None
+
+
+def test_quadbin_toparent_high_resolution():
+    """TOPARENT works at maximum resolution (26 → 25) without integer overflow."""
+    result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_RES26}, 25)')
+
+    parent = result[0][0]
+    assert parent is not None
+
+    res_result = run_query(f'SELECT CAST(({parent} >> 52) & 31 AS INT)')
+    assert res_result[0][0] == 25

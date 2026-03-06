@@ -7,6 +7,9 @@ from test_utils import run_query
 
 QUADBIN_INDEX = 5209574053332910079
 
+# Resolution-26 quadbin from the FROMLONGLAT highest-resolution test
+QUADBIN_RES26 = 5306319089810035706
+
 EXPECTED_CHILDREN_RES5 = sorted(
     [
         5214064458820747263,
@@ -139,3 +142,24 @@ def test_quadbin_tochildren_resolution_smaller_than_index():
         assert False, 'Expected an error for resolution < index resolution'
     except Exception as e:
         assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
+
+
+def test_quadbin_tochildren_high_resolution():
+    """TOCHILDREN works at maximum resolution (25 → 26) without integer overflow.
+
+    Round-trip: the resolution-26 quadbin must appear among the 4 children
+    of its resolution-25 parent.
+    """
+    parent_result = run_query(
+        f'SELECT @@DB_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_RES26}, 25)'
+    )
+    parent_res25 = parent_result[0][0]
+    assert parent_res25 is not None
+
+    children_result = run_query(
+        f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({parent_res25}, 26)'
+    )
+    children = _parse_children(children_result[0][0])
+
+    assert len(children) == 4
+    assert QUADBIN_RES26 in children

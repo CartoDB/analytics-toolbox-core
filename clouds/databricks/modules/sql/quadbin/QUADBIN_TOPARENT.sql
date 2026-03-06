@@ -8,7 +8,8 @@ RETURNS BIGINT
 RETURN
 IF(
     quadbin IS NULL OR resolution IS NULL
-    OR resolution < 0 OR resolution > 26,
+    OR resolution < 0 OR resolution > 26
+    OR resolution > CAST((quadbin >> 52) & CAST(31 AS BIGINT) AS INT),
     NULL,
     (quadbin & ~SHIFTLEFT(CAST(31 AS BIGINT), 52))
     | SHIFTLEFT(CAST(resolution AS BIGINT), 52)
