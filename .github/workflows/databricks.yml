@@ -32,9 +32,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - name: Check changed files
         uses: technote-space/get-diff-action@v6
       - name: Setup Python
@@ -87,9 +84,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - name: Check changed files
         uses: technote-space/get-diff-action@v6
       - name: Setup Python
@@ -133,9 +127,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
