@@ -15,39 +15,45 @@ RETURN (
         IF(
             direction NOT IN ('left', 'right', 'up', 'down'),
             RAISE_ERROR('Wrong direction argument passed to sibling'),
-            (WITH __tile AS (
+            (WITH __tile_raw AS (
                 SELECT @@DB_SCHEMA@@.QUADBIN_TOZXY(quadbin) AS t
             ),
 
-            __delta AS (
+            __tile AS (
                 SELECT
-                    t.z,
-                    t.x,
-                    t.y,
-                    CASE __tile.direction
+                    t.z AS tz,
+                    t.x AS tx,
+                    t.y AS ty
+                FROM __tile_raw
+            ),
+
+            __dir AS (
+                SELECT
+                    CASE direction
                         WHEN 'left' THEN -1 WHEN 'right' THEN 1 ELSE 0
                     END AS dx,
-                    CASE __tile.direction
+                    CASE direction
                         WHEN 'up' THEN -1 WHEN 'down' THEN 1 ELSE 0
                     END AS dy
-                FROM __tile
             ),
 
             __new_tile AS (
                 SELECT
-                    z,
+                    __tile.tz,
                     CASE
-                        WHEN x + dx < 0 THEN (x + dx) + (1 << z)
-                        ELSE (x + dx) % (1 << z)
+                        WHEN __tile.tx + __dir.dx < 0
+                            THEN (__tile.tx + __dir.dx) + (1 << __tile.tz)
+                        ELSE (__tile.tx + __dir.dx) % (1 << __tile.tz)
                     END AS new_x,
-                    y + dy AS new_y
-                FROM __delta
+                    __tile.ty + __dir.dy AS new_y
+                FROM __tile
+                CROSS JOIN __dir
             )
 
             SELECT
                 IF(
-                    new_y < 0 OR new_y >= (1 << z), NULL,
-                    @@DB_SCHEMA@@.QUADBIN_FROMZXY(z, new_x, new_y)
+                    new_y < 0 OR new_y >= (1 << tz), NULL,
+                    @@DB_SCHEMA@@.QUADBIN_FROMZXY(tz, new_x, new_y)
                 )
             FROM __new_tile)
         )
