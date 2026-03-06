@@ -95,7 +95,7 @@ def _parse_children(raw):
 
 
 def test_quadbin_tochildren():
-    result = run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 5)")
+    result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 5)')
 
     children = _parse_children(result[0][0])
     assert children == EXPECTED_CHILDREN_RES5
@@ -103,7 +103,7 @@ def test_quadbin_tochildren():
 
 def test_quadbin_tochildren_multi_level():
     """Test multi-level recursion: resolution 7 produces 4^3 = 64 children."""
-    result = run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 7)")
+    result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 7)')
 
     children = _parse_children(result[0][0])
     assert children == EXPECTED_CHILDREN_RES7
@@ -111,7 +111,7 @@ def test_quadbin_tochildren_multi_level():
 
 def test_quadbin_tochildren_deep_recursion():
     """Test deep recursion: resolution 9 produces 4^5 = 1024 children."""
-    result = run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 9)")
+    result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 9)')
 
     children = _parse_children(result[0][0])
     assert len(children) == EXPECTED_CHILDREN_RES9_COUNT
@@ -119,23 +119,23 @@ def test_quadbin_tochildren_deep_recursion():
 
 def test_quadbin_tochildren_invalid_resolution_negative():
     try:
-        run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, -1)")
-        assert False, "Expected an error for negative resolution"
+        run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, -1)')
+        assert False, 'Expected an error for negative resolution'
     except Exception as e:
-        assert "Invalid resolution" in str(e), f"Unexpected error: {e}"
+        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
 
 
 def test_quadbin_tochildren_resolution_overflow():
     try:
-        run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 27)")
-        assert False, "Expected an error for resolution > 26"
+        run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 27)')
+        assert False, 'Expected an error for resolution > 26'
     except Exception as e:
-        assert "Invalid resolution" in str(e), f"Unexpected error: {e}"
+        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
 
 
 def test_quadbin_tochildren_resolution_smaller_than_index():
     try:
-        run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 3)")
-        assert False, "Expected an error for resolution < index resolution"
+        run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 3)')
+        assert False, 'Expected an error for resolution < index resolution'
     except Exception as e:
-        assert "Invalid resolution" in str(e), f"Unexpected error: {e}"
+        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'

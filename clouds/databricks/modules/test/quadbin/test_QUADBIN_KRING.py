@@ -21,7 +21,7 @@ EXPECTED_KRING = sorted(
 
 
 def test_quadbin_kring():
-    result = run_query("SELECT @@DB_SCHEMA@@.QUADBIN_KRING(5209574053332910079, 1)")
+    result = run_query('SELECT @@DB_SCHEMA@@.QUADBIN_KRING(5209574053332910079, 1)')
 
     raw = result[0][0]
     kring = sorted(json.loads(raw) if isinstance(raw, str) else raw)
@@ -30,9 +30,9 @@ def test_quadbin_kring():
 
 def test_quadbin_kring_null():
     result = run_query(
-        "SELECT"
-        "    @@DB_SCHEMA@@.QUADBIN_KRING(NULL, 1),"
-        "    @@DB_SCHEMA@@.QUADBIN_KRING(5209574053332910079, NULL)"
+        'SELECT'
+        '    @@DB_SCHEMA@@.QUADBIN_KRING(NULL, 1),'
+        '    @@DB_SCHEMA@@.QUADBIN_KRING(5209574053332910079, NULL)'
     )
 
     assert result[0][0] is None

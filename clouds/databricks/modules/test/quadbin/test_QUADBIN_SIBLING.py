@@ -42,6 +42,6 @@ def test_quadbin_sibling_none():
 def test_quadbin_sibling_wrong_direction():
     try:
         run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_SIBLING({QUADBIN_INDEX}, 'wrong')")
-        assert False, "Expected an error for wrong direction"
+        assert False, 'Expected an error for wrong direction'
     except Exception as e:
-        assert "Wrong direction" in str(e), f"Unexpected error: {e}"
+        assert 'Wrong direction' in str(e), f'Unexpected error: {e}'

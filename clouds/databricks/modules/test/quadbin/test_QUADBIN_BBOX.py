@@ -9,7 +9,7 @@ TOLERANCE = 1e-6
 
 
 def test_quadbin_bbox():
-    result = run_query("SELECT @@DB_SCHEMA@@.QUADBIN_BBOX(5209574053332910079)")
+    result = run_query('SELECT @@DB_SCHEMA@@.QUADBIN_BBOX(5209574053332910079)')
 
     raw = result[0][0]
     bbox = json.loads(raw) if isinstance(raw, str) else raw
@@ -21,6 +21,6 @@ def test_quadbin_bbox():
 
 
 def test_quadbin_bbox_null():
-    result = run_query("SELECT @@DB_SCHEMA@@.QUADBIN_BBOX(NULL)")
+    result = run_query('SELECT @@DB_SCHEMA@@.QUADBIN_BBOX(NULL)')
 
     assert result[0][0] is None

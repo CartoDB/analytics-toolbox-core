@@ -26,9 +26,9 @@ EXPECTED_COORDS = [
 
 def _parse_wkt_polygon(wkt):
     """Extract coordinate pairs from a WKT POLYGON string."""
-    match = re.search(r"POLYGON\(\((.+)\)\)", wkt)
-    assert match, f"Not a valid POLYGON WKT: {wkt}"
-    pairs = match.group(1).split(",")
+    match = re.search(r'POLYGON\(\((.+)\)\)', wkt)
+    assert match, f'Not a valid POLYGON WKT: {wkt}'
+    pairs = match.group(1).split(',')
     coords = []
     for pair in pairs:
         parts = pair.strip().split()
@@ -37,7 +37,7 @@ def _parse_wkt_polygon(wkt):
 
 
 def test_quadbin_boundary():
-    result = run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_BOUNDARY({QUADBIN_INDEX})")
+    result = run_query(f'SELECT @@DB_SCHEMA@@.QUADBIN_BOUNDARY({QUADBIN_INDEX})')
 
     boundary = result[0][0]
     assert boundary is not None
@@ -50,6 +50,6 @@ def test_quadbin_boundary():
 
 
 def test_quadbin_boundary_null():
-    result = run_query("SELECT @@DB_SCHEMA@@.QUADBIN_BOUNDARY(NULL)")
+    result = run_query('SELECT @@DB_SCHEMA@@.QUADBIN_BOUNDARY(NULL)')
 
     assert result[0][0] is None
