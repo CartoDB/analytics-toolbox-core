@@ -185,7 +185,7 @@ Examples:
     parser.add_argument(
         '--cloud',
         required=True,
-        choices=['redshift', 'bigquery', 'snowflake', 'databricks'],
+        choices=['redshift', 'bigquery', 'snowflake', 'databricks', 'oracle'],
         help='Cloud platform name'
     )
     parser.add_argument(
