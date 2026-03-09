@@ -29,55 +29,15 @@ Environment Variables:
 
 import os
 import sys
-import oracledb
-import base64
-import tempfile
-import zipfile
-import io
-from pathlib import Path
-
-
-def extract_wallet(wallet_zip_b64, wallet_password):
-    """Extract Oracle wallet from base64-encoded ZIP."""
-    # Decode base64 ZIP
-    zip_data = base64.b64decode(wallet_zip_b64)
-
-    # Create temporary directory for wallet
-    wallet_dir = tempfile.mkdtemp(prefix='oracle_wallet_')
-
-    # Extract ZIP to wallet directory
-    with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
-        z.extractall(wallet_dir)
-
-    # Update sqlnet.ora to point to wallet directory
-    sqlnet_path = Path(wallet_dir) / 'sqlnet.ora'
-    if sqlnet_path.exists():
-        content = sqlnet_path.read_text()
-        content = content.replace('?/network/admin', wallet_dir)
-        sqlnet_path.write_text(content)
-
-    # Extract connection string from tnsnames.ora
-    tnsnames_path = Path(wallet_dir) / 'tnsnames.ora'
-    if tnsnames_path.exists():
-        content = tnsnames_path.read_text()
-        # Extract first connection name
-        for line in content.split('\n'):
-            if '=' in line and not line.strip().startswith('#'):
-                conn_name = line.split('=')[0].strip()
-                return wallet_dir, conn_name
-
-    raise Exception('Could not extract connection string from tnsnames.ora')
+import shutil
+from oracle_db import get_connection
 
 
 def create_schema(schema_name):
     """Create Oracle schema (user with NO AUTHENTICATION)."""
-    # Get credentials from environment
     user = os.getenv('ORA_USER')
-    password = os.getenv('ORA_PASSWORD')
-    wallet_zip = os.getenv('ORA_WALLET_ZIP')
-    wallet_password = os.getenv('ORA_WALLET_PASSWORD')
 
-    if not all([user, password, wallet_zip, wallet_password, schema_name]):
+    if not schema_name:
         print(
             'ERROR: Missing Oracle credentials or schema name. '
             'Set ORA_USER, ORA_PASSWORD, '
@@ -85,21 +45,9 @@ def create_schema(schema_name):
         )
         sys.exit(1)
 
-    # Extract wallet and get connection string
-    wallet_dir, conn_string = extract_wallet(wallet_zip, wallet_password)
+    connection, wallet_dir = get_connection()
 
     try:
-        # Set TNS_ADMIN environment variable
-        os.environ['TNS_ADMIN'] = wallet_dir
-
-        # Initialize Oracle client (if not already initialized)
-        try:
-            oracledb.init_oracle_client(config_dir=wallet_dir)
-        except Exception:
-            pass  # Already initialized
-
-        # Connect to Oracle
-        connection = oracledb.connect(user=user, password=password, dsn=conn_string)
         cursor = connection.cursor()
 
         print(f'Setting up schema: {schema_name}')
@@ -189,9 +137,6 @@ def create_schema(schema_name):
         print(f'✓ Schema {schema_name} ready for Analytics Toolbox deployment')
 
     finally:
-        # Cleanup wallet directory
-        import shutil
-
         shutil.rmtree(wallet_dir, ignore_errors=True)
 
 
