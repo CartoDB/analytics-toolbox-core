@@ -1,13 +1,20 @@
 import os
 import sys
+import shutil
 
-# Add parent directory to path to import oracle_db
+# Add parent directory to path to import oracle_db and run_query
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from oracle_db import get_connection  # noqa: E402
 from oracledb.exceptions import DatabaseError  # noqa: E402
 
-__all__ = ['DatabaseError', 'quote_table_name']
+__all__ = [
+    'DatabaseError',
+    'quote_table_name',
+    'run_query',
+    'run_queries',
+    'get_cursor',
+]
 
 
 def quote_table_name(table_name):
@@ -19,14 +26,17 @@ def quote_table_name(table_name):
 
 
 def run_query(query):
-    """Execute a query and return results."""
+    """Execute a query and return results.
+
+    Note: wallet directory is intentionally not cleaned up here —
+    oracledb caches the tnsnames.ora path per session, so deleting
+    the wallet between calls causes subsequent connections to fail.
+    OS temp cleanup handles reclamation.
+    """
+    query = query.replace('@@ORA_SCHEMA@@', os.environ.get('ORA_SCHEMA', ''))
     conn, _wallet_dir = get_connection()
     conn.autocommit = True
     cursor = conn.cursor()
-
-    # Replace schema placeholder
-    query = query.replace('@@ORA_SCHEMA@@', os.environ['ORA_SCHEMA'])
-
     cursor.execute(query)
     try:
         return cursor.fetchall()
@@ -35,28 +45,25 @@ def run_query(query):
     finally:
         cursor.close()
         conn.close()
-        # Note: Wallet directory cleanup handled by OS temp cleanup
 
 
 def run_queries(queries):
     """Execute multiple queries and return results from the last one."""
-    conn, _wallet_dir = get_connection()
-    conn.autocommit = True
-    cursor = conn.cursor()
-
-    for query in queries:
-        # Replace schema placeholder
-        query = query.replace('@@ORA_SCHEMA@@', os.environ['ORA_SCHEMA'])
-        cursor.execute(query)
-
+    conn, wallet_dir = get_connection()
     try:
-        return cursor.fetchall()
-    except Exception:
-        return 'No results returned'
+        cursor = conn.cursor()
+        for query in queries:
+            query = query.replace('@@ORA_SCHEMA@@', os.environ.get('ORA_SCHEMA', ''))
+            cursor.execute(query)
+        try:
+            return cursor.fetchall()
+        except Exception:
+            return 'No results returned'
+        finally:
+            cursor.close()
+            conn.close()
     finally:
-        cursor.close()
-        conn.close()
-        # Note: Wallet directory cleanup handled by OS temp cleanup
+        shutil.rmtree(wallet_dir, ignore_errors=True)
 
 
 def get_cursor():
