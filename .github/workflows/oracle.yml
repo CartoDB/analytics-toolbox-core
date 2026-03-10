@@ -155,4 +155,4 @@ jobs:
           ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING }}
         run: |
           cd clouds/oracle
-          make deploy
+          make deploy production=1
