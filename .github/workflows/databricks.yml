@@ -32,9 +32,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - name: Check changed files
         uses: technote-space/get-diff-action@v6
       - name: Setup Python
@@ -75,6 +72,51 @@ jobs:
         if: always()
         run: make remove cloud=databricks
 
+  deploy-internal:
+    if: github.ref_name == 'main'
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      DB_HOST_NAME: ${{ secrets.DB_HOST_NAME_CD }}
+      DB_HTTP_PATH: ${{ secrets.DB_HTTP_PATH_CD }}
+      DB_CATALOG: ${{ secrets.DB_CATALOG_CD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Check changed files
+        uses: technote-space/get-diff-action@v6
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Authenticate with Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Get Databricks secrets
+        id: secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CD }}
+            databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CD }}
+      - name: Get Databricks OAuth token
+        run: |
+          RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials" \
+            -d "client_id=${{ steps.secrets.outputs.databricks-client-id }}" \
+            -d "client_secret=${{ steps.secrets.outputs.databricks-client-secret }}" \
+            -d "scope=all-apis")
+          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
+          echo "::add-mask::$TOKEN"
+          echo "DB_TOKEN=$TOKEN" >> $GITHUB_ENV
+      - name: Deploy modules
+        run: make deploy cloud=databricks diff="$GIT_DIFF" production=1
+
   publish:
     if: github.ref_name == 'stable'
     needs: test
@@ -85,9 +127,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
