@@ -8,8 +8,7 @@ here = os.path.dirname(__file__)
 @pytest.mark.integration
 def test_s2_totoken():
     """Test S2_TOTOKEN converts cell IDs to tokens"""
-    results = run_query(
-        """WITH context AS(
+    results = run_query("""WITH context AS(
             SELECT -8070450532247928832 AS id UNION ALL
             SELECT -7782220156096217088 UNION ALL
             SELECT -7854277750134145024 UNION ALL
@@ -21,8 +20,7 @@ def test_s2_totoken():
             SELECT -7843177080740118528
         )
         SELECT @@RS_SCHEMA@@.S2_TOTOKEN(id) AS token
-        FROM context;"""
-    )
+        FROM context;""")
 
     fixture_path = os.path.join(here, "fixtures/s2_totoken_out.txt")
     with open(fixture_path, "r") as fixture_file:

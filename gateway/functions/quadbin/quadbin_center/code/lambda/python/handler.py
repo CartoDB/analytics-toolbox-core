@@ -29,7 +29,7 @@ def process_quadbin_center_row(row):
     if quadbin is None:
         return None
 
-    (x, y) = cell_to_point(quadbin)
+    x, y = cell_to_point(quadbin)
     return "POINT ({} {})".format(x, y)
 
 

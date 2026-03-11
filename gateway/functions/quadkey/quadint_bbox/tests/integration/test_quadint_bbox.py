@@ -10,12 +10,10 @@ class TestQuadintBboxIntegration:
 
     def test_bbox_success(self):
         """Test getting bounding boxes for quadints"""
-        result = run_query(
-            """SELECT @@RS_SCHEMA@@.QUADINT_BBOX(162) as bbox1,
+        result = run_query("""SELECT @@RS_SCHEMA@@.QUADINT_BBOX(162) as bbox1,
             @@RS_SCHEMA@@.QUADINT_BBOX(12070922) as bbox2,
             @@RS_SCHEMA@@.QUADINT_BBOX(791040491538) as bbox3,
-            @@RS_SCHEMA@@.QUADINT_BBOX(12960460429066265) as bbox4"""
-        )
+            @@RS_SCHEMA@@.QUADINT_BBOX(12960460429066265) as bbox4""")
 
         assert result[0][0] == "[-90.0,0.0,0.0,66.51326044311186]"
         assert (

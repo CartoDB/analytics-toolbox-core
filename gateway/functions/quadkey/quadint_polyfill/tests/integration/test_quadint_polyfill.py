@@ -20,12 +20,10 @@ class TestQuadintPolyfillIntegration:
         fixture_file.close()
         feature_wkt = lines[0].rstrip()
 
-        result = run_query(
-            f"""SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
+        result = run_query(f"""SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
                 ST_GeomFromText('{feature_wkt}'), 10) UNION ALL
             SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
-                ST_GeomFromText('{feature_wkt}'), 14)"""
-        )
+                ST_GeomFromText('{feature_wkt}'), 14)""")
 
         with open(f"{here}/fixtures/quadint_polyfill_out.txt", "r") as fixture_file:
             lines = fixture_file.readlines()
@@ -47,10 +45,8 @@ class TestQuadintPolyfillIntegration:
 
         feature_wkt = lines[1].rstrip()
 
-        result = run_query(
-            f"""SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
-                ST_GeomFromText('{feature_wkt}'), 22)"""
-        )
+        result = run_query(f"""SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
+                ST_GeomFromText('{feature_wkt}'), 22)""")
 
         with open(f"{here}/fixtures/quadint_polyfill_out.txt", "r") as fixture_file:
             lines = fixture_file.readlines()
@@ -68,8 +64,6 @@ class TestQuadintPolyfillIntegration:
 
         feature_wkt = "POINT(10 2)"
         with pytest.raises(Exception) as excinfo:
-            run_query(
-                f"""SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
-                    ST_GeomFromText('{feature_wkt}'), NULL)"""
-            )
+            run_query(f"""SELECT @@RS_SCHEMA@@.QUADINT_POLYFILL(
+                    ST_GeomFromText('{feature_wkt}'), NULL)""")
         assert "NULL argument passed to UDF" in str(excinfo.value)
