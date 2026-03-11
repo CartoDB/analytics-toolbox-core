@@ -5,8 +5,7 @@ from test_utils.integration.redshift import run_query
 @pytest.mark.integration
 def test_s2_resolution():
     """Test S2_RESOLUTION returns the resolution level of S2 cells"""
-    results = run_query(
-        """WITH context AS(
+    results = run_query("""WITH context AS(
             SELECT -8070450532247928832 AS res UNION ALL
             SELECT -7782220156096217088 UNION ALL
             SELECT -7854277750134145024 UNION ALL
@@ -18,8 +17,7 @@ def test_s2_resolution():
             SELECT -7843177080740118528
         )
         SELECT @@RS_SCHEMA@@.S2_RESOLUTION(res) AS resolution
-        FROM context;"""
-    )
+        FROM context;""")
 
     for idx, result in enumerate(results):
         assert result[0] == idx

@@ -13,8 +13,7 @@ class TestPlacekeyIsvalidIntegration:
 
     def test_placekey_isvalid(self):
         """Test PLACEKEY_ISVALID with various inputs"""
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.PLACEKEY_ISVALID(NULL)
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_ISVALID('@abc')
@@ -40,8 +39,7 @@ class TestPlacekeyIsvalidIntegration:
             SELECT @@RS_SCHEMA@@.PLACEKEY_ISVALID('zzz@abc-234-xyz')
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_ISVALID('222-zzz@abc-234-xyz')
-        """
-        )
+        """)
 
         assert result[0][0] is False
         assert result[1][0] is False

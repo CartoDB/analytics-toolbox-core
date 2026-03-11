@@ -6,5 +6,4 @@ This module imports shared utilities from lib/
 
 from lib.s2 import get_resolution
 
-
 __all__ = ["get_resolution"]

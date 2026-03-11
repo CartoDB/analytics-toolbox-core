@@ -13,11 +13,9 @@ class TestQuadintBoundaryIntegration:
 
     def test_boundary_success(self):
         """Test getting boundary geometries for quadints"""
-        results = run_query(
-            """SELECT @@RS_SCHEMA@@.QUADINT_BOUNDARY(12070922) as geog1,
+        results = run_query("""SELECT @@RS_SCHEMA@@.QUADINT_BOUNDARY(12070922) as geog1,
             @@RS_SCHEMA@@.QUADINT_BOUNDARY(791040491538) as geog2,
-            @@RS_SCHEMA@@.QUADINT_BOUNDARY(12960460429066265) as geog3"""
-        )
+            @@RS_SCHEMA@@.QUADINT_BOUNDARY(12960460429066265) as geog3""")
 
         with open(f"{here}/fixtures/quadint_boundary_out.txt", "r") as fixture_file:
             lines = fixture_file.readlines()

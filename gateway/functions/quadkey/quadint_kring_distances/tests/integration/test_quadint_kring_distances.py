@@ -11,11 +11,9 @@ class TestQuadintKringDistancesIntegration:
 
     def test_kring_distances_success(self):
         """Test getting k-ring with distances"""
-        result = run_query(
-            """SELECT @@RS_SCHEMA@@.QUADINT_KRING_DISTANCES(162, 1),
+        result = run_query("""SELECT @@RS_SCHEMA@@.QUADINT_KRING_DISTANCES(162, 1),
                 @@RS_SCHEMA@@.QUADINT_KRING_DISTANCES(12070922, 1),
-                @@RS_SCHEMA@@.QUADINT_KRING_DISTANCES(12070922, 2)"""
-        )
+                @@RS_SCHEMA@@.QUADINT_KRING_DISTANCES(12070922, 2)""")
 
         assert json.loads(result[0][0]) == [
             {"index": 2, "distance": 1},
