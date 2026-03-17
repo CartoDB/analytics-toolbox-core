@@ -12,7 +12,7 @@ Returns an array of H3 cell indexes contained in the given geography at a reques
 
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
-* `mode`: `STRING`
+* `mode`: `STRING`.
   * `center` returns the indexes of the H3 cells which centers intersect the input geography (polygon). The resulting H3 set does not fully cover the input geography, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines. Equivalent to [`H3_POLYFILL`](h3#h3_polyfill).
   * `intersects` returns the indexes of the H3 cells that intersect the input geography. The resulting H3 set will completely cover the input geography (point, line, polygon).
   * `contains` returns the indexes of the H3 cells that are entirely contained inside the input geography (polygon). This mode is not compatible with points or lines.
