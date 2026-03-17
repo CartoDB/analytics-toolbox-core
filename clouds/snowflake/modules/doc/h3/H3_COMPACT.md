@@ -8,6 +8,8 @@ H3_COMPACT(indexArray)
 
 Returns an array with the indexes of a set of hexagons across multiple resolutions that represent the same area as the input set of hexagons.
 
+**Input parameters**
+
 * `indexArray`: `ARRAY` of H3 cell indices of the same resolution as hexadecimal.
 
 **Return type**

@@ -8,6 +8,8 @@ QUADBIN_FROMQUADKEY(quadkey)
 
 Compute a quadbin index from a quadkey.
 
+**Input parameters**
+
 * `quadkey`: `VARCHAR(MAX)` Quadkey representation of the index.
 
 **Return type**

@@ -8,6 +8,8 @@ ST_ENVELOPE(geog)
 
 Takes any number of features and returns a rectangular Polygon that encompasses all vertices.
 
+**Input parameters**
+
 * `geog`: `ARRAY<GEOGRAPHY>` input features.
 
 **Return type**

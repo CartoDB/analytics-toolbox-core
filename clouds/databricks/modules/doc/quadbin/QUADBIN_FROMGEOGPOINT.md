@@ -8,6 +8,8 @@ QUADBIN_FROMGEOGPOINT(longitude, latitude, resolution)
 
 Returns the Quadbin of a given point at a requested resolution. This function is an alias for `QUADBIN_FROMLONGLAT`.
 
+**Input parameters**
+
 * `longitude`: `DOUBLE` longitude (WGS84) of the point.
 * `latitude`: `DOUBLE` latitude (WGS84) of the point.
 * `resolution`: `INT` level of detail or zoom.

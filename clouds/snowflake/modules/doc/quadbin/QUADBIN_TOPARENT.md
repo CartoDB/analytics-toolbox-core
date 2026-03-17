@@ -8,6 +8,8 @@ QUADBIN_TOPARENT(quadbin, resolution)
 
 Returns the parent (ancestor) Quadbin of a given Quadbin for a specific resolution. An ancestor of a given Quadbin is a Quadbin of smaller resolution that spatially contains it.
 
+**Input parameters**
+
 * `quadbin`: `BIGINT` Quadbin to get the parent from.
 * `resolution`: `INT` resolution of the desired parent.
 

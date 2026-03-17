@@ -8,6 +8,8 @@ H3_STRING_TOINT(index)
 
 Converts the string representation of the H3 index to the integer representation.
 
+**Input parameters**
+
 * `index`: `STRING` The H3 cell index.
 
 **Return type**

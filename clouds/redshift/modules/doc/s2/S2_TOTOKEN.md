@@ -8,6 +8,8 @@ S2_TOTOKEN(id)
 
 Returns the conversion of a S2 cell ID into a token (S2 cell hexified ID).
 
+**Input parameters**
+
 * `id`: `INT8` S2 cell ID.
 
 **Return type**

@@ -8,6 +8,8 @@ ST_MINKOWSKIDISTANCE(geog [, p])
 
 Calculate the Minkowski p-norm distance between two features.
 
+**Input parameters**
+
 * `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 * `p` (optional): `FLOAT64` minkowski p-norm distance parameter. 1: Manhattan distance. 2: Euclidean distance. 1 =< p <= infinity. By default `p` is `2`.
 

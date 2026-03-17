@@ -8,6 +8,8 @@ ST_CENTERMEDIAN(geom)
 
 Takes a FeatureCollection of points and computes the median center. The median center is understood as the point that requires the least total travel from all other points.
 
+**Input parameters**
+
 * `geog`: `GEOMETRY` for which to compute the center.
 
 **Return type**

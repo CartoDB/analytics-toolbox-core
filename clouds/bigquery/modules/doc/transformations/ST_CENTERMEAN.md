@@ -8,6 +8,8 @@ ST_CENTERMEAN(geog)
 
 Takes a Feature or FeatureCollection and returns the mean center (average of its vertices).
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` feature for which to compute the center.
 
 **Return type**

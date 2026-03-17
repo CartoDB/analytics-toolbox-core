@@ -8,6 +8,8 @@ QUADBIN_CENTER(quadbin)
 
 Returns the center for a given Quadbin. The center is the intersection point of the four immediate children Quadbin.
 
+**Input parameters**
+
 * `quadbin`: `BIGINT` Quadbin to get the center from.
 
 **Return type**

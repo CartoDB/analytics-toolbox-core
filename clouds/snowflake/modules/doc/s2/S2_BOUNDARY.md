@@ -8,6 +8,8 @@ S2_BOUNDARY(id)
 
 Returns the boundary for a given S2 cell ID. We extract the boundary by getting the corner longitudes and latitudes, then enclose it in a GeoJSON and finally transform it into geography.
 
+**Input parameters**
+
 * `id`: `BIGINT` S2 cell ID to get the boundary geography from.
 
 **Return type**

@@ -8,6 +8,8 @@ S2_FROMTOKEN(token)
 
 Returns the conversion of a token into a S2 cell ID.
 
+**Input parameters**
+
 * `token`: `STRING` S2 cell hexified ID.
 
 **Return type**

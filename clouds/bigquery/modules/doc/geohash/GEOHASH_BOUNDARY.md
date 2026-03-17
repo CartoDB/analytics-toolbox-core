@@ -8,6 +8,8 @@ GEOHASH_BOUNDARY(index)
 
 Returns a geography representing the geohash cell. It will return `null` on error (invalid input).
 
+**Input parameters**
+
 * `index`: `STRING` The Geohash cell index. The maximum length supported is 17.
 
 **Return type**

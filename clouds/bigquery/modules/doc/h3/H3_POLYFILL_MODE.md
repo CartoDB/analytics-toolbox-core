@@ -8,6 +8,8 @@ H3_POLYFILL_MODE(geog, resolution, mode)
 
 Returns an array of H3 cell indexes contained in the given geography at a requested resolution. Containment is determined by the mode: center, intersects, contains.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 * `mode`: `STRING`
@@ -57,6 +59,6 @@ FROM UNNEST(carto.H3_POLYFILL_MODE(
 
 ```sql
 SELECT h3
-FROM <project>.<dataset>.<table>,
+FROM <my-project>.<my-dataset>.<my-table>,
   UNNEST(carto.H3_POLYFILL_MODE(geog, 9, 'intersects')) AS h3;
 ```

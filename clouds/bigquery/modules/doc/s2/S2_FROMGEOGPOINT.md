@@ -8,6 +8,8 @@ S2_FROMGEOGPOINT(point, resolution)
 
 Returns the S2 cell ID of a given point at a requested resolution.
 
+**Input parameters**
+
 * `point`: `GEOGRAPHY` point to get the ID from.
 * `resolution`: `INT64` level of detail or zoom.
 

@@ -8,6 +8,8 @@ QUADBIN_DISTANCE(origin, destination)
 
 Returns the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance) between two quadbin indexes. The origin and destination indices must have the same resolution. Otherwise `NULL` will be returned.
 
+**Input parameters**
+
 * `origin`: `BIGINT` origin quadbin index.
 * `destination`: `BIGINT` destination quadbin index.
 

@@ -8,6 +8,8 @@ QUADBIN_BBOX(quadbin)
 
 Returns an array with the boundary box of a given Quadbin. This boundary box contains the minimum and maximum longitude and latitude. The output format is [West-South, East-North] or [min long, min lat, max long, max lat].
 
+**Input parameters**
+
 * `quadbin`: `BIGINT` Quadbin to get the bbox from.
 
 **Return type**

@@ -8,6 +8,8 @@ H3_POLYFILL(geog, resolution)
 
 Returns an array of H3 cell indexes contained in the given geography (Polygon, MultiPolygon) at a requested resolution. Containment is determined by the cells' center. This function is equivalent to [`H3_POLYFILL_MODE`](h3#h3_polyfill_mode) with mode `center`.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 
@@ -42,6 +44,6 @@ FROM UNNEST(carto.H3_POLYFILL(
 
 ```sql
 SELECT h3
-FROM <project>.<dataset>.<table>,
+FROM <my-project>.<my-dataset>.<my-table>,
   UNNEST(carto.H3_POLYFILL(geog, 9)) AS h3;
 ```

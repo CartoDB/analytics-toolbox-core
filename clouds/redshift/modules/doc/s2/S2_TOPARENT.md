@@ -10,6 +10,8 @@ Returns the parent ID of a given cell ID for a specific resolution. A parent cel
 
 By default, this function returns the direct parent (where parent resolution is child resolution + 1). However, an optional resolution argument can be passed with the desired parent resolution.
 
+**Input parameters**
+
 * `id`: `INT8` quadint to get the parent from.
 * `resolution` (optional): `INT4` resolution of the desired parent.
 

@@ -8,6 +8,8 @@ S2_CENTER(id)
 
 Returns a POINT corresponding to the centroid of an S2 cell, given its ID.
 
+**Input parameters**
+
 * `id`: `INT64` S2 cell ID to get the boundary geography from.
 
 **Return type**

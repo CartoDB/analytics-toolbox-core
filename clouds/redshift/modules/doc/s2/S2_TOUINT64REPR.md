@@ -8,6 +8,8 @@ S2_TOUINT64REPR(id)
 
 Returns the UINT64 representation of a cell ID.
 
+**Input parameters**
+
 * `id`: `INT8` S2 cell ID.
 
 **Return type**

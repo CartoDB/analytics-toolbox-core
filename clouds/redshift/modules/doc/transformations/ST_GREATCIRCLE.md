@@ -8,6 +8,8 @@ ST_GREATCIRCLE(start_point, end_point, n_points)
 
 Calculates a great circle route as a LineString.
 
+**Input parameters**
+
 * `start_point`: `GEOMETRY` source point feature.
 * `end_point`: `GEOMETRY` destination point feature.
 * `n_points` (optional): `INT` number of points. Defaults to `100`.

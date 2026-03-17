@@ -8,6 +8,8 @@ S2_BOUNDARY(id)
 
 Returns the boundary for a given S2 Cell ID as a WKT string. Note that S2 cell vertices should be joined with geodesic edges (great circles), not straight lines in a planar projection.
 
+**Input parameters**
+
 * `id`: `INT8` id to get the boundary geography from.
 
 **Return type**

@@ -8,6 +8,8 @@ ST_LINE_INTERPOLATE_POINT(geog, distance [, units])
 
 Takes a LineString and returns a Point at a specified distance along the line.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` input line.
 * `distance`: `DOUBLE` distance along the line.
 * `units` (optional): `STRING` units of length, the supported options are: `miles`, `kilometers`, `degrees` and `radians`. By default `units` is `kilometers`.

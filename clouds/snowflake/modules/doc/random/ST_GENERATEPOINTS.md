@@ -10,6 +10,8 @@ Generates randomly placed points inside a polygon and returns them in an array o
 
 The distribution of the generated points is spherically uniform (i.e. if the coordinates are interpreted as longitude and latitude on a sphere); this means that WGS84 coordinates will be only approximately uniformly distributed, since WGS84 is based on an ellipsoidal model.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` a polygon; the random points generated will be inside this polygon.
 * `npoints`: `INT` number of points to generate.
 

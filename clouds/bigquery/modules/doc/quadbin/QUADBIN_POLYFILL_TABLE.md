@@ -8,6 +8,8 @@ QUADBIN_POLYFILL_TABLE(input_query, resolution, mode, output_table)
 
 Returns a table with the quadbin cell indexes contained in the given geography at a requested resolution. Containment is determined by the mode: center, intersects, contains. All the attributes except the geography will be included in the output table, clustered by the quadbin column.
 
+**Input parameters**
+
 * `input_query`: `STRING` input data to polyfill. It must contain a column `geom` with the shape to cover. Additionally, other columns can be included.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 26.
 * `mode`: `STRING`
@@ -30,7 +32,7 @@ Mode `contains`:
 
 **Output**
 
-The results are stored in the table named `<output_table>`, which contains the following columns:
+The results are stored in the table named `<my-output-table>`, which contains the following columns:
 
 * `quadbin`: `INT64` the geometry of the considered point.
 * The rest of columns included in `input_query` except `geom`.
@@ -41,18 +43,18 @@ The results are stored in the table named `<output_table>`, which contains the f
 CALL carto.QUADBIN_POLYFILL_TABLE(
   "SELECT ST_GEOGFROMTEXT('POLYGON ((-3.71219873428345 40.413365349070865, -3.7144088745117 40.40965661286395, -3.70659828186035 40.409525904775634, -3.71219873428345 40.413365349070865))') AS geom",
   12, 'intersects',
-  '<project>.<dataset>.<output_table>'
+  '<my-project>.<my-dataset>.<my-output-table>'
 );
--- The table `<project>.<dataset>.<output_table>` will be created
+-- The table `<my-project>.<my-dataset>.<my-output-table>` will be created
 -- with column: quadbin
 ```
 
 ```sql
 CALL carto.QUADBIN_POLYFILL_TABLE(
-  'SELECT geom, name, value FROM `<project>.<dataset>.<table>`',
+  'SELECT geom, name, value FROM `<my-project>.<my-dataset>.<my-table>`',
   12, 'center',
-  '<project>.<dataset>.<output_table>'
+  '<my-project>.<my-dataset>.<my-output-table>'
 );
--- The table `<project>.<dataset>.<output_table>` will be created
+-- The table `<my-project>.<my-dataset>.<my-output-table>` will be created
 -- with columns: quadbin, name, value
 ```

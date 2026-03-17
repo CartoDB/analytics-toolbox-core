@@ -8,6 +8,8 @@ ST_MAKEELLIPSE(geog, xSemiAxis, ySemiAxis [, angle] [, units] [, steps])
 
 Takes a Point and calculates the ellipse polygon given two semi-axes expressed in variable units and steps for precision.
 
+**Input parameters**
+
 * `center`: `GEOGRAPHY` center point.
 * `xSemiAxis`: `DOUBLE` semi (major) axis of the ellipse along the x-axis.
 * `ySemiAxis`: `DOUBLE` semi (minor) axis of the ellipse along the y-axis.

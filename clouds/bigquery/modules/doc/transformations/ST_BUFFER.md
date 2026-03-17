@@ -8,6 +8,8 @@ ST_BUFFER(geog, radius, units, steps)
 
 Calculates a Geography buffer for input features for a given radius, i.e. the area within the given distance of the input. Units supported are miles, kilometers, and degrees.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` input to be buffered.
 * `radius`: `FLOAT64` distance to draw the buffer (negative values are allowed).
 * `units`: `STRING`|`NULL` units of length, the supported options are: miles, kilometers, and degrees. If `NULL`the default value `kilometers` is used.
