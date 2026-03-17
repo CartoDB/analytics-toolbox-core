@@ -16,7 +16,7 @@ Returns a table with the quadbin cell indexes contained in the given geography a
   * `center` returns the indexes of the quadbin cells which centers intersect the input geography (polygon). The resulting quadbin set does not fully cover the input geography, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines. Equivalent to [`QUADBIN_POLYFILL`](quadbin#quadbin_polyfill).
   * `intersects` returns the indexes of the quadbin cells that intersect the input geography. The resulting quadbin set will completely cover the input geography (point, line, polygon).
   * `contains` returns the indexes of the quadbin cells that are entirely contained inside the input geography (polygon). This mode is not compatible with points or lines.
-* `output_table`: `STRING` name of the output table to store the results of the polyfill.
+* `output_table`: `STRING` qualified name of the output table, e.g. `<my-project>.<my-dataset>.<my-output-table>`. The process will fail if the table already exists.
 
 Mode `center`:
 

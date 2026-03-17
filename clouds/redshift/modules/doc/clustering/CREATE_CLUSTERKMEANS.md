@@ -11,7 +11,7 @@ Takes a set of points as input and partitions them into clusters using the k-mea
 **Input parameters**
 
 * `input`: `VARCHAR` name of the table or literal SQL query to be clustered.
-* `output_table`: `VARCHAR` name of the output table.
+* `output_table`: `VARCHAR(MAX)` qualified name of the output table, e.g. `<my-schema>.<my-output-table>`. The process will fail if the table already exists.
 * `geom_column`: `VARCHAR` name of the column to be clusterd.
 * `number_of_clusters`: `INT` number of clusters that will be generated.
 

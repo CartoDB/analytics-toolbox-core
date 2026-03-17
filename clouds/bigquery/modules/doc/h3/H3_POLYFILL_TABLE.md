@@ -16,7 +16,7 @@ Returns a table with the H3 cell indexes contained in the given geography at a r
   * `center` returns the indexes of the H3 cells which centers intersect the input geography (polygon). The resulting H3 set does not fully cover the input geography, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines. Equivalent to [`H3_POLYFILL`](h3#h3_polyfill).
   * `intersects` returns the indexes of the H3 cells that intersect the input geography. The resulting H3 set will completely cover the input geography (point, line, polygon).
   * `contains` returns the indexes of the H3 cells that are entirely contained inside the input geography (polygon). This mode is not compatible with points or lines.
-* `output_table`: `STRING` name of the output table to store the results of the polyfill.
+* `output_table`: `STRING` qualified name of the output table, e.g. `<my-project>.<my-dataset>.<my-output-table>`. The process will fail if the table already exists.
 
 Mode `center`:
 
