@@ -8,6 +8,8 @@ H3_KRING_DISTANCES(origin, size)
 
 Returns all cell indexes and their distances in a **filled hexagonal k-ring** centered at the origin in no particular order.
 
+**Input parameters**
+
 * `origin`: `STRING` H3 cell index of the origin.
 * `size`: `INT64` size of the ring (distance from the origin).
 

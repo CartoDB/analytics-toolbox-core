@@ -8,12 +8,14 @@ H3_POLYFILL(geography, resolution [, mode])
 
 Returns an array with all H3 cell indexes contained in the given polygon. There are three modes which decide if a H3 cell is contained in the polygon:  
 
+**Input parameters**
+
 * `geography`: `GEOGRAPHY` **polygon** or **multipolygon** representing the shape to cover. **GeometryCollections** are also allowed but they should contain **polygon** or **multipolygon** geographies. Non-Polygon types will not raise an error but will be ignored instead.
 * `resolution`: `INT` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 * `mode`: `STRING` `<center|contains|intersects>`. Optional. Defaults to 'center' mode.
-  * `center` The center point of the H3 cell must be within the polygon
-  * `contains` The H3 cell must be fully contained within the polygon (least inclusive)
-  * `intersects` The H3 cell intersects in any way with the polygon (most inclusive)
+  * `center`: The center point of the H3 cell must be within the polygon.
+  * `contains`: The H3 cell must be fully contained within the polygon (least inclusive).
+  * `intersects`: The H3 cell intersects in any way with the polygon (most inclusive).
 
 Mode `center`:
 
@@ -66,7 +68,7 @@ SELECT carto.H3_POLYFILL(
 
 ```sql
 SELECT carto.H3_POLYFILL(
-    TO_GEOGRAPHY('POLYGON ((30 1040 4020 4010 2030 10))')4'intersects');
+    TO_GEOGRAPHY('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))'), 4, 'intersects');
 -- 843f0cbffffffff
 -- 842da01ffffffff
 -- 843e467ffffffff

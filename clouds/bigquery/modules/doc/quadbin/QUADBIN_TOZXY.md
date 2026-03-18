@@ -8,6 +8,8 @@ QUADBIN_TOZXY(quadbin)
 
 Returns the zoom level `z` and coordinates `x`, `y` for a given Quadbin.
 
+**Input parameters**
+
 * `quadbin`: `INT64` Quadbin from which to obtain the coordinates.
 
 **Return type**

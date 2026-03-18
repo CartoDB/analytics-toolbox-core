@@ -8,6 +8,8 @@ ST_POLYGONIZE(lines)
 
 Creates a set of polygons from geographies which contain lines that represent the their edges.
 
+**Input parameters**
+
 * `lines`: `ARRAY<GEOGRAPHY>` array of lines which represent the polygons edges.
 
 **Return type**

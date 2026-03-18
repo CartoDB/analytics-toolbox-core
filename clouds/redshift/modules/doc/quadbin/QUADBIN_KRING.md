@@ -8,6 +8,8 @@ QUADBIN_KRING(origin, size)
 
 Returns all cell indexes in a **filled square k-ring** centered at the origin in no particular order.
 
+**Input parameters**
+
 * `origin`: `BIGINT` Quadbin index of the origin.
 * `size`: `INT` size of the ring (distance from the origin).
 

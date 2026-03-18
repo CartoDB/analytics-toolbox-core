@@ -8,6 +8,8 @@ QUADBIN_TOQUADKEY(quadbin)
 
 Compute a quadkey from a quadbin index.
 
+**Input parameters**
+
 * `quadbin`: `INT64` Quadbin index.
 
 **Return type**

@@ -8,6 +8,8 @@ S2_FROMLONGLAT(longitude, latitude, resolution)
 
 Returns the S2 cell ID representation for a requested resolution and geographic coordinates.
 
+**Input parameters**
+
 * `longitude`: `FLOAT8` horizontal coordinate of the map.
 * `latitude`: `FLOAT8` vertical coordinate of the map.
 * `resolution`: `INT4` level of detail or zoom.

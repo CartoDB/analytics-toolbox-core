@@ -13,6 +13,8 @@ by using the largest cells possible.
 Two optional arguments can be passed with the minimum and maximum resolution for coverage. If you desire a
 coverage at a single resolution level, simply set the maximum and minimum longitude to be of equal value.
 
+**Input parameters**
+
 * `min_longitude`: `FLOAT8` minimum longitude of the bounding box.
 * `max_longitude`: `FLOAT8` maximum longitude of the bounding box.
 * `min_latitude`: `FLOAT8` minimum latitude of the bounding box.

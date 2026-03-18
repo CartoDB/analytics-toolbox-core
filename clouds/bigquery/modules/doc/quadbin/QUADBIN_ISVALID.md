@@ -8,20 +8,22 @@ QUADBIN_ISVALID(quadbin)
 
 Returns `true` when the given index is a valid Quadbin, `false` otherwise.
 
+**Input parameters**
+
 * `quadbin`: `INT64` Quadbin index.
 
 **Return type**
 
-`BOOLEAN`
+`BOOL`
 
 **Examples**
 
 ```sql
 SELECT carto.QUADBIN_ISVALID(5207251884775047167);
--- true
+-- TRUE
 ```
 
 ```sql
 SELECT carto.QUADBIN_ISVALID(1234);
--- false
+-- FALSE
 ```

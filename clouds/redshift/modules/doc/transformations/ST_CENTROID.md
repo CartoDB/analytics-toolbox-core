@@ -8,6 +8,8 @@ ST_CENTROID(geom)
 
 Takes any Feature or a FeatureCollection as input and returns its centroid. It is equivalent to [`ST_CENTEROFMASS`](transformations#st_centerofmass).
 
+**Input parameters**
+
 * `geom`: `GEOMETRY` for which to compute the centroid.
 
 **Return type**

@@ -8,6 +8,8 @@ ST_DESTINATION(geom, distance, bearing, units)
 
 Takes a Point and calculates the location of a destination point given a distance in degrees, radians, miles, or kilometers; and a bearing in degrees. This uses the Haversine formula to account for global curvature.
 
+**Input parameters**
+
 * `geom`: `GEOMETRY` starting point.
 * `distance`: `FLOAT8` distance from the origin point in the units specified.
 * `bearing`: `FLOAT8` ranging from -180 to 180 (e.g. 0 is North, 90 is East, 180 is South, -90 is West).

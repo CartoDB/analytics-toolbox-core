@@ -7,6 +7,8 @@ ST_TILEENVELOPE(zoomLevel, xTile, yTile)
 **Description**
 Returns the boundary polygon of a tile given its zoom level and its X and Y indices.
 
+**Input parameters**
+
 * `zoomLevel`: `INT` zoom level of the tile.
 * `xTile`: `INT` X index of the tile.
 * `yTile`: `INT` Y index of the tile.

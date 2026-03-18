@@ -8,6 +8,8 @@ S2_TOCHILDREN(index, resolution)
 
 Returns an array with the S2 indexes of the children/descendents of the given hexagon at the given resolution.
 
+**Input parameters**
+
 * `index`: `STRING` The S2 cell index.
 * `resolution`: `INT64` number between 0 and 30 with the [S2 resolution](https://S2geo.org/docs/core-library/restable).
 

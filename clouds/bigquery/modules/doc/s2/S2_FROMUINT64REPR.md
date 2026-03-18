@@ -8,6 +8,8 @@ S2_FROMUINT64REPR(uid)
 
 Returns the cell ID from a UINT64 representation.
 
+**Input parameters**
+
 * `uid`: `STRING` UINT64 representation of a S2 cell ID.
 
 **Return type**

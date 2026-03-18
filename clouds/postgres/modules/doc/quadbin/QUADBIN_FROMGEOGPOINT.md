@@ -8,6 +8,8 @@ QUADBIN_FROMGEOGPOINT(point, resolution)
 
 Returns the Quadbin of a given point at a requested resolution. This function is an alias for `QUADBIN_FROMGEOPOINT`.
 
+**Input parameters**
+
 * `point`: `GEOMETRY` point to get the Quadbin from.
 * `resolution`: `BIGINT` level of detail or zoom.
 

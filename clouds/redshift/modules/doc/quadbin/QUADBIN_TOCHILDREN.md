@@ -8,6 +8,8 @@ QUADBIN_TOCHILDREN(quadbin, resolution)
 
 Returns an array with the children Quadbins of a given Quadbin for a specific resolution. A children Quadbin is a Quadbin of higher level of detail that is contained by the current Quadbin. Each Quadbin has four direct children (at the next higher resolution).
 
+**Input parameters**
+
 * `quadbin`: `BIGINT` Quadbin to get the children from.
 * `resolution`: `INT` resolution of the desired children.
 

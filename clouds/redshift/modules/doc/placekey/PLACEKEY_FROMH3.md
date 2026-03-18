@@ -8,6 +8,8 @@ PLACEKEY_FROMH3(h3index)
 
 Returns the Placekey equivalent to the given H3 index.
 
+**Input parameters**
+
 * `h3index`: `VARCHAR` H3 identifier.
 
 **Return type**

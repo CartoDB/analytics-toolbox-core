@@ -8,6 +8,8 @@ ST_BEZIERSPLINE(linestring [, resolution] [, sharpness])
 
 Takes a line and returns a curved version of it by applying a Bezier spline algorithm. Note that the resulting geography will be a LineString with additional points inserted.
 
+**Input parameters**
+
 * `geog`: `GEOMETRY` input LineString.
 * `resolution` (optional): `INT` total time in milliseconds assigned to the line. Tthe default value is `10000`. Internal curve vertices are generated in 10 ms increments, so the maximum number of resulting points will be `resolution/10` (close points may be merged resulting in less points). A higher number will increase the accuracy of the result but will increase the computation time and number of points.
 * `sharpness` (optional): `FLOAT8` a measure of how curvy the path should be between splines. If not specified, the default value of `0.85` will be used.

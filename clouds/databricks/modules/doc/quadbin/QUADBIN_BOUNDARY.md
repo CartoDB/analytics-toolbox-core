@@ -8,6 +8,8 @@ QUADBIN_BOUNDARY(quadbin)
 
 Returns the boundary for a given Quadbin as a WKT POLYGON string with the same coordinates as given by the [QUADBIN_BBOX](quadbin#quadbin_bbox) function.
 
+**Input parameters**
+
 * `quadbin`: `BIGINT` Quadbin to get the boundary from.
 
 **Return type**

@@ -8,6 +8,8 @@ QUADBIN_POLYFILL(geojson_or_wkt, resolution)
 
 Returns an array of Quadbins that intersect with the given geometry at a requested resolution. The geometry can be provided as a WKT string or a GeoJSON string.
 
+**Input parameters**
+
 * `geojson_or_wkt`: `STRING` geometry to extract the Quadbins from (WKT or GeoJSON).
 * `resolution`: `INT` level of detail or zoom.
 

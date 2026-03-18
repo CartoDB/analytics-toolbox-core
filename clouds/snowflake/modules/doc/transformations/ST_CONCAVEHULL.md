@@ -8,6 +8,8 @@ ST_CONCAVEHULL(geojsons [, maxEdge] [, units])
 
 Takes a set of points and returns a concave hull Polygon or MultiPolygon. In case that a single or a couple of points are passed as input, the function will return that point or a segment respectively.
 
+**Input parameters**
+
 * `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 * `maxEdge` (optional): `DOUBLE` the maximum length allowed for an edge of the concave hull. Higher `maxEdge` values will produce more convex-like hulls. If not provided, the default value `infinity` is used and it would be equivalent to a Convex Hull.
 * `units` (optional): `STRING` units of length, the supported options are: miles, kilometers, degrees or radians. By default `units` is `kilometers`.
@@ -74,12 +76,12 @@ If points are stored in a table, a query like the one below can be used (multipl
 WITH _array AS (
     SELECT
         cluster_id,
-        ARRAY_AGG(ST_ASGEOJSON(geom)::STRING) as geomarray
-    from mytable
-    group by cluster_id
+        ARRAY_AGG(ST_ASGEOJSON(geom)::STRING) AS geomarray
+    FROM mytable
+    GROUP BY cluster_id
 )
 SELECT
-    carto.ST_CONCAVEHULL(geomarray) as geom,
+    carto.ST_CONCAVEHULL(geomarray) AS geom,
     cluster_id
-from _array
+FROM _array
 ```

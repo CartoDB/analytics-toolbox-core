@@ -8,6 +8,8 @@ S2_RESOLUTION(index)
 
 Returns the S2 cell resolution as an integer.
 
+**Input parameters**
+
 * `index`: `STRING` The S2 cell index.
 
 **Return type**

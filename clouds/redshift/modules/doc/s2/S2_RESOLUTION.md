@@ -8,6 +8,8 @@ S2_RESOLUTION(id)
 
 Returns an integer with the resolution of a given cell ID.
 
+**Input parameters**
+
 * `id`: `INT8` id to get the resolution from.
 
 **Return type**

@@ -8,6 +8,8 @@ H3_POLYFILL(geom, resolution [, mode])
 
 Returns an array of H3 cell indexes contained in the given geometry at a requested resolution. Containment is determined by the mode: center, intersects, contains.
 
+**Input parameters**
+
 * `geom`: `GEOMETRY` representing the shape to cover.
 * `resolution`: `INT` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 * `mode` (optional): `VARCHAR`
@@ -52,7 +54,7 @@ FROM UNNEST(carto.H3_POLYFILL(
 
 ```sql
 SELECT h3
-FROM <database>.<schema>.<table>,
+FROM <my-schema>.<my-table>,
   UNNEST(carto.H3_POLYFILL(geom, 9)) AS h3;
 ```
 
@@ -80,6 +82,6 @@ FROM UNNEST(carto.H3_POLYFILL(
 
 ```sql
 SELECT h3
-FROM <database>.<schema>.<table>,
+FROM <my-schema>.<my-table>,
   UNNEST(carto.H3_POLYFILL(geom, 9, 'intersects')) AS h3;
 ```

@@ -10,6 +10,8 @@ Computes the convex hull of the input geography. The convex hull is the smallest
 
 This is not an aggregate function. To compute the convex hull of a set of geography, use [ST_COLLECT](https://docs.snowflake.com/en/sql-reference/functions/st_collect) to aggregate them into a collection.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` input to compute the convex hull.
 
 **Return type**
@@ -27,7 +29,7 @@ SELECT carto.ST_CONVEXHULL(
 
 ```sql
 SELECT carto.ST_CONVEXHULL(ST_COLLECT(geog))
-FROM <database>.<schema>.<table>;
+FROM <my-database>.<my-schema>.<my-table>;
 ```
 
 ````hint:warning
