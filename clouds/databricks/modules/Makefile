@@ -9,11 +9,7 @@ COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
 export DB_VERSION_FUNCTION ?= VERSION_CORE
-ifeq ($(production),1)
 export DB_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
-else
-export DB_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
-endif
 
 REPLACEMENTS = "DB_SCHEMA DB_CATALOG DB_UNQUALIFIED_SCHEMA DB_VERSION_FUNCTION DB_PACKAGE_VERSION"
 

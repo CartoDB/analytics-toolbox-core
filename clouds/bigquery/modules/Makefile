@@ -13,11 +13,7 @@ BQ_DEPLOY_DATASET = $(BQ_PREFIX)$(BQ_DATASET_DEFAULT)
 
 MODULES_DIRS ?= $(ROOT_DIR)
 export BQ_VERSION_FUNCTION ?= VERSION_CORE
-ifeq ($(production),1)
 export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
-else
-export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
-endif
 
 ifeq ($(testall),1)
 BAIL=
