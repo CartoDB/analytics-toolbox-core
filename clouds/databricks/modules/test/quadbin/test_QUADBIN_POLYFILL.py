@@ -51,7 +51,11 @@ def _parse_polyfill(raw):
 
 
 def test_quadbin_polyfill_polygon():
-    result = run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('{POLYGON_WKT}', 17)")
+    result = run_query(
+        f'SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('
+        f"    ST_GEOMFROMTEXT('{POLYGON_WKT}', 4326), 17"
+        f')'
+    )
 
     polyfill = _parse_polyfill(result[0][0])
     assert polyfill == EXPECTED_POLYGON_POLYFILL
@@ -59,7 +63,9 @@ def test_quadbin_polyfill_polygon():
 
 def test_quadbin_polyfill_multi_polygon():
     result = run_query(
-        f"SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('{MULTI_POLYGON_WKT}', 17)"
+        f'SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('
+        f"    ST_GEOMFROMTEXT('{MULTI_POLYGON_WKT}', 4326), 17"
+        f')'
     )
 
     polyfill = _parse_polyfill(result[0][0])
@@ -71,7 +77,8 @@ def test_quadbin_polyfill_null():
         'SELECT'
         '    @@DB_SCHEMA@@.QUADBIN_POLYFILL(NULL, 17),'
         '    @@DB_SCHEMA@@.QUADBIN_POLYFILL('
-        "        'POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))', NULL"
+        "        ST_GEOMFROMTEXT('POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))', 4326),"
+        '        NULL'
         '    )'
     )
 

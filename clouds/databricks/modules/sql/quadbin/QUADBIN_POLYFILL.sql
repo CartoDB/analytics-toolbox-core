@@ -2,13 +2,12 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Returns an array of quadbins whose centers fall inside the given
--- geometry at a requested resolution. Accepts WKT or GeoJSON strings.
--- Uses Python UDF because Databricks SQL lacks native geography
+-- Internal Python UDF that performs the polyfill computation on WKT/GeoJSON
+-- strings. Uses Python because Databricks SQL lacks native geography
 -- primitives (ST_INTERSECTS, ST_CONTAINS) needed for a pure SQL
 -- implementation. BigQuery's SQL version relies on its GEOGRAPHY type.
 
-CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.QUADBIN_POLYFILL
+CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.__QUADBIN_POLYFILL_STRING
 (geojson_or_wkt STRING, resolution INT)
 RETURNS ARRAY<BIGINT>
 LANGUAGE PYTHON
@@ -199,3 +198,10 @@ for polygon_rings in polygons:
 
 return list(quadbin_set)
 $$;
+
+-- Public function that accepts GEOMETRY(4326), matching other clouds.
+CREATE OR REPLACE FUNCTION @@DB_SCHEMA@@.QUADBIN_POLYFILL
+(geom GEOMETRY(4326), resolution INT)
+RETURNS ARRAY<BIGINT>
+RETURN
+@@DB_SCHEMA@@.__QUADBIN_POLYFILL_STRING(ST_ASTEXT(geom), resolution);
