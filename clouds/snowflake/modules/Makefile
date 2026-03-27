@@ -13,11 +13,7 @@ NATIVE_APP_DIR ?= $(ROOT_DIR)/../native_app
 
 MODULES_DIRS ?= $(ROOT_DIR)
 export SF_VERSION_FUNCTION ?= VERSION_CORE
-ifeq ($(production),1)
 export SF_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
-else
-export SF_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
-endif
 export SF_SHARE ?= $(SF_PREFIX)ANALYTICS_TOOLBOX
 
 ifeq ($(testall),1)

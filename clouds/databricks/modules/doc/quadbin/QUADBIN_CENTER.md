@@ -6,7 +6,7 @@ QUADBIN_CENTER(quadbin)
 
 **Description**
 
-Returns the center of a given Quadbin as an array `[longitude, latitude]`. The center is the intersection point of the four immediate children Quadbin.
+Returns the center of a given Quadbin as a `GEOMETRY(4326)` POINT. The center is the intersection point of the four immediate children Quadbin.
 
 **Input parameters**
 
@@ -14,11 +14,11 @@ Returns the center of a given Quadbin as an array `[longitude, latitude]`. The c
 
 **Return type**
 
-`ARRAY<DOUBLE>`
+`GEOMETRY(4326)`
 
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_CENTER(5207251884775047167);
--- [-11.25, 31.952162238024955]
+SELECT ST_ASTEXT(carto.QUADBIN_CENTER(5207251884775047167));
+-- POINT(-11.25 31.952162238024955)
 ```

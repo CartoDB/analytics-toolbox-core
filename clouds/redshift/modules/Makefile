@@ -9,11 +9,7 @@ COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
 export RS_VERSION_FUNCTION ?= VERSION_CORE
-ifeq ($(production),1)
 export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
-else
-export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
-endif
 
 REPLACEMENTS = "RS_SCHEMA RS_VERSION_FUNCTION RS_PACKAGE_VERSION"
 

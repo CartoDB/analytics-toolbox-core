@@ -6,7 +6,7 @@ QUADBIN_BOUNDARY(quadbin)
 
 **Description**
 
-Returns the boundary for a given Quadbin as a WKT POLYGON string with the same coordinates as given by the [QUADBIN_BBOX](quadbin#quadbin_bbox) function.
+Returns the boundary for a given Quadbin as a `GEOMETRY(4326)` POLYGON with the same coordinates as given by the [QUADBIN_BBOX](quadbin#quadbin_bbox) function.
 
 **Input parameters**
 
@@ -14,11 +14,11 @@ Returns the boundary for a given Quadbin as a WKT POLYGON string with the same c
 
 **Return type**
 
-`STRING` (WKT POLYGON)
+`GEOMETRY(4326)`
 
 **Example**
 
 ```sql
-SELECT carto.QUADBIN_BOUNDARY(5207251884775047167);
+SELECT ST_ASTEXT(carto.QUADBIN_BOUNDARY(5207251884775047167));
 -- POLYGON((-22.5 21.9430455334,-22.5 40.9798980696,0.0 40.9798980696,0.0 21.9430455334,-22.5 21.9430455334))
 ```

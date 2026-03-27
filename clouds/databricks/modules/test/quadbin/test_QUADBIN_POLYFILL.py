@@ -27,20 +27,30 @@ MULTI_POLYGON_WKT = (
     '-3.7122470136178776 40.41158984452673)))'
 )
 
+# Expected values match the quadbin library (v0.2.2) used by Redshift,
+# and BigQuery's QUADBIN_POLYFILL_MODE with 'intersects' mode.
 EXPECTED_POLYGON_POLYFILL = sorted(
     [
+        5265786693153193983,
         5265786693163941887,
+        5265786693164204031,
         5265786693164466175,
         5265786693164728319,
+        5265786693165514751,
     ]
 )
 
 EXPECTED_MULTI_POLYGON_POLYFILL = sorted(
     [
+        5265786693074550783,
+        5265786693075337215,
+        5265786693153193983,
         5265786693163941887,
-        5265786693164466175,
         5265786693164204031,
+        5265786693164466175,
         5265786693164728319,
+        5265786693164990463,
+        5265786693165514751,
     ]
 )
 
@@ -51,7 +61,11 @@ def _parse_polyfill(raw):
 
 
 def test_quadbin_polyfill_polygon():
-    result = run_query(f"SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('{POLYGON_WKT}', 17)")
+    result = run_query(
+        f'SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('
+        f"    ST_GEOMFROMTEXT('{POLYGON_WKT}', 4326), 17"
+        f')'
+    )
 
     polyfill = _parse_polyfill(result[0][0])
     assert polyfill == EXPECTED_POLYGON_POLYFILL
@@ -59,7 +73,9 @@ def test_quadbin_polyfill_polygon():
 
 def test_quadbin_polyfill_multi_polygon():
     result = run_query(
-        f"SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('{MULTI_POLYGON_WKT}', 17)"
+        f'SELECT @@DB_SCHEMA@@.QUADBIN_POLYFILL('
+        f"    ST_GEOMFROMTEXT('{MULTI_POLYGON_WKT}', 4326), 17"
+        f')'
     )
 
     polyfill = _parse_polyfill(result[0][0])
@@ -71,7 +87,8 @@ def test_quadbin_polyfill_null():
         'SELECT'
         '    @@DB_SCHEMA@@.QUADBIN_POLYFILL(NULL, 17),'
         '    @@DB_SCHEMA@@.QUADBIN_POLYFILL('
-        "        'POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))', NULL"
+        "        ST_GEOMFROMTEXT('POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))', 4326),"
+        '        NULL'
         '    )'
     )
 

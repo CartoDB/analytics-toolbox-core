@@ -136,7 +136,7 @@ function arrayDictsKeysToLower (array) {
     });
 }
 
-function isGeometryCloseTo(actual, expected, precision = 6) {
+function isGeometryCloseTo (actual, expected, precision = 6) {
     // Normalize both geometries to the same precision
     const normalizedActual = truncate(actual, { precision, mutate: false });
     const normalizedExpected = truncate(expected, { precision, mutate: false });

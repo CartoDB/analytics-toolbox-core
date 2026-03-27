@@ -1,0 +1,93 @@
+name: Databricks dedicated env
+
+on:
+  pull_request:
+    types: [closed, unlabeled, labeled, synchronize]
+
+env:
+  PYTHON_VERSION: 3.8.18
+  VIRTUALENV_VERSION: 20.15.1
+
+jobs:
+
+  dedicated:
+    if: |
+      github.event.label.name == 'dedicated_databricks' ||
+      (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_databricks')) ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_databricks'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DB_HOST_NAME: ${{ secrets.DB_HOST_NAME_CD }}
+      DB_HTTP_PATH: ${{ secrets.DB_HTTP_PATH_CD }}
+      DB_CATALOG: ${{ secrets.DB_CATALOG_CD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Set DB_PREFIX for releases
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          echo "DB_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set DB_PREFIX for hotfixes
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          echo "DB_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set DB_PREFIX for the rest
+        if: |
+          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
+          !(startsWith(github.event.pull_request.head.ref, 'release/'))
+        run: echo "DB_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Setup virtualenv
+        run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
+      - name: Authenticate with Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Get Databricks secrets
+        id: secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CD }}
+            databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CD }}
+      - name: Get Databricks OAuth token
+        run: |
+          RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials" \
+            -d "client_id=${{ steps.secrets.outputs.databricks-client-id }}" \
+            -d "client_secret=${{ steps.secrets.outputs.databricks-client-secret }}" \
+            -d "scope=all-apis")
+          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
+          echo "::add-mask::$TOKEN"
+          echo "DB_TOKEN=$TOKEN" >> $GITHUB_ENV
+      - name: Run deploy
+        id: deploy
+        if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        run: |
+          cd clouds/databricks
+          make deploy
+      - name: Run remove
+        id: remove
+        if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        run: |
+          cd clouds/databricks
+          make remove
+      - name: Comment deploy PR
+        if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated ${{ env.DB_PREFIX }}carto environment deployed in Databricks catalog ${{ env.DB_CATALOG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment remove PR
+        if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            Dedicated environment removed
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

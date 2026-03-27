@@ -4,6 +4,24 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2026-03-24
+
+- fix(db): package creation from wrong folder (#575)
+- fix(rs): show the right links in the created packages (#576)
+- fix(rs): local redshift deployment overriding carto.carto (#577)
+- chore(sf): deploy internal in CI (#579)
+- chore: update root makefile to make it consistent with premium (#581)
+- chore(rs): deploy all lambdas if sql changes (#582)
+- fix(rs): force packager to drop_functions and provide port and ssl options (#586)
+- feat(ora): add Oracle support (#587)
+- feat(db|quadbin): migrate quadbin to databricks (#588)
+- chore(ora): deploy for production (#589)
+- chore(deps): bump sqlparse from 0.5.0 to 0.5.4 in /clouds/databricks/common (#585)
+- chore(deps): bump sqlparse from 0.5.0 to 0.5.4 in /clouds/postgres/common (#584)
+- chore(deps): bump sqlparse from 0.4.4 to 0.5.4 in /clouds/redshift/common (#583)
+- docs(bq,sf,rs,pg,db): unify documentation patterns (#590)
+- fix(bq|s2): S2_TOTOKEN and S2_FROMTOKEN produces non-standard 16-char tokens (#591)
+
 ## 2025-12-30
 
 - chore(sf): update Snowflake authentication to use RSA key pair [sc-527122] (#568)
