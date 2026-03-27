@@ -8,6 +8,8 @@ ST_ENVELOPE_ARR(geojsons)
 
 Takes any number of features and returns a rectangular Polygon that encompasses all vertices.
 
+**Input parameters**
+
 * `geojsons`: `ARRAY` array of features in GeoJSON format casted to STRING.
 
 **Return type**

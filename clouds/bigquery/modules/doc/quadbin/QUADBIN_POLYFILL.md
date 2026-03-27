@@ -8,6 +8,8 @@ QUADBIN_POLYFILL(geog, resolution)
 
 Returns an array of quadbin cell indexes contained in the given geography (Polygon, MultiPolygon) at a requested resolution. Containment is determined by the cells' center. This function is equivalent to [`QUADBIN_POLYFILL_MODE`](quadbin#quadbin_polyfill_mode) with mode `center`.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 26.
 
@@ -44,6 +46,6 @@ FROM UNNEST(carto.QUADBIN_POLYFILL(
 
 ```sql
 SELECT quadbin
-FROM <project>.<dataset>.<table>,
+FROM <my-project>.<my-dataset>.<my-table>,
   UNNEST(carto.QUADBIN_POLYFILL(geog, 17)) AS quadbin;
 ```

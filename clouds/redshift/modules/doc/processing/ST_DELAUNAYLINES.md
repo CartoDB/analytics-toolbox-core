@@ -8,6 +8,8 @@ ST_DELAUNAYLINES(points)
 
 Calculates the Delaunay triangulation of the points provided. A MultiLineString object is returned.
 
+**Input parameters**
+
 * `points`: `GEOMETRY` MultiPoint input to the Delaunay triangulation.
 
 ````hint:warning

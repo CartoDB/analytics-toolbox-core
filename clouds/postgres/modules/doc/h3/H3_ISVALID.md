@@ -8,6 +8,8 @@ H3_ISVALID(index)
 
 Returns `true` when the given index is valid, `false` otherwise.
 
+**Input parameters**
+
 * `index`: `VARCHAR(16)` The H3 cell index as hexadecimal.
 
 **Return type**
@@ -18,10 +20,10 @@ Returns `true` when the given index is valid, `false` otherwise.
 
 ```sql
 SELECT carto.H3_ISVALID('84390cbffffffff');
--- true
+-- TRUE
 ```
 
 ```sql
 SELECT carto.H3_ISVALID('1');
--- false
+-- FALSE
 ```

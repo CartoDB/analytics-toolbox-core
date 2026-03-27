@@ -13,8 +13,7 @@ class TestPlacekeyFromh3Integration:
 
     def test_placekey_fromh3_valid(self):
         """Test PLACEKEY_FROMH3 with valid H3 indices"""
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.PLACEKEY_FROMH3('847b59dffffffff')
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_FROMH3('8a2a9c580577fff')
@@ -28,8 +27,7 @@ class TestPlacekeyFromh3Integration:
             SELECT @@RS_SCHEMA@@.PLACEKEY_FROMH3('8a3e0ba6659ffff')
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_FROMH3('8a961652a407fff')
-        """
-        )
+        """)
 
         assert result[0][0] == "@ff7-swh-m49"
         assert result[1][0] == "@63m-vc4-z75"
@@ -41,13 +39,11 @@ class TestPlacekeyFromh3Integration:
 
     def test_placekey_fromh3_invalid(self):
         """Test PLACEKEY_FROMH3 with invalid inputs"""
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.PLACEKEY_FROMH3(NULL)
             UNION ALL
             SELECT @@RS_SCHEMA@@.PLACEKEY_FROMH3('ff283473fffffff')
-        """
-        )
+        """)
 
         assert result[0][0] is None
         assert result[1][0] is None

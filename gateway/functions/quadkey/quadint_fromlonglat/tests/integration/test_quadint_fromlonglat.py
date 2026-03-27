@@ -13,8 +13,7 @@ class TestQuadintFromlonglatIntegration:
 
     def test_longlat_asquadint_success(self):
         """Test converting longitude/latitude to quadints at various zoom levels"""
-        results = run_query(
-            """WITH zoomContext AS(
+        results = run_query("""WITH zoomContext AS(
                 SELECT 0 AS zoom, -150 AS long, 60 AS lat UNION ALL
                 SELECT 1, -150, 60 UNION ALL
                 SELECT 2, 150, 60 UNION ALL
@@ -47,8 +46,7 @@ class TestQuadintFromlonglatIntegration:
                 SELECT 29, 0, 0
             )
             SELECT @@RS_SCHEMA@@.QUADINT_FROMLONGLAT(long, lat, zoom) as quadints
-                FROM zoomContext;"""
-        )
+                FROM zoomContext;""")
 
         with open(f"{here}/fixtures/quadint_fromlonglat_out.txt", "r") as fixture_file:
             lines = fixture_file.readlines()

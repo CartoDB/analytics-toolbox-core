@@ -8,6 +8,8 @@ QUADBIN_POLYFILL(geom, resolution [, mode])
 
 Returns an array of quadbin cell indexes contained in the given geometry at a requested resolution. Containment is determined by the mode: center, intersects, contains.
 
+**Input parameters**
+
 * `geom`: `GEOMETRY` representing the shape to cover.
 * `resolution`: `INT` level of detail. The value must be between 0 and 26.
 * `mode` (optional): `VARCHAR`
@@ -54,7 +56,7 @@ FROM UNNEST(carto.QUADBIN_POLYFILL(
 
 ```sql
 SELECT quadbin
-FROM <database>.<schema>.<table>,
+FROM <my-schema>.<my-table>,
   UNNEST(carto.QUADBIN_POLYFILL(geom, 17)) AS quadbin;
 ```
 
@@ -82,6 +84,6 @@ FROM UNNEST(carto.QUADBIN_POLYFILL(
 
 ```sql
 SELECT quadbin
-FROM <database>.<schema>.<table>,
+FROM <my-schema>.<my-table>,
   UNNEST(carto.QUADBIN_POLYFILL(geom, 17, 'intersects')) AS quadbin;
 ```

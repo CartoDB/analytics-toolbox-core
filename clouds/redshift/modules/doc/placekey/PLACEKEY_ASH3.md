@@ -8,6 +8,8 @@ PLACEKEY_ASH3(placekey)
 
 Returns the H3 index equivalent to the given placekey.
 
+**Input parameters**
+
 * `placekey`: `VARCHAR` Placekey identifier.
 
 **Return type**

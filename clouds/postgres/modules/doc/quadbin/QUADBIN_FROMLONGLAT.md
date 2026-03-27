@@ -8,6 +8,8 @@ QUADBIN_FROMLONGLAT(longitude, latitude, resolution)
 
 Returns the Quadbin representation of a point for a requested resolution and geographic coordinates.
 
+**Input parameters**
+
 * `longitude`: `DOUBLE PRECISION` longitude (WGS84) of the point.
 * `latitude`: `DOUBLE PRECISION` latitude (WGS84) of the point.
 * `resolution`: `INT` level of detail or zoom.

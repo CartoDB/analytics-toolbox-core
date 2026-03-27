@@ -9,8 +9,7 @@ class TestQuadbinFromlonglatIntegration:
     """Integration tests for QUADBIN_FROMLONGLAT with Redshift"""
 
     def test_quadbin_fromlonglat(self):
-        result = run_query(
-            """
+        result = run_query("""
                 WITH inputs AS (
                     SELECT 1 AS ID,
                         @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 4)
@@ -28,8 +27,7 @@ class TestQuadbinFromlonglatIntegration:
                         UNION ALL SELECT 7,
                         @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(0, -90, 26)
                 )
-                SELECT * FROM inputs ORDER BY id ASC"""
-        )
+                SELECT * FROM inputs ORDER BY id ASC""")
         assert result[0][1] == 5209574053332910079
         assert result[1][1] == 5306366260949286912
         assert result[2][1] == 5306366260949286912
@@ -39,13 +37,11 @@ class TestQuadbinFromlonglatIntegration:
         assert result[6][1] == 5309368660700867242
 
     def test_quadbin_fromlonglat_null(self):
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(NULL, -3.7038, 4),
                    @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, NULL, 4),
                    @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, NULL)
-        """
-        )
+        """)
 
         assert len(result[0]) == 3
         assert result[0][0] is None
@@ -68,14 +64,12 @@ class TestQuadbinFromlonglatIntegration:
         This test is useful to get a reference value to build test and check SQL
         implementation against this python implementation of quadbin
         """
-        result = run_query(
-            """
+        result = run_query("""
             SELECT @@RS_SCHEMA@@.QUADBIN_FROMLONGLAT(
                 40.413365349070865,
                 -3.71219873428345,
                 26)
-            """
-        )
+            """)
         assert result[0][0] == 5308641755410858449
 
         query = """

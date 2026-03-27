@@ -8,6 +8,8 @@ QUADBIN_FROMZXY(z, x, y)
 
 Returns a Quadbin from `z`, `x`, `y` [tile coordinates](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames).
 
+**Input parameters**
+
 * `z`: `INT64` zoom level.
 * `x`: `INT64` horizontal position of a tile.
 * `y`: `INT64` vertical position of a tile.

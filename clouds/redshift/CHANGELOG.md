@@ -4,6 +4,15 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.1] - 2026-03-24
+
+- fix: show the right links in the created packages (#576)
+- fix: local redshift deployment overriding carto.carto (#577)
+- fix: force packager to drop_functions and provide port and ssl options (#586)
+- chore: deploy all lambdas if sql changes (#582)
+- chore(deps): bump sqlparse from 0.4.4 to 0.5.4 (#583)
+- docs: unify documentation patterns (#590)
+
 ## [1.2.0] - 2025-12-30
 
 - chore: update get diff version (#570)

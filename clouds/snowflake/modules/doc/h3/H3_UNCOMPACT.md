@@ -8,6 +8,8 @@ H3_UNCOMPACT(indexArray, resolution)
 
 Returns an array with the indexes of a set of hexagons of the same `resolution` that represent the same area as the [compacted](h3#h3_compact) input hexagons.
 
+**Input parameters**
+
 * `indexArray`: `ARRAY` of H3 cell indices as hexadecimal.
 * `resolution`: `INT` number between 0 and 15 with the [H3 resolution](https://h3geo.org/docs/core-library/restable).
 

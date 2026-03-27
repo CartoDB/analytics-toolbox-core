@@ -8,6 +8,8 @@ ST_CENTEROFMASS(geom)
 
 Takes any Feature or a FeatureCollection and returns its center of mass. It is equivalent to [`ST_CENTROID`](transformations#st_centroid).
 
+**Input parameters**
+
 * `geom`: `GEOMETRY` for which to compute the center of mass.
 
 **Return type**

@@ -11,11 +11,16 @@ ifneq (,$(wildcard $(ENV_DIR)/.env))
 	export $(shell sed 's/=.*//' $(ENV_DIR)/.env)
 endif
 
-ifeq ($(production),1)
-export RS_SCHEMA ?= $(RS_SCHEMA_DEFAULT)
-else
-export RS_SCHEMA ?= $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
+# Set RS_SCHEMA only if not already set (allows override from outside)
+ifeq ($(RS_SCHEMA),)
+  ifeq ($(production),1)
+    RS_SCHEMA = $(RS_SCHEMA_DEFAULT)
+  else
+    RS_SCHEMA = $(RS_PREFIX)$(RS_SCHEMA_DEFAULT)
+  endif
 endif
+
+export RS_SCHEMA
 
 .PHONY: check venv3 $(NODE_MODULES_DEV)
 

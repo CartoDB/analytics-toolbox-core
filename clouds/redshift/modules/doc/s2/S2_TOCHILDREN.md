@@ -11,6 +11,8 @@ A child is an S2 cell of higher level of detail that is contained within the cur
 
 By default, this function returns the direct children (where parent resolution is children resolution - 1). However, an optional resolution argument can be passed with the desired parent resolution. Note that the amount of children grows to the power of four per zoom level.
 
+**Input parameters**
+
 * `id`: `INT8` id to get the children from.
 * `resolution` (optional): `INT4` resolution of the desired children.
 

@@ -9,11 +9,7 @@ COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
 export PG_VERSION_FUNCTION ?= VERSION_CORE
-ifeq ($(production),1)
 export PG_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
-else
-export PG_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)-dev
-endif
 
 REPLACEMENTS = "PG_SCHEMA PG_LIBRARY PG_VERSION_FUNCTION PG_PACKAGE_VERSION"
 

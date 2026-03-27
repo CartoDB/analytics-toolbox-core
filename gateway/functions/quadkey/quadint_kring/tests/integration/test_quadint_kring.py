@@ -10,11 +10,9 @@ class TestQuadintKringIntegration:
 
     def test_kring_success(self):
         """Test getting k-ring of quadints"""
-        result = run_query(
-            """SELECT @@RS_SCHEMA@@.QUADINT_KRING(162, 1),
+        result = run_query("""SELECT @@RS_SCHEMA@@.QUADINT_KRING(162, 1),
                 @@RS_SCHEMA@@.QUADINT_KRING(12070922, 1),
-                @@RS_SCHEMA@@.QUADINT_KRING(12070922, 2)"""
-        )
+                @@RS_SCHEMA@@.QUADINT_KRING(12070922, 2)""")
 
         assert result[0][0] == "[2,34,66,130,162,194,258,290,322]"
         assert result[0][1] == (

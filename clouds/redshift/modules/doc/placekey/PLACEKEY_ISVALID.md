@@ -8,6 +8,8 @@ PLACEKEY_ISVALID(placekey)
 
 Returns a boolean value `true` when the given string represents a valid Placekey, `false` otherwise.
 
+**Input parameters**
+
 * `placekey`: `VARCHAR` Placekey identifier.
 
 **Return type**
@@ -18,15 +20,15 @@ Returns a boolean value `true` when the given string represents a valid Placekey
 
 ```sql
 SELECT carto.PLACEKEY_ISVALID('@7dd-dc3-52k');
--- true
+-- TRUE
 ```
 
 ```sql
 SELECT carto.PLACEKEY_ISVALID('7dd-dc3-52k');
--- true
+-- TRUE
 ```
 
 ```sql
 SELECT carto.PLACEKEY_ISVALID('x');
--- false
+-- FALSE
 ```

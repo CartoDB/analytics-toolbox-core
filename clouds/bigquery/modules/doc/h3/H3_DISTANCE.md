@@ -8,6 +8,8 @@ H3_DISTANCE(origin, destination)
 
 Returns the **grid distance** between two hexagon indexes. This function may fail to find the distance between two indexes if they are very far apart or on opposite sides of a pentagon. Returns `null` on failure or invalid input.
 
+**Input parameters**
+
 * `origin`: `STRING` origin H3 cell index.
 * `destination`: `STRING` destination H3 cell index.
 

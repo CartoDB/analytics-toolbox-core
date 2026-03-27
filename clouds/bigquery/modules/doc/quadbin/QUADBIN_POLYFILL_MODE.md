@@ -8,9 +8,11 @@ QUADBIN_POLYFILL_MODE(geog, resolution, mode)
 
 Returns an array of quadbin cell indexes contained in the given geography at a requested resolution. Containment is determined by the mode: center, intersects, contains.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` representing the shape to cover.
 * `resolution`: `INT64` level of detail. The value must be between 0 and 26.
-* `mode`: `STRING`
+* `mode`: `STRING`.
   * `center` returns the indexes of the quadbin cells which centers intersect the input geography (polygon). The resulting quadbin set does not fully cover the input geography, however, this is **significantly faster** that the other modes. This mode is not compatible with points or lines. Equivalent to [`QUADBIN_POLYFILL`](quadbin#quadbin_polyfill).
   * `intersects` returns the indexes of the quadbin cells that intersect the input geography. The resulting quadbin set will completely cover the input geography (point, line, polygon).
   * `contains` returns the indexes of the quadbin cells that are entirely contained inside the input geography (polygon). This mode is not compatible with points or lines.
@@ -57,6 +59,6 @@ FROM UNNEST(carto.QUADBIN_POLYFILL_MODE(
 
 ```sql
 SELECT quadbin
-FROM <project>.<dataset>.<table>,
+FROM <my-project>.<my-dataset>.<my-table>,
   UNNEST(carto.QUADBIN_POLYFILL_MODE(geog, 17, 'intersects')) AS quadbin;
 ```

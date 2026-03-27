@@ -8,6 +8,8 @@ H3_BOUNDARY(index)
 
 Returns a geography representing the H3 cell. It will return `null` on error (invalid input).
 
+**Input parameters**
+
 * `index`: `STRING` The H3 cell index.
 
 **Return type**

@@ -8,6 +8,8 @@ ST_BUFFER(geog, distance [, segments])
 
 Calculates a buffer for the input features for a given distance.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` input to be buffered.
 * `distance`: `DOUBLE` distance of the buffer around the input geography. The value is in meters. Negative values are allowed.
 * `segments` (optional): `INTEGER` number of segments used to approximate a quarter circle. The default value is `8`.
@@ -16,7 +18,7 @@ Calculates a buffer for the input features for a given distance.
 
 `GEOGRAPHY`
 
-**Example**
+**Examples**
 
 ```sql
 SELECT carto.ST_BUFFER(ST_POINT(-74.00, 40.7128), 1000);

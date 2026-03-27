@@ -8,6 +8,8 @@ H3_CENTER(index)
 
 Returns the center of the H3 cell as a GEOGRAPHY point. It will return `null` on error (invalid input).
 
+**Input parameters**
+
 * `index`: `STRING` The H3 cell index.
 
 **Return type**

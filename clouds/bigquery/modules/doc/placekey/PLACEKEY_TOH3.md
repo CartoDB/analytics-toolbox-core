@@ -8,6 +8,8 @@ PLACEKEY_TOH3(placekey)
 
 Returns the H3 index equivalent of the given placekey.
 
+**Input parameters**
+
 * `placekey`: `STRING` Placekey identifier.
 
 **Return type**

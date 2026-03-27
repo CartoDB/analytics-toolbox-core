@@ -8,6 +8,8 @@ ST_POINTONSURFACE(geog)
 
 Takes any Feature or a FeatureCollection and returns a point that is granted to be inside one of the polygons.
 
+**Input parameters**
+
 * `geog`: `GEOGRAPHY` feature to be centered.
 
 **Return type**

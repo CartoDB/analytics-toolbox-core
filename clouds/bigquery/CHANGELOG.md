@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.7] - 2026-03-24
+
+- fix(s2): S2_TOTOKEN and S2_FROMTOKEN produces non-standard 16-char tokens (#591)
+- docs: unify documentation patterns (#590)
+
 ## [1.2.6] - 2025-04-30
 
 - chore(clustering): ST_CLUSTERKMEANS procedure throwing error for null geoms (#550)

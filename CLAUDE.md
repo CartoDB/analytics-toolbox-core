@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-**CARTO Analytics Toolbox Core** is a multi-cloud spatial analytics platform providing UDFs and Stored Procedures for BigQuery, Snowflake, Redshift, Postgres, and Databricks. The repository is organized into:
+**CARTO Analytics Toolbox Core** is a multi-cloud spatial analytics platform providing UDFs and Stored Procedures for BigQuery, Snowflake, Redshift, Postgres, Databricks, and Oracle. The repository is organized into:
 
 1. **Gateway**: Lambda-based Python functions callable via SQL external functions (Redshift)
 2. **Clouds**: Native SQL UDFs specific to each cloud platform
@@ -25,14 +25,26 @@ core/
 │   │   └── platforms/aws-lambda/
 │   └── tools/                 # Build and dependency tools
 │
-└── clouds/{cloud}/            # Native SQL UDFs for each cloud
-    ├── modules/
+└── clouds/{cloud}/            # Native SQL UDFs for each cloud (6 clouds)
+    ├── modules/               # bigquery, snowflake, redshift, postgres, databricks, oracle
     │   ├── sql/               # SQL function definitions
     │   ├── doc/               # Function documentation
     │   └── test/              # Integration tests
     ├── libraries/             # Cloud-specific libraries (Python/JS)
+    ├── common/                # Cloud-specific build scripts and utilities
     └── version                # Version file (defines package version)
 ```
+
+### Cloud-Specific Modules (core)
+
+| Cloud | Key Modules | Notes |
+|-------|-------------|-------|
+| BigQuery | h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random | Mature, JS-based libraries |
+| Snowflake | h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random | Mature, JS-based libraries |
+| Redshift | h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random | Mature, Python UDFs + Gateway Lambda |
+| Postgres | h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random | Mature, SQL/PLpgSQL |
+| Databricks | quadbin | Recently migrated (March 2026), 20 SQL functions |
+| Oracle | (none yet) | New cloud (v1.0.0), infrastructure only, SQL modules coming |
 
 ## Common Development Commands
 
@@ -69,6 +81,31 @@ RS_USER=<user>
 RS_PASSWORD=<password>
 RS_LAMBDA_INVOKE_ROLE=arn:aws:iam::<account>:role/<role>
 ```
+
+### Cloud-Specific Configuration
+
+**Databricks** (`.env` template at `clouds/databricks/.env.template`):
+
+```bash
+DB_PREFIX=yourname_            # Schema prefix (e.g., "yourname_" → "yourname_carto")
+DB_CATALOG=<catalog>           # Databricks catalog name
+DB_HOST_NAME=<hostname>        # SQL Warehouse hostname
+DB_HTTP_PATH=<path>            # SQL Warehouse HTTP path
+DB_TOKEN=<token>               # Access token
+```
+
+**Oracle** (`.env` template at `clouds/oracle/.env.template`):
+
+```bash
+ORA_PREFIX=DEV_                # Schema prefix (e.g., "DEV_" → "DEV_CARTO", empty for production)
+ORA_USER=<user>                # Database user
+ORA_PASSWORD=<password>        # User password
+ORA_WALLET_ZIP=<base64>        # Base64-encoded Oracle wallet ZIP
+ORA_WALLET_PASSWORD=<password> # Wallet password
+ORA_CONNECTION_STRING=<tns>    # Optional TNS alias override (auto-detected from wallet)
+```
+
+**Note**: Oracle uses wallet-based authentication, unique among all supported clouds.
 
 ### Building and Testing Gateway Functions
 
@@ -220,6 +257,7 @@ python scripts/install.py \
 - **Snowflake**: `cd clouds/snowflake && make deploy`
 - **Databricks**: `cd clouds/databricks && make deploy`
 - **Postgres**: `cd clouds/postgres && make deploy`
+- **Oracle**: `cd clouds/oracle && make deploy`
 
 These clouds deploy native SQL UDFs directly without Lambda or installer.
 
@@ -834,6 +872,10 @@ make lint
 
 ## Multi-Cloud Support
 
+**Supported clouds (6):** BigQuery, Snowflake, Redshift, Postgres, Databricks, Oracle.
+
+**Gateway (Lambda) functions** are currently **Redshift-only**. All other clouds use native SQL UDFs exclusively. The gateway architecture is extensible but no other cloud has been implemented yet.
+
 Functions can support multiple clouds in function.yaml:
 
 ```yaml
@@ -845,6 +887,34 @@ clouds:
     type: lambda
     # ... snowflake config
 ```
+
+## Branching Strategy
+
+- **`main`**: Development branch. All feature PRs merge here.
+- **`stable`**: Production branch. Only release PRs merge here.
+
+Release branches follow `release/YYYY-MM-DD` naming and target `stable`. After merging, CI publishes packages and deploys to production. See `RELEASING.md` in the parent AT repo for full process.
+
+**Release conventions:**
+- Use `git merge --strategy ours stable` to handle divergence
+- Commit: `release: YYYY-MM-DD` with changelog and bumped versions in body
+- PR title: `Release YYYY-MM-DD`, base: `stable`
+- Version bumps: feat → minor, fix → patch, chore/docs → no bump
+
+## CI/CD Workflows
+
+Each cloud has CI/CD workflows in `.github/workflows/`:
+
+| Cloud | Main Workflow | Dedicated Env |
+|-------|--------------|---------------|
+| BigQuery | `bigquery.yml` | `bigquery-ded.yml` |
+| Snowflake | `snowflake.yml` | `snowflake-ded.yml` |
+| Redshift | `redshift.yml` | `redshift-ded.yml` |
+| Databricks | `databricks.yml` | - |
+| Postgres | `postgres.yml` | `postgres-ded.yml` |
+| Oracle | `oracle.yml` | `oracle-ded.yml` |
+
+Publishing is triggered by `publish-release.yml` on push to `stable`.
 
 ## Version Management
 
@@ -869,7 +939,7 @@ fix(sf|h3): fix h3_polyfill boundary handling
 
 Scope format: `(<cloud(s)>|<module(s)>)`
 
-Cloud codes: `bq` (BigQuery), `sf` (Snowflake), `rs` (Redshift), `pg` (Postgres), `db` (Databricks)
+Cloud codes: `bq` (BigQuery), `sf` (Snowflake), `rs` (Redshift), `pg` (Postgres), `db` (Databricks), `ora` (Oracle)
 
 ## Important Notes
 

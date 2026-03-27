@@ -8,6 +8,8 @@ ST_VORONOIPOLYGONS(points)
 
 Calculates the Voronoi diagram of the points provided. A MultiPolygon object is returned.
 
+**Input parameters**
+
 * `points`: `GEOMETRY` MultiPoint input to the Voronoi diagram.
 
 ````hint:warning

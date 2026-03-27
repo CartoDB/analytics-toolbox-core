@@ -4,7 +4,6 @@
 
 import numpy as np
 
-
 # Set random seed so output is all same
 np.random.seed(1)
 

@@ -8,6 +8,8 @@ H3_INT_TOSTRING(index)
 
 Converts the integer representation of the H3 index to the string representation.
 
+**Input parameters**
+
 * `index`: `INT64` The H3 cell index.
 
 **Return type**

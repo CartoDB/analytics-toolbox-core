@@ -8,6 +8,8 @@ S2_FROMTOKEN(token)
 
 Returns the conversion of an S2 cell token (hexified ID) into an unsigned, 64 bit ID.
 
+**Input parameters**
+
 * `token`: `VARCHAR(MAX)` S2 cell token.
 
 **Return type**
