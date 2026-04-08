@@ -10,12 +10,34 @@ import io
 import base64
 import tempfile
 import zipfile
+import atexit
+import shutil
 import oracledb
 from pathlib import Path
+
+# Module-level wallet directory cache: reuse across all connections in a process
+# so that oracledb's internal TNS cache remains valid throughout the session.
+_wallet_dir = None
+_conn_string = None
+
+
+def _cleanup_wallet():
+    """Remove cached wallet directory at process exit."""
+    global _wallet_dir
+    if _wallet_dir and os.path.exists(_wallet_dir):
+        shutil.rmtree(_wallet_dir, ignore_errors=True)
+
+
+atexit.register(_cleanup_wallet)
 
 
 def extract_wallet(wallet_zip_b64, wallet_password):
     """Extract Oracle wallet from base64-encoded ZIP."""
+    global _wallet_dir, _conn_string
+
+    if _wallet_dir and os.path.exists(_wallet_dir):
+        return _wallet_dir, _conn_string
+
     zip_data = base64.b64decode(wallet_zip_b64)
     wallet_dir = tempfile.mkdtemp(prefix='oracle_wallet_')
 
@@ -34,6 +56,8 @@ def extract_wallet(wallet_zip_b64, wallet_password):
         for line in content.split('\n'):
             if '=' in line and not line.strip().startswith('#'):
                 conn_name = line.split('=')[0].strip()
+                _wallet_dir = wallet_dir
+                _conn_string = conn_name
                 return wallet_dir, conn_name
 
     raise Exception('Could not extract connection string from tnsnames.ora')
@@ -45,7 +69,7 @@ def get_connection():
 
     Returns:
         oracledb.Connection: Active database connection
-        str: Wallet directory path (for cleanup)
+        str: Wallet directory path (kept alive for process lifetime)
     """
     user = os.getenv('ORA_USER')
     password = os.getenv('ORA_PASSWORD')
