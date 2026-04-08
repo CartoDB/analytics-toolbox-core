@@ -1,0 +1,33 @@
+----------------------------
+-- Copyright (C) 2026 CARTO
+----------------------------
+
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMGEOGPOINT
+(
+    point SDO_GEOMETRY, resolution NUMBER
+)
+RETURN VARCHAR2
+DETERMINISTIC
+IS
+    MIN_RESOLUTION CONSTANT PLS_INTEGER := 0;
+    MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
+    POINT_GTYPE CONSTANT PLS_INTEGER := 1;
+    h3_raw RAW(8);
+BEGIN
+    IF point IS NULL OR resolution IS NULL THEN
+        RETURN NULL;
+    END IF;
+    IF resolution < MIN_RESOLUTION OR resolution > MAX_RESOLUTION THEN
+        RETURN NULL;
+    END IF;
+    IF point.GET_GTYPE() != POINT_GTYPE THEN
+        RETURN NULL;
+    END IF;
+
+    h3_raw := SDO_UTIL.H3_KEY(point, resolution);
+    RETURN LOWER(LTRIM(RAWTOHEX(h3_raw), '0'));
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN NULL;
+END H3_FROMGEOGPOINT;
+/
