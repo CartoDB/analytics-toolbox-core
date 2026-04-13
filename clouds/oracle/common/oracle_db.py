@@ -23,7 +23,6 @@ _conn_string = None
 
 def _cleanup_wallet():
     """Remove cached wallet directory at process exit."""
-    global _wallet_dir
     if _wallet_dir and os.path.exists(_wallet_dir):
         shutil.rmtree(_wallet_dir, ignore_errors=True)
 
