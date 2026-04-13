@@ -292,7 +292,7 @@ BEGIN
 
     -- Build CTAS using JSON_TABLE to unnest the polyfill results
     -- The input_query must have a column named 'geom' of type SDO_GEOMETRY
-    v_sql := 'CREATE TABLE ' || output_table || ' AS '
+    v_sql := 'CREATE TABLE ' || DBMS_ASSERT.QUALIFIED_SQL_NAME(output_table) || ' AS '
         || 'SELECT jt.h3, i.* FROM '
         || '(' || input_query || ') i, '
         || 'JSON_TABLE('
