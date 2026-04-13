@@ -38,10 +38,6 @@ def test_h3_polyfill_table_center_mode():
     output_table = f'{SCHEMA}.TEST_POLYFILL_CENTER'
     _drop_table(output_table)
     try:
-        input_query = (
-            "SELECT SDO_UTIL.FROM_WKTGEOMETRY("
-            f"''{POLYGON_WKT}'') AS geom FROM DUAL"
-        )
         call_stmt = (
             f"BEGIN @@ORA_SCHEMA@@.H3_POLYFILL_TABLE("
             f"'SELECT SDO_UTIL.FROM_WKTGEOMETRY("

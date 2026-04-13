@@ -1,6 +1,5 @@
 # Copyright (c) 2026, CARTO
 import json
-import pytest
 from test_utils import run_query
 
 
@@ -48,7 +47,6 @@ def test_h3_uncompact_same_resolution():
 def test_h3_uncompact_expand_one_level():
     """A cell expanded one level below produces 7 children."""
     parent = '87283080dffffff'
-    parent_res = 7
     target_res = 8
     result = run_query(
         f"SELECT @@ORA_SCHEMA@@.H3_UNCOMPACT("

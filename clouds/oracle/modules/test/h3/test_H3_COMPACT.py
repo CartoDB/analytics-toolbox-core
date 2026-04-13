@@ -1,6 +1,5 @@
 # Copyright (c) 2026, CARTO
 import json
-import pytest
 from test_utils import run_query
 
 
@@ -50,7 +49,6 @@ def test_h3_compact_already_compact():
 def test_h3_compact_full_sibling_set():
     """All 7 children of a hex parent compact to the parent."""
     parent = '87283080dffffff'
-    parent_res = 7
     child_res = 8
     # Get all children of this parent
     children_result = run_query(

@@ -1,6 +1,5 @@
 # Copyright (c) 2026, CARTO
 import json
-import pytest
 from test_utils import run_query
 
 
