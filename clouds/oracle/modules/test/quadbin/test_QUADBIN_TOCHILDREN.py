@@ -97,14 +97,12 @@ EXPECTED_CHILDREN_RES9_COUNT = 1024
 
 def _parse_children(raw):
     """Parse a TOCHILDREN result into a sorted list of quadbin indices."""
-    if hasattr(raw, 'read'):
-        raw = raw.read()
     return sorted(json.loads(raw) if isinstance(raw, str) else raw)
 
 
 def test_quadbin_tochildren():
     result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 5) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 5)) FROM DUAL',
         fetch=True,
     )
 
@@ -115,7 +113,7 @@ def test_quadbin_tochildren():
 def test_quadbin_tochildren_multi_level():
     """Test multi-level recursion: resolution 7 produces 4^3 = 64 children."""
     result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 7) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 7)) FROM DUAL',
         fetch=True,
     )
 
@@ -126,7 +124,7 @@ def test_quadbin_tochildren_multi_level():
 def test_quadbin_tochildren_deep_recursion():
     """Test deep recursion: resolution 9 produces 4^5 = 1024 children."""
     result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 9) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 9)) FROM DUAL',
         fetch=True,
     )
 
@@ -181,7 +179,7 @@ def test_quadbin_tochildren_high_resolution():
     assert parent_res25 is not None
 
     children_result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({parent_res25}, 26) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({parent_res25}, 26)) FROM DUAL',
         fetch=True,
     )
     children = _parse_children(children_result[0][0])

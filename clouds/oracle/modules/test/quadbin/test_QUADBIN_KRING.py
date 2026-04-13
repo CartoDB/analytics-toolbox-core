@@ -27,14 +27,12 @@ EXPECTED_KRING = sorted(
 
 def _parse_kring(raw):
     """Parse a KRING result into a sorted list of quadbin indices."""
-    if hasattr(raw, 'read'):
-        raw = raw.read()
     return sorted(json.loads(raw) if isinstance(raw, str) else raw)
 
 
 def test_quadbin_kring():
     result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, 1) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, 1)) FROM DUAL',
         fetch=True,
     )
 
@@ -45,7 +43,7 @@ def test_quadbin_kring():
 def test_quadbin_kring_distance_zero():
     """Distance 0 returns only the origin cell."""
     result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, 0) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, 0)) FROM DUAL',
         fetch=True,
     )
 
@@ -56,8 +54,8 @@ def test_quadbin_kring_distance_zero():
 def test_quadbin_kring_null():
     result = run_query(
         'SELECT'
-        '    @@ORA_SCHEMA@@.QUADBIN_KRING(NULL, 1),'
-        f'    @@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, NULL)'
+        '    TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING(NULL, 1)),'
+        f'    TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, NULL))'
         ' FROM DUAL',
         fetch=True,
     )

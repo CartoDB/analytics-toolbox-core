@@ -25,15 +25,13 @@ EXPECTED_KRING_DISTANCES = [
 
 def _parse_kring_distances(raw):
     """Parse a KRING_DISTANCES result into a sorted list of dicts."""
-    if hasattr(raw, 'read'):
-        raw = raw.read()
     items = json.loads(raw) if isinstance(raw, str) else raw
     return sorted(items, key=lambda x: x['index'])
 
 
 def test_quadbin_kring_distances():
     result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_KRING_DISTANCES({QUADBIN_INDEX}, 1) FROM DUAL',
+        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING_DISTANCES({QUADBIN_INDEX}, 1)) FROM DUAL',
         fetch=True,
     )
 
@@ -49,8 +47,8 @@ def test_quadbin_kring_distances():
 def test_quadbin_kring_distances_null():
     result = run_query(
         'SELECT'
-        '    @@ORA_SCHEMA@@.QUADBIN_KRING_DISTANCES(NULL, 1),'
-        f'    @@ORA_SCHEMA@@.QUADBIN_KRING_DISTANCES({QUADBIN_INDEX}, NULL)'
+        '    TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING_DISTANCES(NULL, 1)),'
+        f'    TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING_DISTANCES({QUADBIN_INDEX}, NULL))'
         ' FROM DUAL',
         fetch=True,
     )
