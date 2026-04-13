@@ -48,8 +48,10 @@ AS
     v_min_ty     NUMBER;
     v_max_ty     NUMBER;
     v_num_tiles_i NUMBER;
+    v_tx_count   NUMBER;
 
     -- Iteration variables
+    v_tx         NUMBER;
     v_qb         NUMBER;
     v_relate     VARCHAR2(20);
 
@@ -145,8 +147,9 @@ BEGIN
             )
         AS NUMBER)
     );
+    -- Keep raw (unwrapped) tx so that antimeridian crossings
+    -- (where east < west after wrapping) produce a correct count.
     v_min_tx := FLOOR(v_num_tiles * ((v_west / 360.0d) + 0.5d));
-    v_min_tx := BITAND(v_min_tx, v_num_tiles_i - 1);
 
     -- Convert NE corner (east, north) to tile coordinates
     -- This gives us the tile at the top-right of the bbox
@@ -169,17 +172,24 @@ BEGIN
         AS NUMBER)
     );
     v_max_tx := FLOOR(v_num_tiles * ((v_east / 360.0d) + 0.5d));
-    v_max_tx := BITAND(v_max_tx, v_num_tiles_i - 1);
+
+    -- Tile count from raw (unwrapped) coordinates handles antimeridian
+    -- crossings correctly: when the bbox spans the dateline, v_max_tx
+    -- is still >= v_min_tx in raw space.
+    v_tx_count := v_max_tx - v_min_tx + 1;
 
     -- Build result CLOB
     DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
     DBMS_LOB.WRITEAPPEND(v_result, 1, '[');
 
-    -- Iterate all tiles in the bounding-box range
+    -- Iterate all tiles in the bounding-box range.
+    -- Use an offset loop + BITAND wrap for x to handle antimeridian.
     FOR ty IN v_min_ty .. v_max_ty LOOP
-        FOR tx IN v_min_tx .. v_max_tx LOOP
+        FOR i IN 0 .. v_tx_count - 1 LOOP
+            v_tx := BITAND(v_min_tx + i, v_num_tiles_i - 1);
+
             -- Get quadbin index for this tile
-            v_qb := @@ORA_SCHEMA@@.QUADBIN_FROMZXY(resolution, tx, ty);
+            v_qb := @@ORA_SCHEMA@@.QUADBIN_FROMZXY(resolution, v_tx, ty);
 
             -- Get tile boundary polygon
             v_tile_geom := @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb);

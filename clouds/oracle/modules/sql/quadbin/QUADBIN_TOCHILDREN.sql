@@ -22,7 +22,7 @@
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN
 (quadbin NUMBER, resolution NUMBER)
-RETURN VARCHAR2
+RETURN CLOB
 AS
     ZOOM_BITS    CONSTANT NUMBER := 31;
     ZOOM_SHIFT   CONSTANT NUMBER := 52;
@@ -38,8 +38,9 @@ AS
     v_child_base     NUMBER;
     v_clear_mask     NUMBER;
     v_child          NUMBER;
-    v_result         VARCHAR2(32767);
+    v_result         CLOB;
     v_first          BOOLEAN := TRUE;
+    v_val            VARCHAR2(30);
 BEGIN
     IF quadbin IS NULL OR resolution IS NULL THEN
         RETURN NULL;
@@ -80,7 +81,9 @@ BEGIN
     v_child_base := v_child_base - BITAND(v_child_base, v_clear_mask);
 
     -- Generate all children by iterating over row (r) and column (c)
-    v_result := '[';
+    DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
+    DBMS_LOB.WRITEAPPEND(v_result, 1, '[');
+
     FOR r IN 0 .. v_sqrt_range - 1 LOOP
         FOR c IN 0 .. v_sqrt_range - 1 LOOP
             -- child = child_base | ((r * sqrt_range + c) << block_shift)
@@ -94,13 +97,14 @@ BEGIN
             IF v_first THEN
                 v_first := FALSE;
             ELSE
-                v_result := v_result || ',';
+                DBMS_LOB.WRITEAPPEND(v_result, 1, ',');
             END IF;
-            v_result := v_result || TO_CHAR(v_child);
+            v_val := TO_CHAR(v_child);
+            DBMS_LOB.WRITEAPPEND(v_result, LENGTH(v_val), v_val);
         END LOOP;
     END LOOP;
-    v_result := v_result || ']';
 
+    DBMS_LOB.WRITEAPPEND(v_result, 1, ']');
     RETURN v_result;
 END;
 /

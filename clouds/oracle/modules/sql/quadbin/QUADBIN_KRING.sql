@@ -17,7 +17,7 @@
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_KRING
 (origin NUMBER, distance NUMBER)
-RETURN VARCHAR2
+RETURN CLOB
 AS
     v_zxy    VARCHAR2(200);
     v_z      NUMBER;
@@ -26,8 +26,9 @@ AS
     v_size   NUMBER;
     v_new_x  NUMBER;
     v_new_y  NUMBER;
-    v_result VARCHAR2(32767);
+    v_result CLOB;
     v_first  BOOLEAN := TRUE;
+    v_val    VARCHAR2(30);
 BEGIN
     IF origin IS NULL OR distance IS NULL THEN
         RETURN NULL;
@@ -42,7 +43,9 @@ BEGIN
     -- Number of tiles per axis at this zoom level
     v_size := POWER(2, v_z);
 
-    v_result := '[';
+    DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
+    DBMS_LOB.WRITEAPPEND(v_result, 1, '[');
+
     FOR v_dx IN -distance .. distance LOOP
         FOR v_dy IN -distance .. distance LOOP
             v_new_y := v_y + v_dy;
@@ -55,17 +58,18 @@ BEGIN
                 IF v_first THEN
                     v_first := FALSE;
                 ELSE
-                    v_result := v_result || ',';
+                    DBMS_LOB.WRITEAPPEND(v_result, 1, ',');
                 END IF;
 
-                v_result := v_result || TO_CHAR(
+                v_val := TO_CHAR(
                     @@ORA_SCHEMA@@.QUADBIN_FROMZXY(v_z, v_new_x, v_new_y)
                 );
+                DBMS_LOB.WRITEAPPEND(v_result, LENGTH(v_val), v_val);
             END IF;
         END LOOP;
     END LOOP;
-    v_result := v_result || ']';
 
+    DBMS_LOB.WRITEAPPEND(v_result, 1, ']');
     RETURN v_result;
 END;
 /
