@@ -21,6 +21,42 @@ def apply_replacements(text):
     return text
 
 
+def split_sql(content):
+    """Split SQL content into individual statements.
+
+    Uses sqlparse.split() but post-processes the results to re-split
+    any parts that contain multiple CREATE OR REPLACE statements.
+    sqlparse sometimes merges Databricks SQL compound statements
+    (BEGIN...END with IF/WHILE/CASE blocks) with following statements.
+    """
+    parts = split(content)
+    result = []
+    create_pattern = re.compile(
+        r'\n(?=CREATE\s+OR\s+REPLACE\s)', re.IGNORECASE
+    )
+    for part in parts:
+        stripped = part.strip()
+        if not stripped:
+            continue
+        # Check if this part contains multiple CREATE OR REPLACE statements
+        count = len(re.findall(
+            r'(?:^|\n)\s*CREATE\s+OR\s+REPLACE\s', stripped, re.IGNORECASE
+        ))
+        if count <= 1:
+            result.append(stripped)
+        else:
+            # Re-split on CREATE OR REPLACE boundaries
+            sub_parts = create_pattern.split(part)
+            for i, sub in enumerate(sub_parts):
+                sub = sub.strip()
+                if sub:
+                    # Re-add the CREATE keyword for parts after the first
+                    if i > 0 and not sub.upper().startswith('CREATE'):
+                        sub = 'CREATE ' + sub
+                    result.append(sub)
+    return result
+
+
 def run_queries(queries):
     global function
     with sql.connect(
@@ -53,7 +89,7 @@ if __name__ == '__main__':
             exit(1)
     else:
         try:
-            run_queries(split(content))
+            run_queries(split_sql(content))
         except Exception as error:
             error_msg = str(error)
             print(f'[{function}] ERROR: {error_msg}')
