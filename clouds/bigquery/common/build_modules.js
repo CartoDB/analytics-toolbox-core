@@ -196,8 +196,10 @@ content = apply_replacements(content);
 
 // Split into individual statements and write output files,
 // chunking into multiple files if the BigQuery query size limit is exceeded
+// BigQuery hard limit is 1,024,000 characters per query.
+// Using 768KB to keep files well under the limit and reduce future splits.
 const BQ_QUERY_CHAR_LIMIT = 1024 * 1000; // 1,024,000 characters
-const SAFE_LIMIT = BQ_QUERY_CHAR_LIMIT - 10000; // 10KB margin
+const SAFE_LIMIT = 768 * 1000; // 768,000 characters
 
 const statements = content.split(internalSeparator).filter(q => q.trim());
 const singleContent = statements.join(outputSeparator);
