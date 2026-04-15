@@ -211,6 +211,10 @@ if (singleContent.length <= SAFE_LIMIT) {
     let currentSize = 0;
 
     for (const stmt of statements) {
+        if (stmt.length > BQ_QUERY_CHAR_LIMIT) {
+            console.log(`ERROR: Single statement exceeds BigQuery limit (${stmt.length} chars)`);
+            process.exit(1);
+        }
         const addedSize = stmt.length + outputSeparator.length;
         if (currentSize + addedSize > SAFE_LIMIT && currentStatements.length > 0) {
             chunks.push(currentStatements.join(outputSeparator));
@@ -226,7 +230,7 @@ if (singleContent.length <= SAFE_LIMIT) {
     }
 
     for (let i = 0; i < chunks.length; i++) {
-        const filename = `modules_${i + 1}.sql`;
+        const filename = `modules_${String(i + 1).padStart(2, '0')}.sql`;
         fs.writeFileSync(path.join(outputDir, filename), chunks[i]);
         console.log(`Write ${outputDir}/${filename}`);
     }
