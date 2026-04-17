@@ -71,22 +71,12 @@ for (let inputDir of inputDirs) {
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    const rawContent = fs.readFileSync(path.join(moduledir, file)).toString();
-                    // Parse @extra-dependency annotations before stripping comments
-                    // Format: -- @extra-dependency FUNCTION_NAME
-                    const extraDeps = [];
-                    const extraDepPattern = /@extra-dependency\s+(\S+)/g;
-                    let match;
-                    while ((match = extraDepPattern.exec(rawContent)) !== null) {
-                        extraDeps.push(match[1]);
-                    }
-                    const content = rawContent.replace(/--.*\n/g, '');
+                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
                     functions.push({
                         name,
                         module,
                         content,
-                        dependencies: [],
-                        extraDependencies: extraDeps
+                        dependencies: []
                     });
                 }
             });
@@ -116,12 +106,6 @@ if (!nodeps) {
                 if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
-            }
-        });
-        // Add @extra-dependency annotations
-        mainFunction.extraDependencies.forEach(dep => {
-            if (!mainFunction.dependencies.includes(dep)) {
-                mainFunction.dependencies.push(dep);
             }
         });
     });
