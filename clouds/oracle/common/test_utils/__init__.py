@@ -82,6 +82,6 @@ def drop_table(*table_names):
     """
     for table_name in table_names:
         try:
-            run_query(f'DROP TABLE {table_name}')
+            run_query(f'DROP TABLE {quote_table_name(table_name)}')
         except Exception:
             pass
