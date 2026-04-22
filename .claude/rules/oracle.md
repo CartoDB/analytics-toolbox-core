@@ -77,7 +77,35 @@ Functions whose output size depends on input parameters MUST be pipelined. Fixed
 
 ### Type placement
 
-Per-module `clouds/oracle/modules/sql/<module>/00_types.sql` — the `00_` prefix ensures alphabetical deploy ordering (types before functions). Module-scoped; promote to `clouds/oracle/libraries/types/` only if a genuine cross-cutting pattern emerges.
+Types are declared in the same SQL file as the function that uses them, before the function body. Keeps a single point of edit per function and removes the need to track cross-file dependencies.
+
+Shared types (used by multiple functions in a module) go in a dedicated `00_<type_name>.sql` file — the `00_` prefix ensures alphabetical deploy ordering (types before functions that consume them). Module-scoped; promote to `clouds/oracle/libraries/types/` only if a genuine cross-cutting pattern emerges.
+
+### Idempotent type deployment
+
+`CREATE OR REPLACE TYPE` fails with `ORA-02303` when another type depends on the one being replaced (e.g. a `TABLE OF CELL` collection depends on `CELL`). For redeployable type files, drop with `FORCE` in reverse-dependency order first, then create:
+
+```sql
+-- Reset types idempotently. FORCE cascades to invalidate dependent
+-- objects, which are recompiled when recreated later in the deploy.
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE <SCHEMA>.LDS_H3_ISOLINE_CELLS FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE <SCHEMA>.LDS_H3_ISOLINE_CELL FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+CREATE TYPE <SCHEMA>.LDS_H3_ISOLINE_CELL AS OBJECT (...);
+/
+CREATE TYPE <SCHEMA>.LDS_H3_ISOLINE_CELLS AS TABLE OF <SCHEMA>.LDS_H3_ISOLINE_CELL;
+/
+```
+
+The `BEGIN … EXCEPTION WHEN OTHERS THEN NULL; END;` pattern is Oracle's idiom for "DROP IF EXISTS" (no native syntax). Handles fresh deploy (type doesn't exist → caught), redeploy (type exists with dependents → cascade via FORCE), and partial state (one of the types missing) uniformly.
 
 ### Naming
 
