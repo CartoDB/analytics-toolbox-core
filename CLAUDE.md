@@ -12,8 +12,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Key Commands
 
 ```bash
-# Gateway (Redshift-only): build REQUIRED before tests
+# Gateway (Redshift-only): setup and build REQUIRED before tests
 cd gateway
+make venv                                        # First-time setup
 make build cloud=redshift && make test-unit cloud=redshift modules=X
 
 # Cloud SQL UDFs
@@ -23,7 +24,8 @@ make deploy                          # Deploy SQL UDFs
 
 # Root: combined gateway + clouds
 make deploy cloud=redshift
-make create-package cloud=redshift
+make create-package cloud=redshift   # Create distribution package
+make lint cloud=redshift             # Lint both gateway + clouds
 ```
 
 Environment templates: `gateway/.env.template`, `clouds/{cloud}/.env.template`.

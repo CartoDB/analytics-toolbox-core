@@ -253,6 +253,30 @@ SQL UDFs go in `clouds/{cloud}/modules/sql/<module>/` and follow cloud-specific 
 - `clouds/bigquery/README.md`
 - etc.
 
+## Multi-Cloud Functions
+
+Functions can support multiple clouds in a single `function.yaml`:
+
+```yaml
+clouds:
+  redshift:
+    type: lambda
+    lambda_name: ex_multi
+    code_file: code/lambda/python/handler.py
+  snowflake:
+    type: lambda
+    code_file: code/snowflake/handler.py
+```
+
+## Function Documentation
+
+Documentation lives in `clouds/{cloud}/modules/doc/<module>/`:
+
+- `_INTRO.md` — Module introduction
+- `FUNCTION_NAME.md` — Individual function docs
+
+Follows markdown format with special metadata headers. See `CONTRIBUTING.md` for details.
+
 ## Future Development Guidelines
 
 ### When adding new functions
