@@ -169,15 +169,15 @@ These return `RAW(8)` — use `RAWTOHEX`/`HEXTORAW` to bridge to `VARCHAR2` hex 
 
 ## Dynamic SQL in Procedures
 
-Use Q-literal multiline strings with `REPLACE`-based named placeholders:
+Use string concatenation (`||`) for dynamic SQL — consistent with Redshift, Snowflake, BigQuery, and Postgres patterns in this repo.
+
+For data values, prefer bind variables (`EXECUTE IMMEDIATE ... USING`) over concatenation — avoids escaping and injection issues. Identifier interpolation (table/schema names in DDL) still requires concatenation since DDL can't bind names.
 
 ```sql
-v_sql := q'[
-    SELECT * FROM #INPUT_TABLE# WHERE #CONDITION#
-]';
-v_sql := REPLACE(v_sql, '#INPUT_TABLE#', p_input_table);
-v_sql := REPLACE(v_sql, '#CONDITION#', v_condition);
-EXECUTE IMMEDIATE v_sql;
+-- Identifier concatenated; data values bound
+v_sql := 'CREATE TABLE ' || p_output_table || ' AS
+    SELECT :val AS label FROM DUAL';
+EXECUTE IMMEDIATE v_sql USING p_value;
 ```
 
-Preferred over `UTL_LMS.FORMAT_MESSAGE` (limited to 5 args).
+Avoid `REPLACE`-based placeholder patterns (e.g. `#INPUT_TABLE#`): collisions with interpolated data that contain the placeholder sentinel cause silent corruption.
