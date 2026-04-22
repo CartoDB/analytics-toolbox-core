@@ -50,7 +50,6 @@ make remove drop-schema=1      # Drop entire schema (destructive)
 - Pipelined functions (`RETURN <type> PIPELINED`, `PIPE ROW(...)`) for size-variable array/struct-array returns
 - No SQL BOOLEAN — use `NUMBER(1)` (1/0) for boolean returns; callers use `= 1`
 - `AUTHID CURRENT_USER` (invoker rights) for all procedures
-- Error codes in `-20100` to `-20199` range for data module errors
 
 ## Oracle Type Mapping (v1.0)
 
@@ -159,7 +158,7 @@ Test files use the shared helpers:
 from test_utils import run_query, drop_table
 ```
 
-Test files must not use `sys.path.insert(...)` or `from run_query import run_query` patterns — those are bootstrap-level infrastructure and belong only inside `clouds/oracle/common/test_utils/__init__.py` (which uses `sys.path.insert` internally to load its dependencies). Test modules themselves should only import from `test_utils`.
+Individual test modules (`test_*.py`) must not use `sys.path.insert(...)` or `from run_query import run_query`. These patterns are bootstrap-level infrastructure and belong only in `__init__.py` package initializers — specifically `clouds/oracle/modules/test/__init__.py` (the pytest root) and `clouds/oracle/common/test_utils/__init__.py` (the shared helpers). Test modules should only import from `test_utils`.
 
 ## Oracle Native H3 Functions
 
