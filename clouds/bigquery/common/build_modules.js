@@ -151,13 +151,9 @@ function add (f, include) {
 functions.forEach(f => add(f));
 
 // Replace environment variables
-let separator;
-if (argv.production) {
-    separator = '\n';
-} else {
-    separator = '\n-->\n';  // marker to future SQL split
-}
-let content = output.map(f => f.content).join(separator);
+const internalSeparator = '\n-->\n';  // marker to split SQL statements
+const outputSeparator = argv.production ? '\n' : internalSeparator;
+let content = output.map(f => f.content).join(internalSeparator);
 
 function apply_replacements (text) {
     const libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_[^@]*?_BUCKET@@', 'g')))];
@@ -190,14 +186,54 @@ function apply_replacements (text) {
 
 if (argv.dropfirst) {
     const header = fs.readFileSync(path.resolve(__dirname, 'DROP_FUNCTIONS.sql')).toString();
-    content = header + separator + content
+    content = header + internalSeparator + content
 }
 
 const footer = fs.readFileSync(path.resolve(__dirname, 'VERSION.sql')).toString();
-content += separator + footer;
+content += internalSeparator + footer;
 
 content = apply_replacements(content);
 
-// Write modules.sql file
-fs.writeFileSync(path.join(outputDir, 'modules.sql'), content);
-console.log(`Write ${outputDir}/modules.sql`);
+// Split into individual statements and write output files,
+// chunking into multiple files if the BigQuery query size limit is exceeded
+// BigQuery hard limit is 1,024,000 characters per query.
+// Using 768KB to keep files well under the limit and reduce future splits.
+const BQ_QUERY_CHAR_LIMIT = 1024 * 1000; // 1,024,000 characters
+const SAFE_LIMIT = 768 * 1000; // 768,000 characters
+
+const statements = content.split(internalSeparator).filter(q => q.trim());
+const singleContent = statements.join(outputSeparator);
+
+if (singleContent.length <= SAFE_LIMIT) {
+    fs.writeFileSync(path.join(outputDir, 'modules.sql'), singleContent);
+    console.log(`Write ${outputDir}/modules.sql`);
+} else {
+    const chunks = [];
+    let currentStatements = [];
+    let currentSize = 0;
+
+    for (const stmt of statements) {
+        if (stmt.length > BQ_QUERY_CHAR_LIMIT) {
+            console.log(`ERROR: Single statement exceeds BigQuery limit (${stmt.length} chars)`);
+            process.exit(1);
+        }
+        const addedSize = stmt.length + outputSeparator.length;
+        if (currentSize + addedSize > SAFE_LIMIT && currentStatements.length > 0) {
+            chunks.push(currentStatements.join(outputSeparator));
+            currentStatements = [stmt];
+            currentSize = addedSize;
+        } else {
+            currentStatements.push(stmt);
+            currentSize += addedSize;
+        }
+    }
+    if (currentStatements.length > 0) {
+        chunks.push(currentStatements.join(outputSeparator));
+    }
+
+    for (let i = 0; i < chunks.length; i++) {
+        const filename = `modules_${String(i + 1).padStart(2, '0')}.sql`;
+        fs.writeFileSync(path.join(outputDir, filename), chunks[i]);
+        console.log(`Write ${outputDir}/${filename}`);
+    }
+}

@@ -72,6 +72,9 @@ def execute_script(script_path):
 
         # Remove line comments
         sql = re.sub(r'--.*\n', '\n', sql)
+        # Remove block comments — Oracle's '/' statement terminator collides
+        # with the closing '*/' if they stay in the script
+        sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
 
         # Execute SQL (split by statement terminator)
         cursor = connection.cursor()

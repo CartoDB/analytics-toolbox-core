@@ -58,8 +58,10 @@ build: $(NODE_MODULES_DEV)
 deploy: check build
 	echo "Deploying modules..."
 	$(MAKE) dataset-create
-	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
-	$(COMMON_DIR)/run-script.js $(BUILD_DIR)/modules.sql
+	for f in $(BUILD_DIR)/modules*.sql; do \
+		GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+		$(COMMON_DIR)/run-script.js $$f || exit 1; \
+	done
 ifdef BQ_PERMISSIONS
 	BQ_PERMISSIONS_TARGET_DATASET=$(BQ_DEPLOY_DATASET) $(COMMON_DIR)/$(MODULE_PERMISSIONS_BASH)
 endif
