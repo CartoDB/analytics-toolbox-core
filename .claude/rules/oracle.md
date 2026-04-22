@@ -48,7 +48,7 @@ make remove drop-schema=1      # Drop entire schema (destructive)
 - Pure SQL functions: `CREATE OR REPLACE FUNCTION ... RETURN ... IS BEGIN ... END;` with `/` terminator
 - PL/SQL blocks with loops for complex functions (KRING, TOCHILDREN, POLYFILL)
 - Pipelined functions (`RETURN <type> PIPELINED`, `PIPE ROW(...)`) for size-variable array/struct-array returns
-- No SQL BOOLEAN — use `NUMBER` (1/0) for boolean returns; callers use `= 1`
+- No SQL BOOLEAN — use `NUMBER(1)` (1/0) for boolean returns; callers use `= 1`
 - `AUTHID CURRENT_USER` (invoker rights) for all procedures
 - Error codes in `-20100` to `-20199` range for data module errors
 
@@ -59,7 +59,7 @@ make remove drop-schema=1      # Drop entire schema (destructive)
 | Generic shape | Oracle type | Notes |
 |---|---|---|
 | scalar INT / FLOAT | `NUMBER` | 38-digit decimal; holds 64-bit ints and floats exactly |
-| scalar BOOL | `NUMBER` (1/0) | no SQL BOOLEAN; callers use `= 1` |
+| scalar BOOL | `NUMBER(1)` (1/0) | no SQL BOOLEAN; callers use `= 1` |
 | scalar STRING | `VARCHAR2` | direct |
 | scalar GEOMETRY / GEOGRAPHY | `SDO_GEOMETRY` with explicit SRID 4326 | matches BQ/SF implicit WGS84 |
 | `ARRAY<primitive>` | `TABLE OF <type>` PIPELINED | consume via `TABLE(func(...))` |
@@ -125,13 +125,13 @@ SELECT zxy.z, zxy.x, zxy.y FROM t;
 
 ## Oracle Test Patterns
 
-All tests use the shared helpers:
+Test files use the shared helpers:
 
 ```python
 from test_utils import run_query, drop_table
 ```
 
-Do not use `sys.path.insert(...)` or `from run_query import run_query` patterns.
+Test files must not use `sys.path.insert(...)` or `from run_query import run_query` patterns — those are bootstrap-level infrastructure and belong only inside `clouds/oracle/common/test_utils/__init__.py` (which uses `sys.path.insert` internally to load its dependencies). Test modules themselves should only import from `test_utils`.
 
 ## Oracle Native H3 Functions
 
