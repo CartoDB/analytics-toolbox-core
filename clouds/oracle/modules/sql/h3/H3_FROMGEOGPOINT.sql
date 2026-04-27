@@ -2,6 +2,10 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
+-- Input geometry must be a WGS84 (SRID 4326) point. The function does
+-- not auto-transform: a point with an explicit SRID other than 4326
+-- returns NULL. A NULL SRID is accepted and treated as WGS84, matching
+-- the convention used by SDO_UTIL.FROM_WKTGEOMETRY.
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMGEOGPOINT
 (
     point SDO_GEOMETRY, resolution NUMBER
@@ -12,6 +16,7 @@ IS
     MIN_RESOLUTION CONSTANT PLS_INTEGER := 0;
     MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
     POINT_GTYPE CONSTANT PLS_INTEGER := 1;
+    SRID_WGS84 CONSTANT PLS_INTEGER := 4326;
     h3_raw RAW(8);
 BEGIN
     IF point IS NULL OR resolution IS NULL THEN
@@ -21,6 +26,11 @@ BEGIN
         RETURN NULL;
     END IF;
     IF point.GET_GTYPE() != POINT_GTYPE THEN
+        RETURN NULL;
+    END IF;
+    -- Reject explicit non-WGS84 SRIDs; accept NULL SRID (caller's
+    -- intent is WGS84, e.g. SDO_UTIL.FROM_WKTGEOMETRY output)
+    IF point.SDO_SRID IS NOT NULL AND point.SDO_SRID != SRID_WGS84 THEN
         RETURN NULL;
     END IF;
 
