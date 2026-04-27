@@ -5,6 +5,9 @@
 -- Converts longitude/latitude/resolution to a quadbin index via
 -- Web Mercator projection, then delegates to QUADBIN_FROMZXY.
 --
+-- Coordinates are interpreted as WGS84 (EPSG:4326) degrees. There is no
+-- auto-transform from other CRSs in v1.0; callers must project beforehand.
+--
 -- Uses BINARY_DOUBLE (IEEE 754) for intermediate calculations to match
 -- the floating-point behaviour of other platforms (Databricks DOUBLE, etc.).
 --

@@ -5,6 +5,10 @@
 -- Extracts longitude/latitude from an SDO_GEOMETRY point and delegates
 -- to QUADBIN_FROMLONGLAT for the actual quadbin computation.
 --
+-- The input point is interpreted as WGS84 (EPSG:4326). The function does
+-- not validate or transform the SDO_SRID — points in any other CRS will
+-- silently produce incorrect quadbins. Callers must project beforehand.
+--
 -- Handles both SDO_POINT and SDO_ORDINATES representations, since
 -- Oracle SDO_GEOMETRY can store point coordinates in either location
 -- depending on how the geometry was constructed.

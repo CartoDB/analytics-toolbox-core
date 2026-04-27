@@ -5,6 +5,9 @@
 -- Extracts z/x/y tile coordinates from a quadbin index by de-interleaving
 -- the Morton-coded bits.
 --
+-- Returns a QUADBIN_ZXY object (z, x, y). Consumers access fields via
+-- `t.z`, `t.x`, `t.y` rather than parsing JSON.
+--
 -- Bit-mask constants (decimal equivalents):
 --   MASK_1   = 6148914691236517205 = 0x5555555555555555
 --   MASK_2   = 3689348814741910323 = 0x3333333333333333
@@ -16,7 +19,7 @@
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_TOZXY
 (quadbin NUMBER)
-RETURN VARCHAR2
+RETURN @@ORA_SCHEMA@@.QUADBIN_ZXY
 AS
     MASK_1  CONSTANT NUMBER := 6148914691236517205;
     MASK_2  CONSTANT NUMBER := 3689348814741910323;
@@ -75,6 +78,6 @@ BEGIN
     v_x := TRUNC(v_x / POWER(2, 32 - v_z));
     v_y := TRUNC(v_y / POWER(2, 32 - v_z));
 
-    RETURN '{"z":' || v_z || ',"x":' || v_x || ',"y":' || v_y || '}';
+    RETURN @@ORA_SCHEMA@@.QUADBIN_ZXY(v_z, v_x, v_y);
 END;
 /

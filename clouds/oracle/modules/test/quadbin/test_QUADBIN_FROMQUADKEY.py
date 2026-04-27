@@ -1,10 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 # Note: In Oracle '' IS NULL, so the empty-string quadkey (zoom 0) cannot
@@ -21,7 +17,6 @@ def test_quadbin_fromquadkey():
     for quadkey, expected_quadbin in QUADKEY_QUADBIN_PAIRS:
         result = run_query(
             f"SELECT @@ORA_SCHEMA@@.QUADBIN_FROMQUADKEY('{quadkey}') FROM DUAL",
-            fetch=True,
         )
 
         assert result[0][0] == expected_quadbin, (
@@ -33,7 +28,6 @@ def test_quadbin_fromquadkey_null():
     """In Oracle '' IS NULL, so NULL input returns NULL (covers empty string)."""
     result = run_query(
         'SELECT @@ORA_SCHEMA@@.QUADBIN_FROMQUADKEY(NULL) FROM DUAL',
-        fetch=True,
     )
 
     assert result[0][0] is None
@@ -46,7 +40,6 @@ def test_quadbin_fromquadkey_roundtrip():
             f"""SELECT @@ORA_SCHEMA@@.QUADBIN_TOQUADKEY(
                 @@ORA_SCHEMA@@.QUADBIN_FROMQUADKEY('{quadkey}')
             ) FROM DUAL""",
-            fetch=True,
         )
 
         assert result[0][0] == quadkey, (

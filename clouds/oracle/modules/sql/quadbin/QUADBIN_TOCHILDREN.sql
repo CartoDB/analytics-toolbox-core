@@ -2,12 +2,15 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Returns a JSON array of all child quadbin indices at the specified
--- (finer) resolution.  Each zoom level produces 4 children (quadtree),
--- so total = 4^(resolution - current_resolution).
+-- Returns all child quadbin indices at the specified (finer) resolution,
+-- as a pipelined QUADBIN_INDEX_ARRAY. Each zoom level produces 4 children
+-- (quadtree), so total = 4^(resolution - current_resolution).
 --
--- Raises an error if resolution is outside [0,26] or less than the
--- current resolution of the input quadbin.
+-- Consume via: SELECT COLUMN_VALUE FROM TABLE(QUADBIN_TOCHILDREN(idx, r))
+--
+-- Returns an empty pipeline (no rows) when the resolution is outside
+-- [0, 26] or coarser than the input quadbin's own resolution. Matches the
+-- NULL-on-invalid convention codified in .claude/rules/oracle.md.
 --
 -- Oracle bit operation equivalents:
 --   a << n  =>  a * POWER(2, n)
@@ -22,7 +25,7 @@
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN
 (quadbin NUMBER, resolution NUMBER)
-RETURN CLOB
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
     ZOOM_BITS    CONSTANT NUMBER := 31;
     ZOOM_SHIFT   CONSTANT NUMBER := 52;
@@ -38,21 +41,17 @@ AS
     v_child_base     NUMBER;
     v_clear_mask     NUMBER;
     v_child          NUMBER;
-    v_result         CLOB;
-    v_first          BOOLEAN := TRUE;
-    v_val            VARCHAR2(30);
 BEGIN
     IF quadbin IS NULL OR resolution IS NULL THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
-    -- Extract current resolution
     v_current_res := BITAND(TRUNC(quadbin / POWER(2, ZOOM_SHIFT)), ZOOM_BITS);
 
-    -- Validate resolution
+    -- Empty pipeline on out-of-range or coarser-than-input resolution
     IF resolution < MIN_RES OR resolution > MAX_RES
        OR resolution < v_current_res THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Invalid resolution');
+        RETURN;
     END IF;
 
     v_res_diff := resolution - v_current_res;
@@ -80,10 +79,6 @@ BEGIN
     v_clear_mask := (v_block_range - 1) * POWER(2, v_block_shift);
     v_child_base := v_child_base - BITAND(v_child_base, v_clear_mask);
 
-    -- Generate all children by iterating over row (r) and column (c)
-    DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
-    DBMS_LOB.WRITEAPPEND(v_result, 1, '[');
-
     FOR r IN 0 .. v_sqrt_range - 1 LOOP
         FOR c IN 0 .. v_sqrt_range - 1 LOOP
             -- child = child_base | ((r * sqrt_range + c) << block_shift)
@@ -93,18 +88,10 @@ BEGIN
                     v_child_base,
                     (r * v_sqrt_range + c) * POWER(2, v_block_shift)
                 );
-
-            IF v_first THEN
-                v_first := FALSE;
-            ELSE
-                DBMS_LOB.WRITEAPPEND(v_result, 1, ',');
-            END IF;
-            v_val := TO_CHAR(v_child);
-            DBMS_LOB.WRITEAPPEND(v_result, LENGTH(v_val), v_val);
+            PIPE ROW(v_child);
         END LOOP;
     END LOOP;
 
-    DBMS_LOB.WRITEAPPEND(v_result, 1, ']');
-    RETURN v_result;
+    RETURN;
 END;
 /

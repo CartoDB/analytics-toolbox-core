@@ -1,10 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 def test_quadbin_fromgeogpoint():
@@ -17,7 +13,6 @@ def test_quadbin_fromgeogpoint():
             4
         ) FROM DUAL
         """,
-        fetch=True,
     )
     assert result[0][0] == 5209574053332910079
 
@@ -27,7 +22,6 @@ def test_quadbin_fromgeogpoint_null():
         """
         SELECT @@ORA_SCHEMA@@.QUADBIN_FROMGEOGPOINT(NULL, 4) FROM DUAL
         """,
-        fetch=True,
     )
     assert result[0][0] is None
 
@@ -40,6 +34,5 @@ def test_quadbin_fromgeogpoint_null():
             NULL
         ) FROM DUAL
         """,
-        fetch=True,
     )
     assert result[0][0] is None

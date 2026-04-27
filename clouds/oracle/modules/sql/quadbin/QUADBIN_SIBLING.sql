@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_SIBLING
 (quadbin NUMBER, direction VARCHAR2)
 RETURN NUMBER
 AS
-    v_zxy    VARCHAR2(200);
+    v_zxy    @@ORA_SCHEMA@@.QUADBIN_ZXY;
     v_z      NUMBER;
     v_x      NUMBER;
     v_y      NUMBER;
@@ -37,11 +37,10 @@ BEGIN
         );
     END IF;
 
-    -- Parse z/x/y from the JSON string returned by QUADBIN_TOZXY
     v_zxy := @@ORA_SCHEMA@@.QUADBIN_TOZXY(quadbin);
-    v_z := TO_NUMBER(JSON_VALUE(v_zxy, '$.z'));
-    v_x := TO_NUMBER(JSON_VALUE(v_zxy, '$.x'));
-    v_y := TO_NUMBER(JSON_VALUE(v_zxy, '$.y'));
+    v_z := v_zxy.z;
+    v_x := v_zxy.x;
+    v_y := v_zxy.y;
 
     -- Direction deltas
     CASE direction

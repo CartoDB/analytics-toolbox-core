@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_CENTER
 (quadbin NUMBER)
 RETURN SDO_GEOMETRY
 AS
-    v_zxy       VARCHAR2(200);
+    v_zxy       @@ORA_SCHEMA@@.QUADBIN_ZXY;
     v_z         BINARY_DOUBLE;
     v_x         BINARY_DOUBLE;
     v_y         BINARY_DOUBLE;
@@ -24,12 +24,11 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    -- Get z, x, y from QUADBIN_TOZXY (returns JSON)
     v_zxy := @@ORA_SCHEMA@@.QUADBIN_TOZXY(quadbin);
 
-    v_z := CAST(JSON_VALUE(v_zxy, '$.z') AS BINARY_DOUBLE);
-    v_x := CAST(JSON_VALUE(v_zxy, '$.x') AS BINARY_DOUBLE);
-    v_y := CAST(JSON_VALUE(v_zxy, '$.y') AS BINARY_DOUBLE);
+    v_z := CAST(v_zxy.z AS BINARY_DOUBLE);
+    v_x := CAST(v_zxy.x AS BINARY_DOUBLE);
+    v_y := CAST(v_zxy.y AS BINARY_DOUBLE);
 
     v_num_tiles := POWER(2.0d, v_z);
     v_pi := ACOS(-1.0d);

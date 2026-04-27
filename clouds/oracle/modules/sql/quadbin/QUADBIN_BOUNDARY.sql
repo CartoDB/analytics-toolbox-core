@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BOUNDARY
 (quadbin NUMBER)
 RETURN SDO_GEOMETRY
 AS
-    v_bbox  VARCHAR2(400);
+    v_bbox  @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ;
     v_west  NUMBER;
     v_south NUMBER;
     v_east  NUMBER;
@@ -20,13 +20,12 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    -- Get bounding box as JSON array: [west, south, east, north]
     v_bbox := @@ORA_SCHEMA@@.QUADBIN_BBOX(quadbin);
 
-    v_west  := TO_NUMBER(JSON_VALUE(v_bbox, '$[0]'));
-    v_south := TO_NUMBER(JSON_VALUE(v_bbox, '$[1]'));
-    v_east  := TO_NUMBER(JSON_VALUE(v_bbox, '$[2]'));
-    v_north := TO_NUMBER(JSON_VALUE(v_bbox, '$[3]'));
+    v_west  := v_bbox.west;
+    v_south := v_bbox.south;
+    v_east  := v_bbox.east;
+    v_north := v_bbox.north;
 
     -- Construct polygon (counterclockwise exterior ring)
     RETURN SDO_GEOMETRY(

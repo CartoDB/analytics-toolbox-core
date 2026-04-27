@@ -1,10 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 QUADBIN_INDEX = 5209574053332910079
@@ -17,7 +13,6 @@ def test_quadbin_boundary():
             @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(5209574053332910079)
         )) FROM DUAL
         """,
-        fetch=True,
     )
 
     boundary_wkt = result[0][0]
@@ -34,7 +29,6 @@ def test_quadbin_boundary_srid():
             FROM DUAL
         ) t
         """,
-        fetch=True,
     )
 
     assert result[0][0] == 4326
@@ -43,7 +37,6 @@ def test_quadbin_boundary_srid():
 def test_quadbin_boundary_null():
     result = run_query(
         'SELECT @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(NULL) FROM DUAL',
-        fetch=True,
     )
 
     assert result[0][0] is None

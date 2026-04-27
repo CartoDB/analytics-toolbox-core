@@ -9,7 +9,8 @@
 --   a >> n  =>  TRUNC(a / POWER(2, n))
 --   a & b   =>  BITAND(a, b)
 --
--- Returns 1 if valid, 0 if invalid (Oracle has no SQL BOOLEAN).
+-- Returns 1 if valid, 0 if invalid. Type is NUMBER(1), the Oracle convention
+-- for a boolean (no native SQL BOOLEAN). Callers test with `= 1`.
 --
 -- Bit-mask constants (decimal equivalents):
 --   HEADER_MASK = 4611686018427387904 = 0x4000000000000000
@@ -18,6 +19,9 @@
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_ISVALID
 (quadbin NUMBER)
 RETURN NUMBER
+-- NUMBER(1) is the conventional boolean shape; the function is declared
+-- as NUMBER (Oracle ignores precision/scale on PL/SQL function returns
+-- but the contract is documented for callers and SQL clients).
 AS
     HEADER_MASK  CONSTANT NUMBER := 4611686018427387904;
     UNUSED_MASK  CONSTANT NUMBER := 4503599627370495;

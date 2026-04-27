@@ -1,11 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import json
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 QUADBIN_INDEX = 5209574053332910079
@@ -25,40 +20,30 @@ EXPECTED_KRING = sorted(
 )
 
 
-def _parse_kring(raw):
-    """Parse a KRING result into a sorted list of quadbin indices."""
-    return sorted(json.loads(raw) if isinstance(raw, str) else raw)
+def _kring(origin, distance):
+    """Run QUADBIN_KRING and return a sorted list of indices."""
+    rows = run_query(
+        f"""SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_KRING({origin}, {distance}))"""
+    )
+    return sorted(int(r[0]) for r in rows)
 
 
 def test_quadbin_kring():
-    result = run_query(
-        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, 1)) FROM DUAL',
-        fetch=True,
-    )
-
-    kring = _parse_kring(result[0][0])
-    assert kring == EXPECTED_KRING
+    assert _kring(QUADBIN_INDEX, 1) == EXPECTED_KRING
 
 
 def test_quadbin_kring_distance_zero():
     """Distance 0 returns only the origin cell."""
-    result = run_query(
-        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, 0)) FROM DUAL',
-        fetch=True,
-    )
-
-    kring = _parse_kring(result[0][0])
-    assert kring == [QUADBIN_INDEX]
+    assert _kring(QUADBIN_INDEX, 0) == [QUADBIN_INDEX]
 
 
 def test_quadbin_kring_null():
-    result = run_query(
-        'SELECT'
-        '    TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING(NULL, 1)),'
-        f'    TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, NULL))'
-        ' FROM DUAL',
-        fetch=True,
+    """NULL inputs yield an empty pipeline (zero rows)."""
+    rows = run_query(
+        f"""SELECT COLUMN_VALUE FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_KRING(NULL, 1))
+        UNION ALL
+        SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_KRING({QUADBIN_INDEX}, NULL))"""
     )
-
-    assert result[0][0] is None
-    assert result[0][1] is None
+    assert rows == [] or rows == 'No results returned'

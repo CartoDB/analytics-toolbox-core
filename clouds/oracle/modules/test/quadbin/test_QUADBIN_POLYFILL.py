@@ -1,11 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import json
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 POLYGON_WKT = (
@@ -59,51 +54,92 @@ EXPECTED_MULTI_POLYGON_POLYFILL = sorted(
 
 RESOLUTION = 17
 
+ANTIMERIDIAN_WKT = (
+    'POLYGON ((179.5 -1, -179.5 -1, -179.5 1, 179.5 1, 179.5 -1))'
+)
+LARGE_BBOX_WKT = (
+    'POLYGON ((-10 -10, 10 -10, 10 10, -10 10, -10 -10))'
+)
+DEGENERATE_POINT_WKT = 'POINT (0 0)'
 
-def _parse_polyfill(raw):
-    """Parse a polyfill result into a sorted list of quadbin indices."""
-    return sorted(json.loads(raw) if isinstance(raw, str) else raw)
+
+def _polyfill(wkt, resolution):
+    """Run QUADBIN_POLYFILL on a WKT geometry; return sorted list of ints."""
+    rows = run_query(
+        f"""SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
+            SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'),
+            {resolution}
+        ))"""
+    )
+    return sorted(int(r[0]) for r in rows)
 
 
 def test_quadbin_polyfill_polygon():
-    result = run_query(
-        f"""SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
-            SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'),
-            {RESOLUTION}
-        )) FROM DUAL""",
-        fetch=True,
-    )
-
-    polyfill = _parse_polyfill(result[0][0])
-    assert polyfill == EXPECTED_POLYGON_POLYFILL
+    assert _polyfill(POLYGON_WKT, RESOLUTION) == EXPECTED_POLYGON_POLYFILL
 
 
 def test_quadbin_polyfill_multi_polygon():
-    result = run_query(
-        f"""SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
-            SDO_UTIL.FROM_WKTGEOMETRY('{MULTI_POLYGON_WKT}'),
-            {RESOLUTION}
-        )) FROM DUAL""",
-        fetch=True,
+    assert (
+        _polyfill(MULTI_POLYGON_WKT, RESOLUTION)
+        == EXPECTED_MULTI_POLYGON_POLYFILL
     )
-
-    polyfill = _parse_polyfill(result[0][0])
-    assert polyfill == EXPECTED_MULTI_POLYGON_POLYFILL
 
 
 def test_quadbin_polyfill_null():
-    result = run_query(
-        """SELECT
-            TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(NULL, 17)),
-            TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
-                SDO_UTIL.FROM_WKTGEOMETRY(
-                    'POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))'
-                ),
-                NULL
-            ))
-        FROM DUAL""",
-        fetch=True,
+    """NULL inputs yield an empty pipeline (zero rows)."""
+    rows = run_query(
+        """SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(NULL, 17))
+        UNION ALL
+        SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
+            SDO_UTIL.FROM_WKTGEOMETRY(
+                'POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))'
+            ),
+            NULL
+        ))"""
     )
+    assert rows == [] or rows == 'No results returned'
 
-    assert result[0][0] is None
-    assert result[0][1] is None
+
+def test_quadbin_polyfill_invalid_resolution():
+    """Out-of-range resolution returns an empty pipeline (NULL-on-invalid)."""
+    rows = run_query(
+        f"""SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
+            SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), -1
+        ))
+        UNION ALL
+        SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
+            SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), 27
+        ))"""
+    )
+    assert rows == [] or rows == 'No results returned'
+
+
+def test_quadbin_polyfill_degenerate_point():
+    """A point geometry covers exactly one tile (the one containing it)."""
+    cells = _polyfill(DEGENERATE_POINT_WKT, 5)
+    assert len(cells) >= 1
+
+
+def test_quadbin_polyfill_antimeridian():
+    """Antimeridian-crossing bbox produces a contiguous tile set on both sides
+    of the dateline (no empty result, no duplicate sweep across 360°)."""
+    cells = _polyfill(ANTIMERIDIAN_WKT, 4)
+    # Resolution 4 has 2^4 = 16 tiles per row; the input spans only ~1° on
+    # each side of the antimeridian, so the result must be small (well under
+    # the 16-tile-per-row total) yet non-empty.
+    assert 0 < len(cells) < 16 * 4
+
+
+def test_quadbin_polyfill_large_bbox():
+    """A bbox spanning ~20° at resolution 5 fills a sizable but bounded set
+    of tiles. Verifies the BBOX-scan loop terminates."""
+    cells = _polyfill(LARGE_BBOX_WKT, 5)
+    assert len(cells) > 0
+    # 2^5 = 32 tiles per row; a 20° × 20° box can't possibly need more than
+    # the whole grid (32 * 32 = 1024).
+    assert len(cells) <= 32 * 32

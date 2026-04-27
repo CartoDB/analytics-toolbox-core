@@ -1,11 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import json
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 TOLERANCE = 1e-6
@@ -19,23 +14,26 @@ EXPECTED_NORTH = 0.0
 
 def test_quadbin_bbox():
     result = run_query(
-        'SELECT @@ORA_SCHEMA@@.QUADBIN_BBOX(5209574053332910079) FROM DUAL',
-        fetch=True,
+        f"""SELECT t.bbox.west, t.bbox.south, t.bbox.east, t.bbox.north
+        FROM (
+            SELECT @@ORA_SCHEMA@@.QUADBIN_BBOX({QUADBIN_INDEX}) AS bbox
+            FROM DUAL
+        ) t"""
     )
 
-    raw = result[0][0]
-    bbox = json.loads(raw)
-    assert len(bbox) == 4
-    assert abs(bbox[0] - EXPECTED_WEST) < TOLERANCE
-    assert abs(bbox[1] - EXPECTED_SOUTH) < TOLERANCE
-    assert abs(bbox[2] - EXPECTED_EAST) < TOLERANCE
-    assert abs(bbox[3] - EXPECTED_NORTH) < TOLERANCE
+    west, south, east, north = result[0]
+    assert abs(west - EXPECTED_WEST) < TOLERANCE
+    assert abs(south - EXPECTED_SOUTH) < TOLERANCE
+    assert abs(east - EXPECTED_EAST) < TOLERANCE
+    assert abs(north - EXPECTED_NORTH) < TOLERANCE
 
 
 def test_quadbin_bbox_null():
     result = run_query(
-        'SELECT @@ORA_SCHEMA@@.QUADBIN_BBOX(NULL) FROM DUAL',
-        fetch=True,
+        """SELECT t.bbox.west
+        FROM (
+            SELECT @@ORA_SCHEMA@@.QUADBIN_BBOX(NULL) AS bbox FROM DUAL
+        ) t"""
     )
 
     assert result[0][0] is None

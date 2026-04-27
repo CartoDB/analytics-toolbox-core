@@ -1,11 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import json
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 QUADBIN_INDEX = 5209574053332910079
@@ -95,94 +90,55 @@ EXPECTED_CHILDREN_RES7 = sorted(
 EXPECTED_CHILDREN_RES9_COUNT = 1024
 
 
-def _parse_children(raw):
-    """Parse a TOCHILDREN result into a sorted list of quadbin indices."""
-    return sorted(json.loads(raw) if isinstance(raw, str) else raw)
+def _children(quadbin, resolution):
+    """Return TOCHILDREN result as a sorted list of ints."""
+    rows = run_query(
+        f"""SELECT COLUMN_VALUE
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({quadbin}, {resolution}))"""
+    )
+    return sorted(int(r[0]) for r in rows)
 
 
 def test_quadbin_tochildren():
-    result = run_query(
-        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 5)) FROM DUAL',
-        fetch=True,
-    )
-
-    children = _parse_children(result[0][0])
-    assert children == EXPECTED_CHILDREN_RES5
+    assert _children(QUADBIN_INDEX, 5) == EXPECTED_CHILDREN_RES5
 
 
 def test_quadbin_tochildren_multi_level():
-    """Test multi-level recursion: resolution 7 produces 4^3 = 64 children."""
-    result = run_query(
-        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 7)) FROM DUAL',
-        fetch=True,
-    )
-
-    children = _parse_children(result[0][0])
-    assert children == EXPECTED_CHILDREN_RES7
+    """Resolution 7 produces 4^3 = 64 children."""
+    assert _children(QUADBIN_INDEX, 7) == EXPECTED_CHILDREN_RES7
 
 
 def test_quadbin_tochildren_deep_recursion():
-    """Test deep recursion: resolution 9 produces 4^5 = 1024 children."""
-    result = run_query(
-        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 9)) FROM DUAL',
-        fetch=True,
-    )
-
-    children = _parse_children(result[0][0])
-    assert len(children) == EXPECTED_CHILDREN_RES9_COUNT
+    """Resolution 9 produces 4^5 = 1024 children."""
+    assert len(_children(QUADBIN_INDEX, 9)) == EXPECTED_CHILDREN_RES9_COUNT
 
 
 def test_quadbin_tochildren_invalid_resolution_negative():
-    try:
-        run_query(
-            f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, -1) FROM DUAL',
-            fetch=True,
-        )
-        assert False, 'Expected an error for negative resolution'
-    except Exception as e:
-        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
+    """Negative resolution returns empty pipeline (NULL-on-invalid)."""
+    assert _children(QUADBIN_INDEX, -1) == []
 
 
 def test_quadbin_tochildren_resolution_overflow():
-    try:
-        run_query(
-            f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 27) FROM DUAL',
-            fetch=True,
-        )
-        assert False, 'Expected an error for resolution > 26'
-    except Exception as e:
-        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
+    """Resolution > 26 returns empty pipeline."""
+    assert _children(QUADBIN_INDEX, 27) == []
 
 
 def test_quadbin_tochildren_resolution_smaller_than_index():
-    try:
-        run_query(
-            f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({QUADBIN_INDEX}, 3) FROM DUAL',
-            fetch=True,
-        )
-        assert False, 'Expected an error for resolution < index resolution'
-    except Exception as e:
-        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
+    """Resolution coarser than input returns empty pipeline."""
+    assert _children(QUADBIN_INDEX, 3) == []
 
 
 def test_quadbin_tochildren_high_resolution():
-    """TOCHILDREN works at maximum resolution (25 -> 26) without integer overflow.
+    """TOCHILDREN works at maximum resolution (25 -> 26).
 
     Round-trip: the resolution-26 quadbin must appear among the 4 children
     of its resolution-25 parent.
     """
     parent_result = run_query(
-        f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_RES26}, 25) FROM DUAL',
-        fetch=True,
+        f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOPARENT({QUADBIN_RES26}, 25) FROM DUAL'
     )
-    parent_res25 = parent_result[0][0]
-    assert parent_res25 is not None
+    parent_res25 = int(parent_result[0][0])
 
-    children_result = run_query(
-        f'SELECT TO_CHAR(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN({parent_res25}, 26)) FROM DUAL',
-        fetch=True,
-    )
-    children = _parse_children(children_result[0][0])
-
+    children = _children(parent_res25, 26)
     assert len(children) == 4
     assert QUADBIN_RES26 in children

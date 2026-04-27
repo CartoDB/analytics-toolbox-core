@@ -1,10 +1,6 @@
 # Copyright (c) 2026, CARTO
 
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'common'))
-from run_query import run_query
+from test_utils import run_query
 
 
 TOLERANCE = 1e-6
@@ -25,7 +21,6 @@ def test_quadbin_center():
             FROM DUAL
         ) t
         """,
-        fetch=True,
     )
 
     assert abs(result[0][0] - EXPECTED_LON) < TOLERANCE
@@ -41,7 +36,6 @@ def test_quadbin_center_srid():
             FROM DUAL
         ) t
         """,
-        fetch=True,
     )
 
     assert result[0][0] == 4326
@@ -50,7 +44,6 @@ def test_quadbin_center_srid():
 def test_quadbin_center_null():
     result = run_query(
         'SELECT @@ORA_SCHEMA@@.QUADBIN_CENTER(NULL) FROM DUAL',
-        fetch=True,
     )
 
     assert result[0][0] is None

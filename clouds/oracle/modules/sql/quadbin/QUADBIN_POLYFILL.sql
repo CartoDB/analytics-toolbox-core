@@ -2,30 +2,37 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Returns a JSON array of all quadbin cell indexes that cover (intersect)
--- the given geometry at the specified resolution.
+-- Returns all quadbin cell indexes that cover (intersect) the given
+-- geometry at the specified resolution, as a pipelined QUADBIN_INDEX_ARRAY.
+--
+-- Consume via:
+--   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, resolution));
 --
 -- Algorithm  (bounding-box scan + intersection filter):
 --   1. Compute the MBR (minimum bounding rectangle) of the input geometry.
 --   2. Convert bbox corners to tile coordinates using Web Mercator math
 --      (same formulas as QUADBIN_FROMLONGLAT).
---   3. Iterate every tile in the bounding-box range.
+--   3. Iterate every tile in the bounding-box range, wrapping x for
+--      antimeridian-crossing bboxes.
 --   4. For each tile, build its boundary polygon via QUADBIN_BOUNDARY.
---   5. Keep the tile only if SDO_GEOM.RELATE reports ANYINTERACT with
---      the input geometry.
---   6. Return matching quadbin indices as a sorted JSON array (CLOB).
+--   5. Pipe the tile only if SDO_GEOM.RELATE reports ANYINTERACT.
 --
--- Uses BINARY_DOUBLE (IEEE 754) for Web Mercator calculations to match
+-- BINARY_DOUBLE (IEEE 754) is used for Web Mercator calculations to match
 -- the floating-point behaviour of other platforms.
+--
+-- NULL-on-invalid: out-of-range resolution returns an empty pipeline
+-- (per .claude/rules/oracle.md). Input geometry without an explicit SRID
+-- is assumed WGS84 (EPSG:4326).
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
 (geom SDO_GEOMETRY, resolution NUMBER)
-RETURN CLOB
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
     MIN_RESOLUTION CONSTANT NUMBER := 0;
     MAX_RESOLUTION CONSTANT NUMBER := 26;
     LAT_CLAMP_MIN  CONSTANT BINARY_DOUBLE := -89.0d;
     LAT_CLAMP_MAX  CONSTANT BINARY_DOUBLE := 89.0d;
+    RELATE_TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
 
     v_geom       SDO_GEOMETRY;
     v_mbr        SDO_GEOMETRY;
@@ -54,22 +61,13 @@ AS
     v_tx         NUMBER;
     v_qb         NUMBER;
     v_relate     VARCHAR2(20);
-
-    -- Result building
-    v_result     CLOB;
-    v_first      BOOLEAN := TRUE;
-    v_val        VARCHAR2(30);
 BEGIN
     IF geom IS NULL OR resolution IS NULL THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
     IF resolution < MIN_RESOLUTION OR resolution > MAX_RESOLUTION THEN
-        RAISE_APPLICATION_ERROR(
-            -20001,
-            'Invalid resolution: should be between '
-                || MIN_RESOLUTION || ' and ' || MAX_RESOLUTION
-        );
+        RETURN;
     END IF;
 
     -- Ensure input geometry has SRID 4326 so SDO_GEOM.RELATE works
@@ -81,29 +79,22 @@ BEGIN
         v_geom := geom;
     END IF;
 
-    -- Get MBR of the input geometry
     v_mbr := SDO_GEOM.SDO_MBR(v_geom);
 
     IF v_mbr IS NULL THEN
         -- Degenerate geometry (e.g., empty)
-        DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
-        DBMS_LOB.WRITEAPPEND(v_result, 2, '[]');
-        RETURN v_result;
+        RETURN;
     END IF;
 
-    -- Extract MBR corners.
-    -- SDO_MBR returns a rectangle as SDO_GEOMETRY with ordinates:
-    --   (min_x, min_y, max_x, max_y) for optimized rectangle
-    -- or (min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y, min_x, min_y)
-    -- We handle both forms.
+    -- Extract MBR corners. SDO_MBR returns either:
+    --   (a) a point geometry (SDO_POINT) for a single-point input, or
+    --   (b) a rectangle/polygon with SDO_ORDINATES.
     IF v_mbr.SDO_POINT IS NOT NULL THEN
-        -- Point geometry: MBR is the point itself
         v_west  := CAST(v_mbr.SDO_POINT.X AS BINARY_DOUBLE);
         v_south := CAST(v_mbr.SDO_POINT.Y AS BINARY_DOUBLE);
         v_east  := v_west;
         v_north := v_south;
     ELSIF v_mbr.SDO_ORDINATES IS NOT NULL AND v_mbr.SDO_ORDINATES.COUNT >= 4 THEN
-        -- Rectangle or polygon MBR
         v_west  := CAST(v_mbr.SDO_ORDINATES(1) AS BINARY_DOUBLE);
         v_south := CAST(v_mbr.SDO_ORDINATES(2) AS BINARY_DOUBLE);
         IF v_mbr.SDO_ORDINATES.COUNT = 4 THEN
@@ -111,15 +102,12 @@ BEGIN
             v_east  := CAST(v_mbr.SDO_ORDINATES(3) AS BINARY_DOUBLE);
             v_north := CAST(v_mbr.SDO_ORDINATES(4) AS BINARY_DOUBLE);
         ELSE
-            -- Polygon form: extract max from ordinates
+            -- Polygon form: (min_x, min_y, max_x, min_y, max_x, max_y, ...)
             v_east  := CAST(v_mbr.SDO_ORDINATES(3) AS BINARY_DOUBLE);
             v_north := CAST(v_mbr.SDO_ORDINATES(6) AS BINARY_DOUBLE);
         END IF;
     ELSE
-        -- Fallback: empty result
-        DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
-        DBMS_LOB.WRITEAPPEND(v_result, 2, '[]');
-        RETURN v_result;
+        RETURN;
     END IF;
 
     -- Web Mercator tile coordinate computation
@@ -128,7 +116,6 @@ BEGIN
     v_num_tiles_i := POWER(2, resolution);
 
     -- Convert SW corner (west, south) to tile coordinates
-    -- This gives us the tile at the bottom-left of the bbox
     v_sinlat := SIN(
         GREATEST(LAT_CLAMP_MIN, LEAST(LAT_CLAMP_MAX, v_south)) * v_pi / 180.0d
     );
@@ -152,7 +139,6 @@ BEGIN
     v_min_tx := FLOOR(v_num_tiles * ((v_west / 360.0d) + 0.5d));
 
     -- Convert NE corner (east, north) to tile coordinates
-    -- This gives us the tile at the top-right of the bbox
     v_sinlat := SIN(
         GREATEST(LAT_CLAMP_MIN, LEAST(LAT_CLAMP_MAX, v_north)) * v_pi / 180.0d
     );
@@ -178,39 +164,22 @@ BEGIN
     -- is still >= v_min_tx in raw space.
     v_tx_count := v_max_tx - v_min_tx + 1;
 
-    -- Build result CLOB
-    DBMS_LOB.CREATETEMPORARY(v_result, TRUE);
-    DBMS_LOB.WRITEAPPEND(v_result, 1, '[');
-
-    -- Iterate all tiles in the bounding-box range.
-    -- Use an offset loop + BITAND wrap for x to handle antimeridian.
     FOR ty IN v_min_ty .. v_max_ty LOOP
         FOR i IN 0 .. v_tx_count - 1 LOOP
             v_tx := BITAND(v_min_tx + i, v_num_tiles_i - 1);
 
-            -- Get quadbin index for this tile
             v_qb := @@ORA_SCHEMA@@.QUADBIN_FROMZXY(resolution, v_tx, ty);
-
-            -- Get tile boundary polygon
             v_tile_geom := @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb);
-
-            -- Check if tile intersects the input geometry
-            v_relate := SDO_GEOM.RELATE(v_tile_geom, 'ANYINTERACT', v_geom, 0.0000001);
+            v_relate := SDO_GEOM.RELATE(
+                v_tile_geom, 'ANYINTERACT', v_geom, RELATE_TOLERANCE
+            );
 
             IF v_relate = 'TRUE' THEN
-                v_val := TO_CHAR(v_qb);
-                IF v_first THEN
-                    v_first := FALSE;
-                ELSE
-                    DBMS_LOB.WRITEAPPEND(v_result, 1, ',');
-                END IF;
-                DBMS_LOB.WRITEAPPEND(v_result, LENGTH(v_val), v_val);
+                PIPE ROW(v_qb);
             END IF;
         END LOOP;
     END LOOP;
 
-    DBMS_LOB.WRITEAPPEND(v_result, 1, ']');
-
-    RETURN v_result;
+    RETURN;
 END;
 /

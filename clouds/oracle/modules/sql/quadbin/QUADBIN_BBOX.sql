@@ -2,17 +2,17 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Returns the bounding box [west, south, east, north] for a quadbin tile
--- as a JSON array string, using inverse Web Mercator projection.
+-- Returns the bounding box for a quadbin tile as a QUADBIN_BBOX_OBJ
+-- (west, south, east, north in WGS84 degrees), using inverse Web Mercator.
 --
--- Uses BINARY_DOUBLE (IEEE 754) for intermediate calculations to match
+-- BINARY_DOUBLE (IEEE 754) is used for intermediate calculations to match
 -- the floating-point behaviour of other platforms (Databricks DOUBLE, etc.).
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BBOX
 (quadbin NUMBER)
-RETURN VARCHAR2
+RETURN @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ
 AS
-    v_zxy      VARCHAR2(200);
+    v_zxy      @@ORA_SCHEMA@@.QUADBIN_ZXY;
     v_z        BINARY_DOUBLE;
     v_x        BINARY_DOUBLE;
     v_y        BINARY_DOUBLE;
@@ -27,12 +27,11 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    -- Get z, x, y from QUADBIN_TOZXY (returns JSON)
     v_zxy := @@ORA_SCHEMA@@.QUADBIN_TOZXY(quadbin);
 
-    v_z := CAST(JSON_VALUE(v_zxy, '$.z') AS BINARY_DOUBLE);
-    v_x := CAST(JSON_VALUE(v_zxy, '$.x') AS BINARY_DOUBLE);
-    v_y := CAST(JSON_VALUE(v_zxy, '$.y') AS BINARY_DOUBLE);
+    v_z := CAST(v_zxy.z AS BINARY_DOUBLE);
+    v_x := CAST(v_zxy.x AS BINARY_DOUBLE);
+    v_y := CAST(v_zxy.y AS BINARY_DOUBLE);
 
     v_num_tiles := POWER(2.0d, v_z);
     v_pi := ACOS(-1.0d);
@@ -49,10 +48,6 @@ BEGIN
         / v_pi - 0.25d
     );
 
-    RETURN '[' || TO_CHAR(v_west)
-        || ',' || TO_CHAR(v_south)
-        || ',' || TO_CHAR(v_east)
-        || ',' || TO_CHAR(v_north)
-        || ']';
+    RETURN @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ(v_west, v_south, v_east, v_north);
 END;
 /
