@@ -1,0 +1,24 @@
+## H3_INT_TOSTRING
+
+```sql:signature
+H3_INT_TOSTRING(index)
+```
+
+**Description**
+
+Converts the integer representation of the H3 index to the string representation.
+
+**Input parameters**
+
+* `index`: `NUMBER` The H3 cell index.
+
+**Return type**
+
+`VARCHAR2(16)`
+
+**Example**
+
+```sql
+SELECT carto.H3_INT_TOSTRING(595478781590765567) FROM DUAL;
+-- 84390cbffffffff
+```
