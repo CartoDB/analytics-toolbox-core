@@ -259,19 +259,20 @@ BEGIN
 
     -- CTAS that consumes __H3_POLYFILL_MODE as a pipelined nested table.
     -- The input_query must expose a column named GEOM of type SDO_GEOMETRY.
-    -- Mode and resolution are bound as PL/SQL parameters; the table name
-    -- and schema are validated identifiers (DBMS_ASSERT) and concatenated,
-    -- because DDL cannot bind identifiers.
+    -- Mode and resolution can't be bound as parameters here — Oracle
+    -- raises ORA-22905 when bind variables appear inside a correlated
+    -- TABLE() expression in a CTAS. They are safe to inline because we
+    -- validated v_mode against a fixed allowlist and TRUNC'd v_res into
+    -- a small integer above. The output table name and schema are
+    -- validated identifiers (DBMS_ASSERT.QUALIFIED_SQL_NAME).
     v_sql := 'CREATE TABLE ' || v_safe_table || ' AS
         SELECT t.COLUMN_VALUE AS h3, i.*
           FROM (' || input_query || ') i,
                TABLE(' || v_schema || '."__H3_POLYFILL_MODE"(
-                   i.geom, :p_res, :p_mode
+                   i.geom, ' || v_res || ', ''' || v_mode || '''
                )) t';
 
-    -- :p_res / :p_mode prefixes avoid ORA-01745 (Oracle reserves
-    -- short forms like :mode as bind names)
-    EXECUTE IMMEDIATE v_sql USING v_res, v_mode;
+    EXECUTE IMMEDIATE v_sql;
     COMMIT;
 
 EXCEPTION
