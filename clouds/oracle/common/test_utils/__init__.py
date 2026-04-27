@@ -14,6 +14,7 @@ __all__ = [
     'run_query',
     'run_queries',
     'get_cursor',
+    'drop_table',
 ]
 
 
@@ -70,3 +71,17 @@ def get_cursor():
     """Get a database cursor for manual operations."""
     conn, _wallet_dir = get_connection()
     return conn.cursor()
+
+
+def drop_table(*table_names):
+    """Drop one or more tables, ignoring non-existent ones.
+
+    Equivalent to DROP TABLE IF EXISTS, which Oracle does not support
+    natively. Accepts @@ORA_SCHEMA@@ placeholders which are resolved by
+    run_query.
+    """
+    for table_name in table_names:
+        try:
+            run_query(f'DROP TABLE {quote_table_name(table_name)}')
+        except Exception:
+            pass
