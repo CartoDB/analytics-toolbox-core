@@ -266,9 +266,11 @@ BEGIN
         SELECT t.COLUMN_VALUE AS h3, i.*
           FROM (' || input_query || ') i,
                TABLE(' || v_schema || '."__H3_POLYFILL_MODE"(
-                   i.geom, :res, :mode
+                   i.geom, :p_res, :p_mode
                )) t';
 
+    -- :p_res / :p_mode prefixes avoid ORA-01745 (Oracle reserves
+    -- short forms like :mode as bind names)
     EXECUTE IMMEDIATE v_sql USING v_res, v_mode;
     COMMIT;
 
