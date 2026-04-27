@@ -4,13 +4,12 @@
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_COMPACT
 (
-    h3_indexes VARCHAR2
+    h3_indexes @@ORA_SCHEMA@@.H3_INDEX_ARRAY
 )
-RETURN VARCHAR2
+RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED
 DETERMINISTIC
 IS
     -- Constants
-    RAW_BYTE_LENGTH CONSTANT PLS_INTEGER := 16;
     MIN_RESOLUTION CONSTANT PLS_INTEGER := 0;
     MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
     HEX_CHILDREN_COUNT CONSTANT PLS_INTEGER := 7;
@@ -20,15 +19,11 @@ IS
     TYPE str_set IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(32);
 
     -- Working variables
-    cells str_set;           -- current cell set (hex string -> 1)
+    cells str_set;
     cell_key VARCHAR2(32);
-    json_arr JSON_ARRAY_T;
-    elem JSON_ELEMENT_T;
     cell_str VARCHAR2(32);
-    i PLS_INTEGER;
     compacted BOOLEAN;
 
-    -- Per-iteration variables
     TYPE parent_children_count IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(32);
     TYPE parent_child_list IS TABLE OF VARCHAR2(32767) INDEX BY VARCHAR2(32);
     parent_counts parent_children_count;
@@ -42,48 +37,27 @@ IS
     child_str VARCHAR2(32);
     comma_pos PLS_INTEGER;
 
-    -- Resolution tracking
     min_res PLS_INTEGER;
     max_res PLS_INTEGER;
     cur_res PLS_INTEGER;
 
-    -- Result building
-    json_result VARCHAR2(32767);
-    first_entry BOOLEAN;
-
-    -- Sorted output collection
-    TYPE str_array IS TABLE OF VARCHAR2(32) INDEX BY PLS_INTEGER;
-    sorted_cells str_array;
-    sorted_count PLS_INTEGER;
+    i PLS_INTEGER;
 BEGIN
-    -- Handle NULL input
-    IF h3_indexes IS NULL THEN
-        RETURN '[]';
+    IF h3_indexes IS NULL OR h3_indexes.COUNT = 0 THEN
+        RETURN;
     END IF;
 
-    -- Parse JSON array
-    BEGIN
-        json_arr := JSON_ARRAY_T.PARSE(h3_indexes);
-    EXCEPTION
-        WHEN OTHERS THEN
-            RETURN '[]';
-    END;
-
-    IF json_arr.GET_SIZE() = 0 THEN
-        RETURN '[]';
-    END IF;
-
-    -- Load cells into associative array (deduplicates automatically)
-    FOR i IN 0 .. json_arr.GET_SIZE() - 1 LOOP
-        elem := json_arr.GET(i);
-        cell_str := LOWER(TRIM(REPLACE(elem.TO_STRING(), '"', '')));
+    -- Load input cells into associative array (deduplicates automatically,
+    -- iterates in lexicographic key order)
+    FOR i IN 1 .. h3_indexes.COUNT LOOP
+        cell_str := LOWER(TRIM(h3_indexes(i)));
         IF cell_str IS NOT NULL AND LENGTH(cell_str) > 0 THEN
             cells(cell_str) := 1;
         END IF;
     END LOOP;
 
     IF cells.COUNT = 0 THEN
-        RETURN '[]';
+        RETURN;
     END IF;
 
     -- Iterative compaction: repeat until no more compaction is possible
@@ -91,7 +65,6 @@ BEGIN
     WHILE compacted LOOP
         compacted := FALSE;
 
-        -- Find the resolution range of current cells
         min_res := MAX_RESOLUTION;
         max_res := MIN_RESOLUTION;
         cell_key := cells.FIRST;
@@ -108,11 +81,8 @@ BEGIN
             cell_key := cells.NEXT(cell_key);
         END LOOP;
 
-        -- Process from finest to coarsest resolution
         FOR cur_res IN REVERSE min_res .. max_res LOOP
-            -- Skip resolution 0 -- cannot compact further
             IF cur_res > MIN_RESOLUTION THEN
-                -- Group cells at this resolution by parent
                 parent_counts.DELETE;
                 parent_lists.DELETE;
 
@@ -139,7 +109,6 @@ BEGIN
                     cell_key := cells.NEXT(cell_key);
                 END LOOP;
 
-                -- Check each parent to see if all children are present
                 parent_key := parent_counts.FIRST;
                 WHILE parent_key IS NOT NULL LOOP
                     is_pent := @@ORA_SCHEMA@@.H3_ISPENTAGON(parent_key);
@@ -150,11 +119,9 @@ BEGIN
                     END IF;
 
                     IF parent_counts(parent_key) = expected_count THEN
-                        -- Replace all children with the parent
                         compacted := TRUE;
                         child_list := parent_lists(parent_key);
 
-                        -- Remove each child from the cell set
                         LOOP
                             comma_pos := INSTR(child_list, ',');
                             IF comma_pos > 0 THEN
@@ -177,7 +144,6 @@ BEGIN
                                 OR LENGTH(child_list) = 0;
                         END LOOP;
 
-                        -- Add the parent
                         cells(parent_key) := 1;
                     END IF;
 
@@ -187,34 +153,18 @@ BEGIN
         END LOOP;
     END LOOP;
 
-    -- Collect cells into an indexable array for sorting
-    sorted_count := 0;
+    -- Pipe out cells in associative-array key order (lexicographic)
     cell_key := cells.FIRST;
     WHILE cell_key IS NOT NULL LOOP
-        sorted_count := sorted_count + 1;
-        sorted_cells(sorted_count) := cell_key;
+        PIPE ROW(cell_key);
         cell_key := cells.NEXT(cell_key);
     END LOOP;
 
-    -- The associative array keyed by VARCHAR2 is already iterated
-    -- in key order, so sorted_cells is already sorted lexicographically.
-
-    -- Build JSON array result
-    json_result := '[';
-    first_entry := TRUE;
-    FOR i IN 1 .. sorted_count LOOP
-        IF first_entry THEN
-            first_entry := FALSE;
-        ELSE
-            json_result := json_result || ',';
-        END IF;
-        json_result := json_result || '"' || sorted_cells(i) || '"';
-    END LOOP;
-    json_result := json_result || ']';
-
-    RETURN json_result;
+    RETURN;
 EXCEPTION
+    WHEN NO_DATA_NEEDED THEN
+        RETURN;
     WHEN OTHERS THEN
-        RETURN '[]';
+        RETURN;
 END H3_COMPACT;
 /

@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_KRING
 (
     origin VARCHAR2, distance NUMBER
 )
-RETURN VARCHAR2
+RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED
 IS
     -- Constants
     RAW_BYTE_LENGTH CONSTANT PLS_INTEGER := 16;
@@ -16,8 +16,6 @@ IS
     -- Small offset (~1m) to push edge midpoints out of the origin cell
     -- so H3_KEY resolves them to the neighboring cell
     NUDGE_FACTOR CONSTANT NUMBER := 0.00001;
-    ERR_INVALID_ORIGIN CONSTANT PLS_INTEGER := -20001;
-    ERR_INVALID_SIZE CONSTANT PLS_INTEGER := -20002;
 
     -- Working variables
     h3_raw RAW(8);
@@ -52,24 +50,16 @@ IS
     neighbor_raw RAW(8);
     neighbor_hex VARCHAR2(16);
     cell_raw RAW(8);
-
-    -- JSON building
-    json_result VARCHAR2(32767);
-    first_entry BOOLEAN;
     v_key VARCHAR2(16);
 BEGIN
-    -- Validate inputs
-    IF origin IS NULL THEN
-        RAISE_APPLICATION_ERROR(ERR_INVALID_ORIGIN, 'Invalid input origin');
-    END IF;
-
-    IF distance IS NULL THEN
-        RAISE_APPLICATION_ERROR(ERR_INVALID_SIZE, 'Invalid input size');
+    -- NULL inputs -> empty result
+    IF origin IS NULL OR distance IS NULL THEN
+        RETURN;
     END IF;
 
     dist := TRUNC(distance);
     IF dist < 0 THEN
-        RAISE_APPLICATION_ERROR(ERR_INVALID_SIZE, 'Invalid input size');
+        RETURN;
     END IF;
 
     -- Validate H3 origin
@@ -77,21 +67,18 @@ BEGIN
         h3_raw := HEXTORAW(LPAD(origin, RAW_BYTE_LENGTH, '0'));
         is_valid := SDO_UTIL.H3_IS_VALID_CELL(h3_raw);
         IF NOT is_valid THEN
-            RAISE_APPLICATION_ERROR(ERR_INVALID_ORIGIN, 'Invalid input origin');
+            RETURN;
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
-            IF SQLCODE = ERR_INVALID_ORIGIN THEN
-                RAISE;
-            END IF;
-            RAISE_APPLICATION_ERROR(ERR_INVALID_ORIGIN, 'Invalid input origin');
+            RETURN;
     END;
 
     cell_res := SDO_UTIL.H3_RESOLUTION(h3_raw);
 
     -- Initialize BFS: origin at distance 0
-    visited(origin) := 0;
-    frontier(1) := origin;
+    visited(LOWER(origin)) := 0;
+    frontier(1) := LOWER(origin);
     frontier_count := 1;
 
     -- BFS: expand frontier for each distance level
@@ -115,8 +102,6 @@ BEGIN
                 mid_lon := (v_ords(2 * e - 1) + v_ords(2 * e + 1)) / MIDPOINT_DIVISOR;
                 mid_lat := (v_ords(2 * e) + v_ords(2 * e + 2)) / MIDPOINT_DIVISOR;
 
-                -- Nudge the midpoint away from the cell center so that
-                -- H3_KEY resolves it to the neighbor, not back to self
                 dx := mid_lon - center_lon;
                 dy := mid_lat - center_lat;
                 edge_dist := SQRT(dx * dx + dy * dy);
@@ -134,7 +119,6 @@ BEGIN
                 neighbor_raw := SDO_UTIL.H3_KEY(mid_point, cell_res);
                 neighbor_hex := LOWER(LTRIM(RAWTOHEX(neighbor_raw), '0'));
 
-                -- Add to visited if not already seen
                 IF NOT visited.EXISTS(neighbor_hex) THEN
                     visited(neighbor_hex) := d;
                     next_count := next_count + 1;
@@ -143,7 +127,6 @@ BEGIN
             END LOOP;
         END LOOP;
 
-        -- Swap frontiers
         frontier.DELETE;
         frontier_count := next_count;
         FOR i IN 1 .. frontier_count LOOP
@@ -152,21 +135,16 @@ BEGIN
         next_frontier.DELETE;
     END LOOP;
 
-    -- Build JSON array from visited keys
-    json_result := '[';
-    first_entry := TRUE;
+    -- Pipe rows in associative-array key order (lexicographic by hex)
     v_key := visited.FIRST;
     WHILE v_key IS NOT NULL LOOP
-        IF first_entry THEN
-            first_entry := FALSE;
-        ELSE
-            json_result := json_result || ',';
-        END IF;
-        json_result := json_result || '"' || v_key || '"';
+        PIPE ROW(v_key);
         v_key := visited.NEXT(v_key);
     END LOOP;
-    json_result := json_result || ']';
 
-    RETURN json_result;
+    RETURN;
+EXCEPTION
+    WHEN NO_DATA_NEEDED THEN
+        RETURN;
 END H3_KRING;
 /

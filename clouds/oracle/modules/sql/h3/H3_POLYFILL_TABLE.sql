@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__H3_POLYFILL_MODE"
 (
     geom SDO_GEOMETRY, resolution NUMBER, polyfill_mode VARCHAR2
 )
-RETURN VARCHAR2
+RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED
 IS
     -- Constants
     RAW_BYTE_LENGTH CONSTANT PLS_INTEGER := 16;
@@ -16,16 +16,13 @@ IS
     MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
     TOLERANCE CONSTANT NUMBER := 0.0000001;
 
-    -- Geometry type constants
     GTYPE_POLYGON CONSTANT PLS_INTEGER := 3;
     GTYPE_MULTIPOLYGON CONSTANT PLS_INTEGER := 7;
     GTYPE_COLLECTION CONSTANT PLS_INTEGER := 4;
 
-    -- H3 average edge lengths in meters by resolution
     TYPE edge_array IS TABLE OF NUMBER INDEX BY PLS_INTEGER;
     edge_lengths edge_array;
 
-    -- Working variables
     res PLS_INTEGER;
     gtype PLS_INTEGER;
     v_mode VARCHAR2(20);
@@ -55,44 +52,34 @@ IS
     OVERSAMPLE_FACTOR CONSTANT NUMBER := 0.35;
     METERS_PER_DEGREE CONSTANT NUMBER := 111320;
 
-    -- Candidate cells
     TYPE cell_map IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(16);
     candidates cell_map;
 
-    -- Result map (sorted by key order)
     TYPE sorted_map IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(16);
     result_map sorted_map;
     v_key VARCHAR2(16);
-
-    -- JSON building
-    json_result VARCHAR2(32767);
-    first_entry BOOLEAN;
 BEGIN
-    -- Null guards
     IF geom IS NULL OR resolution IS NULL THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
     res := TRUNC(resolution);
     IF res < MIN_RESOLUTION OR res > MAX_RESOLUTION THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
     v_mode := LOWER(polyfill_mode);
     IF v_mode NOT IN ('center', 'intersects') THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
-    -- Only polygon types are supported
     gtype := geom.GET_GTYPE();
     IF gtype NOT IN (GTYPE_POLYGON, GTYPE_MULTIPOLYGON, GTYPE_COLLECTION) THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
-    -- Track input SRID to match on H3 geometry outputs
     geom_srid := geom.SDO_SRID;
 
-    -- Initialize edge lengths
     edge_lengths(0) := 1281256.011;
     edge_lengths(1) := 483056.8391;
     edge_lengths(2) := 182512.9565;
@@ -112,15 +99,14 @@ BEGIN
 
     edge_m := edge_lengths(res);
 
-    -- Compute bounding box
     mbr := SDO_GEOM.SDO_MBR(geom);
     IF mbr IS NULL THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
     mbr_ords := mbr.SDO_ORDINATES;
     IF mbr_ords IS NULL OR mbr_ords.COUNT < 4 THEN
-        RETURN NULL;
+        RETURN;
     END IF;
 
     west := mbr_ords(1);
@@ -128,7 +114,6 @@ BEGIN
     east := mbr_ords(3);
     north := mbr_ords(4);
 
-    -- Compute sampling step in degrees
     center_lat := (south + north) / 2;
     cos_lat := COS(center_lat * 3.14159265358979323846 / 180);
     IF cos_lat < 0.01 THEN
@@ -145,7 +130,6 @@ BEGIN
         step_lon := 0.0000001;
     END IF;
 
-    -- Phase 1: Generate sample points and collect candidate cells
     grid_lat := south - step_lat;
     WHILE grid_lat <= north + step_lat LOOP
         grid_lon := west - step_lon;
@@ -172,14 +156,11 @@ BEGIN
         grid_lat := grid_lat + step_lat;
     END LOOP;
 
-    -- Phase 2: Filter candidates based on mode
     v_key := candidates.FIRST;
     WHILE v_key IS NOT NULL LOOP
         BEGIN
             cell_raw := HEXTORAW(LPAD(v_key, RAW_BYTE_LENGTH, '0'));
             IF v_mode = 'center' THEN
-                -- Center mode: cell center must be inside geometry
-                -- Re-create center with matching SRID
                 h3_geom := SDO_UTIL.H3_CENTER(cell_raw);
                 check_geom := SDO_GEOMETRY(
                     POINT_GTYPE, geom_srid,
@@ -191,8 +172,6 @@ BEGIN
                     NULL, NULL
                 );
             ELSE
-                -- Intersects mode: cell boundary must intersect geometry
-                -- Re-create boundary with matching SRID
                 h3_boundary := SDO_UTIL.H3_BOUNDARY(cell_raw);
                 h3_ords := h3_boundary.SDO_ORDINATES;
                 check_geom := SDO_GEOMETRY(
@@ -204,10 +183,7 @@ BEGIN
                 );
             END IF;
             relates_result := SDO_GEOM.RELATE(
-                check_geom,
-                'ANYINTERACT',
-                geom,
-                TOLERANCE
+                check_geom, 'ANYINTERACT', geom, TOLERANCE
             );
             IF relates_result = 'TRUE' THEN
                 result_map(v_key) := 1;
@@ -219,29 +195,18 @@ BEGIN
         v_key := candidates.NEXT(v_key);
     END LOOP;
 
-    -- Phase 3: Build sorted JSON array
-    IF result_map.COUNT = 0 THEN
-        RETURN NULL;
-    END IF;
-
-    json_result := '[';
-    first_entry := TRUE;
     v_key := result_map.FIRST;
     WHILE v_key IS NOT NULL LOOP
-        IF first_entry THEN
-            first_entry := FALSE;
-        ELSE
-            json_result := json_result || ',';
-        END IF;
-        json_result := json_result || '"' || v_key || '"';
+        PIPE ROW(v_key);
         v_key := result_map.NEXT(v_key);
     END LOOP;
-    json_result := json_result || ']';
 
-    RETURN json_result;
+    RETURN;
 EXCEPTION
+    WHEN NO_DATA_NEEDED THEN
+        RETURN;
     WHEN OTHERS THEN
-        RETURN NULL;
+        RETURN;
 END "__H3_POLYFILL_MODE";
 /
 
@@ -262,8 +227,8 @@ IS
     v_res PLS_INTEGER;
     v_sql CLOB;
     v_schema VARCHAR2(128);
+    v_safe_table VARCHAR2(257);
 BEGIN
-    -- Validate mode
     v_mode := LOWER(polyfill_mode);
     IF v_mode NOT IN ('center', 'intersects') THEN
         RAISE_APPLICATION_ERROR(
@@ -273,7 +238,6 @@ BEGIN
         );
     END IF;
 
-    -- Validate resolution
     v_res := TRUNC(resolution);
     IF v_res < MIN_RESOLUTION OR v_res > MAX_RESOLUTION THEN
         RAISE_APPLICATION_ERROR(
@@ -283,24 +247,29 @@ BEGIN
         );
     END IF;
 
-    -- Extract schema from output_table for function reference
-    IF INSTR(output_table, '.') > 0 THEN
-        v_schema := SUBSTR(output_table, 1, INSTR(output_table, '.') - 1);
+    -- Sanitize the output identifier (rejects malicious table names)
+    v_safe_table := DBMS_ASSERT.QUALIFIED_SQL_NAME(output_table);
+
+    -- Resolve schema for the pipelined function reference
+    IF INSTR(v_safe_table, '.') > 0 THEN
+        v_schema := SUBSTR(v_safe_table, 1, INSTR(v_safe_table, '.') - 1);
     ELSE
         v_schema := SYS_CONTEXT('USERENV', 'CURRENT_SCHEMA');
     END IF;
 
-    -- Build CTAS using JSON_TABLE to unnest the polyfill results
-    -- The input_query must have a column named 'geom' of type SDO_GEOMETRY
-    v_sql := 'CREATE TABLE ' || DBMS_ASSERT.QUALIFIED_SQL_NAME(output_table) || ' AS '
-        || 'SELECT jt.h3, i.* FROM '
-        || '(' || input_query || ') i, '
-        || 'JSON_TABLE('
-        || v_schema || '."__H3_POLYFILL_MODE"'
-        || '(i.geom, ' || v_res || ', ''' || v_mode || '''), '
-        || '''$[*]'' COLUMNS (h3 VARCHAR2(16) PATH ''$'')) jt';
+    -- CTAS that consumes __H3_POLYFILL_MODE as a pipelined nested table.
+    -- The input_query must expose a column named GEOM of type SDO_GEOMETRY.
+    -- Mode and resolution are bound as PL/SQL parameters; the table name
+    -- and schema are validated identifiers (DBMS_ASSERT) and concatenated,
+    -- because DDL cannot bind identifiers.
+    v_sql := 'CREATE TABLE ' || v_safe_table || ' AS
+        SELECT t.COLUMN_VALUE AS h3, i.*
+          FROM (' || input_query || ') i,
+               TABLE(' || v_schema || '."__H3_POLYFILL_MODE"(
+                   i.geom, :res, :mode
+               )) t';
 
-    EXECUTE IMMEDIATE v_sql;
+    EXECUTE IMMEDIATE v_sql USING v_res, v_mode;
     COMMIT;
 
 EXCEPTION
