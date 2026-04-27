@@ -48,7 +48,7 @@ make remove drop-schema=1      # Drop entire schema (destructive)
 - Pure SQL functions: `CREATE OR REPLACE FUNCTION ... RETURN ... IS BEGIN ... END;` with `/` terminator
 - PL/SQL blocks with loops for complex functions (KRING, TOCHILDREN, POLYFILL)
 - Pipelined functions (`RETURN <type> PIPELINED`, `PIPE ROW(...)`) for size-variable array/struct-array returns
-- No SQL BOOLEAN — use `NUMBER(1)` (1/0) for boolean columns and variables; callers use `= 1`. Function `RETURN` clauses must use plain `NUMBER` (Oracle disallows precision on function return types — `RETURN NUMBER(1)` raises `PLS-00103`)
+- No SQL BOOLEAN — use `NUMBER(1)` (1/0) for boolean columns and local variables; callers use `= 1`. Subprogram parameter and `RETURN` clause types must use plain `NUMBER` (Oracle disallows precision in subprogram signatures — `RETURN NUMBER(1)` or `p NUMBER(1)` raises `PLS-00103`)
 - `AUTHID CURRENT_USER` (invoker rights) for all procedures
 
 ## Oracle Type Mapping (v1.0)
@@ -58,7 +58,7 @@ make remove drop-schema=1      # Drop entire schema (destructive)
 | Generic shape | Oracle type | Notes |
 |---|---|---|
 | scalar INT / FLOAT | `NUMBER` | 38-digit decimal; holds 64-bit ints and floats exactly |
-| scalar BOOL | `NUMBER(1)` (1/0) for columns/variables, plain `NUMBER` for function `RETURN` clauses | no SQL BOOLEAN; callers use `= 1`. Oracle disallows precision on function return types |
+| scalar BOOL | `NUMBER(1)` (1/0) for columns/local variables, plain `NUMBER` for parameters/returns | no SQL BOOLEAN; callers use `= 1`. Oracle disallows precision in subprogram signatures |
 | scalar STRING | `VARCHAR2` | direct |
 | scalar GEOMETRY / GEOGRAPHY | `SDO_GEOMETRY` with explicit SRID 4326 | matches BQ/SF implicit WGS84 |
 | `ARRAY<primitive>` | `TABLE OF <type>` PIPELINED | consume via `TABLE(func(...))` |
