@@ -108,6 +108,34 @@ def test_h3_fromgeogpoint_polygon():
     assert result[0][0] is None
 
 
+def test_h3_fromgeogpoint_non_wgs84_srid():
+    """Returns NULL when point's explicit SRID is not 4326."""
+    # SRID 3857 (Web Mercator) is rejected; H3 expects WGS84 inputs and
+    # the function does not auto-transform.
+    result = run_query(
+        "SELECT @@ORA_SCHEMA@@.H3_FROMGEOGPOINT("
+        "SDO_GEOMETRY(2001, 3857,"
+        " SDO_POINT_TYPE(-122.0553238, 37.3615593, NULL),"
+        " NULL, NULL), 5) FROM DUAL"
+    )
+    assert len(result) == 1
+    assert result[0][0] is None
+
+
+def test_h3_fromgeogpoint_null_srid_accepted():
+    """Accepts a NULL SRID and treats the point as WGS84."""
+    # SDO_UTIL.FROM_WKTGEOMETRY produces NULL-SRID geometries; we must
+    # not reject those.
+    result = run_query(
+        "SELECT @@ORA_SCHEMA@@.H3_FROMGEOGPOINT("
+        "SDO_GEOMETRY(2001, NULL,"
+        " SDO_POINT_TYPE(-122.0553238, 37.3615593, NULL),"
+        " NULL, NULL), 5) FROM DUAL"
+    )
+    assert len(result) == 1
+    assert result[0][0] == '85283473fffffff'
+
+
 def test_h3_fromgeogpoint_multipoint():
     """Returns NULL for a MULTIPOINT geometry (non-point)."""
     result = run_query(

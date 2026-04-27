@@ -1,5 +1,4 @@
 # Copyright (c) 2026, CARTO
-import json
 from test_utils import run_query
 
 
@@ -36,67 +35,68 @@ LINE_WKT = (
 )
 
 
-def _polyfill_query(wkt, resolution):
-    """Build a polyfill query from WKT and resolution."""
-    return (
-        f"SELECT @@ORA_SCHEMA@@.H3_POLYFILL("
-        f"SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'), {resolution}) FROM DUAL"
+def _polyfill(wkt, resolution):
+    """Run H3_POLYFILL as a TABLE and return the list of cells."""
+    sql = (
+        f"SELECT COLUMN_VALUE FROM TABLE("
+        f"@@ORA_SCHEMA@@.H3_POLYFILL("
+        f"SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'), {resolution}))"
     )
+    return [r[0] for r in run_query(sql)]
+
+
+def _polyfill_mode(wkt, resolution, mode):
+    """Run __H3_POLYFILL_MODE as a TABLE and return the list of cells."""
+    sql = (
+        f"SELECT COLUMN_VALUE FROM TABLE("
+        f"@@ORA_SCHEMA@@.\"__H3_POLYFILL_MODE\"("
+        f"SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'), {resolution}, '{mode}'))"
+    )
+    return [r[0] for r in run_query(sql)]
 
 
 def test_h3_polyfill_polygon_center():
     """Polygon at resolution 9 returns expected cells (center mode)."""
-    result = run_query(_polyfill_query(POLYGON_WKT, 9))
-    assert len(result) == 1
-    cells = json.loads(result[0][0])
-    assert sorted(cells) == ['89390cb1b4bffff']
+    assert sorted(_polyfill(POLYGON_WKT, 9)) == ['89390cb1b4bffff']
 
 
 def test_h3_polyfill_multipolygon_center():
     """MultiPolygon at resolution 9 returns expected cells (center mode)."""
-    result = run_query(_polyfill_query(MULTI_POLYGON_WKT, 9))
-    assert len(result) == 1
-    cells = json.loads(result[0][0])
-    assert sorted(cells) == ['89390cb1b4bffff']
+    assert sorted(_polyfill(MULTI_POLYGON_WKT, 9)) == ['89390cb1b4bffff']
 
 
-def test_h3_polyfill_point_returns_null():
-    """Point geometry returns NULL (non-polygon)."""
-    result = run_query(_polyfill_query(POINT_WKT, 9))
-    assert len(result) == 1
-    assert result[0][0] is None
+def test_h3_polyfill_point_returns_empty():
+    """Point geometry returns no rows (non-polygon)."""
+    assert _polyfill(POINT_WKT, 9) == []
 
 
-def test_h3_polyfill_line_returns_null():
-    """Linestring geometry returns NULL (non-polygon)."""
-    result = run_query(_polyfill_query(LINE_WKT, 8))
-    assert len(result) == 1
-    assert result[0][0] is None
+def test_h3_polyfill_line_returns_empty():
+    """Linestring geometry returns no rows (non-polygon)."""
+    assert _polyfill(LINE_WKT, 8) == []
 
 
 def test_h3_polyfill_null_geom():
-    """NULL geometry returns NULL."""
-    result = run_query(
-        'SELECT @@ORA_SCHEMA@@.H3_POLYFILL(NULL, 9) FROM DUAL'
+    """NULL geometry returns no rows."""
+    sql = (
+        'SELECT COLUMN_VALUE FROM TABLE('
+        '@@ORA_SCHEMA@@.H3_POLYFILL(NULL, 9))'
     )
-    assert len(result) == 1
-    assert result[0][0] is None
+    assert run_query(sql) == []
 
 
 def test_h3_polyfill_null_resolution():
-    """NULL resolution returns NULL."""
-    result = run_query(
-        "SELECT @@ORA_SCHEMA@@.H3_POLYFILL("
-        f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), NULL) FROM DUAL"
+    """NULL resolution returns no rows."""
+    sql = (
+        f"SELECT COLUMN_VALUE FROM TABLE("
+        f"@@ORA_SCHEMA@@.H3_POLYFILL("
+        f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), NULL))"
     )
-    assert len(result) == 1
-    assert result[0][0] is None
+    assert run_query(sql) == []
 
 
 def test_h3_polyfill_all_valid():
     """All returned cells should be valid H3 indexes."""
-    result = run_query(_polyfill_query(POLYGON_WKT, 9))
-    cells = json.loads(result[0][0])
+    cells = _polyfill(POLYGON_WKT, 9)
     for cell in cells:
         valid_result = run_query(
             f"SELECT @@ORA_SCHEMA@@.H3_ISVALID('{cell}') FROM DUAL"
@@ -107,44 +107,44 @@ def test_h3_polyfill_all_valid():
 def test_h3_polyfill_all_correct_resolution():
     """All returned cells should have the requested resolution."""
     target_res = 9
-    result = run_query(_polyfill_query(POLYGON_WKT, target_res))
-    cells = json.loads(result[0][0])
+    cells = _polyfill(POLYGON_WKT, target_res)
     for cell in cells:
         res_result = run_query(
             f"SELECT @@ORA_SCHEMA@@.H3_RESOLUTION('{cell}') FROM DUAL"
         )
-        assert res_result[0][0] == target_res, (
-            f'Cell {cell} has resolution {res_result[0][0]}, '
-            f'expected {target_res}'
-        )
+        assert res_result[0][0] == target_res
 
 
 def test_h3_polyfill_unique_cells():
     """All returned cells should be unique."""
-    result = run_query(_polyfill_query(POLYGON_WKT, 9))
-    cells = json.loads(result[0][0])
+    cells = _polyfill(POLYGON_WKT, 9)
     assert len(cells) == len(set(cells))
 
 
 def test_h3_polyfill_resolution_out_of_range():
-    """Resolution outside 0-15 returns NULL."""
-    result = run_query(
-        "SELECT @@ORA_SCHEMA@@.H3_POLYFILL("
-        f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), -1) FROM DUAL"
-    )
-    assert len(result) == 1
-    assert result[0][0] is None
-
-    result = run_query(
-        "SELECT @@ORA_SCHEMA@@.H3_POLYFILL("
-        f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), 16) FROM DUAL"
-    )
-    assert len(result) == 1
-    assert result[0][0] is None
+    """Resolution outside 0-15 returns no rows."""
+    assert _polyfill(POLYGON_WKT, -1) == []
+    assert _polyfill(POLYGON_WKT, 16) == []
 
 
 def test_h3_polyfill_sorted_output():
-    """Returned JSON array should be sorted."""
-    result = run_query(_polyfill_query(POLYGON_WKT, 9))
-    cells = json.loads(result[0][0])
+    """Returned rows should be in lexicographic order."""
+    cells = _polyfill(POLYGON_WKT, 9)
     assert cells == sorted(cells)
+
+
+def test_h3_polyfill_mode_center_direct():
+    """__H3_POLYFILL_MODE in center mode matches H3_POLYFILL."""
+    assert sorted(_polyfill_mode(POLYGON_WKT, 9, 'center')) == ['89390cb1b4bffff']
+
+
+def test_h3_polyfill_mode_intersects_direct():
+    """__H3_POLYFILL_MODE in intersects mode returns the center cell + neighbors."""
+    cells = _polyfill_mode(POLYGON_WKT, 9, 'intersects')
+    assert len(cells) >= 1
+    assert '89390cb1b4bffff' in cells
+
+
+def test_h3_polyfill_mode_invalid_returns_empty():
+    """__H3_POLYFILL_MODE returns no rows for unknown mode."""
+    assert _polyfill_mode(POLYGON_WKT, 9, 'bogus') == []
