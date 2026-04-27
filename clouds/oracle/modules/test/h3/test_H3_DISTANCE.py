@@ -1,5 +1,4 @@
 # Copyright (c) 2026, CARTO
-import json
 from test_utils import run_query
 
 
@@ -51,14 +50,15 @@ def test_h3_distance_valid_inputs():
     origin = '8928308280fffff'
     for d in range(5):
         ring = run_query(
-            f"SELECT @@ORA_SCHEMA@@.H3_HEXRING('{origin}', {d}) FROM DUAL"
+            f"SELECT COLUMN_VALUE FROM TABLE("
+            f"@@ORA_SCHEMA@@.H3_HEXRING('{origin}', {d}))"
         )
-        cells = json.loads(ring[0][0])
+        cells = [r[0] for r in ring]
         for cell in cells:
             result = run_query(
                 f"SELECT @@ORA_SCHEMA@@.H3_DISTANCE('{origin}', '{cell}')"
-                " FROM DUAL"
+                ' FROM DUAL'
             )
             assert result[0][0] == d, (
-                f"Expected distance {d} for {cell}, got {result[0][0]}"
+                f'Expected distance {d} for {cell}, got {result[0][0]}'
             )
