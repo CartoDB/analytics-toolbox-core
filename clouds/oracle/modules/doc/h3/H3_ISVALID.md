@@ -14,7 +14,7 @@ Returns `1` when the given index is valid, `0` otherwise.
 
 **Return type**
 
-`NUMBER(1)` (1/0). Oracle has no SQL `BOOLEAN`; callers compare with `= 1`.
+`NUMBER` (1/0). Oracle has no SQL `BOOLEAN`; callers compare with `= 1`.
 
 **Examples**
 

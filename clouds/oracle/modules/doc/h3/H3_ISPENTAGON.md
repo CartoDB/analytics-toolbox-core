@@ -14,7 +14,7 @@ Returns `1` if the given H3 index is a pentagon. Returns `0` otherwise, even on 
 
 **Return type**
 
-`NUMBER(1)` (1/0). Oracle has no SQL `BOOLEAN`; callers compare with `= 1`.
+`NUMBER` (1/0). Oracle has no SQL `BOOLEAN`; callers compare with `= 1`.
 
 **Examples**
 

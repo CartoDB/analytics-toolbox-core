@@ -16,4 +16,4 @@ FROM TABLE(carto.H3_TOCHILDREN('83390cfffffffff', 4));
 
 `H3_COMPACT` and `H3_UNCOMPACT` accept the same `H3_INDEX_ARRAY` type as input — pass cell IDs with `carto.H3_INDEX_ARRAY('a', 'b', ...)` or by piping another nested-table result through `CAST(MULTISET(...) AS carto.H3_INDEX_ARRAY)`.
 
-Boolean-style functions (`H3_ISVALID`, `H3_ISPENTAGON`) return `NUMBER(1)` (1/0) since Oracle SQL has no `BOOLEAN`. Compare with `= 1` rather than using truthy predicates.
+Boolean-style functions (`H3_ISVALID`, `H3_ISPENTAGON`) return `NUMBER` constrained to 1/0, since Oracle SQL has no `BOOLEAN`. Compare with `= 1` rather than using truthy predicates.
