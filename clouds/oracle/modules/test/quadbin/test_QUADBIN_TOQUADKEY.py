@@ -21,9 +21,9 @@ def test_quadbin_toquadkey():
             f'SELECT @@ORA_SCHEMA@@.QUADBIN_TOQUADKEY({quadbin}) FROM DUAL',
         )
 
-        assert result[0][0] == expected_quadkey, (
-            f"TOQUADKEY({quadbin}): expected '{expected_quadkey}', got '{result[0][0]}'"
-        )
+        assert (
+            result[0][0] == expected_quadkey
+        ), f"TOQUADKEY({quadbin}): expected '{expected_quadkey}', got '{result[0][0]}'"
 
 
 def test_quadbin_toquadkey_zoom0():
@@ -53,6 +53,6 @@ def test_quadbin_toquadkey_roundtrip():
             ) FROM DUAL""",
         )
 
-        assert result[0][0] == quadbin, (
-            f'Roundtrip for {quadbin}: expected {quadbin}, got {result[0][0]}'
-        )
+        assert (
+            result[0][0] == quadbin
+        ), f'Roundtrip for {quadbin}: expected {quadbin}, got {result[0][0]}'

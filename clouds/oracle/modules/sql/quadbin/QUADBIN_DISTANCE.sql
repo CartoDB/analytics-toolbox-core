@@ -2,6 +2,19 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
+-- Type used by this function. Inline declaration with idempotent DROP+CREATE.
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_ZXY FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_ZXY AS OBJECT (
+    z NUMBER,
+    x NUMBER,
+    y NUMBER
+);
+/
+
 -- Returns the Chebyshev distance between two quadbin indexes.
 -- Both must have the same resolution; otherwise returns NULL.
 --

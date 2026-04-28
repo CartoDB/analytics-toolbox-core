@@ -2,6 +2,38 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
+-- Types used by this function. Inline declaration with idempotent DROP+CREATE.
+-- Drop in reverse-dependency order (DISTANCE_ARRAY references DISTANCE_PAIR).
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_DISTANCE_ARRAY FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_DISTANCE_PAIR FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_ZXY FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_ZXY AS OBJECT (
+    z NUMBER,
+    x NUMBER,
+    y NUMBER
+);
+/
+CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_DISTANCE_PAIR AS OBJECT (
+    quadbin_index NUMBER,
+    distance      NUMBER
+);
+/
+CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_DISTANCE_ARRAY
+    AS TABLE OF @@ORA_SCHEMA@@.QUADBIN_DISTANCE_PAIR;
+/
+
 -- Returns all quadbin cell indexes and their Chebyshev distances in a
 -- filled square k-ring centered at the origin, as a pipelined collection
 -- of QUADBIN_DISTANCE_PAIR (quadbin_index, distance).

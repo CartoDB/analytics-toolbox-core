@@ -2,6 +2,15 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
+-- Type used by this function. Inline declaration with idempotent DROP+CREATE.
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY FORCE';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
+/
+
 -- Returns all quadbin cell indexes that cover (intersect) the given
 -- geometry at the specified resolution, as a pipelined QUADBIN_INDEX_ARRAY.
 --

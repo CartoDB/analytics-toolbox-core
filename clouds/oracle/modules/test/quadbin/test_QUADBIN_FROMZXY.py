@@ -33,14 +33,15 @@ def test_quadbin_fromzxy_null():
 def test_quadbin_fromzxy_roundtrip():
     """Verify FROMZXY -> TOZXY roundtrip returns original values."""
     result = run_query(
-        """
-        SELECT @@ORA_SCHEMA@@.QUADBIN_TOZXY(
-            @@ORA_SCHEMA@@.QUADBIN_FROMZXY(4, 9, 8)
-        ) FROM DUAL
-        """,
+        """SELECT t.zxy.z, t.zxy.x, t.zxy.y
+        FROM (
+            SELECT @@ORA_SCHEMA@@.QUADBIN_TOZXY(
+                @@ORA_SCHEMA@@.QUADBIN_FROMZXY(4, 9, 8)
+            ) AS zxy
+            FROM DUAL
+        ) t"""
     )
-    import json
-    row = json.loads(result[0][0])
-    assert row['z'] == 4
-    assert row['x'] == 9
-    assert row['y'] == 8
+    z, x, y = result[0]
+    assert z == 4
+    assert x == 9
+    assert y == 8

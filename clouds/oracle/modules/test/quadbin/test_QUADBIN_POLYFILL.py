@@ -54,12 +54,8 @@ EXPECTED_MULTI_POLYGON_POLYFILL = sorted(
 
 RESOLUTION = 17
 
-ANTIMERIDIAN_WKT = (
-    'POLYGON ((179.5 -1, -179.5 -1, -179.5 1, 179.5 1, 179.5 -1))'
-)
-LARGE_BBOX_WKT = (
-    'POLYGON ((-10 -10, 10 -10, 10 10, -10 10, -10 -10))'
-)
+ANTIMERIDIAN_WKT = 'POLYGON ((179.5 -1, -179.5 -1, -179.5 1, 179.5 1, 179.5 -1))'
+LARGE_BBOX_WKT = 'POLYGON ((-10 -10, 10 -10, 10 10, -10 10, -10 -10))'
 DEGENERATE_POINT_WKT = 'POINT (0 0)'
 
 
@@ -80,10 +76,7 @@ def test_quadbin_polyfill_polygon():
 
 
 def test_quadbin_polyfill_multi_polygon():
-    assert (
-        _polyfill(MULTI_POLYGON_WKT, RESOLUTION)
-        == EXPECTED_MULTI_POLYGON_POLYFILL
-    )
+    assert _polyfill(MULTI_POLYGON_WKT, RESOLUTION) == EXPECTED_MULTI_POLYGON_POLYFILL
 
 
 def test_quadbin_polyfill_null():

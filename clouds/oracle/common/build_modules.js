@@ -63,15 +63,11 @@ for (let inputDir of inputDirs) {
     if (!fs.existsSync(sqldir)) {
         continue;
     }
-    // Sort modules and files alphabetically so files prefixed `00_` (e.g.
-    // shared `00_types.sql`) deploy before the consumer functions, per the
-    // convention in .claude/rules/oracle.md. readdirSync order is
-    // filesystem-dependent on Linux and cannot be relied on otherwise.
-    const modules = fs.readdirSync(sqldir).sort();
+    const modules = fs.readdirSync(sqldir);
     modules.forEach(module => {
         const moduledir = path.join(sqldir, module);
         if (fs.statSync(moduledir).isDirectory()) {
-            const files = fs.readdirSync(moduledir).sort();
+            const files = fs.readdirSync(moduledir);
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
