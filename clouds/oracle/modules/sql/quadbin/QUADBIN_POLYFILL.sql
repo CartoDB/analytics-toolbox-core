@@ -11,62 +11,76 @@ END;
 CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
 /
 
--- Returns all quadbin cell indexes that cover (intersect) the given
--- geometry at the specified resolution, as a pipelined QUADBIN_INDEX_ARRAY.
+-- =====================================================================
+-- QUADBIN_POLYFILL — faithful port of the BigQuery / Postgres algorithm.
 --
+-- Two-phase scan: estimate a coarse "init" resolution from geometry area,
+-- bbox-scan at that resolution to get parent cells, expand each parent to
+-- target resolution via QUADBIN_TOCHILDREN, then mode-filter the children.
+--
+-- Public entry: QUADBIN_POLYFILL(geom, resolution, mode)
+--   mode = 'center' (default), 'intersects', 'contains'
 -- Consume via:
---   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, resolution));
---
--- Algorithm  (bounding-box scan + intersection filter):
---   1. Compute the MBR (minimum bounding rectangle) of the input geometry.
---   2. Convert bbox corners to tile coordinates using Web Mercator math
---      (same formulas as QUADBIN_FROMLONGLAT).
---   3. Iterate every tile in the bounding-box range, wrapping x for
---      antimeridian-crossing bboxes.
---   4. For each tile, build its boundary polygon via QUADBIN_BOUNDARY.
---   5. Pipe the tile only if SDO_GEOM.RELATE reports ANYINTERACT.
---
--- BINARY_DOUBLE (IEEE 754) is used for Web Mercator calculations to match
--- the floating-point behaviour of other platforms.
---
--- NULL-on-invalid: out-of-range resolution returns an empty pipeline
--- (per .claude/rules/oracle.md). Input geometry without an explicit SRID
--- is assumed WGS84 (EPSG:4326).
+--   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, 17));
+--   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, 17, 'intersects'));
+-- =====================================================================
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
+-- Estimate the init resolution: the resolution at which a cell has
+-- approximately the same area as the geometry, plus 3 levels finer.
+-- Clamped to <= target resolution. Matches Postgres __QUADBIN_POLYFILL_INIT_Z.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z
+(geom SDO_GEOMETRY, resolution NUMBER)
+RETURN NUMBER
+AS
+    Q0_AREA   CONSTANT BINARY_DOUBLE := 61236.812721460745d;
+    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
+    v_area    NUMBER;
+    v_init_z  NUMBER;
+BEGIN
+    BEGIN
+        v_area := SDO_GEOM.SDO_AREA(geom, TOLERANCE);
+    EXCEPTION WHEN OTHERS THEN
+        v_area := 0;
+    END;
+    IF v_area IS NOT NULL AND v_area > 0 THEN
+        -- -log4(area / Q0_area) gives the resolution at which a cell has
+        -- the same area as the geometry; +3 picks a finer working level.
+        v_init_z := TRUNC(-LOG(4, v_area / Q0_AREA)) + 3;
+    ELSE
+        v_init_z := resolution;
+    END IF;
+    RETURN LEAST(resolution, GREATEST(0, v_init_z));
+END;
+/
+
+-- Bbox scan at the given resolution. Returns the set of tiles whose
+-- boundary intersects the input geometry (no mode-specific filtering yet).
+-- Matches BigQuery __QUADBIN_POLYFILL_INIT.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
-    MIN_RESOLUTION CONSTANT NUMBER := 0;
-    MAX_RESOLUTION CONSTANT NUMBER := 26;
-    LAT_CLAMP_MIN  CONSTANT BINARY_DOUBLE := -89.0d;
-    LAT_CLAMP_MAX  CONSTANT BINARY_DOUBLE := 89.0d;
+    LAT_CLAMP_MIN    CONSTANT BINARY_DOUBLE := -89.0d;
+    LAT_CLAMP_MAX    CONSTANT BINARY_DOUBLE := 89.0d;
     RELATE_TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
 
-    v_geom       SDO_GEOMETRY;
     v_mbr        SDO_GEOMETRY;
-    v_tile_geom  SDO_GEOMETRY;
-
-    -- MBR corners (lon/lat)
     v_west       BINARY_DOUBLE;
     v_south      BINARY_DOUBLE;
     v_east       BINARY_DOUBLE;
     v_north      BINARY_DOUBLE;
 
-    -- Web Mercator intermediates
     v_pi         BINARY_DOUBLE;
-    v_num_tiles  BINARY_DOUBLE;
-    v_sinlat     BINARY_DOUBLE;
+    v_z2         BINARY_DOUBLE;
+    v_z2_int     NUMBER;
+    v_sinlat_min BINARY_DOUBLE;
+    v_sinlat_max BINARY_DOUBLE;
 
-    -- Tile coordinate ranges (inclusive)
-    v_min_tx     NUMBER;
-    v_max_tx     NUMBER;
-    v_min_ty     NUMBER;
-    v_max_ty     NUMBER;
-    v_num_tiles_i NUMBER;
+    v_xmin       NUMBER;
+    v_xmax       NUMBER;
+    v_ymin       NUMBER;
+    v_ymax       NUMBER;
     v_tx_count   NUMBER;
-
-    -- Iteration variables
     v_tx         NUMBER;
     v_qb         NUMBER;
     v_relate     VARCHAR2(20);
@@ -75,29 +89,13 @@ BEGIN
         RETURN;
     END IF;
 
-    IF resolution < MIN_RESOLUTION OR resolution > MAX_RESOLUTION THEN
-        RETURN;
-    END IF;
-
-    -- Ensure input geometry has SRID 4326 so SDO_GEOM.RELATE works
-    -- with the tile boundaries (which also use SRID 4326).
-    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
-        v_geom := geom;
-        v_geom.SDO_SRID := 4326;
-    ELSE
-        v_geom := geom;
-    END IF;
-
-    v_mbr := SDO_GEOM.SDO_MBR(v_geom);
-
+    v_mbr := SDO_GEOM.SDO_MBR(geom);
     IF v_mbr IS NULL THEN
-        -- Degenerate geometry (e.g., empty)
         RETURN;
     END IF;
 
-    -- Extract MBR corners. SDO_MBR returns either:
-    --   (a) a point geometry (SDO_POINT) for a single-point input, or
-    --   (b) a rectangle/polygon with SDO_ORDINATES.
+    -- Extract MBR corners. Point inputs come back with SDO_POINT set;
+    -- regular geometries use SDO_ORDINATES (4-element optimized rectangle).
     IF v_mbr.SDO_POINT IS NOT NULL THEN
         v_west  := CAST(v_mbr.SDO_POINT.X AS BINARY_DOUBLE);
         v_south := CAST(v_mbr.SDO_POINT.Y AS BINARY_DOUBLE);
@@ -106,89 +104,241 @@ BEGIN
     ELSIF v_mbr.SDO_ORDINATES IS NOT NULL AND v_mbr.SDO_ORDINATES.COUNT >= 4 THEN
         v_west  := CAST(v_mbr.SDO_ORDINATES(1) AS BINARY_DOUBLE);
         v_south := CAST(v_mbr.SDO_ORDINATES(2) AS BINARY_DOUBLE);
-        IF v_mbr.SDO_ORDINATES.COUNT = 4 THEN
-            -- Optimized rectangle: (min_x, min_y, max_x, max_y)
-            v_east  := CAST(v_mbr.SDO_ORDINATES(3) AS BINARY_DOUBLE);
-            v_north := CAST(v_mbr.SDO_ORDINATES(4) AS BINARY_DOUBLE);
-        ELSE
-            -- Polygon form: (min_x, min_y, max_x, min_y, max_x, max_y, ...)
-            v_east  := CAST(v_mbr.SDO_ORDINATES(3) AS BINARY_DOUBLE);
-            v_north := CAST(v_mbr.SDO_ORDINATES(6) AS BINARY_DOUBLE);
-        END IF;
+        v_east  := CAST(v_mbr.SDO_ORDINATES(3) AS BINARY_DOUBLE);
+        v_north := CAST(v_mbr.SDO_ORDINATES(4) AS BINARY_DOUBLE);
     ELSE
         RETURN;
     END IF;
 
-    -- Web Mercator tile coordinate computation
-    v_pi := ACOS(-1.0d);
-    v_num_tiles := POWER(2.0d, CAST(resolution AS BINARY_DOUBLE));
-    v_num_tiles_i := POWER(2, resolution);
+    v_pi     := ACOS(-1.0d);
+    v_z2     := POWER(2.0d, CAST(resolution AS BINARY_DOUBLE));
+    v_z2_int := POWER(2, resolution);
 
-    -- Convert SW corner (west, south) to tile coordinates
-    v_sinlat := SIN(
-        GREATEST(LAT_CLAMP_MIN, LEAST(LAT_CLAMP_MAX, v_south)) * v_pi / 180.0d
-    );
-    v_max_ty := FLOOR(
-        CAST(
-            GREATEST(
-                0.0d,
-                LEAST(
-                    v_num_tiles - 1.0d,
-                    v_num_tiles * (
-                        0.5d - 0.25d
-                        * LN((1.0d + v_sinlat) / (1.0d - v_sinlat))
-                        / v_pi
-                    )
-                )
-            )
-        AS NUMBER)
-    );
-    -- Keep raw (unwrapped) tx so that antimeridian crossings
-    -- (where east < west after wrapping) produce a correct count.
-    v_min_tx := FLOOR(v_num_tiles * ((v_west / 360.0d) + 0.5d));
+    v_sinlat_min := SIN(GREATEST(LAT_CLAMP_MIN, LEAST(LAT_CLAMP_MAX, v_south)) * v_pi / 180.0d);
+    v_sinlat_max := SIN(GREATEST(LAT_CLAMP_MIN, LEAST(LAT_CLAMP_MAX, v_north)) * v_pi / 180.0d);
 
-    -- Convert NE corner (east, north) to tile coordinates
-    v_sinlat := SIN(
-        GREATEST(LAT_CLAMP_MIN, LEAST(LAT_CLAMP_MAX, v_north)) * v_pi / 180.0d
-    );
-    v_min_ty := FLOOR(
-        CAST(
-            GREATEST(
-                0.0d,
-                LEAST(
-                    v_num_tiles - 1.0d,
-                    v_num_tiles * (
-                        0.5d - 0.25d
-                        * LN((1.0d + v_sinlat) / (1.0d - v_sinlat))
-                        / v_pi
-                    )
-                )
-            )
-        AS NUMBER)
-    );
-    v_max_tx := FLOOR(v_num_tiles * ((v_east / 360.0d) + 0.5d));
+    v_xmin := FLOOR(v_z2 * ((v_west / 360.0d) + 0.5d));
+    v_xmax := FLOOR(v_z2 * ((v_east / 360.0d) + 0.5d));
+    v_ymin := FLOOR(GREATEST(0.0d, LEAST(v_z2 - 1.0d,
+        v_z2 * (0.5d - 0.25d * LN((1.0d + v_sinlat_max) / (1.0d - v_sinlat_max)) / v_pi)
+    )));
+    v_ymax := FLOOR(GREATEST(0.0d, LEAST(v_z2 - 1.0d,
+        v_z2 * (0.5d - 0.25d * LN((1.0d + v_sinlat_min) / (1.0d - v_sinlat_min)) / v_pi)
+    )));
 
-    -- Tile count from raw (unwrapped) coordinates handles antimeridian
-    -- crossings correctly: when the bbox spans the dateline, v_max_tx
-    -- is still >= v_min_tx in raw space.
-    v_tx_count := v_max_tx - v_min_tx + 1;
+    -- Antimeridian-safe iteration: count is unwrapped, then BITAND wraps
+    -- each x into [0, 2^z) on the torus.
+    v_tx_count := v_xmax - v_xmin + 1;
 
-    FOR ty IN v_min_ty .. v_max_ty LOOP
+    FOR ty IN v_ymin .. v_ymax LOOP
         FOR i IN 0 .. v_tx_count - 1 LOOP
-            v_tx := BITAND(v_min_tx + i, v_num_tiles_i - 1);
-
+            v_tx := BITAND(v_xmin + i, v_z2_int - 1);
             v_qb := @@ORA_SCHEMA@@.QUADBIN_FROMZXY(resolution, v_tx, ty);
-            v_tile_geom := @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb);
             v_relate := SDO_GEOM.RELATE(
-                v_tile_geom, 'ANYINTERACT', v_geom, RELATE_TOLERANCE
+                geom, 'ANYINTERACT',
+                @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb),
+                RELATE_TOLERANCE
             );
-
             IF v_relate = 'TRUE' THEN
                 PIPE ROW(v_qb);
             END IF;
         END LOOP;
     END LOOP;
 
+    RETURN;
+END;
+/
+
+-- 'intersects' mode: keep child if it intersects the input geometry.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS
+(geom SDO_GEOMETRY, resolution NUMBER)
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
+AS
+    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
+    v_init_z  NUMBER;
+    v_relate  VARCHAR2(20);
+BEGIN
+    v_init_z := @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom, resolution);
+
+    IF resolution < v_init_z + 2 THEN
+        -- Direct scan at target resolution (no expansion benefit).
+        FOR rec IN (
+            SELECT COLUMN_VALUE AS qb
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, resolution))
+        ) LOOP
+            PIPE ROW(rec.qb);
+        END LOOP;
+    ELSE
+        -- Coarse parent scan, then expand and refilter children.
+        FOR p IN (
+            SELECT COLUMN_VALUE AS parent
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, v_init_z))
+        ) LOOP
+            FOR c IN (
+                SELECT COLUMN_VALUE AS child
+                FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN(p.parent, resolution))
+            ) LOOP
+                v_relate := SDO_GEOM.RELATE(
+                    geom, 'ANYINTERACT',
+                    @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(c.child),
+                    TOLERANCE
+                );
+                IF v_relate = 'TRUE' THEN
+                    PIPE ROW(c.child);
+                END IF;
+            END LOOP;
+        END LOOP;
+    END IF;
+    RETURN;
+END;
+/
+
+-- 'contains' mode: keep child only if input geometry fully contains the cell boundary.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS
+(geom SDO_GEOMETRY, resolution NUMBER)
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
+AS
+    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
+    v_init_z  NUMBER;
+    v_relate  VARCHAR2(20);
+BEGIN
+    v_init_z := @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom, resolution);
+
+    IF resolution < v_init_z + 2 THEN
+        FOR rec IN (
+            SELECT COLUMN_VALUE AS qb
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, resolution))
+        ) LOOP
+            v_relate := SDO_GEOM.RELATE(
+                geom, 'CONTAINS',
+                @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(rec.qb),
+                TOLERANCE
+            );
+            IF v_relate = 'CONTAINS' THEN
+                PIPE ROW(rec.qb);
+            END IF;
+        END LOOP;
+    ELSE
+        FOR p IN (
+            SELECT COLUMN_VALUE AS parent
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, v_init_z))
+        ) LOOP
+            FOR c IN (
+                SELECT COLUMN_VALUE AS child
+                FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN(p.parent, resolution))
+            ) LOOP
+                v_relate := SDO_GEOM.RELATE(
+                    geom, 'CONTAINS',
+                    @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(c.child),
+                    TOLERANCE
+                );
+                IF v_relate = 'CONTAINS' THEN
+                    PIPE ROW(c.child);
+                END IF;
+            END LOOP;
+        END LOOP;
+    END IF;
+    RETURN;
+END;
+/
+
+-- 'center' mode (default): keep child if input geometry intersects the cell center.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER
+(geom SDO_GEOMETRY, resolution NUMBER)
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
+AS
+    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
+    v_init_z  NUMBER;
+    v_relate  VARCHAR2(20);
+BEGIN
+    v_init_z := @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom, resolution);
+
+    IF resolution < v_init_z + 2 THEN
+        FOR rec IN (
+            SELECT COLUMN_VALUE AS qb
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, resolution))
+        ) LOOP
+            v_relate := SDO_GEOM.RELATE(
+                geom, 'ANYINTERACT',
+                @@ORA_SCHEMA@@.QUADBIN_CENTER(rec.qb),
+                TOLERANCE
+            );
+            IF v_relate = 'TRUE' THEN
+                PIPE ROW(rec.qb);
+            END IF;
+        END LOOP;
+    ELSE
+        FOR p IN (
+            SELECT COLUMN_VALUE AS parent
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, v_init_z))
+        ) LOOP
+            FOR c IN (
+                SELECT COLUMN_VALUE AS child
+                FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN(p.parent, resolution))
+            ) LOOP
+                v_relate := SDO_GEOM.RELATE(
+                    geom, 'ANYINTERACT',
+                    @@ORA_SCHEMA@@.QUADBIN_CENTER(c.child),
+                    TOLERANCE
+                );
+                IF v_relate = 'TRUE' THEN
+                    PIPE ROW(c.child);
+                END IF;
+            END LOOP;
+        END LOOP;
+    END IF;
+    RETURN;
+END;
+/
+
+-- Public function: dispatches by mode. Default mode is 'center' (matches
+-- BigQuery and Postgres). NULL-on-invalid: empty pipeline for invalid resolution
+-- or NULL inputs (per .claude/rules/oracle.md).
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
+(geom SDO_GEOMETRY, resolution NUMBER, mode VARCHAR2 DEFAULT 'center')
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
+AS
+    v_geom SDO_GEOMETRY;
+BEGIN
+    IF geom IS NULL OR resolution IS NULL THEN
+        RETURN;
+    END IF;
+
+    IF resolution < 0 OR resolution > 26 THEN
+        RETURN;
+    END IF;
+
+    -- Ensure SRID 4326 so SDO_GEOM.RELATE works against tile boundaries.
+    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
+        v_geom := geom;
+        v_geom.SDO_SRID := 4326;
+    ELSE
+        v_geom := geom;
+    END IF;
+
+    IF mode = 'intersects' THEN
+        FOR r IN (
+            SELECT COLUMN_VALUE AS qb
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(v_geom, resolution))
+        ) LOOP
+            PIPE ROW(r.qb);
+        END LOOP;
+    ELSIF mode = 'contains' THEN
+        FOR r IN (
+            SELECT COLUMN_VALUE AS qb
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(v_geom, resolution))
+        ) LOOP
+            PIPE ROW(r.qb);
+        END LOOP;
+    ELSIF mode = 'center' THEN
+        FOR r IN (
+            SELECT COLUMN_VALUE AS qb
+            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(v_geom, resolution))
+        ) LOOP
+            PIPE ROW(r.qb);
+        END LOOP;
+    END IF;
+    -- Unknown mode: empty pipeline (matches BigQuery 'wrong-mode' behavior).
     RETURN;
 END;
 /
