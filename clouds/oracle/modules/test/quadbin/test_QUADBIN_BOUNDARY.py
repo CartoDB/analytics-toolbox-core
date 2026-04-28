@@ -42,9 +42,9 @@ def test_quadbin_boundary():
     boundary_wkt = result[0][0]
     assert boundary_wkt is not None
     coords = _parse_polygon_coords(boundary_wkt)
-    assert len(coords) == len(EXPECTED_VERTICES), (
-        f'Expected {len(EXPECTED_VERTICES)} vertices, got {len(coords)}: {coords}'
-    )
+    assert len(coords) == len(
+        EXPECTED_VERTICES
+    ), f'Expected {len(EXPECTED_VERTICES)} vertices, got {len(coords)}: {coords}'
     for (lon, lat), (exp_lon, exp_lat) in zip(coords, EXPECTED_VERTICES):
         assert abs(lon - exp_lon) < TOLERANCE, f'lon: got {lon}, expected {exp_lon}'
         assert abs(lat - exp_lat) < TOLERANCE, f'lat: got {lat}, expected {exp_lat}'
