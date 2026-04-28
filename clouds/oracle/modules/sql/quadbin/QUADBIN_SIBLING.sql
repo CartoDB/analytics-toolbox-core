@@ -45,9 +45,7 @@ BEGIN
     END IF;
 
     IF direction NOT IN ('left', 'right', 'up', 'down') THEN
-        RAISE_APPLICATION_ERROR(
-            -20001, 'Wrong direction argument passed to sibling'
-        );
+        RETURN NULL;
     END IF;
 
     v_zxy := @@ORA_SCHEMA@@.QUADBIN_TOZXY(quadbin);

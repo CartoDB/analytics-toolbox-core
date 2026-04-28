@@ -41,11 +41,7 @@ BEGIN
     END IF;
 
     IF resolution < MIN_RESOLUTION OR resolution > MAX_RESOLUTION THEN
-        RAISE_APPLICATION_ERROR(
-            -20001,
-            'Invalid resolution: should be between '
-                || MIN_RESOLUTION || ' and ' || MAX_RESOLUTION
-        );
+        RETURN NULL;
     END IF;
 
     v_lon := CAST(longitude AS BINARY_DOUBLE);

@@ -49,11 +49,8 @@ def test_quadbin_sibling_none():
 
 
 def test_quadbin_sibling_wrong_direction():
-    try:
-        run_query(
-            'SELECT @@ORA_SCHEMA@@.QUADBIN_SIBLING('
-            f"{QUADBIN_INDEX}, 'wrong') FROM DUAL",
-        )
-        assert False, 'Expected an error for wrong direction'
-    except Exception as e:
-        assert 'Wrong direction' in str(e), f'Unexpected error: {e}'
+    """Wrong direction returns NULL (NULL-on-invalid convention, matches Snowflake)."""
+    result = run_query(
+        f"SELECT @@ORA_SCHEMA@@.QUADBIN_SIBLING({QUADBIN_INDEX}, 'wrong') FROM DUAL",
+    )
+    assert result[0][0] is None

@@ -76,23 +76,17 @@ def test_quadbin_fromlonglat_null():
 
 
 def test_quadbin_fromlonglat_invalid_resolution():
-    try:
-        run_query(
-            'SELECT @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, -1) FROM DUAL',
-        )
-        assert False, 'Expected an error for negative resolution'
-    except Exception as e:
-        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
+    result = run_query(
+        'SELECT @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, -1) FROM DUAL',
+    )
+    assert result[0][0] is None
 
 
 def test_quadbin_fromlonglat_resolution_overflow():
-    try:
-        run_query(
-            'SELECT @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 27) FROM DUAL',
-        )
-        assert False, 'Expected an error for resolution > 26'
-    except Exception as e:
-        assert 'Invalid resolution' in str(e), f'Unexpected error: {e}'
+    result = run_query(
+        'SELECT @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT(40.4168, -3.7038, 27) FROM DUAL',
+    )
+    assert result[0][0] is None
 
 
 def test_quadbin_fromlonglat_highest_resolution():

@@ -28,7 +28,7 @@ CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
 -- Estimate the init resolution: the resolution at which a cell has
 -- approximately the same area as the geometry, plus 3 levels finer.
 -- Clamped to <= target resolution. Matches Postgres __QUADBIN_POLYFILL_INIT_Z.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN NUMBER
 AS
@@ -56,7 +56,7 @@ END;
 -- Bbox scan at the given resolution. Returns the set of tiles whose
 -- boundary intersects the input geometry (no mode-specific filtering yet).
 -- Matches BigQuery __QUADBIN_POLYFILL_INIT.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
@@ -150,7 +150,7 @@ END;
 /
 
 -- 'intersects' mode: keep child if it intersects the input geometry.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_INTERSECTS"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
@@ -158,13 +158,13 @@ AS
     v_init_z  NUMBER;
     v_relate  VARCHAR2(20);
 BEGIN
-    v_init_z := @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom, resolution);
+    v_init_z := @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"(geom, resolution);
 
     IF resolution < v_init_z + 2 THEN
         -- Direct scan at target resolution (no expansion benefit).
         FOR rec IN (
             SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, resolution))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, resolution))
         ) LOOP
             PIPE ROW(rec.qb);
         END LOOP;
@@ -172,7 +172,7 @@ BEGIN
         -- Coarse parent scan, then expand and refilter children.
         FOR p IN (
             SELECT COLUMN_VALUE AS parent
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, v_init_z))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, v_init_z))
         ) LOOP
             FOR c IN (
                 SELECT COLUMN_VALUE AS child
@@ -194,7 +194,7 @@ END;
 /
 
 -- 'contains' mode: keep child only if input geometry fully contains the cell boundary.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CONTAINS"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
@@ -202,12 +202,12 @@ AS
     v_init_z  NUMBER;
     v_relate  VARCHAR2(20);
 BEGIN
-    v_init_z := @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom, resolution);
+    v_init_z := @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"(geom, resolution);
 
     IF resolution < v_init_z + 2 THEN
         FOR rec IN (
             SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, resolution))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, resolution))
         ) LOOP
             v_relate := SDO_GEOM.RELATE(
                 geom, 'CONTAINS',
@@ -221,7 +221,7 @@ BEGIN
     ELSE
         FOR p IN (
             SELECT COLUMN_VALUE AS parent
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, v_init_z))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, v_init_z))
         ) LOOP
             FOR c IN (
                 SELECT COLUMN_VALUE AS child
@@ -243,7 +243,7 @@ END;
 /
 
 -- 'center' mode (default): keep child if input geometry intersects the cell center.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
@@ -251,12 +251,12 @@ AS
     v_init_z  NUMBER;
     v_relate  VARCHAR2(20);
 BEGIN
-    v_init_z := @@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT_Z(geom, resolution);
+    v_init_z := @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"(geom, resolution);
 
     IF resolution < v_init_z + 2 THEN
         FOR rec IN (
             SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, resolution))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, resolution))
         ) LOOP
             v_relate := SDO_GEOM.RELATE(
                 geom, 'ANYINTERACT',
@@ -270,7 +270,7 @@ BEGIN
     ELSE
         FOR p IN (
             SELECT COLUMN_VALUE AS parent
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_INIT(geom, v_init_z))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, v_init_z))
         ) LOOP
             FOR c IN (
                 SELECT COLUMN_VALUE AS child
@@ -319,21 +319,21 @@ BEGIN
     IF mode = 'intersects' THEN
         FOR r IN (
             SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_INTERSECTS(v_geom, resolution))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_INTERSECTS"(v_geom, resolution))
         ) LOOP
             PIPE ROW(r.qb);
         END LOOP;
     ELSIF mode = 'contains' THEN
         FOR r IN (
             SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CONTAINS(v_geom, resolution))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CONTAINS"(v_geom, resolution))
         ) LOOP
             PIPE ROW(r.qb);
         END LOOP;
     ELSIF mode = 'center' THEN
         FOR r IN (
             SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@.__QUADBIN_POLYFILL_CHILDREN_CENTER(v_geom, resolution))
+            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"(v_geom, resolution))
         ) LOOP
             PIPE ROW(r.qb);
         END LOOP;
