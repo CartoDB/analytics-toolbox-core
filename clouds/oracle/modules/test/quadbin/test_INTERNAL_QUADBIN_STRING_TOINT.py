@@ -6,7 +6,8 @@ from test_utils import run_query
 def test_quadbin_string_toint():
     result = run_query(
         """
-        SELECT @@ORA_SCHEMA@@.INTERNAL_QUADBIN_STRING_TOINT('484c1fffffffffff') FROM DUAL
+        SELECT @@ORA_SCHEMA@@.INTERNAL_QUADBIN_STRING_TOINT('484c1fffffffffff')
+        FROM DUAL
         UNION ALL
         SELECT @@ORA_SCHEMA@@.INTERNAL_QUADBIN_STRING_TOINT(NULL) FROM DUAL
         """,

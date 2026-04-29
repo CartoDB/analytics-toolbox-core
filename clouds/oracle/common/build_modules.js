@@ -123,9 +123,9 @@ if (!nodeps) {
         for (const m of typeMatches) {
             definedBy[m[1].toUpperCase()] = f.name;
         }
-        // CREATE OR REPLACE MLE MODULE NAME
+        // CREATE OR REPLACE MLE MODULE [@@SCHEMA@@.]NAME
         const mleMatches = f.content.matchAll(
-            /CREATE\s+(?:OR\s+REPLACE\s+)?MLE\s+MODULE\s+(\w+)/gi
+            /CREATE\s+(?:OR\s+REPLACE\s+)?MLE\s+MODULE\s+(?:@@\w+@@\.)?(\w+)/gi
         );
         for (const m of mleMatches) {
             definedBy[m[1].toUpperCase()] = f.name;
@@ -139,9 +139,9 @@ if (!nodeps) {
             const content = mainFunction.content;
             // (1) function call:  @@SCHEMA@@.NAME(
             const isFunctionCall = content.includes(`SCHEMA@@.${name}(`);
-            // (2) MLE module ref:  AS MLE MODULE NAME
+            // (2) MLE module ref:  AS MLE MODULE [@@SCHEMA@@.]NAME
             const mleRef = new RegExp(
-                `\\bAS\\s+MLE\\s+MODULE\\s+${name}\\b`, 'i'
+                `\\bAS\\s+MLE\\s+MODULE\\s+(?:@@\\w+@@\\.)?${name}\\b`, 'i'
             );
             const isMleRef = mleRef.test(content);
             // (3) bare type ref:   @@SCHEMA@@.NAME (not followed by '(' or word char)
@@ -189,9 +189,30 @@ functions.forEach(f => add(f));
 // Replace environment variables
 let content = output.map(f => f.content).join('\n');
 
+// Inline @@ORA_LIBRARY_<NAME>@@ → libraries/javascript/build/<name>.js, then
+// apply env-var @@VAR@@ replacements.
 function apply_replacements (text) {
+    const libraryDir = path.resolve(
+        __dirname, '..', 'libraries', 'javascript', 'build'
+    );
+    const libraries = [...new Set(text.match(/@@ORA_LIBRARY_[A-Z_]+@@/g) || [])];
+    for (const library of libraries) {
+        const libName = library.replace('@@ORA_LIBRARY_', '').replace('@@', '');
+        const file = path.join(libraryDir, libName.toLowerCase() + '.js');
+        if (!fs.existsSync(file)) {
+            console.error(
+                `Error: library bundle "${file}" not found. Run \`make build\` ` +
+                'in libraries/javascript/ to produce it before deploying.'
+            );
+            process.exit(1);
+        }
+        text = text.replace(
+            new RegExp(library, 'g'),
+            fs.readFileSync(file).toString()
+        );
+    }
     const replacements = process.env.REPLACEMENTS.split(' ');
-    for (let replacement of replacements) {
+    for (const replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
             text = text.replace(pattern, process.env[replacement]);
