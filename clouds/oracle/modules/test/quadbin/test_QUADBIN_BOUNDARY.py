@@ -8,8 +8,8 @@ from test_utils import run_query
 QUADBIN_INDEX = 5209574053332910079
 TOLERANCE = 1e-6
 
-# Same expected vertices as BigQuery's QUADBIN_BOUNDARY.test.js:
-#   POLYGON((22.5 0, 22.5 -21.9430455334382, 45 -21.9430455334382, 45 0, 22.5 0))
+# Expected polygon: NW → SW → SE → NE → NW close.
+# POLYGON((22.5 0, 22.5 -21.9430455334382, 45 -21.9430455334382, 45 0, 22.5 0))
 EXPECTED_VERTICES = [
     (22.5, 0.0),
     (22.5, -21.9430455334382),

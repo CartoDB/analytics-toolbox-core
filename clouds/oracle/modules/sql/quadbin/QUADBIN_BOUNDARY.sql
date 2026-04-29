@@ -41,18 +41,18 @@ BEGIN
     v_east  := v_bbox.east;
     v_north := v_bbox.north;
 
-    -- Construct polygon (counterclockwise exterior ring)
+    -- Construct polygon. Vertex order: NW → SW → SE → NE → NW close.
     RETURN SDO_GEOMETRY(
         2003,
         4326,
         NULL,
         SDO_ELEM_INFO_ARRAY(1, 1003, 1),
         SDO_ORDINATE_ARRAY(
+            v_west, v_north,
             v_west, v_south,
             v_east, v_south,
             v_east, v_north,
-            v_west, v_north,
-            v_west, v_south
+            v_west, v_north
         )
     );
 END;

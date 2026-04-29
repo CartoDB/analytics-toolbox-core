@@ -5,9 +5,9 @@ import pytest
 from test_utils import run_query
 
 
-# Fixtures aligned with BigQuery and Postgres test fixtures verbatim.
-# QUADBIN_POLYFILL is a faithful port of the BigQuery / Postgres algorithm:
-# default mode 'center' returns 3 cells, mode 'intersects' returns 6, etc.
+# Two public entry points:
+#   QUADBIN_POLYFILL(geom, resolution)           — default 'center' mode
+#   QUADBIN_POLYFILL_MODE(geom, resolution, mode) — explicit 'center'|'intersects'|'contains'
 POINT = 'POINT(-3.7115216913662175 40.41092231814629)'
 MULTI_POINT = (
     'MULTIPOINT ((-3.7115216913662175 40.41092231814629),'
@@ -60,7 +60,7 @@ def _polyfill(wkt, resolution, mode=None):
             ))"""
     else:
         sql = f"""SELECT COLUMN_VALUE
-            FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
+            FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL_MODE(
                 SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'),
                 {resolution},
                 '{mode}'
@@ -72,8 +72,7 @@ def _polyfill(wkt, resolution, mode=None):
 
 
 # ----------------------------------------------------------------------
-# Default form: QUADBIN_POLYFILL(geom, resolution) — defaults to 'center'
-# Fixtures match BigQuery and Postgres exactly.
+# Default form: QUADBIN_POLYFILL(geom, resolution) — 'center' mode
 # ----------------------------------------------------------------------
 @pytest.mark.parametrize(
     'name,resolution,wkt,output',
@@ -104,8 +103,7 @@ def test_quadbin_polyfill_default_center(name, resolution, wkt, output):
 
 
 # ----------------------------------------------------------------------
-# Mode form: QUADBIN_POLYFILL(geom, resolution, mode)
-# Fixtures match BigQuery's QUADBIN_POLYFILL_MODE and Postgres's 3-arg form.
+# Mode form: QUADBIN_POLYFILL_MODE(geom, resolution, mode)
 # ----------------------------------------------------------------------
 @pytest.mark.parametrize(
     'name,mode,resolution,wkt,output',

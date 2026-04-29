@@ -49,7 +49,7 @@ def test_quadbin_sibling_none():
 
 
 def test_quadbin_sibling_wrong_direction():
-    """Wrong direction returns NULL (NULL-on-invalid convention, matches Snowflake)."""
+    """Wrong direction returns NULL (NULL-on-invalid convention)."""
     result = run_query(
         f"SELECT @@ORA_SCHEMA@@.QUADBIN_SIBLING({QUADBIN_INDEX}, 'wrong') FROM DUAL",
     )

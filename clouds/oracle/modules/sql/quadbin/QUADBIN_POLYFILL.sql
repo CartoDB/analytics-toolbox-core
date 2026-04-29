@@ -12,14 +12,14 @@ CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
 /
 
 -- =====================================================================
--- QUADBIN_POLYFILL — faithful port of the BigQuery / Postgres algorithm.
+-- QUADBIN_POLYFILL
 --
 -- Two-phase scan: estimate a coarse "init" resolution from geometry area,
 -- bbox-scan at that resolution to get parent cells, expand each parent to
 -- target resolution via QUADBIN_TOCHILDREN, then mode-filter the children.
 --
--- Public entry: QUADBIN_POLYFILL(geom, resolution, mode)
---   mode = 'center' (default), 'intersects', 'contains'
+-- Public entry: QUADBIN_POLYFILL(geom, resolution, polyfill_mode)
+--   polyfill_mode = 'center' (default), 'intersects', 'contains'
 -- Consume via:
 --   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, 17));
 --   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, 17, 'intersects'));
@@ -27,7 +27,7 @@ CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
 
 -- Estimate the init resolution: the resolution at which a cell has
 -- approximately the same area as the geometry, plus 3 levels finer.
--- Clamped to <= target resolution. Matches Postgres __QUADBIN_POLYFILL_INIT_Z.
+-- Clamped to <= target resolution.
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN NUMBER
@@ -55,7 +55,6 @@ END;
 
 -- Bbox scan at the given resolution. Returns the set of tiles whose
 -- boundary intersects the input geometry (no mode-specific filtering yet).
--- Matches BigQuery __QUADBIN_POLYFILL_INIT.
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
@@ -291,16 +290,18 @@ BEGIN
 END;
 /
 
--- Public function: dispatches by mode. Default mode is 'center' (matches
--- BigQuery and Postgres). NULL-on-invalid: empty pipeline for invalid resolution
--- or NULL inputs (per .claude/rules/oracle.md).
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
-(geom SDO_GEOMETRY, resolution NUMBER, mode VARCHAR2 DEFAULT 'center')
+-- Public function with explicit mode. NULL-on-invalid: empty pipeline for
+-- invalid resolution or NULL inputs.
+-- Two separate functions (POLYFILL / POLYFILL_MODE) instead of a single
+-- function with a DEFAULT parameter, because Oracle doesn't honor DEFAULT
+-- subprogram parameters when called from SQL via positional arguments.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL_MODE
+(geom SDO_GEOMETRY, resolution NUMBER, polyfill_mode VARCHAR2)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
     v_geom SDO_GEOMETRY;
 BEGIN
-    IF geom IS NULL OR resolution IS NULL THEN
+    IF geom IS NULL OR resolution IS NULL OR polyfill_mode IS NULL THEN
         RETURN;
     END IF;
 
@@ -316,21 +317,21 @@ BEGIN
         v_geom := geom;
     END IF;
 
-    IF mode = 'intersects' THEN
+    IF polyfill_mode = 'intersects' THEN
         FOR r IN (
             SELECT COLUMN_VALUE AS qb
             FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_INTERSECTS"(v_geom, resolution))
         ) LOOP
             PIPE ROW(r.qb);
         END LOOP;
-    ELSIF mode = 'contains' THEN
+    ELSIF polyfill_mode = 'contains' THEN
         FOR r IN (
             SELECT COLUMN_VALUE AS qb
             FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CONTAINS"(v_geom, resolution))
         ) LOOP
             PIPE ROW(r.qb);
         END LOOP;
-    ELSIF mode = 'center' THEN
+    ELSIF polyfill_mode = 'center' THEN
         FOR r IN (
             SELECT COLUMN_VALUE AS qb
             FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"(v_geom, resolution))
@@ -338,7 +339,39 @@ BEGIN
             PIPE ROW(r.qb);
         END LOOP;
     END IF;
-    -- Unknown mode: empty pipeline (matches BigQuery 'wrong-mode' behavior).
+    -- Unknown mode: empty pipeline.
+    RETURN;
+END;
+/
+
+-- Public 2-arg form: defaults to 'center' mode.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
+(geom SDO_GEOMETRY, resolution NUMBER)
+RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
+AS
+    v_geom SDO_GEOMETRY;
+BEGIN
+    IF geom IS NULL OR resolution IS NULL THEN
+        RETURN;
+    END IF;
+
+    IF resolution < 0 OR resolution > 26 THEN
+        RETURN;
+    END IF;
+
+    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
+        v_geom := geom;
+        v_geom.SDO_SRID := 4326;
+    ELSE
+        v_geom := geom;
+    END IF;
+
+    FOR r IN (
+        SELECT COLUMN_VALUE AS qb
+        FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"(v_geom, resolution))
+    ) LOOP
+        PIPE ROW(r.qb);
+    END LOOP;
     RETURN;
 END;
 /
