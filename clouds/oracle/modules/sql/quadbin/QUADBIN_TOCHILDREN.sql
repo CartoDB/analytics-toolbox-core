@@ -2,15 +2,6 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Type used by this function. Inline declaration with idempotent DROP+CREATE.
-BEGIN
-    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY FORCE';
-EXCEPTION WHEN OTHERS THEN NULL;
-END;
-/
-CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
-/
-
 -- Returns all child quadbin indices at the specified (finer) resolution,
 -- as a pipelined QUADBIN_INDEX_ARRAY. Each zoom level produces 4 children
 -- (quadtree), so total = 4^(resolution - current_resolution).

@@ -2,67 +2,34 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Type used by this function. Inline declaration with idempotent DROP+CREATE.
-BEGIN
-    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY FORCE';
-EXCEPTION WHEN OTHERS THEN NULL;
-END;
-/
-CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY AS TABLE OF NUMBER;
-/
-
 -- =====================================================================
 -- QUADBIN_POLYFILL
 --
--- Two-phase scan: estimate a coarse "init" resolution from geometry area,
--- bbox-scan at that resolution to get parent cells, expand each parent to
--- target resolution via QUADBIN_TOCHILDREN, then mode-filter the children.
+-- Single-phase bbox scan at the target resolution with inline mode
+-- predicate dispatch. Mode controls which cells are kept:
+--   'center'    — geometry must intersect the cell center (default form)
+--   'intersects' — cell boundary must intersect the geometry
+--   'contains'  — geometry must fully contain the cell boundary
 --
--- Public entry: QUADBIN_POLYFILL(geom, resolution, polyfill_mode)
---   polyfill_mode = 'center' (default), 'intersects', 'contains'
--- Consume via:
---   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, 17));
---   SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(geom, 17, 'intersects'));
+-- Two public entry points:
+--   QUADBIN_POLYFILL(geom, resolution)            — defaults to 'center'
+--   QUADBIN_POLYFILL_MODE(geom, resolution, mode) — explicit mode
+--
+-- Consume via: SELECT COLUMN_VALUE FROM TABLE(QUADBIN_POLYFILL(...));
+--
+-- NULL-on-invalid: returns an empty pipeline for NULL inputs or
+-- out-of-range resolution (per .claude/rules/oracle.md).
 -- =====================================================================
 
--- Estimate the init resolution: the resolution at which a cell has
--- approximately the same area as the geometry, plus 3 levels finer.
--- Clamped to <= target resolution.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"
-(geom SDO_GEOMETRY, resolution NUMBER)
-RETURN NUMBER
-AS
-    Q0_AREA   CONSTANT BINARY_DOUBLE := 61236.812721460745d;
-    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
-    v_area    NUMBER;
-    v_init_z  NUMBER;
-BEGIN
-    BEGIN
-        v_area := SDO_GEOM.SDO_AREA(geom, TOLERANCE);
-    EXCEPTION WHEN OTHERS THEN
-        v_area := 0;
-    END;
-    IF v_area IS NOT NULL AND v_area > 0 THEN
-        -- -log4(area / Q0_area) gives the resolution at which a cell has
-        -- the same area as the geometry; +3 picks a finer working level.
-        v_init_z := TRUNC(-LOG(4, v_area / Q0_AREA)) + 3;
-    ELSE
-        v_init_z := resolution;
-    END IF;
-    RETURN LEAST(resolution, GREATEST(0, v_init_z));
-END;
-/
-
--- Bbox scan at the given resolution. Returns the set of tiles whose
--- boundary intersects the input geometry (no mode-specific filtering yet).
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"
-(geom SDO_GEOMETRY, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL_MODE
+(geom SDO_GEOMETRY, resolution NUMBER, polyfill_mode VARCHAR2)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
     LAT_CLAMP_MIN    CONSTANT BINARY_DOUBLE := -89.0d;
     LAT_CLAMP_MAX    CONSTANT BINARY_DOUBLE := 89.0d;
     RELATE_TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
 
+    v_geom       SDO_GEOMETRY;
     v_mbr        SDO_GEOMETRY;
     v_west       BINARY_DOUBLE;
     v_south      BINARY_DOUBLE;
@@ -82,13 +49,28 @@ AS
     v_tx_count   NUMBER;
     v_tx         NUMBER;
     v_qb         NUMBER;
-    v_relate     VARCHAR2(20);
+
+    v_tile_geom  SDO_GEOMETRY;
+    v_test_geom  SDO_GEOMETRY;
+    v_relation   VARCHAR2(20);
+    v_keep       BOOLEAN;
 BEGIN
-    IF geom IS NULL OR resolution IS NULL THEN
+    IF geom IS NULL OR resolution IS NULL OR polyfill_mode IS NULL THEN
+        RETURN;
+    END IF;
+    IF resolution < 0 OR resolution > 26 THEN
         RETURN;
     END IF;
 
-    v_mbr := SDO_GEOM.SDO_MBR(geom);
+    -- Ensure SRID 4326 so SDO_GEOM.RELATE works against tile boundaries.
+    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
+        v_geom := geom;
+        v_geom.SDO_SRID := 4326;
+    ELSE
+        v_geom := geom;
+    END IF;
+
+    v_mbr := SDO_GEOM.SDO_MBR(v_geom);
     IF v_mbr IS NULL THEN
         RETURN;
     END IF;
@@ -133,12 +115,33 @@ BEGIN
         FOR i IN 0 .. v_tx_count - 1 LOOP
             v_tx := BITAND(v_xmin + i, v_z2_int - 1);
             v_qb := @@ORA_SCHEMA@@.QUADBIN_FROMZXY(resolution, v_tx, ty);
-            v_relate := SDO_GEOM.RELATE(
-                geom, 'ANYINTERACT',
-                @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb),
-                RELATE_TOLERANCE
-            );
-            IF v_relate = 'TRUE' THEN
+
+            -- Apply the mode predicate inline. 'center' tests against the
+            -- tile center point; 'intersects' / 'contains' against the
+            -- full tile boundary polygon.
+            IF polyfill_mode = 'center' THEN
+                v_test_geom := @@ORA_SCHEMA@@.QUADBIN_CENTER(v_qb);
+                v_relation := SDO_GEOM.RELATE(
+                    v_geom, 'ANYINTERACT', v_test_geom, RELATE_TOLERANCE
+                );
+                v_keep := (v_relation = 'TRUE');
+            ELSIF polyfill_mode = 'intersects' THEN
+                v_tile_geom := @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb);
+                v_relation := SDO_GEOM.RELATE(
+                    v_geom, 'ANYINTERACT', v_tile_geom, RELATE_TOLERANCE
+                );
+                v_keep := (v_relation = 'TRUE');
+            ELSIF polyfill_mode = 'contains' THEN
+                v_tile_geom := @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(v_qb);
+                v_relation := SDO_GEOM.RELATE(
+                    v_geom, 'CONTAINS', v_tile_geom, RELATE_TOLERANCE
+                );
+                v_keep := (v_relation = 'CONTAINS');
+            ELSE
+                v_keep := FALSE;
+            END IF;
+
+            IF v_keep THEN
                 PIPE ROW(v_qb);
             END IF;
         END LOOP;
@@ -148,227 +151,15 @@ BEGIN
 END;
 /
 
--- 'intersects' mode: keep child if it intersects the input geometry.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_INTERSECTS"
-(geom SDO_GEOMETRY, resolution NUMBER)
-RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
-AS
-    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
-    v_init_z  NUMBER;
-    v_relate  VARCHAR2(20);
-BEGIN
-    v_init_z := @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"(geom, resolution);
-
-    IF resolution < v_init_z + 2 THEN
-        -- Direct scan at target resolution (no expansion benefit).
-        FOR rec IN (
-            SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, resolution))
-        ) LOOP
-            PIPE ROW(rec.qb);
-        END LOOP;
-    ELSE
-        -- Coarse parent scan, then expand and refilter children.
-        FOR p IN (
-            SELECT COLUMN_VALUE AS parent
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, v_init_z))
-        ) LOOP
-            FOR c IN (
-                SELECT COLUMN_VALUE AS child
-                FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN(p.parent, resolution))
-            ) LOOP
-                v_relate := SDO_GEOM.RELATE(
-                    geom, 'ANYINTERACT',
-                    @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(c.child),
-                    TOLERANCE
-                );
-                IF v_relate = 'TRUE' THEN
-                    PIPE ROW(c.child);
-                END IF;
-            END LOOP;
-        END LOOP;
-    END IF;
-    RETURN;
-END;
-/
-
--- 'contains' mode: keep child only if input geometry fully contains the cell boundary.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CONTAINS"
-(geom SDO_GEOMETRY, resolution NUMBER)
-RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
-AS
-    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
-    v_init_z  NUMBER;
-    v_relate  VARCHAR2(20);
-BEGIN
-    v_init_z := @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"(geom, resolution);
-
-    IF resolution < v_init_z + 2 THEN
-        FOR rec IN (
-            SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, resolution))
-        ) LOOP
-            v_relate := SDO_GEOM.RELATE(
-                geom, 'CONTAINS',
-                @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(rec.qb),
-                TOLERANCE
-            );
-            IF v_relate = 'CONTAINS' THEN
-                PIPE ROW(rec.qb);
-            END IF;
-        END LOOP;
-    ELSE
-        FOR p IN (
-            SELECT COLUMN_VALUE AS parent
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, v_init_z))
-        ) LOOP
-            FOR c IN (
-                SELECT COLUMN_VALUE AS child
-                FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN(p.parent, resolution))
-            ) LOOP
-                v_relate := SDO_GEOM.RELATE(
-                    geom, 'CONTAINS',
-                    @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(c.child),
-                    TOLERANCE
-                );
-                IF v_relate = 'CONTAINS' THEN
-                    PIPE ROW(c.child);
-                END IF;
-            END LOOP;
-        END LOOP;
-    END IF;
-    RETURN;
-END;
-/
-
--- 'center' mode (default): keep child if input geometry intersects the cell center.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"
-(geom SDO_GEOMETRY, resolution NUMBER)
-RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
-AS
-    TOLERANCE CONSTANT BINARY_DOUBLE := 0.0000001d;
-    v_init_z  NUMBER;
-    v_relate  VARCHAR2(20);
-BEGIN
-    v_init_z := @@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT_Z"(geom, resolution);
-
-    IF resolution < v_init_z + 2 THEN
-        FOR rec IN (
-            SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, resolution))
-        ) LOOP
-            v_relate := SDO_GEOM.RELATE(
-                geom, 'ANYINTERACT',
-                @@ORA_SCHEMA@@.QUADBIN_CENTER(rec.qb),
-                TOLERANCE
-            );
-            IF v_relate = 'TRUE' THEN
-                PIPE ROW(rec.qb);
-            END IF;
-        END LOOP;
-    ELSE
-        FOR p IN (
-            SELECT COLUMN_VALUE AS parent
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_INIT"(geom, v_init_z))
-        ) LOOP
-            FOR c IN (
-                SELECT COLUMN_VALUE AS child
-                FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_TOCHILDREN(p.parent, resolution))
-            ) LOOP
-                v_relate := SDO_GEOM.RELATE(
-                    geom, 'ANYINTERACT',
-                    @@ORA_SCHEMA@@.QUADBIN_CENTER(c.child),
-                    TOLERANCE
-                );
-                IF v_relate = 'TRUE' THEN
-                    PIPE ROW(c.child);
-                END IF;
-            END LOOP;
-        END LOOP;
-    END IF;
-    RETURN;
-END;
-/
-
--- Public function with explicit mode. NULL-on-invalid: empty pipeline for
--- invalid resolution or NULL inputs.
--- Two separate functions (POLYFILL / POLYFILL_MODE) instead of a single
--- function with a DEFAULT parameter, because Oracle doesn't honor DEFAULT
--- subprogram parameters when called from SQL via positional arguments.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL_MODE
-(geom SDO_GEOMETRY, resolution NUMBER, polyfill_mode VARCHAR2)
-RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
-AS
-    v_geom SDO_GEOMETRY;
-BEGIN
-    IF geom IS NULL OR resolution IS NULL OR polyfill_mode IS NULL THEN
-        RETURN;
-    END IF;
-
-    IF resolution < 0 OR resolution > 26 THEN
-        RETURN;
-    END IF;
-
-    -- Ensure SRID 4326 so SDO_GEOM.RELATE works against tile boundaries.
-    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
-        v_geom := geom;
-        v_geom.SDO_SRID := 4326;
-    ELSE
-        v_geom := geom;
-    END IF;
-
-    IF polyfill_mode = 'intersects' THEN
-        FOR r IN (
-            SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_INTERSECTS"(v_geom, resolution))
-        ) LOOP
-            PIPE ROW(r.qb);
-        END LOOP;
-    ELSIF polyfill_mode = 'contains' THEN
-        FOR r IN (
-            SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CONTAINS"(v_geom, resolution))
-        ) LOOP
-            PIPE ROW(r.qb);
-        END LOOP;
-    ELSIF polyfill_mode = 'center' THEN
-        FOR r IN (
-            SELECT COLUMN_VALUE AS qb
-            FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"(v_geom, resolution))
-        ) LOOP
-            PIPE ROW(r.qb);
-        END LOOP;
-    END IF;
-    -- Unknown mode: empty pipeline.
-    RETURN;
-END;
-/
-
--- Public 2-arg form: defaults to 'center' mode.
+-- 2-arg form: defaults to 'center' mode.
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
 (geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
-    v_geom SDO_GEOMETRY;
 BEGIN
-    IF geom IS NULL OR resolution IS NULL THEN
-        RETURN;
-    END IF;
-
-    IF resolution < 0 OR resolution > 26 THEN
-        RETURN;
-    END IF;
-
-    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
-        v_geom := geom;
-        v_geom.SDO_SRID := 4326;
-    ELSE
-        v_geom := geom;
-    END IF;
-
     FOR r IN (
         SELECT COLUMN_VALUE AS qb
-        FROM TABLE(@@ORA_SCHEMA@@."__QUADBIN_POLYFILL_CHILDREN_CENTER"(v_geom, resolution))
+        FROM TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL_MODE(geom, resolution, 'center'))
     ) LOOP
         PIPE ROW(r.qb);
     END LOOP;

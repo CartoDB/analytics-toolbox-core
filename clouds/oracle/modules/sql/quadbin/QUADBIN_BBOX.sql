@@ -2,36 +2,9 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
--- Types used by this function. Inline declaration with idempotent DROP+CREATE.
-BEGIN
-    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_ZXY FORCE';
-EXCEPTION WHEN OTHERS THEN NULL;
-END;
-/
-CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_ZXY AS OBJECT (
-    z NUMBER,
-    x NUMBER,
-    y NUMBER
-);
-/
-BEGIN
-    EXECUTE IMMEDIATE 'DROP TYPE @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ FORCE';
-EXCEPTION WHEN OTHERS THEN NULL;
-END;
-/
-CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ AS OBJECT (
-    west  BINARY_DOUBLE,
-    south BINARY_DOUBLE,
-    east  BINARY_DOUBLE,
-    north BINARY_DOUBLE
-);
-/
-
 -- Returns the bounding box for a quadbin tile as a QUADBIN_BBOX_OBJ
 -- (west, south, east, north in WGS84 degrees), using inverse Web Mercator.
---
--- BINARY_DOUBLE (IEEE 754) is used for intermediate calculations to match
--- the floating-point behaviour of other platforms (Databricks DOUBLE, etc.).
+-- BINARY_DOUBLE (IEEE 754) is used for intermediate calculations.
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BBOX
 (quadbin NUMBER)
