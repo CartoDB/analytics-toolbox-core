@@ -7,7 +7,7 @@ OUTPUT_DIR ?= dist
 REPO_NAME = analytics-toolbox-core
 
 # Supported clouds (validation list)
-VALID_CLOUDS := redshift bigquery snowflake databricks postgres
+VALID_CLOUDS := redshift bigquery snowflake databricks postgres oracle
 
 # Ensure cloud parameter is provided
 .PHONY: create-package

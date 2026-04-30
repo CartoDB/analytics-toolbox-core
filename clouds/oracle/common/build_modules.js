@@ -98,13 +98,61 @@ functionsFilter.forEach(f => {
     }
 });
 
-// Extract function dependencies
+// Extract function and type dependencies
+//
+// Three reference patterns are detected:
+//   1. Function calls:    @@SCHEMA@@.NAME(   — paren-suffixed
+//   2. MLE module refs:   AS MLE MODULE NAME — keyword-prefixed
+//   3. Type references:   @@SCHEMA@@.NAME    — bare (no paren)
+//
+// For (3), we collect the names of types/modules each file *defines* by
+// scanning for CREATE TYPE / CREATE OR REPLACE MLE MODULE, then mark a
+// dependency when another file references one of those names. Files that
+// only define types (e.g. _types.sql) end up topologically before any
+// function that uses them, with no filename convention required.
 if (!nodeps) {
+    // Map: object name → file that defines it
+    const definedBy = {};
+    functions.forEach(f => {
+        // Function definitions: filename = name (existing convention)
+        definedBy[f.name.toUpperCase()] = f.name;
+        // CREATE [OR REPLACE] TYPE @@SCHEMA@@.NAME
+        const typeMatches = f.content.matchAll(
+            /CREATE\s+(?:OR\s+REPLACE\s+)?TYPE\s+@@\w+@@\.(\w+)/gi
+        );
+        for (const m of typeMatches) {
+            definedBy[m[1].toUpperCase()] = f.name;
+        }
+        // CREATE OR REPLACE MLE MODULE [@@SCHEMA@@.]NAME
+        const mleMatches = f.content.matchAll(
+            /CREATE\s+(?:OR\s+REPLACE\s+)?MLE\s+MODULE\s+(?:@@\w+@@\.)?(\w+)/gi
+        );
+        for (const m of mleMatches) {
+            definedBy[m[1].toUpperCase()] = f.name;
+        }
+    });
+
     functions.forEach(mainFunction => {
-        functions.forEach(depFunction => {
-            if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
-                    mainFunction.dependencies.push(depFunction.name);
+        Object.keys(definedBy).forEach(name => {
+            const definerName = definedBy[name];
+            if (mainFunction.name === definerName) return;
+            const content = mainFunction.content;
+            // (1) function call:  @@SCHEMA@@.NAME(
+            const isFunctionCall = content.includes(`SCHEMA@@.${name}(`);
+            // (2) MLE module ref:  AS MLE MODULE [@@SCHEMA@@.]NAME
+            const mleRef = new RegExp(
+                `\\bAS\\s+MLE\\s+MODULE\\s+(?:@@\\w+@@\\.)?${name}\\b`, 'i'
+            );
+            const isMleRef = mleRef.test(content);
+            // (3) bare type ref:   @@SCHEMA@@.NAME (not followed by '(' or word char)
+            const typeRef = new RegExp(
+                `@@\\w+@@\\.${name}(?![\\w(])`, 'i'
+            );
+            const isTypeRef = typeRef.test(content);
+
+            if (isFunctionCall || isMleRef || isTypeRef) {
+                if (!mainFunction.dependencies.includes(definerName)) {
+                    mainFunction.dependencies.push(definerName);
                 }
             }
         });
@@ -141,9 +189,30 @@ functions.forEach(f => add(f));
 // Replace environment variables
 let content = output.map(f => f.content).join('\n');
 
+// Inline @@ORA_LIBRARY_<NAME>@@ → libraries/javascript/build/<name>.js, then
+// apply env-var @@VAR@@ replacements.
 function apply_replacements (text) {
+    const libraryDir = path.resolve(
+        __dirname, '..', 'libraries', 'javascript', 'build'
+    );
+    const libraries = [...new Set(text.match(/@@ORA_LIBRARY_[A-Z_]+@@/g) || [])];
+    for (const library of libraries) {
+        const libName = library.replace('@@ORA_LIBRARY_', '').replace('@@', '');
+        const file = path.join(libraryDir, libName.toLowerCase() + '.js');
+        if (!fs.existsSync(file)) {
+            console.error(
+                `Error: library bundle "${file}" not found. Run \`make build\` ` +
+                'in libraries/javascript/ to produce it before deploying.'
+            );
+            process.exit(1);
+        }
+        text = text.replace(
+            new RegExp(library, 'g'),
+            fs.readFileSync(file).toString()
+        );
+    }
     const replacements = process.env.REPLACEMENTS.split(' ');
-    for (let replacement of replacements) {
+    for (const replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
             text = text.replace(pattern, process.env[replacement]);
