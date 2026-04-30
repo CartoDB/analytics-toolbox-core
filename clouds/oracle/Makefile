@@ -60,14 +60,18 @@ lint-fix-common: venv3 $(NODE_MODULES_DEV)
 
 build:
 	rm -rf $(BUILD_DIR)
+	$(MAKE) build-libs
 	$(MAKE) build-modules
+
+build-libs:
+	$(MAKE) -C libraries/javascript build
 
 build-modules:
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build
 	cp modules/build/modules.sql $(BUILD_DIR)
 
-deploy:
+deploy: build-libs
 	$(MAKE) deploy-modules
 
 deploy-modules:

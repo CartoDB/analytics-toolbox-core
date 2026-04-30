@@ -70,10 +70,14 @@ def execute_script(script_path):
         }
         sql = replace_variables(sql, variables)
 
-        # Remove line comments
-        sql = re.sub(r'--.*\n', '\n', sql)
+        # Note: line comments are already stripped by build_modules.js when
+        # producing modules.sql. We must NOT strip them again here because
+        # the resulting script may contain MLE JavaScript bodies (inlined via
+        # @@ORA_LIBRARY_*@@) that include `--` substrings (e.g. JS decrement
+        # operators like `i--`), which would be misread as SQL line comments
+        # and mangle the body.
         # Remove block comments — Oracle's '/' statement terminator collides
-        # with the closing '*/' if they stay in the script
+        # with the closing '*/' if they stay in the script.
         sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
 
         # Execute SQL (split by statement terminator)

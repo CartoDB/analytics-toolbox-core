@@ -1,8 +1,14 @@
 {
     "license": "BSD-3-Clause",
     "devDependencies": {
+        "@rollup/plugin-commonjs": "^17.1.0",
+        "@rollup/plugin-json": "^4.1.0",
+        "@rollup/plugin-node-resolve": "^13.0.0",
         "eslint": "^8.22.0",
         "markdownlint-cli": "^0.32.2",
-        "minimist": "1.2.6"
+        "minimist": "1.2.6",
+        "rollup": "^2.47.0",
+        "rollup-plugin-bundle-size": "^1.0.3",
+        "rollup-plugin-terser": "^7.0.2"
     }
 }
