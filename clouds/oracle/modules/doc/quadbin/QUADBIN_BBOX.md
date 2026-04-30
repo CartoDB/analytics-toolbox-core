@@ -23,8 +23,6 @@ SELECT t.bbox.west, t.bbox.south, t.bbox.east, t.bbox.north
 FROM (
     SELECT carto.QUADBIN_BBOX(5207251884775047167) AS bbox FROM DUAL
 ) t;
--- -2.250000000000000e+01,
--- 2.194304553343818e+01,
--- 0,
--- 4.097989806962013e+01
+-- WEST                    SOUTH                  EAST  NORTH
+-- -2.250000000000000e+01  2.194304553343818e+01  0     4.097989806962013e+01
 ```

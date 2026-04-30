@@ -21,6 +21,6 @@ Returns the zoom level `z` and coordinates `x`, `y` for a given Quadbin.
 ```sql
 SELECT t.zxy.z, t.zxy.x, t.zxy.y
 FROM (SELECT carto.QUADBIN_TOZXY(5207251884775047167) AS zxy FROM DUAL) t;
--- z  x  y
+-- Z  X  Y
 -- 4  7  6
 ```
