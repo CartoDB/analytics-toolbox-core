@@ -22,15 +22,16 @@ Returns all cell indexes and their distances in a **filled square k-ring** cente
 ```sql
 SELECT t.quadbin_index, t.distance
 FROM TABLE(carto.QUADBIN_KRING_DISTANCES(5207251884775047167, 1)) t;
--- {"quadbin_index": 5207128739472736255, "distance": 1}
--- {"quadbin_index": 5207234292589002751, "distance": 1}
--- {"quadbin_index": 5207269476961091583, "distance": 1}
--- {"quadbin_index": 5207146331658780671, "distance": 1}
--- {"quadbin_index": 5207251884775047167, "distance": 0}
--- {"quadbin_index": 5207287069147135999, "distance": 1}
--- {"quadbin_index": 5207902795658690559, "distance": 1}
--- {"quadbin_index": 5208008348774957055, "distance": 1}
--- {"quadbin_index": 5208043533147045887, "distance": 1}
+-- QUADBIN_INDEX        DISTANCE
+-- 5207128739472736255  1
+-- 5207234292589002751  1
+-- 5207269476961091583  1
+-- 5207146331658780671  1
+-- 5207251884775047167  0
+-- 5207287069147135999  1
+-- 5207902795658690559  1
+-- 5208008348774957055  1
+-- 5208043533147045887  1
 ```
 
 ````hint:info
