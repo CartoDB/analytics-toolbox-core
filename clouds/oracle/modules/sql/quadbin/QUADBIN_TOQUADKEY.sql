@@ -27,8 +27,10 @@ BEGIN
     -- Extract zoom: bits 52-56
     v_z := BITAND(TRUNC(quadbin / POWER(2, 52)), 31);
 
+    -- Zoom 0 has an empty quadkey, but Oracle treats '' as NULL, so the
+    -- caller will see NULL. Doc page documents this.
     IF v_z = 0 THEN
-        RETURN '';
+        RETURN NULL;
     END IF;
 
     -- Extract the interleaved xy field: lower 52 bits >> (52 - z*2)
