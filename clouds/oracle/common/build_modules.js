@@ -98,6 +98,13 @@ functionsFilter.forEach(f => {
     }
 });
 
+// Index files by "module/name" — filenames like _types.sql and
+// _module.sql are intentionally reused across modules, so identifying a
+// file by its bare name is ambiguous.
+const fnKey = f => `${f.module}/${f.name}`;
+const byKey = {};
+functions.forEach(f => { byKey[fnKey(f)] = f; });
+
 // Extract function and type dependencies
 //
 // Three reference patterns are detected:
@@ -111,31 +118,48 @@ functionsFilter.forEach(f => {
 // only define types (e.g. _types.sql) end up topologically before any
 // function that uses them, with no filename convention required.
 if (!nodeps) {
-    // Map: object name → file that defines it
+    // Map: object name → fnKey of the file that defines it.
     const definedBy = {};
+    // Enforce the "module-prefixed type names" convention: a SQL identifier
+    // (function, type, MLE module) must be defined in exactly one file.
+    // Otherwise the dep walk silently picks one definition and deploy fails
+    // later with a confusing PLS-00201.
+    const define = (name, f) => {
+        const key = name.toUpperCase();
+        if (definedBy[key] && definedBy[key] !== fnKey(f)) {
+            console.log(
+                `ERROR: ${name} defined in both ${definedBy[key]} and ${fnKey(f)}`
+            );
+            process.exit(1);
+        }
+        definedBy[key] = fnKey(f);
+    };
     functions.forEach(f => {
-        // Function definitions: filename = name (existing convention)
-        definedBy[f.name.toUpperCase()] = f.name;
+        // Function/procedure definitions. Detected from the SQL itself
+        // rather than the filename, so consolidated files like _types.sql
+        // and _module.sql (which only define types/MLE modules) don't
+        // register a spurious entry under their own filename.
+        const fnMatches = f.content.matchAll(
+            /CREATE\s+(?:OR\s+REPLACE\s+)?(?:FUNCTION|PROCEDURE)\s+@@\w+@@\.(\w+)/gi
+        );
+        for (const m of fnMatches) define(m[1], f);
         // CREATE [OR REPLACE] TYPE @@SCHEMA@@.NAME
         const typeMatches = f.content.matchAll(
             /CREATE\s+(?:OR\s+REPLACE\s+)?TYPE\s+@@\w+@@\.(\w+)/gi
         );
-        for (const m of typeMatches) {
-            definedBy[m[1].toUpperCase()] = f.name;
-        }
+        for (const m of typeMatches) define(m[1], f);
         // CREATE OR REPLACE MLE MODULE [@@SCHEMA@@.]NAME
         const mleMatches = f.content.matchAll(
             /CREATE\s+(?:OR\s+REPLACE\s+)?MLE\s+MODULE\s+(?:@@\w+@@\.)?(\w+)/gi
         );
-        for (const m of mleMatches) {
-            definedBy[m[1].toUpperCase()] = f.name;
-        }
+        for (const m of mleMatches) define(m[1], f);
     });
 
     functions.forEach(mainFunction => {
+        const mainKey = fnKey(mainFunction);
         Object.keys(definedBy).forEach(name => {
-            const definerName = definedBy[name];
-            if (mainFunction.name === definerName) return;
+            const definerKey = definedBy[name];
+            if (mainKey === definerKey) return;
             const content = mainFunction.content;
             // (1) function call:  @@SCHEMA@@.NAME(
             const isFunctionCall = content.includes(`SCHEMA@@.${name}(`);
@@ -151,8 +175,8 @@ if (!nodeps) {
             const isTypeRef = typeRef.test(content);
 
             if (isFunctionCall || isMleRef || isTypeRef) {
-                if (!mainFunction.dependencies.includes(definerName)) {
-                    mainFunction.dependencies.push(definerName);
+                if (!mainFunction.dependencies.includes(definerKey)) {
+                    mainFunction.dependencies.push(definerKey);
                 }
             }
         });
@@ -161,24 +185,30 @@ if (!nodeps) {
 
 // Check circular dependencies
 functions.forEach(mainFunction => {
-    functions.forEach(depFunction => {
-        if (mainFunction.dependencies.includes(depFunction.name) &&
-            depFunction.dependencies.includes(mainFunction.name)) {
-            console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+    const mainKey = fnKey(mainFunction);
+    for (const depKey of mainFunction.dependencies) {
+        const depFunction = byKey[depKey];
+        if (depFunction && depFunction.dependencies.includes(mainKey)) {
+            console.log(`ERROR: Circular dependency between ${mainKey} and ${depKey}`);
             process.exit(1);
         }
-    });
+    }
 });
 
 // Filter and order functions
 const output = [];
+const seen = new Set();
 function add (f, include) {
     include = include || all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
-    for (const dependency of f.dependencies) {
-        add(functions.find(f => f.name === dependency), include);
+    for (const dependencyKey of f.dependencies) {
+        const dep = byKey[dependencyKey];
+        if (dep) add(dep, include);
     }
-    if (!output.map(f => f.name).includes(f.name) && include) {
+    const key = `${f.module}/${f.name}`;
+    if (!seen.has(key) && include) {
+        seen.add(key);
         output.push({
+            module: f.module,
             name: f.name,
             content: f.content
         });
