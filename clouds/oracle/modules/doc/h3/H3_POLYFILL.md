@@ -14,7 +14,7 @@ Returns no rows on error (invalid input, resolution out of bounds, or non-polygo
 
 **Input parameters**
 
-* `geom`: `SDO_GEOMETRY` polygon or multipolygon to cover (WGS84 / SRID 4326).
+* `geom`: `SDO_GEOMETRY` **polygon** or **multipolygon** representing the shape to cover. **GeometryCollections** containing polygons or multipolygons are also allowed. Non-polygon geometries (`POINT`, `LINESTRING`, etc.) are silently ignored — no error is raised. Interpreted as WGS84 (EPSG:4326).
 * `resolution`: `NUMBER` level of detail. The value must be between 0 and 15 ([H3 resolution table](https://h3geo.org/docs/core-library/restable)).
 
 **Return type**

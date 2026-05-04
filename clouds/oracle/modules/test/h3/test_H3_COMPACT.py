@@ -12,17 +12,14 @@ def _index_array_literal(cells):
 
 def _compact(input_sql):
     """Run H3_COMPACT as a TABLE and return the list of cells."""
-    sql = (
-        f'SELECT COLUMN_VALUE FROM TABLE('
-        f'@@ORA_SCHEMA@@.H3_COMPACT({input_sql}))'
-    )
+    sql = f'SELECT COLUMN_VALUE FROM TABLE(' f'@@ORA_SCHEMA@@.H3_COMPACT({input_sql}))'
     return [r[0] for r in run_query(sql)]
 
 
 def _tochildren(parent, res):
     """Helper: list children of `parent` at resolution `res`."""
     sql = (
-        f"SELECT COLUMN_VALUE FROM TABLE("
+        f'SELECT COLUMN_VALUE FROM TABLE('
         f"@@ORA_SCHEMA@@.H3_TOCHILDREN('{parent}', {res}))"
     )
     return [r[0] for r in run_query(sql)]
@@ -31,8 +28,7 @@ def _tochildren(parent, res):
 def _kring(origin, k):
     """Helper: list k-ring of `origin`."""
     sql = (
-        f"SELECT COLUMN_VALUE FROM TABLE("
-        f"@@ORA_SCHEMA@@.H3_KRING('{origin}', {k}))"
+        f'SELECT COLUMN_VALUE FROM TABLE(' f"@@ORA_SCHEMA@@.H3_KRING('{origin}', {k}))"
     )
     return [r[0] for r in run_query(sql)]
 
@@ -79,14 +75,18 @@ def test_h3_compact_partial_sibling_set():
 
 
 def test_h3_compact_roundtrip_kring():
-    """Compact/uncompact roundtrip: KRING at distance 2 (19 cells)."""
+    """Compact/uncompact roundtrip: KRING at distance 2 (19 cells).
+    Compaction yields exactly 13 cells (the kring is not a full sibling
+    set, so most cells stay at res 9; some siblings collapse to res 8)."""
     origin = '8928308280fffff'
     origin_res = 9
     cells = _kring(origin, 2)
     assert len(cells) == 19
 
     compacted = _compact(_index_array_literal(cells))
-    assert len(compacted) <= len(cells)
+    assert (
+        len(compacted) == 13
+    ), f'expected 13 compacted cells (matches h3-js compact), got {len(compacted)}'
 
     uncompact_sql = (
         f'SELECT COLUMN_VALUE FROM TABLE('

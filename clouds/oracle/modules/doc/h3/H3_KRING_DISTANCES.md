@@ -22,6 +22,7 @@ Returns all cell indexes and their distances in a **filled hexagonal k-ring** ce
 ```sql
 SELECT t.h3, t.distance
 FROM TABLE(carto.H3_KRING_DISTANCES('84390cbffffffff', 1)) t;
+-- H3               DISTANCE
 -- 84390cbffffffff  0
 -- 84390c9ffffffff  1
 -- 84390c1ffffffff  1

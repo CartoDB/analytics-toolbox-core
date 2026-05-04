@@ -29,10 +29,10 @@ def test_h3_tochildren_invalid_index():
 def test_h3_tochildren_coarser_resolution():
     """Returns no rows when target resolution < current."""
     children = _tochildren(
-        "@@ORA_SCHEMA@@.H3_FROMGEOGPOINT("
-        "SDO_GEOMETRY(2001, 4326,"
-        " SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),"
-        " NULL, NULL), 7)",
+        '@@ORA_SCHEMA@@.H3_FROMGEOGPOINT('
+        'SDO_GEOMETRY(2001, 4326,'
+        ' SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),'
+        ' NULL, NULL), 7)',
         '6',
     )
     assert children == []
@@ -46,10 +46,10 @@ def test_h3_tochildren_same_resolution():
 def test_h3_tochildren_direct_children():
     """A res-7 cell has exactly 7 children at res 8."""
     children = _tochildren(
-        "@@ORA_SCHEMA@@.H3_FROMGEOGPOINT("
-        "SDO_GEOMETRY(2001, 4326,"
-        " SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),"
-        " NULL, NULL), 7)",
+        '@@ORA_SCHEMA@@.H3_FROMGEOGPOINT('
+        'SDO_GEOMETRY(2001, 4326,'
+        ' SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),'
+        ' NULL, NULL), 7)',
         '8',
     )
     assert len(children) == 7
@@ -58,10 +58,10 @@ def test_h3_tochildren_direct_children():
 def test_h3_tochildren_grandchildren():
     """A res-7 cell has exactly 49 grandchildren at res 9 (7*7)."""
     children = _tochildren(
-        "@@ORA_SCHEMA@@.H3_FROMGEOGPOINT("
-        "SDO_GEOMETRY(2001, 4326,"
-        " SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),"
-        " NULL, NULL), 7)",
+        '@@ORA_SCHEMA@@.H3_FROMGEOGPOINT('
+        'SDO_GEOMETRY(2001, 4326,'
+        ' SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),'
+        ' NULL, NULL), 7)',
         '9',
     )
     assert len(children) == 49
@@ -69,26 +69,28 @@ def test_h3_tochildren_grandchildren():
 
 def test_h3_tochildren_all_valid():
     """All returned children should be valid H3 indexes."""
-    children = _tochildren("'87283080dffffff'", '8')
-    for child in children:
-        valid_result = run_query(
-            f"SELECT @@ORA_SCHEMA@@.H3_ISVALID('{child}') FROM DUAL"
-        )
-        assert valid_result[0][0] == 1, f'Child {child} is not valid'
+    invalid = run_query(
+        'SELECT t.COLUMN_VALUE AS h3'
+        " FROM TABLE(@@ORA_SCHEMA@@.H3_TOCHILDREN('87283080dffffff', 8)) t"
+        ' WHERE @@ORA_SCHEMA@@.H3_ISVALID(t.COLUMN_VALUE) != 1'
+    )
+    assert (
+        invalid == 'No results returned' or invalid == []
+    ), f'Invalid children: {invalid}'
 
 
 def test_h3_tochildren_correct_resolution():
     """All returned children should have the target resolution."""
     target_res = 8
-    children = _tochildren("'87283080dffffff'", str(target_res))
-    for child in children:
-        res_result = run_query(
-            f"SELECT @@ORA_SCHEMA@@.H3_RESOLUTION('{child}') FROM DUAL"
-        )
-        assert res_result[0][0] == target_res, (
-            f'Child {child} has resolution {res_result[0][0]}, '
-            f'expected {target_res}'
-        )
+    wrong = run_query(
+        f'SELECT t.COLUMN_VALUE AS h3'
+        f" FROM TABLE(@@ORA_SCHEMA@@.H3_TOCHILDREN('87283080dffffff',"
+        f' {target_res})) t'
+        f' WHERE @@ORA_SCHEMA@@.H3_RESOLUTION(t.COLUMN_VALUE) != {target_res}'
+    )
+    assert (
+        wrong == 'No results returned' or wrong == []
+    ), f'Children at wrong resolution: {wrong}'
 
 
 def test_h3_tochildren_parent_roundtrip():
@@ -96,13 +98,17 @@ def test_h3_tochildren_parent_roundtrip():
     parent_hex = '87283080dffffff'
     parent_res = 7
     child_res = 8
-    children = _tochildren(f"'{parent_hex}'", str(child_res))
-    for child in children:
-        parent_result = run_query(
-            f"SELECT @@ORA_SCHEMA@@.H3_TOPARENT("
-            f"'{child}', {parent_res}) FROM DUAL"
-        )
-        assert parent_result[0][0] == parent_hex
+    wrong = run_query(
+        f'SELECT t.COLUMN_VALUE AS h3,'
+        f' @@ORA_SCHEMA@@.H3_TOPARENT(t.COLUMN_VALUE, {parent_res}) AS p'
+        f" FROM TABLE(@@ORA_SCHEMA@@.H3_TOCHILDREN('{parent_hex}',"
+        f' {child_res})) t'
+        f' WHERE @@ORA_SCHEMA@@.H3_TOPARENT(t.COLUMN_VALUE, {parent_res})'
+        f" != '{parent_hex}'"
+    )
+    assert (
+        wrong == 'No results returned' or wrong == []
+    ), f'Children with wrong parent: {wrong}'
 
 
 def test_h3_tochildren_unique():
@@ -124,10 +130,10 @@ def test_h3_tochildren_resolution_above_max():
 def test_h3_tochildren_res0_to_res1():
     """A resolution 0 cell should have 7 children at res 1."""
     children = _tochildren(
-        "@@ORA_SCHEMA@@.H3_FROMGEOGPOINT("
-        "SDO_GEOMETRY(2001, 4326,"
-        " SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),"
-        " NULL, NULL), 0)",
+        '@@ORA_SCHEMA@@.H3_FROMGEOGPOINT('
+        'SDO_GEOMETRY(2001, 4326,'
+        ' SDO_POINT_TYPE(-122.409290778685, 37.81331899988944, NULL),'
+        ' NULL, NULL), 0)',
         '1',
     )
     assert len(children) == 7

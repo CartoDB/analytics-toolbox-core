@@ -38,19 +38,9 @@ LINE_WKT = (
 def _polyfill(wkt, resolution):
     """Run H3_POLYFILL as a TABLE and return the list of cells."""
     sql = (
-        f"SELECT COLUMN_VALUE FROM TABLE("
-        f"@@ORA_SCHEMA@@.H3_POLYFILL("
+        f'SELECT COLUMN_VALUE FROM TABLE('
+        f'@@ORA_SCHEMA@@.H3_POLYFILL('
         f"SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'), {resolution}))"
-    )
-    return [r[0] for r in run_query(sql)]
-
-
-def _polyfill_mode(wkt, resolution, mode):
-    """Run __H3_POLYFILL_MODE as a TABLE and return the list of cells."""
-    sql = (
-        f"SELECT COLUMN_VALUE FROM TABLE("
-        f"@@ORA_SCHEMA@@.\"__H3_POLYFILL_MODE\"("
-        f"SDO_UTIL.FROM_WKTGEOMETRY('{wkt}'), {resolution}, '{mode}'))"
     )
     return [r[0] for r in run_query(sql)]
 
@@ -77,18 +67,15 @@ def test_h3_polyfill_line_returns_empty():
 
 def test_h3_polyfill_null_geom():
     """NULL geometry returns no rows."""
-    sql = (
-        'SELECT COLUMN_VALUE FROM TABLE('
-        '@@ORA_SCHEMA@@.H3_POLYFILL(NULL, 9))'
-    )
+    sql = 'SELECT COLUMN_VALUE FROM TABLE(' '@@ORA_SCHEMA@@.H3_POLYFILL(NULL, 9))'
     assert run_query(sql) == []
 
 
 def test_h3_polyfill_null_resolution():
     """NULL resolution returns no rows."""
     sql = (
-        f"SELECT COLUMN_VALUE FROM TABLE("
-        f"@@ORA_SCHEMA@@.H3_POLYFILL("
+        f'SELECT COLUMN_VALUE FROM TABLE('
+        f'@@ORA_SCHEMA@@.H3_POLYFILL('
         f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), NULL))"
     )
     assert run_query(sql) == []
@@ -96,23 +83,29 @@ def test_h3_polyfill_null_resolution():
 
 def test_h3_polyfill_all_valid():
     """All returned cells should be valid H3 indexes."""
-    cells = _polyfill(POLYGON_WKT, 9)
-    for cell in cells:
-        valid_result = run_query(
-            f"SELECT @@ORA_SCHEMA@@.H3_ISVALID('{cell}') FROM DUAL"
-        )
-        assert valid_result[0][0] == 1, f'Cell {cell} is not valid'
+    invalid = run_query(
+        f'SELECT t.COLUMN_VALUE AS h3'
+        f' FROM TABLE(@@ORA_SCHEMA@@.H3_POLYFILL('
+        f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), 9)) t"
+        f' WHERE @@ORA_SCHEMA@@.H3_ISVALID(t.COLUMN_VALUE) != 1'
+    )
+    assert (
+        invalid == 'No results returned' or invalid == []
+    ), f'Invalid cells in polyfill: {invalid}'
 
 
 def test_h3_polyfill_all_correct_resolution():
     """All returned cells should have the requested resolution."""
     target_res = 9
-    cells = _polyfill(POLYGON_WKT, target_res)
-    for cell in cells:
-        res_result = run_query(
-            f"SELECT @@ORA_SCHEMA@@.H3_RESOLUTION('{cell}') FROM DUAL"
-        )
-        assert res_result[0][0] == target_res
+    wrong_res = run_query(
+        f'SELECT t.COLUMN_VALUE AS h3'
+        f' FROM TABLE(@@ORA_SCHEMA@@.H3_POLYFILL('
+        f"SDO_UTIL.FROM_WKTGEOMETRY('{POLYGON_WKT}'), {target_res})) t"
+        f' WHERE @@ORA_SCHEMA@@.H3_RESOLUTION(t.COLUMN_VALUE) != {target_res}'
+    )
+    assert (
+        wrong_res == 'No results returned' or wrong_res == []
+    ), f'Cells at wrong resolution: {wrong_res}'
 
 
 def test_h3_polyfill_unique_cells():
@@ -131,20 +124,3 @@ def test_h3_polyfill_sorted_output():
     """Returned rows should be in lexicographic order."""
     cells = _polyfill(POLYGON_WKT, 9)
     assert cells == sorted(cells)
-
-
-def test_h3_polyfill_mode_center_direct():
-    """__H3_POLYFILL_MODE in center mode matches H3_POLYFILL."""
-    assert sorted(_polyfill_mode(POLYGON_WKT, 9, 'center')) == ['89390cb1b4bffff']
-
-
-def test_h3_polyfill_mode_intersects_direct():
-    """__H3_POLYFILL_MODE in intersects mode returns the center cell + neighbors."""
-    cells = _polyfill_mode(POLYGON_WKT, 9, 'intersects')
-    assert len(cells) >= 1
-    assert '89390cb1b4bffff' in cells
-
-
-def test_h3_polyfill_mode_invalid_returns_empty():
-    """__H3_POLYFILL_MODE returns no rows for unknown mode."""
-    assert _polyfill_mode(POLYGON_WKT, 9, 'bogus') == []

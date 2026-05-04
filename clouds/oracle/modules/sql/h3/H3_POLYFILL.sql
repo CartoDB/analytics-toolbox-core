@@ -2,202 +2,64 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
+-- Private MLE binding to h3-js polyfill (CENTER mode for Polygon /
+-- MultiPolygon inputs; non-polygon inputs are silently ignored, matching
+-- the established SF/BQ pattern). Mode-aware filtering for intersects /
+-- contains is done in PL/SQL via SDO_GEOM.RELATE.
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_POLYFILL_JS
+(geojson CLOB, resolution NUMBER)
+RETURN CLOB
+AS MLE MODULE @@ORA_SCHEMA@@.h3_module
+SIGNATURE 'polyfill(string, number)';
+/
+
+-- Pipelined wrapper. Marshals SDO_GEOMETRY → GeoJSON, calls the JS
+-- export, then pipes each cell. NULL inputs or any error inside h3-js
+-- yield an empty pipeline.
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_POLYFILL
 (
     geom SDO_GEOMETRY, resolution NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED
-IS
-    -- Constants
-    RAW_BYTE_LENGTH CONSTANT PLS_INTEGER := 16;
-    SRID_WGS84 CONSTANT PLS_INTEGER := 4326;
-    POINT_GTYPE CONSTANT PLS_INTEGER := 2001;
+AS
     MIN_RESOLUTION CONSTANT PLS_INTEGER := 0;
     MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
-    TOLERANCE CONSTANT NUMBER := 0.0000001;
 
-    -- Geometry type constants (from SDO_GEOMETRY.GET_GTYPE())
-    GTYPE_POLYGON CONSTANT PLS_INTEGER := 3;
-    GTYPE_MULTIPOLYGON CONSTANT PLS_INTEGER := 7;
-    GTYPE_COLLECTION CONSTANT PLS_INTEGER := 4;
-
-    -- H3 average edge lengths in meters by resolution (from h3geo.org)
-    TYPE edge_array IS TABLE OF NUMBER INDEX BY PLS_INTEGER;
-    edge_lengths edge_array;
-
-    -- Working variables
-    res PLS_INTEGER;
-    gtype PLS_INTEGER;
-    mbr SDO_GEOMETRY;
-    mbr_ords SDO_ORDINATE_ARRAY;
-    west NUMBER;
-    south NUMBER;
-    east NUMBER;
-    north NUMBER;
-    center_lat NUMBER;
-    edge_m NUMBER;
-    step_lat NUMBER;
-    step_lon NUMBER;
-    cos_lat NUMBER;
-    grid_lat NUMBER;
-    grid_lon NUMBER;
-    sample_point SDO_GEOMETRY;
-    cell_raw RAW(8);
-    cell_hex VARCHAR2(16);
-    relates_result VARCHAR2(20);
-    h3_center SDO_GEOMETRY;
-    center_point SDO_GEOMETRY;
-    geom_srid PLS_INTEGER;
-
-    OVERSAMPLE_FACTOR CONSTANT NUMBER := 0.35;
-    METERS_PER_DEGREE CONSTANT NUMBER := 111320;
-
-    TYPE cell_map IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(16);
-    candidates cell_map;
-
-    TYPE sorted_map IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(16);
-    result_map sorted_map;
-    v_key VARCHAR2(16);
+    v_geom    SDO_GEOMETRY;
+    v_geojson CLOB;
+    v_cells   CLOB;
 BEGIN
     IF geom IS NULL OR resolution IS NULL THEN
         RETURN;
     END IF;
-
-    res := TRUNC(resolution);
-    IF res < MIN_RESOLUTION OR res > MAX_RESOLUTION THEN
+    IF resolution < MIN_RESOLUTION OR resolution > MAX_RESOLUTION THEN
         RETURN;
     END IF;
 
-    gtype := geom.GET_GTYPE();
-    IF gtype NOT IN (GTYPE_POLYGON, GTYPE_MULTIPOLYGON, GTYPE_COLLECTION) THEN
-        RETURN;
+    -- Ensure SRID 4326 so TO_GEOJSON emits WGS84 lon/lat.
+    IF geom.SDO_SRID IS NULL OR geom.SDO_SRID != 4326 THEN
+        v_geom := geom;
+        v_geom.SDO_SRID := 4326;
+    ELSE
+        v_geom := geom;
     END IF;
 
-    -- Track the input SRID so we can match it on H3 center points.
-    -- SDO_UTIL.H3_CENTER returns SRID 4326, but input may have NULL SRID
-    -- (e.g. from SDO_UTIL.FROM_WKTGEOMETRY). SDO_GEOM.RELATE requires
-    -- both geometries to have the same SRID.
-    geom_srid := geom.SDO_SRID;
+    v_geojson := SDO_UTIL.TO_GEOJSON(v_geom);
+    v_cells := @@ORA_SCHEMA@@.INTERNAL_H3_POLYFILL_JS(v_geojson, resolution);
 
-    edge_lengths(0) := 1281256.011;
-    edge_lengths(1) := 483056.8391;
-    edge_lengths(2) := 182512.9565;
-    edge_lengths(3) := 68979.22179;
-    edge_lengths(4) := 26071.75968;
-    edge_lengths(5) := 9854.090990;
-    edge_lengths(6) := 3724.532667;
-    edge_lengths(7) := 1406.475763;
-    edge_lengths(8) := 531.414010;
-    edge_lengths(9) := 200.786148;
-    edge_lengths(10) := 75.863783;
-    edge_lengths(11) := 28.663897;
-    edge_lengths(12) := 10.830188;
-    edge_lengths(13) := 4.092010;
-    edge_lengths(14) := 1.546100;
-    edge_lengths(15) := 0.584169;
-
-    edge_m := edge_lengths(res);
-
-    mbr := SDO_GEOM.SDO_MBR(geom);
-    IF mbr IS NULL THEN
-        RETURN;
-    END IF;
-
-    mbr_ords := mbr.SDO_ORDINATES;
-    IF mbr_ords IS NULL OR mbr_ords.COUNT < 4 THEN
-        RETURN;
-    END IF;
-
-    west := mbr_ords(1);
-    south := mbr_ords(2);
-    east := mbr_ords(3);
-    north := mbr_ords(4);
-
-    center_lat := (south + north) / 2;
-    cos_lat := COS(center_lat * 3.14159265358979323846 / 180);
-    IF cos_lat < 0.01 THEN
-        cos_lat := 0.01;
-    END IF;
-
-    step_lat := (edge_m * OVERSAMPLE_FACTOR) / METERS_PER_DEGREE;
-    step_lon := step_lat / cos_lat;
-
-    IF step_lat < 0.0000001 THEN
-        step_lat := 0.0000001;
-    END IF;
-    IF step_lon < 0.0000001 THEN
-        step_lon := 0.0000001;
-    END IF;
-
-    -- Phase 1: collect candidate cells over the bbox grid
-    grid_lat := south - step_lat;
-    WHILE grid_lat <= north + step_lat LOOP
-        grid_lon := west - step_lon;
-        WHILE grid_lon <= east + step_lon LOOP
-            sample_point := SDO_GEOMETRY(
-                POINT_GTYPE, SRID_WGS84,
-                SDO_POINT_TYPE(grid_lon, grid_lat, NULL),
-                NULL, NULL
-            );
-            BEGIN
-                cell_raw := SDO_UTIL.H3_KEY(sample_point, res);
-                cell_hex := LOWER(LTRIM(RAWTOHEX(cell_raw), '0'));
-                IF cell_hex IS NOT NULL AND LENGTH(cell_hex) > 0 THEN
-                    IF NOT candidates.EXISTS(cell_hex) THEN
-                        candidates(cell_hex) := 1;
-                    END IF;
-                END IF;
-            EXCEPTION
-                WHEN OTHERS THEN
-                    NULL;
-            END;
-            grid_lon := grid_lon + step_lon;
-        END LOOP;
-        grid_lat := grid_lat + step_lat;
-    END LOOP;
-
-    -- Phase 2: filter candidates by center-in-geometry check
-    v_key := candidates.FIRST;
-    WHILE v_key IS NOT NULL LOOP
-        BEGIN
-            cell_raw := HEXTORAW(LPAD(v_key, RAW_BYTE_LENGTH, '0'));
-            -- Re-create H3 center with input geometry's SRID so that
-            -- SDO_GEOM.RELATE can compare them
-            h3_center := SDO_UTIL.H3_CENTER(cell_raw);
-            center_point := SDO_GEOMETRY(
-                POINT_GTYPE, geom_srid,
-                SDO_POINT_TYPE(
-                    h3_center.SDO_POINT.X,
-                    h3_center.SDO_POINT.Y,
-                    NULL
-                ),
-                NULL, NULL
-            );
-            relates_result := SDO_GEOM.RELATE(
-                center_point, 'ANYINTERACT', geom, TOLERANCE
-            );
-            IF relates_result = 'TRUE' THEN
-                result_map(v_key) := 1;
-            END IF;
-        EXCEPTION
-            WHEN OTHERS THEN
-                NULL;
-        END;
-        v_key := candidates.NEXT(v_key);
-    END LOOP;
-
-    -- Phase 3: pipe rows in lexicographic key order
-    v_key := result_map.FIRST;
-    WHILE v_key IS NOT NULL LOOP
-        PIPE ROW(v_key);
-        v_key := result_map.NEXT(v_key);
+    FOR rec IN (
+        SELECT jt.cell AS h3
+        FROM JSON_TABLE(
+            v_cells, '$[*]'
+            COLUMNS (cell VARCHAR2(16) PATH '$')
+        ) jt
+    ) LOOP
+        PIPE ROW(rec.h3);
     END LOOP;
 
     RETURN;
 EXCEPTION
-    WHEN NO_DATA_NEEDED THEN
-        RETURN;
     WHEN OTHERS THEN
         RETURN;
-END H3_POLYFILL;
+END;
 /

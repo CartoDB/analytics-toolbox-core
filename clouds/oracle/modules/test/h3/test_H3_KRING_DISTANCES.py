@@ -13,18 +13,19 @@ def _kring_distances(origin_sql, distance_sql):
 
 def test_h3_kring_distances_distance_0():
     """K-ring distances with distance 0 returns origin at distance 0."""
-    assert _kring_distances("'8928308280fffff'", '0') == [
-        ('8928308280fffff', 0)
-    ]
+    assert _kring_distances("'8928308280fffff'", '0') == [('8928308280fffff', 0)]
 
 
 def test_h3_kring_distances_distance_1():
     """K-ring distances with distance 1 returns 7 entries."""
     expected = [
         ('8928308280fffff', 0),
-        ('89283082803ffff', 1), ('89283082807ffff', 1),
-        ('8928308280bffff', 1), ('89283082873ffff', 1),
-        ('89283082877ffff', 1), ('8928308283bffff', 1),
+        ('89283082803ffff', 1),
+        ('89283082807ffff', 1),
+        ('8928308280bffff', 1),
+        ('89283082873ffff', 1),
+        ('89283082877ffff', 1),
+        ('8928308283bffff', 1),
     ]
     actual = _kring_distances("'8928308280fffff'", '1')
     assert sorted(actual) == sorted(expected)
@@ -34,15 +35,24 @@ def test_h3_kring_distances_distance_2():
     """K-ring distances with distance 2 returns 19 entries."""
     expected = [
         ('8928308280fffff', 0),
-        ('89283082803ffff', 1), ('89283082807ffff', 1),
-        ('8928308280bffff', 1), ('89283082873ffff', 1),
-        ('89283082877ffff', 1), ('8928308283bffff', 1),
-        ('89283082813ffff', 2), ('89283082817ffff', 2),
-        ('8928308281bffff', 2), ('89283082823ffff', 2),
-        ('8928308282bffff', 2), ('89283082833ffff', 2),
-        ('89283082847ffff', 2), ('89283082857ffff', 2),
-        ('89283082863ffff', 2), ('89283082867ffff', 2),
-        ('8928308287bffff', 2), ('892830828abffff', 2),
+        ('89283082803ffff', 1),
+        ('89283082807ffff', 1),
+        ('8928308280bffff', 1),
+        ('89283082873ffff', 1),
+        ('89283082877ffff', 1),
+        ('8928308283bffff', 1),
+        ('89283082813ffff', 2),
+        ('89283082817ffff', 2),
+        ('8928308281bffff', 2),
+        ('89283082823ffff', 2),
+        ('8928308282bffff', 2),
+        ('89283082833ffff', 2),
+        ('89283082847ffff', 2),
+        ('89283082857ffff', 2),
+        ('89283082863ffff', 2),
+        ('89283082867ffff', 2),
+        ('8928308287bffff', 2),
+        ('892830828abffff', 2),
     ]
     actual = _kring_distances("'8928308280fffff'", '2')
     assert sorted(actual) == sorted(expected)

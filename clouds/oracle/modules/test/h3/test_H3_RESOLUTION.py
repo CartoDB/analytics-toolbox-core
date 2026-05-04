@@ -31,8 +31,6 @@ def test_h3_resolution_invalid():
 
 def test_h3_resolution_null():
     """Returns NULL for NULL input."""
-    result = run_query(
-        'SELECT @@ORA_SCHEMA@@.H3_RESOLUTION(NULL) FROM DUAL'
-    )
+    result = run_query('SELECT @@ORA_SCHEMA@@.H3_RESOLUTION(NULL) FROM DUAL')
     assert len(result) == 1
     assert result[0][0] is None

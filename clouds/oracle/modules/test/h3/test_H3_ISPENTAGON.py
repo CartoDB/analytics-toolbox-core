@@ -31,8 +31,6 @@ def test_h3_ispentagon_invalid():
 
 def test_h3_ispentagon_null():
     """Returns 0 for NULL input."""
-    result = run_query(
-        'SELECT @@ORA_SCHEMA@@.H3_ISPENTAGON(NULL) FROM DUAL'
-    )
+    result = run_query('SELECT @@ORA_SCHEMA@@.H3_ISPENTAGON(NULL) FROM DUAL')
     assert len(result) == 1
     assert result[0][0] == 0

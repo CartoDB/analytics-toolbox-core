@@ -13,8 +13,6 @@ def test_h3_string_toint():
 
 def test_h3_string_toint_null():
     """Returns NULL for NULL input."""
-    result = run_query(
-        'SELECT @@ORA_SCHEMA@@.H3_STRING_TOINT(NULL) FROM DUAL'
-    )
+    result = run_query('SELECT @@ORA_SCHEMA@@.H3_STRING_TOINT(NULL) FROM DUAL')
     assert len(result) == 1
     assert result[0][0] is None

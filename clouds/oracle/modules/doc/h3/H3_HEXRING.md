@@ -6,7 +6,7 @@ H3_HEXRING(origin, size)
 
 **Description**
 
-Returns all cell indexes in a **hollow hexagonal ring** centered at the origin in no particular order. For `size = 0` returns just the origin (matching the BigQuery, Snowflake and Postgres implementations in this repo). Returns no rows for invalid input or negative `size`.
+Returns all cell indexes in a **hollow hexagonal ring** centered at the origin in no particular order. For `size = 0` returns just the origin. Returns no rows for invalid input or negative `size`.
 
 **Input parameters**
 
