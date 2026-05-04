@@ -110,18 +110,11 @@ def test_h3_polyfill_mode_line_returns_empty():
 
 
 @pytest.mark.parametrize(
-    'label,wkt,resolution,mode,expected',
+    'wkt,resolution,mode,expected',
     [
-        ('Polygon center 9', POLYGON_WKT, 9, 'center', ['89390cb1b4bffff']),
+        (POLYGON_WKT, 9, 'center', ['89390cb1b4bffff']),
+        (POLYGON_WKT, 10, 'contains', ['8a390cb1b487fff', '8a390cb1b4b7fff']),
         (
-            'Polygon contains 10',
-            POLYGON_WKT,
-            10,
-            'contains',
-            ['8a390cb1b487fff', '8a390cb1b4b7fff'],
-        ),
-        (
-            'Polygon intersects 9',
             POLYGON_WKT,
             9,
             'intersects',
@@ -134,22 +127,9 @@ def test_h3_polyfill_mode_line_returns_empty():
                 '89390cb1b5bffff',
             ],
         ),
+        (MULTI_POLYGON_WKT, 9, 'center', ['89390cb1b4bffff']),
+        (MULTI_POLYGON_WKT, 10, 'contains', []),
         (
-            'MultiPolygon center 9',
-            MULTI_POLYGON_WKT,
-            9,
-            'center',
-            ['89390cb1b4bffff'],
-        ),
-        (
-            'MultiPolygon contains 10',
-            MULTI_POLYGON_WKT,
-            10,
-            'contains',
-            [],
-        ),
-        (
-            'MultiPolygon intersects 9',
             MULTI_POLYGON_WKT,
             9,
             'intersects',
@@ -164,13 +144,19 @@ def test_h3_polyfill_mode_line_returns_empty():
             ],
         ),
     ],
+    ids=[
+        'polygon-center-9',
+        'polygon-contains-10',
+        'polygon-intersects-9',
+        'multipolygon-center-9',
+        'multipolygon-contains-10',
+        'multipolygon-intersects-9',
+    ],
 )
-def test_h3_polyfill_mode_fixtures(label, wkt, resolution, mode, expected):
+def test_h3_polyfill_mode_fixtures(wkt, resolution, mode, expected):
     """H3_POLYFILL_MODE polygon fixture matrix — exact cell sets."""
     cells = sorted(_polyfill_mode(wkt, resolution, mode))
-    assert cells == sorted(
-        expected
-    ), f'{label}: got {cells}, expected {sorted(expected)}'
+    assert cells == sorted(expected), f'got {cells}, expected {sorted(expected)}'
 
 
 def test_h3_polyfill_mode_center_matches_h3_polyfill():

@@ -19,14 +19,19 @@ AS
     RAW_BYTE_LENGTH CONSTANT PLS_INTEGER := 16;
     TOLERANCE CONSTANT NUMBER := 0.0000001;
 
-    v_mode      VARCHAR2(20);
-    v_geom      SDO_GEOMETRY;
-    v_geojson   CLOB;
-    v_cells     CLOB;
-    v_cell_raw  RAW(8);
-    v_h3_geom   SDO_GEOMETRY;
-    v_relates   VARCHAR2(20);
-    v_geom_srid PLS_INTEGER;
+    -- SDO_GEOMETRY GET_GTYPE codes for polygon-shaped inputs
+    GTYPE_POLYGON      CONSTANT PLS_INTEGER := 3;
+    GTYPE_MULTIPOLYGON CONSTANT PLS_INTEGER := 7;
+
+    v_mode       VARCHAR2(20);
+    v_geom       SDO_GEOMETRY;
+    v_geojson    CLOB;
+    v_cells      CLOB;
+    v_cell_raw   RAW(8);
+    v_h3_geom    SDO_GEOMETRY;
+    v_relates    VARCHAR2(20);
+    v_geom_srid  PLS_INTEGER;
+    v_is_polygon BOOLEAN;
 
     -- Set used for de-duplication across kring expansion.
     TYPE cell_set IS TABLE OF PLS_INTEGER INDEX BY VARCHAR2(16);
@@ -43,6 +48,14 @@ BEGIN
 
     v_mode := LOWER(polyfill_mode);
     IF v_mode NOT IN ('center', 'intersects', 'contains') THEN
+        RETURN;
+    END IF;
+
+    -- Polygon types qualify for the full polyfill pipeline. Non-polygon
+    -- geometries (points, lines, etc.) are silently ignored to match the
+    -- behaviour documented on the H3_POLYFILL/H3_POLYFILL_MODE doc pages.
+    v_is_polygon := geom.GET_GTYPE() IN (GTYPE_POLYGON, GTYPE_MULTIPOLYGON);
+    IF NOT v_is_polygon THEN
         RETURN;
     END IF;
 
@@ -74,8 +87,16 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Intersects / contains: build a candidate set (center cells
-    -- + their kring-1 neighbours) and filter by SDO_GEOM.RELATE.
+    -- Intersects / contains: build a candidate set and filter by
+    -- SDO_GEOM.RELATE. Three sources of seeds:
+    --   (a) center cells from h3-js (polygons large enough to span ≥1 cell)
+    --   (b) cells containing each polygon vertex (guarantees non-empty
+    --       candidates for polygons smaller than one h3 cell at this
+    --       resolution — h3-js polyfill returns [] in that case)
+    --   (c) kring-1 expansion of (a) ∪ (b) — catches cells whose boundary
+    --       crosses polygon edges between sample points
+    --
+    -- Step (a): center cells
     FOR rec IN (
         SELECT jt.cell AS h3
         FROM JSON_TABLE(
@@ -84,13 +105,57 @@ BEGIN
         ) jt
     ) LOOP
         candidates(rec.h3) := 1;
-        FOR ring IN (
-            SELECT COLUMN_VALUE AS h3
-            FROM TABLE(@@ORA_SCHEMA@@.H3_KRING(rec.h3, 1))
-        ) LOOP
-            candidates(ring.h3) := 1;
-        END LOOP;
     END LOOP;
+
+    -- Step (b): vertex seeds via SDO_UTIL.H3_KEY (native Oracle h3)
+    DECLARE
+        v_pt   SDO_GEOMETRY;
+        v_raw  RAW(8);
+        v_hex  VARCHAR2(16);
+    BEGIN
+        FOR vrt IN (
+            SELECT v.x AS lon, v.y AS lat
+            FROM TABLE(SDO_UTIL.GETVERTICES(v_geom)) v
+        ) LOOP
+            BEGIN
+                v_pt := SDO_GEOMETRY(
+                    2001, 4326,
+                    SDO_POINT_TYPE(vrt.lon, vrt.lat, NULL),
+                    NULL, NULL
+                );
+                v_raw := SDO_UTIL.H3_KEY(v_pt, resolution);
+                v_hex := LOWER(LTRIM(RAWTOHEX(v_raw), '0'));
+                IF v_hex IS NOT NULL THEN
+                    candidates(v_hex) := 1;
+                END IF;
+            EXCEPTION
+                WHEN OTHERS THEN NULL;
+            END;
+        END LOOP;
+    END;
+
+    -- Step (c): expand by kring(1). Snapshot keys first so the iteration
+    -- isn't disturbed by additions during expansion.
+    DECLARE
+        TYPE seed_array IS TABLE OF VARCHAR2(16) INDEX BY PLS_INTEGER;
+        seeds seed_array;
+        n PLS_INTEGER := 0;
+    BEGIN
+        v_key := candidates.FIRST;
+        WHILE v_key IS NOT NULL LOOP
+            n := n + 1;
+            seeds(n) := v_key;
+            v_key := candidates.NEXT(v_key);
+        END LOOP;
+        FOR i IN 1 .. n LOOP
+            FOR ring IN (
+                SELECT COLUMN_VALUE AS h3
+                FROM TABLE(@@ORA_SCHEMA@@.H3_KRING(seeds(i), 1))
+            ) LOOP
+                candidates(ring.h3) := 1;
+            END LOOP;
+        END LOOP;
+    END;
 
     v_key := candidates.FIRST;
     WHILE v_key IS NOT NULL LOOP
