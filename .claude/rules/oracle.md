@@ -76,9 +76,9 @@ Functions whose output size depends on input parameters MUST be pipelined. Fixed
 
 ### Type placement
 
-Types are declared in the same SQL file as the function that uses them, before the function body. Keeps a single point of edit per function and removes the need to track cross-file dependencies.
+Each module collects its types in a single `_types.sql` file at the module root (e.g. `clouds/oracle/modules/sql/h3/_types.sql`). MLE modules likewise live in `_module.sql`. Deploy order is solved by the build's dependency walker — files that reference `@@ORA_SCHEMA@@.<TYPE>` or `AS MLE MODULE ... <NAME>` pull in the defining file before themselves, so no filename prefix is load-bearing.
 
-Shared types (used by multiple functions in a module) go in a dedicated `00_<type_name>.sql` file — the `00_` prefix ensures alphabetical deploy ordering (types before functions that consume them). Module-scoped; promote to `clouds/oracle/libraries/types/` only if a genuine cross-cutting pattern emerges.
+The `_types.sql` / `_module.sql` filenames are intentionally reused across modules. The build (`clouds/oracle/common/build_modules.js`) keys files by `module/name` everywhere — output dedup, dependency lookup, and circular-check — so the collision is just a naming convenience, not a functional one. Promote a type to `clouds/oracle/libraries/types/` only if a genuine cross-cutting pattern emerges.
 
 ### Idempotent type deployment
 
@@ -108,7 +108,7 @@ The `BEGIN … EXCEPTION WHEN OTHERS THEN NULL; END;` pattern is Oracle's idiom 
 
 ### Naming
 
-Module-prefixed type names: `H3_INDEX_ARRAY`, `H3_DISTANCE_PAIR`, `QUADBIN_INDEX_ARRAY`, `QUADBIN_ZXY`, etc. Avoids schema-wide collisions and documents ownership.
+Module-prefixed type names: `H3_INDEX_ARRAY`, `H3_DISTANCE_PAIR`, `QUADBIN_INDEX_ARRAY`, `QUADBIN_ZXY`, etc. Avoids schema-wide collisions and documents ownership. The build enforces this — defining the same identifier (function, type, or MLE module) in two files fails the build with `ERROR: <NAME> defined in both <module>/<file> and <module>/<file>`.
 
 ### SRID rule
 
