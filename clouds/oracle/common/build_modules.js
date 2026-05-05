@@ -30,7 +30,7 @@ if (all) {
     console.log(`- Build input functions: ${argv.functions}`);
 }
 
-// Convert diff to modules/functions
+// Convert diff to modules
 if (diff.length) {
     const patternsAll = [
         /\.github\/workflows\/oracle\.yml/,
@@ -56,7 +56,9 @@ if (diff.length) {
     }
 }
 
-// Extract functions
+// Extract functions. Files like _types.sql and _module.sql are intentionally
+// reused across modules (per the typing convention), so each file is
+// keyed by "module/name" internally to disambiguate.
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
@@ -84,6 +86,10 @@ for (let inputDir of inputDirs) {
     });
 }
 
+const fnKey = f => `${f.module}/${f.name}`;
+const byKey = {};
+functions.forEach(f => { byKey[fnKey(f)] = f; });
+
 // Check filters
 modulesFilter.forEach(m => {
     if (!functions.map(fn => fn.module).includes(m)) {
@@ -98,85 +104,33 @@ functionsFilter.forEach(f => {
     }
 });
 
-// Index files by "module/name" — filenames like _types.sql and
-// _module.sql are intentionally reused across modules, so identifying a
-// file by its bare name is ambiguous.
-const fnKey = f => `${f.module}/${f.name}`;
-const byKey = {};
-functions.forEach(f => { byKey[fnKey(f)] = f; });
-
-// Extract function and type dependencies
-//
-// Three reference patterns are detected:
-//   1. Function calls:    @@SCHEMA@@.NAME(   — paren-suffixed
-//   2. MLE module refs:   AS MLE MODULE NAME — keyword-prefixed
-//   3. Type references:   @@SCHEMA@@.NAME    — bare (no paren)
-//
-// For (3), we collect the names of types/modules each file *defines* by
-// scanning for CREATE TYPE / CREATE OR REPLACE MLE MODULE, then mark a
-// dependency when another file references one of those names. Files that
-// only define types (e.g. _types.sql) end up topologically before any
-// function that uses them, with no filename convention required.
-if (!nodeps) {
-    // Map: object name → fnKey of the file that defines it.
-    const definedBy = {};
-    // Enforce the "module-prefixed type names" convention: a SQL identifier
-    // (function, type, MLE module) must be defined in exactly one file.
-    // Otherwise the dep walk silently picks one definition and deploy fails
-    // later with a confusing PLS-00201.
-    const define = (name, f) => {
-        const key = name.toUpperCase();
-        if (definedBy[key] && definedBy[key] !== fnKey(f)) {
-            console.log(
-                `ERROR: ${name} defined in both ${definedBy[key]} and ${fnKey(f)}`
-            );
-            process.exit(1);
+// Module-shared files (_types.sql, _module.sql): types and MLE modules
+// are module-scoped and module-private by convention. Any non-shared
+// file in module M synthetically depends on M's shared files, so the
+// topological sort guarantees they're emitted first within the module.
+const isShared = f => f.name.startsWith('_');
+functions.forEach(f => {
+    if (isShared(f)) return;
+    functions.forEach(s => {
+        if (!isShared(s) || s.module !== f.module) return;
+        if (!f.dependencies.includes(fnKey(s))) {
+            f.dependencies.push(fnKey(s));
         }
-        definedBy[key] = fnKey(f);
-    };
-    functions.forEach(f => {
-        // Function/procedure definitions. Detected from the SQL itself
-        // rather than the filename, so consolidated files like _types.sql
-        // and _module.sql (which only define types/MLE modules) don't
-        // register a spurious entry under their own filename.
-        const fnMatches = f.content.matchAll(
-            /CREATE\s+(?:OR\s+REPLACE\s+)?(?:FUNCTION|PROCEDURE)\s+@@\w+@@\.(\w+)/gi
-        );
-        for (const m of fnMatches) define(m[1], f);
-        // CREATE [OR REPLACE] TYPE @@SCHEMA@@.NAME
-        const typeMatches = f.content.matchAll(
-            /CREATE\s+(?:OR\s+REPLACE\s+)?TYPE\s+@@\w+@@\.(\w+)/gi
-        );
-        for (const m of typeMatches) define(m[1], f);
-        // CREATE OR REPLACE MLE MODULE [@@SCHEMA@@.]NAME
-        const mleMatches = f.content.matchAll(
-            /CREATE\s+(?:OR\s+REPLACE\s+)?MLE\s+MODULE\s+(?:@@\w+@@\.)?(\w+)/gi
-        );
-        for (const m of mleMatches) define(m[1], f);
     });
+});
 
+// Extract function-call dependencies. Mirrors the algorithm used by
+// every other cloud: a file referencing @@SCHEMA@@.NAME( depends on
+// the file named NAME in that file's module (or any module — function
+// names are unique across modules).
+if (!nodeps) {
     functions.forEach(mainFunction => {
-        const mainKey = fnKey(mainFunction);
-        Object.keys(definedBy).forEach(name => {
-            const definerKey = definedBy[name];
-            if (mainKey === definerKey) return;
-            const content = mainFunction.content;
-            // (1) function call:  @@SCHEMA@@.NAME(
-            const isFunctionCall = content.includes(`SCHEMA@@.${name}(`);
-            // (2) MLE module ref:  AS MLE MODULE [@@SCHEMA@@.]NAME
-            const mleRef = new RegExp(
-                `\\bAS\\s+MLE\\s+MODULE\\s+(?:@@\\w+@@\\.)?${name}\\b`, 'i'
-            );
-            const isMleRef = mleRef.test(content);
-            // (3) bare type ref:   @@SCHEMA@@.NAME (not followed by '(' or word char)
-            const typeRef = new RegExp(
-                `@@\\w+@@\\.${name}(?![\\w(])`, 'i'
-            );
-            const isTypeRef = typeRef.test(content);
-
-            if (isFunctionCall || isMleRef || isTypeRef) {
-                if (!mainFunction.dependencies.includes(definerKey)) {
-                    mainFunction.dependencies.push(definerKey);
+        functions.forEach(depFunction => {
+            if (isShared(depFunction)) return;
+            if (fnKey(mainFunction) === fnKey(depFunction)) return;
+            if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (!mainFunction.dependencies.includes(fnKey(depFunction))) {
+                    mainFunction.dependencies.push(fnKey(depFunction));
                 }
             }
         });
@@ -184,16 +138,17 @@ if (!nodeps) {
 }
 
 // Check circular dependencies
-functions.forEach(mainFunction => {
-    const mainKey = fnKey(mainFunction);
-    for (const depKey of mainFunction.dependencies) {
-        const depFunction = byKey[depKey];
-        if (depFunction && depFunction.dependencies.includes(mainKey)) {
-            console.log(`ERROR: Circular dependency between ${mainKey} and ${depKey}`);
-            process.exit(1);
+if (!nodeps) {
+    functions.forEach(mainFunction => {
+        for (const depKey of mainFunction.dependencies) {
+            const depFunction = byKey[depKey];
+            if (depFunction && depFunction.dependencies.includes(fnKey(mainFunction))) {
+                console.log(`ERROR: Circular dependency between ${fnKey(mainFunction)} and ${depKey}`);
+                process.exit(1);
+            }
         }
-    }
-});
+    });
+}
 
 // Filter and order functions
 const output = [];
@@ -204,7 +159,7 @@ function add (f, include) {
         const dep = byKey[dependencyKey];
         if (dep) add(dep, include);
     }
-    const key = `${f.module}/${f.name}`;
+    const key = fnKey(f);
     if (!seen.has(key) && include) {
         seen.add(key);
         output.push({

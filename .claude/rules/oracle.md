@@ -76,9 +76,11 @@ Functions whose output size depends on input parameters MUST be pipelined. Fixed
 
 ### Type placement
 
-Each module collects its types in a single `_types.sql` file at the module root (e.g. `clouds/oracle/modules/sql/h3/_types.sql`). MLE modules likewise live in `_module.sql`. Deploy order is solved by the build's dependency walker — files that reference `@@ORA_SCHEMA@@.<TYPE>` or `AS MLE MODULE ... <NAME>` pull in the defining file before themselves, so no filename prefix is load-bearing.
+Each module collects its types in a single `_types.sql` file at the module root (e.g. `clouds/oracle/modules/sql/h3/_types.sql`). MLE modules likewise live in `_module.sql`. Types and MLE modules are **module-scoped and module-private**: they are referenced only by other files in the same module, never across modules.
 
-The `_types.sql` / `_module.sql` filenames are intentionally reused across modules. The build (`clouds/oracle/common/build_modules.js`) keys files by `module/name` everywhere — output dedup, dependency lookup, and circular-check — so the collision is just a naming convenience, not a functional one. Promote a type to `clouds/oracle/libraries/types/` only if a genuine cross-cutting pattern emerges.
+The build (`clouds/oracle/common/build_modules.js`) honors this convention structurally: any non-shared file in module M synthetically depends on M's `_types.sql` and `_module.sql`, so they are emitted first within the module and auto-included whenever any file from M is included. No content-scanning or filename-prefix ordering is needed.
+
+The `_types.sql` / `_module.sql` filenames are intentionally reused across modules. The build keys files by `module/name` to disambiguate. Promote a type to `clouds/oracle/libraries/types/` only if a genuine cross-cutting pattern emerges; that would require relaxing the module-private rule and is intentionally not supported in v1.0.
 
 ### Idempotent type deployment
 
@@ -108,7 +110,7 @@ The `BEGIN … EXCEPTION WHEN OTHERS THEN NULL; END;` pattern is Oracle's idiom 
 
 ### Naming
 
-Module-prefixed type names: `H3_INDEX_ARRAY`, `H3_DISTANCE_PAIR`, `QUADBIN_INDEX_ARRAY`, `QUADBIN_ZXY`, etc. Avoids schema-wide collisions and documents ownership. The build enforces this — defining the same identifier (function, type, or MLE module) in two files fails the build with `ERROR: <NAME> defined in both <module>/<file> and <module>/<file>`.
+Module-prefixed type names: `H3_INDEX_ARRAY`, `H3_DISTANCE_PAIR`, `QUADBIN_INDEX_ARRAY`, `QUADBIN_ZXY`, etc. Avoids schema-wide collisions and documents ownership.
 
 ### SRID rule
 
