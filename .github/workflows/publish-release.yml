@@ -14,6 +14,7 @@ jobs:
     outputs:
       change_bq: ${{ steps.changes.outputs.bigquery }}
       change_db: ${{ steps.changes.outputs.databricks }}
+      change_ora: ${{ steps.changes.outputs.oracle }}
       change_pg: ${{ steps.changes.outputs.postgres }}
       change_rs: ${{ steps.changes.outputs.redshift }}
       change_sf: ${{ steps.changes.outputs.snowflake }}
@@ -44,6 +45,8 @@ jobs:
               - 'clouds/bigquery/version'
             databricks:
               - 'clouds/databricks/version'
+            oracle:
+              - 'clouds/oracle/version'
             postgres:
               - 'clouds/postgres/version'
             redshift:
@@ -55,6 +58,7 @@ jobs:
         run: |
           BQ_VERSION=$(cat clouds/bigquery/version)
           DB_VERSION=$(cat clouds/databricks/version)
+          ORA_VERSION=$(cat clouds/oracle/version)
           PG_VERSION=$(cat clouds/postgres/version)
           RS_VERSION=$(cat clouds/redshift/version)
           SF_VERSION=$(cat clouds/snowflake/version)
@@ -64,6 +68,9 @@ jobs:
           fi
           if [[ ${{ steps.changes.outputs.databricks }} = "true" ]]; then
             RELEASE_BODY+="\n- Databricks release version $DB_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/databricks/CHANGELOG.md)"
+          fi
+          if [[ ${{ steps.changes.outputs.oracle }} = "true" ]]; then
+            RELEASE_BODY+="\n- Oracle release version $ORA_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/oracle/CHANGELOG.md)"
           fi
           if [[ ${{ steps.changes.outputs.postgres }} = "true" ]]; then
             RELEASE_BODY+="\n- Postgres release version $PG_VERSION - [CHANGELOG](https://github.com/${{ github.repository }}/blob/stable/clouds/postgres/CHANGELOG.md)"
@@ -109,6 +116,13 @@ jobs:
     if: needs.release.outputs.change_bq == 'true'
     name: "Publish AT for BigQuery"
     uses: CartoDB/analytics-toolbox-core/.github/workflows/bigquery.yml@stable
+    secrets: inherit
+
+  publish-ora:
+    needs: release
+    if: needs.release.outputs.change_ora == 'true'
+    name: "Publish AT for Oracle"
+    uses: CartoDB/analytics-toolbox-core/.github/workflows/oracle.yml@stable
     secrets: inherit
 
   publish-pg:
