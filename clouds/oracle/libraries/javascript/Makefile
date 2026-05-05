@@ -4,17 +4,31 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 LIBS_DIR ?= $(ROOT_DIR)/libs
 SRC_DIR ?= $(ROOT_DIR)/src
+TEST_DIR ?= $(ROOT_DIR)/test
 BUILD_DIR ?= $(ROOT_DIR)/build
+ESLINTRC_DIR ?= $(ROOT_DIR)/../../../..
 COMMON_DIR = $(ROOT_DIR)/../../common
 
 include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help build clean
+.PHONY: help lint lint-fix build clean
 
 help:
-	echo "Available targets: build clean"
+	echo "Available targets: lint lint-fix build clean"
+
+lint: $(NODE_MODULES_DEV)
+	echo "Linting libraries..."
+	echo "- Lint JavaScript files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR)
+
+lint-fix: $(NODE_MODULES_DEV)
+	echo "Auto-fixing lint issues in libraries..."
+	echo "- Fix JavaScript files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(LIBS_DIR) $(SRC_DIR) $(TEST_DIR) --fix
 
 # Build all JS libraries: one rollup invocation per *.js file in libs/.
 # Output goes to build/<name>.js for substitution into _module.sql via
