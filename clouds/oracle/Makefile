@@ -19,12 +19,20 @@ help:
 	echo "Available targets: lint lint-fix build deploy test remove clean create-package"
 
 lint:
+	$(MAKE) lint-libraries
 	$(MAKE) lint-modules
 	$(MAKE) lint-common
 
 lint-fix:
+	$(MAKE) lint-fix-libraries
 	$(MAKE) lint-fix-modules
 	$(MAKE) lint-fix-common
+
+lint-libraries:
+	$(MAKE) -C libraries/javascript lint
+
+lint-fix-libraries:
+	$(MAKE) -C libraries/javascript lint-fix
 
 lint-modules:
 	$(MAKE) -C modules lint
