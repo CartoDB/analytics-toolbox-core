@@ -40,13 +40,18 @@ def _ensure_file_header(caller_file):
         return
     _FILE_HEADER_PRINTED_FOR.add(caller_file)
     rel = os.path.relpath(caller_file, os.path.dirname(_results_path()))
-    header = '\n'.join([
-        '',
-        f'### {rel}',
-        '',
-        '| Workload | Mode | Time (s) |',
-        '|---|---|---|',
-    ]) + '\n'
+    header = (
+        '\n'.join(
+            [
+                '',
+                f'### {rel}',
+                '',
+                '| Workload | Mode | Time (s) |',
+                '|---|---|---|',
+            ]
+        )
+        + '\n'
+    )
     sys.stdout.write(header)
     with open(_results_path(), 'a') as f:
         f.write(header)
