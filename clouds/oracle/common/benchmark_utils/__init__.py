@@ -5,7 +5,7 @@ per-function timing benchmarks that print a markdown row to stdout and
 append to clouds/oracle/benchmark_results.md (location overridable via
 the BENCHMARK_RESULTS_FILE env var).
 
-Used by clouds/oracle/modules/benchmarks/<module>/benchmark_<FUNCTION>.py
+Used by clouds/oracle/modules/benchmark/<module>/benchmark_<FUNCTION>.py
 files invoked via `make benchmark` (which sets PYTHONPATH and
 BENCHMARK_RESULTS_FILE).
 """

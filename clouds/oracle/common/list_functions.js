@@ -18,9 +18,9 @@ let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
 
 // type=test (default) scans modules/test/<module>/test_<FUNCTION>.py
-// type=benchmark scans modules/benchmarks/<module>/benchmark_<FUNCTION>.py
+// type=benchmark scans modules/benchmark/<module>/benchmark_<FUNCTION>.py
 const type = argv.type === 'benchmark' ? 'benchmark' : 'test';
-const subdir = type === 'benchmark' ? 'benchmarks' : 'test';
+const subdir = type === 'benchmark' ? 'benchmark' : 'test';
 const filePrefix = type === 'benchmark' ? 'benchmark_' : 'test_';
 
 // Convert diff to modules/functions

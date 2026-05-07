@@ -5,7 +5,7 @@ Per-function timing benchmarks for the Oracle modules. Each benchmark runs once,
 ## Layout
 
 ```
-clouds/oracle/modules/benchmarks/
+clouds/oracle/modules/benchmark/
 ├── h3/
 │   └── benchmark_H3_<FUNCTION>.py
 └── quadbin/
@@ -69,7 +69,7 @@ Results accumulate in `clouds/oracle/benchmark_results.md` (gitignored). Each Ma
 ## Authoring a new benchmark
 
 ```python
-# clouds/oracle/modules/benchmarks/<module>/benchmark_<FUNCTION>.py
+# clouds/oracle/modules/benchmark/<module>/benchmark_<FUNCTION>.py
 from benchmark_utils import bench
 
 SOURCE_TABLE = '@@ORA_SCHEMA@@.SAMPLE_TABLE'

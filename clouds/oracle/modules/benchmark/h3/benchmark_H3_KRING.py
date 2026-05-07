@@ -1,4 +1,5 @@
-"""Benchmark for H3_KRING."""
+# Copyright (c) 2026, CARTO
+
 from benchmark_utils import bench
 
 # === Tweak for your environment ===
