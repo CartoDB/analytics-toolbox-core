@@ -12,6 +12,7 @@ __pycache__/
 
 *.log
 *.pyc
+benchmark_results.md
 snowsql_rt.*
 .DS_STORE
 .env*

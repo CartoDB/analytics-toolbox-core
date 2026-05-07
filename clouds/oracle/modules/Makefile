@@ -17,7 +17,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint lint-fix build deploy test remove clean
+.PHONY: help lint lint-fix build deploy test benchmark remove clean
 
 help:
 	echo "Available targets: lint lint-fix build deploy test remove clean"
@@ -75,6 +75,22 @@ test: check venv3 $(NODE_MODULES_DEV)
 	if [ ! -z "`$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`" ]; then \
 		$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv `$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 	fi;
+
+benchmark: check venv3 $(NODE_MODULES_DEV)
+	echo "Running Oracle module benchmarks..."
+	{ \
+		echo ""; \
+		echo "## Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+	} >> $(ROOT_DIR)/../benchmark_results.md
+	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --modules=$(modules) --functions=$(functions)`; \
+	if [ -n "$$files" ]; then \
+		for f in $$files; do \
+			echo "→ $$f"; \
+			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../benchmark_results.md $(VENV3_BIN)/python "$$f"; \
+		done; \
+	else \
+		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
+	fi
 
 remove: venv3
 	echo "Removing Oracle modules..."
