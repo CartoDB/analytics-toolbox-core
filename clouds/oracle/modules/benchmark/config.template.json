@@ -1,15 +1,124 @@
 {
+    "H3_BOUNDARY": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_CENTER": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_COMPACT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_DISTANCE": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_FROMGEOGPOINT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "geom_column": "geom", "resolution": 9}
+    ],
+    "H3_FROMLONGLAT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "lon_column": "lon", "lat_column": "lat", "resolution": 9}
+    ],
+    "H3_HEXRING": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3", "size": 2}
+    ],
+    "H3_INT_TOSTRING": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_ISPENTAGON": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_ISVALID": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
     "H3_KRING": [
-        {
-            "source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE",
-            "h3_column": "h3",
-            "size": 2
-        }
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3", "size": 2}
+    ],
+    "H3_KRING_DISTANCES": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3", "size": 2}
     ],
     "H3_POLYFILL": [
+        {"geog": "POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))", "resolution": 9}
+    ],
+    "H3_POLYFILL_MODE": [
+        {"geog": "POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))", "resolution": 9, "mode": "center"},
+        {"geog": "POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))", "resolution": 9, "mode": "intersects"},
+        {"geog": "POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))", "resolution": 9, "mode": "contains"}
+    ],
+    "H3_POLYFILL_TABLE": [
         {
-            "geog": "POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))",
-            "resolution": 9
+            "input_query": "SELECT SDO_UTIL.FROM_WKTGEOMETRY(''POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))'') AS geom FROM DUAL",
+            "resolution": 9,
+            "mode": "center",
+            "output_table": "@@ORA_SCHEMA@@.BENCH_H3_POLYFILL_OUT"
         }
+    ],
+    "H3_RESOLUTION": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_STRING_TOINT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3"}
+    ],
+    "H3_TOCHILDREN": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3", "resolution": 11}
+    ],
+    "H3_TOPARENT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3", "resolution": 7}
+    ],
+    "H3_UNCOMPACT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "h3_column": "h3", "resolution": 11}
+    ],
+
+    "QUADBIN_BBOX": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_BOUNDARY": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_CENTER": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_DISTANCE": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_FROMGEOGPOINT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "geom_column": "geom", "resolution": 14}
+    ],
+    "QUADBIN_FROMLONGLAT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "lon_column": "lon", "lat_column": "lat", "resolution": 14}
+    ],
+    "QUADBIN_FROMQUADKEY": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_FROMZXY": [
+        {"z": 14, "x": 8053, "y": 6160}
+    ],
+    "QUADBIN_ISVALID": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_KRING": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "size": 2}
+    ],
+    "QUADBIN_KRING_DISTANCES": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "size": 2}
+    ],
+    "QUADBIN_POLYFILL": [
+        {"geog": "POLYGON((-3.85 40.30, -3.55 40.30, -3.55 40.55, -3.85 40.55, -3.85 40.30))", "resolution": 14}
+    ],
+    "QUADBIN_RESOLUTION": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_SIBLING": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "direction": "right"}
+    ],
+    "QUADBIN_TOCHILDREN": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "resolution": 16}
+    ],
+    "QUADBIN_TOPARENT": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "resolution": 12}
+    ],
+    "QUADBIN_TOQUADKEY": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_TOZXY": [
+        {"source_table": "@@ORA_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
     ]
 }

@@ -3,7 +3,7 @@
 from benchmark_utils import benchmark
 
 benchmark(
-    function='H3_KRING',
+    function='H3_KRING_DISTANCES',
     sql="""SELECT COUNT(*) FROM ${source_table} t,
-TABLE(@@ORA_SCHEMA@@.H3_KRING(t.${h3_column}, ${size}))""",
+TABLE(@@ORA_SCHEMA@@.H3_KRING_DISTANCES(t.${h3_column}, ${size}))""",
 )

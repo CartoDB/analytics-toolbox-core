@@ -3,14 +3,21 @@ import json
 import os
 import sys
 import time
+from string import Template
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from test_utils import run_query  # noqa: E402
+from test_utils import run_query, drop_table  # noqa: E402
 
-__all__ = ['bench', 'config_for']
+__all__ = ['benchmark', 'bench', 'config_for']
 
-_FILE_HEADER_PRINTED_FOR = set()
+# Process-global. Each Make-driven invocation runs each benchmark file in
+# its own Python process. BENCHMARK_HEADER_WRITTEN signals Make-mode:
+# Make wrote the markdown table header in the results file already, and
+# bench() should keep stdout quiet (only the per-function summary in
+# benchmark() prints — Jest-style).
+_HEADER_PRINTED = False
 _CONFIG_CACHE = None
+_MISSING_CONFIG = '__missing_config__'
 
 
 def _config_dir():
@@ -56,7 +63,7 @@ def config_for(function):
     """
     entry = _load_config().get(function)
     if entry is None:
-        return [{'__missing_config__': True}]
+        return [{_MISSING_CONFIG: True}]
     if not isinstance(entry, list):
         entry = [entry]
     return entry
@@ -69,23 +76,18 @@ def _results_path():
     return path
 
 
-def _ensure_file_header(caller_file):
-    if caller_file in _FILE_HEADER_PRINTED_FOR:
+def _quiet():
+    return bool(os.environ.get('BENCHMARK_HEADER_WRITTEN'))
+
+
+def _ensure_header():
+    """Write the markdown table header once per process. Skipped in Make-mode."""
+    global _HEADER_PRINTED
+    if _HEADER_PRINTED or _quiet():
+        _HEADER_PRINTED = True
         return
-    _FILE_HEADER_PRINTED_FOR.add(caller_file)
-    rel = os.path.relpath(caller_file, os.path.dirname(_results_path()))
-    header = (
-        '\n'.join(
-            [
-                '',
-                f'### {rel}',
-                '',
-                '| Function | Params | Time (s) | Error |',
-                '|---|---|---|---|',
-            ]
-        )
-        + '\n'
-    )
+    _HEADER_PRINTED = True
+    header = '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
     sys.stdout.write(header)
     with open(_results_path(), 'a') as f:
         f.write(header)
@@ -104,25 +106,81 @@ def _format_params(params, max_value_len=60):
 
 
 def _sanitize_error(exc):
-    msg = str(exc).split('\n', 1)[0][:200].replace('|', r'\|')
-    return msg
+    return str(exc).split('\n', 1)[0][:120].replace('|', r'\|')
+
+
+def benchmark(function, sql, cleanup=None):
+    """Run all configured cases for `function`.
+
+    cleanup: list of table-name templates (with `${placeholders}`) to drop
+    before AND after each case. Skipped when the function has no config
+    entry (sentinel case) so the missing-config path doesn't crash.
+
+    Emits one Jest-style summary line per function:
+        ✓ FUNCTION (1.23s)            all cases passed
+        - FUNCTION (no config)        no entry in config.json
+        ✗ FUNCTION (1/3 failed)       at least one case errored
+    """
+    cleanup = cleanup or []
+    passed = failed = skipped = 0
+    total_time = 0.0
+
+    for case in config_for(function):
+        is_missing = case.get(_MISSING_CONFIG, False)
+        tables = [] if is_missing else [Template(t).substitute(**case) for t in cleanup]
+        for tbl in tables:
+            drop_table(tbl)
+        try:
+            status, elapsed = bench(function=function, params=case, sql=sql)
+        finally:
+            for tbl in tables:
+                drop_table(tbl)
+        total_time += elapsed
+        if status == 'pass':
+            passed += 1
+        elif status == 'skip':
+            skipped += 1
+        else:
+            failed += 1
+
+    total = passed + failed + skipped
+    if failed:
+        line = f'✗ {function} ({failed}/{total} failed)'
+    elif skipped == total and total == 1:
+        line = f'- {function} (no config)'
+    elif passed == 0 and skipped:
+        line = f'- {function} ({skipped} skipped)'
+    else:
+        suffix = f'{total_time:.2f}s'
+        if skipped:
+            suffix += f', {skipped} skipped'
+        line = f'✓ {function} ({suffix})'
+    sys.stdout.write(line + '\n')
 
 
 def bench(function, sql, params=None, skip_reason=None):
-    caller_file = sys._getframe(1).f_globals.get('__file__', '<unknown>')
-    _ensure_file_header(caller_file)
+    """Run one case. Returns (status, elapsed_seconds).
 
-    if params and params.pop('__missing_config__', False):
+    status ∈ {'pass', 'skip', 'fail'}.
+    Writes a markdown row to the results file always; to stdout only when
+    not in Make-mode (so direct `python <file>` runs are still verbose).
+    """
+    _ensure_header()
+
+    if params and params.pop(_MISSING_CONFIG, False):
         skip_reason = f'no entry for {function} in config.json'
 
     params_str = _format_params(params)
+    elapsed = 0.0
+    status = 'pass'
 
     if skip_reason:
         time_str = 'n/a'
         error_str = f'skipped: {skip_reason}'
+        status = 'skip'
     else:
         try:
-            final_sql = sql.format(**(params or {}))
+            final_sql = Template(sql).substitute(**(params or {}))
             start = time.perf_counter()
             run_query(final_sql)
             elapsed = time.perf_counter() - start
@@ -131,9 +189,13 @@ def bench(function, sql, params=None, skip_reason=None):
         except Exception as e:
             time_str = 'n/a'
             error_str = _sanitize_error(e)
+            status = 'fail'
 
     row = f'| {function} | {params_str} | {time_str} | {error_str} |'
 
-    sys.stdout.write(row + '\n')
+    if not _quiet():
+        sys.stdout.write(row + '\n')
     with open(_results_path(), 'a') as f:
         f.write(row + '\n')
+
+    return status, elapsed

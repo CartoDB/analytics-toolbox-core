@@ -25,8 +25,8 @@ help:
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	echo "- Lint Python files"
-	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --quiet || true
-	$(VENV3_BIN)/flake8 test --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || true
+	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes --quiet || true
+	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || true
 	echo "- Lint Markdown files"
 	if [ -n "$$(find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/.pytest_cache/*' 2>/dev/null)" ]; then \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
@@ -40,7 +40,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 lint-fix: venv3 $(NODE_MODULES_DEV)
 	echo "Auto-fixing linting issues in modules..."
 	echo "- Fix Python formatting"
-	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes
+	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes
 	echo "- Fix Markdown files"
 	if [ -n "$$(find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/.pytest_cache/*' 2>/dev/null)" ]; then \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
@@ -49,7 +49,7 @@ lint-fix: venv3 $(NODE_MODULES_DEV)
 		echo "  No markdown files to fix"; \
 	fi
 	echo "- Check remaining issues"
-	$(VENV3_BIN)/flake8 test --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
+	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 	echo "✓ Auto-fix complete. Review remaining flake8 issues above."
 
 build: $(NODE_MODULES_DEV)
@@ -77,20 +77,28 @@ test: check venv3 $(NODE_MODULES_DEV)
 	fi;
 
 benchmark: check venv3 $(NODE_MODULES_DEV)
-	echo "Running Oracle module benchmarks..."
-	mkdir -p $(ROOT_DIR)/../dist
-	{ \
-		echo ""; \
-		echo "## Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
-	} >> $(ROOT_DIR)/../dist/benchmark_results.md
 	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --modules=$(modules) --functions=$(functions)`; \
 	if [ -n "$$files" ]; then \
+		count=`echo "$$files" | wc -w | tr -d ' '`; \
+		echo "Running $$count Oracle benchmarks..."; \
+		echo ""; \
+		mkdir -p $(ROOT_DIR)/../dist; \
+		{ \
+			echo ""; \
+			echo "## Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+			echo ""; \
+			echo "| Function | Params | Time (s) | Error |"; \
+			echo "|---|---|---|---|"; \
+		} >> $(ROOT_DIR)/../dist/benchmark_results.md; \
+		start=`date +%s`; \
 		for f in $$files; do \
-			echo "→ $$f"; \
 			PYTHONPATH=$(COMMON_DIR) \
 			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../dist/benchmark_results.md \
+			BENCHMARK_HEADER_WRITTEN=1 \
 			$(VENV3_BIN)/python "$$f"; \
 		done; \
+		echo ""; \
+		echo "Done in `expr \`date +%s\` - $$start`s. Results: $(ROOT_DIR)/../dist/benchmark_results.md"; \
 	else \
 		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
 	fi
