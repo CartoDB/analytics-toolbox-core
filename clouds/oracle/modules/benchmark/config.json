@@ -1,0 +1,9 @@
+{
+    "H3_KRING": [
+        {
+            "source_table": "vdelacruz_carto.h3_test",
+            "h3_column": "h3",
+            "size": 2
+        }
+    ]
+}

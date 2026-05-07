@@ -1,17 +1,13 @@
 # Copyright (c) 2026, CARTO
 
-from benchmark_utils import bench
+from benchmark_utils import bench, config_for
 
-# === Tweak for your environment ===
-SOURCE_TABLE = '@@ORA_SCHEMA@@.SAMPLE_TABLE'
-H3_COLUMN = 'h3'
-K = 2
-
-if __name__ == '__main__':
+for case in config_for('H3_KRING'):
     bench(
-        name=f'H3_KRING(h3, {K})',
+        function='H3_KRING',
+        params=case,
         sql=(
-            f'SELECT COUNT(*) FROM {SOURCE_TABLE} t, '
-            f'TABLE(@@ORA_SCHEMA@@.H3_KRING(t.{H3_COLUMN}, {K}))'
+            'SELECT COUNT(*) FROM {source_table} t, '
+            'TABLE(@@ORA_SCHEMA@@.H3_KRING(t.{h3_column}, {size}))'
         ),
     )

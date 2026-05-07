@@ -78,16 +78,17 @@ test: check venv3 $(NODE_MODULES_DEV)
 
 benchmark: check venv3 $(NODE_MODULES_DEV)
 	echo "Running Oracle module benchmarks..."
+	mkdir -p $(ROOT_DIR)/../dist
 	{ \
 		echo ""; \
 		echo "## Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
-	} >> $(ROOT_DIR)/../benchmark_results.md
+	} >> $(ROOT_DIR)/../dist/benchmark_results.md
 	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --modules=$(modules) --functions=$(functions)`; \
 	if [ -n "$$files" ]; then \
 		for f in $$files; do \
 			echo "→ $$f"; \
 			PYTHONPATH=$(COMMON_DIR) \
-			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../benchmark_results.md \
+			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../dist/benchmark_results.md \
 			$(VENV3_BIN)/python "$$f"; \
 		done; \
 	else \
