@@ -80,25 +80,27 @@ benchmark: check venv3 $(NODE_MODULES_DEV)
 	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --modules=$(modules) --functions=$(functions)`; \
 	if [ -n "$$files" ]; then \
 		count=`echo "$$files" | wc -w | tr -d ' '`; \
+		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
+		results=$(ROOT_DIR)/../dist/benchmark_$$ts.md; \
 		echo "Running $$count Oracle benchmarks..."; \
 		echo ""; \
 		mkdir -p $(ROOT_DIR)/../dist; \
 		{ \
-			echo ""; \
-			echo "## Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
 			echo ""; \
 			echo "| Function | Params | Time (s) | Error |"; \
 			echo "|---|---|---|---|"; \
-		} >> $(ROOT_DIR)/../dist/benchmark_results.md; \
+		} > $$results; \
 		start=`date +%s`; \
 		for f in $$files; do \
 			PYTHONPATH=$(COMMON_DIR) \
-			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../dist/benchmark_results.md \
+			BENCHMARK_RESULTS_FILE=$$results \
 			BENCHMARK_HEADER_WRITTEN=1 \
+			BENCHMARK_KEEP_OUTPUT=$(keep) \
 			$(VENV3_BIN)/python "$$f"; \
 		done; \
 		echo ""; \
-		echo "Done in `expr \`date +%s\` - $$start`s. Results: $(ROOT_DIR)/../dist/benchmark_results.md"; \
+		echo "Done in `expr \`date +%s\` - $$start`s. Results: $$results"; \
 	else \
 		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
 	fi

@@ -17,6 +17,7 @@ __all__ = ['benchmark', 'bench', 'config_for']
 # benchmark() prints — Jest-style).
 _HEADER_PRINTED = False
 _CONFIG_CACHE = None
+_RESULTS_PATH_CACHE = None
 _MISSING_CONFIG = '__missing_config__'
 
 
@@ -62,7 +63,7 @@ def config_for(function):
     silently producing no output.
     """
     entry = _load_config().get(function)
-    if entry is None:
+    if not entry:  # None, [], or any other falsy → treat as missing
         return [{_MISSING_CONFIG: True}]
     if not isinstance(entry, list):
         entry = [entry]
@@ -70,9 +71,18 @@ def config_for(function):
 
 
 def _results_path():
-    default = os.path.join(os.getcwd(), 'dist', 'benchmark_results.md')
-    path = os.environ.get('BENCHMARK_RESULTS_FILE', default)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    """Resolve the per-run results file. Cached so all bench() calls share it."""
+    global _RESULTS_PATH_CACHE
+    if _RESULTS_PATH_CACHE:
+        return _RESULTS_PATH_CACHE
+    env_path = os.environ.get('BENCHMARK_RESULTS_FILE')
+    if env_path:
+        path = env_path
+    else:
+        ts = time.strftime('%Y-%m-%dT%H-%M-%SZ', time.gmtime())
+        path = os.path.join(os.getcwd(), 'dist', f'benchmark_{ts}.md')
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+    _RESULTS_PATH_CACHE = path
     return path
 
 
@@ -116,13 +126,18 @@ def benchmark(function, sql, cleanup=None):
     before AND after each case. Skipped when the function has no config
     entry (sentinel case) so the missing-config path doesn't crash.
 
+    Set BENCHMARK_KEEP_OUTPUT=1 (or run `make benchmark keep=1`) to skip
+    the post-case drops so output tables can be inspected. Pre-case drops
+    still happen so each run starts from clean state.
+
     Emits one Jest-style summary line per function:
         ✓ FUNCTION (1.23s)            all cases passed
         - FUNCTION (no config)        no entry in config.json
         ✗ FUNCTION (1/3 failed)       at least one case errored
     """
     cleanup = cleanup or []
-    passed = failed = skipped = 0
+    keep = bool(os.environ.get('BENCHMARK_KEEP_OUTPUT'))
+    counts = {'pass': 0, 'fail': 0, 'skip': 0, 'no_config': 0}
     total_time = 0.0
 
     for case in config_for(function):
@@ -133,27 +148,25 @@ def benchmark(function, sql, cleanup=None):
         try:
             status, elapsed = bench(function=function, params=case, sql=sql)
         finally:
-            for tbl in tables:
-                drop_table(tbl)
+            if not keep:
+                for tbl in tables:
+                    drop_table(tbl)
         total_time += elapsed
-        if status == 'pass':
-            passed += 1
-        elif status == 'skip':
-            skipped += 1
-        else:
-            failed += 1
+        counts[status] += 1
 
-    total = passed + failed + skipped
-    if failed:
-        line = f'✗ {function} ({failed}/{total} failed)'
-    elif skipped == total and total == 1:
+    total = sum(counts.values())
+    if counts['fail']:
+        line = f'✗ {function} ({counts["fail"]}/{total} failed)'
+    elif counts['no_config'] == total:
         line = f'- {function} (no config)'
-    elif passed == 0 and skipped:
-        line = f'- {function} ({skipped} skipped)'
+    elif counts['pass'] == 0:
+        skipped_total = counts['skip'] + counts['no_config']
+        line = f'- {function} ({skipped_total} skipped)'
     else:
         suffix = f'{total_time:.2f}s'
-        if skipped:
-            suffix += f', {skipped} skipped'
+        skipped_total = counts['skip'] + counts['no_config']
+        if skipped_total:
+            suffix += f', {skipped_total} skipped'
         line = f'✓ {function} ({suffix})'
     sys.stdout.write(line + '\n')
 
@@ -167,7 +180,8 @@ def bench(function, sql, params=None, skip_reason=None):
     """
     _ensure_header()
 
-    if params and params.pop(_MISSING_CONFIG, False):
+    is_missing_config = bool(params and params.pop(_MISSING_CONFIG, False))
+    if is_missing_config:
         skip_reason = f'no entry for {function} in config.json'
 
     params_str = _format_params(params)
@@ -177,7 +191,7 @@ def bench(function, sql, params=None, skip_reason=None):
     if skip_reason:
         time_str = 'n/a'
         error_str = f'skipped: {skip_reason}'
-        status = 'skip'
+        status = 'no_config' if is_missing_config else 'skip'
     else:
         try:
             final_sql = Template(sql).substitute(**(params or {}))

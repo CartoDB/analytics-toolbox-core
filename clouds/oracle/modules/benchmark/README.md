@@ -1,6 +1,6 @@
 # Oracle Module Benchmark
 
-Per-function timing benchmarks. Each `benchmark(...)` call iterates the configured cases for that function, runs the SQL once per case, prints a markdown row, and appends to `clouds/oracle/dist/benchmark_results.md`.
+Per-function timing benchmarks. Each `benchmark(...)` call iterates the configured cases for that function, runs the SQL once per case, prints a markdown row, and appends to `clouds/oracle/dist/benchmark_<UTC-timestamp>.md`.
 
 ## Setup
 
@@ -20,7 +20,13 @@ make benchmark modules=h3                       # one module
 make benchmark modules=h3 functions=H3_KRING    # one benchmark
 ```
 
-`make benchmark` prepends `## Benchmark run — <UTC>` to `benchmark_results.md` per invocation. Override the destination with `BENCHMARK_RESULTS_FILE=<path>`.
+Each `make benchmark` run writes a new file named `benchmark_<UTC-timestamp>.md` (ISO 8601 form `YYYY-MM-DDTHH-MM-SSZ`) so runs are isolated, sortable, and easy to diff. Override the destination with `BENCHMARK_RESULTS_FILE=<path>`.
+
+For procedures that create output tables (e.g. `H3_POLYFILL_TABLE`), pass `keep=1` to leave the tables in place after the run for inspection — the pre-case drop still runs so each invocation starts clean:
+
+```bash
+make benchmark functions=H3_POLYFILL_TABLE keep=1
+```
 
 ## Config
 
@@ -43,7 +49,7 @@ If a function isn't in `config.json`, the benchmark emits a `skipped: no entry f
 ## Output
 
 ```markdown
-## Benchmark run — 2026-05-07T14:32:18Z
+# Benchmark run — 2026-05-07T14:32:18Z
 
 | Function          | Params                                      | Time (s) | Error |
 |---|---|---|---|
@@ -53,7 +59,7 @@ If a function isn't in `config.json`, the benchmark emits a `skipped: no entry f
 | H3_POLYFILL_TABLE | output_table=...BAD                         | n/a      | ORA-00942: table or view does not exist |
 ```
 
-One section per `make benchmark` run; all functions in a single table — no per-file sub-headings.
+One file per `make benchmark` run; all functions in a single table — no per-file sub-headings.
 
 Error column: `-` (success), `skipped: <reason>`, or first line of the exception (truncated, pipes escaped). `bench()` catches exceptions, so one failure doesn't kill the run. Long values in Params are truncated to ~60 chars.
 

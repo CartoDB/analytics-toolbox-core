@@ -91,6 +91,12 @@ test:
 test-modules:
 	$(MAKE) -C modules test
 
+benchmark:
+	$(MAKE) benchmark-modules
+
+benchmark-modules:
+	$(MAKE) -C modules benchmark modules=$(modules) functions=$(functions) keep=$(keep)
+
 remove:
 	$(MAKE) remove-modules
 
