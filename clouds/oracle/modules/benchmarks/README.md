@@ -28,11 +28,13 @@ make benchmark modules=h3 functions=H3_KRING    # one specific benchmark
 
 `make benchmark` prepends a timestamped section header (`## Benchmark run — <UTC>`) to `benchmark_results.md` before running each matching file.
 
-For an isolated re-run after a fix, invoke the file directly (no Make header is added — just the per-file `### filename` sub-section + the timing row(s)):
+For an isolated re-run after a fix, use Make's filter (still gets `## Benchmark run` header for the single file):
 
 ```bash
-python modules/benchmarks/h3/benchmark_H3_KRING.py
+make benchmark modules=h3 functions=H3_KRING
 ```
+
+Direct `python <file>` invocation requires `PYTHONPATH=clouds/oracle/common` to be set so `benchmark_utils` resolves — prefer the Make form above.
 
 ## Output format
 
@@ -68,7 +70,7 @@ Results accumulate in `clouds/oracle/benchmark_results.md` (gitignored). Each Ma
 
 ```python
 # clouds/oracle/modules/benchmarks/<module>/benchmark_<FUNCTION>.py
-from test_utils import bench
+from benchmark_utils import bench
 
 SOURCE_TABLE = '@@ORA_SCHEMA@@.SAMPLE_TABLE'
 COLUMN = 'h3'

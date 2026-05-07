@@ -86,7 +86,9 @@ benchmark: check venv3 $(NODE_MODULES_DEV)
 	if [ -n "$$files" ]; then \
 		for f in $$files; do \
 			echo "→ $$f"; \
-			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../benchmark_results.md $(VENV3_BIN)/python "$$f"; \
+			PYTHONPATH=$(COMMON_DIR) \
+			BENCHMARK_RESULTS_FILE=$(ROOT_DIR)/../benchmark_results.md \
+			$(VENV3_BIN)/python "$$f"; \
 		done; \
 	else \
 		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \

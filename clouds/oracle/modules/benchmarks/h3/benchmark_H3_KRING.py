@@ -1,13 +1,5 @@
-"""Benchmark for H3_KRING.
-
-Run with:
-    cd clouds/oracle && make benchmark modules=h3 functions=H3_KRING
-Or directly:
-    python clouds/oracle/modules/benchmarks/h3/benchmark_H3_KRING.py
-
-Edit the constants below to point at your dev table.
-"""
-from test_utils import bench
+"""Benchmark for H3_KRING."""
+from benchmark_utils import bench
 
 # === Tweak for your environment ===
 SOURCE_TABLE = '@@ORA_SCHEMA@@.SAMPLE_TABLE'
