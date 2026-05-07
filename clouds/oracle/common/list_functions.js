@@ -57,7 +57,7 @@ if (fs.existsSync(scandir)) {
         if (fs.statSync(moduledir).isDirectory()) {
             const files = fs.readdirSync(moduledir);
             files.forEach(file => {
-                pfile = path.parse(file);
+                const pfile = path.parse(file);
                 if (pfile.name.startsWith(filePrefix) && pfile.ext === '.py') {
                     const name = pfile.name.substring(filePrefix.length);
                     functions.push({

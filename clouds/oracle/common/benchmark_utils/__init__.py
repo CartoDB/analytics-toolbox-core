@@ -1,4 +1,5 @@
 """Per-function timing benchmarks for Oracle modules. Sibling of test_utils."""
+import atexit
 import json
 import os
 import sys
@@ -6,9 +7,50 @@ import time
 from string import Template
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from test_utils import run_query, drop_table  # noqa: E402
+from oracle_db import get_connection  # noqa: E402
+from test_utils import drop_table  # noqa: E402
 
 __all__ = ['benchmark', 'bench', 'config_for']
+
+# Connection-establishment time would otherwise be charged to whichever
+# bench() call happens first. Cache one connection per process and
+# pre-warm before each timer starts so timings reflect query work only.
+_BENCH_CONN = None
+
+
+def _close_bench_conn():
+    global _BENCH_CONN
+    if _BENCH_CONN is not None:
+        try:
+            _BENCH_CONN.close()
+        except Exception:
+            pass
+        _BENCH_CONN = None
+
+
+def _get_bench_conn():
+    global _BENCH_CONN
+    if _BENCH_CONN is None:
+        conn, _ = get_connection()
+        conn.autocommit = True
+        _BENCH_CONN = conn
+        atexit.register(_close_bench_conn)
+    return _BENCH_CONN
+
+
+def _run_query_timed(sql):
+    """Execute on the cached connection. Used inside the timer window."""
+    sql = sql.replace('@@ORA_SCHEMA@@', os.environ.get('ORA_SCHEMA', ''))
+    cursor = _get_bench_conn().cursor()
+    try:
+        cursor.execute(sql)
+        try:
+            return cursor.fetchall()
+        except Exception:
+            return None
+    finally:
+        cursor.close()
+
 
 # Process-global. Each Make-driven invocation runs each benchmark file in
 # its own Python process. BENCHMARK_HEADER_WRITTEN signals Make-mode:
@@ -195,8 +237,9 @@ def bench(function, sql, params=None, skip_reason=None):
     else:
         try:
             final_sql = Template(sql).substitute(**(params or {}))
+            _get_bench_conn()  # pre-warm; connection cost not counted
             start = time.perf_counter()
-            run_query(final_sql)
+            _run_query_timed(final_sql)
             elapsed = time.perf_counter() - start
             time_str = f'{elapsed:.2f}'
             error_str = '-'
