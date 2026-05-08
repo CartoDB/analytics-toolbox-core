@@ -5,15 +5,19 @@
 // ./list_functions.js --diff="clouds/bigquery/modules/test/quadbin/QUADBIN_TOZXY.test.js"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
+// ./list_functions.js h3 --type=benchmark --functions=H3_KRING
 
 const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const modulename = argv._[0];
-const moduledir = path.resolve('test', modulename);
+// type=test (default) scans test/<module>/<FUNCTION>.test.js
+// type=benchmark scans benchmark/<module>/<FUNCTION>.bench.js
+const type = argv.type === 'benchmark' ? 'benchmark' : 'test';
+const moduledir = path.resolve(type, modulename);
 const diff = argv.diff || [];
-const fileExtension = argv.fileExtension || '.test.js';
+const fileExtension = argv.fileExtension || (type === 'benchmark' ? '.bench.js' : '.test.js');
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
@@ -45,12 +49,13 @@ if (diff.length) {
 
 // Extract functions
 const functions = [];
-if (fs.statSync(moduledir).isDirectory()) {
+if (fs.existsSync(moduledir) && fs.statSync(moduledir).isDirectory()) {
     const files = fs.readdirSync(moduledir);
     files.forEach(file => {
-        pfile = path.parse(file);
+        const pfile = path.parse(file);
         if (file.endsWith(fileExtension)) {
-            const name = pfile.name.replace('.test', '');
+            // strip both .test.js and .bench.js compound extensions
+            const name = pfile.name.replace(/\.(test|bench)$/, '');
             functions.push({
                 name,
                 module: modulename,
