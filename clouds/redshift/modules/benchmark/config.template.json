@@ -1,0 +1,58 @@
+{
+    "_README": "Per-function benchmark cases. Copy this file to config.json (gitignored) and edit it for your environment. Use real table names, columns, and parameter values that exist on your dev Redshift cluster. Each function is a list of cases (one row per case in the output markdown table).",
+
+    "QUADBIN_BBOX": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_BOUNDARY": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_CENTER": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_DISTANCE": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "other_quadbin": 5207251884775047167}
+    ],
+    "QUADBIN_FROMGEOGPOINT": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "geom_column": "geom", "resolution": 9}
+    ],
+    "QUADBIN_FROMLONGLAT": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "lon_column": "lon", "lat_column": "lat", "resolution": 9}
+    ],
+    "QUADBIN_FROMQUADKEY": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadkey_column": "quadkey"}
+    ],
+    "QUADBIN_FROMZXY": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "z_column": "z", "x_column": "x", "y_column": "y"}
+    ],
+    "QUADBIN_ISVALID": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_KRING": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "size": 2}
+    ],
+    "QUADBIN_KRING_DISTANCES": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "size": 2}
+    ],
+    "QUADBIN_POLYFILL": [
+        {"source_table": "@@RS_SCHEMA@@.POLYGONS", "geom_column": "geom", "resolution": 8}
+    ],
+    "QUADBIN_RESOLUTION": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_SIBLING": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "direction": "right"}
+    ],
+    "QUADBIN_TOCHILDREN": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "resolution": 10}
+    ],
+    "QUADBIN_TOPARENT": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin", "resolution": 5}
+    ],
+    "QUADBIN_TOQUADKEY": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ],
+    "QUADBIN_TOZXY": [
+        {"source_table": "@@RS_SCHEMA@@.SAMPLE_TABLE", "quadbin_column": "quadbin"}
+    ]
+}
