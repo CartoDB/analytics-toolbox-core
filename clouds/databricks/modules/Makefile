@@ -55,6 +55,35 @@ test: check venv3 $(NODE_MODULES_DEV)
 		$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv `$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 	fi;
 
+benchmark: check venv3 $(NODE_MODULES_DEV)
+	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --modules=$(modules) --functions=$(functions)`; \
+	if [ -n "$$files" ]; then \
+		count=`echo "$$files" | wc -w | tr -d ' '`; \
+		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
+		results=$(ROOT_DIR)/../dist/benchmark_$$ts.md; \
+		echo "Running $$count Databricks benchmarks..."; \
+		echo ""; \
+		mkdir -p $(ROOT_DIR)/../dist; \
+		{ \
+			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+			echo ""; \
+			echo "| Function | Params | Time (s) | Error |"; \
+			echo "|---|---|---|---|"; \
+		} > $$results; \
+		start=`date +%s`; \
+		for f in $$files; do \
+			PYTHONPATH=$(COMMON_DIR) \
+			BENCHMARK_RESULTS_FILE=$$results \
+			BENCHMARK_HEADER_WRITTEN=1 \
+			BENCHMARK_KEEP_OUTPUT=$(keep) \
+			$(VENV3_BIN)/python "$$f"; \
+		done; \
+		echo ""; \
+		echo "Done in `expr \`date +%s\` - $$start`s. Results: $$results"; \
+	else \
+		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
+	fi
+
 remove: venv3
 	echo "Removing modules..."
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(DB_SCHEMA) CASCADE;"
