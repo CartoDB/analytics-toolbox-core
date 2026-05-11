@@ -1,10 +1,15 @@
 {
-    "_README": "Per-function benchmark cases. Copy this file to config.json (gitignored) and edit the source tables / parameter values for your environment. Each function entry is a list of cases. Each case provides values for the ${name} placeholders in the corresponding benchmark file.",
-
     "H3_KRING": [
-        {"source_table": "MYDB.MYSCHEMA.H3_TABLE", "h3_column": "H3", "size": 2}
+        {"source_table": "<my-database>.<my-schema>.h3_table", "h3_column": "h3", "size": 3}
     ],
-    "H3_POLYFILL": [
-        {"source_table": "MYDB.MYSCHEMA.POLYGONS", "geom_column": "GEOM", "resolution": 8}
+    "H3_POLYFILL_MODE": [
+        {"source_table": "<my-database>.<my-schema>.polygons_table", "geom_column": "geom", "resolution": 8, "mode": "center"},
+        {"source_table": "<my-database>.<my-schema>.polygons_table", "geom_column": "geom", "resolution": 8, "mode": "intersects"}
+    ],
+    "QUADBIN_KRING": [
+        {"source_table": "<my-database>.<my-schema>.quadbin_table", "quadbin_column": "quadbin", "size": 3}
+    ],
+    "QUADBIN_POLYFILL": [
+        {"source_table": "<my-database>.<my-schema>.polygons_table", "geom_column": "geom", "resolution": 11}
     ]
 }
