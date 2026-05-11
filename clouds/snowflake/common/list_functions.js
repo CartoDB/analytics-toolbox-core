@@ -5,13 +5,18 @@
 // ./list_functions.js --diff="clouds/snowflake/modules/test/quadbin/QUADBIN_TOZXY.test.js"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
+// ./list_functions.js h3 --type=benchmark --functions=H3_KRING
 
 const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const modulename = argv._[0];
-const moduledir = path.resolve('test', modulename);
+// type=test (default) scans test/<module>/<FUNCTION>.test.js
+// type=benchmark scans benchmark/<module>/<FUNCTION>.bench.js
+const type = argv.type === 'benchmark' ? 'benchmark' : 'test';
+const moduledir = path.resolve(type, modulename);
+const fileExtension = type === 'benchmark' ? '.bench.js' : '.test.js';
 const diff = argv.diff || [];
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
@@ -44,12 +49,13 @@ if (diff.length) {
 
 // Extract functions
 const functions = [];
-if (fs.statSync(moduledir).isDirectory()) {
+if (fs.existsSync(moduledir) && fs.statSync(moduledir).isDirectory()) {
     const files = fs.readdirSync(moduledir);
     files.forEach(file => {
-        pfile = path.parse(file);
-        if (file.endsWith('.test.js')) {
-            const name = pfile.name.replace('.test', '');
+        const pfile = path.parse(file);
+        if (file.endsWith(fileExtension)) {
+            // strip both .test.js and .bench.js compound extensions
+            const name = pfile.name.replace(/\.(test|bench)$/, '');
             functions.push({
                 name,
                 module: modulename,

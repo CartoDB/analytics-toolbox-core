@@ -3,6 +3,7 @@
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 TEST_DIR ?= $(ROOT_DIR)/test
+BENCHMARK_DIR ?= $(ROOT_DIR)/benchmark
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 SQL_DIR ?= $(ROOT_DIR)/sql
@@ -31,16 +32,16 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test test-fast test-slow remove remove-share clean
+.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test test-fast test-slow benchmark remove remove-share clean
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: lint build deploy test benchmark remove clean"
 
 lint: $(NODE_MODULES_DEV) venv3
 	echo "Linting modules..."
 	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) --fix
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) --fix
 	echo "- Lint Markdown files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
@@ -127,6 +128,44 @@ test-slow: check $(NODE_MODULES_DEV)
 			fi; \
 		fi; \
 	done;
+
+benchmark: check $(NODE_MODULES_DEV)
+	files=""; \
+	if [ -d $(BENCHMARK_DIR) ]; then \
+		for m in `ls $(BENCHMARK_DIR)`; do \
+			[ -d $(BENCHMARK_DIR)/$$m ] || continue; \
+			matched=`$(COMMON_DIR)/list_functions.js $$m --type=benchmark --modules=$(modules) --functions=$(functions)`; \
+			if [ -n "$$matched" ]; then \
+				files="$$files $$matched"; \
+			fi; \
+		done; \
+	fi; \
+	files=`echo "$$files" | xargs`; \
+	if [ -n "$$files" ]; then \
+		count=`echo "$$files" | wc -w | tr -d ' '`; \
+		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
+		results=$(ROOT_DIR)/../dist/benchmark_$$ts.md; \
+		echo "Running $$count Snowflake benchmarks..."; \
+		echo ""; \
+		mkdir -p $(ROOT_DIR)/../dist; \
+		{ \
+			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+			echo ""; \
+			echo "| Function | Params | Time (s) | Error |"; \
+			echo "|---|---|---|---|"; \
+		} > $$results; \
+		start=`date +%s`; \
+		for f in $$files; do \
+			BENCHMARK_RESULTS_FILE=$$results \
+			BENCHMARK_HEADER_WRITTEN=1 \
+			BENCHMARK_KEEP_OUTPUT=$(keep) \
+			node "$$f" || exit 1; \
+		done; \
+		echo ""; \
+		echo "Done in `expr \`date +%s\` - $$start`s. Results: $$results"; \
+	else \
+		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
+	fi
 
 remove: $(NODE_MODULES_DEV)
 	echo "Removing modules..."
