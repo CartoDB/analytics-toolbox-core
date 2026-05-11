@@ -6,5 +6,5 @@ benchmark(
     function='H3_UNCOMPACT',
     sql='SELECT COUNT(*) FROM '
         'UNNEST(@@PG_SCHEMA@@.H3_UNCOMPACT('
-        'ARRAY(SELECT t.${compacted_h3_column} FROM ${source_table} t), ${resolution}))',
+        'ARRAY(SELECT t.${h3_column} FROM ${source_table} t), ${resolution}))',
 )
