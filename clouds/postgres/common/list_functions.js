@@ -5,6 +5,7 @@
 // ./list_functions.js --diff="clouds/postgres/modules/test/quadbin/test_QUADBIN_TOZXY.py"
 // ./list_functions.js --functions=ST_TILEENVELOPE
 // ./list_functions.js --modules=quadbin
+// ./list_functions.js --type=benchmark --modules=h3 --functions=H3_KRING
 
 const fs = require('fs');
 const path = require('path');
@@ -15,6 +16,12 @@ const diff = argv.diff || [];
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
 let all = !(diff.length || modulesFilter.length || functionsFilter.length);
+
+// type=test (default) scans modules/test/<module>/test_<FUNCTION>.py
+// type=benchmark scans modules/benchmark/<module>/benchmark_<FUNCTION>.py
+const type = argv.type === 'benchmark' ? 'benchmark' : 'test';
+const subdir = type === 'benchmark' ? 'benchmark' : 'test';
+const filePrefix = type === 'benchmark' ? 'benchmark_' : 'test_';
 
 // Convert diff to modules/functions
 if (diff.length) {
@@ -42,25 +49,27 @@ if (diff.length) {
 
 // Extract functions
 const functions = [];
-const testdir = path.join(inputDir, 'test');
-const modules = fs.readdirSync(testdir);
-modules.forEach(module => {
-    const moduledir = path.join(testdir, module);
-    if (fs.statSync(moduledir).isDirectory()) {
-        const files = fs.readdirSync(moduledir);
-        files.forEach(file => {
-            pfile = path.parse(file);
-            if (pfile.name.startsWith('test_') && pfile.ext === '.py') {
-                const name = pfile.name.substring(5);
-                functions.push({
-                    name,
-                    module,
-                    fullPath: path.join(moduledir, file)
-                });
-            }
-        });
-    }
-});
+const scandir = path.resolve(inputDir, subdir);
+if (fs.existsSync(scandir)) {
+    const modules = fs.readdirSync(scandir);
+    modules.forEach(module => {
+        const moduledir = path.join(scandir, module);
+        if (fs.statSync(moduledir).isDirectory()) {
+            const files = fs.readdirSync(moduledir);
+            files.forEach(file => {
+                const pfile = path.parse(file);
+                if (pfile.name.startsWith(filePrefix) && pfile.ext === '.py') {
+                    const name = pfile.name.substring(filePrefix.length);
+                    functions.push({
+                        name,
+                        module,
+                        fullPath: path.join(moduledir, file)
+                    });
+                }
+            });
+        }
+    });
+}
 
 // Check filters
 modulesFilter.forEach(m => {
