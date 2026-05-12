@@ -125,6 +125,7 @@ benchmark: check $(NODE_MODULES_DEV)
 			BENCHMARK_RESULTS_FILE=$$results \
 			BENCHMARK_HEADER_WRITTEN=1 \
 			BENCHMARK_KEEP_OUTPUT=$(keep) \
+			BENCHMARK_VERBOSE=$(verbose) \
 			node "$$f" || exit 1; \
 		done; \
 		echo ""; \

@@ -10,6 +10,7 @@ const path = require('path');
 const { BigQuery } = require('@google-cloud/bigquery');
 
 const MISSING_CONFIG = '__missing_config__';
+const _VERBOSE = Boolean(process.env.BENCHMARK_VERBOSE);
 
 // One client + auth/HTTP handshake per process. Pre-warmed before every
 // bench() timer starts so connection establishment isn't charged to the
@@ -139,6 +140,7 @@ function _formatParams (params, maxValueLen = 60) {
 
 function _sanitizeError (e) {
     const msg = (e && e.message) ? e.message : String(e);
+    if (_VERBOSE) return msg.replace(/\n+/g, ' ').replace(/\|/g, '\\|');
     return msg.split('\n', 1)[0].slice(0, 120).replace(/\|/g, '\\|');
 }
 
@@ -180,6 +182,7 @@ async function bench ({ function: fnName, sql, params, skip_reason: skipReason }
         } catch (e) {
             errorStr = _sanitizeError(e);
             status = 'fail';
+            if (_VERBOSE) process.stderr.write(`\n[BENCHMARK_VERBOSE] ${fnName}:\n${(e && e.message) ? e.message : String(e)}\n`);
         }
     }
 

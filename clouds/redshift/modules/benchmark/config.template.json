@@ -1,8 +1,8 @@
 {
     "QUADBIN_KRING": [
-        {"source_table": "<my-database>.<my-schema>.quadbin_table", "quadbin_column": "quadbin", "size": 3}
+        {"source_table": "<my-schema>.quadbin_table", "quadbin_column": "quadbin", "size": 3}
     ],
     "QUADBIN_POLYFILL": [
-        {"source_table": "<my-database>.<my-schema>.polygons_table", "geom_column": "geom", "resolution": 11}
+        {"source_table": "<my-schema>.polygons_table", "geom_column": "geom", "resolution": 11}
     ]
 }

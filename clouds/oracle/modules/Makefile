@@ -97,6 +97,7 @@ benchmark: check venv3 $(NODE_MODULES_DEV)
 			BENCHMARK_RESULTS_FILE=$$results \
 			BENCHMARK_HEADER_WRITTEN=1 \
 			BENCHMARK_KEEP_OUTPUT=$(keep) \
+			BENCHMARK_VERBOSE=$(verbose) \
 			$(VENV3_BIN)/python "$$f"; \
 		done; \
 		echo ""; \

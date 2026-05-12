@@ -80,6 +80,7 @@ _HEADER_PRINTED = False
 _CONFIG_CACHE = None
 _RESULTS_PATH_CACHE = None
 _MISSING_CONFIG = '__missing_config__'
+_VERBOSE = bool(os.environ.get('BENCHMARK_VERBOSE'))
 
 
 def _config_dir():
@@ -177,7 +178,10 @@ def _format_params(params, max_value_len=60):
 
 
 def _sanitize_error(exc):
-    return str(exc).split('\n', 1)[0][:120].replace('|', r'\|')
+    msg = str(exc)
+    if _VERBOSE:
+        return msg.replace('\n', ' ').replace('|', r'\|')
+    return msg.split('\n', 1)[0][:120].replace('|', r'\|')
 
 
 def benchmark(function, sql, cleanup=None):
@@ -266,6 +270,8 @@ def bench(function, sql, params=None, skip_reason=None):
             time_str = 'n/a'
             error_str = _sanitize_error(e)
             status = 'fail'
+            if _VERBOSE:
+                sys.stderr.write(f'\n[BENCHMARK_VERBOSE] {function}:\n{e}\n')
 
     row = f'| {function} | {params_str} | {time_str} | {error_str} |'
 
