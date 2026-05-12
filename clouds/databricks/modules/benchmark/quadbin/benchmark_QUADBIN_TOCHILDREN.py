@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_TOCHILDREN',
-    sql='SELECT SUM(SIZE(@@DB_SCHEMA@@.QUADBIN_TOCHILDREN(t.${quadbin_column}, ${resolution}))) '
+    sql='CREATE OR REPLACE TABLE ${output_table} AS '
+        'SELECT t.${quadbin_column} AS input, @@DB_SCHEMA@@.QUADBIN_TOCHILDREN(t.${quadbin_column}, ${resolution}) AS cells '
         'FROM ${source_table} t',
 )

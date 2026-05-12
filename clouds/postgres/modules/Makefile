@@ -67,8 +67,13 @@ benchmark: check venv3 $(NODE_MODULES_DEV)
 		{ \
 			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
 			echo ""; \
-			echo "| Function | Params | Time (s) | Error |"; \
-			echo "|---|---|---|---|"; \
+			if [ -n "$(keep)" ]; then \
+				echo "| Function | Params | Time (s) | Error | Output Table |"; \
+				echo "|---|---|---|---|---|"; \
+			else \
+				echo "| Function | Params | Time (s) | Error |"; \
+				echo "|---|---|---|---|"; \
+			fi; \
 		} > $$results; \
 		start=`date +%s`; \
 		for f in $$files; do \

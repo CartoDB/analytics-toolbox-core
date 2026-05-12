@@ -4,6 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_POLYFILL_MODE',
-    sql: `SELECT COUNT(*) FROM (SELECT * FROM \${source_table}) t,
-UNNEST(\`@@BQ_DATASET@@.H3_POLYFILL_MODE\`(t.\${geom_column}, \${resolution}, '\${mode}')) AS h`
+    sql: "CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.H3_POLYFILL_MODE`(t.${geom_column}, ${resolution}, '${mode}') AS cells FROM ${source_table} t"
 });

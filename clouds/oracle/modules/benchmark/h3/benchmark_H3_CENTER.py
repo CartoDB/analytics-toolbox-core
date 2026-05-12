@@ -4,5 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='H3_CENTER',
-    sql='SELECT COUNT(@@ORA_SCHEMA@@.H3_CENTER(t.${h3_column})) FROM ${source_table} t',
+    sql='CREATE TABLE ${output_table} AS '
+    'SELECT @@ORA_SCHEMA@@.H3_CENTER(t.${h3_column}) AS result '
+    'FROM ${source_table} t',
 )

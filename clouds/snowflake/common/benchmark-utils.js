@@ -165,7 +165,10 @@ function _ensureHeader () {
         return;
     }
     _headerPrinted = true;
-    const header = '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n';
+    const keep = Boolean(process.env.BENCHMARK_KEEP_OUTPUT);
+    const header = keep
+        ? '\n| Function | Params | Time (s) | Error | Output Table |\n|---|---|---|---|---|\n'
+        : '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n';
     process.stdout.write(header);
     fs.appendFileSync(_resultsPath(), header);
 }
@@ -174,11 +177,18 @@ function _formatParams (params, maxValueLen = 60) {
     if (!params || Object.keys(params).length === 0) return '-';
     const parts = [];
     for (const [k, v] of Object.entries(params)) {
+        if (k === 'output_table') continue;
         let s = String(v);
         if (s.length > maxValueLen) s = s.slice(0, maxValueLen - 3) + '...';
         parts.push(`${k}=${s}`);
     }
-    return parts.join(', ');
+    return parts.join(', ') || '-';
+}
+
+async function _dropBenchTable (fqn) {
+    try {
+        await _runQueryTimed(`DROP TABLE IF EXISTS ${fqn}`);
+    } catch (_) { /* best-effort */ }
 }
 
 function _sanitizeError (e) {
@@ -215,9 +225,11 @@ async function bench ({ function: fnName, sql, params, skip_reason: skipReason }
         errorStr = `skipped: ${skipReason}`;
         status = isMissing ? 'no_config' : 'skip';
     } else {
+        const outputTable = (params && params.output_table) || null;
         try {
             const finalSql = _substitute(sql, params || {});
             await _ensureWarmed();
+            if (outputTable) await _dropBenchTable(outputTable);
             const start = process.hrtime.bigint();
             await _runQueryTimed(finalSql);
             elapsed = Number(process.hrtime.bigint() - start) / 1e9;
@@ -225,11 +237,19 @@ async function bench ({ function: fnName, sql, params, skip_reason: skipReason }
         } catch (e) {
             errorStr = _sanitizeError(e);
             status = 'fail';
-            if (_VERBOSE) process.stderr.write(`\n[BENCHMARK_VERBOSE] ${fnName}:\n${(e && e.message) ? e.message : String(e)}\n`);
+        } finally {
+            if (outputTable && !process.env.BENCHMARK_KEEP_OUTPUT) {
+                await _dropBenchTable(outputTable);
+            }
         }
     }
 
-    const row = `| ${fnName} | ${paramsStr} | ${timeStr} | ${errorStr} |`;
+    const outputTableDisplay = ((params && params.output_table) || '-')
+        .replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA || '');
+    const outputTableCol = Boolean(process.env.BENCHMARK_KEEP_OUTPUT)
+        ? ` ${outputTableDisplay} |`
+        : '';
+    const row = `| ${fnName} | ${paramsStr} | ${timeStr} | ${errorStr} |${outputTableCol}`;
     if (!_quiet()) process.stdout.write(row + '\n');
     fs.appendFileSync(_resultsPath(), row + '\n');
 

@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='H3_FROMLONGLAT',
-    sql='SELECT COUNT(@@PG_SCHEMA@@.H3_FROMLONGLAT(${lon}, ${lat}, ${resolution})) '
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@PG_SCHEMA@@.H3_FROMLONGLAT(${lon}, ${lat}, ${resolution}) AS result '
         'FROM ${source_table}',
 )

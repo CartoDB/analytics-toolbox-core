@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_TOCHILDREN',
-    sql='SELECT COUNT(*) FROM ${source_table} t, '
-        'UNNEST(@@PG_SCHEMA@@.QUADBIN_TOCHILDREN(t.${quadbin_column}, ${resolution})) AS c',
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT t.${quadbin_column} AS input, @@PG_SCHEMA@@.QUADBIN_TOCHILDREN(t.${quadbin_column}, ${resolution}) AS cells '
+        'FROM ${source_table} t',
 )

@@ -4,6 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_TOCHILDREN',
-    sql: `SELECT COUNT(*) FROM \`\${source_table}\` t,
-UNNEST(\`@@BQ_DATASET@@.H3_TOCHILDREN\`(t.\${h3_column}, \${resolution})) AS h`
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT t.${h3_column} AS input, `@@BQ_DATASET@@.H3_TOCHILDREN`(t.${h3_column}, ${resolution}) AS cells FROM ${source_table} t'
 });

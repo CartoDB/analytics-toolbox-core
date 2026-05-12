@@ -4,5 +4,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_FROMGEOGPOINT',
-    sql: 'SELECT COUNT(@@SF_SCHEMA@@.H3_FROMGEOGPOINT(t.${geom_column}, ${resolution})) FROM ${source_table} t'
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT @@SF_SCHEMA@@.H3_FROMGEOGPOINT(t.\${geom_column}, \${resolution}) AS result
+FROM \${source_table} t`
 });

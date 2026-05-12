@@ -4,6 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'QUADBIN_POLYFILL',
-    sql: `SELECT COUNT(*) FROM (SELECT * FROM \${source_table}) t,
-UNNEST(\`@@BQ_DATASET@@.QUADBIN_POLYFILL\`(t.\${geom_column}, \${resolution})) AS q`
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.QUADBIN_POLYFILL`(t.${geom_column}, ${resolution}) AS cells FROM ${source_table} t'
 });

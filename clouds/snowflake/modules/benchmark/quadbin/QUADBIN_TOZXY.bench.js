@@ -4,5 +4,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'QUADBIN_TOZXY',
-    sql: 'SELECT COUNT(@@SF_SCHEMA@@.QUADBIN_TOZXY(t.${quadbin_column}):z) FROM ${source_table} t'
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT @@SF_SCHEMA@@.QUADBIN_TOZXY(t.\${quadbin_column}) AS zxy
+FROM \${source_table} t`
 });

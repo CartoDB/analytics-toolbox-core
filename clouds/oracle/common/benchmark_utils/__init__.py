@@ -64,6 +64,24 @@ _MISSING_CONFIG = '__missing_config__'
 _VERBOSE = bool(os.environ.get('BENCHMARK_VERBOSE'))
 
 
+def _drop_bench_table(fqn):
+    """Best-effort pre/post-run drop of benchmark output table."""
+    fqn = fqn.replace('@@ORA_SCHEMA@@', os.environ.get('ORA_SCHEMA', ''))
+    if not fqn:
+        return
+    sql = (
+        f"BEGIN EXECUTE IMMEDIATE 'DROP TABLE {fqn}'; "
+        'EXCEPTION WHEN OTHERS THEN NULL; END;'
+    )
+    cursor = _get_bench_conn().cursor()
+    try:
+        cursor.execute(sql)
+    except Exception:
+        pass
+    finally:
+        cursor.close()
+
+
 def _config_dir():
     here = os.path.dirname(os.path.abspath(__file__))
     return os.path.abspath(os.path.join(here, '..', '..', 'modules', 'benchmark'))
@@ -140,7 +158,12 @@ def _ensure_header():
         _HEADER_PRINTED = True
         return
     _HEADER_PRINTED = True
-    header = '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
+    keep = bool(os.environ.get('BENCHMARK_KEEP_OUTPUT'))
+    header = (
+        '\n| Function | Params | Time (s) | Error | Output Table |\n|---|---|---|---|---|\n'
+        if keep else
+        '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
+    )
     sys.stdout.write(header)
     with open(_results_path(), 'a') as f:
         f.write(header)
@@ -151,11 +174,13 @@ def _format_params(params, max_value_len=60):
         return '-'
     parts = []
     for k, v in params.items():
+        if k == 'output_table':
+            continue
         s = str(v)
         if len(s) > max_value_len:
             s = s[: max_value_len - 3] + '...'
         parts.append(f'{k}={s}')
-    return ', '.join(parts)
+    return ', '.join(parts) or '-'
 
 
 def _sanitize_error(exc):
@@ -239,9 +264,12 @@ def bench(function, sql, params=None, skip_reason=None):
         error_str = f'skipped: {skip_reason}'
         status = 'no_config' if is_missing_config else 'skip'
     else:
+        output_table = (params or {}).get('output_table')
         try:
             final_sql = Template(sql).substitute(**(params or {}))
-            _get_bench_conn()  # pre-warm; connection cost not counted
+            _get_bench_conn()
+            if output_table:
+                _drop_bench_table(output_table)
             start = time.perf_counter()
             _run_query_timed(final_sql)
             elapsed = time.perf_counter() - start
@@ -251,10 +279,18 @@ def bench(function, sql, params=None, skip_reason=None):
             time_str = 'n/a'
             error_str = _sanitize_error(e)
             status = 'fail'
-            if _VERBOSE:
-                sys.stderr.write(f'\n[BENCHMARK_VERBOSE] {function}:\n{e}\n')
+        finally:
+            if output_table and not bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')):
+                _drop_bench_table(output_table)
 
-    row = f'| {function} | {params_str} | {time_str} | {error_str} |'
+    output_table_display = (params or {}).get('output_table', '-').replace(
+        '@@ORA_SCHEMA@@', os.environ.get('ORA_SCHEMA', ''),
+    )
+    output_table_col = (
+        f' {output_table_display} |'
+        if bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')) else ''
+    )
+    row = f'| {function} | {params_str} | {time_str} | {error_str} |{output_table_col}'
 
     if not _quiet():
         sys.stdout.write(row + '\n')

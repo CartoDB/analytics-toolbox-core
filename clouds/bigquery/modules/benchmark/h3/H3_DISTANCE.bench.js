@@ -4,5 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_DISTANCE',
-    sql: 'SELECT COUNT(`@@BQ_DATASET@@.H3_DISTANCE`(t.${h3_column}, t.${h3_column})) FROM `${source_table}` t'
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.H3_DISTANCE`(t.${h3_column}, t.${h3_column}) AS result FROM ${source_table} t'
 });

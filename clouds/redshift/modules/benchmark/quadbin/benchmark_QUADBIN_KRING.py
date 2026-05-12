@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_KRING',
-    sql='SELECT COUNT(@@RS_SCHEMA@@.QUADBIN_KRING(t.${quadbin_column}, ${size})) '
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT t.${quadbin_column} AS input, @@RS_SCHEMA@@.QUADBIN_KRING(t.${quadbin_column}, ${size}) AS cells '
         'FROM ${source_table} t',
 )

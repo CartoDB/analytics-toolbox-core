@@ -4,5 +4,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_BOUNDARY',
-    sql: 'SELECT COUNT(@@SF_SCHEMA@@.H3_BOUNDARY(t.${h3_column})) FROM ${source_table} t'
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT @@SF_SCHEMA@@.H3_BOUNDARY(t.\${h3_column}) AS result
+FROM \${source_table} t`
 });

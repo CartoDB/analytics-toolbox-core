@@ -4,5 +4,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_TOPARENT',
-    sql: 'SELECT COUNT(@@SF_SCHEMA@@.H3_TOPARENT(t.${h3_column}, ${resolution})) FROM ${source_table} t'
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT @@SF_SCHEMA@@.H3_TOPARENT(t.\${h3_column}, \${resolution}) AS result
+FROM \${source_table} t`
 });

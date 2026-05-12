@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_TOPARENT',
-    sql='SELECT COUNT(@@PG_SCHEMA@@.QUADBIN_TOPARENT(t.${quadbin_column}, ${resolution})) '
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@PG_SCHEMA@@.QUADBIN_TOPARENT(t.${quadbin_column}, ${resolution}) AS result '
         'FROM ${source_table} t',
 )

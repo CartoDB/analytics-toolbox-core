@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='H3_INT_TOSTRING',
-    sql="""SELECT COUNT(@@ORA_SCHEMA@@.H3_INT_TOSTRING(${h3_int}))
-FROM ${source_table} t""",
+    sql='CREATE TABLE ${output_table} AS '
+    'SELECT @@ORA_SCHEMA@@.H3_INT_TOSTRING(${h3_int}) AS result '
+    'FROM ${source_table} t',
 )

@@ -9,6 +9,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_POLYFILL_MODE',
-    sql: 'SELECT COUNT(*) FROM ${source_table} t,\n' +
-         "LATERAL FLATTEN(input => @@SF_SCHEMA@@.H3_POLYFILL(t.${geom_column}, ${resolution}, '${mode}'))"
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT @@SF_SCHEMA@@.H3_POLYFILL(t.\${geom_column}, \${resolution}, '\${mode}') AS cells
+FROM \${source_table} t`
 });

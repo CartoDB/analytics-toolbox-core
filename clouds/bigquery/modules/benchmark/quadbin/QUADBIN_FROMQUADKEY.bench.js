@@ -4,5 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'QUADBIN_FROMQUADKEY',
-    sql: 'SELECT COUNT(`@@BQ_DATASET@@.QUADBIN_FROMQUADKEY`(\'${quadkey}\')) FROM `${source_table}`'
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.QUADBIN_FROMQUADKEY`(\'${quadkey}\') AS result FROM ${source_table}'
 });

@@ -4,7 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_TOPARENT',
-    sql="""SELECT COUNT(
-    @@ORA_SCHEMA@@.QUADBIN_TOPARENT(t.${quadbin_column}, ${resolution})
-) FROM ${source_table} t""",
+    sql="""CREATE TABLE ${output_table} AS
+SELECT @@ORA_SCHEMA@@.QUADBIN_TOPARENT(t.${quadbin_column}, ${resolution}) AS result
+FROM ${source_table} t""",
 )

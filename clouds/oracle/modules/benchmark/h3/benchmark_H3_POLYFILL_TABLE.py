@@ -10,5 +10,4 @@ benchmark(
     '${mode}',
     '${output_table}'
 )""",
-    cleanup=['${output_table}'],
 )

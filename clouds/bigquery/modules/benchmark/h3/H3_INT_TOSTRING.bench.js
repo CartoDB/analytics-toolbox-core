@@ -4,5 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_INT_TOSTRING',
-    sql: 'SELECT COUNT(`@@BQ_DATASET@@.H3_INT_TOSTRING`(${h3_int})) FROM `${source_table}`'
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.H3_INT_TOSTRING`(${h3_int}) AS result FROM ${source_table}'
 });

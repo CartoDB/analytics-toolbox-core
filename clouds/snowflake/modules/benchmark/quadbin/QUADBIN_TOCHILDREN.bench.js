@@ -4,6 +4,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'QUADBIN_TOCHILDREN',
-    sql: `SELECT COUNT(*) FROM \${source_table} t,
-LATERAL FLATTEN(input => @@SF_SCHEMA@@.QUADBIN_TOCHILDREN(t.\${quadbin_column}, \${resolution}))`
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT t.\${quadbin_column} AS input, @@SF_SCHEMA@@.QUADBIN_TOCHILDREN(t.\${quadbin_column}, \${resolution}) AS cells
+FROM \${source_table} t`
 });

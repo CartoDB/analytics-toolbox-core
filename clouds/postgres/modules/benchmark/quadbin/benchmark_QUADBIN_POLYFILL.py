@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_POLYFILL',
-    sql='SELECT COUNT(*) FROM (SELECT * FROM ${source_table}) t, '
-        'UNNEST(@@PG_SCHEMA@@.QUADBIN_POLYFILL(t.${geom_column}, ${resolution})) AS q',
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@PG_SCHEMA@@.QUADBIN_POLYFILL(t.${geom_column}, ${resolution}) AS cells '
+        'FROM ${source_table} t',
 )

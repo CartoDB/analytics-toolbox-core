@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='H3_POLYFILL',
-    sql='SELECT COUNT(*) FROM (SELECT * FROM ${source_table}) t, '
-        'UNNEST(@@PG_SCHEMA@@.H3_POLYFILL(t.${geom_column}, ${resolution})) AS h',
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@PG_SCHEMA@@.H3_POLYFILL(t.${geom_column}, ${resolution}) AS cells '
+        'FROM ${source_table} t',
 )

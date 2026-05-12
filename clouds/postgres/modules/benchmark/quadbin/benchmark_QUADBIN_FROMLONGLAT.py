@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_FROMLONGLAT',
-    sql='SELECT COUNT(@@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(${lon}, ${lat}, ${resolution})) '
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@PG_SCHEMA@@.QUADBIN_FROMLONGLAT(${lon}, ${lat}, ${resolution}) AS result '
         'FROM ${source_table}',
 )

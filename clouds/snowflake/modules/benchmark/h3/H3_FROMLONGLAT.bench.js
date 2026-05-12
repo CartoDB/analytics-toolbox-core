@@ -4,5 +4,7 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_FROMLONGLAT',
-    sql: 'SELECT COUNT(@@SF_SCHEMA@@.H3_FROMLONGLAT(${lon}, ${lat}, ${resolution})) FROM ${source_table}'
+    sql: `CREATE OR REPLACE TABLE \${output_table} AS
+SELECT @@SF_SCHEMA@@.H3_FROMLONGLAT(\${lon}, \${lat}, \${resolution}) AS result
+FROM \${source_table}`
 });

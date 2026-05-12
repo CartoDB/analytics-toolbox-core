@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='H3_INT_TOSTRING',
-    sql='SELECT COUNT(@@PG_SCHEMA@@.H3_INT_TOSTRING(${h3_int})) '
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@PG_SCHEMA@@.H3_INT_TOSTRING(${h3_int}) AS result '
         'FROM ${source_table}',
 )

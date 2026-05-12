@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_FROMQUADKEY',
-    sql="SELECT COUNT(@@PG_SCHEMA@@.QUADBIN_FROMQUADKEY('${quadkey}')) "
+    sql="CREATE TABLE ${output_table} AS "
+        "SELECT @@PG_SCHEMA@@.QUADBIN_FROMQUADKEY('${quadkey}') AS result "
         'FROM ${source_table}',
 )

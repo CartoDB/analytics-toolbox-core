@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_BBOX',
-    sql="""SELECT COUNT(@@ORA_SCHEMA@@.QUADBIN_BBOX(t.${quadbin_column}))
-FROM ${source_table} t""",
+    sql='CREATE TABLE ${output_table} AS '
+    'SELECT @@ORA_SCHEMA@@.QUADBIN_BBOX(t.${quadbin_column}) AS result '
+    'FROM ${source_table} t',
 )

@@ -4,8 +4,6 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_TOQUADKEY',
-    sql='SELECT COUNT(*) FROM ('
-        'SELECT @@DB_SCHEMA@@.QUADBIN_TOQUADKEY(t.${quadbin_column}) AS q '
-        'FROM ${source_table} t'
-        ')',
+    sql='CREATE OR REPLACE TABLE ${output_table} AS '
+        'SELECT @@DB_SCHEMA@@.QUADBIN_TOQUADKEY(t.${quadbin_column}) AS result FROM ${source_table} t',
 )

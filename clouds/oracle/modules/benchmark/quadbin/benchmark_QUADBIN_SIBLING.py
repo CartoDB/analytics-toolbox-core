@@ -4,7 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_SIBLING',
-    sql="""SELECT COUNT(
-    @@ORA_SCHEMA@@.QUADBIN_SIBLING(t.${quadbin_column}, '${direction}')
-) FROM ${source_table} t""",
+    sql="""CREATE TABLE ${output_table} AS
+SELECT @@ORA_SCHEMA@@.QUADBIN_SIBLING(t.${quadbin_column}, '${direction}') AS result
+FROM ${source_table} t""",
 )

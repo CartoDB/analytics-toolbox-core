@@ -4,5 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_UNCOMPACT',
-    sql: 'SELECT COUNT(*) FROM UNNEST(`@@BQ_DATASET@@.H3_UNCOMPACT`(ARRAY(SELECT ${h3_column} FROM ${source_table}), ${resolution}))'
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.H3_UNCOMPACT`(ARRAY_AGG(${h3_column}), ${resolution}) AS expanded FROM ${source_table}'
 });

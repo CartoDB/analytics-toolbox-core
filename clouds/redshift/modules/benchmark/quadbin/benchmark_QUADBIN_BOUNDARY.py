@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_BOUNDARY',
-    sql='SELECT COUNT(@@RS_SCHEMA@@.QUADBIN_BOUNDARY(t.${quadbin_column})) '
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT @@RS_SCHEMA@@.QUADBIN_BOUNDARY(t.${quadbin_column}) AS result '
         'FROM ${source_table} t',
 )

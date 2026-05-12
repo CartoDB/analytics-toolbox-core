@@ -4,6 +4,7 @@ from benchmark_utils import benchmark
 
 benchmark(
     function='QUADBIN_KRING_DISTANCES',
-    sql='SELECT COUNT(*) FROM ${source_table} t, '
-        'UNNEST(@@PG_SCHEMA@@.QUADBIN_KRING_DISTANCES(t.${quadbin_column}, ${size})) AS k',
+    sql='CREATE TABLE ${output_table} AS '
+        'SELECT t.${quadbin_column} AS input, @@PG_SCHEMA@@.QUADBIN_KRING_DISTANCES(t.${quadbin_column}, ${size}) AS kring '
+        'FROM ${source_table} t',
 )

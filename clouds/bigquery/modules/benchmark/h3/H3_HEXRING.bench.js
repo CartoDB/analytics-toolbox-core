@@ -4,6 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_HEXRING',
-    sql: `SELECT COUNT(*) FROM \`\${source_table}\` t,
-UNNEST(\`@@BQ_DATASET@@.H3_HEXRING\`(t.\${h3_column}, \${size})) AS h`
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT t.${h3_column} AS input, `@@BQ_DATASET@@.H3_HEXRING`(t.${h3_column}, ${size}) AS cells FROM ${source_table} t'
 });
