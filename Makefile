@@ -262,7 +262,8 @@ endif
 		(cd clouds/$(cloud) && $(MAKE) benchmark \
 			$(if $(modules),modules=$(modules),) \
 			$(if $(functions),functions=$(functions),) \
-			$(if $(keep),keep=$(keep),)); \
+			$(if $(keep),keep=$(keep),) \
+			$(if $(verbose),verbose=$(verbose),)); \
 	else \
 		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi

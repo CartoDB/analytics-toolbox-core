@@ -101,6 +101,10 @@ async function _dropTable (fqTable) {
 let _configCache = null;
 
 function _configDir () {
+    // Set by each modules/Makefile; root's export wins over core's `?=`.
+    const env = process.env.BENCHMARK_CONFIG_DIR;
+    if (env) return path.resolve(env);
+    // Fallback for direct `node <bench>` invocation (no Make involved).
     return path.resolve(__dirname, '..', 'modules', 'benchmark');
 }
 
@@ -246,7 +250,7 @@ async function bench ({ function: fnName, sql, params, skip_reason: skipReason }
 
     const outputTableDisplay = ((params && params.output_table) || '-')
         .replace(/@@SF_SCHEMA@@/g, process.env.SF_SCHEMA || '');
-    const outputTableCol = Boolean(process.env.BENCHMARK_KEEP_OUTPUT)
+    const outputTableCol = process.env.BENCHMARK_KEEP_OUTPUT
         ? ` ${outputTableDisplay} |`
         : '';
     const row = `| ${fnName} | ${paramsStr} | ${timeStr} | ${errorStr} |${outputTableCol}`;

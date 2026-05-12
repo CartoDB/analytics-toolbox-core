@@ -83,6 +83,11 @@ def _drop_bench_table(fqn):
 
 
 def _config_dir():
+    # Set by each modules/Makefile; root's export wins over core's `?=`.
+    env = os.environ.get('BENCHMARK_CONFIG_DIR')
+    if env:
+        return os.path.abspath(env)
+    # Fallback for direct `python <bench>` invocation (no Make involved).
     here = os.path.dirname(os.path.abspath(__file__))
     return os.path.abspath(os.path.join(here, '..', '..', 'modules', 'benchmark'))
 
@@ -160,9 +165,10 @@ def _ensure_header():
     _HEADER_PRINTED = True
     keep = bool(os.environ.get('BENCHMARK_KEEP_OUTPUT'))
     header = (
-        '\n| Function | Params | Time (s) | Error | Output Table |\n|---|---|---|---|---|\n'
-        if keep else
-        '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
+        '\n| Function | Params | Time (s) | Error | Output Table |\n'
+        '|---|---|---|---|---|\n'
+        if keep
+        else '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
     )
     sys.stdout.write(header)
     with open(_results_path(), 'a') as f:
@@ -283,12 +289,18 @@ def bench(function, sql, params=None, skip_reason=None):
             if output_table and not bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')):
                 _drop_bench_table(output_table)
 
-    output_table_display = (params or {}).get('output_table', '-').replace(
-        '@@ORA_SCHEMA@@', os.environ.get('ORA_SCHEMA', ''),
+    output_table_display = (
+        (params or {})
+        .get('output_table', '-')
+        .replace(
+            '@@ORA_SCHEMA@@',
+            os.environ.get('ORA_SCHEMA', ''),
+        )
     )
     output_table_col = (
         f' {output_table_display} |'
-        if bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')) else ''
+        if bool(os.environ.get('BENCHMARK_KEEP_OUTPUT'))
+        else ''
     )
     row = f'| {function} | {params_str} | {time_str} | {error_str} |{output_table_col}'
 

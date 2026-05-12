@@ -8,6 +8,7 @@ SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
+export BENCHMARK_CONFIG_DIR ?= $(ROOT_DIR)/benchmark
 export RS_VERSION_FUNCTION ?= VERSION_CORE
 export RS_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
@@ -56,7 +57,7 @@ test: check venv3 $(NODE_MODULES_DEV)
 	fi;
 
 benchmark: check venv3 $(NODE_MODULES_DEV)
-	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --modules=$(modules) --functions=$(functions)`; \
+	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --base-dirs="$(MODULES_DIRS)" --modules=$(modules) --functions=$(functions)`; \
 	if [ -n "$$files" ]; then \
 		count=`echo "$$files" | wc -w | tr -d ' '`; \
 		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \

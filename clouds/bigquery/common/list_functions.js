@@ -15,7 +15,10 @@ const modulename = argv._[0];
 // type=test (default) scans test/<module>/<FUNCTION>.test.js
 // type=benchmark scans benchmark/<module>/<FUNCTION>.bench.js
 const type = argv.type === 'benchmark' ? 'benchmark' : 'test';
-const moduledir = path.resolve(type, modulename);
+// --base-dirs="p1,p2" scans each base dir; defaults to CWD.
+const baseDirs = argv['base-dirs']
+    ? argv['base-dirs'].split(',').map(s => s.trim()).filter(Boolean)
+    : ['.'];
 const diff = argv.diff || [];
 const fileExtension = argv.fileExtension || (type === 'benchmark' ? '.bench.js' : '.test.js');
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
@@ -47,9 +50,11 @@ if (diff.length) {
     }
 }
 
-// Extract functions
+// Extract functions across all base dirs.
 const functions = [];
-if (fs.existsSync(moduledir) && fs.statSync(moduledir).isDirectory()) {
+const moduledirs = baseDirs.map(b => path.resolve(b, type, modulename));
+moduledirs.forEach(moduledir => {
+    if (!fs.existsSync(moduledir) || !fs.statSync(moduledir).isDirectory()) return;
     const files = fs.readdirSync(moduledir);
     files.forEach(file => {
         const pfile = path.parse(file);
@@ -63,7 +68,7 @@ if (fs.existsSync(moduledir) && fs.statSync(moduledir).isDirectory()) {
             });
         }
     });
-}
+});
 
 // Filter functions
 const output = [];
@@ -76,15 +81,20 @@ function add (f) {
 functions.forEach(f => add(f));
 
 if (output.length) {
-    // Check global setup
-    const setupfile = path.join(moduledir, 'global', 'setup.js');
-    if (fs.existsSync(setupfile)) {
-        output.push(`--globalSetup=${setupfile}`)
+    // Check global setup/teardown across base dirs (first match wins).
+    for (const moduledir of moduledirs) {
+        const setupfile = path.join(moduledir, 'global', 'setup.js');
+        if (fs.existsSync(setupfile)) {
+            output.push(`--globalSetup=${setupfile}`);
+            break;
+        }
     }
-    // Check global teardown
-    const teardownfile = path.join(moduledir, 'global', 'teardown.js');
-    if (fs.existsSync(teardownfile)) {
-        output.push(`--globalTeardown=${teardownfile}`)
+    for (const moduledir of moduledirs) {
+        const teardownfile = path.join(moduledir, 'global', 'teardown.js');
+        if (fs.existsSync(teardownfile)) {
+            output.push(`--globalTeardown=${teardownfile}`);
+            break;
+        }
     }
 }
 

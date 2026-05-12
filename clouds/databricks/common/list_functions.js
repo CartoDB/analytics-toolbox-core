@@ -11,7 +11,10 @@ const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const inputDir = '.';
+// --base-dirs="p1,p2" scans each base dir; defaults to CWD.
+const baseDirs = argv['base-dirs']
+    ? argv['base-dirs'].split(',').map(s => s.trim()).filter(Boolean)
+    : ['.'];
 const diff = argv.diff || [];
 let modulesFilter = (argv.modules && argv.modules.split(',')) || [];
 let functionsFilter = (argv.functions && argv.functions.split(',')) || [];
@@ -53,29 +56,33 @@ if (diff.length) {
     }
 }
 
-// Extract functions
+// Extract functions across all base dirs.
 const functions = [];
-const scandir = path.resolve(inputDir, subdir);
-if (fs.existsSync(scandir)) {
+function upsert (entry) {
+    const idx = functions.findIndex(f => f.name === entry.name && f.module === entry.module);
+    if (idx >= 0) functions[idx] = entry;
+    else functions.push(entry);
+}
+baseDirs.forEach(baseDir => {
+    const scandir = path.resolve(baseDir, subdir);
+    if (!fs.existsSync(scandir)) return;
     const modules = fs.readdirSync(scandir);
     modules.forEach(module => {
         const moduledir = path.join(scandir, module);
-        if (fs.statSync(moduledir).isDirectory()) {
-            const files = fs.readdirSync(moduledir);
-            files.forEach(file => {
-                const pfile = path.parse(file);
-                if (pfile.name.startsWith(filePrefix) && pfile.ext === '.py') {
-                    const name = pfile.name.substring(filePrefix.length);
-                    functions.push({
-                        name,
-                        module,
-                        fullPath: path.join(moduledir, file)
-                    });
-                }
-            });
-        }
+        if (!fs.statSync(moduledir).isDirectory()) return;
+        const files = fs.readdirSync(moduledir);
+        files.forEach(file => {
+            const pfile = path.parse(file);
+            if (pfile.name.startsWith(filePrefix) && pfile.ext === '.py') {
+                upsert({
+                    name: pfile.name.substring(filePrefix.length),
+                    module,
+                    fullPath: path.join(moduledir, file)
+                });
+            }
+        });
     });
-}
+});
 
 // Check filters
 // Only validate explicitly requested modules (not modules from diff)

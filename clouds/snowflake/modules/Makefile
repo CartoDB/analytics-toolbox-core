@@ -4,6 +4,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 TEST_DIR ?= $(ROOT_DIR)/test
 BENCHMARK_DIR ?= $(ROOT_DIR)/benchmark
+export BENCHMARK_CONFIG_DIR ?= $(ROOT_DIR)/benchmark
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 SQL_DIR ?= $(ROOT_DIR)/sql
@@ -131,15 +132,21 @@ test-slow: check $(NODE_MODULES_DEV)
 
 benchmark: check $(NODE_MODULES_DEV)
 	files=""; \
-	if [ -d $(BENCHMARK_DIR) ]; then \
-		for m in `ls $(BENCHMARK_DIR)`; do \
-			[ -d $(BENCHMARK_DIR)/$$m ] || continue; \
-			matched=`$(COMMON_DIR)/list_functions.js $$m --type=benchmark --modules=$(modules) --functions=$(functions)`; \
-			if [ -n "$$matched" ]; then \
-				files="$$files $$matched"; \
-			fi; \
+	seen=""; \
+	for dir in `echo "$(MODULES_DIRS)" | tr ',' ' '`; do \
+		bdir="$$dir/benchmark"; \
+		[ -d "$$bdir" ] || continue; \
+		for m in `ls "$$bdir"`; do \
+			[ -d "$$bdir/$$m" ] || continue; \
+			case " $$seen " in *" $$m "*) ;; *) seen="$$seen $$m";; esac; \
 		done; \
-	fi; \
+	done; \
+	for m in $$seen; do \
+		matched=`$(COMMON_DIR)/list_functions.js $$m --type=benchmark --base-dirs="$(MODULES_DIRS)" --modules=$(modules) --functions=$(functions)`; \
+		if [ -n "$$matched" ]; then \
+			files="$$files $$matched"; \
+		fi; \
+	done; \
 	files=`echo "$$files" | xargs`; \
 	if [ -n "$$files" ]; then \
 		count=`echo "$$files" | wc -w | tr -d ' '`; \

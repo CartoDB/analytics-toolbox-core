@@ -95,6 +95,11 @@ def _drop_bench_table(fqn):
 
 
 def _config_dir():
+    # Set by each modules/Makefile; root's export wins over core's `?=`.
+    env = os.environ.get('BENCHMARK_CONFIG_DIR')
+    if env:
+        return os.path.abspath(env)
+    # Fallback for direct `python <bench>` invocation (no Make involved).
     here = os.path.dirname(os.path.abspath(__file__))
     return os.path.abspath(os.path.join(here, '..', '..', 'modules', 'benchmark'))
 
@@ -165,7 +170,8 @@ def _ensure_header():
     _HEADER_PRINTED = True
     keep = bool(os.environ.get('BENCHMARK_KEEP_OUTPUT'))
     header = (
-        '\n| Function | Params | Time (s) | Error | Output Table |\n|---|---|---|---|---|\n'
+        '\n| Function | Params | Time (s) | Error | Output Table |\n'
+        '|---|---|---|---|---|\n'
         if keep else
         '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
     )
