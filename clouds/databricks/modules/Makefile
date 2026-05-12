@@ -9,6 +9,7 @@ COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
 export BENCHMARK_CONFIG_DIR ?= $(ROOT_DIR)/benchmark
+BENCHMARK_DIST_DIR ?= $(ROOT_DIR)/../dist
 export DB_VERSION_FUNCTION ?= VERSION_CORE
 export DB_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
@@ -61,10 +62,10 @@ benchmark: check venv3 $(NODE_MODULES_DEV)
 	if [ -n "$$files" ]; then \
 		count=`echo "$$files" | wc -w | tr -d ' '`; \
 		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
-		results=$(ROOT_DIR)/../dist/benchmark_$$ts.md; \
+		results=$(BENCHMARK_DIST_DIR)/benchmark_$$ts.md; \
 		echo "Running $$count Databricks benchmarks..."; \
 		echo ""; \
-		mkdir -p $(ROOT_DIR)/../dist; \
+		mkdir -p $(BENCHMARK_DIST_DIR); \
 		{ \
 			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
 			echo ""; \

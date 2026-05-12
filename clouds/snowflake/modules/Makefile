@@ -5,6 +5,7 @@ ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 TEST_DIR ?= $(ROOT_DIR)/test
 BENCHMARK_DIR ?= $(ROOT_DIR)/benchmark
 export BENCHMARK_CONFIG_DIR ?= $(ROOT_DIR)/benchmark
+BENCHMARK_DIST_DIR ?= $(ROOT_DIR)/../dist
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 SQL_DIR ?= $(ROOT_DIR)/sql
@@ -151,10 +152,10 @@ benchmark: check $(NODE_MODULES_DEV)
 	if [ -n "$$files" ]; then \
 		count=`echo "$$files" | wc -w | tr -d ' '`; \
 		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
-		results=$(ROOT_DIR)/../dist/benchmark_$$ts.md; \
+		results=$(BENCHMARK_DIST_DIR)/benchmark_$$ts.md; \
 		echo "Running $$count Snowflake benchmarks..."; \
 		echo ""; \
-		mkdir -p $(ROOT_DIR)/../dist; \
+		mkdir -p $(BENCHMARK_DIST_DIR); \
 		{ \
 			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
 			echo ""; \
