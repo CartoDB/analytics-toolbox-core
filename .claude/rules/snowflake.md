@@ -41,3 +41,7 @@ make deploy-share         # deploy data share
 - JS libraries: `clouds/snowflake/libraries/javascript/`
 - Build/test utilities: `clouds/snowflake/common/`
 - Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+
+## Placeholder conventions
+
+In docs, benchmark `config.template.json`, and any user-facing example: use `<my-database>.<my-schema>.<my-table>` for input tables and `<my-database>.<my-schema>.<my-output-table>` for procedure-output tables. Keep the namespace depth (<my-database>.<my-schema>) consistent across files.

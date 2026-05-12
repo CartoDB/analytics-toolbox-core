@@ -73,3 +73,7 @@ SELECT @@RS_SCHEMA@@.H3_POLYFILL(geom, 5)
 - Schema placeholder: `@@RS_SCHEMA@@`
 - Python libraries: `clouds/redshift/libraries/python/`
 - Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+
+## Placeholder conventions
+
+In docs, benchmark `config.template.json`, and any user-facing example: use `<my-schema>.<my-table>` for input tables and `<my-schema>.<my-output-table>` for procedure-output tables. Keep the namespace depth (<my-schema>) consistent across files.
