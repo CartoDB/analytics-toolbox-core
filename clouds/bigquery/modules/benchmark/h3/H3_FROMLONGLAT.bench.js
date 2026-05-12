@@ -4,5 +4,5 @@ const { benchmark } = require('../../../common/benchmark-utils');
 
 benchmark({
     function: 'H3_FROMLONGLAT',
-    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.H3_FROMLONGLAT`(${lon}, ${lat}, ${resolution}) AS result FROM ${source_table}'
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.H3_FROMLONGLAT`(${longitude}, ${latitude}, ${resolution}) AS result FROM ${source_table}'
 });

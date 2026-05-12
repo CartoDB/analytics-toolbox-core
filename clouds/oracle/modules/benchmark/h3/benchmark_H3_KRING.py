@@ -7,5 +7,5 @@ benchmark(
     sql="""CREATE TABLE ${output_table} AS
 SELECT t.${h3_column} AS input, k.COLUMN_VALUE AS cell
 FROM ${source_table} t,
-TABLE(@@ORA_SCHEMA@@.H3_KRING(t.${h3_column}, ${size})) k""",
+TABLE(@@ORA_SCHEMA@@.H3_KRING(t.${h3_column}, ${distance})) k""",
 )

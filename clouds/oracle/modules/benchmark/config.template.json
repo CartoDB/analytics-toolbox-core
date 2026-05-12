@@ -3,7 +3,7 @@
         {
             "source_table": "<my-schema>.h3_table",
             "h3_column": "h3",
-            "size": 3,
+            "distance": 3,
             "output_table": "<my-schema>.bench_h3_kring"
         }
     ],
@@ -33,7 +33,7 @@
         {
             "source_table": "<my-schema>.quadbin_table",
             "quadbin_column": "quadbin",
-            "size": 3,
+            "distance": 3,
             "output_table": "<my-schema>.bench_quadbin_kring"
         }
     ],

@@ -5,6 +5,6 @@ from benchmark_utils import benchmark
 benchmark(
     function='H3_INT_TOSTRING',
     sql='CREATE TABLE ${output_table} AS '
-        'SELECT @@PG_SCHEMA@@.H3_INT_TOSTRING(${h3_int}) AS result '
+        'SELECT @@PG_SCHEMA@@.H3_INT_TOSTRING(${h3int}) AS result '
         'FROM ${source_table}',
 )
