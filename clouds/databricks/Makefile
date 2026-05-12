@@ -59,7 +59,7 @@ benchmark:
 	$(MAKE) benchmark-modules
 
 benchmark-modules:
-	$(MAKE) -C modules benchmark modules=$(modules) functions=$(functions) keep=$(keep) verbose=$(verbose)
+	$(MAKE) -C modules benchmark modules=$(modules) functions=$(functions) keep=$(keep) verbose=$(verbose) tags=$(tags)
 
 remove:
 	$(MAKE) remove-modules

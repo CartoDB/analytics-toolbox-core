@@ -13,14 +13,20 @@
             "geom_column": "geom",
             "resolution": 8,
             "mode": "center",
-            "output_table": "<my-project>.<my-dataset>.bench_h3_polyfill_mode_center"
+            "output_table": "<my-project>.<my-dataset>.bench_h3_polyfill_mode_center",
+            "tags": [
+                "center"
+            ]
         },
         {
             "source_table": "<my-project>.<my-dataset>.polygons_table",
             "geom_column": "geom",
             "resolution": 8,
             "mode": "intersects",
-            "output_table": "<my-project>.<my-dataset>.bench_h3_polyfill_mode_intersects"
+            "output_table": "<my-project>.<my-dataset>.bench_h3_polyfill_mode_intersects",
+            "tags": [
+                "intersects"
+            ]
         }
     ],
     "QUADBIN_KRING": [

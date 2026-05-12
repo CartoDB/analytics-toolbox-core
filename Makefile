@@ -263,7 +263,8 @@ endif
 			$(if $(modules),modules=$(modules),) \
 			$(if $(functions),functions=$(functions),) \
 			$(if $(keep),keep=$(keep),) \
-			$(if $(verbose),verbose=$(verbose),)); \
+			$(if $(verbose),verbose=$(verbose),) \
+			$(if $(tags),tags=$(tags),)); \
 	else \
 		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi

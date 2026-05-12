@@ -149,6 +149,11 @@ def config_for(function):
         return [{_MISSING_CONFIG: True}]
     if not isinstance(entry, list):
         entry = [entry]
+    tags_filter = os.environ.get('BENCHMARK_TAGS', '').strip()
+    if tags_filter:
+        wanted = {t.strip() for t in tags_filter.split(',') if t.strip()}
+        if wanted:
+            entry = [c for c in entry if wanted & set(c.get('tags') or [])]
     return entry
 
 
@@ -194,7 +199,7 @@ def _format_params(params, max_value_len=60):
         return '-'
     parts = []
     for k, v in params.items():
-        if k == 'output_table':
+        if k in ('output_table', 'tags'):
             continue
         s = str(v)
         if len(s) > max_value_len:

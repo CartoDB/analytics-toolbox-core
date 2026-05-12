@@ -138,7 +138,17 @@ function configFor (fnName) {
     if (!entry || (Array.isArray(entry) && entry.length === 0)) {
         return [{ [MISSING_CONFIG]: true }];
     }
-    return Array.isArray(entry) ? entry : [entry];
+    let cases = Array.isArray(entry) ? entry : [entry];
+    const tagsFilter = (process.env.BENCHMARK_TAGS || '').trim();
+    if (tagsFilter) {
+        const wanted = new Set(
+            tagsFilter.split(',').map(t => t.trim()).filter(Boolean)
+        );
+        if (wanted.size) {
+            cases = cases.filter(c => (c.tags || []).some(t => wanted.has(t)));
+        }
+    }
+    return cases;
 }
 
 // ---------- output ----------
@@ -181,7 +191,7 @@ function _formatParams (params, maxValueLen = 60) {
     if (!params || Object.keys(params).length === 0) return '-';
     const parts = [];
     for (const [k, v] of Object.entries(params)) {
-        if (k === 'output_table') continue;
+        if (k === 'output_table' || k === 'tags') continue;
         let s = String(v);
         if (s.length > maxValueLen) s = s.slice(0, maxValueLen - 3) + '...';
         parts.push(`${k}=${s}`);

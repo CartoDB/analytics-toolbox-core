@@ -173,6 +173,7 @@ benchmark: check $(NODE_MODULES_DEV)
 			BENCHMARK_HEADER_WRITTEN=1 \
 			BENCHMARK_KEEP_OUTPUT=$(keep) \
 			BENCHMARK_VERBOSE=$(verbose) \
+			BENCHMARK_TAGS=$(tags) \
 			node "$$f" || exit 1; \
 		done; \
 		echo ""; \

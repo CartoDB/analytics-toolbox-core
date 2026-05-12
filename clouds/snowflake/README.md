@@ -56,7 +56,7 @@ SF_PASSWORD=<password>
 - `make build`: builds the final SQL scripts and libraries (JS)
 - `make deploy`: builds the JS libraries and SQL scripts and deploys in the Snowflake database
 - `make test`: runs the library tests locally and the modules tests with the Snowflake database (jest)
-- `make benchmark`: runs per-function timing benchmarks. Flags: `keep=1` (preserve output tables for inspection), `verbose=1` (full error messages). Configure inputs in `modules/benchmark/config.json` (copy from `config.template.json`).
+- `make benchmark`: runs per-function timing benchmarks. Flags: `keep=1` (preserve output tables for inspection), `verbose=1` (full error messages), `tags=<tag,…>` (run only cases with matching tag). Configure inputs in `modules/benchmark/config.json` (copy from `config.template.json`).
 - `make remove`: removes the SQL scripts from the Snowflake database
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates the installation package in the dist folder (zip)

@@ -45,7 +45,7 @@ AWS_SECRET_ACCESS_KEY=<secret-access-key>
 - `make build-modules`: builds the final SQL scripts
 - `make deploy`: builds and deploys SQL scripts to the Redshift database
 - `make test`: runs the modules tests with the Redshift database (pytest)
-- `make benchmark`: runs per-function timing benchmarks. Flags: `keep=1` (preserve output tables for inspection), `verbose=1` (full error messages). Configure inputs in `modules/benchmark/config.json` (copy from `config.template.json`).
+- `make benchmark`: runs per-function timing benchmarks. Flags: `keep=1` (preserve output tables for inspection), `verbose=1` (full error messages), `tags=<tag,…>` (run only cases with matching tag). Configure inputs in `modules/benchmark/config.json` (copy from `config.template.json`).
 - `make remove`: removes SQL functions from the Redshift database
 - `make clean`: cleans the installed dependencies and generated files locally
 
