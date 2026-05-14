@@ -3,6 +3,9 @@
 ROOT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 TEST_DIR ?= $(ROOT_DIR)/test
+BENCHMARK_DIR ?= $(ROOT_DIR)/benchmark
+export BENCHMARK_CONFIG_DIR ?= $(ROOT_DIR)/benchmark
+BENCHMARK_DIST_DIR ?= $(ROOT_DIR)/../dist
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/build
 SQL_DIR ?= $(ROOT_DIR)/sql
@@ -30,16 +33,16 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share deploy deploy-share test remove remove-share clean
+.PHONY: help lint build build-share deploy deploy-share test benchmark remove remove-share clean
 
 help:
-	echo "Available targets: lint build deploy test remove clean"
+	echo "Available targets: lint build deploy test benchmark remove clean"
 
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) --fix
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) --fix
 	echo "- Lint Markdown files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
@@ -92,6 +95,58 @@ test: check $(NODE_MODULES_DEV)
 			fi; \
 		fi; \
 	done;
+
+benchmark: check $(NODE_MODULES_DEV)
+	files=""; \
+	seen=""; \
+	for dir in `echo "$(MODULES_DIRS)" | tr ',' ' '`; do \
+		bdir="$$dir/benchmark"; \
+		[ -d "$$bdir" ] || continue; \
+		for m in `ls "$$bdir"`; do \
+			[ -d "$$bdir/$$m" ] || continue; \
+			case " $$seen " in *" $$m "*) ;; *) seen="$$seen $$m";; esac; \
+		done; \
+	done; \
+	for m in $$seen; do \
+		matched=`$(COMMON_DIR)/list_functions.js $$m --type=benchmark --base-dirs="$(MODULES_DIRS)" --modules=$(modules) --functions=$(functions)`; \
+		if [ -n "$$matched" ]; then \
+			files="$$files $$matched"; \
+		fi; \
+	done; \
+	files=`echo "$$files" | xargs`; \
+	if [ -n "$$files" ]; then \
+		count=`echo "$$files" | wc -w | tr -d ' '`; \
+		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
+		results=$(BENCHMARK_DIST_DIR)/benchmark_$$ts.md; \
+		echo "Running $$count BigQuery benchmarks..."; \
+		echo ""; \
+		mkdir -p $(BENCHMARK_DIST_DIR); \
+		{ \
+			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+			echo ""; \
+			if [ -n "$(keep)" ]; then \
+				echo "| Function | Params | Time (s) | Error | Output Table |"; \
+				echo "|---|---|---|---|---|"; \
+			else \
+				echo "| Function | Params | Time (s) | Error |"; \
+				echo "|---|---|---|---|"; \
+			fi; \
+		} > $$results; \
+		start=`date +%s`; \
+		for f in $$files; do \
+			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+			BENCHMARK_RESULTS_FILE=$$results \
+			BENCHMARK_HEADER_WRITTEN=1 \
+			BENCHMARK_KEEP_OUTPUT=$(keep) \
+			BENCHMARK_VERBOSE=$(verbose) \
+			BENCHMARK_TAGS=$(tags) \
+			node "$$f" || exit 1; \
+		done; \
+		echo ""; \
+		echo "Done in `expr \`date +%s\` - $$start`s. Results: $$results"; \
+	else \
+		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
+	fi
 
 remove: check
 	echo "Removing modules..."

@@ -1,0 +1,18 @@
+{
+    "QUADBIN_KRING": [
+        {
+            "source_table": "<my-schema>.quadbin_table",
+            "quadbin_column": "quadbin",
+            "size": 3,
+            "output_table": "<my-schema>.bench_quadbin_kring"
+        }
+    ],
+    "QUADBIN_POLYFILL": [
+        {
+            "source_table": "<my-schema>.polygons_table",
+            "geom_column": "geom",
+            "resolution": 11,
+            "output_table": "<my-schema>.bench_quadbin_polyfill"
+        }
+    ]
+}

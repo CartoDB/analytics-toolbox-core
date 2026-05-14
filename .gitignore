@@ -12,6 +12,7 @@ __pycache__/
 
 *.log
 *.pyc
+**/benchmark/config.json
 snowsql_rt.*
 .DS_STORE
 .env*

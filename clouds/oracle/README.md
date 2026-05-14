@@ -45,13 +45,14 @@ Note: `ORA_WALLET_ZIP` is the base64-encoded content of the Oracle wallet ZIP fi
 - `make build`: builds the final SQL scripts
 - `make deploy`: builds and deploys SQL scripts to the Oracle database
 - `make test`: runs the modules tests with the Oracle database (pytest)
+- `make benchmark`: runs per-function timing benchmarks. Flags: `keep=1` (preserve output tables for inspection), `verbose=1` (full error messages), `tags=<tag,…>` (run only cases with matching tag). Configure inputs in `modules/benchmark/config.json` (copy from `config.template.json`).
 - `make remove`: removes SQL functions from the Oracle database
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates a distributable package (ZIP file)
 
 **Filtering**
 
-Commands `build-modules`, `deploy-modules`, and `test-modules` can be filtered by the following. All the filters are additive:
+Commands `build-modules`, `deploy-modules`, `test-modules`, and `benchmark-modules` can be filtered by the following. All the filters are additive:
 
 - `diff`: list of changed files
 - `modules`: list of modules to filter
