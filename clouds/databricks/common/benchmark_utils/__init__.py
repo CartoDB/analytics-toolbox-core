@@ -84,6 +84,7 @@ _VERBOSE = bool(os.environ.get('BENCHMARK_VERBOSE'))
 def _drop_bench_table(fqn):
     """Best-effort pre/post-run drop of benchmark output table."""
     fqn = fqn.replace('@@DB_SCHEMA@@', os.environ.get('DB_SCHEMA', ''))
+    fqn = fqn.replace('\\`', '`')
     sql = f'DROP TABLE IF EXISTS {fqn}'
     cursor = _get_bench_conn().cursor()
     try:
@@ -282,7 +283,7 @@ def bench(function, sql, params=None, skip_reason=None):
 
     output_table_display = (params or {}).get('output_table', '-').replace(
         '@@DB_SCHEMA@@', os.environ.get('DB_SCHEMA', ''),
-    )
+    ).replace('\\`', '`')
     output_table_col = (
         f' {output_table_display} |'
         if bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')) else ''
