@@ -199,12 +199,6 @@ function _formatParams (params, maxValueLen = 60) {
     return parts.join(', ') || '-';
 }
 
-async function _dropBenchTable (fqn) {
-    try {
-        await _runQueryTimed(`DROP TABLE IF EXISTS ${fqn}`);
-    } catch (_) { /* best-effort */ }
-}
-
 function _sanitizeError (e) {
     const msg = (e && e.message) ? e.message : String(e);
     if (_VERBOSE) return msg.replace(/\n+/g, ' ').replace(/\|/g, '\\|');
@@ -243,7 +237,7 @@ async function bench ({ function: fnName, sql, params, skip_reason: skipReason }
         try {
             const finalSql = _substitute(sql, params || {});
             await _ensureWarmed();
-            if (outputTable) await _dropBenchTable(outputTable);
+            if (outputTable) await _dropTable(outputTable);
             const start = process.hrtime.bigint();
             await _runQueryTimed(finalSql);
             elapsed = Number(process.hrtime.bigint() - start) / 1e9;
@@ -253,7 +247,7 @@ async function bench ({ function: fnName, sql, params, skip_reason: skipReason }
             status = 'fail';
         } finally {
             if (outputTable && !process.env.BENCHMARK_KEEP_OUTPUT) {
-                await _dropBenchTable(outputTable);
+                await _dropTable(outputTable);
             }
         }
     }

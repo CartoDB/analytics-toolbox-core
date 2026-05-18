@@ -328,6 +328,7 @@ help:
 	@echo "  deploy          Deploy gateway and clouds"
 	@echo "  remove          Remove gateway and clouds deployments"
 	@echo "  test            Run tests"
+	@echo "  benchmark       Run per-function timing benchmarks"
 	@echo "  lint            Lint code"
 	@echo ""
 	@echo "Package targets:"

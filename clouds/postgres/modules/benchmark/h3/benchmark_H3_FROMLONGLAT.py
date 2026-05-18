@@ -1,5 +1,3 @@
-# Copyright (c) 2026, CARTO
-
 from benchmark_utils import benchmark
 
 benchmark(
