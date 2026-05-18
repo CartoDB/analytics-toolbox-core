@@ -36,3 +36,7 @@ make build-modules             # Build module packages
 - `quadbin` module migrated March 2026 (20 SQL functions)
 - Deploy scripts in `clouds/databricks/common/`: `run_query.py`, `create_schema.py`
 - Schema creation runs automatically during deploy
+
+## Placeholder conventions
+
+In docs, benchmark `config.template.json`, and any user-facing example: use `<my-catalog>.<my-schema>.<my-table>` for input tables and `<my-catalog>.<my-schema>.<my-output-table>` for procedure-output tables. Keep the namespace depth (<my-catalog>.<my-schema>) consistent across files.

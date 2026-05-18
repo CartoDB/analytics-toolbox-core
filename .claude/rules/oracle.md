@@ -183,3 +183,7 @@ EXECUTE IMMEDIATE v_sql USING p_value;
 ```
 
 Avoid `REPLACE`-based placeholder patterns (e.g. `#INPUT_TABLE#`): collisions with interpolated data that contain the placeholder sentinel cause silent corruption.
+
+## Placeholder conventions
+
+In docs, benchmark `config.template.json`, and any user-facing example: use `<my-schema>.<my-table>` for input tables and `<my-schema>.<my-output-table>` for procedure-output tables. Keep the namespace depth (<my-schema>) consistent across files.

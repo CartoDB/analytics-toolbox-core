@@ -244,6 +244,31 @@ endif
 	@echo "✓ Tests complete"
 	@echo "========================================================================"
 
+# Run benchmarks for a cloud
+.PHONY: benchmark
+benchmark:
+ifndef cloud
+	@echo "Error: cloud parameter required"
+	@echo "Usage: make benchmark cloud=<cloud>"
+	@echo "Valid clouds: $(VALID_CLOUDS)"
+	@exit 1
+endif
+	@if ! echo "$(VALID_CLOUDS)" | grep -wq "$(cloud)"; then \
+		echo "Error: Invalid cloud '$(cloud)'"; \
+		echo "Valid options: $(VALID_CLOUDS)"; \
+		exit 1; \
+	fi
+	@if [ -d "clouds/$(cloud)" ]; then \
+		(cd clouds/$(cloud) && $(MAKE) benchmark \
+			$(if $(modules),modules=$(modules),) \
+			$(if $(functions),functions=$(functions),) \
+			$(if $(keep),keep=$(keep),) \
+			$(if $(verbose),verbose=$(verbose),) \
+			$(if $(tags),tags=$(tags),)); \
+	else \
+		echo "  ⚠️  No clouds/$(cloud) directory found"; \
+	fi
+
 # Run linting for both gateway and clouds
 .PHONY: lint
 lint:
@@ -303,6 +328,7 @@ help:
 	@echo "  deploy          Deploy gateway and clouds"
 	@echo "  remove          Remove gateway and clouds deployments"
 	@echo "  test            Run tests"
+	@echo "  benchmark       Run per-function timing benchmarks"
 	@echo "  lint            Lint code"
 	@echo ""
 	@echo "Package targets:"

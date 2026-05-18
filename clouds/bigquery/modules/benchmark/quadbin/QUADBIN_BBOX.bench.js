@@ -1,0 +1,6 @@
+const { benchmark } = require('../../../common/benchmark-utils');
+
+benchmark({
+    function: 'QUADBIN_BBOX',
+    sql: 'CREATE OR REPLACE TABLE `${output_table}` AS SELECT `@@BQ_DATASET@@.QUADBIN_BBOX`(t.${quadbin_column}) AS result FROM ${source_table} t'
+});

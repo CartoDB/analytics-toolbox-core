@@ -39,3 +39,7 @@ make build    # build JS libraries + SQL modules
 - Test/build utilities: `clouds/bigquery/common/`
 - Schema placeholder: `@@BQ_DATASET@@`, `@@BQ_PREFIX@@`
 - Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+
+## Placeholder conventions
+
+In docs, benchmark `config.template.json`, and any user-facing example: use `<my-project>.<my-dataset>.<my-table>` for input tables and `<my-project>.<my-dataset>.<my-output-table>` for procedure-output tables. Keep the namespace depth (<my-project>.<my-dataset>) consistent across files.

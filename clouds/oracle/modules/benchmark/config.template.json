@@ -1,0 +1,48 @@
+{
+    "H3_KRING": [
+        {
+            "source_table": "<my-schema>.h3_table",
+            "h3_column": "h3",
+            "distance": 3,
+            "output_table": "<my-schema>.bench_h3_kring"
+        }
+    ],
+    "H3_POLYFILL_MODE": [
+        {
+            "source_table": "<my-schema>.polygons_table",
+            "geom_column": "geom",
+            "resolution": 8,
+            "mode": "center",
+            "output_table": "<my-schema>.bench_h3_polyfill_mode_center",
+            "tags": [
+                "center"
+            ]
+        },
+        {
+            "source_table": "<my-schema>.polygons_table",
+            "geom_column": "geom",
+            "resolution": 8,
+            "mode": "intersects",
+            "output_table": "<my-schema>.bench_h3_polyfill_mode_intersects",
+            "tags": [
+                "intersects"
+            ]
+        }
+    ],
+    "QUADBIN_KRING": [
+        {
+            "source_table": "<my-schema>.quadbin_table",
+            "quadbin_column": "quadbin",
+            "distance": 3,
+            "output_table": "<my-schema>.bench_quadbin_kring"
+        }
+    ],
+    "QUADBIN_POLYFILL": [
+        {
+            "source_table": "<my-schema>.polygons_table",
+            "geom_column": "geom",
+            "resolution": 11,
+            "output_table": "<my-schema>.bench_quadbin_polyfill"
+        }
+    ]
+}

@@ -8,6 +8,8 @@ SQL_DIR ?= $(ROOT_DIR)/sql
 COMMON_DIR ?= $(ROOT_DIR)/../common
 
 MODULES_DIRS ?= .
+export BENCHMARK_CONFIG_DIR ?= $(ROOT_DIR)/benchmark
+BENCHMARK_DIST_DIR ?= $(ROOT_DIR)/../dist
 export ORA_VERSION_FUNCTION ?= VERSION_CORE
 export ORA_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 
@@ -17,7 +19,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint lint-fix build deploy test remove clean
+.PHONY: help lint lint-fix build deploy test benchmark remove clean
 
 help:
 	echo "Available targets: lint lint-fix build deploy test remove clean"
@@ -25,8 +27,8 @@ help:
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	echo "- Lint Python files"
-	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --quiet || true
-	$(VENV3_BIN)/flake8 test --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || true
+	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes --quiet || true
+	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || true
 	echo "- Lint Markdown files"
 	if [ -n "$$(find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/.pytest_cache/*' 2>/dev/null)" ]; then \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
@@ -40,7 +42,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 lint-fix: venv3 $(NODE_MODULES_DEV)
 	echo "Auto-fixing linting issues in modules..."
 	echo "- Fix Python formatting"
-	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes
+	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes
 	echo "- Fix Markdown files"
 	if [ -n "$$(find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/.pytest_cache/*' 2>/dev/null)" ]; then \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
@@ -49,7 +51,7 @@ lint-fix: venv3 $(NODE_MODULES_DEV)
 		echo "  No markdown files to fix"; \
 	fi
 	echo "- Check remaining issues"
-	$(VENV3_BIN)/flake8 test --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
+	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 	echo "✓ Auto-fix complete. Review remaining flake8 issues above."
 
 build: $(NODE_MODULES_DEV)
@@ -75,6 +77,42 @@ test: check venv3 $(NODE_MODULES_DEV)
 	if [ ! -z "`$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`" ]; then \
 		$(VENV3_BIN)/pytest -rP -p no:warnings -x -vv `$(COMMON_DIR)/list_functions.js --diff="$(diff)" --modules=$(modules) --functions=$(functions)`; \
 	fi;
+
+benchmark: check venv3 $(NODE_MODULES_DEV)
+	files=`$(COMMON_DIR)/list_functions.js --type=benchmark --base-dirs="$(MODULES_DIRS)" --modules=$(modules) --functions=$(functions)`; \
+	if [ -n "$$files" ]; then \
+		count=`echo "$$files" | wc -w | tr -d ' '`; \
+		ts=`date -u +%Y-%m-%dT%H-%M-%SZ`; \
+		results=$(BENCHMARK_DIST_DIR)/benchmark_$$ts.md; \
+		echo "Running $$count Oracle benchmarks..."; \
+		echo ""; \
+		mkdir -p $(BENCHMARK_DIST_DIR); \
+		{ \
+			echo "# Benchmark run — `date -u +%Y-%m-%dT%H:%M:%SZ`"; \
+			echo ""; \
+			if [ -n "$(keep)" ]; then \
+				echo "| Function | Params | Time (s) | Error | Output Table |"; \
+				echo "|---|---|---|---|---|"; \
+			else \
+				echo "| Function | Params | Time (s) | Error |"; \
+				echo "|---|---|---|---|"; \
+			fi; \
+		} > $$results; \
+		start=`date +%s`; \
+		for f in $$files; do \
+			PYTHONPATH=$(COMMON_DIR) \
+			BENCHMARK_RESULTS_FILE=$$results \
+			BENCHMARK_HEADER_WRITTEN=1 \
+			BENCHMARK_KEEP_OUTPUT=$(keep) \
+			BENCHMARK_VERBOSE=$(verbose) \
+			BENCHMARK_TAGS=$(tags) \
+			$(VENV3_BIN)/python "$$f"; \
+		done; \
+		echo ""; \
+		echo "Done in `expr \`date +%s\` - $$start`s. Results: $$results"; \
+	else \
+		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
+	fi
 
 remove: venv3
 	echo "Removing Oracle modules..."

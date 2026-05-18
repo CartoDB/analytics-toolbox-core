@@ -1,0 +1,9 @@
+from benchmark_utils import benchmark
+
+benchmark(
+    function='QUADBIN_DISTANCE',
+    sql="""CREATE TABLE ${output_table} AS
+SELECT @@ORA_SCHEMA@@.QUADBIN_DISTANCE(
+    t.${quadbin_column}, t.${quadbin_column}) AS result
+FROM ${source_table} t""",
+)
