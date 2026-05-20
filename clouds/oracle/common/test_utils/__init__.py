@@ -15,7 +15,19 @@ __all__ = [
     'run_queries',
     'get_cursor',
     'drop_table',
+    'escape_sql',
 ]
+
+
+def escape_sql(query):
+    """Escape single quotes for embedding inside an Oracle string literal.
+
+    Oracle SQL doubles single quotes inside string literals: e.g. when
+    passing a SELECT query as a VARCHAR2 argument to a stored procedure,
+    every ' inside the query must become ''. Useful in tests that pass a
+    SQL fragment as a string parameter.
+    """
+    return query.replace("'", "''")
 
 
 def quote_table_name(table_name):
