@@ -27,6 +27,8 @@ def escape_sql(query):
     every ' inside the query must become ''. Useful in tests that pass a
     SQL fragment as a string parameter.
     """
+    if query is None:
+        return None
     return query.replace("'", "''")
 
 
