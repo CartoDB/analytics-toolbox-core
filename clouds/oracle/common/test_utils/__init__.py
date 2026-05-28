@@ -14,7 +14,22 @@ __all__ = [
     'run_query',
     'run_queries',
     'get_cursor',
+    'drop_table',
+    'escape_sql',
 ]
+
+
+def escape_sql(query):
+    """Escape single quotes for embedding inside an Oracle string literal.
+
+    Oracle SQL doubles single quotes inside string literals: e.g. when
+    passing a SELECT query as a VARCHAR2 argument to a stored procedure,
+    every ' inside the query must become ''. Useful in tests that pass a
+    SQL fragment as a string parameter.
+    """
+    if query is None:
+        return None
+    return query.replace("'", "''")
 
 
 def quote_table_name(table_name):
@@ -70,3 +85,17 @@ def get_cursor():
     """Get a database cursor for manual operations."""
     conn, _wallet_dir = get_connection()
     return conn.cursor()
+
+
+def drop_table(*table_names):
+    """Drop one or more tables, ignoring non-existent ones.
+
+    Equivalent to DROP TABLE IF EXISTS, which Oracle does not support
+    natively. Accepts @@ORA_SCHEMA@@ placeholders which are resolved by
+    run_query.
+    """
+    for table_name in table_names:
+        try:
+            run_query(f'DROP TABLE {quote_table_name(table_name)}')
+        except Exception:
+            pass

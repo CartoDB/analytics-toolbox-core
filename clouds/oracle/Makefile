@@ -19,12 +19,20 @@ help:
 	echo "Available targets: lint lint-fix build deploy test remove clean create-package"
 
 lint:
+	$(MAKE) lint-libraries
 	$(MAKE) lint-modules
 	$(MAKE) lint-common
 
 lint-fix:
+	$(MAKE) lint-fix-libraries
 	$(MAKE) lint-fix-modules
 	$(MAKE) lint-fix-common
+
+lint-libraries:
+	$(MAKE) -C libraries/javascript lint
+
+lint-fix-libraries:
+	$(MAKE) -C libraries/javascript lint-fix
 
 lint-modules:
 	$(MAKE) -C modules lint
@@ -60,14 +68,18 @@ lint-fix-common: venv3 $(NODE_MODULES_DEV)
 
 build:
 	rm -rf $(BUILD_DIR)
+	$(MAKE) build-libs
 	$(MAKE) build-modules
+
+build-libs:
+	$(MAKE) -C libraries/javascript build
 
 build-modules:
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build
 	cp modules/build/modules.sql $(BUILD_DIR)
 
-deploy:
+deploy: build-libs
 	$(MAKE) deploy-modules
 
 deploy-modules:
@@ -78,6 +90,12 @@ test:
 
 test-modules:
 	$(MAKE) -C modules test
+
+benchmark:
+	$(MAKE) benchmark-modules
+
+benchmark-modules:
+	$(MAKE) -C modules benchmark modules=$(modules) functions=$(functions) keep=$(keep) verbose=$(verbose) tags=$(tags)
 
 remove:
 	$(MAKE) remove-modules

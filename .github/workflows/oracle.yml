@@ -156,3 +156,41 @@ jobs:
         run: |
           cd clouds/oracle
           make deploy production=1
+
+  publish:
+    if: github.ref_name == 'stable'
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PACKAGE_BUCKET: gs://carto-analytics-toolbox-core/oracle
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup yarn
+        run: npm install -g yarn
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCLOUD_PRODUCTION_RELEASE_SA }}
+          project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+          create_credentials_file: true
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+            version: ${{ env.GCLOUD_VERSION }}
+            project_id: ${{ secrets.GCLOUD_PRODUCTION_PROJECT }}
+      - name: Create package
+        run: |
+          cd clouds/oracle
+          make create-package
+      - name: Publish package
+        run: |
+          cd clouds/oracle
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
+          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-oracle-latest.zip
+          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/

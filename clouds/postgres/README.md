@@ -53,6 +53,7 @@ PG_PASSWORD=<password>
 - `make build`: builds the final SQL script
 - `make deploy`: builds and deploys the SQL scripts in the Postgres database
 - `make test`: runs the modules tests with the Postgres database (pytest)
+- `make benchmark`: runs per-function timing benchmarks. Flags: `keep=1` (preserve output tables for inspection), `verbose=1` (full error messages), `tags=<tag,…>` (run only cases with matching tag). Configure inputs in `modules/benchmark/config.json` (copy from `config.template.json`).
 - `make remove`: removes all the SQL scripts from the Postgres cluster and database
 - `make clean`: cleans the installed dependencies and generated files locally
 - `make create-package`: creates the installation package in the dist folder (zip)
@@ -61,7 +62,7 @@ Make commands can be run also inside `modules` folders, or be called like `make 
 
 **Filtering**
 
-Commands `build-modules`, `deploy-modules`, `test-modules` and `create-package` can be filtered by the following. All the filters are additive:
+Commands `build-modules`, `deploy-modules`, `test-modules`, `create-package`, and `benchmark-modules` can be filtered by the following. All the filters are additive:
 
 - `diff`: list of changed files
 - `modules`: list of modules to filter

@@ -30,7 +30,7 @@ if (all) {
     console.log(`- Build input functions: ${argv.functions}`);
 }
 
-// Convert diff to modules/functions
+// Convert diff to modules
 if (diff.length) {
     const patternsAll = [
         /\.github\/workflows\/oracle\.yml/,
@@ -56,7 +56,9 @@ if (diff.length) {
     }
 }
 
-// Extract functions
+// Extract functions. Files like _types.sql and _module.sql are intentionally
+// reused across modules (per the typing convention), so each file is
+// keyed by "module/name" internally to disambiguate.
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
@@ -84,6 +86,10 @@ for (let inputDir of inputDirs) {
     });
 }
 
+const fnKey = f => `${f.module}/${f.name}`;
+const byKey = {};
+functions.forEach(f => { byKey[fnKey(f)] = f; });
+
 // Check filters
 modulesFilter.forEach(m => {
     if (!functions.map(fn => fn.module).includes(m)) {
@@ -98,13 +104,33 @@ functionsFilter.forEach(f => {
     }
 });
 
-// Extract function dependencies
+// Module-shared files (_types.sql, _module.sql): types and MLE modules
+// are module-scoped and module-private by convention. Any non-shared
+// file in module M synthetically depends on M's shared files, so the
+// topological sort guarantees they're emitted first within the module.
+const isShared = f => f.name.startsWith('_');
+functions.forEach(f => {
+    if (isShared(f)) return;
+    functions.forEach(s => {
+        if (!isShared(s) || s.module !== f.module) return;
+        if (!f.dependencies.includes(fnKey(s))) {
+            f.dependencies.push(fnKey(s));
+        }
+    });
+});
+
+// Extract function-call dependencies. Mirrors the algorithm used by
+// every other cloud: a file referencing @@SCHEMA@@.NAME( depends on
+// the file named NAME in that file's module (or any module — function
+// names are unique across modules).
 if (!nodeps) {
     functions.forEach(mainFunction => {
         functions.forEach(depFunction => {
-            if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
-                    mainFunction.dependencies.push(depFunction.name);
+            if (isShared(depFunction)) return;
+            if (fnKey(mainFunction) === fnKey(depFunction)) return;
+            if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (!mainFunction.dependencies.includes(fnKey(depFunction))) {
+                    mainFunction.dependencies.push(fnKey(depFunction));
                 }
             }
         });
@@ -112,25 +138,32 @@ if (!nodeps) {
 }
 
 // Check circular dependencies
-functions.forEach(mainFunction => {
-    functions.forEach(depFunction => {
-        if (mainFunction.dependencies.includes(depFunction.name) &&
-            depFunction.dependencies.includes(mainFunction.name)) {
-            console.log(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
-            process.exit(1);
+if (!nodeps) {
+    functions.forEach(mainFunction => {
+        for (const depKey of mainFunction.dependencies) {
+            const depFunction = byKey[depKey];
+            if (depFunction && depFunction.dependencies.includes(fnKey(mainFunction))) {
+                console.log(`ERROR: Circular dependency between ${fnKey(mainFunction)} and ${depKey}`);
+                process.exit(1);
+            }
         }
     });
-});
+}
 
 // Filter and order functions
 const output = [];
+const seen = new Set();
 function add (f, include) {
     include = include || all || functionsFilter.includes(f.name) || modulesFilter.includes(f.module);
-    for (const dependency of f.dependencies) {
-        add(functions.find(f => f.name === dependency), include);
+    for (const dependencyKey of f.dependencies) {
+        const dep = byKey[dependencyKey];
+        if (dep) add(dep, include);
     }
-    if (!output.map(f => f.name).includes(f.name) && include) {
+    const key = fnKey(f);
+    if (!seen.has(key) && include) {
+        seen.add(key);
         output.push({
+            module: f.module,
             name: f.name,
             content: f.content
         });
@@ -141,9 +174,30 @@ functions.forEach(f => add(f));
 // Replace environment variables
 let content = output.map(f => f.content).join('\n');
 
+// Inline @@ORA_LIBRARY_<NAME>@@ → libraries/javascript/build/<name>.js, then
+// apply env-var @@VAR@@ replacements.
 function apply_replacements (text) {
+    const libraryDir = path.resolve(
+        __dirname, '..', 'libraries', 'javascript', 'build'
+    );
+    const libraries = [...new Set(text.match(/@@ORA_LIBRARY_[A-Z0-9_]+@@/g) || [])];
+    for (const library of libraries) {
+        const libName = library.replace('@@ORA_LIBRARY_', '').replace('@@', '');
+        const file = path.join(libraryDir, libName.toLowerCase() + '.js');
+        if (!fs.existsSync(file)) {
+            console.error(
+                `Error: library bundle "${file}" not found. Run \`make build\` ` +
+                'in libraries/javascript/ to produce it before deploying.'
+            );
+            process.exit(1);
+        }
+        text = text.replace(
+            new RegExp(library, 'g'),
+            fs.readFileSync(file).toString()
+        );
+    }
     const replacements = process.env.REPLACEMENTS.split(' ');
-    for (let replacement of replacements) {
+    for (const replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
             text = text.replace(pattern, process.env[replacement]);

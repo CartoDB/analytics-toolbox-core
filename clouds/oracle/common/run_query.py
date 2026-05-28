@@ -3,7 +3,6 @@
 
 import os
 import sys
-import shutil
 from oracle_db import get_connection
 
 
@@ -30,7 +29,9 @@ def run_query(query, fetch=False):
             conn.commit()
     finally:
         conn.close()
-        shutil.rmtree(wallet_dir, ignore_errors=True)
+        # Wallet directory is kept alive for the process lifetime (managed by
+        # oracle_db module) to prevent oracledb's TNS cache from becoming
+        # invalid between successive connections within the same test session.
 
 
 if __name__ == '__main__':

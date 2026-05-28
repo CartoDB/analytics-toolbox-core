@@ -1,0 +1,8 @@
+from benchmark_utils import benchmark
+
+benchmark(
+    function='QUADBIN_RESOLUTION',
+    sql='CREATE OR REPLACE TABLE ${output_table} AS '
+        'SELECT @@DB_SCHEMA@@.QUADBIN_RESOLUTION(t.${quadbin_column}) AS result '
+        'FROM ${source_table} t',
+)

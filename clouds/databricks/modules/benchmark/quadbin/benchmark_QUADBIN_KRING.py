@@ -1,0 +1,8 @@
+from benchmark_utils import benchmark
+
+benchmark(
+    function='QUADBIN_KRING',
+    sql='CREATE OR REPLACE TABLE ${output_table} AS '
+        'SELECT t.${quadbin_column} AS input, @@DB_SCHEMA@@.QUADBIN_KRING(t.${quadbin_column}, ${size}) AS cells '
+        'FROM ${source_table} t',
+)

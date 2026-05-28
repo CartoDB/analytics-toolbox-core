@@ -1,0 +1,8 @@
+from benchmark_utils import benchmark
+
+benchmark(
+    function='QUADBIN_SIBLING',
+    sql="CREATE TABLE ${output_table} AS "
+        "SELECT @@PG_SCHEMA@@.QUADBIN_SIBLING(t.${quadbin_column}, '${direction}') AS result "
+        'FROM ${source_table} t',
+)

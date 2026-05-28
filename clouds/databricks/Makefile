@@ -16,7 +16,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test remove clean create-package
+.PHONY: help lint build deploy test benchmark remove clean create-package
 
 help:
 	echo "Available targets: help lint build deploy test remove clean"
@@ -54,6 +54,12 @@ test:
 
 test-modules:
 	$(MAKE) -C modules test
+
+benchmark:
+	$(MAKE) benchmark-modules
+
+benchmark-modules:
+	$(MAKE) -C modules benchmark modules=$(modules) functions=$(functions) keep=$(keep) verbose=$(verbose) tags=$(tags)
 
 remove:
 	$(MAKE) remove-modules

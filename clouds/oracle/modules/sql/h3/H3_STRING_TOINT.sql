@@ -1,0 +1,19 @@
+----------------------------
+-- Copyright (C) 2026 CARTO
+----------------------------
+
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_STRING_TOINT
+(
+    h3_index VARCHAR2
+)
+RETURN NUMBER
+DETERMINISTIC
+IS
+    HEX_FORMAT_MASK CONSTANT VARCHAR2(16) := 'XXXXXXXXXXXXXXXX';
+BEGIN
+    IF h3_index IS NULL THEN
+        RETURN NULL;
+    END IF;
+    RETURN TO_NUMBER(h3_index, HEX_FORMAT_MASK);
+END H3_STRING_TOINT;
+/
