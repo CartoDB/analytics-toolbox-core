@@ -4,6 +4,15 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2026-05-27
+
+- chore(ora): clarify NUMBER(1) usage — not allowed in function RETURN clauses (#603)
+- feat(ora|quadbin): add Quadbin spatial indexing module for Oracle (#595)
+- feat(ora|h3): add H3 spatial indexing module for Oracle (#594)
+- chore(ora): simplify build_modules.js, add linting + libs forward-compat, wire publish workflow (#605)
+- chore(bq|sf|rs|pg|db|ora|benchmark): cross-cloud spatial-index benchmark suite (#606)
+- feat(ora|test_utils): add escape_sql helper (#612)
+
 ## 2026-03-24
 
 - fix(db): package creation from wrong folder (#575)
