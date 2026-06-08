@@ -27,17 +27,17 @@ help:
 lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	echo "- Lint Python files"
-	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes --quiet || true
-	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || true
+	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes --quiet
+	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 	echo "- Lint Markdown files"
 	if [ -n "$$(find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/.pytest_cache/*' 2>/dev/null)" ]; then \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-		markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 -- || true; \
+		markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --; \
 	else \
 		echo "  No markdown files to lint"; \
 	fi
 	echo "- Lint SQL files"
-	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || true
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
 
 lint-fix: venv3 $(NODE_MODULES_DEV)
 	echo "Auto-fixing linting issues in modules..."
