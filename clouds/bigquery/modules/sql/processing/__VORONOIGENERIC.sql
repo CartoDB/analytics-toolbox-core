@@ -2,15 +2,14 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__VORONOIGENERIC`
-(points ARRAY<GEOGRAPHY>, bbox ARRAY<FLOAT64>, type_of_voronoi STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__VORONOIGENERIC`(points ARRAY<GEOGRAPHY>, bbox ARRAY<FLOAT64>, type_of_voronoi STRING)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
     WITH distinct_rounded_points AS (
         SELECT ST_GEOGPOINT(x, y) AS point FROM (
           SELECT DISTINCT ROUND(ST_X(point), 5) AS x, ROUND(ST_Y(point), 5) AS y
           FROM UNNEST(points) AS point
-        )
+        ) AS rounded_points
     ),
     geojson_points AS (
         SELECT ARRAY_AGG(ST_ASGEOJSON(point)) AS array_points

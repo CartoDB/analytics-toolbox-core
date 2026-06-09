@@ -2,8 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_BBOX`
-(quadbin INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_BBOX`(quadbin INT64)
 RETURNS ARRAY<FLOAT64>
 AS (
     CASE quadbin

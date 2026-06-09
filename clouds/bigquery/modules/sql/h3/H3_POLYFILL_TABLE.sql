@@ -2,8 +2,7 @@
 -- Copyright (C) 2023 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_QUERY`
-(
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__H3_POLYFILL_QUERY`(
     input_query STRING,
     resolution INT64,
     mode STRING,

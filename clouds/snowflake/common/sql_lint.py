@@ -25,10 +25,10 @@ def restore_variables(content):
 
 
 def lint_error(name, error):
-    code = error['code']
-    line_no = error['line_no']
-    line_pos = error['line_pos']
-    description = error['description']
+    code = error.get('code', 'UNKNOWN')
+    line_no = error.get('start_line_no', 0)
+    line_pos = error.get('start_line_pos', 0)
+    description = error.get('description', 'Unknown error')
     print(f'{name}:{line_no}:{line_pos}: {code} {description}')
 
 

@@ -50,6 +50,8 @@ lint-fix: venv3 $(NODE_MODULES_DEV)
 	else \
 		echo "  No markdown files to fix"; \
 	fi
+	echo "- Lint SQL files (oracle is lint-only; sqlfluff auto-fix is unsafe for PL/SQL)"
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || true
 	echo "- Check remaining issues"
 	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 	echo "✓ Auto-fix complete. Review remaining flake8 issues above."

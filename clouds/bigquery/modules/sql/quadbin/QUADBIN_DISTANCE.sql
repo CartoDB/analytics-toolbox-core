@@ -2,8 +2,7 @@
 -- Copyright (C) 2023 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_DISTANCE`
-(origin INT64, destination INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_DISTANCE`(origin INT64, destination INT64)
 RETURNS INT64
 AS ((
     IF(origin IS NULL OR destination IS NULL,

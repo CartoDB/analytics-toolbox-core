@@ -14,5 +14,5 @@ pandas==1.5.3
 shapely<2
 SQLAlchemy==1.4.23
 mapbox-vector-tile==1.2.1
-sqlfluff==1.3.1
+sqlfluff==4.2.2
 numpy==1.24.4

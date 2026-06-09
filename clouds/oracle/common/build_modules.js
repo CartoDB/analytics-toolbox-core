@@ -123,12 +123,21 @@ functions.forEach(f => {
 // every other cloud: a file referencing @@SCHEMA@@.NAME( depends on
 // the file named NAME in that file's module (or any module — function
 // names are unique across modules).
+// Dep detection looks for `SCHEMA@@.NAME(` in mainFunction.content. To avoid
+// false positives, strip CREATE OR REPLACE definitions and single-quoted
+// string literals (which may carry DDL with names that aren't real calls).
+function stripNonCallContent(content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
+        .replace(/'(?:''|[^'])*'/g, "''");
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (isShared(depFunction)) return;
             if (fnKey(mainFunction) === fnKey(depFunction)) return;
-            if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+            if (callContent.includes(`SCHEMA@@.${depFunction.name}(`)) {
                 if (!mainFunction.dependencies.includes(fnKey(depFunction))) {
                     mainFunction.dependencies.push(fnKey(depFunction));
                 }

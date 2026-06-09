@@ -2,8 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_TOPARENT`
-(quadint INT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_TOPARENT`(quadint INT64, resolution INT64)
 RETURNS INT64
 AS ((
     IF(resolution IS NULL OR resolution < 0 OR quadint IS NULL,

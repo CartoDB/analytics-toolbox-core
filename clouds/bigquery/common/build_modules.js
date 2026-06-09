@@ -100,8 +100,20 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
+// Dep detection looks for the substring `\`DATASET@@.NAME\`(` in mainFunction.content.
+// To avoid false positives, we strip from the content:
+//   1. CREATE OR REPLACE FUNCTION/PROCEDURE signatures (a definition is not a call)
+//   2. Single-quoted strings + triple-quoted JS bodies (r"""...""" / """...""")
+// This replaces the fragile "intentional newline before paren" defensive pattern.
+function stripNonCallContent(content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/r?"""[\s\S]*?"""/g, '""""""')
+        .replace(/'(?:''|[^'])*'/g, "''");
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
                 const depFunctionMatches = [];
@@ -113,7 +125,7 @@ if (!nodeps) {
                     qualifiedDepFunctName = qualifiedDepFunctName.split('.');
                     depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
                 })
-                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\`(`))) {
+                if (depFunctionNames.some((depFunctionName) => callContent.includes(`DATASET@@.${depFunctionName}\`(`))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

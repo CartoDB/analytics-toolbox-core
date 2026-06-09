@@ -80,12 +80,19 @@ functionsFilter.forEach(f => {
     }
 });
 
+// See build_modules.js for rationale: strip CREATE definitions + strings.
+function stripNonCallContent(content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
+        .replace(/'(?:''|[^'])*'/g, "''");
+}
 // Extract function dependencies
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (callContent.includes(`SCHEMA@@.${depFunction.name}(`)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

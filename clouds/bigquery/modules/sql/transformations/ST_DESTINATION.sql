@@ -2,8 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DESTINATION`
-(geojsonStart STRING, distance FLOAT64, bearing FLOAT64, units STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DESTINATION`(geojsonStart STRING, distance FLOAT64, bearing FLOAT64, units STRING)
 RETURNS STRING
 DETERMINISTIC
 LANGUAGE js
@@ -22,8 +21,7 @@ AS """
     return JSON.stringify(destination.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_DESTINATION`
-(startPoint GEOGRAPHY, distance FLOAT64, bearing FLOAT64, units STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_DESTINATION`(startPoint GEOGRAPHY, distance FLOAT64, bearing FLOAT64, units STRING)
 RETURNS GEOGRAPHY
 AS (
     ST_GEOGFROMGEOJSON(

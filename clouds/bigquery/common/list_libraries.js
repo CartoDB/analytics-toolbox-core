@@ -85,8 +85,17 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
+// See build_modules.js for rationale: strip CREATE definitions and string
+// literals before substring matching, to avoid false-positive cycles.
+function stripNonCallContent(content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/r?"""[\s\S]*?"""/g, '""""""')
+        .replace(/'(?:''|[^'])*'/g, "''");
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
                 const depFunctionMatches = [];
@@ -98,7 +107,7 @@ if (!nodeps) {
                     qualifiedDepFunctName = qualifiedDepFunctName.split('.');
                     depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
                 })
-                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\`(`))) {
+                if (depFunctionNames.some((depFunctionName) => callContent.includes(`DATASET@@.${depFunctionName}\`(`))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

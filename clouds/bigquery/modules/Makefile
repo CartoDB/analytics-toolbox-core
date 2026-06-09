@@ -33,7 +33,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share deploy deploy-share test benchmark remove remove-share clean
+.PHONY: help lint lint-fix build build-share deploy deploy-share test benchmark remove remove-share clean
 
 help:
 	echo "Available targets: lint build deploy test benchmark remove clean"
@@ -48,6 +48,8 @@ lint: venv3 $(NODE_MODULES_DEV)
 	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
 	echo "- Lint SQL files"
 	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || exit 1
+
+lint-fix: lint
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."

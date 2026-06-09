@@ -2,8 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__TABLENAME_SPLIT`
-(qualified_name STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__TABLENAME_SPLIT`(qualified_name STRING)
 RETURNS STRUCT<project STRING, dataset STRING, table STRING>
 AS ((
     WITH unquoted AS (SELECT REPLACE(qualified_name, "`", "") AS name)

@@ -1,6 +1,7 @@
 """List and fix Databricks SQL files."""
 
 import os
+import re
 import sys
 import sqlfluff
 import multiprocessing as mp
@@ -17,13 +18,18 @@ def replace_variables(content):
 
 
 def restore_variables(content):
-    return content.replace('SQLFLUFF_', '@').replace('_SQLFLUFFDOT_', '.')
+    # Case-insensitive: sqlfluff's capitalisation.identifiers rule (lower for DB)
+    # may lowercase the placeholder; a case-sensitive replace would miss the
+    # lowercased form and leave `sqlfluff_xxx` corruption in the SQL.
+    content = re.sub('SQLFLUFF_', '@', content, flags=re.IGNORECASE)
+    content = re.sub('_SQLFLUFFDOT_', '.', content, flags=re.IGNORECASE)
+    return content
 
 
 def lint_error(name, error):
     code = error.get('code', 'UNKNOWN')
-    line_no = error.get('line_no', 0)
-    line_pos = error.get('line_pos', 0)
+    line_no = error.get('start_line_no', 0)
+    line_pos = error.get('start_line_pos', 0)
     description = error.get('description', 'Unknown error')
     print(f'{name}:{line_no}:{line_pos}: {code} {description}')
 

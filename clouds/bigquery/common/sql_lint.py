@@ -1,6 +1,7 @@
 """List and fix BigQuery SQL files."""
 
 import os
+import re
 import sys
 import sqlfluff
 import multiprocessing as mp
@@ -15,16 +16,21 @@ def replace_variables(content):
 
 
 def restore_variables(content):
-    return content.replace('_SQLFLUFFDATASET_', '@@BQ_DATASET@@').replace(
-        '_SQLFLUFF_', '@'
-    )
+    # Case-insensitive: sqlfluff's capitalisation.identifiers rule may
+    # lowercase the placeholder (e.g. _SQLFLUFF_ -> _sqlfluff_). A
+    # case-sensitive replace would miss the lowercased form and leave
+    # `_sqlfluff_xxx` corruption in BQ system variables (@@error.message)
+    # and template placeholders (@@BQ_LIBRARY_X@@).
+    content = re.sub('_SQLFLUFFDATASET_', '@@BQ_DATASET@@', content, flags=re.IGNORECASE)
+    content = re.sub('_SQLFLUFF_', '@', content, flags=re.IGNORECASE)
+    return content
 
 
 def lint_error(name, error):
-    code = error['code']
-    line_no = error['line_no']
-    line_pos = error['line_pos']
-    description = error['description']
+    code = error.get('code', 'UNKNOWN')
+    line_no = error.get('start_line_no', 0)
+    line_pos = error.get('start_line_pos', 0)
+    description = error.get('description', 'Unknown error')
     print(f'{name}:{line_no}:{line_pos}: {code} {description}')
 
 

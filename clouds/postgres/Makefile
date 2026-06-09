@@ -12,7 +12,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build deploy test benchmark remove clean create-package
+.PHONY: help lint lint-fix build deploy test benchmark remove clean create-package
 
 help:
 	echo "Available targets: lint build deploy test remove clean create-package"
@@ -21,6 +21,8 @@ lint:
 	$(MAKE) lint-libraries
 	$(MAKE) lint-modules
 	$(MAKE) lint-common
+
+lint-fix: lint
 
 lint-libraries:
 	$(MAKE) -C libraries/javascript lint

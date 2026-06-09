@@ -2,8 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__TABLENAME_JOIN`
-(split_name STRUCT<project STRING, dataset STRING, table STRING>)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__TABLENAME_JOIN`(split_name STRUCT<project STRING, dataset STRING, table STRING>)
 RETURNS STRING
 AS (
     IF(

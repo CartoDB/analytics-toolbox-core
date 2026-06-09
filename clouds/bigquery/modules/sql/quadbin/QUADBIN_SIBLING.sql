@@ -2,8 +2,7 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__ZXY_QUADBIN_SIBLING`
-(origin STRUCT<z INT64, x INT64, y INT64>, dx INT64, dy INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__ZXY_QUADBIN_SIBLING`(origin STRUCT<z INT64, x INT64, y INT64>, dx INT64, dy INT64)
 AS (
     IF(origin.y + dy >= 0 AND origin.y + dy < (1 << origin.z),
         `@@BQ_DATASET@@.QUADBIN_FROMZXY`(
@@ -17,8 +16,7 @@ AS (
     )
 );
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_SIBLING`
-(origin INT64, dx INT64, dy INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_SIBLING`(origin INT64, dx INT64, dy INT64)
 AS (
     `@@BQ_DATASET@@.__ZXY_QUADBIN_SIBLING`(
         `@@BQ_DATASET@@.QUADBIN_TOZXY`(
@@ -32,8 +30,7 @@ AS (
     )
 );
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_SIBLING`
-(quadbin INT64, direction STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_SIBLING`(quadbin INT64, direction STRING)
 AS (
     CASE direction
         WHEN 'left' THEN

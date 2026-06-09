@@ -2,8 +2,7 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__MAKEELLIPSE`
-(
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__MAKEELLIPSE`(
     geojson STRING,
     xSemiAxis FLOAT64,
     ySemiAxis FLOAT64,
@@ -35,8 +34,7 @@ AS """
     return JSON.stringify(ellipse.geometry);
 """;
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_MAKEELLIPSE`
-(
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_MAKEELLIPSE`(
     geog GEOGRAPHY,
     xSemiAxis FLOAT64,
     ySemiAxis FLOAT64,

@@ -2,15 +2,14 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DELAUNAYGENERIC`
-(inputPoints ARRAY<GEOGRAPHY>)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DELAUNAYGENERIC`(inputPoints ARRAY<GEOGRAPHY>)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
     WITH distinct_rounded_points AS (
         SELECT ST_GEOGPOINT(x, y) AS point FROM (
           SELECT DISTINCT ROUND(ST_X(point), 5) AS x, ROUND(ST_Y(point), 5) AS y
           FROM UNNEST(inputpoints) AS point
-        )
+        ) AS rounded_points
     ),
     points AS (
         SELECT

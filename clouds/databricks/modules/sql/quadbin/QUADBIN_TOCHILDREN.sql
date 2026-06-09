@@ -16,7 +16,7 @@ RETURN (
         (WITH __params AS (
             SELECT
                 GREATEST(resolution - CAST((quadbin >> 52) & 31 AS INT), 0)
-                AS res_diff
+                    AS res_diff
         ),
 
         __constants AS (
@@ -37,7 +37,7 @@ RETURN (
                     | (CAST(resolution AS BIGINT) << 52)
                 )
                 & ~(CAST(block_range - 1 AS BIGINT) << block_shift)
-                AS child_base
+                    AS child_base
             FROM __constants
         ),
 
@@ -45,7 +45,7 @@ RETURN (
             SELECT
                 child_base
                 | (CAST(r * sqrt_block_range + c AS BIGINT) << block_shift)
-                AS child
+                    AS child
             FROM __child_base
                 LATERAL VIEW EXPLODE(SEQUENCE(0, sqrt_block_range - 1)) t1 AS r
                 LATERAL VIEW EXPLODE(SEQUENCE(0, sqrt_block_range - 1)) t2 AS c

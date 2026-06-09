@@ -125,11 +125,22 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
+// Dep detection looks for the substring `SCHEMA@@.NAME(` in mainFunction.content.
+// To avoid false positives, we strip from the content:
+//   1. CREATE OR REPLACE FUNCTION/PROCEDURE signatures (a definition is not a call)
+//   2. Single-quoted string literals (e.g. EXECUTE strings carrying DDL)
+// This replaces the fragile "intentional space before paren" defensive pattern.
+function stripNonCallContent(content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
+        .replace(/'(?:''|[^'])*'/g, "''");
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (callContent.includes(`SCHEMA@@.${depFunction.name}(`)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }
