@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_KRING(
     origin VARCHAR(16),
     size INT
 )
-RETURNS VARCHAR(16) []
+RETURNS VARCHAR(16)[]
 AS
 $BODY$
     if (size == null || size < 0) {

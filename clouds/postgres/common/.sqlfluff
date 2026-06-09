@@ -75,6 +75,12 @@ spacing_after = touch
 [sqlfluff:layout:type:function_name_identifier]
 spacing_after = touch
 
+# Array type syntax: PostgreSQL convention is `type[]` with no space
+# (see https://www.postgresql.org/docs/current/arrays.html). sqlfluff
+# default would insert a space (`VARCHAR(16) []`) which is non-idiomatic.
+[sqlfluff:layout:type:start_square_bracket]
+spacing_before = touch
+
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
 allow_scalar = True
