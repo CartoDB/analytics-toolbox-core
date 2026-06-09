@@ -79,7 +79,7 @@ modulesFilter.forEach(m => {
 });
 functionsFilter.forEach(f => {
     if (!functions.map(fn => fn.name).includes(f)) {
-        process.stderr.write(`ERROR: Function not found ${f}`);
+        process.stderr.write(`ERROR: Function not found ${f}\n`);
         process.exit(1);
     }
 });
@@ -120,7 +120,7 @@ functions.forEach(mainFunction => {
     functions.forEach(depFunction => {
         if (mainFunction.dependencies.includes(depFunction.name) &&
             depFunction.dependencies.includes(mainFunction.name)) {
-            process.stderr.write(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+            process.stderr.write(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}\n`);
             process.exit(1);
         }
     });
