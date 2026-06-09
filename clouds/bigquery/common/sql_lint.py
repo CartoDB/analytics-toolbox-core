@@ -21,7 +21,9 @@ def restore_variables(content):
     # case-sensitive replace would miss the lowercased form and leave
     # `_sqlfluff_xxx` corruption in BQ system variables (@@error.message)
     # and template placeholders (@@BQ_LIBRARY_X@@).
-    content = re.sub('_SQLFLUFFDATASET_', '@@BQ_DATASET@@', content, flags=re.IGNORECASE)
+    content = re.sub(
+        '_SQLFLUFFDATASET_', '@@BQ_DATASET@@', content, flags=re.IGNORECASE
+    )
     content = re.sub('_SQLFLUFF_', '@', content, flags=re.IGNORECASE)
     return content
 

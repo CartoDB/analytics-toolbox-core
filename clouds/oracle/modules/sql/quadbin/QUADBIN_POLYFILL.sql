@@ -5,8 +5,7 @@
 -- Private MLE binding to the JavaScript `polyfill` export. Returns a
 -- JSON array of quadbin index strings (full 64-bit precision preserved
 -- by string serialization).
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_QUADBIN_POLYFILL_JS
-(geojson VARCHAR2, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_QUADBIN_POLYFILL_JS(geojson VARCHAR2, resolution NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.quadbin_module
 SIGNATURE 'polyfill(string, number)';
@@ -24,8 +23,7 @@ SIGNATURE 'polyfill(string, number)';
 --
 -- NULL-on-invalid: returns an empty pipeline for NULL inputs or
 -- out-of-range resolution.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL
-(geom SDO_GEOMETRY, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_POLYFILL(geom SDO_GEOMETRY, resolution NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_INDEX_ARRAY PIPELINED
 AS
     v_geom    SDO_GEOMETRY;

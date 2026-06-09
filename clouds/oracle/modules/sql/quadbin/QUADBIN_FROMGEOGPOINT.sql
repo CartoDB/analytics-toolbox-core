@@ -13,8 +13,7 @@
 -- Oracle SDO_GEOMETRY can store point coordinates in either location
 -- depending on how the geometry was constructed.
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_FROMGEOGPOINT
-(point SDO_GEOMETRY, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_FROMGEOGPOINT(point SDO_GEOMETRY, resolution NUMBER)
 RETURN NUMBER
 AS
     v_lon NUMBER;

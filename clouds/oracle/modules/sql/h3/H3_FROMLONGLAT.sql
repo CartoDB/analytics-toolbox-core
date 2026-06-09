@@ -2,8 +2,7 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMLONGLAT
-(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMLONGLAT(
     longitude NUMBER, latitude NUMBER, resolution NUMBER
 )
 RETURN VARCHAR2
@@ -12,7 +11,7 @@ IS
     MIN_RESOLUTION CONSTANT PLS_INTEGER := 0;
     MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
 
-    point  SDO_GEOMETRY;
+    point SDO_GEOMETRY;
     h3_raw RAW(8);
 BEGIN
     IF longitude IS NULL OR latitude IS NULL OR resolution IS NULL THEN

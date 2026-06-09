@@ -1,20 +1,32 @@
-"""List Oracle SQL files (lint-only — no auto-fix).
+"""Fix and lint Oracle SQL files.
 
-Oracle uses PL/SQL, which sqlfluff parses imperfectly. Auto-fixing has
-been observed to produce semantically wrong changes (e.g. qualifying a
-function parameter as if it were a column reference, like turning
-`variables` into `JT.VARIABLES` inside a JSON_TABLE call). Therefore
-this script reports lint violations as warnings but does NOT call
-sqlfluff.fix(). Developers should review violations and apply fixes
-manually when appropriate.
+Oracle uses PL/SQL, which sqlfluff parses imperfectly. The full
+`sqlfluff.fix()` ruleset has been observed to produce semantically
+wrong changes (e.g. RF03 qualifying a procedure parameter as
+`JT.P_SERVICE` inside a JSON_TABLE call, or ST06 reordering SELECT
+columns and breaking the INTO mapping). Therefore fix is restricted to
+the SAFE_FIX_RULES set below — rules that only alter casing or
+whitespace and cannot change semantics. Other rules still LINT but
+must be resolved manually (or excluded in .sqlfluff if appropriate).
 """
 
 import os
+import re
 import sys
 import sqlfluff
 import multiprocessing as mp
 
 DIALECT = 'oracle'
+
+# Rules safe to auto-fix in Oracle PL/SQL — purely capitalisation/whitespace
+# changes that cannot alter semantics:
+#   CP03 (capitalisation.functions): uppercase function names.
+#   CP05 (capitalisation.types): uppercase datatypes.
+#   LT01 (layout.spacing): collapse unexpected line breaks / extra whitespace.
+# CP02 (capitalisation.identifiers) is intentionally excluded because the
+# repo distinguishes UPPERCASE constants from lowercase variables; sqlfluff
+# cannot tell them apart.
+SAFE_FIX_RULES = ['CP03', 'CP05', 'LT01']
 
 
 def replace_variables(content):
@@ -25,6 +37,15 @@ def replace_variables(content):
     )
 
 
+def restore_variables(content):
+    # Case-insensitive: CP02 (capitalisation.identifiers) uppercases the
+    # placeholder (SQLFLUFFAT -> SQLFLUFFAT stays, but SQLFLUFFSCHEMA may be
+    # split or partially cased). Use regex to restore robustly.
+    content = re.sub('SQLFLUFFSCHEMA', '@@ORA_SCHEMA@@', content, flags=re.IGNORECASE)
+    content = re.sub('SQLFLUFFAT', '@', content, flags=re.IGNORECASE)
+    return content
+
+
 def lint_error(name, error):
     code = error.get('code', 'UNKNOWN')
     line_no = error.get('start_line_no', 0)
@@ -33,14 +54,28 @@ def lint_error(name, error):
     print(f'{name}:{line_no}:{line_pos}: {code} {description}')
 
 
-def lint_only(script):
+def fix_and_lint(script):
     if not script:
         return False
     with open(script, 'r') as file:
         name = os.path.basename(file.name)
         content = replace_variables(file.read())
 
-    lint = sqlfluff.lint(content, dialect=DIALECT, config_path=sys.argv[2])
+    fix = restore_variables(
+        sqlfluff.fix(
+            content,
+            dialect=DIALECT,
+            config_path=sys.argv[2],
+            rules=SAFE_FIX_RULES,
+        )
+    )
+    if content != fix:
+        with open(script, 'w') as file:
+            file.write(fix)
+
+    fix = replace_variables(fix)
+
+    lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
     if lint:
         has_error = False
         for error in lint:
@@ -64,7 +99,7 @@ if __name__ == '__main__':
                 )
 
     pool = mp.Pool(processes=int(mp.cpu_count() / 2))
-    output = pool.map(lint_only, scripts)
+    output = pool.map(fix_and_lint, scripts)
 
     if any(output):
         sys.exit(1)

@@ -8,8 +8,7 @@
 -- (the surrounding hex shell — small set) and filter the candidates with
 -- SDO_GEOM.RELATE. Two-phase: cheap candidate set from JS, exact mode
 -- predicate evaluated in PL/SQL.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_POLYFILL_MODE
-(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_POLYFILL_MODE(
     geom SDO_GEOMETRY, resolution NUMBER, polyfill_mode VARCHAR2
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED

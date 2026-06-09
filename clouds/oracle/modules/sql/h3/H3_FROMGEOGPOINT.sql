@@ -6,8 +6,7 @@
 -- not auto-transform: a point with an explicit SRID other than 4326
 -- returns NULL. A NULL SRID is accepted and treated as WGS84, matching
 -- the convention used by SDO_UTIL.FROM_WKTGEOMETRY.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMGEOGPOINT
-(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMGEOGPOINT(
     point SDO_GEOMETRY, resolution NUMBER
 )
 RETURN VARCHAR2

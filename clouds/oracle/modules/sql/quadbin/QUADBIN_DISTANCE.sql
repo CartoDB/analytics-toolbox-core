@@ -10,8 +10,7 @@
 --   2. If resolutions differ, return NULL
 --   3. Return GREATEST(ABS(x_a - x_b), ABS(y_a - y_b))
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_DISTANCE
-(origin NUMBER, destination NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_DISTANCE(origin NUMBER, destination NUMBER)
 RETURN NUMBER
 AS
     v_o_zxy @@ORA_SCHEMA@@.QUADBIN_ZXY;

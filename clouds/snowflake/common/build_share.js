@@ -98,7 +98,7 @@ functionsFilter.forEach(f => {
 // Extract function dependencies
 // See build_modules.js for rationale: strip CREATE definitions + string
 // literals before substring matching, to avoid false-positive cycles.
-function stripNonCallContent(content) {
+function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(SECURE\s+)?(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
         .replace(/'(?:''|[^'])*'/g, "''");

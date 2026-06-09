@@ -126,7 +126,7 @@ functions.forEach(f => {
 // Dep detection looks for `SCHEMA@@.NAME(` in mainFunction.content. To avoid
 // false positives, strip CREATE OR REPLACE definitions and single-quoted
 // string literals (which may carry DDL with names that aren't real calls).
-function stripNonCallContent(content) {
+function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
         .replace(/'(?:''|[^'])*'/g, "''");

@@ -3,8 +3,7 @@
 ----------------------------
 
 -- Private MLE binding to h3-js uncompact. Input is a JSON array string.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_UNCOMPACT_JS
-(cells_json CLOB, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_UNCOMPACT_JS(cells_json CLOB, resolution NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'uncompact(string, number)';
@@ -14,8 +13,7 @@ SIGNATURE 'uncompact(string, number)';
 -- calls the JS export, then pipes each returned cell. NULL or empty
 -- input (or any error inside h3-js, e.g. resolution coarser than some
 -- input cell) yields an empty pipeline.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_UNCOMPACT
-(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_UNCOMPACT(
     h3_indexes @@ORA_SCHEMA@@.H3_INDEX_ARRAY, resolution NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED

@@ -104,7 +104,7 @@ functionsFilter.forEach(f => {
 //   2. Single-quoted string literals (e.g. SETUP.sql embeds 'DROP FUNCTION ...' as a
 //      string passed to EXECUTE IMMEDIATE — those are not real call references)
 // This replaces the fragile "intentional space before paren" defensive pattern.
-function stripNonCallContent(content) {
+function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(SECURE\s+)?(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
         .replace(/'(?:''|[^'])*'/g, "''");

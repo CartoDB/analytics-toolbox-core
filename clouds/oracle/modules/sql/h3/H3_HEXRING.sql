@@ -3,8 +3,7 @@
 ----------------------------
 
 -- Private MLE binding to h3-js hexRing.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_HEXRING_JS
-(origin VARCHAR2, k NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_HEXRING_JS(origin VARCHAR2, k NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'hexring(string, number)';
@@ -13,8 +12,7 @@ SIGNATURE 'hexring(string, number)';
 -- Pipelined wrapper. h3-js hexRing throws when the ring crosses pentagon
 -- distortion; the JS module catches that and returns '[]', so callers
 -- get an empty pipeline (matches BQ/SF behaviour).
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_HEXRING
-(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_HEXRING(
     origin VARCHAR2, distance NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED

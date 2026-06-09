@@ -3,8 +3,7 @@
 ----------------------------
 
 -- Private MLE binding to h3-js h3ToChildren.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_TOCHILDREN_JS
-(parent VARCHAR2, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_TOCHILDREN_JS(parent VARCHAR2, resolution NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'toChildren(string, number)';
@@ -12,8 +11,7 @@ SIGNATURE 'toChildren(string, number)';
 
 -- Pipelined wrapper. NULL inputs (or any error inside h3-js) yield an
 -- empty pipeline.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_TOCHILDREN
-(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_TOCHILDREN(
     h3_index VARCHAR2, resolution NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED

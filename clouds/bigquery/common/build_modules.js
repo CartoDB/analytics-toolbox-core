@@ -105,7 +105,7 @@ functionsFilter.forEach(f => {
 //   1. CREATE OR REPLACE FUNCTION/PROCEDURE signatures (a definition is not a call)
 //   2. Single-quoted strings + triple-quoted JS bodies (r"""...""" / """...""")
 // This replaces the fragile "intentional newline before paren" defensive pattern.
-function stripNonCallContent(content) {
+function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
         .replace(/r?"""[\s\S]*?"""/g, '""""""')
