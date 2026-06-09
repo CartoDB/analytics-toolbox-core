@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION @@PG_SCHEMA@@.H3_KRING_DISTANCES(
     origin VARCHAR(16),
     size INT
 )
-RETURNS JSON []
+RETURNS JSON[]
 AS
 $BODY$
     if (size == null || size < 0) {
