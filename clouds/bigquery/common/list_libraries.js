@@ -85,13 +85,14 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
-// See build_modules.js for rationale: strip CREATE definitions and string
-// literals before substring matching, to avoid false-positive cycles.
+// See build_modules.js for rationale: strip CREATE / DROP statements and
+// triple-quoted JS bodies only. Single-quoted strings are kept (real call
+// refs live inside dynamic-SQL strings).
 function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
-        .replace(/r?"""[\s\S]*?"""/g, '""""""')
-        .replace(/'(?:''|[^'])*'/g, "''");
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/r?"""[\s\S]*?"""/g, '""""""');
 }
 if (!nodeps) {
     functions.forEach(mainFunction => {

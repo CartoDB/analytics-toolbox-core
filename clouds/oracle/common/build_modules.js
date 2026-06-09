@@ -124,12 +124,14 @@ functions.forEach(f => {
 // the file named NAME in that file's module (or any module — function
 // names are unique across modules).
 // Dep detection looks for `SCHEMA@@.NAME(` in mainFunction.content. To avoid
-// false positives, strip CREATE OR REPLACE definitions and single-quoted
-// string literals (which may carry DDL with names that aren't real calls).
+// false positives we strip CREATE / DROP statements (definitions and DDL
+// fragments are not call references). Single-quoted strings are kept:
+// many PL/SQL procedures call other functions from inside EXECUTE IMMEDIATE
+// dynamic-SQL strings, and those carry real runtime dep references.
 function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
-        .replace(/'(?:''|[^'])*'/g, "''");
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '');
 }
 if (!nodeps) {
     functions.forEach(mainFunction => {

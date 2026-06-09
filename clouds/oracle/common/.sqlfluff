@@ -24,7 +24,7 @@ rules = all
 #   commonly uses end-of-line operators.
 # aliasing.expression: requiring explicit aliases for expressions adds noise
 #   without semantic value in Oracle PL/SQL.
-exclude_rules = layout.long_lines,layout.indent,aliasing.forbid,references.qualification,references.consistent,structure.column_order,layout.operators,aliasing.expression,aliasing.required,layout.select_targets,capitalisation.identifiers
+exclude_rules = layout.long_lines,layout.indent,aliasing.forbid,references.qualification,references.consistent,structure.column_order,layout.operators,aliasing.expression,aliasing.required,layout.select_targets,capitalisation.identifiers,structure.using
 # Below controls SQLFluff output, see max_line_length for SQL output
 output_line_length = 80
 # Maximum line length for SQL output
