@@ -59,6 +59,16 @@ if (diff.length) {
 // Extract functions. Files like _types.sql and _module.sql are intentionally
 // reused across modules (per the typing convention), so each file is
 // keyed by "module/name" internally to disambiguate.
+// Strip `--` line comments EXCEPT those mentioning a `@@SCHEMA@@.NAME(` call
+// reference. Some files declare extra deps via a comment because the real
+// reference lives in a dynamic-SQL string created at runtime by another
+// procedure (e.g. INTERNAL_GENERIC_IS_CONFIGURED is redefined by SETUP at
+// runtime; the static dep parser would otherwise miss the link). Keeping the
+// comment in `content` makes the existing substring matcher pick it up
+// automatically; Oracle ignores `--` at execution time, so this is harmless
+// for deploy.
+const COMMENT_STRIP = /--(?!.*@@[A-Z_]+@@\.[A-Z_0-9]+\().*\n/g;
+
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
@@ -73,7 +83,7 @@ for (let inputDir of inputDirs) {
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
+                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(COMMENT_STRIP, '');
                     functions.push({
                         name,
                         module,
