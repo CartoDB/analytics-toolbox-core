@@ -102,16 +102,17 @@ functionsFilter.forEach(f => {
 // Extract function dependencies
 // Dep detection looks for the substring `\`DATASET@@.NAME\`(` in mainFunction.content.
 // To avoid false positives we strip CREATE / DROP statements (signatures and
-// DDL fragments are not call references) and triple-quoted JS bodies (which
-// can contain anything, including names that look like calls but aren't).
-// Single-quoted strings are *kept*: BQ procedures build dynamic SQL via
-// EXECUTE IMMEDIATE concatenation, and those strings carry real runtime dep
-// references that the deploy must honor.
+// DDL fragments are not call references) and JS UDF bodies (`AS r"""..."""`
+// / `AS """..."""` blocks following the JS UDF marker — their contents are
+// JavaScript, not SQL). Plain triple-quoted blocks elsewhere (e.g. BQ
+// scripting `SET x = """SELECT @@DATASET@@.FOO(...) """`) and single-quoted
+// strings are *kept*: BQ procedures often build dynamic SQL via concatenation
+// inside those strings, which carry real runtime dep references.
 function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
         .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
-        .replace(/r?"""[\s\S]*?"""/g, '""""""');
+        .replace(/\bAS\s+r?"""[\s\S]*?"""/g, 'AS """"""');
 }
 if (!nodeps) {
     functions.forEach(mainFunction => {

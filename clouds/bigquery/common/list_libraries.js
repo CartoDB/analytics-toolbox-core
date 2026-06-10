@@ -86,13 +86,14 @@ functionsFilter.forEach(f => {
 
 // Extract function dependencies
 // See build_modules.js for rationale: strip CREATE / DROP statements and
-// triple-quoted JS bodies only. Single-quoted strings are kept (real call
-// refs live inside dynamic-SQL strings).
+// JS UDF bodies (`AS r"""..."""` / `AS """..."""`). Other triple-quoted
+// blocks (BQ scripting string literals) and single-quoted strings are
+// kept — real runtime call refs live inside dynamic-SQL strings.
 function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
         .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
-        .replace(/r?"""[\s\S]*?"""/g, '""""""');
+        .replace(/\bAS\s+r?"""[\s\S]*?"""/g, 'AS """"""');
 }
 if (!nodeps) {
     functions.forEach(mainFunction => {
