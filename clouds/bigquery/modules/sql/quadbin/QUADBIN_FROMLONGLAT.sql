@@ -2,8 +2,7 @@
 -- Copyright (C) 2022-2024 CARTO
 --------------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`
-(longitude FLOAT64, latitude FLOAT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADBIN_FROMLONGLAT`(longitude FLOAT64, latitude FLOAT64, resolution INT64)
 RETURNS INT64
 AS ((
     IF(longitude IS NULL OR latitude IS NULL OR resolution IS NULL,

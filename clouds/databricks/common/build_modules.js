@@ -107,15 +107,14 @@ functionsFilter.forEach(f => {
 
 // Extract function dependencies
 // Dep detection looks for the substring `SCHEMA@@.NAME(` in mainFunction.content.
-// To avoid false positives, we strip from the content:
-//   1. CREATE OR REPLACE FUNCTION/PROCEDURE signatures (a definition is not a call)
-//   2. Single-quoted string literals (e.g. SETUP.sql embeds 'CREATE FUNCTION ...' as a
-//      string passed to EXECUTE IMMEDIATE — those are not real call references)
-// This replaces the fragile "intentional space before paren" defensive pattern.
-function stripNonCallContent(content) {
+// To avoid false positives we strip CREATE and DROP statements that name a
+// function/procedure (signatures and DDL fragments are not call references).
+// String literals are *kept*: dynamic-SQL strings carry real runtime call
+// references that the deploy must honor.
+function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
-        .replace(/'(?:''|[^'])*'/g, "''");
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '');
 }
 if (!nodeps) {
     functions.forEach(mainFunction => {

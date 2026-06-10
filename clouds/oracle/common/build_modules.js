@@ -60,13 +60,11 @@ if (diff.length) {
 // reused across modules (per the typing convention), so each file is
 // keyed by "module/name" internally to disambiguate.
 // Strip `--` line comments EXCEPT those mentioning a `@@SCHEMA@@.NAME(` call
-// reference. Some files declare extra deps via a comment because the real
-// reference lives in a dynamic-SQL string created at runtime by another
-// procedure (e.g. INTERNAL_GENERIC_IS_CONFIGURED is redefined by SETUP at
-// runtime; the static dep parser would otherwise miss the link). Keeping the
-// comment in `content` makes the existing substring matcher pick it up
-// automatically; Oracle ignores `--` at execution time, so this is harmless
-// for deploy.
+// reference. Some files declare extra deps via a comment when the real
+// reference lives in a dynamic-SQL string created at runtime; keeping the
+// comment in `content` lets the existing substring matcher pick it up
+// automatically. Oracle ignores `--` at execution time, so the surviving
+// comment is harmless for deploy.
 const COMMENT_STRIP = /--(?!.*@@[A-Z_]+@@\.[A-Z_0-9]+\().*\n/g;
 
 const functions = [];

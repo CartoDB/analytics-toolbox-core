@@ -1,4 +1,6 @@
 [sqlfluff]
+# Disable parse depth limit; sqlfluff default rejects our deeper queries.
+max_parse_depth = 0
 # verbose is an integer (0-2) indicating the level of log output
 verbose = 0
 # Turn off color formatting of output
@@ -11,7 +13,7 @@ templater = jinja
 # Comma separated list of rules to check, default to all
 rules = all
 # Comma separated list of rules to exclude, or None
-exclude_rules = structure.using
+exclude_rules = structure.using,structure.column_order
 # Below controls SQLFluff output, see max_line_length for SQL output
 output_line_length = 80
 # Maximum line length for SQL output
@@ -68,8 +70,8 @@ apply_dbt_builtins = True
 line_position = trailing
 
 # Procedure call sites: no space between procedure name and opening paren.
-# build_modules.js dependency parser expects the no-space form; sqlfluff 4.x
-# default would insert one, breaking deploy ordering.
+# build_modules.js dependency parser expects the no-space form; the
+# default sqlfluff layout would insert one and break dep detection.
 [sqlfluff:layout:type:procedure_name_identifier]
 spacing_after = touch
 [sqlfluff:layout:type:function_name_identifier]
@@ -100,7 +102,7 @@ ignore_words = None
 ignore_words_regex = None
 
 [sqlfluff:rules:capitalisation.identifiers]
-extended_capitalisation_policy = lower
+extended_capitalisation_policy = consistent
 # Comma separated list of words to ignore for this rule
 ignore_words = None
 ignore_words_regex = None

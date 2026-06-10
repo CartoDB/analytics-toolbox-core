@@ -13,37 +13,37 @@ AS ((
     ),
     __interleaved1 AS (
         SELECT
-            z,
             (x | (x << 16)) & 0x0000FFFF0000FFFF AS x,
-            (y | (y << 16)) & 0x0000FFFF0000FFFF AS y
+            (y | (y << 16)) & 0x0000FFFF0000FFFF AS y,
+            z
         FROM __ints
     ),
     __interleaved2 AS (
         SELECT
-            z,
             (x | (x << 8)) & 0x00FF00FF00FF00FF AS x,
-            (y | (y << 8)) & 0x00FF00FF00FF00FF AS y
+            (y | (y << 8)) & 0x00FF00FF00FF00FF AS y,
+            z
         FROM __interleaved1
     ),
     __interleaved3 AS (
         SELECT
-            z,
             (x | (x << 4)) & 0x0F0F0F0F0F0F0F0F AS x,
-            (y | (y << 4)) & 0x0F0F0F0F0F0F0F0F AS y
+            (y | (y << 4)) & 0x0F0F0F0F0F0F0F0F AS y,
+            z
         FROM __interleaved2
     ),
     __interleaved4 AS (
         SELECT
-            z,
             (x | (x << 2)) & 0x3333333333333333 AS x,
-            (y | (y << 2)) & 0x3333333333333333 AS y
+            (y | (y << 2)) & 0x3333333333333333 AS y,
+            z
         FROM __interleaved3
     ),
     __interleaved5 AS (
         SELECT
-            z,
             (x | (x << 1)) & 0x5555555555555555 AS x,
-            (y | (y << 1)) & 0x5555555555555555 AS y
+            (y | (y << 1)) & 0x5555555555555555 AS y,
+            z
         FROM __interleaved4
     )
     SELECT
