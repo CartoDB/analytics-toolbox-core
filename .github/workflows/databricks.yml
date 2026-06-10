@@ -15,7 +15,7 @@ on:
   workflow_call:
 
 env:
-  PYTHON_VERSION: 3.8.18
+  PYTHON3_VERSION: 3.10.13
   VIRTUALENV_VERSION: 20.15.1
   GCLOUD_VERSION: 500.0.0
 
@@ -37,7 +37,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Authenticate with Google Cloud
@@ -89,7 +89,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Authenticate with Google Cloud
@@ -130,7 +130,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
       - name: Authenticate with Google Cloud
