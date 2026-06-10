@@ -6,7 +6,7 @@ on:
 
 env:
   NODE_VERSION: 14
-  PYTHON_VERSION: 3.10.13
+  PYTHON3_VERSION: 3.10.13
   VIRTUALENV_VERSION: 20.15.1
 
 jobs:
@@ -47,7 +47,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup node
         uses: actions/setup-node@v1
         with:
