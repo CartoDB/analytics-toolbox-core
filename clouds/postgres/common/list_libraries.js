@@ -80,11 +80,12 @@ functionsFilter.forEach(f => {
     }
 });
 
-// See build_modules.js for rationale: strip CREATE definitions + strings.
-function stripNonCallContent(content) {
+// See build_modules.js for rationale: strip CREATE / DROP statements only;
+// keep strings so dynamic-SQL call refs are still detected.
+function stripNonCallContent (content) {
     return content
         .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
-        .replace(/'(?:''|[^'])*'/g, "''");
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '');
 }
 // Extract function dependencies
 if (!nodeps) {

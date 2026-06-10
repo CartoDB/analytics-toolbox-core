@@ -22,6 +22,5 @@ AS ((
         SELECT DISTINCT h3_cell
         FROM t3
         WHERE ST_INTERSECTS(`@@BQ_DATASET@@.H3_BOUNDARY`(h3_cell), geog)
-        GROUP BY h3_cell
     )
 ));
