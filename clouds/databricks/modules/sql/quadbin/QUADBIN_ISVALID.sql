@@ -18,9 +18,9 @@ RETURN (
         ELSE (
             WITH __params AS (
                 SELECT
-                    CAST(4611686018427387904 AS BIGINT) AS header_mask,
                     (quadbin >> 59) & 7 AS mode_bits,
                     (quadbin >> 52) & CAST(31 AS BIGINT) AS zoom_level,
+                    CAST(4611686018427387904 AS BIGINT) AS header_mask,
                     CAST(4503599627370495 AS BIGINT)
                     >> (CAST((quadbin >> 52) & 31 AS INT) * 2) AS unused_mask
             )

@@ -12,9 +12,9 @@ AS (
             WITH
             __params AS (
                 SELECT
-                    0x4000000000000000 AS header,
                     (quadbin >> 59) & 7 AS mode,
                     (quadbin >> 52) & 0x1F AS z,
+                    0x4000000000000000 AS header,
                     (0xFFFFFFFFFFFFF >> (((quadbin >> 52) & 0x1F) * 2)) AS unused
             )
             SELECT
