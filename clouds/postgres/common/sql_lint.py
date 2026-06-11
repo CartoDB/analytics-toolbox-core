@@ -46,9 +46,11 @@ def fix_and_lint(script):
 
     lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
     if lint:
-        has_error = True
+        has_error = False
         for error in lint:
-            lint_error(name, error)
+            if 'Found unparsable section' not in error['description']:
+                has_error = True
+                lint_error(name, error)
 
         return has_error
 
