@@ -53,7 +53,7 @@ def lint_warning(name, error):
 def fix_and_lint(script):
     if not script or not os.path.exists(script):
         return False
-    
+
     name = ''
     content = ''
     with open(script, 'r') as file:
@@ -87,7 +87,9 @@ if __name__ == '__main__' and sys.argv[1]:
     ignored_files = sys.argv[3] if len(sys.argv) > 3 else None
     if ignored_files and os.path.exists(ignored_files):
         with open(ignored_files, 'r') as ignored_file:
-            ignored_scripts = [s.strip() for s in ignored_file.read().split('\n') if s.strip()]
+            ignored_scripts = [
+                s.strip() for s in ignored_file.read().split('\n') if s.strip()
+            ]
         for ignored_script in ignored_scripts:
             scripts = list(filter(lambda x: not x.endswith(ignored_script), scripts))
 
