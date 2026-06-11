@@ -269,12 +269,17 @@ endif
 		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi
 
-# Run linting for both gateway and clouds
-.PHONY: lint
-lint:
+# Run linting (read-only) or lint-fix (writes auto-fixes) for both gateway and clouds
+.PHONY: lint lint-fix _do_lint
+lint: LINT_TARGET = lint
+lint: _do_lint
+lint-fix: LINT_TARGET = lint-fix
+lint-fix: _do_lint
+
+_do_lint:
 ifndef cloud
 	@echo "Error: cloud parameter required"
-	@echo "Usage: make lint cloud=<cloud>"
+	@echo "Usage: make $(LINT_TARGET) cloud=<cloud>"
 	@echo "Valid clouds: $(VALID_CLOUDS)"
 	@exit 1
 endif
@@ -285,30 +290,34 @@ endif
 		exit 1; \
 	fi
 	@echo "========================================================================"
-	@echo "Linting $(cloud)"
+	@if [ "$(LINT_TARGET)" = "lint-fix" ]; then \
+		echo "Auto-fixing lint issues for $(cloud)"; \
+	else \
+		echo "Linting $(cloud)"; \
+	fi
 	@echo "========================================================================"
 	@echo ""
 	@rc=0; \
 	if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
-		echo "Linting gateway..."; \
-		(cd gateway && $(MAKE) lint cloud=$(cloud)) || rc=$$?; \
+		echo "$(LINT_TARGET) gateway..."; \
+		(cd gateway && $(MAKE) $(LINT_TARGET) cloud=$(cloud)) || rc=$$?; \
 		echo ""; \
 	fi; \
 	if [ -d "clouds/$(cloud)" ]; then \
-		echo "Linting clouds..."; \
-		(cd clouds/$(cloud) && $(MAKE) lint) || rc=$$?; \
+		echo "$(LINT_TARGET) clouds..."; \
+		(cd clouds/$(cloud) && $(MAKE) $(LINT_TARGET)) || rc=$$?; \
 	else \
 		echo "  ⚠️  No clouds/$(cloud) directory found"; \
 	fi; \
 	echo ""; \
 	if [ $$rc -ne 0 ]; then \
 		echo "========================================================================"; \
-		echo "✗ Linting failed (exit $$rc)"; \
+		echo "✗ $(LINT_TARGET) failed (exit $$rc)"; \
 		echo "========================================================================"; \
 		exit $$rc; \
 	fi; \
 	echo "========================================================================"; \
-	echo "✓ Linting complete"; \
+	echo "✓ $(LINT_TARGET) complete"; \
 	echo "========================================================================"
 
 # Clean build artifacts
@@ -336,7 +345,8 @@ help:
 	@echo "  remove          Remove gateway and clouds deployments"
 	@echo "  test            Run tests"
 	@echo "  benchmark       Run per-function timing benchmarks"
-	@echo "  lint            Lint code"
+	@echo "  lint            Lint code (read-only, fails on issues)"
+	@echo "  lint-fix        Apply auto-fixable lint changes"
 	@echo ""
 	@echo "Package targets:"
 	@echo "  create-package  Create unified distribution package (gateway + clouds)"
