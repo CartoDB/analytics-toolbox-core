@@ -20,12 +20,23 @@ def restore_variables(content):
     )
 
 
-def lint_error(name, error):
+def _format(name, error):
     code = error.get('code', 'UNKNOWN')
     line_no = error.get('start_line_no', 0)
     line_pos = error.get('start_line_pos', 0)
     description = error.get('description', 'Unknown error')
-    print(f'{name}:{line_no}:{line_pos}: {code} {description}')
+    return f'{name}:{line_no}:{line_pos}: {code} {description}'
+
+
+def lint_error(name, error):
+    print(_format(name, error))
+
+
+def lint_warning(name, error):
+    # sqlfluff cannot fully parse some dialect-specific constructs (BQ
+    # scripting, PL/SQL bodies, etc.). Surface those as warnings so the
+    # author sees them, but do not fail CI on parser limitations alone.
+    print(f'[WARN] {_format(name, error)}', file=sys.stderr)
 
 
 def fix_and_lint(script):
@@ -45,14 +56,14 @@ def fix_and_lint(script):
     fix = replace_variables(fix)
 
     lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
-    if lint:
-        has_error = False
-        for error in lint:
-            if 'Found unparsable section' not in error['description']:
-                has_error = True
-                lint_error(name, error)
-
-        return has_error
+    has_error = False
+    for error in lint:
+        if 'Found unparsable section' in error['description']:
+            lint_warning(name, error)
+        else:
+            has_error = True
+            lint_error(name, error)
+    return has_error
 
 
 if __name__ == '__main__':
