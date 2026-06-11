@@ -8,6 +8,11 @@ import multiprocessing as mp
 
 DIALECT = 'bigquery'
 
+# When True, fix and write changes back to disk. Off by default so `make lint`
+# in CI runs read-only and surfaces lint errors instead of silently rewriting
+# the workspace and reporting clean. `make lint-fix` opts in via --fix.
+FIX_MODE = '--fix' in sys.argv
+
 
 def replace_variables(content):
     return content.replace('@@BQ_DATASET@@', '_SQLFLUFFDATASET_').replace(
@@ -54,14 +59,16 @@ def fix_and_lint(script):
         name = os.path.basename(file.name)
         content = replace_variables(file.read())
 
-    fix = restore_variables(
-        sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
-    )
-    if content != fix:
-        with open(script, 'w') as file:
-            file.write(fix)
-
-    fix = replace_variables(fix)
+    if FIX_MODE:
+        fix = restore_variables(
+            sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
+        )
+        if content != fix:
+            with open(script, 'w') as file:
+                file.write(fix)
+        fix = replace_variables(fix)
+    else:
+        fix = content
 
     lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
     has_error = False

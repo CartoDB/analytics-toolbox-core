@@ -28,6 +28,11 @@ DIALECT = 'oracle'
 # cannot tell them apart.
 SAFE_FIX_RULES = ['CP03', 'CP05', 'LT01']
 
+# When True, fix and write changes back to disk. Off by default so `make lint`
+# in CI runs read-only and surfaces lint errors instead of silently rewriting
+# the workspace and reporting clean. `make lint-fix` opts in via --fix.
+FIX_MODE = '--fix' in sys.argv
+
 
 def replace_variables(content):
     # Oracle identifiers cannot start with underscore, so the placeholders
@@ -72,19 +77,21 @@ def fix_and_lint(script):
         name = os.path.basename(file.name)
         content = replace_variables(file.read())
 
-    fix = restore_variables(
-        sqlfluff.fix(
-            content,
-            dialect=DIALECT,
-            config_path=sys.argv[2],
-            rules=SAFE_FIX_RULES,
+    if FIX_MODE:
+        fix = restore_variables(
+            sqlfluff.fix(
+                content,
+                dialect=DIALECT,
+                config_path=sys.argv[2],
+                rules=SAFE_FIX_RULES,
+            )
         )
-    )
-    if content != fix:
-        with open(script, 'w') as file:
-            file.write(fix)
-
-    fix = replace_variables(fix)
+        if content != fix:
+            with open(script, 'w') as file:
+                file.write(fix)
+        fix = replace_variables(fix)
+    else:
+        fix = content
 
     lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
     has_error = False

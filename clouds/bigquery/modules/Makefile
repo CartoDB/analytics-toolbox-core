@@ -43,7 +43,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 	rc=0; \
 	echo "- Lint JavaScript files"; \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) --fix || rc=$$?; \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) || rc=$$?; \
 	echo "- Lint Markdown files"; \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 -- || rc=$$?; \
@@ -51,7 +51,18 @@ lint: venv3 $(NODE_MODULES_DEV)
 	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || rc=$$?; \
 	exit $$rc
 
-lint-fix: lint
+lint-fix: venv3 $(NODE_MODULES_DEV)
+	echo "Auto-fixing lint issues in modules..."
+	rc=0; \
+	echo "- Fix JavaScript files"; \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) --fix || rc=$$?; \
+	echo "- Fix Markdown files"; \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --fix -- || rc=$$?; \
+	echo "- Fix SQL files"; \
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" --fix || rc=$$?; \
+	exit $$rc
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."

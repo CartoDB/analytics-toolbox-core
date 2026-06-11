@@ -28,7 +28,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	rc=0; \
 	echo "- Lint Python files"; \
-	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --quiet || rc=$$?; \
+	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --check --quiet || rc=$$?; \
 	$(VENV3_BIN)/flake8 test --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || rc=$$?; \
 	echo "- Lint Markdown files"; \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
@@ -37,7 +37,18 @@ lint: venv3 $(NODE_MODULES_DEV)
 	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || rc=$$?; \
 	exit $$rc
 
-lint-fix: lint
+lint-fix: venv3 $(NODE_MODULES_DEV)
+	echo "Auto-fixing lint issues in modules..."
+	rc=0; \
+	echo "- Fix Python files"; \
+	$(VENV3_BIN)/brunette test --line-length=88 --single-quotes --quiet || rc=$$?; \
+	$(VENV3_BIN)/flake8 test --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || rc=$$?; \
+	echo "- Fix Markdown files"; \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --fix -- || rc=$$?; \
+	echo "- Fix SQL files"; \
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" --fix || rc=$$?; \
+	exit $$rc
 
 build: $(NODE_MODULES_DEV)
 	echo "Building modules..."

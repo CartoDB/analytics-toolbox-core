@@ -28,7 +28,7 @@ lint: venv3 $(NODE_MODULES_DEV)
 	echo "Linting modules..."
 	rc=0; \
 	echo "- Lint Python files"; \
-	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes --quiet || rc=$$?; \
+	$(VENV3_BIN)/brunette test benchmark --line-length=88 --single-quotes --check --quiet || rc=$$?; \
 	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203 || rc=$$?; \
 	echo "- Lint Markdown files"; \
 	if [ -n "$$(find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/.pytest_cache/*' 2>/dev/null)" ]; then \
@@ -52,6 +52,8 @@ lint-fix: venv3 $(NODE_MODULES_DEV)
 	else \
 		echo "  No markdown files to fix"; \
 	fi
+	echo "- Fix SQL files"
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" --fix || true
 	echo "- Check remaining issues"
 	$(VENV3_BIN)/flake8 test benchmark --max-line-length=88 --enable-extensions Q0 --ignore=D100,D101,D102,D103,D104,D105,D106,D107,W503,E203
 	echo "✓ Auto-fix complete. Review remaining flake8 issues above."
