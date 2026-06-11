@@ -288,21 +288,28 @@ endif
 	@echo "Linting $(cloud)"
 	@echo "========================================================================"
 	@echo ""
-	@if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
+	@rc=0; \
+	if [ -d "gateway/logic/clouds/$(cloud)" ]; then \
 		echo "Linting gateway..."; \
-		cd gateway && $(MAKE) lint cloud=$(cloud) || echo "  ⚠️  Gateway lint warnings (non-blocking)"; \
+		(cd gateway && $(MAKE) lint cloud=$(cloud)) || rc=$$?; \
 		echo ""; \
-	fi
-	@if [ -d "clouds/$(cloud)" ]; then \
+	fi; \
+	if [ -d "clouds/$(cloud)" ]; then \
 		echo "Linting clouds..."; \
-		cd clouds/$(cloud) && $(MAKE) lint || echo "  ⚠️  Clouds lint warnings (non-blocking)"; \
+		(cd clouds/$(cloud) && $(MAKE) lint) || rc=$$?; \
 	else \
 		echo "  ⚠️  No clouds/$(cloud) directory found"; \
-	fi
-	@echo ""
-	@echo "========================================================================"
-	@echo "✓ Linting complete"
-	@echo "========================================================================"
+	fi; \
+	echo ""; \
+	if [ $$rc -ne 0 ]; then \
+		echo "========================================================================"; \
+		echo "✗ Linting failed (exit $$rc)"; \
+		echo "========================================================================"; \
+		exit $$rc; \
+	fi; \
+	echo "========================================================================"; \
+	echo "✓ Linting complete"; \
+	echo "========================================================================"
 
 # Clean build artifacts
 .PHONY: clean
