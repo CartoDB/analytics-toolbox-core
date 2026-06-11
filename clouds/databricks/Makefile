@@ -25,16 +25,27 @@ lint:
 	$(MAKE) lint-modules
 	$(MAKE) lint-common
 
-lint-fix: lint
+lint-fix:
+	$(MAKE) lint-fix-modules
+	$(MAKE) lint-fix-common
 
 lint-modules:
 	$(MAKE) -C modules lint
+
+lint-fix-modules:
+	$(MAKE) -C modules lint-fix
 
 lint-common: $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	echo "- Lint Markdown files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
+
+lint-fix-common: $(NODE_MODULES_DEV)
+	echo "Auto-fixing lint issues in common..."
+	echo "- Fix Markdown files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --fix -- || true
 
 build:
 	rm -rf $(BUILD_DIR)

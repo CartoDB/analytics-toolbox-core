@@ -24,23 +24,44 @@ lint:
 	$(MAKE) lint-modules
 	$(MAKE) lint-common
 
-lint-fix: lint
+lint-fix:
+	$(MAKE) lint-fix-libraries
+	$(MAKE) lint-fix-modules
+	$(MAKE) lint-fix-common
 
 lint-libraries:
 	$(MAKE) -C libraries/javascript lint
 
+lint-fix-libraries:
+	$(MAKE) -C libraries/javascript lint-fix
+
 lint-modules:
 	$(MAKE) -C modules lint
+
+lint-fix-modules:
+	$(MAKE) -C modules lint-fix
 
 lint-common: venv3 $(NODE_MODULES_DEV)
 	echo "Linting common..."
 	echo "- Lint JavaScript files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(COMMON_DIR)/*.js --fix
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(COMMON_DIR)/*.js
 	echo "- Lint Markdown files"
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --
 	echo "- Lint Python files"
+	$(VENV3_BIN)/brunette $(COMMON_DIR) --exclude node_modules --line-length=88 --single-quotes --check --quiet
+	$(VENV3_BIN)/flake8 $(COMMON_DIR) --exclude node_modules --max-line-length=88 --enable-extensions Q0 --ignore=D100,D103,D104,E203
+
+lint-fix-common: venv3 $(NODE_MODULES_DEV)
+	echo "Auto-fixing lint issues in common..."
+	echo "- Fix JavaScript files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(COMMON_DIR)/*.js --fix
+	echo "- Fix Markdown files"
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '*.md' --ignore node_modules --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --fix -- || true
+	echo "- Fix Python files"
 	$(VENV3_BIN)/brunette $(COMMON_DIR) --exclude node_modules --line-length=88 --single-quotes --quiet
 	$(VENV3_BIN)/flake8 $(COMMON_DIR) --exclude node_modules --max-line-length=88 --enable-extensions Q0 --ignore=D100,D103,D104,E203
 
