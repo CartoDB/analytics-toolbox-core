@@ -85,7 +85,7 @@ lint: install-dev
 	$(VENV_BIN)/black $(LINT_PATHS) --check --line-length=88
 	$(VENV_BIN)/flake8 $(LINT_PATHS) \
 		--max-line-length=88 \
-		--extend-ignore=E203,W503,Q000
+		--extend-ignore=E203,E741,W503,Q000
 
 lint-fix: install-dev
 	$(VENV_BIN)/black $(LINT_PATHS) --line-length=88
