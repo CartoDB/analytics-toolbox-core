@@ -2,7 +2,8 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMLONGLAT(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_FROMLONGLAT
+(
     longitude NUMBER, latitude NUMBER, resolution NUMBER
 )
 RETURN VARCHAR2

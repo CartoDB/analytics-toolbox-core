@@ -12,7 +12,8 @@ SIGNATURE 'toChildren(string, number)';
 
 -- Pipelined wrapper. NULL inputs (or any error inside h3-js) yield an
 -- empty pipeline.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_TOCHILDREN(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_TOCHILDREN
+(
     h3_index VARCHAR2, resolution NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED

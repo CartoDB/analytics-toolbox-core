@@ -2,7 +2,8 @@
 -- Copyright (C) 2026 CARTO
 ----------------------------
 
-CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.H3_POLYFILL_TABLE(
+CREATE OR REPLACE PROCEDURE @@ORA_SCHEMA@@.H3_POLYFILL_TABLE
+(
     input_query VARCHAR2,
     resolution NUMBER,
     polyfill_mode VARCHAR2,

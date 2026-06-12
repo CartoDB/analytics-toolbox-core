@@ -2,7 +2,8 @@
 -- Copyright (C) 2023-2024 CARTO
 --------------------------------
 
-CREATE OR REPLACE PROCEDURE @@SF_SCHEMA@@.H3_POLYFILL_TABLE(
+CREATE OR REPLACE PROCEDURE @@SF_SCHEMA@@.H3_POLYFILL_TABLE
+(
     input_query STRING,
     resolution INT,
     mode STRING,

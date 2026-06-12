@@ -14,7 +14,8 @@ SIGNATURE 'uncompact(string, number)';
 -- calls the JS export, then pipes each returned cell. NULL or empty
 -- input (or any error inside h3-js, e.g. resolution coarser than some
 -- input cell) yields an empty pipeline.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_UNCOMPACT(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_UNCOMPACT
+(
     h3_indexes @@ORA_SCHEMA@@.H3_INDEX_ARRAY, resolution NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED

@@ -12,7 +12,8 @@ SIGNATURE 'kringDistances(string, number)';
 /
 
 -- Pipelined wrapper. NULL inputs yield an empty pipeline.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_KRING_DISTANCES(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_KRING_DISTANCES
+(
     origin VARCHAR2, distance NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_DISTANCE_ARRAY PIPELINED

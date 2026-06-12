@@ -17,7 +17,8 @@
 --   4. Wrap x on torus using BITAND (num_tiles is always a power of 2)
 --   5. Delegate to QUADBIN_FROMZXY(z, x, y)
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT
+(
     longitude NUMBER, latitude NUMBER, resolution NUMBER
 )
 RETURN NUMBER

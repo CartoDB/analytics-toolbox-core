@@ -13,7 +13,8 @@ SIGNATURE 'distance(string, string)';
 /
 
 -- Public wrapper.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_DISTANCE(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_DISTANCE
+(
     origin VARCHAR2, destination VARCHAR2
 )
 RETURN NUMBER

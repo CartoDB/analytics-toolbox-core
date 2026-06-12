@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_MAKEENVELOPE`(
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_MAKEENVELOPE`
+(
     xmin FLOAT64,
     ymin FLOAT64,
     xmax FLOAT64,

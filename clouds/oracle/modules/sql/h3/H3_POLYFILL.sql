@@ -16,7 +16,8 @@ SIGNATURE 'polyfill(string, number)';
 -- Pipelined wrapper. Marshals SDO_GEOMETRY → GeoJSON, calls the JS
 -- export, then pipes each cell. NULL inputs or any error inside h3-js
 -- yield an empty pipeline.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_POLYFILL(
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.H3_POLYFILL
+(
     geom SDO_GEOMETRY, resolution NUMBER
 )
 RETURN @@ORA_SCHEMA@@.H3_INDEX_ARRAY PIPELINED
