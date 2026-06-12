@@ -91,7 +91,7 @@ functionsFilter.forEach(f => {
 // kept — real runtime call refs live inside dynamic-SQL strings.
 function stripNonCallContent (content) {
     return content
-        .replace(/CREATE\s+OR\s+REPLACE\s+(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/CREATE\s+OR\s+REPLACE\s+(?:SECURE\s+|EXTERNAL\s+)*(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
         .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
         .replace(/\bAS\s+r?"""[\s\S]*?"""/g, 'AS """"""');
 }
