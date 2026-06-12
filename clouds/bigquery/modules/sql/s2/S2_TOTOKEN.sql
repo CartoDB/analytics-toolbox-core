@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_TOTOKEN`(id INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_TOTOKEN`
+(id INT64)
 RETURNS STRING
 AS ((
     -- Build full 16-char hex then strip trailing zeros to produce a standard S2 token,

@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_FROMLONGLAT`(longitude FLOAT64, latitude FLOAT64, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_FROMLONGLAT`
+(longitude FLOAT64, latitude FLOAT64, resolution INT64)
 RETURNS INT64
 DETERMINISTIC
 LANGUAGE js

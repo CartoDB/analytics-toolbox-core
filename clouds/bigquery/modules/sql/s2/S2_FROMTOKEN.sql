@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_FROMTOKEN`(token STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_FROMTOKEN`
+(token STRING)
 RETURNS INT64
 AS ((
     -- Pad to 16 hex chars (right-pad with zeros) to restore trailing zero nibbles

@@ -6,7 +6,8 @@
 -- Calls QUADBIN_BBOX to get [west, south, east, north], then constructs
 -- a polygon from the four corners.
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BOUNDARY(quadbin NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BOUNDARY
+(quadbin NUMBER)
 RETURN SDO_GEOMETRY
 AS
     v_bbox @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ;

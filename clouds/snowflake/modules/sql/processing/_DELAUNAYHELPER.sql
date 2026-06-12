@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._DELAUNAYHELPER(input_points ARRAY)
+CREATE OR REPLACE FUNCTION @@SF_SCHEMA@@._DELAUNAYHELPER
+(input_points ARRAY)
 RETURNS ARRAY
 AS $$ (
     WITH distinct_rounded_points AS (

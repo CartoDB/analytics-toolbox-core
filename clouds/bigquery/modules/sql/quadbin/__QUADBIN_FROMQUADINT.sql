@@ -2,7 +2,8 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_FROMQUADINT`(quadint INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_FROMQUADINT`
+(quadint INT64)
 RETURNS INT64 AS ((
     WITH __zxy AS (
         SELECT (quadint >> 5) AS xy, (quadint & 0x1F) AS z

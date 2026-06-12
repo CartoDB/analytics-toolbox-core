@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_ZXY_KRING`(origin STRUCT<z INT64, x INT64, y INT64>, size INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_ZXY_KRING`
+(origin STRUCT<z INT64, x INT64, y INT64>, size INT64)
 AS ((
     SELECT ARRAY_AGG(
             DISTINCT (
@@ -18,7 +19,8 @@ AS ((
     WHERE origin.y + dy >= 0 AND origin.y + dy < (1 << origin.z)
 ));
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_KRING`(origin INT64, size INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_KRING`
+(origin INT64, size INT64)
 AS (
     `@@BQ_DATASET@@.__QUADINT_ZXY_KRING`(
         `@@BQ_DATASET@@.QUADINT_TOZXY`(

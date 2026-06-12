@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DELAUNAYGENERIC`(inputPoints ARRAY<GEOGRAPHY>)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__DELAUNAYGENERIC`
+(inputPoints ARRAY<GEOGRAPHY>)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
     WITH distinct_rounded_points AS (

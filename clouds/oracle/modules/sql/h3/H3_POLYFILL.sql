@@ -6,7 +6,8 @@
 -- MultiPolygon inputs; non-polygon inputs are silently ignored, matching
 -- the established SF/BQ pattern). Mode-aware filtering for intersects /
 -- contains is done in PL/SQL via SDO_GEOM.RELATE.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_POLYFILL_JS(geojson CLOB, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_POLYFILL_JS
+(geojson CLOB, resolution NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'polyfill(string, number)';

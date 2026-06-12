@@ -3,7 +3,8 @@
 ----------------------------
 
 -- Private MLE binding to h3-js h3ToChildren.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_TOCHILDREN_JS(parent VARCHAR2, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_TOCHILDREN_JS
+(parent VARCHAR2, resolution NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'toChildren(string, number)';

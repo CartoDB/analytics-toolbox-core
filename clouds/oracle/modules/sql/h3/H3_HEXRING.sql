@@ -3,7 +3,8 @@
 ----------------------------
 
 -- Private MLE binding to h3-js hexRing.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_HEXRING_JS(origin VARCHAR2, k NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_HEXRING_JS
+(origin VARCHAR2, k NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'hexring(string, number)';

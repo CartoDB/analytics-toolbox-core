@@ -13,7 +13,8 @@
 --   4. Clip new_y: return NULL if out of [0, 2^z)
 --   5. Return QUADBIN_FROMZXY(z, new_x, new_y)
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_SIBLING(quadbin NUMBER, direction VARCHAR2)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_SIBLING
+(quadbin NUMBER, direction VARCHAR2)
 RETURN NUMBER
 AS
     v_zxy @@ORA_SCHEMA@@.QUADBIN_ZXY;

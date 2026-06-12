@@ -3,7 +3,8 @@
 ----------------------------
 
 -- Private MLE binding to h3-js uncompact. Input is a JSON array string.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_UNCOMPACT_JS(cells_json CLOB, resolution NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_UNCOMPACT_JS
+(cells_json CLOB, resolution NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'uncompact(string, number)';

@@ -3,7 +3,8 @@
 ----------------------------
 
 -- Private MLE binding to h3-js compact. Input is a JSON array string.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_COMPACT_JS(cells_json CLOB)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_COMPACT_JS
+(cells_json CLOB)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'compact(string)';

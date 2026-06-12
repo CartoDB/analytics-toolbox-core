@@ -2,7 +2,8 @@
 -- Copyright (C) 2022 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@._H3_COVERINGCELLIDS`(geog GEOGRAPHY, resolution INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@._H3_COVERINGCELLIDS`
+(geog GEOGRAPHY, resolution INT64)
 AS ((
     ARRAY(
         WITH

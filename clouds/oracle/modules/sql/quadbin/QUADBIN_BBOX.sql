@@ -6,7 +6,8 @@
 -- (west, south, east, north in WGS84 degrees), using inverse Web Mercator.
 -- BINARY_DOUBLE (IEEE 754) is used for intermediate calculations.
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BBOX(quadbin NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BBOX
+(quadbin NUMBER)
 RETURN @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ
 AS
     v_zxy @@ORA_SCHEMA@@.QUADBIN_ZXY;

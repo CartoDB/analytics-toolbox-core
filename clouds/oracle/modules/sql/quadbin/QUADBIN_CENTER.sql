@@ -5,7 +5,8 @@
 -- Returns the center of a quadbin tile as an SDO_GEOMETRY point (SRID 4326).
 -- Uses BINARY_DOUBLE (IEEE 754) for intermediate calculations.
 
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_CENTER(quadbin NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_CENTER
+(quadbin NUMBER)
 RETURN SDO_GEOMETRY
 AS
     v_zxy @@ORA_SCHEMA@@.QUADBIN_ZXY;

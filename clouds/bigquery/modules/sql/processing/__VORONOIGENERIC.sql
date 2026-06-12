@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__VORONOIGENERIC`(points ARRAY<GEOGRAPHY>, bbox ARRAY<FLOAT64>, type_of_voronoi STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__VORONOIGENERIC`
+(points ARRAY<GEOGRAPHY>, bbox ARRAY<FLOAT64>, type_of_voronoi STRING)
 RETURNS ARRAY<GEOGRAPHY>
 AS ((
     WITH distinct_rounded_points AS (

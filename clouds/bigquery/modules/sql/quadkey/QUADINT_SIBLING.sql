@@ -2,7 +2,8 @@
 -- Copyright (C) 2021 CARTO
 ----------------------------
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__ZXY_QUADINT_SIBLING`(origin STRUCT<z INT64, x INT64, y INT64>, dx INT64, dy INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__ZXY_QUADINT_SIBLING`
+(origin STRUCT<z INT64, x INT64, y INT64>, dx INT64, dy INT64)
 AS (
     IF(origin.y + dy >= 0 AND origin.y + dy < (1 << origin.z),
         `@@BQ_DATASET@@.QUADINT_FROMZXY`(
@@ -19,7 +20,8 @@ AS (
     )
 );
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_SIBLING`(origin INT64, dx INT64, dy INT64)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADINT_SIBLING`
+(origin INT64, dx INT64, dy INT64)
 AS (
     `@@BQ_DATASET@@.__ZXY_QUADINT_SIBLING`(
         `@@BQ_DATASET@@.QUADINT_TOZXY`(
@@ -32,7 +34,8 @@ AS (
         COALESCE(dy, ERROR('Invalid input dy'))));
 
 
-CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_SIBLING`(quadint INT64, direction STRING)
+CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.QUADINT_SIBLING`
+(quadint INT64, direction STRING)
 AS (
     IF(
         direction = 'left',

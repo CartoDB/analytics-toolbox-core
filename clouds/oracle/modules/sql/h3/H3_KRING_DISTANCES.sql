@@ -4,7 +4,8 @@
 
 -- Private MLE binding to h3-js kRingDistances. JS returns a JSON array
 -- of {h3, distance} objects.
-CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_KRING_DISTANCES_JS(origin VARCHAR2, k NUMBER)
+CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.INTERNAL_H3_KRING_DISTANCES_JS
+(origin VARCHAR2, k NUMBER)
 RETURN CLOB
 AS MLE MODULE @@ORA_SCHEMA@@.h3_module
 SIGNATURE 'kringDistances(string, number)';

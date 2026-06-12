@@ -2,7 +2,8 @@
 -- Copyright (C) 2021-2024 CARTO
 ---------------------------------
 
-CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_FROMLONGLAT(longitude DOUBLE, latitude DOUBLE, resolution INT)
+CREATE OR REPLACE SECURE FUNCTION @@SF_SCHEMA@@.H3_FROMLONGLAT
+(longitude DOUBLE, latitude DOUBLE, resolution INT)
 RETURNS STRING
 IMMUTABLE
 AS $$
