@@ -86,9 +86,9 @@ line_position = trailing
 # build_modules.js dependency parser expects the no-space form; the
 # default sqlfluff layout would insert one and break dep detection.
 [sqlfluff:layout:type:procedure_name_identifier]
-spacing_after = touch
+spacing_after = touch:inline
 [sqlfluff:layout:type:function_name_identifier]
-spacing_after = touch
+spacing_after = touch:inline
 
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]

@@ -73,9 +73,9 @@ line_position = trailing
 # build_modules.js dependency parser expects the no-space form; the
 # default sqlfluff layout would insert one and break dep detection.
 [sqlfluff:layout:type:procedure_name_identifier]
-spacing_after = touch
+spacing_after = touch:inline
 [sqlfluff:layout:type:function_name_identifier]
-spacing_after = touch
+spacing_after = touch:inline
 
 # Array type syntax: PostgreSQL convention is `type[]` with no space
 # (see https://www.postgresql.org/docs/current/arrays.html). sqlfluff

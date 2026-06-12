@@ -110,7 +110,7 @@ if (!nodeps) {
         const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (callContent.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (new RegExp(`SCHEMA@@\\.${depFunction.name}\\s*\\(`).test(callContent)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

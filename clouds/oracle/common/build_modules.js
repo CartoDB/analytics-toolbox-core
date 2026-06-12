@@ -147,7 +147,7 @@ if (!nodeps) {
         functions.forEach(depFunction => {
             if (isShared(depFunction)) return;
             if (fnKey(mainFunction) === fnKey(depFunction)) return;
-            if (callContent.includes(`SCHEMA@@.${depFunction.name}(`)) {
+            if (new RegExp(`SCHEMA@@\\.${depFunction.name}\\s*\\(`).test(callContent)) {
                 if (!mainFunction.dependencies.includes(fnKey(depFunction))) {
                     mainFunction.dependencies.push(fnKey(depFunction));
                 }

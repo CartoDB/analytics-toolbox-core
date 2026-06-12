@@ -76,9 +76,9 @@ line_position = trailing
 # Narrow override on procedure_name_identifier only — keeps the default
 # behavior for other `(` contexts like `IN (...)`, `EXISTS (...)`.
 [sqlfluff:layout:type:procedure_name_identifier]
-spacing_after = touch
+spacing_after = touch:inline
 [sqlfluff:layout:type:function_name_identifier]
-spacing_after = touch
+spacing_after = touch:inline
 
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
