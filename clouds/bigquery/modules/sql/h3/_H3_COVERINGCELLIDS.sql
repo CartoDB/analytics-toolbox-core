@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@._H3_COVERINGCELLIDS`
 (geog GEOGRAPHY, resolution INT64)
 AS ((
-    ARRAY (
+    ARRAY(
         WITH
         t2 AS (
             SELECT `@@BQ_DATASET@@.__S2_CENTER`(s2_index) AS h3_lonlat
@@ -23,6 +23,5 @@ AS ((
         SELECT DISTINCT h3_cell
         FROM t3
         WHERE ST_INTERSECTS(`@@BQ_DATASET@@.H3_BOUNDARY`(h3_cell), geog)
-        GROUP BY h3_cell
     )
 ));

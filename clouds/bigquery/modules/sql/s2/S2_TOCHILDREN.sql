@@ -3,7 +3,7 @@
 ----------------------------
 
 CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.S2_TOCHILDREN`
-(id INT64, resolution INT64 ) AS (
+(id INT64, resolution INT64) AS (
 (
   ARRAY(
 SELECT id + (s2_ << (60 - (2 * resolution))) AS s2

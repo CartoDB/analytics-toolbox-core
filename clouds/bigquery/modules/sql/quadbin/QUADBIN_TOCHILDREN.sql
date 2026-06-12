@@ -14,7 +14,7 @@ AS ((
               SELECT
                 ~(0x1F << 52) AS zoom_level_mask,
                 (1 << ((resolution - ((quadbin >> 52) & 0x1F)) << 1)) AS block_range,
-                 1 <<  (resolution - ((quadbin >> 52) & 0x1F))        AS sqrt_block_range,
+                 1 << (resolution - ((quadbin >> 52) & 0x1F)) AS sqrt_block_range,
                 (52 - (resolution << 1)) AS block_shift
             ),
             __childbase_constants AS (

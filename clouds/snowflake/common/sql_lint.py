@@ -7,6 +7,11 @@ import multiprocessing as mp
 
 DIALECT = 'snowflake'
 
+# When True, fix and write changes back to disk. Off by default so `make lint`
+# in CI runs read-only and surfaces lint errors instead of silently rewriting
+# the workspace and reporting clean. `make lint-fix` opts in via --fix.
+FIX_MODE = '--fix' in sys.argv
+
 
 def replace_variables(content):
     return (
@@ -24,12 +29,23 @@ def restore_variables(content):
     )
 
 
+def _format(name, error):
+    code = error.get('code', 'UNKNOWN')
+    line_no = error.get('start_line_no', 0)
+    line_pos = error.get('start_line_pos', 0)
+    description = error.get('description', 'Unknown error')
+    return f'{name}:{line_no}:{line_pos}: {code} {description}'
+
+
 def lint_error(name, error):
-    code = error['code']
-    line_no = error['line_no']
-    line_pos = error['line_pos']
-    description = error['description']
-    print(f'{name}:{line_no}:{line_pos}: {code} {description}')
+    print(_format(name, error))
+
+
+def lint_warning(name, error):
+    # sqlfluff cannot fully parse some dialect-specific constructs (BQ
+    # scripting, PL/SQL bodies, etc.). Surface those as warnings so the
+    # author sees them, but do not fail CI on parser limitations alone.
+    print(f'[WARN] {_format(name, error)}', file=sys.stderr)
 
 
 def fix_and_lint(script):
@@ -39,22 +55,26 @@ def fix_and_lint(script):
         name = os.path.basename(file.name)
         content = replace_variables(file.read())
 
-    fix = restore_variables(
-        sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
-    )
-    if content != fix:
-        with open(script, 'w') as file:
-            file.write(fix)
-
-    fix = replace_variables(fix)
+    if FIX_MODE:
+        fix = restore_variables(
+            sqlfluff.fix(content, dialect=DIALECT, config_path=sys.argv[2])
+        )
+        if content != fix:
+            with open(script, 'w') as file:
+                file.write(fix)
+        fix = replace_variables(fix)
+    else:
+        fix = content
 
     lint = sqlfluff.lint(fix, dialect=DIALECT, config_path=sys.argv[2])
-    if lint:
-        has_error = True
-        for error in lint:
+    has_error = False
+    for error in lint:
+        if 'Found unparsable section' in error['description']:
+            lint_warning(name, error)
+        else:
+            has_error = True
             lint_error(name, error)
-
-        return has_error
+    return has_error
 
 
 if __name__ == '__main__':

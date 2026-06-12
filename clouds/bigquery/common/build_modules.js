@@ -100,8 +100,23 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
+// Dep detection looks for the substring `\`DATASET@@.NAME\`(` in mainFunction.content.
+// To avoid false positives we strip CREATE / DROP statements (signatures and
+// DDL fragments are not call references) and JS UDF bodies (`AS r"""..."""`
+// / `AS """..."""` blocks following the JS UDF marker — their contents are
+// JavaScript, not SQL). Plain triple-quoted blocks elsewhere (e.g. BQ
+// scripting `SET x = """SELECT @@DATASET@@.FOO(...) """`) and single-quoted
+// strings are *kept*: BQ procedures often build dynamic SQL via concatenation
+// inside those strings, which carry real runtime dep references.
+function stripNonCallContent (content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(?:SECURE\s+|EXTERNAL\s+)*(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/\bAS\s+r?"""[\s\S]*?"""/g, 'AS """"""');
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
                 const depFunctionMatches = [];
@@ -113,7 +128,7 @@ if (!nodeps) {
                     qualifiedDepFunctName = qualifiedDepFunctName.split('.');
                     depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
                 })
-                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\`(`))) {
+                if (depFunctionNames.some((depFunctionName) => new RegExp(`DATASET@@\\.${depFunctionName}\`\\s*\\(`).test(callContent))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

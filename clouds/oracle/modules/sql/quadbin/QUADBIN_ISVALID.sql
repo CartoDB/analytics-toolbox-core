@@ -23,16 +23,16 @@ RETURN NUMBER
 -- as NUMBER (Oracle ignores precision/scale on PL/SQL function returns
 -- but the contract is documented for callers and SQL clients).
 AS
-    HEADER_MASK  CONSTANT NUMBER := 4611686018427387904;
-    UNUSED_MASK  CONSTANT NUMBER := 4503599627370495;
-    MAX_MODE     CONSTANT NUMBER := 6;
-    MAX_ZOOM     CONSTANT NUMBER := 26;
-    MODE_WIDTH   CONSTANT NUMBER := 7;
-    ZOOM_WIDTH   CONSTANT NUMBER := 31;
+    HEADER_MASK CONSTANT NUMBER := 4611686018427387904;
+    UNUSED_MASK CONSTANT NUMBER := 4503599627370495;
+    MAX_MODE CONSTANT NUMBER := 6;
+    MAX_ZOOM CONSTANT NUMBER := 26;
+    MODE_WIDTH CONSTANT NUMBER := 7;
+    ZOOM_WIDTH CONSTANT NUMBER := 31;
 
-    v_mode_bits  NUMBER;
-    v_zoom       NUMBER;
-    v_unused     NUMBER;
+    v_mode_bits NUMBER;
+    v_zoom NUMBER;
+    v_unused NUMBER;
 BEGIN
     IF quadbin IS NULL OR quadbin < 0 THEN
         RETURN 0;

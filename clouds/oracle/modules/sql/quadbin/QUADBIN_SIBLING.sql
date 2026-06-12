@@ -17,15 +17,15 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_SIBLING
 (quadbin NUMBER, direction VARCHAR2)
 RETURN NUMBER
 AS
-    v_zxy    @@ORA_SCHEMA@@.QUADBIN_ZXY;
-    v_z      NUMBER;
-    v_x      NUMBER;
-    v_y      NUMBER;
-    v_dx     NUMBER;
-    v_dy     NUMBER;
-    v_size   NUMBER;
-    v_new_x  NUMBER;
-    v_new_y  NUMBER;
+    v_zxy @@ORA_SCHEMA@@.QUADBIN_ZXY;
+    v_z NUMBER;
+    v_x NUMBER;
+    v_y NUMBER;
+    v_dx NUMBER;
+    v_dy NUMBER;
+    v_size NUMBER;
+    v_new_x NUMBER;
+    v_new_y NUMBER;
 BEGIN
     IF quadbin IS NULL OR direction IS NULL THEN
         RETURN NULL;
@@ -42,10 +42,10 @@ BEGIN
 
     -- Direction deltas
     CASE direction
-        WHEN 'left'  THEN v_dx := -1; v_dy := 0;
-        WHEN 'right' THEN v_dx :=  1; v_dy := 0;
-        WHEN 'up'    THEN v_dx :=  0; v_dy := -1;
-        WHEN 'down'  THEN v_dx :=  0; v_dy :=  1;
+        WHEN 'left' THEN v_dx := -1; v_dy := 0;
+        WHEN 'right' THEN v_dx := 1; v_dy := 0;
+        WHEN 'up' THEN v_dx := 0; v_dy := -1;
+        WHEN 'down' THEN v_dx := 0; v_dy := 1;
     END CASE;
 
     -- Number of tiles per axis at this zoom level

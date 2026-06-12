@@ -8,10 +8,10 @@ RETURNS GEOGRAPHY
 AS ((
         WITH params_res AS (
             SELECT
-                CHAR_LENGTH(index) AS resolution,
                 CAST(
                     FLOOR(5 * (CHAR_LENGTH(index) - 1) / 2.0) + 1 AS INT
-                ) AS power
+                ) AS power,
+                CHAR_LENGTH(index) AS resolution
         ),
 
         params_width AS (

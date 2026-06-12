@@ -59,6 +59,14 @@ if (diff.length) {
 // Extract functions. Files like _types.sql and _module.sql are intentionally
 // reused across modules (per the typing convention), so each file is
 // keyed by "module/name" internally to disambiguate.
+// Strip `--` line comments EXCEPT those mentioning a `@@SCHEMA@@.NAME(` call
+// reference. Some files declare extra deps via a comment when the real
+// reference lives in a dynamic-SQL string created at runtime; keeping the
+// comment in `content` lets the existing substring matcher pick it up
+// automatically. Oracle ignores `--` at execution time, so the surviving
+// comment is harmless for deploy.
+const COMMENT_STRIP = /--(?!.*@@[A-Z_]+@@\.[A-Z_0-9]+\().*\n/g;
+
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
@@ -73,7 +81,7 @@ for (let inputDir of inputDirs) {
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
+                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(COMMENT_STRIP, '');
                     functions.push({
                         name,
                         module,
@@ -123,12 +131,23 @@ functions.forEach(f => {
 // every other cloud: a file referencing @@SCHEMA@@.NAME( depends on
 // the file named NAME in that file's module (or any module — function
 // names are unique across modules).
+// Dep detection looks for `SCHEMA@@.NAME(` in mainFunction.content. To avoid
+// false positives we strip CREATE / DROP statements (definitions and DDL
+// fragments are not call references). Single-quoted strings are kept:
+// many PL/SQL procedures call other functions from inside EXECUTE IMMEDIATE
+// dynamic-SQL strings, and those carry real runtime dep references.
+function stripNonCallContent (content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(?:SECURE\s+|EXTERNAL\s+)*(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '');
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (isShared(depFunction)) return;
             if (fnKey(mainFunction) === fnKey(depFunction)) return;
-            if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+            if (new RegExp(`SCHEMA@@\\.${depFunction.name}\\s*\\(`).test(callContent)) {
                 if (!mainFunction.dependencies.includes(fnKey(depFunction))) {
                     mainFunction.dependencies.push(fnKey(depFunction));
                 }

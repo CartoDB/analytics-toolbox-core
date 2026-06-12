@@ -96,11 +96,19 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
+// See build_modules.js for rationale: strip CREATE / DROP statements only,
+// not string literals (real call refs live inside dynamic-SQL strings).
+function stripNonCallContent (content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(SECURE\s+|EXTERNAL\s+)*(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '');
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (new RegExp(`SCHEMA@@\\.${depFunction.name}\\s*\\(`).test(callContent)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

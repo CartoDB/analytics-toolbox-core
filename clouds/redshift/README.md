@@ -41,7 +41,8 @@ AWS_SECRET_ACCESS_KEY=<secret-access-key>
 ## Make commands
 
 - `make help`: shows the commands available in the Makefile
-- `make lint`: runs a linter (flake8) and fixes the trivial issues (brunette)
+- `make lint`: runs linters (flake8, markdownlint, sqlfluff, brunette --check, eslint) in read-only mode and fails if any issue is found
+- `make lint-fix`: applies the auto-fixable changes (brunette, eslint --fix, markdownlint --fix, sqlfluff --fix)
 - `make build-modules`: builds the final SQL scripts
 - `make deploy`: builds and deploys SQL scripts to the Redshift database
 - `make test`: runs the modules tests with the Redshift database (pytest)

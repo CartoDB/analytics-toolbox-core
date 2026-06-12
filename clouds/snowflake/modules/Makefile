@@ -34,7 +34,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint build build-share build-native-app-setup-script deploy deploy-share test test-fast test-slow benchmark remove remove-share clean
+.PHONY: help lint lint-fix build build-share build-native-app-setup-script deploy deploy-share test test-fast test-slow benchmark remove remove-share clean
 
 help:
 	echo "Available targets: lint build deploy test benchmark remove clean"
@@ -44,12 +44,25 @@ lint: $(NODE_MODULES_DEV) venv3
 	rc=0; \
 	echo "- Lint JavaScript files"; \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) --fix || rc=$$?; \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) || rc=$$?; \
 	echo "- Lint Markdown files"; \
 	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 -- || rc=$$?; \
 	echo "- Lint SQL files"; \
 	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" || rc=$$?; \
+	exit $$rc
+
+lint-fix: $(NODE_MODULES_DEV) venv3
+	echo "Auto-fixing lint issues in modules..."
+	rc=0; \
+	echo "- Fix JavaScript files"; \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	eslint --config $(ESLINTRC_DIR)/.eslintrc.js $(TEST_DIR) $(if $(wildcard $(BENCHMARK_DIR)),$(BENCHMARK_DIR),) --fix || rc=$$?; \
+	echo "- Fix Markdown files"; \
+	PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
+	markdownlint -f '**/*.md' --ignore **/node_modules/** --disable MD013 MD024 MD033 MD036 MD040 MD041 MD051 MD045 --fix -- || rc=$$?; \
+	echo "- Fix SQL files"; \
+	$(VENV3_BIN)/python $(COMMON_DIR)/sql_lint.py "$(wildcard $(SQL_DIR)/**/*.sql)" $(COMMON_DIR)/.sqlfluff "$(wildcard $(SQL_DIR)/.sqlfluffignore)" --fix || rc=$$?; \
 	exit $$rc
 
 build: $(NODE_MODULES_DEV)

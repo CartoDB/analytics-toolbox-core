@@ -125,11 +125,22 @@ functionsFilter.forEach(f => {
 });
 
 // Extract function dependencies
+// Dep detection looks for the substring `SCHEMA@@.NAME(` in mainFunction.content.
+// To avoid false positives we strip CREATE and DROP statements that name a
+// function/procedure (signatures and DDL fragments are not call references).
+// String literals are *kept*: dynamic-SQL strings carry real runtime call
+// references that the deploy must honor.
+function stripNonCallContent (content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(?:SECURE\s+|EXTERNAL\s+)*(FUNCTION|PROCEDURE)\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '')
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+@@[A-Z_]+@@\.[A-Z_0-9]+\s*\([^)]*\)/gi, '');
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
-                if (mainFunction.content.includes(`SCHEMA@@.${depFunction.name}(`)) {
+                if (new RegExp(`SCHEMA@@\\.${depFunction.name}\\s*\\(`).test(callContent)) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }

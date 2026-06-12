@@ -12,7 +12,7 @@ IS
     MIN_RESOLUTION CONSTANT PLS_INTEGER := 0;
     MAX_RESOLUTION CONSTANT PLS_INTEGER := 15;
 
-    point  SDO_GEOMETRY;
+    point SDO_GEOMETRY;
     h3_raw RAW(8);
 BEGIN
     IF longitude IS NULL OR latitude IS NULL OR resolution IS NULL THEN

@@ -5,5 +5,5 @@ pytest-xdist>=3.0.0
 brunette>=0.2.8
 flake8>=6.0.0
 flake8-quotes>=3.3.2
-sqlfluff>=2.0.0
+sqlfluff==4.2.2
 tqdm>=4.0.0
