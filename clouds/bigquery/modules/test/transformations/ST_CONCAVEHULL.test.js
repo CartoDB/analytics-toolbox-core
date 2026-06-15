@@ -62,6 +62,31 @@ test('ST_CONCAVEHULL default values should work', async () => {
     expect(rows[0].nullParam1).toEqual(rows[0].defaultValue);
 });
 
+test('ST_CONCAVEHULL should return NULL for an array of only NULL geographies', async () => {
+    // Regression test for sc-466893: an array of only NULL geographies used to
+    // fail in the JS UDF instead of returning NULL.
+    const query =
+        'SELECT `@@BQ_DATASET@@.ST_CONCAVEHULL`([CAST(NULL AS GEOGRAPHY)], NULL, NULL) as concaveHull1';
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].concaveHull1).toEqual(null);
+});
+
+test('ST_CONCAVEHULL should ignore NULL elements in a mixed array', async () => {
+    // A NULL element should be skipped, yielding the same hull as the array
+    // without NULLs (rather than failing or returning NULL).
+    const cleanArray = getFeatureArray(concaveHullFixturesIn);
+    const mixedArray = '[CAST(NULL AS GEOGRAPHY),' + cleanArray.slice(1);
+    const query = `
+        SELECT
+            \`@@BQ_DATASET@@.ST_CONCAVEHULL\`(${mixedArray}, ${getFeatureMaxEdge(concaveHullFixturesIn)}, ${getFeatureUnits(concaveHullFixturesIn)}) as concaveHullMixed,
+            \`@@BQ_DATASET@@.ST_CONCAVEHULL\`(${cleanArray}, ${getFeatureMaxEdge(concaveHullFixturesIn)}, ${getFeatureUnits(concaveHullFixturesIn)}) as concaveHullClean`;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].concaveHullMixed).not.toEqual(null);
+    expect(rows[0].concaveHullMixed.value).toEqual(rows[0].concaveHullClean.value);
+});
+
 test('ST_CONCAVEHULL with a single point and line should work', async () => {
     const query = `SELECT \`@@BQ_DATASET@@.ST_CONCAVEHULL\`(${getFeatureArray(duplicatesFixturesIn)}, CAST('Infinity' AS FLOAT64), "kilometers") as line,
     \`@@BQ_DATASET@@.ST_CONCAVEHULL\`(${getFeatureArray(pointFixturesIn)}, NULL, NULL) as point`;

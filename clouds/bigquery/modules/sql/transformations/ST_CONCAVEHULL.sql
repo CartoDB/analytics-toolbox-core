@@ -48,6 +48,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_CONCAVEHULL`
 (geog ARRAY<GEOGRAPHY>, maxEdge FLOAT64, units STRING)
 RETURNS GEOGRAPHY
 AS ((
-    SELECT ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__CONCAVEHULL`(ARRAY_AGG(ST_ASGEOJSON(x)), maxedge, units))
+    -- IGNORE NULLS so NULL geographies are skipped instead of producing an
+    -- invalid GeoJSON feature that breaks the hull computation; an all-NULL
+    -- array collapses to NULL.
+    SELECT ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__CONCAVEHULL`(ARRAY_AGG(ST_ASGEOJSON(x) IGNORE NULLS), maxedge, units))
     FROM UNNEST(geog) AS x
 ));
