@@ -33,3 +33,30 @@ test('ST_ENVELOPE should return NULL if any NULL mandatory argument', async () =
     expect(rows.length).toEqual(1);
     expect(rows[0].envelope1).toEqual(null);
 });
+
+test('ST_ENVELOPE should return NULL for an array of only NULL geographies', async () => {
+    // Regression test for sc-466893: ST_ENVELOPE([CAST(NULL AS GEOGRAPHY)])
+    // used to fail with "ST_GeogFromGeoJSON failed: Longitude should be a number"
+    const query =
+        'SELECT `@@BQ_DATASET@@.ST_ENVELOPE`([CAST(NULL AS GEOGRAPHY)]) as envelope1';
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].envelope1).toEqual(null);
+});
+
+test('ST_ENVELOPE should ignore NULL elements in a mixed array', async () => {
+    // A NULL element should be skipped, yielding the same envelope as the
+    // array without NULLs (rather than failing or returning NULL).
+    const query = `
+        SELECT
+            \`@@BQ_DATASET@@.ST_ENVELOPE\`([
+                ST_GEOGPOINT(0, 0), CAST(NULL AS GEOGRAPHY), ST_GEOGPOINT(10, 10)
+            ]) as envelopeMixed,
+            \`@@BQ_DATASET@@.ST_ENVELOPE\`([
+                ST_GEOGPOINT(0, 0), ST_GEOGPOINT(10, 10)
+            ]) as envelopeClean`;
+    const rows = await runQuery(query);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].envelopeMixed).not.toEqual(null);
+    expect(rows[0].envelopeMixed.value).toEqual(rows[0].envelopeClean.value);
+});
