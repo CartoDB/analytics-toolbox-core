@@ -28,7 +28,7 @@ def test_quadbin_polyfill_table():
             'drop table if exists @@RS_SCHEMA@@.quadbin_polyfill_table_output',
             'create table @@RS_SCHEMA@@.quadbin_polyfill_table_input(geom GEOMETRY)',
             f"""insert into @@RS_SCHEMA@@.quadbin_polyfill_table_input
-                values (ST_GeomFromText('{POLYGON}'))""",
+                values (ST_GeomFromText('{POLYGON}', 4326))""",
             """call @@RS_SCHEMA@@.QUADBIN_POLYFILL_TABLE(
                 'SELECT geom FROM @@RS_SCHEMA@@.quadbin_polyfill_table_input',
                 17, 'intersects', '@@RS_SCHEMA@@.quadbin_polyfill_table_output')""",
