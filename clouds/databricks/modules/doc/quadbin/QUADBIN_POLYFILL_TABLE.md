@@ -1,4 +1,4 @@
-## QUADBIN_POLYFILL_TABLE (BETA)
+## QUADBIN_POLYFILL_TABLE
 
 ```sql:signature
 QUADBIN_POLYFILL_TABLE(input_query, resolution, mode, output_table)

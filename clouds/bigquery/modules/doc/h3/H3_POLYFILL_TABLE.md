@@ -1,4 +1,4 @@
-## H3_POLYFILL_TABLE (BETA)
+## H3_POLYFILL_TABLE
 
 ```sql:signature
 H3_POLYFILL_TABLE(input_query, resolution, mode, output_table)
