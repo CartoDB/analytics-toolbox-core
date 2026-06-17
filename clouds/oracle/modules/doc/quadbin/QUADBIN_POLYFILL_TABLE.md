@@ -24,7 +24,7 @@ Invalid `polyfill_mode`, `resolution` outside `0..26`, or `NULL` arguments cause
 None — creates the named table as a side effect. The output table has columns:
 
 * `quadbin` `NUMBER` — the polyfill cell.
-* every other column produced by `input_query`.
+* every other column produced by `input_query` except `geom`.
 
 **Example**
 

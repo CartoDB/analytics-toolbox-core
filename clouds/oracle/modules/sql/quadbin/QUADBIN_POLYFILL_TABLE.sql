@@ -66,6 +66,9 @@ BEGIN
                )) t';
 
     EXECUTE IMMEDIATE v_sql;
+    -- The input GEOM is carried through by i.* above; drop it so the output
+    -- holds only the quadbin index plus the remaining input columns.
+    EXECUTE IMMEDIATE 'ALTER TABLE ' || v_safe_table || ' DROP COLUMN geom';
     COMMIT;
 
 EXCEPTION

@@ -12,6 +12,6 @@ test('QUADBIN_POLYFILL_TABLE should generate the correct query', async () => {
     expect(rows.length).toEqual(1);
     expect(rows[0].output).toEqual(`CREATE TABLE \`<project>.<dataset>.<output_table>\` CLUSTER BY (quadbin) AS
 WITH __input AS (SELECT geom, name, value FROM \`<project>.<dataset>.<table>\`)
-SELECT quadbin, i.* FROM __input AS i,
+SELECT quadbin, i.* EXCEPT (geom) FROM __input AS i,
 UNNEST(\`@@BQ_DATASET@@.QUADBIN_POLYFILL_MODE\`(geom,12,'center')) AS quadbin;`.replace(/@@BQ_DATASET@@/g, BQ_DATASET));
 });

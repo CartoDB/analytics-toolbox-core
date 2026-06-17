@@ -28,7 +28,7 @@ Invalid `polyfill_mode`, `resolution` outside `0..15`, or `NULL` arguments cause
 None — creates the named table as a side effect. The output table has columns:
 
 * `h3` `VARCHAR2(16)` — the polyfill cell.
-* every other column produced by `input_query`.
+* every other column produced by `input_query` except `geom`.
 
 **Example**
 
