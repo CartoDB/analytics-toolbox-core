@@ -16,7 +16,6 @@ IS
     v_mode VARCHAR2(20);
     v_res PLS_INTEGER;
     v_sql CLOB;
-    v_schema VARCHAR2(128);
     v_safe_table VARCHAR2(257);
 BEGIN
     -- NULL-on-invalid: silently no-op for invalid mode/resolution/inputs.
@@ -44,24 +43,17 @@ BEGIN
     -- Sanitize the output identifier (rejects malicious table names)
     v_safe_table := DBMS_ASSERT.QUALIFIED_SQL_NAME(output_table);
 
-    -- Resolve schema for the pipelined function reference
-    IF INSTR(v_safe_table, '.') > 0 THEN
-        v_schema := SUBSTR(v_safe_table, 1, INSTR(v_safe_table, '.') - 1);
-    ELSE
-        v_schema := SYS_CONTEXT('USERENV', 'CURRENT_SCHEMA');
-    END IF;
-
     -- CTAS that consumes QUADBIN_POLYFILL as a pipelined nested table.
     -- The input_query must expose a column named GEOM of type SDO_GEOMETRY.
     -- The resolution can't be bound as a parameter here — Oracle raises
     -- ORA-22905 when bind variables appear inside a correlated TABLE()
     -- expression in a CTAS. It is safe to inline because it was TRUNC'd into
-    -- a small integer above. The output table name and schema are validated
-    -- identifiers (DBMS_ASSERT.QUALIFIED_SQL_NAME).
+    -- a small integer above. The output table name is a validated identifier
+    -- (DBMS_ASSERT.QUALIFIED_SQL_NAME); QUADBIN_POLYFILL lives in @@ORA_SCHEMA@@.
     v_sql := 'CREATE TABLE ' || v_safe_table || ' AS
         SELECT t.COLUMN_VALUE AS quadbin, i.*
           FROM (' || input_query || ') i,
-               TABLE(' || v_schema || '.QUADBIN_POLYFILL(
+               TABLE(@@ORA_SCHEMA@@.QUADBIN_POLYFILL(
                    i.geom, ' || v_res || '
                )) t';
 
