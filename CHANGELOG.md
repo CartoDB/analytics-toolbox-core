@@ -14,6 +14,7 @@ All notable commits to this project will be documented in this file.
 - fix(bq|accessors,transformations): return NULL in ST_ENVELOPE and ST_CONCAVEHULL for ARRAY of NULL geographies (#620)
 - feat(sf,rs,pg,db,ora|h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
 - fix(db|quadbin): balance single quotes in __QUADBIN_POLYFILL_GEOJSON so Databricks install parses (#622)
+- docs(sf|processing): fix ST_DELAUNAYPOLYGONS reference heading (was ST_DELAUNAYLINES) (#623)
 
 ## 2026-05-27
 

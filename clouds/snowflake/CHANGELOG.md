@@ -9,6 +9,7 @@ All notable commits to this project will be documented in this file.
 - feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
 - chore(native_app): bump GET_MODULES_SQL_FROM_STAGE to Python 3.11 (#619)
 - chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+- docs(processing): fix ST_DELAUNAYPOLYGONS reference heading (was ST_DELAUNAYLINES) (#623)
 
 ## [1.2.8] - 2025-11-26
 
