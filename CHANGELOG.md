@@ -15,6 +15,7 @@ All notable commits to this project will be documented in this file.
 - feat(sf,rs,pg,db,ora|h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
 - fix(db|quadbin): balance single quotes in __QUADBIN_POLYFILL_GEOJSON so Databricks install parses (#622)
 - docs(sf|processing): fix ST_DELAUNAYPOLYGONS reference heading (was ST_DELAUNAYLINES) (#623)
+- chore(sf|deps): pin @azure/storage-blob to 12.32.0 for node 20 CI compatibility (#623)
 
 ## 2026-05-27
 

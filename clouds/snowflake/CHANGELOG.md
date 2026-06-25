@@ -10,6 +10,7 @@ All notable commits to this project will be documented in this file.
 - chore(native_app): bump GET_MODULES_SQL_FROM_STAGE to Python 3.11 (#619)
 - chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
 - docs(processing): fix ST_DELAUNAYPOLYGONS reference heading (was ST_DELAUNAYLINES) (#623)
+- chore(deps): pin @azure/storage-blob to 12.32.0 for node 20 CI compatibility (#623)
 
 ## [1.2.8] - 2025-11-26
 
