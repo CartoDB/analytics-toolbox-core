@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Oracle.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.0] - 2026-06-25
+
+- feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
+- chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+
 ## [1.1.0] - 2026-05-27
 
 - chore: clarify NUMBER(1) usage — not allowed in function RETURN clauses (#603)
