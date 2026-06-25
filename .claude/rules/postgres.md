@@ -31,7 +31,7 @@ make build    # build JS libraries + SQL modules
 - Uses JavaScript libraries and pytest for testing
 - Schema creation is automatic
 - JS libraries: `clouds/postgres/libraries/javascript/`
-- Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+- Modules: h3, quadbin
 
 ## Placeholder conventions
 
