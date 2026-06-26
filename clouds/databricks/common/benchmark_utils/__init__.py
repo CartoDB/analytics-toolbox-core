@@ -57,7 +57,8 @@ def _run_query_timed(sql):
 def _drop_table_safe(table_name):
     """Best-effort DROP TABLE used by benchmark()'s cleanup arg."""
     sql = f'DROP TABLE IF EXISTS {table_name}'.replace(
-        '@@DB_SCHEMA@@', os.environ.get('DB_SCHEMA', ''),
+        '@@DB_SCHEMA@@',
+        os.environ.get('DB_SCHEMA', ''),
     )
     try:
         cursor = _get_bench_conn().cursor()
@@ -178,8 +179,8 @@ def _ensure_header():
     header = (
         '\n| Function | Params | Time (s) | Error | Output Table |\n'
         '|---|---|---|---|---|\n'
-        if keep else
-        '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
+        if keep
+        else '\n| Function | Params | Time (s) | Error |\n|---|---|---|---|\n'
     )
     sys.stdout.write(header)
     with open(_results_path(), 'a') as f:
@@ -281,12 +282,19 @@ def bench(function, sql, params=None, skip_reason=None):
             if output_table and not bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')):
                 _drop_bench_table(output_table)
 
-    output_table_display = (params or {}).get('output_table', '-').replace(
-        '@@DB_SCHEMA@@', os.environ.get('DB_SCHEMA', ''),
-    ).replace('\\`', '`')
+    output_table_display = (
+        (params or {})
+        .get('output_table', '-')
+        .replace(
+            '@@DB_SCHEMA@@',
+            os.environ.get('DB_SCHEMA', ''),
+        )
+        .replace('\\`', '`')
+    )
     output_table_col = (
         f' {output_table_display} |'
-        if bool(os.environ.get('BENCHMARK_KEEP_OUTPUT')) else ''
+        if bool(os.environ.get('BENCHMARK_KEEP_OUTPUT'))
+        else ''
     )
     row = f'| {function} | {params_str} | {time_str} | {error_str} |{output_table_col}'
 

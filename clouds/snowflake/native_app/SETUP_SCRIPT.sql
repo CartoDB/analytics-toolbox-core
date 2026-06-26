@@ -1,7 +1,7 @@
 CREATE OR REPLACE PROCEDURE @@SF_APP_SCHEMA@@.GET_MODULES_SQL_FROM_STAGE()
     returns string
     language python
-    RUNTIME_VERSION = '3.9'
+    RUNTIME_VERSION = '3.11'
     packages = ('snowflake-snowpark-python')
     imports = (
         '/get_modules_sql_from_stage.py',

@@ -10,10 +10,10 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_BOUNDARY
 (quadbin NUMBER)
 RETURN SDO_GEOMETRY
 AS
-    v_bbox  @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ;
-    v_west  NUMBER;
+    v_bbox @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ;
+    v_west NUMBER;
     v_south NUMBER;
-    v_east  NUMBER;
+    v_east NUMBER;
     v_north NUMBER;
 BEGIN
     IF quadbin IS NULL THEN
@@ -22,9 +22,9 @@ BEGIN
 
     v_bbox := @@ORA_SCHEMA@@.QUADBIN_BBOX(quadbin);
 
-    v_west  := v_bbox.west;
+    v_west := v_bbox.west;
     v_south := v_bbox.south;
-    v_east  := v_bbox.east;
+    v_east := v_bbox.east;
     v_north := v_bbox.north;
 
     -- Construct polygon. Vertex order: NW → SW → SE → NE → NW close.

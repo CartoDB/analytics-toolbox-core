@@ -33,9 +33,9 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /
 CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_BBOX_OBJ AS OBJECT (
-    west  BINARY_DOUBLE,
+    west BINARY_DOUBLE,
     south BINARY_DOUBLE,
-    east  BINARY_DOUBLE,
+    east BINARY_DOUBLE,
     north BINARY_DOUBLE
 );
 /
@@ -58,7 +58,7 @@ END;
 /
 CREATE TYPE @@ORA_SCHEMA@@.QUADBIN_DISTANCE_PAIR AS OBJECT (
     quadbin_index NUMBER,
-    distance      NUMBER
+    distance NUMBER
 );
 /
 

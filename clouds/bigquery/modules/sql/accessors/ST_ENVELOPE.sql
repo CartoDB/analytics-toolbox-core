@@ -24,6 +24,9 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.ST_ENVELOPE`
 (geog ARRAY<GEOGRAPHY>)
 RETURNS GEOGRAPHY
 AS ((
-    SELECT ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__ENVELOPE`(ARRAY_AGG(ST_ASGEOJSON(x))))
+    -- IGNORE NULLS so NULL geographies are skipped instead of producing an
+    -- invalid GeoJSON feature that breaks the envelope computation; an
+    -- all-NULL array collapses to NULL.
+    SELECT ST_GEOGFROMGEOJSON(`@@BQ_DATASET@@.__ENVELOPE`(ARRAY_AGG(ST_ASGEOJSON(x) IGNORE NULLS)))
     FROM UNNEST(geog) AS x
 ));

@@ -162,7 +162,7 @@ def polygon_cover(geom, zoom):
             m = (j + 1) % ring_length
             y = ring[j][1]
 
-            #  add intersection if it's not local extremum or duplicate
+            #  add intersection if it is not local extremum or duplicate
             if (
                 (y > ring[k][1] or y > ring[m][1])
                 and (y < ring[k][1] or y < ring[m][1])

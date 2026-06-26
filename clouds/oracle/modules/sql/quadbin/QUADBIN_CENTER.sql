@@ -9,12 +9,12 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_CENTER
 (quadbin NUMBER)
 RETURN SDO_GEOMETRY
 AS
-    v_zxy       @@ORA_SCHEMA@@.QUADBIN_ZXY;
-    v_z         BINARY_DOUBLE;
-    v_x         BINARY_DOUBLE;
-    v_y         BINARY_DOUBLE;
+    v_zxy @@ORA_SCHEMA@@.QUADBIN_ZXY;
+    v_z BINARY_DOUBLE;
+    v_x BINARY_DOUBLE;
+    v_y BINARY_DOUBLE;
     v_num_tiles BINARY_DOUBLE;
-    v_pi        BINARY_DOUBLE;
+    v_pi BINARY_DOUBLE;
     v_center_lon BINARY_DOUBLE;
     v_center_lat BINARY_DOUBLE;
 BEGIN

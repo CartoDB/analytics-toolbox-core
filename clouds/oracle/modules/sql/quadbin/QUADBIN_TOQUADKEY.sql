@@ -15,10 +15,10 @@ RETURN VARCHAR2
 AS
     MORTON_MASK CONSTANT NUMBER := 4503599627370495;
 
-    v_z       NUMBER;
-    v_xy      NUMBER;
-    v_result  VARCHAR2(26);
-    v_digit   NUMBER;
+    v_z NUMBER;
+    v_xy NUMBER;
+    v_result VARCHAR2(26);
+    v_digit NUMBER;
 BEGIN
     IF quadbin IS NULL THEN
         RETURN NULL;
@@ -39,7 +39,7 @@ BEGIN
     -- Convert to base-4 string by repeatedly extracting the least-significant
     -- base-4 digit and prepending it. This produces exactly z digits.
     v_result := '';
-    FOR i IN 1 .. v_z LOOP
+    FOR i IN 1..v_z LOOP
         v_digit := MOD(v_xy, 4);
         v_result := TO_CHAR(v_digit) || v_result;
         v_xy := TRUNC(v_xy / 4);

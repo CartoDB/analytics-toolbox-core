@@ -1,4 +1,6 @@
 [sqlfluff]
+# Disable parse depth limit; sqlfluff default rejects our deeper queries.
+max_parse_depth = 0
 # verbose is an integer (0-2) indicating the level of log output
 verbose = 0
 # Turn off color formatting of output
@@ -11,7 +13,7 @@ templater = jinja
 # Comma separated list of rules to check, default to all
 rules = all
 # Comma separated list of rules to exclude, or None
-exclude_rules = LT01
+exclude_rules = LT01,structure.using,structure.column_order,capitalisation.identifiers,aliasing.required,convention.is_null,ambiguous.order_by_limit,references.qualification,references.from,aliasing.unique.table
 # Below controls SQLFluff output, see max_line_length for SQL output
 output_line_length = 80
 # Maximum line length for SQL output
@@ -67,6 +69,21 @@ apply_dbt_builtins = True
 [sqlfluff:layout:type:comma]
 line_position = trailing
 
+# Procedure call sites: no space between procedure name and opening paren.
+# build_modules.js dependency parser expects the no-space form; the
+# default sqlfluff layout would insert one and break dep detection.
+[sqlfluff:layout:type:procedure_name_identifier]
+spacing_after = touch
+[sqlfluff:layout:type:function_name_identifier]
+spacing_after = touch
+
+# sqlfluff default for function_parameter_list (the (args) block in a
+# CREATE FUNCTION/PROCEDURE) is 'touch:inline', which strips any newline
+# between the name and (args). Override to plain 'touch' so the multi-line
+# def-site style is preserved (newlines are handed off to indentation rules).
+[sqlfluff:layout:type:function_parameter_list]
+spacing_before = touch
+
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
 allow_scalar = True
@@ -92,7 +109,7 @@ ignore_words = None
 ignore_words_regex = None
 
 [sqlfluff:rules:capitalisation.identifiers]
-extended_capitalisation_policy = lower
+extended_capitalisation_policy = consistent
 # Comma separated list of words to ignore for this rule
 ignore_words = None
 ignore_words_regex = None

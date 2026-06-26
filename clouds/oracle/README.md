@@ -41,7 +41,8 @@ Note: `ORA_WALLET_ZIP` is the base64-encoded content of the Oracle wallet ZIP fi
 ## Make commands
 
 - `make help`: shows the commands available in the Makefile
-- `make lint`: runs a linter (flake8, sqlfluff) and fixes the trivial issues (brunette)
+- `make lint`: runs linters (flake8, sqlfluff, brunette --check, markdownlint, eslint) in read-only mode and fails if any issue is found
+- `make lint-fix`: applies the auto-fixable changes (brunette, eslint --fix, markdownlint --fix, sqlfluff --fix)
 - `make build`: builds the final SQL scripts
 - `make deploy`: builds and deploys SQL scripts to the Oracle database
 - `make test`: runs the modules tests with the Oracle database (pytest)

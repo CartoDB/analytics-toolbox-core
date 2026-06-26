@@ -79,14 +79,25 @@ modulesFilter.forEach(m => {
 });
 functionsFilter.forEach(f => {
     if (!functions.map(fn => fn.name).includes(f)) {
-        process.stderr.write(`ERROR: Function not found ${f}`);
+        process.stderr.write(`ERROR: Function not found ${f}\n`);
         process.exit(1);
     }
 });
 
 // Extract function dependencies
+// See build_modules.js for rationale: strip CREATE / DROP statements and
+// JS UDF bodies (`AS r"""..."""` / `AS """..."""`). Other triple-quoted
+// blocks (BQ scripting string literals) and single-quoted strings are
+// kept — real runtime call refs live inside dynamic-SQL strings.
+function stripNonCallContent (content) {
+    return content
+        .replace(/CREATE\s+OR\s+REPLACE\s+(?:SECURE\s+|EXTERNAL\s+)*(FUNCTION|PROCEDURE)\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/DROP\s+(FUNCTION|PROCEDURE)(\s+IF\s+EXISTS)?\s+`?@@[A-Z_]+@@\.[A-Z_0-9]+`?\s*\([^)]*\)/gi, '')
+        .replace(/\bAS\s+r?"""[\s\S]*?"""/g, 'AS """"""');
+}
 if (!nodeps) {
     functions.forEach(mainFunction => {
+        const callContent = stripNonCallContent(mainFunction.content);
         functions.forEach(depFunction => {
             if (mainFunction.name != depFunction.name) {
                 const depFunctionMatches = [];
@@ -98,7 +109,7 @@ if (!nodeps) {
                     qualifiedDepFunctName = qualifiedDepFunctName.split('.');
                     depFunctionNames.push(qualifiedDepFunctName[qualifiedDepFunctName.length - 1]);
                 })
-                if (depFunctionNames.some((depFunctionName) => mainFunction.content.includes(`DATASET@@.${depFunctionName}\`(`))) {
+                if (depFunctionNames.some((depFunctionName) => new RegExp(`DATASET@@\\.${depFunctionName}\`\\s*\\(`).test(callContent))) {
                     mainFunction.dependencies.push(depFunction.name);
                 }
             }
@@ -111,7 +122,7 @@ functions.forEach(mainFunction => {
     functions.forEach(depFunction => {
         if (mainFunction.dependencies.includes(depFunction.name) &&
             depFunction.dependencies.includes(mainFunction.name)) {
-            process.stderr.write(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}`);
+            process.stderr.write(`ERROR: Circular dependency between ${mainFunction.name} and ${depFunction.name}\n`);
             process.exit(1);
         }
     });

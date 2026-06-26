@@ -44,7 +44,8 @@ Note: you may need to run `gcloud auth login` to generate the `acd.json` file.
 ## Make commands
 
 - `make help`: shows the commands available in the Makefile
-- `make lint`: runs a linter (eslint) and fixes the trivial issues
+- `make lint`: runs linters (eslint, markdownlint, sqlfluff, brunette --check, flake8) in read-only mode and fails if any issue is found
+- `make lint-fix`: applies the auto-fixable changes (eslint --fix, markdownlint --fix, sqlfluff --fix, brunette)
 - `make build`: builds the final SQL scripts and libraries (JS)
 - `make deploy`: builds the JS libraries and SQL scripts and deploys in the Bigquery project
 - `make test`: runs the library tests locally and the modules tests with the Bigquery project (jest)

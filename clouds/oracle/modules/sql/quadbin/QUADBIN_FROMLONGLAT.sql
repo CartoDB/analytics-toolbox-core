@@ -18,22 +18,24 @@
 --   5. Delegate to QUADBIN_FROMZXY(z, x, y)
 
 CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_FROMLONGLAT
-(longitude NUMBER, latitude NUMBER, resolution NUMBER)
+(
+    longitude NUMBER, latitude NUMBER, resolution NUMBER
+)
 RETURN NUMBER
 AS
     MIN_RESOLUTION CONSTANT NUMBER := 0;
     MAX_RESOLUTION CONSTANT NUMBER := 26;
-    LAT_CLAMP_MIN  CONSTANT BINARY_DOUBLE := -89.0d;
-    LAT_CLAMP_MAX  CONSTANT BINARY_DOUBLE := 89.0d;
+    LAT_CLAMP_MIN CONSTANT BINARY_DOUBLE := -89.0d;
+    LAT_CLAMP_MAX CONSTANT BINARY_DOUBLE := 89.0d;
 
-    v_lon          BINARY_DOUBLE;
-    v_num_tiles    BINARY_DOUBLE;
-    v_pi           BINARY_DOUBLE;
-    v_clamped_lat  BINARY_DOUBLE;
-    v_sinlat       BINARY_DOUBLE;
-    v_raw_x        NUMBER;
-    v_x            NUMBER;
-    v_y            NUMBER;
+    v_lon BINARY_DOUBLE;
+    v_num_tiles BINARY_DOUBLE;
+    v_pi BINARY_DOUBLE;
+    v_clamped_lat BINARY_DOUBLE;
+    v_sinlat BINARY_DOUBLE;
+    v_raw_x NUMBER;
+    v_x NUMBER;
+    v_y NUMBER;
 BEGIN
     IF longitude IS NULL OR latitude IS NULL OR resolution IS NULL THEN
         RETURN NULL;

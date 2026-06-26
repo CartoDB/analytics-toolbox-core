@@ -10,6 +10,6 @@ AS (
         CAST(
             CAST(
                 uid AS BIGNUMERIC
-            ) - CAST('18446744073709551616' AS BIGNUMERIC)AS INT64
+            ) - CAST('18446744073709551616' AS BIGNUMERIC) AS INT64
         ),
         CAST(uid AS INT64)));

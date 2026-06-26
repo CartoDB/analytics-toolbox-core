@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION `@@BQ_DATASET@@.__QUADBIN_ZXY_KRING`
 (origin STRUCT<z INT64, x INT64, y INT64>, size INT64)
 AS ((
     SELECT ARRAY_AGG(
-        DISTINCT(
+        DISTINCT (
             `@@BQ_DATASET@@.QUADBIN_FROMZXY`(
                 origin.z,
                 MOD(origin.x + dx + (1 << origin.z), (1 << origin.z)),

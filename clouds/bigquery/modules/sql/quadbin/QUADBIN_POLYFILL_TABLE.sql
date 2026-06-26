@@ -25,7 +25,7 @@ AS """
 
     return 'CREATE TABLE `' + output_table + '` CLUSTER BY (quadbin) AS\\n' +
         'WITH __input AS (' + input_query + ')\\n' +
-        'SELECT quadbin, i.* FROM __input AS i,\\n' +
+        'SELECT quadbin, i.* EXCEPT (geom) FROM __input AS i,\\n' +
         'UNNEST(`@@BQ_DATASET@@.QUADBIN_POLYFILL_MODE`(geom,' + resolution + ',\\'' + mode + '\\')) AS quadbin;'
 """;
 

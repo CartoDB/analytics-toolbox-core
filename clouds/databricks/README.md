@@ -40,7 +40,8 @@ DB_TOKEN=
 ## Make commands
 
 - `make help`: shows the commands available in the Makefile
-- `make lint`: runs a linter and fixes the trivial issues (markdownlint, sqlfluff, brunette, flake8)
+- `make lint`: runs linters (markdownlint, sqlfluff, brunette --check, flake8, eslint) in read-only mode and fails if any issue is found
+- `make lint-fix`: applies the auto-fixable changes (brunette, eslint --fix, markdownlint --fix, sqlfluff --fix)
 - `make build`: builds the final SQL script
 - `make deploy`: builds and deploys the SQL scripts in the Databricks database
 - `make test`: runs the modules tests with the Databricks database (pytest)

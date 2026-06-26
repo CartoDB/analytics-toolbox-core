@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core for Redshift.
 
 All notable commits to this project will be documented in this file.
 
+## [1.3.0] - 2026-06-25
+
+- feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
+- chore(deps): bump redshift-connector from 2.0.884 to 2.1.14 (#615)
+- chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+
 ## [1.2.1] - 2026-03-24
 
 - fix: show the right links in the created packages (#576)

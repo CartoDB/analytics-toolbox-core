@@ -19,14 +19,14 @@ CREATE OR REPLACE FUNCTION @@ORA_SCHEMA@@.QUADBIN_FROMQUADKEY
 (quadkey VARCHAR2)
 RETURN NUMBER
 AS
-    HEADER      CONSTANT NUMBER := 4611686018427387904;
-    MODE_BIT    CONSTANT NUMBER := 576460752303423488;
+    HEADER CONSTANT NUMBER := 4611686018427387904;
+    MODE_BIT CONSTANT NUMBER := 576460752303423488;
     UNUSED_MASK CONSTANT NUMBER := 4503599627370495;
 
-    v_z      NUMBER;
-    v_xy     NUMBER;
-    v_i      NUMBER;
-    v_digit  NUMBER;
+    v_z NUMBER;
+    v_xy NUMBER;
+    v_i NUMBER;
+    v_digit NUMBER;
     v_unused NUMBER;
     v_result NUMBER;
 BEGIN
@@ -41,7 +41,7 @@ BEGIN
 
     -- Parse the quadkey string as a base-4 number
     v_xy := 0;
-    FOR v_i IN 1 .. v_z LOOP
+    FOR v_i IN 1..v_z LOOP
         v_digit := TO_NUMBER(SUBSTR(quadkey, v_i, 1));
         v_xy := v_xy * 4 + v_digit;
     END LOOP;
