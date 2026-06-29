@@ -40,7 +40,7 @@ make deploy-share         # deploy data share
 - Supports native apps and data shares
 - JS libraries: `clouds/snowflake/libraries/javascript/`
 - Build/test utilities: `clouds/snowflake/common/`
-- Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+- Modules: accessors, clustering, constructors, h3, measurements, placekey, processing, quadbin, quadkey, random, s2, transformations, utils
 
 ## Placeholder conventions
 

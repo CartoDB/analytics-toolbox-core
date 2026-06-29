@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core for Postgres.
 
 All notable commits to this project will be documented in this file.
 
+## [1.4.0] - 2026-06-25
+
+- feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
+- chore: bump CI Python to 3.10.13 + update pg deps for compat (#618)
+- chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+
 ## [1.3.1] - 2024-10-28
 
 - chore(h3,quadbin): added "geo" aliases for certain functions (#526)

@@ -38,7 +38,7 @@ make remove drop-schema=1      # Drop entire schema (destructive)
 
 ## Key Details
 
-- New cloud (v1.0.0, March 2026), infrastructure in place
+- Added March 2026; current core version v1.2.0. Core modules: h3, quadbin (both expose H3/QUADBIN_POLYFILL_TABLE)
 - Schema placeholder: `@@ORA_SCHEMA@@`
 - `ORA_GATEWAY_SERVICE_MOCK=1` to mock gateway (no real Oracle connection)
 - Deploy/test utilities in `clouds/oracle/common/`: `run_query.py`

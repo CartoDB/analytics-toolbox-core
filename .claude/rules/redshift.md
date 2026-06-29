@@ -72,7 +72,7 @@ SELECT @@RS_SCHEMA@@.H3_POLYFILL(geom, 5)
 
 - Schema placeholder: `@@RS_SCHEMA@@`
 - Python libraries: `clouds/redshift/libraries/python/`
-- Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+- Modules (native SQL): clustering, constructors, processing, quadbin, quadkey, s2, transformations (other functions such as h3 are provided via the Redshift gateway/Lambda, not native SQL)
 
 ## Placeholder conventions
 
