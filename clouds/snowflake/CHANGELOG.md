@@ -4,6 +4,14 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.3.0] - 2026-06-25
+
+- feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
+- chore(native_app): bump GET_MODULES_SQL_FROM_STAGE to Python 3.11 (#619)
+- chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+- docs(processing): fix ST_DELAUNAYPOLYGONS reference heading (was ST_DELAUNAYLINES) (#623)
+- chore(deps): pin @azure/storage-blob to 12.32.0 for node 20 CI compatibility (#623)
+
 ## [1.2.8] - 2025-11-26
 
 ## 2025-11-26

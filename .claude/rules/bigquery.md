@@ -38,7 +38,7 @@ make build    # build JS libraries + SQL modules
 - JS libraries: `clouds/bigquery/libraries/javascript/`
 - Test/build utilities: `clouds/bigquery/common/`
 - Schema placeholder: `@@BQ_DATASET@@`, `@@BQ_PREFIX@@`
-- Modules: h3, quadbin, s2, placekey, constructors, transformations, processing, clustering, random
+- Modules: accessors, clustering, constructors, geohash, h3, measurements, placekey, processing, quadbin, quadkey, random, s2, transformations, utils
 
 ## Placeholder conventions
 

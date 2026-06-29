@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for BigQuery.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.8] - 2026-06-25
+
+- fix(accessors,transformations): return NULL in ST_ENVELOPE and ST_CONCAVEHULL for ARRAY of NULL geographies (#620)
+- chore(lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+
 ## [1.2.7] - 2026-03-24
 
 - fix(s2): S2_TOTOKEN and S2_FROMTOKEN produces non-standard 16-char tokens (#591)

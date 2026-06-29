@@ -4,6 +4,19 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2026-06-25
+
+- chore(ci|pg): bump CI Python to 3.10.13 + update pg deps for compat (#618)
+- chore(deps): bump redshift-connector from 2.0.884 to 2.1.14 (#615)
+- chore(ci): make lint failures fail CI (#616)
+- chore(bq|sf|rs|pg|db|ora|lint): bump sqlfluff to 4.2.2 and harden CI lint (#617)
+- chore(sf|native_app): bump GET_MODULES_SQL_FROM_STAGE to Python 3.11 (#619)
+- fix(bq|accessors,transformations): return NULL in ST_ENVELOPE and ST_CONCAVEHULL for ARRAY of NULL geographies (#620)
+- feat(sf,rs,pg,db,ora|h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
+- fix(db|quadbin): balance single quotes in __QUADBIN_POLYFILL_GEOJSON so Databricks install parses (#622)
+- docs(sf|processing): fix ST_DELAUNAYPOLYGONS reference heading (was ST_DELAUNAYLINES) (#623)
+- chore(sf|deps): pin @azure/storage-blob to 12.32.0 for node 20 CI compatibility (#623)
+
 ## 2026-05-27
 
 - chore(ora): clarify NUMBER(1) usage — not allowed in function RETURN clauses (#603)

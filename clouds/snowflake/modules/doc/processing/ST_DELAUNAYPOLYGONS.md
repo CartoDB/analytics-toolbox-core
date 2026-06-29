@@ -1,7 +1,7 @@
-## ST_DELAUNAYLINES
+## ST_DELAUNAYPOLYGONS
 
 ```sql:signature
-ST_DELAUNAYLINES(points)
+ST_DELAUNAYPOLYGONS(points)
 ```
 
 **Description**
