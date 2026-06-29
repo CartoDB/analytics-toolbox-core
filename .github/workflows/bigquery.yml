@@ -85,7 +85,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v6
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Auth google
@@ -134,7 +134,7 @@ jobs:
       - name: Check diff
         uses: technote-space/get-diff-action@v6
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Auth google
