@@ -376,8 +376,8 @@ class LambdaDeployer:
 
                     if result.returncode != 0:
                         raise RuntimeError(
-                            f"pip install failed for {requirements_file}; "
-                            f"the deployment package would be incomplete: {result.stderr}"
+                            f"pip install failed for {requirements_file}; the "
+                            f"deployment package would be incomplete: {result.stderr}"
                         )
 
                     # Add all installed packages to zip
