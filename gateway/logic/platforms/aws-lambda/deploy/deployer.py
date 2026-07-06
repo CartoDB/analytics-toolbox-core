@@ -291,6 +291,7 @@ class LambdaDeployer:
         output_zip: Optional[Path] = None,
         include_runtime_lib: bool = True,
         function_root: Optional[Path] = None,
+        runtime: str = "python3.14",
     ) -> Path:
         """
         Create a Lambda deployment package (zip file)
@@ -301,6 +302,7 @@ class LambdaDeployer:
             output_zip: Optional output path (creates temp file if None)
             include_runtime_lib: Include core runtime library
             function_root: Root directory of function (for finding function.yaml)
+            runtime: Lambda runtime identifier; sets the pip --python-version target
 
         Returns:
             Path to created zip file
@@ -363,7 +365,7 @@ class LambdaDeployer:
                             "manylinux2014_x86_64",
                             "--only-binary=:all:",
                             "--python-version",
-                            "3.10",
+                            runtime.removeprefix("python"),
                             "--quiet",
                             "--no-compile",
                             "--upgrade",
@@ -507,7 +509,7 @@ class LambdaDeployer:
         function_name: str,
         zip_path: Path,
         handler: str,
-        runtime: str = "python3.11",
+        runtime: str = "python3.14",
         role_arn: Optional[str] = None,
         memory_size: int = 512,
         timeout: int = 60,
@@ -738,7 +740,7 @@ class LambdaDeployer:
         handler_file: Path,
         requirements_file: Optional[Path] = None,
         handler: str = "handler.lambda_handler",
-        runtime: str = "python3.11",
+        runtime: str = "python3.14",
         memory_size: int = 512,
         timeout: int = 60,
         description: str = "",
@@ -769,7 +771,7 @@ class LambdaDeployer:
         """
         # Create deployment package
         zip_path = self.create_deployment_package(
-            handler_file, requirements_file, function_root=function_root
+            handler_file, requirements_file, function_root=function_root, runtime=runtime
         )
 
         try:
