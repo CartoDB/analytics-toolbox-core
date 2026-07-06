@@ -61,7 +61,7 @@ clouds:
       memory_size: 512              # MB (128-10240, default 512)
       timeout: 300                  # Seconds (3-900, default 300)
       max_batch_rows: 100           # Batch size (default 100)
-      runtime: python3.10           # Python runtime
+      runtime: python3.12           # Python runtime
 ```
 
 ### Function Naming Convention
