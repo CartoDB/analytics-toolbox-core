@@ -365,7 +365,7 @@ class LambdaDeployer:
                             "manylinux2014_x86_64",
                             "--only-binary=:all:",
                             "--python-version",
-                            runtime.removeprefix("python"),
+                            (runtime or "python3.14").removeprefix("python"),
                             "--quiet",
                             "--no-compile",
                             "--upgrade",
@@ -375,7 +375,10 @@ class LambdaDeployer:
                     )
 
                     if result.returncode != 0:
-                        print(f"Warning: pip install had errors: {result.stderr}")
+                        raise RuntimeError(
+                            f"pip install failed for {requirements_file}; "
+                            f"the deployment package would be incomplete: {result.stderr}"
+                        )
 
                     # Add all installed packages to zip
                     for item in temp_path.rglob("*"):
