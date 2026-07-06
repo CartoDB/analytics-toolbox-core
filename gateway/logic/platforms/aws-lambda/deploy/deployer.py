@@ -774,7 +774,10 @@ class LambdaDeployer:
         """
         # Create deployment package
         zip_path = self.create_deployment_package(
-            handler_file, requirements_file, function_root=function_root, runtime=runtime
+            handler_file,
+            requirements_file,
+            function_root=function_root,
+            runtime=runtime,
         )
 
         try:
