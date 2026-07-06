@@ -778,7 +778,7 @@ def deploy_lambda(
 
     # Get Lambda configuration with sensible defaults
     # These can be overridden in function.yaml under clouds.redshift.config
-    runtime = cloud_config.config.get("runtime", "python3.10")
+    runtime = cloud_config.config.get("runtime", "python3.11")
     memory_size = cloud_config.config.get("memory_size", 256)  # MB
     timeout = cloud_config.config.get("timeout", 300)
 
@@ -1202,7 +1202,7 @@ def deploy_all(
                         sys.exit(1)
 
                     # Get Lambda configuration
-                    runtime = cloud_config.config.get("runtime", "python3.10")
+                    runtime = cloud_config.config.get("runtime", "python3.11")
                     memory_size = cloud_config.config.get("memory_size", 512)  # MB
                     timeout = cloud_config.config.get("timeout", 300)  # seconds
 
