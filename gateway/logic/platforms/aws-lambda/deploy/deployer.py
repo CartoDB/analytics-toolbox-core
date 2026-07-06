@@ -291,7 +291,7 @@ class LambdaDeployer:
         output_zip: Optional[Path] = None,
         include_runtime_lib: bool = True,
         function_root: Optional[Path] = None,
-        runtime: str = "python3.14",
+        runtime: str = "python3.12",
     ) -> Path:
         """
         Create a Lambda deployment package (zip file)
@@ -365,7 +365,7 @@ class LambdaDeployer:
                             "manylinux2014_x86_64",
                             "--only-binary=:all:",
                             "--python-version",
-                            (runtime or "python3.14").removeprefix("python"),
+                            (runtime or "python3.12").removeprefix("python"),
                             "--quiet",
                             "--no-compile",
                             "--upgrade",
@@ -512,7 +512,7 @@ class LambdaDeployer:
         function_name: str,
         zip_path: Path,
         handler: str,
-        runtime: str = "python3.14",
+        runtime: str = "python3.12",
         role_arn: Optional[str] = None,
         memory_size: int = 512,
         timeout: int = 60,
@@ -743,7 +743,7 @@ class LambdaDeployer:
         handler_file: Path,
         requirements_file: Optional[Path] = None,
         handler: str = "handler.lambda_handler",
-        runtime: str = "python3.14",
+        runtime: str = "python3.12",
         memory_size: int = 512,
         timeout: int = 60,
         description: str = "",
