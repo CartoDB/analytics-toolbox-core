@@ -1,7 +1,8 @@
 {
   "license": "BSD-3-Clause",
   "resolutions": {
-    "@azure/storage-blob": "12.32.0"
+    "@azure/storage-blob": "12.32.0",
+    "@azure/core-paging": "1.6.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
