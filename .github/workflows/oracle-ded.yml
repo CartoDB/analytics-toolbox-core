@@ -30,7 +30,7 @@ jobs:
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |-
-            ORA_DB_CREDENTIALS:projects/carto-terraform-ci-cd/secrets/carto-golden-dataset-credentials
+            ORA_DB_CREDENTIALS:projects/carto-terraform-ci-cd/secrets/carto-dev-database-credentials
       - name: Extract Oracle credentials (CD)
         id: ora-creds
         env:
