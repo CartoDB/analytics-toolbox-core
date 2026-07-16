@@ -129,6 +129,31 @@ jobs:
         with:
           secrets: |-
             ORA_DB_CREDENTIALS:projects/carto-terraform-ci-cd/secrets/carto-golden-dataset-credentials
+      - name: Extract Oracle credentials (CD)
+        if: matrix.target == 'cd'
+        id: ora-creds
+        env:
+          ORA_DB_CREDENTIALS: ${{ steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS }}
+        run: |
+          set -eu
+          extract() {
+            key="$1"; name="$2"
+            value="$(jq -er ".databases.oracle.config.credentials.${key}" <<< "${ORA_DB_CREDENTIALS}")" || {
+              echo "Missing '${key}' at databases.oracle.config.credentials in credentials JSON" >&2
+              exit 1
+            }
+            echo "::add-mask::${value}"
+            {
+              echo "${name}<<__OUT__"
+              echo "${value}"
+              echo "__OUT__"
+            } >> "${GITHUB_OUTPUT}"
+          }
+          extract user ORA_USER
+          extract password ORA_PASSWORD
+          extract walletZip ORA_WALLET_ZIP
+          extract walletPassword ORA_WALLET_PASSWORD
+          extract connectionString ORA_CONNECTION_STRING
       - name: Setup node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
@@ -141,25 +166,13 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Run deploy (CI)
-        if: matrix.target == 'ci'
+      - name: Run deploy
         env:
-          ORA_USER: ${{ steps.get-gcp-secrets.outputs.ORA_USER }}
-          ORA_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_PASSWORD }}
-          ORA_WALLET_ZIP: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_ZIP }}
-          ORA_WALLET_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_PASSWORD }}
-          ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING }}
-        run: |
-          cd clouds/oracle
-          make deploy production=1
-      - name: Run deploy (CD)
-        if: matrix.target == 'cd'
-        env:
-          ORA_USER: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.user }}
-          ORA_PASSWORD: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.password }}
-          ORA_WALLET_ZIP: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.walletZip }}
-          ORA_WALLET_PASSWORD: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.walletPassword }}
-          ORA_CONNECTION_STRING: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.connectionString }}
+          ORA_USER: ${{ steps.get-gcp-secrets.outputs.ORA_USER || steps.ora-creds.outputs.ORA_USER }}
+          ORA_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_PASSWORD || steps.ora-creds.outputs.ORA_PASSWORD }}
+          ORA_WALLET_ZIP: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_ZIP || steps.ora-creds.outputs.ORA_WALLET_ZIP }}
+          ORA_WALLET_PASSWORD: ${{ steps.get-gcp-secrets.outputs.ORA_WALLET_PASSWORD || steps.ora-creds.outputs.ORA_WALLET_PASSWORD }}
+          ORA_CONNECTION_STRING: ${{ steps.get-gcp-secrets.outputs.ORA_CONNECTION_STRING || steps.ora-creds.outputs.ORA_CONNECTION_STRING }}
         run: |
           cd clouds/oracle
           make deploy production=1
