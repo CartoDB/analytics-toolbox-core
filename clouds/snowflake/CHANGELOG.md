@@ -4,6 +4,11 @@ CARTO Analytics Toolbox Core for Snowflake.
 
 All notable commits to this project will be documented in this file.
 
+## [1.3.1] - 2026-07-16
+
+- fix: pin @azure/core-paging to 1.6.2 for node 20 CI compatibility (#630)
+- chore: pin actions/setup-node to SHA across all workflows [sc-559087] (#628)
+
 ## [1.3.0] - 2026-06-25
 
 - feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)

@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2026-07-16
+
+- fix(sf): pin @azure/core-paging to 1.6.2 for node 20 CI compatibility (#630)
+- chore(rs): default Redshift Lambda runtime to python3.12 (Python 3.10 EOL) (#629)
+- chore(bq,sf,rs,pg,ora): pin actions/setup-node to SHA across all workflows [sc-559087] (#628)
+
 ## 2026-06-25
 
 - chore(ci|pg): bump CI Python to 3.10.13 + update pg deps for compat (#618)
