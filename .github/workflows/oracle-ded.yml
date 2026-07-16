@@ -18,14 +18,19 @@ jobs:
       (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_oracle'))
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    env:
-      ORA_USER: ${{ secrets.ORA_USER_CD }}
-      ORA_PASSWORD: ${{ secrets.ORA_PASSWORD_CD }}
-      ORA_WALLET_ZIP: ${{ secrets.ORA_WALLET_ZIP_CD }}
-      ORA_WALLET_PASSWORD: ${{ secrets.ORA_WALLET_PASSWORD_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+      - name: Retrieve secrets (CD)
+        id: get-gcp-secrets-cd
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            ORA_DB_CREDENTIALS:projects/carto-terraform-ci-cd/secrets/carto-dev-database-credentials
       - name: Set ORA_PREFIX for releases
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
@@ -54,12 +59,24 @@ jobs:
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        env:
+          ORA_USER: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.user }}
+          ORA_PASSWORD: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.password }}
+          ORA_WALLET_ZIP: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.walletZip }}
+          ORA_WALLET_PASSWORD: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.walletPassword }}
+          ORA_CONNECTION_STRING: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.connectionString }}
         run: |
           cd clouds/oracle
           make deploy
       - name: Run remove
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        env:
+          ORA_USER: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.user }}
+          ORA_PASSWORD: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.password }}
+          ORA_WALLET_ZIP: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.walletZip }}
+          ORA_WALLET_PASSWORD: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.walletPassword }}
+          ORA_CONNECTION_STRING: ${{ fromJSON(steps.get-gcp-secrets-cd.outputs.ORA_DB_CREDENTIALS).databases.oracle.config.credentials.connectionString }}
         run: |
           cd clouds/oracle
           make remove drop-schema=1
