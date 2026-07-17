@@ -30,7 +30,7 @@ jobs:
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |-
-            ORA_DB_CREDENTIALS:projects/carto-terraform-ci-cd/secrets/carto-golden-dataset-credentials
+            ORA_DB_CREDENTIALS:projects/carto-terraform-ci-cd/secrets/carto-dev-database-credentials
       - name: Extract Oracle credentials (CD)
         id: ora-creds
         env:
@@ -39,8 +39,8 @@ jobs:
           set -eu
           extract() {
             key="$1"; name="$2"
-            value="$(jq -er ".providers.oracle.credentials.${key}" <<< "${ORA_DB_CREDENTIALS}")" || {
-              echo "Missing '${key}' at providers.oracle.credentials in credentials JSON" >&2
+            value="$(jq -er ".databases.oracle.config.credentials.${key}" <<< "${ORA_DB_CREDENTIALS}")" || {
+              echo "Missing '${key}' at databases.oracle.config.credentials in credentials JSON" >&2
               exit 1
             }
             echo "::add-mask::${value}"
