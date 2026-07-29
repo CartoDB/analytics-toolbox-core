@@ -52,7 +52,7 @@ jobs:
           make lint && \
           make deploy diff="$GIT_DIFF" && \
           make test diff="$GIT_DIFF" && \
-          make remove
+          make remove drop-schema=1
 
   deploy-internal:
     if: github.ref_name == 'main'
