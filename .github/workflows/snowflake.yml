@@ -57,15 +57,31 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Run linter and tests
+      - name: Run lint
+        run: |
+          cd clouds/snowflake
+          make lint
+      - name: Run deploy
         env:
           SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
           SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
-          make lint && \
-          make deploy diff="$GIT_DIFF" && \
-          make test diff="$GIT_DIFF" && \
+          make deploy diff="$GIT_DIFF"
+      - name: Run test
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
+        run: |
+          cd clouds/snowflake
+          make test diff="$GIT_DIFF"
+      - name: Run remove
+        if: always()
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
+        run: |
+          cd clouds/snowflake
           make remove drop-schema=1
 
   deploy-internal:
