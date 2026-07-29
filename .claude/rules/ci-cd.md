@@ -21,12 +21,12 @@ Each cloud has its own CI/CD workflows in `.github/workflows/`:
 | BigQuery | `bigquery.yml` | `bigquery-ded.yml` |
 | Snowflake | `snowflake.yml` | `snowflake-ded.yml` |
 | Redshift | `redshift.yml` | `redshift-ded.yml` |
-| Databricks | `databricks.yml` | - |
+| Databricks | `databricks.yml` | `databricks-ded.yml` |
 | Postgres | `postgres.yml` | `postgres-ded.yml` |
 | Oracle | `oracle.yml` | `oracle-ded.yml` |
 
 - **Main workflows**: Triggered on PRs and pushes to main. Run lint, deploy to CI env, test, cleanup.
-- **Dedicated (`-ded`) workflows**: PR-triggered, deploy to isolated environment for testing.
+- **Dedicated (`-ded`) workflows**: PR-triggered, deploy to isolated environment for testing. Envs are named `dedicated_core_<PR>_carto` — the `core_` infix keeps the namespace disjoint from the premium Analytics Toolbox repo, whose dedicated envs are `dedicated_<PR>_carto` in the same CD warehouses.
 - **Publish**: Triggered by `publish-release.yml` on push to `stable`. Creates GitHub Release, publishes packages to GCS, deploys to production.
 
 ## Diff Parameter Handling in Makefiles
