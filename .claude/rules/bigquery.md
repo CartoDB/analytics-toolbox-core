@@ -29,6 +29,8 @@ cd clouds/bigquery
 make deploy   # deploy modules
 make test     # run tests (Jest)
 make build    # build JS libraries + SQL modules
+make remove   # drop deployed functions
+make remove drop-schema=1  # drop entire dataset with CASCADE (destructive)
 ```
 
 ## Key Details

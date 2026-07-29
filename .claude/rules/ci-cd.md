@@ -25,7 +25,7 @@ Each cloud has its own CI/CD workflows in `.github/workflows/`:
 | Postgres | `postgres.yml` | `postgres-ded.yml` |
 | Oracle | `oracle.yml` | `oracle-ded.yml` |
 
-- **Main workflows**: Triggered on PRs and pushes to main. Run lint, deploy to CI env, test, cleanup.
+- **Main workflows**: Triggered on PRs and pushes to main. Run lint, deploy to CI env, test, cleanup. The cleanup step runs under `if: always()` with `drop-schema=1`, so the `ci_*` schema is dropped with CASCADE even when lint/deploy/test fails; a failed cleanup fails the workflow (no `|| true` masking).
 - **Dedicated (`-ded`) workflows**: PR-triggered, deploy to isolated environment for testing. Envs are named `dedicated_core_<PR>_carto` — the `core_` infix keeps the namespace disjoint from the premium Analytics Toolbox repo, whose dedicated envs are `dedicated_<PR>_carto` in the same CD warehouses.
 - **Publish**: Triggered by `publish-release.yml` on push to `stable`. Creates GitHub Release, publishes packages to GCS, deploys to production.
 
