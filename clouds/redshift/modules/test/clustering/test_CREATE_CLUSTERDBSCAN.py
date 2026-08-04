@@ -116,12 +116,15 @@ def test_create_clusterdbscan_null_geometry_is_skipped():
 def test_create_clusterdbscan_partition_column():
     """Cluster each partition independently.
 
-    Identical geometry in two partitions yields one cluster per partition, and
-    cluster_id restarts at zero in every partition.
+    Identical geometry in three partitions yields one cluster per partition, and
+    cluster_id restarts at zero in every partition. Rows whose partition value is
+    NULL form their own group rather than being dropped, matching SQL
+    PARTITION BY / GROUP BY semantics and BigQuery.
     """
     rows = ','.join(
         [f"({i + 1},'a',{_pt(i * 10)})" for i in range(3)]
         + [f"({i + 4},'b',{_pt(i * 10)})" for i in range(3)]
+        + [f'({i + 7},NULL,{_pt(i * 10)})' for i in range(3)]
     )
     results = run_queries(
         _setup('dbscan_part', rows, with_part=True)
@@ -130,13 +133,17 @@ def test_create_clusterdbscan_partition_column():
                 '@@RS_SCHEMA@@.dbscan_part',
                 '@@RS_SCHEMA@@.dbscan_part_out',
                 'geom', 25, 3, 'part')""",
-            """select count(distinct part || ':' || cluster_id),
-                      count(distinct cluster_id)
+            """select count(distinct coalesce(part,'__null__')
+                                  || ':' || cluster_id),
+                      count(distinct cluster_id),
+                      sum(case when pt_type = 'skipped' then 1 else 0 end)
                from @@RS_SCHEMA@@.dbscan_part_out
                where cluster_id is not null""",
         ]
     )
-    assert results[0] == [2, 1]
+    # three (partition, cluster) pairs including the NULL group, cluster_id
+    # restarts at 0 in each, and nothing is skipped
+    assert results[0] == [3, 1, 0]
     run_queries(_drop('dbscan_part'))
 
 

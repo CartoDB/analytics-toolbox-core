@@ -22,7 +22,6 @@ DECLARE
     bad_geom      BIGINT;
     part_expr     VARCHAR(MAX);
     dist_col      VARCHAR(MAX);
-    part_filter   VARCHAR(MAX) := '';
     lat_max       FLOAT8;
     sin_half      FLOAT8;
     cos_lat       FLOAT8;
@@ -41,8 +40,8 @@ BEGIN
     ------------------------------------------------------------------
     IF epsilon IS NULL OR epsilon <= 0
     THEN
-        output_table := 'Invalid epsilon. It must be a positive distance in metres';
-        RAISE INFO 'Invalid epsilon. It must be a positive distance in metres';
+        output_table := 'Invalid epsilon. It must be a positive distance in meters';
+        RAISE INFO 'Invalid epsilon. It must be a positive distance in meters';
         RETURN;
     END IF;
 
@@ -91,12 +90,18 @@ BEGIN
     THEN
         -- Single global partition. Distribute by latitude band so one slice does
         -- not receive the whole dataset.
-        part_expr := '0';
+        part_expr := '''0''';
         dist_col  := 'gy';
     ELSE
-        part_expr   := partition_column;
-        dist_col    := 'part';
-        part_filter := ' AND ' || partition_column || ' IS NOT NULL';
+        -- The partition key is compared with an equality join, which never
+        -- matches NULL to NULL. Cast it to VARCHAR and substitute a sentinel so
+        -- that rows with a NULL partition value form their own group, which is
+        -- what SQL PARTITION BY / GROUP BY do and what BigQuery's
+        -- ST_CLUSTERDBSCAN(...) OVER (PARTITION BY ...) would do. Excluding them
+        -- instead would silently drop rows from the analysis.
+        part_expr := 'COALESCE(' || partition_column ||
+                     '::VARCHAR, ''__carto_null_partition__'')';
+        dist_col  := 'part';
     END IF;
 
     ------------------------------------------------------------------
@@ -104,6 +109,11 @@ BEGIN
     ------------------------------------------------------------------
     -- __carto_idx is ordered by coordinate, not by physical row order, so the
     -- cluster ids below are reproducible across runs.
+    -- pt_type defaults to 'skipped'; step 9 overwrites it for every row that was
+    -- actually clustered, so rows with a NULL geometry keep it without needing a
+    -- second pass over the table. A NULL geometry is the ONLY reason a row is
+    -- skipped: it is absent input, not a density result, so reporting it as
+    -- 'noise' would claim the location is isolated when it has no location.
     EXECUTE 'DROP TABLE IF EXISTS ' || output_table;
     EXECUTE 'CREATE TABLE ' || output_table || ' AS
         SELECT *,
@@ -111,7 +121,7 @@ BEGIN
                    ORDER BY ST_X(' || geom_column || '), ST_Y(' || geom_column || ')
                ) AS __carto_idx,
                NULL::BIGINT     AS cluster_id,
-               NULL::VARCHAR(8) AS pt_type
+               ''skipped''::VARCHAR(8) AS pt_type
         FROM ' || input_query;
 
     ------------------------------------------------------------------
@@ -128,7 +138,7 @@ BEGIN
     -- provably sufficient for ANY epsilon and ANY latitude:
     --   |d_lat|   <= epsilon/R                                    (meridian arc, exact)
     --   |d_lon|/2 <= ASIN( SIN(epsilon/2R) / COS(lat_max) )       (haversine, exact)
-    -- Do NOT substitute a linear metres-per-degree approximation for the second
+    -- Do NOT substitute a linear meters-per-degree approximation for the second
     -- bound: it understates d_lon by roughly (epsilon/2R)^2/6 * TAN(lat)^2, which
     -- exceeds the 1% margin below once epsilon*TAN(lat) passes ~3000 km, and silently
     -- drops pairs. The 1% margin absorbs the exact sphere radius Redshift uses
@@ -171,7 +181,7 @@ BEGIN
                  % ' || gx_span || ') + ' || gx_span || ') % ' || gx_span || ' AS gx,
                FLOOR(ST_Y(' || geom_column || ') / ' || dlat || ')::BIGINT AS gy
         FROM ' || output_table || '
-        WHERE ' || geom_column || ' IS NOT NULL' || part_filter;
+        WHERE ' || geom_column || ' IS NOT NULL';
 
     ------------------------------------------------------------------
     -- 4. Probe cells: each point claims its own cell and its 8 neighbours
@@ -201,7 +211,7 @@ BEGIN
     ------------------------------------------------------------------
     -- The connected-components proof in step 7 REQUIRES a symmetric edge set.
     -- Rather than relying on ST_DistanceSphere(a,b) = ST_DistanceSphere(b,a)
-    -- holding bit-for-bit at the epsilon boundary, build one direction (idx < idx)
+    -- holding bit-for-bit at the epsilon boundary, build the a < b direction only
     -- and mirror it. This makes symmetry structural, and halves the number of
     -- distance evaluations.
     EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_edges';
@@ -334,11 +344,6 @@ BEGIN
                 ) lab
              ) s
              WHERE __carto_idx = s.idx';
-
-    -- Rows excluded from clustering (NULL geometry, or NULL partition key) are
-    -- reported as skipped, not as noise: absent input is not a density result.
-    EXECUTE 'UPDATE ' || output_table || '
-             SET pt_type = ''skipped'' WHERE pt_type IS NULL';
 
     ------------------------------------------------------------------
     -- 10. Clean up

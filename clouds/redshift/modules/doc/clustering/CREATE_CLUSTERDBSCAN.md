@@ -20,13 +20,15 @@ A point is a **core** point when at least `min_points` points (counting itself) 
 * `geom_column`: `VARCHAR` name of the point column to be clustered. It must contain `POINT` geometries in SRID 4326 (or 0), since distances are measured with `ST_DistanceSphere`.
 * `epsilon`: `FLOAT8` the search radius in meters. Must be greater than zero.
 * `min_points`: `INT` the minimum number of points, including the point itself, required to form a dense neighborhood. Must be at least 1.
-* `partition_column`: `VARCHAR` optional name of a column to cluster within. When provided, points are clustered independently for each distinct value, and `cluster_id` restarts at zero in every partition. When omitted, the whole input is treated as a single set.
+* `partition_column` (optional): `VARCHAR` name of a column to cluster within. When provided, points are clustered independently for each distinct value, and `cluster_id` restarts at zero in every partition. Rows whose partition value is `NULL` form their own group, as they would with `PARTITION BY` or `GROUP BY`. When omitted, the whole input is treated as a single set.
 
 **Output columns**
 
 * every column of `input`
 * `cluster_id`: `BIGINT` zero-based cluster index, or `NULL` for points that are not in any cluster.
-* `pt_type`: `VARCHAR(8)` one of `core`, `border`, `noise`, or `skipped`. `skipped` marks rows that were excluded from the clustering because the geometry, or the partition value, was `NULL`.
+* `pt_type`: `VARCHAR(8)` one of `core`, `border`, `noise`, or `skipped`.
+
+`noise` and `skipped` both leave `cluster_id` as `NULL` but mean different things. `noise` is a result: the point was clustered and found to lie in no dense neighborhood. `skipped` means the row was never clustered at all because its geometry was `NULL` — absent input rather than a density result, so it is not reported as noise.
 
 ````hint:info
 **info**
