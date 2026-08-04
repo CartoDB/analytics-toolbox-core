@@ -6,11 +6,9 @@ CREATE_CLUSTERDBSCAN(input, output_table, geom_column, epsilon, min_points [, pa
 
 **Description**
 
-Takes a set of points as input and groups them into clusters using the DBSCAN algorithm. Creates a new table with the same columns as `input` plus a `cluster_id` column holding the cluster index of each point, and a `pt_type` column describing its role in the cluster.
+Takes a set of points as input and groups them into clusters using the DBSCAN algorithm, writing the result to a new table.
 
-DBSCAN groups together points that lie in dense neighborhoods and labels the rest as noise. Unlike k-means it does not require the number of clusters up front, it finds clusters of arbitrary shape, and it does not force every point into a cluster.
-
-A point is a **core** point when at least `min_points` points (counting itself) lie within `epsilon` of it. Core points that are within `epsilon` of each other belong to the same cluster. A **border** point is not a core point but lies within `epsilon` of one; it joins that cluster but does not connect it to any other. Everything else is **noise** and gets a `NULL` cluster id.
+DBSCAN groups together points lying in dense neighborhoods and labels the rest as noise. Unlike k-means it does not require the number of clusters up front, it finds clusters of arbitrary shape, and it does not force every point into a cluster.
 
 **Input parameters**
 
@@ -21,13 +19,13 @@ A point is a **core** point when at least `min_points` points (counting itself) 
 * `min_points`: `INT` the minimum number of points, counting the point itself, that form a dense neighborhood.
 * `partition_column` (optional): `VARCHAR` name of a column to cluster within, `NULL` values forming their own group. If omitted the whole input is one set.
 
-**Output columns**
+**Output**
 
-* every column of `input`
-* `cluster_id`: `BIGINT` zero-based cluster index, `NULL` for points in no cluster. It restarts at zero in each partition.
-* `pt_type`: `VARCHAR(8)` role of the point: `core`, `border`, `noise`, or `skipped`.
+The output table contains all the columns of `input` plus `cluster_id` and `pt_type`.
 
-`noise` and `skipped` both leave `cluster_id` as `NULL`. `noise` is a result: the point was clustered and lies in no dense neighborhood. `skipped` means it was never clustered because its geometry was `NULL`.
+`cluster_id` is a zero-based cluster index, restarting at zero in each partition. It is `NULL` for any point that is not in a cluster.
+
+`pt_type` is the role of the point. A **core** point has at least `min_points` points within `epsilon` of it, counting itself, and core points within `epsilon` of each other belong to the same cluster. A **border** point is not a core point but lies within `epsilon` of one, so it joins that cluster without connecting it to any other. A **noise** point is neither. A **skipped** point was never clustered because its geometry was `NULL`, which is absent input rather than a result.
 
 ````hint:info
 **info**
