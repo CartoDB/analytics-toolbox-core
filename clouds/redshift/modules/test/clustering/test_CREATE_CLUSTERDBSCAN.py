@@ -258,4 +258,17 @@ def test_create_clusterdbscan_rejects_invalid_input():
         ]
     )
     assert 'must not contain columns named' in results[0][0]
+
+    results = run_queries(
+        _setup('dbscan_bad', rows)
+        + [
+            """call @@RS_SCHEMA@@.CREATE_CLUSTERDBSCAN(
+                '@@RS_SCHEMA@@.dbscan_bad',
+                '@@RS_SCHEMA@@.dbscan_bad',
+                'geom', 25, 3)""",
+            """select count(*) from @@RS_SCHEMA@@.dbscan_bad""",
+        ]
+    )
+    # the input table must survive being named as its own output
+    assert results[0][0] == 3
     run_queries(_drop('dbscan_bad') + _drop('dbscan_bad_out'))

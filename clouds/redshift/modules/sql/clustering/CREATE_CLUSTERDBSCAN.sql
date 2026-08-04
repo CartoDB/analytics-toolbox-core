@@ -53,12 +53,14 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Accept either a table name or a subquery, as CREATE_CLUSTERKMEANS does
-    input_query := input;
-    EXECUTE 'SELECT regexp_count(''' || input || ''', ''\\\\s'')' INTO table_format;
+    -- Accept either a table name or a subquery, as CREATE_CLUSTERKMEANS does.
+    -- Trim first: a padded table name would otherwise match the whitespace test
+    -- and be wrapped in parentheses as though it were a query.
+    input_query := BTRIM(input);
+    EXECUTE 'SELECT regexp_count(''' || input_query || ''', ''\\\\s'')' INTO table_format;
     IF table_format > 0
     THEN
-        input_query := '(' || input || ')';
+        input_query := '(' || input_query || ')';
     END IF;
 
     -- Validate output table
@@ -84,6 +86,16 @@ BEGIN
     THEN
         output_table := 'Invalid geometry column. Expected POINT in SRID 4326 (or 0)';
         RAISE INFO 'Invalid geometry column. Expected POINT in SRID 4326 (or 0)';
+        RETURN;
+    END IF;
+
+    -- The output table is replaced before the input is read, so naming the same
+    -- table for both would drop the data this is meant to cluster. Detect the
+    -- direct case; a subquery that happens to read output_table is not caught.
+    IF LOWER(BTRIM(input)) = LOWER(BTRIM(output_table))
+    THEN
+        output_table := 'Invalid output table. It must not be the same as input';
+        RAISE INFO 'Invalid output table. It must not be the same as input';
         RETURN;
     END IF;
 
@@ -311,18 +323,11 @@ BEGIN
 
     -- Should be unreachable: pointer jumping converges in O(log n) passes, so
     -- max_iter covers any realistic input. Raise rather than RETURN so the
-    -- transaction is rolled back: that discards the half-labelled output table
-    -- and restores whatever the caller had there before, instead of committing
-    -- a table whose cluster_id is NULL everywhere.
+    -- transaction is rolled back, discarding the half-labelled output table and
+    -- restoring whatever the caller had there before. The exception handler at
+    -- the end releases the working tables.
     IF n_changed > 0
     THEN
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_pts';
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_probe';
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_edges';
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_core';
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_ce';
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_a';
-        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_b';
         RAISE EXCEPTION 'CARTO Error: clustering did not converge';
     END IF;
 
@@ -390,6 +395,23 @@ BEGIN
     EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_b';
 
     output_table := 'Table ' || output_table || ' created with the clustering';
+
+-- Releases the working tables when anything above fails. They are TEMP, so they
+-- would otherwise survive to the end of the session. The original error still
+-- reaches the caller: Redshift propagates it after the handler runs rather than
+-- swallowing it, and a bare RAISE to re-raise explicitly is not supported. The
+-- output table needs no attention here, since the rollback that accompanies the
+-- error restores whatever the caller had before the call.
+EXCEPTION WHEN OTHERS THEN
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_pts';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_probe';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_edges';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_core';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_ce';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_border';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_a';
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_b';
 END;
 $$ LANGUAGE plpgsql;
 
