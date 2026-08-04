@@ -46,6 +46,8 @@ make test modules=h3               # Specific module
 make test functions=H3_POLYFILL    # Specific function
 make deploy                        # Deploy SQL UDFs
 make lint                          # Run linter
+make remove                        # Drop deployed functions
+make remove drop-schema=1          # Drop entire schema with CASCADE (destructive)
 
 # Gateway deployment (from gateway/)
 cd gateway

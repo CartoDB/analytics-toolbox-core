@@ -56,13 +56,23 @@ jobs:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup virtualenv
         run: pip install virtualenv==${{ env.VIRTUALENV_VERSION }}
-      - name: Run linter and tests
+      - name: Run lint
         run: |
           cd clouds/bigquery
-          make lint && \
-          make deploy diff="$GIT_DIFF" && \
-          make test diff="$GIT_DIFF" && \
-          make remove
+          make lint
+      - name: Run deploy
+        run: |
+          cd clouds/bigquery
+          make deploy diff="$GIT_DIFF"
+      - name: Run test
+        run: |
+          cd clouds/bigquery
+          make test diff="$GIT_DIFF"
+      - name: Run remove
+        if: always()
+        run: |
+          cd clouds/bigquery
+          make remove drop-schema=1
 
   deploy-internal:
     if: github.ref_name == 'main'
