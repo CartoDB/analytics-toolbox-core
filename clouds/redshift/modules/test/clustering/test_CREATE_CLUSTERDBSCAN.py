@@ -219,3 +219,43 @@ def test_create_clusterdbscan_converges_on_a_long_chain():
     )
     assert results[0] == [1, 300]
     run_queries(_drop('dbscan_chain'))
+
+
+def test_create_clusterdbscan_rejects_invalid_input():
+    """Report a clear message rather than a raw SQL error.
+
+    The reserved-column case matters because the obvious way to hit it is
+    re-running the procedure on its own output, which already carries
+    cluster_id and pt_type.
+    """
+    rows = ','.join(f'({i + 1},{_pt(i * 10)})' for i in range(3))
+    for args, expected in [
+        ('0, 3', 'Invalid epsilon'),
+        ('25, 0', 'Invalid min_points'),
+    ]:
+        results = run_queries(
+            _setup('dbscan_bad', rows)
+            + [
+                f"""call @@RS_SCHEMA@@.CREATE_CLUSTERDBSCAN(
+                    '@@RS_SCHEMA@@.dbscan_bad',
+                    '@@RS_SCHEMA@@.dbscan_bad_out',
+                    'geom', {args})"""
+            ]
+        )
+        assert expected in results[0][0]
+
+    results = run_queries(
+        _setup('dbscan_bad', rows)
+        + [
+            """call @@RS_SCHEMA@@.CREATE_CLUSTERDBSCAN(
+                '@@RS_SCHEMA@@.dbscan_bad',
+                '@@RS_SCHEMA@@.dbscan_bad_out',
+                'geom', 25, 3)""",
+            """call @@RS_SCHEMA@@.CREATE_CLUSTERDBSCAN(
+                '@@RS_SCHEMA@@.dbscan_bad_out',
+                '@@RS_SCHEMA@@.dbscan_bad_out2',
+                'geom', 25, 3)""",
+        ]
+    )
+    assert 'must not contain columns named' in results[0][0]
+    run_queries(_drop('dbscan_bad') + _drop('dbscan_bad_out'))

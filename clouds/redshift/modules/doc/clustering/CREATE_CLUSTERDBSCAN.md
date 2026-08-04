@@ -15,7 +15,7 @@ A point is a **core** point when at least `min_points` points (counting itself) 
 
 **Input parameters**
 
-* `input`: `VARCHAR` name of the table or literal SQL query to be clustered.
+* `input`: `VARCHAR` name of the table or literal SQL query to be clustered. It must not already contain columns named `cluster_id`, `pt_type` or `__carto_idx`, since those are added to the output; in particular this means the output of a previous call cannot be passed straight back in.
 * `output_table`: `VARCHAR(MAX)` qualified name of the output table, e.g. `<my-schema>.<my-output-table>`. It is replaced if it already exists.
 * `geom_column`: `VARCHAR` name of the point column to be clustered. It must contain `POINT` geometries in SRID 4326 (or 0), since distances are measured with `ST_DistanceSphere`.
 * `epsilon`: `FLOAT8` the search radius in meters. Must be greater than zero.

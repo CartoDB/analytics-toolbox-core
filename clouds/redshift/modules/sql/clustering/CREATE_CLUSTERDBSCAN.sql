@@ -20,6 +20,7 @@ DECLARE
     output_third  VARCHAR(MAX);
     output_fourth VARCHAR(MAX);
     bad_geom      BIGINT;
+    bad_cols      BIGINT;
     part_expr     VARCHAR(MAX);
     dist_col      VARCHAR(MAX);
     lat_max       FLOAT8;
@@ -83,6 +84,27 @@ BEGIN
     THEN
         output_table := 'Invalid geometry column. Expected POINT in SRID 4326 (or 0)';
         RAISE INFO 'Invalid geometry column. Expected POINT in SRID 4326 (or 0)';
+        RETURN;
+    END IF;
+
+    -- The output is built with SELECT *, so an input that already carries
+    -- cluster_id, pt_type or __carto_idx would produce a duplicate column name.
+    -- The obvious way to hit this is re-running the procedure on its own output,
+    -- so fail with a clear message instead of a raw duplicate-column error.
+    -- Materialising zero rows lets this work for a subquery input too.
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+    EXECUTE 'CREATE TEMP TABLE __carto_dbscan_cols AS
+             SELECT * FROM ' || input_query || ' LIMIT 0';
+    EXECUTE 'SELECT COUNT(*) FROM pg_attribute a
+             JOIN pg_class c ON c.oid = a.attrelid
+             WHERE c.relname = ''__carto_dbscan_cols'' AND a.attnum > 0
+               AND LOWER(a.attname) IN
+                   (''cluster_id'', ''pt_type'', ''__carto_idx'')' INTO bad_cols;
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+    IF bad_cols > 0
+    THEN
+        output_table := 'Invalid input. It must not contain columns named cluster_id, pt_type or __carto_idx';
+        RAISE INFO 'Invalid input. It must not contain columns named cluster_id, pt_type or __carto_idx';
         RETURN;
     END IF;
 
