@@ -309,11 +309,21 @@ BEGIN
         cc_swap := cc_cur; cc_cur := cc_nxt; cc_nxt := cc_swap;
     END LOOP;
 
+    -- Should be unreachable: pointer jumping converges in O(log n) passes, so
+    -- max_iter covers any realistic input. Raise rather than RETURN so the
+    -- transaction is rolled back: that discards the half-labelled output table
+    -- and restores whatever the caller had there before, instead of committing
+    -- a table whose cluster_id is NULL everywhere.
     IF n_changed > 0
     THEN
-        output_table := 'Clustering did not converge in ' || max_iter || ' iterations';
-        RAISE INFO 'Clustering did not converge in % iterations', max_iter;
-        RETURN;
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_pts';
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_probe';
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_edges';
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_core';
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_ce';
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_a';
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cc_b';
+        RAISE EXCEPTION 'CARTO Error: clustering did not converge';
     END IF;
 
     ------------------------------------------------------------------
