@@ -58,7 +58,7 @@ def test_create_clusterdbscan():
                from @@RS_SCHEMA@@.dbscan_basic_out"""
         ]
     )
-    # cluster_id is dense and zero-based, as in scikit-learn and BigQuery
+    # cluster_id is dense and zero-based
     assert results[0] == [0, 1, 2, 2, 6]
     run_queries(_drop('dbscan_basic'))
 
@@ -68,7 +68,7 @@ def test_create_clusterdbscan_core_border_and_noise():
 
     Points sit at exact metre offsets 0, 12, 24, 48, 72, 84, 96 along a
     meridian, with epsilon = 25 and min_points = 4. Only the points at 24 m and
-    72 m reach 4 neighbours counting themselves, so they are the only cores,
+    72 m reach 4 neighbors counting themselves, so they are the only cores,
     and they are 48 m apart -- beyond epsilon -- so they cannot be density
     connected. The point at 48 m is within epsilon of both cores but is not
     itself a core, so it joins one cluster without merging them. This is the
@@ -119,7 +119,7 @@ def test_create_clusterdbscan_partition_column():
     Identical geometry in three partitions yields one cluster per partition, and
     cluster_id restarts at zero in every partition. Rows whose partition value is
     NULL form their own group rather than being dropped, matching SQL
-    PARTITION BY / GROUP BY semantics and BigQuery.
+    PARTITION BY and GROUP BY semantics.
     """
     rows = ','.join(
         [f"({i + 1},'a',{_pt(i * 10)})" for i in range(3)]
@@ -148,10 +148,10 @@ def test_create_clusterdbscan_partition_column():
 
 
 def test_create_clusterdbscan_handles_antimeridian_and_high_latitude():
-    """Exercise the two hard cases for the neighbour pre-filter.
+    """Exercise the two hard cases for the neighbor pre-filter.
 
     It must wrap across +/-180, and it must size its longitude cells using
-    cos(latitude) so that high-latitude neighbours are not missed.
+    cos(latitude) so that high-latitude neighbors are not missed.
     """
     anti = ','.join(
         [

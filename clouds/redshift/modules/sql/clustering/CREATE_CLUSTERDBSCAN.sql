@@ -91,7 +91,7 @@ BEGIN
     -- cluster_id, pt_type or __carto_idx would produce a duplicate column name.
     -- The obvious way to hit this is re-running the procedure on its own output,
     -- so fail with a clear message instead of a raw duplicate-column error.
-    -- Materialising zero rows lets this work for a subquery input too.
+    -- Materializing zero rows lets this work for a subquery input too.
     EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
     EXECUTE 'CREATE TEMP TABLE __carto_dbscan_cols AS
              SELECT * FROM ' || input_query || ' LIMIT 0';
@@ -118,9 +118,8 @@ BEGIN
         -- The partition key is compared with an equality join, which never
         -- matches NULL to NULL. Cast it to VARCHAR and substitute a sentinel so
         -- that rows with a NULL partition value form their own group, which is
-        -- what SQL PARTITION BY / GROUP BY do and what BigQuery's
-        -- ST_CLUSTERDBSCAN(...) OVER (PARTITION BY ...) would do. Excluding them
-        -- instead would silently drop rows from the analysis.
+        -- what SQL PARTITION BY and GROUP BY both do. Excluding them instead
+        -- would silently drop rows from the analysis.
         part_expr := 'COALESCE(' || partition_column ||
                      '::VARCHAR, ''__carto_null_partition__'')';
         dist_col  := 'part';
@@ -147,7 +146,7 @@ BEGIN
         FROM ' || input_query;
 
     ------------------------------------------------------------------
-    -- 2. Grid parameters for the neighbour pre-filter
+    -- 2. Grid parameters for the neighbor pre-filter
     ------------------------------------------------------------------
     -- dlat/dlon are sized so that any two points within epsilon fall in the same
     -- or an adjacent cell. dlon is computed at the HIGHEST |latitude| present,
@@ -206,7 +205,7 @@ BEGIN
         WHERE ' || geom_column || ' IS NOT NULL';
 
     ------------------------------------------------------------------
-    -- 4. Probe cells: each point claims its own cell and its 8 neighbours
+    -- 4. Probe cells: each point claims its own cell and its 8 neighbors
     ------------------------------------------------------------------
     -- Expanding the 3x3 ring on one side turns the range predicate into an
     -- equijoin, so step 5 is a hash join rather than a nested loop.
@@ -318,12 +317,12 @@ BEGIN
     END IF;
 
     ------------------------------------------------------------------
-    -- 8. Border points: smallest component label among core neighbours
+    -- 8. Border points: smallest component label among core neighbors
     ------------------------------------------------------------------
     -- MIN over canonical component labels reproduces sklearn exactly: sklearn
     -- opens clusters in increasing order of minimum core index and never
     -- relabels, so a border point joins the cluster with the smallest
-    -- minimum-core-index among its core neighbours.
+    -- minimum-core-index among its core neighbors.
     EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_border';
     EXECUTE 'CREATE TEMP TABLE __carto_dbscan_border DISTKEY(idx) SORTKEY(idx) AS
         SELECT e.a AS idx, MIN(cc.comp) AS comp
@@ -336,9 +335,9 @@ BEGIN
     ------------------------------------------------------------------
     -- 9. Write labels back
     ------------------------------------------------------------------
-    -- cluster_id is 0-based and dense per partition, matching sklearn labels_
-    -- and BigQuery ST_CLUSTERDBSCAN. Noise is NULL (BigQuery convention;
-    -- sklearn uses -1).
+    -- cluster_id is 0-based and dense per partition, matching the reference
+    -- DBSCAN labelling. Noise is NULL rather than a sentinel such as -1, so it
+    -- reads as SQL's absence of a value.
     EXECUTE 'UPDATE ' || output_table || ' SET
                 cluster_id = s.cluster_id,
                 pt_type    = s.pt_type

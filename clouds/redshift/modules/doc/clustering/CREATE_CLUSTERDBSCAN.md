@@ -8,7 +8,7 @@ CREATE_CLUSTERDBSCAN(input, output_table, geom_column, epsilon, min_points [, pa
 
 Takes a set of points as input and groups them into clusters using the DBSCAN algorithm. Creates a new table with the same columns as `input` plus a `cluster_id` column holding the cluster index of each point, and a `pt_type` column describing its role in the cluster.
 
-DBSCAN groups together points that lie in dense neighbourhoods and labels the rest as noise. Unlike k-means it does not require the number of clusters up front, it finds clusters of arbitrary shape, and it does not force every point into a cluster.
+DBSCAN groups together points that lie in dense neighborhoods and labels the rest as noise. Unlike k-means it does not require the number of clusters up front, it finds clusters of arbitrary shape, and it does not force every point into a cluster.
 
 A point is a **core** point when at least `min_points` points (counting itself) lie within `epsilon` of it. Core points that are within `epsilon` of each other belong to the same cluster. A **border** point is not a core point but lies within `epsilon` of one; it joins that cluster but does not connect it to any other. Everything else is **noise** and gets a `NULL` cluster id.
 
@@ -33,8 +33,6 @@ A point is a **core** point when at least `min_points` points (counting itself) 
 **info**
 
 Cluster assignments match `sklearn.cluster.DBSCAN` with `metric='haversine'` for the same `epsilon` and `min_points`. Where DBSCAN is inherently ambiguous — a border point reachable from two clusters — this implementation always picks the cluster with the lowest canonical label, so results are deterministic and reproducible across runs.
-
-If you are porting a query from BigQuery, `epsilon` is the same parameter as in the native `ST_CLUSTERDBSCAN(geography_column, epsilon, minimum_geographies)`, and `min_points` corresponds to `minimum_geographies`.
 
 ````
 
