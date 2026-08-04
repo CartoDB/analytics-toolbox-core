@@ -1,8 +1,7 @@
 ## CREATE_CLUSTERDBSCAN
 
 ```sql:signature
-CREATE_CLUSTERDBSCAN(input, output_table, geom_column, epsilon, min_points)
-CREATE_CLUSTERDBSCAN(input, output_table, geom_column, epsilon, min_points, partition_column)
+CREATE_CLUSTERDBSCAN(input, output_table, geom_column, epsilon, min_points [, partition_column])
 ```
 
 **Description**
@@ -15,20 +14,20 @@ A point is a **core** point when at least `min_points` points (counting itself) 
 
 **Input parameters**
 
-* `input`: `VARCHAR` name of the table or literal SQL query to be clustered. It must not already contain columns named `cluster_id`, `pt_type` or `__carto_idx`, since those are added to the output; in particular this means the output of a previous call cannot be passed straight back in.
+* `input`: `VARCHAR` name of the table or literal SQL query to be clustered.
 * `output_table`: `VARCHAR(MAX)` qualified name of the output table, e.g. `<my-schema>.<my-output-table>`. It is replaced if it already exists.
-* `geom_column`: `VARCHAR` name of the point column to be clustered. It must contain `POINT` geometries in SRID 4326 (or 0), since distances are measured with `ST_DistanceSphere`.
-* `epsilon`: `FLOAT8` the search radius in meters. Must be greater than zero.
-* `min_points`: `INT` the minimum number of points, including the point itself, required to form a dense neighborhood. Must be at least 1.
-* `partition_column` (optional): `VARCHAR` name of a column to cluster within. When provided, points are clustered independently for each distinct value, and `cluster_id` restarts at zero in every partition. Rows whose partition value is `NULL` form their own group, as they would with `PARTITION BY` or `GROUP BY`. When omitted, the whole input is treated as a single set.
+* `geom_column`: `VARCHAR` name of the `POINT` column to be clustered, in SRID 4326 or 0.
+* `epsilon`: `FLOAT8` the search radius in meters.
+* `min_points`: `INT` the minimum number of points, counting the point itself, that form a dense neighborhood.
+* `partition_column` (optional): `VARCHAR` name of a column to cluster within, `NULL` values forming their own group. If omitted the whole input is one set.
 
 **Output columns**
 
 * every column of `input`
-* `cluster_id`: `BIGINT` zero-based cluster index, or `NULL` for points that are not in any cluster.
-* `pt_type`: `VARCHAR(8)` one of `core`, `border`, `noise`, or `skipped`.
+* `cluster_id`: `BIGINT` zero-based cluster index, `NULL` for points in no cluster. It restarts at zero in each partition.
+* `pt_type`: `VARCHAR(8)` role of the point: `core`, `border`, `noise`, or `skipped`.
 
-`noise` and `skipped` both leave `cluster_id` as `NULL` but mean different things. `noise` is a result: the point was clustered and found to lie in no dense neighborhood. `skipped` means the row was never clustered at all because its geometry was `NULL` — absent input rather than a density result, so it is not reported as noise.
+`noise` and `skipped` both leave `cluster_id` as `NULL`. `noise` is a result: the point was clustered and lies in no dense neighborhood. `skipped` means it was never clustered because its geometry was `NULL`.
 
 ````hint:info
 **info**
@@ -42,7 +41,9 @@ If you are porting a query from BigQuery, `epsilon` is the same parameter as in 
 ````hint:warning
 **warning**
 
-Only `POINT` geometries are supported. Runtime is driven by point *density* rather than row count: the cost grows with the number of points that fall within `epsilon` of each other, so a very large radius over a tightly packed area is the expensive case.
+Only `POINT` geometries are supported. The input must not already have columns named `cluster_id`, `pt_type` or `__carto_idx`, so the output of one call cannot be fed straight back into another.
+
+Runtime is driven by point *density* rather than row count: the cost grows with the number of points within `epsilon` of each other, so a large radius over a tightly packed area is the expensive case.
 
 ````
 
