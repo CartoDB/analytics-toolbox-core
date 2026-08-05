@@ -57,23 +57,79 @@ BEGIN
     -- Trim first: a padded table name would otherwise match the whitespace test
     -- and be wrapped in parentheses as though it were a query.
     input_query := BTRIM(input);
-    EXECUTE 'SELECT regexp_count(''' || input_query || ''', ''\\\\s'')' INTO table_format;
+    -- Evaluated directly rather than through EXECUTE: interpolating the input
+    -- into a SQL literal breaks on any query containing a quote, which rules
+    -- out most real queries (WHERE country = 'ES').
+    table_format := REGEXP_COUNT(input_query, '\\s');
     IF table_format > 0
     THEN
         input_query := '(' || input_query || ')';
     END IF;
 
     -- Validate output table
-    EXECUTE 'SELECT split_part(''' || output_table || ''', ''.'', 1)' INTO output_first;
-    EXECUTE 'SELECT split_part(''' || output_table || ''', ''.'', 2)' INTO output_second;
-    EXECUTE 'SELECT split_part(''' || output_table || ''', ''.'', 3)' INTO output_third;
-    EXECUTE 'SELECT split_part(''' || output_table || ''', ''.'', 4)' INTO output_fourth;
+    output_first  := SPLIT_PART(output_table, '.', 1);
+    output_second := SPLIT_PART(output_table, '.', 2);
+    output_third  := SPLIT_PART(output_table, '.', 3);
+    output_fourth := SPLIT_PART(output_table, '.', 4);
     IF output_first = '' OR output_second = '' OR output_fourth != ''
     THEN
         output_table := 'Invalid output table name. It must have the form [DATABASE.]SCHEMA.TABLE';
         RAISE INFO 'Invalid output table name. It must have the form [DATABASE.]SCHEMA.TABLE';
         RETURN;
     END IF;
+
+    -- Column checks, all against a zero-row materialization of the input so they
+    -- work for a subquery as well as a table name. Doing them before touching the
+    -- data means a wrong column name is reported plainly instead of surfacing as
+    -- a raw error that quotes internal SQL.
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+    EXECUTE 'CREATE TEMP TABLE __carto_dbscan_cols AS
+             SELECT * FROM ' || input_query || ' LIMIT 0';
+
+    -- The output is built with SELECT *, so an input that already carries
+    -- cluster_id, pt_type or __carto_idx would produce a duplicate column name.
+    -- The obvious way to hit this is re-running the procedure on its own output.
+    EXECUTE 'SELECT COUNT(*) FROM pg_attribute a
+             JOIN pg_class c ON c.oid = a.attrelid
+             WHERE c.relname = ''__carto_dbscan_cols'' AND a.attnum > 0
+               AND LOWER(a.attname) IN
+                   (''cluster_id'', ''pt_type'', ''__carto_idx'')' INTO bad_cols;
+    IF bad_cols > 0
+    THEN
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+        output_table := 'Invalid input. It must not contain columns named cluster_id, pt_type or __carto_idx';
+        RAISE INFO 'Invalid input. It must not contain columns named cluster_id, pt_type or __carto_idx';
+        RETURN;
+    END IF;
+
+    EXECUTE 'SELECT COUNT(*) FROM pg_attribute a
+             JOIN pg_class c ON c.oid = a.attrelid
+             WHERE c.relname = ''__carto_dbscan_cols'' AND a.attnum > 0
+               AND LOWER(a.attname) = LOWER(''' || BTRIM(geom_column) || ''')' INTO bad_cols;
+    IF bad_cols = 0
+    THEN
+        EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+        output_table := 'Invalid geom_column. It does not exist in input';
+        RAISE INFO 'Invalid geom_column. It does not exist in input';
+        RETURN;
+    END IF;
+
+    IF partition_column IS NOT NULL AND BTRIM(partition_column) != ''
+    THEN
+        EXECUTE 'SELECT COUNT(*) FROM pg_attribute a
+                 JOIN pg_class c ON c.oid = a.attrelid
+                 WHERE c.relname = ''__carto_dbscan_cols'' AND a.attnum > 0
+                   AND LOWER(a.attname) = LOWER(''' || BTRIM(partition_column) || ''')' INTO bad_cols;
+        IF bad_cols = 0
+        THEN
+            EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
+            output_table := 'Invalid partition_column. It does not exist in input';
+            RAISE INFO 'Invalid partition_column. It does not exist in input';
+            RETURN;
+        END IF;
+    END IF;
+
+    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
 
     -- ST_DistanceSphere reads coordinates as degrees and only accepts points.
     -- SRID 0 is tolerated (lon/lat without a declared SRID is common); anything
@@ -96,27 +152,6 @@ BEGIN
     THEN
         output_table := 'Invalid output table. It must not be the same as input';
         RAISE INFO 'Invalid output table. It must not be the same as input';
-        RETURN;
-    END IF;
-
-    -- The output is built with SELECT *, so an input that already carries
-    -- cluster_id, pt_type or __carto_idx would produce a duplicate column name.
-    -- The obvious way to hit this is re-running the procedure on its own output,
-    -- so fail with a clear message instead of a raw duplicate-column error.
-    -- Materializing zero rows lets this work for a subquery input too.
-    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
-    EXECUTE 'CREATE TEMP TABLE __carto_dbscan_cols AS
-             SELECT * FROM ' || input_query || ' LIMIT 0';
-    EXECUTE 'SELECT COUNT(*) FROM pg_attribute a
-             JOIN pg_class c ON c.oid = a.attrelid
-             WHERE c.relname = ''__carto_dbscan_cols'' AND a.attnum > 0
-               AND LOWER(a.attname) IN
-                   (''cluster_id'', ''pt_type'', ''__carto_idx'')' INTO bad_cols;
-    EXECUTE 'DROP TABLE IF EXISTS __carto_dbscan_cols';
-    IF bad_cols > 0
-    THEN
-        output_table := 'Invalid input. It must not contain columns named cluster_id, pt_type or __carto_idx';
-        RAISE INFO 'Invalid input. It must not contain columns named cluster_id, pt_type or __carto_idx';
         RETURN;
     END IF;
 

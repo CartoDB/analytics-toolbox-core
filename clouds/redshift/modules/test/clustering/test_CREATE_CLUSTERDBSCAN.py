@@ -144,6 +144,24 @@ def test_create_clusterdbscan_partition_column():
     # three (partition, cluster) pairs including the NULL group, cluster_id
     # restarts at 0 in each, and nothing is skipped
     assert results[0] == [3, 1, 0]
+
+    # the same, but with the partition column derived in a subquery input. The
+    # quotes matter: the input is not interpolated into a SQL literal, so a query
+    # containing string literals has to survive being passed through.
+    results = run_queries(
+        [
+            """drop table if exists @@RS_SCHEMA@@.dbscan_part_out""",
+            """call @@RS_SCHEMA@@.CREATE_CLUSTERDBSCAN(
+                'SELECT *, CASE WHEN id <= 3 THEN ''low'' ELSE ''high'' END
+                 AS grp FROM @@RS_SCHEMA@@.dbscan_part',
+                '@@RS_SCHEMA@@.dbscan_part_out',
+                'geom', 25, 3, 'grp')""",
+            """select count(distinct grp || ':' || cluster_id)
+               from @@RS_SCHEMA@@.dbscan_part_out
+               where cluster_id is not null""",
+        ]
+    )
+    assert results[0][0] == 2
     run_queries(_drop('dbscan_part'))
 
 
@@ -232,6 +250,7 @@ def test_create_clusterdbscan_rejects_invalid_input():
     for args, expected in [
         ('0, 3', 'Invalid epsilon'),
         ('25, 0', 'Invalid min_points'),
+        ("25, 3, 'nosuchcol'", 'Invalid partition_column'),
     ]:
         results = run_queries(
             _setup('dbscan_bad', rows)
