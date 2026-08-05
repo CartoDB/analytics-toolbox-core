@@ -48,12 +48,12 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.SF_PREFIX }}carto environment deployed in Snowflake database ${{ env.SF_ACCOUNT }}.${{ env.SF_PROJECT }}
+            ✅ Dedicated Snowflake environment deployed: schema `${{ env.SF_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR
         if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment removed
+            🧹 Dedicated Snowflake environment removed: schema `${{ env.SF_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

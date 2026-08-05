@@ -71,12 +71,12 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.DB_PREFIX }}carto environment deployed in Databricks catalog ${{ env.DB_CATALOG }}
+            ✅ Dedicated Databricks environment deployed: schema `${{ env.DB_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR
         if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment removed
+            🧹 Dedicated Databricks environment removed: schema `${{ env.DB_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
