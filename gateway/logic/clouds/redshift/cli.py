@@ -341,6 +341,9 @@ def deploy_external_function(
         package_version: Package version for @@PACKAGE_VERSION@@ template variable
         max_batch_rows: Maximum rows per Lambda batch invocation
     """
+    if not validate_sql_identifier(function_name, "function name"):
+        logger.error(f"Invalid function name '{function_name}'. Aborting for security.")
+        sys.exit(1)
     # Render SQL template
     renderer = TemplateRenderer()
     sql = renderer.render_external_function(
