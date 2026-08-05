@@ -163,7 +163,7 @@ benchmark: check $(NODE_MODULES_DEV)
 		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
 	fi
 
-remove: check
+remove: check $(NODE_MODULES_DEV)
 	echo "Removing modules..."
 ifdef drop-schema
 	echo "Dropping dataset $(BQ_DATASET) with CASCADE..."
