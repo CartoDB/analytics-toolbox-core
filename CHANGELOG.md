@@ -12,7 +12,7 @@ All notable commits to this project will be documented in this file.
 - chore(ora): source Oracle CD secrets from GCP Secret Manager [sc-562575] (#632)
 - chore(bq|sf|rs|pg|db|ora): reliable dedicated/CI env cleanup and unified env naming [sc-564479] (#633)
 - fix(bq): install node modules before dedicated env removal [sc-565491] (#635)
-- fix(sf): unblock Snowflake CI — pin @azure/storage-common and tolerate H3_POLYFILL release drift [sc-565492][sc-565533] (#636)
+- fix(sf): unblock Snowflake CI — pin @azure/storage-common and tolerate H3_POLYFILL release drift [sc-565492, sc-565533] (#636)
 - chore(bq|sf|rs|pg|db|ora): unify dedicated env PR comments [sc-565493] (#637)
 - fix(rs): validate function name in gateway deploy CLI (#640)
 - feat(rs|clustering): add CREATE_CLUSTERDBSCAN [sc-565418] (#634)
