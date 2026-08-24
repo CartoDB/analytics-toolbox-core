@@ -28,16 +28,18 @@ Manual process — edit the version file directly. No automated tooling.
 - `.github/workflows/publish-release.yml` detects which version files changed to determine which clouds to publish
 - Installer scripts display version at runtime
 
-## Changelog entries are linted markdown
+## Changelog entries reference the PR, not the ticket
 
-`make lint-common` runs `markdownlint` over each cloud's `*.md`, including `CHANGELOG.md`.
-It disables MD013, MD024, MD033, MD036, MD040, MD041, MD051 and MD045 — but **not MD052**
-(reference links must resolve).
+Write `- fix(sf|data): native intersections in enrichment (#1182)`. Ticket ids belong in the
+commit message and the PR description; the changelog carries the PR number, which is the
+durable reference a reader can actually follow. Nearly every release since 2024 is PR-only —
+the handful of `[sc-...]` entries in the history are strays, not the pattern. The one
+reasonable exception is a change committed straight to the release branch with no PR of its
+own, where the ticket is the only reference available.
 
-So never copy a commit subject carrying two ticket ids as `[sc-1][sc-2]` straight into a
-changelog: markdown reads that as a full reference link `[text][label]` whose label is
-undefined, and the lint job fails. Write `[sc-1, sc-2]` in a single bracket instead. A
-single `[sc-1]` is fine.
+Keeping ticket ids out also avoids a linter trap: `make lint-common` runs `markdownlint` over
+each cloud's `*.md` including `CHANGELOG.md` and does not disable MD052, so two ids written
+`[sc-1][sc-2]` parse as a reference link with an undefined label and fail the job.
 
 ## Release Process
 

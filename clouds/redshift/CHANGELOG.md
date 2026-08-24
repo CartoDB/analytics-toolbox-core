@@ -6,12 +6,12 @@ All notable commits to this project will be documented in this file.
 
 ## [1.4.0] - 2026-08-24
 
-- feat(clustering): add CREATE_CLUSTERDBSCAN [sc-565418] (#634)
+- feat(clustering): add CREATE_CLUSTERDBSCAN (#634)
 - fix: validate function name in gateway deploy CLI (#640)
 - chore: default Redshift Lambda runtime to python3.12 (Python 3.10 EOL) (#629)
-- chore: reliable dedicated/CI env cleanup and unified env naming [sc-564479] (#633)
-- chore: unify dedicated env PR comments [sc-565493] (#637)
-- chore: pin actions/setup-node to SHA across all workflows [sc-559087] (#628)
+- chore: reliable dedicated/CI env cleanup and unified env naming (#633)
+- chore: unify dedicated env PR comments (#637)
+- chore: pin actions/setup-node to SHA across all workflows (#628)
 
 ## [1.3.0] - 2026-06-25
 
