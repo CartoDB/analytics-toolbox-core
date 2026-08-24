@@ -30,16 +30,10 @@ Manual process — edit the version file directly. No automated tooling.
 
 ## Changelog entries reference the PR, not the ticket
 
-Write `- fix(sf|data): native intersections in enrichment (#1182)`. Ticket ids belong in the
-commit message and the PR description; the changelog carries the PR number, which is the
-durable reference a reader can actually follow. Nearly every release since 2024 is PR-only —
-the handful of `[sc-...]` entries in the history are strays, not the pattern. The one
-reasonable exception is a change committed straight to the release branch with no PR of its
-own, where the ticket is the only reference available.
-
-Keeping ticket ids out also avoids a linter trap: `make lint-common` runs `markdownlint` over
-each cloud's `*.md` including `CHANGELOG.md` and does not disable MD052, so two ids written
-`[sc-1][sc-2]` parse as a reference link with an undefined label and fail the job.
+`- fix(sf|data): native intersections in enrichment (#1182)`. Ticket ids stay in the commit
+message and PR description. Don't take the pattern from the newest entry: 2026-07 tagged most
+of its entries `[sc-...]` and is the outlier, while the releases around it are PR-only. The one
+exception is a change committed straight to the release branch with no PR of its own.
 
 ## Release Process
 
