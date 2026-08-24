@@ -28,6 +28,17 @@ Manual process — edit the version file directly. No automated tooling.
 - `.github/workflows/publish-release.yml` detects which version files changed to determine which clouds to publish
 - Installer scripts display version at runtime
 
+## Changelog entries are linted markdown
+
+`make lint-common` runs `markdownlint` over each cloud's `*.md`, including `CHANGELOG.md`.
+It disables MD013, MD024, MD033, MD036, MD040, MD041, MD051 and MD045 — but **not MD052**
+(reference links must resolve).
+
+So never copy a commit subject carrying two ticket ids as `[sc-1][sc-2]` straight into a
+changelog: markdown reads that as a full reference link `[text][label]` whose label is
+undefined, and the lint job fails. Write `[sc-1, sc-2]` in a single bracket instead. A
+single `[sc-1]` is fine.
+
 ## Release Process
 
 See `RELEASING.md` for the full process. Key steps:
