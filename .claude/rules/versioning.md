@@ -28,6 +28,13 @@ Manual process — edit the version file directly. No automated tooling.
 - `.github/workflows/publish-release.yml` detects which version files changed to determine which clouds to publish
 - Installer scripts display version at runtime
 
+## Changelog entries reference the PR, not the ticket
+
+`- fix(sf|data): native intersections in enrichment (#1182)`. Ticket ids stay in the commit
+message and PR description. Don't take the pattern from the newest entry: 2026-07 tagged most
+of its entries `[sc-...]` and is the outlier, while the releases around it are PR-only. The one
+exception is a change committed straight to the release branch with no PR of its own.
+
 ## Release Process
 
 See `RELEASING.md` for the full process. Key steps:
