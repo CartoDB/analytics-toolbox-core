@@ -341,6 +341,9 @@ def deploy_external_function(
         package_version: Package version for @@PACKAGE_VERSION@@ template variable
         max_batch_rows: Maximum rows per Lambda batch invocation
     """
+    if not validate_sql_identifier(function_name, "function name"):
+        logger.error(f"Invalid function name '{function_name}'. Aborting for security.")
+        sys.exit(1)
     # Render SQL template
     renderer = TemplateRenderer()
     sql = renderer.render_external_function(
@@ -778,7 +781,7 @@ def deploy_lambda(
 
     # Get Lambda configuration with sensible defaults
     # These can be overridden in function.yaml under clouds.redshift.config
-    runtime = cloud_config.config.get("runtime", "python3.10")
+    runtime = cloud_config.config.get("runtime", "python3.12")
     memory_size = cloud_config.config.get("memory_size", 256)  # MB
     timeout = cloud_config.config.get("timeout", 300)
 
@@ -1202,7 +1205,7 @@ def deploy_all(
                         sys.exit(1)
 
                     # Get Lambda configuration
-                    runtime = cloud_config.config.get("runtime", "python3.10")
+                    runtime = cloud_config.config.get("runtime", "python3.12")
                     memory_size = cloud_config.config.get("memory_size", 512)  # MB
                     timeout = cloud_config.config.get("timeout", 300)  # seconds
 

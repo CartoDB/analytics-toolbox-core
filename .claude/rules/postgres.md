@@ -24,6 +24,8 @@ cd clouds/postgres
 make deploy   # deploy modules
 make test     # run tests (pytest)
 make build    # build JS libraries + SQL modules
+make remove   # drop deployed functions
+make remove drop-schema=1  # drop entire schema with CASCADE (destructive)
 ```
 
 ## Key Details

@@ -110,8 +110,13 @@ benchmark: check venv3 $(NODE_MODULES_DEV)
 
 remove: venv3
 	echo "Removing modules..."
+ifdef drop-schema
+	echo "Dropping schema $(RS_SCHEMA) with CASCADE..."
+	$(VENV3_BIN)/python $(COMMON_DIR)/run_query.py "DROP SCHEMA IF EXISTS $(RS_SCHEMA) CASCADE;"
+else
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(VENV3_BIN)/python $(COMMON_DIR)/run_script.py $(COMMON_DIR)/DROP_FUNCTIONS.sql
+endif
 
 clean:
 	echo "Cleaning modules..."

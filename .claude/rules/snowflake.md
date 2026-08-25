@@ -32,6 +32,8 @@ make test                 # run tests (Jest)
 make build                # build JS libraries + SQL modules
 make deploy-native-app    # deploy native app
 make deploy-share         # deploy data share
+make remove               # drop deployed functions
+make remove drop-schema=1 # drop entire schema with CASCADE (destructive)
 ```
 
 ## Key Details

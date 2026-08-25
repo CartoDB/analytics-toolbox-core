@@ -28,6 +28,7 @@ make deploy                    # Deploy SQL UDFs
 make test                      # Run all tests (pytest)
 make test modules=quadbin      # Run tests for specific module
 make build-modules             # Build module packages
+make remove                    # Drop entire schema with CASCADE (destructive)
 ```
 
 ## Key Details

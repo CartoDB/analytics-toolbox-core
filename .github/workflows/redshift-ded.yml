@@ -31,25 +31,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Set RS_PREFIX for releases
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: |
-          echo "RS_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set RS_PREFIX for hotfixes
-        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
-        run: |
-          echo "RS_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set RS_PREFIX for the rest
-        if: |
-          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
-          !(startsWith(github.event.pull_request.head.ref, 'release/'))
-        run: echo "RS_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set RS_PREFIX
+        run: echo "RS_PREFIX=dedicated_core_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON3_VERSION }}
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup yarn
@@ -87,20 +76,20 @@ jobs:
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
         run: |
-          make remove cloud=redshift drop-schema=1 || echo "Removal (best effort)"
+          make remove cloud=redshift drop-schema=1
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.RS_PREFIX }}carto environment deployed in Redshift host ${{ env.RS_HOST }} and ${{ env.RS_DATABASE }} database
-            - Gateway functions (Lambda): ${{ env.RS_LAMBDA_PREFIX }}*
-            - Clouds functions (SQL UDFs): deployed
+            ✅ Dedicated Redshift environment deployed: schema `${{ env.RS_PREFIX }}carto`
+            - Lambda functions: `${{ env.RS_LAMBDA_PREFIX }}*`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR
         if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment removed
+            🧹 Dedicated Redshift environment removed: schema `${{ env.RS_PREFIX }}carto`
+            - Lambda functions: `${{ env.RS_LAMBDA_PREFIX }}*`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

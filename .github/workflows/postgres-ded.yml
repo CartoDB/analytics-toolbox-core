@@ -26,21 +26,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Set PG_PREFIX for releases
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: |
-          echo "PG_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set PG_PREFIX for hotfixes
-        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
-        run: |
-          echo "PG_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set PG_PREFIX for regular deploys
-        if: |
-          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
-          !(startsWith(github.event.pull_request.head.ref, 'release/'))
-        run: echo "PG_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set PG_PREFIX
+        run: echo "PG_PREFIX=dedicated_core_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup python 3
@@ -60,18 +49,18 @@ jobs:
         id: remove
         run: |
           cd clouds/postgres
-          make remove
+          make remove drop-schema=1
       - name: Comment deploy PR
         if: steps.deploy.outcome == 'success' && github.event.action == 'labeled'
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.PG_PREFIX }}carto environment deployed in Postgres host ${{ env.PG_HOST }} and ${{ env.PG_DATABASE }} database
+            ✅ Dedicated Postgres environment deployed: schema `${{ env.PG_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR
         if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment removed
+            🧹 Dedicated Postgres environment removed: schema `${{ env.PG_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

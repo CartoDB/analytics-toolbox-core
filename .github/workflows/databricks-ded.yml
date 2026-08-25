@@ -24,19 +24,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - name: Set DB_PREFIX for releases
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: |
-          echo "DB_PREFIX=dedicated_release_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set DB_PREFIX for hotfixes
-        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
-        run: |
-          echo "DB_PREFIX=dedicated_hotfix_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
-      - name: Set DB_PREFIX for the rest
-        if: |
-          !(startsWith(github.event.pull_request.head.ref, 'hotfix/')) &&
-          !(startsWith(github.event.pull_request.head.ref, 'release/'))
-        run: echo "DB_PREFIX=dedicated_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
+      - name: Set DB_PREFIX
+        run: echo "DB_PREFIX=dedicated_core_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -82,12 +71,12 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated ${{ env.DB_PREFIX }}carto environment deployed in Databricks catalog ${{ env.DB_CATALOG }}
+            ✅ Dedicated Databricks environment deployed: schema `${{ env.DB_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Comment remove PR
         if: steps.remove.outcome == 'success' && (github.event.action == 'unlabeled' || github.event.action == 'closed')
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Dedicated environment removed
+            🧹 Dedicated Databricks environment removed: schema `${{ env.DB_PREFIX }}carto`
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

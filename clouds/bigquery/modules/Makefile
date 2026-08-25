@@ -163,11 +163,17 @@ benchmark: check $(NODE_MODULES_DEV)
 		echo "  No benchmarks matched (modules=$(modules) functions=$(functions))"; \
 	fi
 
-remove: check
+remove: check $(NODE_MODULES_DEV)
 	echo "Removing modules..."
+ifdef drop-schema
+	echo "Dropping dataset $(BQ_DATASET) with CASCADE..."
+	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
+	$(COMMON_DIR)/run-query.js "DROP SCHEMA IF EXISTS \`$(BQ_DATASET)\` CASCADE;"
+else
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
+endif
 
 
 clean:

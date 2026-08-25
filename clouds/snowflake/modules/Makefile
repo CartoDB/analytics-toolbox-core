@@ -199,8 +199,13 @@ benchmark: check $(NODE_MODULES_DEV)
 
 remove: $(NODE_MODULES_DEV)
 	echo "Removing modules..."
+ifdef drop-schema
+	echo "Dropping schema $(SF_SCHEMA) with CASCADE..."
+	$(COMMON_DIR)/run-query.js "DROP SCHEMA IF EXISTS $(SF_SCHEMA) CASCADE;"
+else
 	REPLACEMENTS=$(REPLACEMENTS)" "$(REPLACEMENTS_EXTRA) \
 	$(COMMON_DIR)/run-script.js $(COMMON_DIR)/DROP_FUNCTIONS.sql
+endif
 
 
 remove-share: $(NODE_MODULES_DEV)

@@ -183,7 +183,8 @@ endif
 	@echo ""
 	@echo "Removing clouds..."
 	@if [ -d "clouds/$(cloud)" ]; then \
-		cd clouds/$(cloud) && $(MAKE) remove || true; \
+		cd clouds/$(cloud) && $(MAKE) remove \
+			$(if $(drop-schema),drop-schema=$(drop-schema),); \
 	else \
 		echo "  ⓘ No clouds/$(cloud) directory - nothing to remove"; \
 	fi
@@ -191,7 +192,7 @@ endif
 		echo ""; \
 		echo "Removing gateway..."; \
 		cd gateway && $(MAKE) remove cloud=$(cloud) \
-			$(if $(drop-schema),drop-schema=$(drop-schema),) || echo "  ⚠️  Gateway removal (best effort)"; \
+			$(if $(drop-schema),drop-schema=$(drop-schema),); \
 		echo ""; \
 	else \
 		echo ""; \
