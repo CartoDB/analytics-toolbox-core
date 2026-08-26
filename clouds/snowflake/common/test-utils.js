@@ -30,20 +30,38 @@ if (process.env.SF_PASSWORD) {
     });
 }
 
-const connection = snowflake.createConnection(connectionOptions);
+// Connect on first query rather than on import. Jest imports a test file to
+// discover its tests even when they are all skipped, so connecting at module
+// scope left an HTTP request in flight after the suite finished and the
+// environment was torn down. Concurrent callers share one in-flight connect,
+// which keeps the previous one-connection-per-worker behaviour.
+let connection = null;
+let connecting = null;
 
-connection.connect((err) => {
-    if (err) {
-        console.error(`Unable to connect: ${err.message}`);
-    } else {
-        // Optional: store the connection ID.
-        //const connection_ID = conn.getId();
+function getConnection () {
+    if (connection) {
+        return Promise.resolve(connection);
     }
-});
+    if (!connecting) {
+        const conn = snowflake.createConnection(connectionOptions);
+        connecting = new Promise((resolve, reject) => {
+            conn.connect((err) => {
+                if (err) {
+                    connecting = null;
+                    return reject(new Error(`Unable to connect: ${err.message}`));
+                }
+                connection = conn;
+                return resolve(conn);
+            });
+        });
+    }
+    return connecting;
+}
 
-function execAsync (query) {
+async function execAsync (query) {
+    const conn = await getConnection();
     return new Promise((resolve, reject) => {
-        connection.execute({
+        conn.execute({
             sqlText: query,
             complete: (err, stmt, rows) => {
                 if (err) {
