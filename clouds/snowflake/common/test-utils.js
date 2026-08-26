@@ -30,29 +30,29 @@ if (process.env.SF_PASSWORD) {
     });
 }
 
-// Connect on first query rather than on import. Jest imports a test file to
+// Connect on first query rather than on import: jest imports a test file to
 // discover its tests even when they are all skipped, so connecting at module
 // scope left an HTTP request in flight after the suite finished and the
-// environment was torn down. Concurrent callers share one in-flight connect,
-// which keeps the previous one-connection-per-worker behaviour.
-let connection = null;
+// environment was torn down.
+//
+// The promise itself is the cache, so concurrent callers share one connect and
+// later callers reuse it. It is cleared on failure so a subsequent call retries
+// rather than latching the error forever.
 let connecting = null;
 
 function getConnection () {
-    if (connection) {
-        return Promise.resolve(connection);
-    }
     if (!connecting) {
         const conn = snowflake.createConnection(connectionOptions);
         connecting = new Promise((resolve, reject) => {
             conn.connect((err) => {
                 if (err) {
-                    connecting = null;
                     return reject(new Error(`Unable to connect: ${err.message}`));
                 }
-                connection = conn;
                 return resolve(conn);
             });
+        }).catch((err) => {
+            connecting = null;
+            throw err;
         });
     }
     return connecting;
