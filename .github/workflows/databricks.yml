@@ -23,6 +23,9 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: 20
     env:
       DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
@@ -43,7 +46,8 @@ jobs:
       - name: Authenticate with Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+          workload_identity_provider: projects/1086647180948/locations/global/workloadIdentityPools/github-actions-pool/providers/github-analytics-toolbox
+          service_account: carto-at-gh-actions@cartodb-on-gcp-terraform-ci-cd.iam.gserviceaccount.com
       - name: Get Databricks secrets
         id: secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
@@ -76,6 +80,9 @@ jobs:
     if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: 10
     env:
       DB_HOST_NAME: ${{ secrets.DB_HOST_NAME_CD }}
@@ -95,7 +102,8 @@ jobs:
       - name: Authenticate with Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+          workload_identity_provider: projects/1086647180948/locations/global/workloadIdentityPools/github-actions-pool/providers/github-analytics-toolbox
+          service_account: carto-at-gh-actions@cartodb-on-gcp-terraform-ci-cd.iam.gserviceaccount.com
       - name: Get Databricks secrets
         id: secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
