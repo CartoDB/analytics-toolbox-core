@@ -55,22 +55,24 @@ functions.forEach(f => {
     });
 });
 
-// Collect the built artifacts and check every library ships a usable map
+// Check that every library inlined into the SQL ships a source map the
+// un-minified code can actually be recovered from. A missing or unusable map is
+// a build failure: the package would be rejected by the security scan.
 const errors = [];
-const entries = Object.keys(libraries).sort().map(library => {
+const libraryNames = Object.keys(libraries).sort();
+libraryNames.forEach(library => {
     const bundlePath = path.join(libsBuildDir, `${library}.js`);
     const mapPath = `${bundlePath}.map`;
     if (!fs.existsSync(bundlePath)) {
         errors.push(`library "${library}" is inlined by ${libraries[library].join(', ')} but ${bundlePath} does not exist`);
-        return null;
+        return;
     }
-    const bundle = fs.readFileSync(bundlePath);
-    if (!bundle.toString().includes('//# sourceMappingURL=')) {
+    if (!fs.readFileSync(bundlePath).toString().includes('//# sourceMappingURL=')) {
         errors.push(`bundle "${library}.js" has no sourceMappingURL comment: enable "sourcemap" in the rollup config`);
     }
     if (!fs.existsSync(mapPath)) {
         errors.push(`library "${library}" has no source map at ${mapPath}`);
-        return null;
+        return;
     }
     const map = JSON.parse(fs.readFileSync(mapPath).toString());
     if (!map.sourcesContent || !map.sourcesContent.length) {
@@ -80,10 +82,6 @@ const entries = Object.keys(libraries).sort().map(library => {
     if (leaked.length) {
         errors.push(`source map "${library}.js.map" leaks build paths (${leaked[0]}): check sourcemapPathTransform`);
     }
-    return {
-        library,
-        functions: [... new Set(libraries[library])].sort()
-    };
 });
 
 if (errors.length) {
@@ -135,18 +133,10 @@ functions.sort((a, b) => a.name.localeCompare(b.name)).forEach(f => {
     lines.push(`| \`${f.name}\` | ${maps} |`);
 });
 lines.push('');
-lines.push('## Libraries');
-lines.push('');
-lines.push('| Library | Source map | Functions inlining it |');
-lines.push('| --- | --- | --- |');
-entries.forEach(e => {
-    lines.push(`| ${e.library} | \`${sourceMapsDir}/${e.library}.js.map\` | ${e.functions.length} |`);
-});
-lines.push('');
 const commit = currentCommit();
 if (commit) {
     lines.push(`Built from commit \`${commit}\`.`);
 }
 
 fs.writeFileSync(path.join(outputDir, 'SOURCE_REVIEW.md'), lines.join('\n'));
-console.log(`Write ${outputDir}/SOURCE_REVIEW.md (${entries.length} libraries, ${functions.length} functions)`);
+console.log(`Write ${outputDir}/SOURCE_REVIEW.md (${libraryNames.length} libraries, ${functions.length} functions)`);
