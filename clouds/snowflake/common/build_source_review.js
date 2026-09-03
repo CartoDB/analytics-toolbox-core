@@ -13,11 +13,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const { execSync } = require('child_process');
 const argv = require('minimist')(process.argv.slice(2));
-
-const sha256 = contents => crypto.createHash('sha256').update(contents).digest('hex');
 
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
@@ -85,11 +82,7 @@ const entries = Object.keys(libraries).sort().map(library => {
     }
     return {
         library,
-        functions: [... new Set(libraries[library])].sort(),
-        bundleSize: bundle.length,
-        mapSize: fs.statSync(mapPath).size,
-        mapSha256: sha256(fs.readFileSync(mapPath)),
-        sources: (map.sources || []).length
+        functions: [... new Set(libraries[library])].sort()
     };
 });
 
@@ -98,67 +91,42 @@ if (errors.length) {
     process.exit(1);
 }
 
-// Build provenance, so the reviewer can reproduce the bundles rather than trust them
-function describeBuild () {
-    let commit = 'unknown';
+// The document. Everything in it is derived from this build: no content is
+// maintained by hand, and it is aimed at whoever reviews the package, so it
+// carries only what is needed to get from minified code to its source.
+function currentCommit () {
     try {
-        commit = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+        return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
     } catch (e) {
-        // Not a git checkout (e.g. building from a package): leave it unknown
+        return null;  // not a git checkout, e.g. building from a package
     }
-    const dependencies = require(path.resolve(__dirname, 'package.json')).devDependencies || {};
-    const versions = ['rollup', 'rollup-plugin-terser']
-        .filter(d => dependencies[d])
-        .map(d => `${d} ${dependencies[d]}`)
-        .join(', ');
-    return { commit, versions };
 }
-
-const { commit, versions } = describeBuild();
-const totalEmbedded = entries.reduce((total, e) => total + e.bundleSize * e.functions.length, 0);
 
 const lines = [];
 lines.push('# Source review');
 lines.push('');
-lines.push('The JavaScript in `modules.sql` is minified. This package includes a source map for');
-lines.push('every library it inlines, so the un-minified code can be recovered from the map alone');
-lines.push('(`sourcesContent` is included).');
+lines.push('The JavaScript inlined in `modules.sql` is minified. Every library it inlines ships');
+lines.push('with its source map in `' + sourceMapsDir + '/`, and each map includes `sourcesContent`, so the');
+lines.push('original un-minified source can be recovered from the map on its own, with no other');
+lines.push('file needed.');
 lines.push('');
-lines.push('Snowflake JavaScript UDFs have no import mechanism: a function body must be entirely');
+lines.push('Snowflake JavaScript UDFs cannot import code: a function body has to be entirely');
 lines.push('self-contained inside its `CREATE FUNCTION` statement. Each library is therefore');
-lines.push('bundled and inlined into every function that uses it, which is why one source map can');
-lines.push('cover several functions. Each inlined bundle ends with a');
-lines.push('`//# sourceMappingURL=` comment naming its map, so every occurrence is linked');
-lines.push('individually from inside the function body.');
+lines.push('bundled and inlined into every function that uses it, which is why one map can cover');
+lines.push('several functions. Every inlined copy ends with a `//# sourceMappingURL=` comment');
+lines.push('naming its map, so each occurrence in `modules.sql` points at its own source.');
 lines.push('');
-lines.push('## Build');
+lines.push('## Reading a source map');
 lines.push('');
-lines.push(`- commit: \`${commit}\``);
-lines.push(`- node: \`${process.version}\``);
-if (versions) {
-    lines.push(`- bundler: \`${versions}\``);
-}
-lines.push('- command: `make deploy-native-app-package production=1`');
-lines.push('- The build is deterministic: rebuilding from this commit reproduces `modules.sql`');
-lines.push('  and the source maps byte-for-byte, so every SHA-256 here can be verified');
-lines.push('  independently.');
+lines.push('A `.map` file is JSON. Two fields carry the original code:');
 lines.push('');
-lines.push('Inlined bundle sizes are the sizes as built. A bundle can differ by a few bytes once');
-lines.push('inlined, because the build substitutes its own `@@...@@` placeholders (the package');
-lines.push('version, for instance) across `modules.sql` after the libraries are inlined.');
+lines.push('- `sources` — the path of each original file that went into the bundle');
+lines.push('- `sourcesContent` — the full text of each of those files, at the same index');
 lines.push('');
-lines.push(`## Libraries (${entries.length})`);
+lines.push('So `sourcesContent[i]` is the complete, un-minified source of `sources[i]`. Browser');
+lines.push('developer tools also load these maps directly and will display the original files.');
 lines.push('');
-entries.forEach(e => {
-    lines.push(`### ${e.library}`);
-    lines.push('');
-    lines.push(`- source map: \`${sourceMapsDir}/${e.library}.js.map\` (${e.mapSize.toLocaleString('en-US')} bytes, ${e.sources} original sources)`);
-    lines.push(`- source map sha256: \`${e.mapSha256}\``);
-    lines.push(`- inlined bundle: ${e.bundleSize.toLocaleString('en-US')} bytes as built`);
-    lines.push(`- inlined into ${e.functions.length} function(s): ${e.functions.map(f => `\`${f}\``).join(', ')}`);
-    lines.push('');
-});
-lines.push('## Functions');
+lines.push('## Which source map covers which function');
 lines.push('');
 lines.push('| Function | Source map |');
 lines.push('| --- | --- |');
@@ -167,15 +135,17 @@ functions.sort((a, b) => a.name.localeCompare(b.name)).forEach(f => {
     lines.push(`| \`${f.name}\` | ${maps} |`);
 });
 lines.push('');
-lines.push('## Totals');
+lines.push('## Libraries');
 lines.push('');
-lines.push(`- ${entries.length} libraries inlined into ${functions.length} functions`);
-lines.push(`- ${totalEmbedded.toLocaleString('en-US')} bytes of minified JavaScript embedded in \`modules.sql\``);
-lines.push(`- ${entries.reduce((total, e) => total + e.mapSize, 0).toLocaleString('en-US')} bytes of source maps`);
-const modulesSqlPath = path.join(outputDir, 'modules.sql');
-if (fs.existsSync(modulesSqlPath)) {
-    const modulesSql = fs.readFileSync(modulesSqlPath);
-    lines.push(`- \`modules.sql\`: ${modulesSql.length.toLocaleString('en-US')} bytes, sha256 \`${sha256(modulesSql)}\``);
+lines.push('| Library | Source map | Functions inlining it |');
+lines.push('| --- | --- | --- |');
+entries.forEach(e => {
+    lines.push(`| ${e.library} | \`${sourceMapsDir}/${e.library}.js.map\` | ${e.functions.length} |`);
+});
+lines.push('');
+const commit = currentCommit();
+if (commit) {
+    lines.push(`Built from commit \`${commit}\`.`);
 }
 
 fs.writeFileSync(path.join(outputDir, 'SOURCE_REVIEW.md'), lines.join('\n'));
