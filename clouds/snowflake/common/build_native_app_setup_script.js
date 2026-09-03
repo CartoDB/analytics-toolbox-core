@@ -28,8 +28,7 @@ function apply_replacements (text) {
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryContent = fs.readFileSync(libraryPath).toString();
-            // A replacer function, so $&, $` and $' inside a bundle are inserted
-            // literally instead of being expanded as replacement patterns.
+            // A replacer function, so $&, $` and $' in a bundle are inserted literally
             text = text.replace(new RegExp(library, 'g'), () => libraryContent);
         }
         else {
