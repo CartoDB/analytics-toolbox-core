@@ -79,7 +79,7 @@ build-modules:
 
 build-native-app-setup-script:
 	rm -rf $(BUILD_DIR)
-	$(MAKE) build-libraries
+	$(MAKE) build-libraries sourcemap=1
 	$(MAKE) prefix-library-sourcemap-urls
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build SF_SCHEMA=@@SF_SCHEMA@@

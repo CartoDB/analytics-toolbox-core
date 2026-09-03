@@ -30,7 +30,7 @@ export default {
     input,
     output: {
         file: process.env.OUTPUT,
-        sourcemap: true,
+        sourcemap: Boolean(process.env.SOURCEMAP),
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
             // Source paths default to being relative to the map, which is
             // meaningless once the map ships in its own package sub-directory

@@ -51,6 +51,7 @@ ifdef UNIT_TEST
 	$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all 1>/dev/null # Check errors
 	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIR) --all`; do \
 		NAME=$${f}Lib \
+		SOURCEMAP=$(sourcemap) \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIR) \
 		FILENAME=$${f}.js \
@@ -61,6 +62,7 @@ else
 	$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps) 1>/dev/null # Check errors
 	for f in `$(COMMON_DIR)/list_libraries.js $(MODULES_DIRS) --diff="$(diff)" --modules=$(modules) --functions=$(functions) --nodeps=$(nodeps)`; do \
 		NAME=$${f}Lib \
+		SOURCEMAP=$(sourcemap) \
 		PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
 		DIRS=$(LIBS_DIRS) \
 		FILENAME=$${f}.js \
