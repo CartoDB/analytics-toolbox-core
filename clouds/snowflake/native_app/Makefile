@@ -6,8 +6,8 @@ DIST_DIR ?= $(ROOT_DIR)/../dist
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/../build
 COMMON_DIR = $(ROOT_DIR)/../common
-LIBS_BUILD_DIR ?= $(APP_DIR)/../libraries/javascript/build
 APP_DIR ?= $(ROOT_DIR)
+LIBS_BUILD_DIR ?= $(APP_DIR)/../libraries/javascript/build
 
 include $(COMMON_DIR)/Makefile
 
