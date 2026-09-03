@@ -30,6 +30,22 @@ export default {
     input,
     output: {
         file: process.env.OUTPUT,
+        sourcemap: true,
+        sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+            // Source paths default to being relative to the map, which is
+            // meaningless once the map ships in its own package sub-directory
+            // (and leaks the build machine's layout when building out of tree).
+            // Re-root them at the repository directory instead, so a reviewer
+            // reading the map sees where each source actually lives.
+            const absolutePath = path.resolve(path.dirname(sourcemapPath), relativeSourcePath);
+            const marker = `${path.sep}clouds${path.sep}`;
+            const index = absolutePath.lastIndexOf(marker);
+            if (index === -1) {
+                return relativeSourcePath;
+            }
+            const root = absolutePath.slice(0, index).split(path.sep).pop();
+            return [root, ...absolutePath.slice(index + 1).split(path.sep)].join('/');
+        },
         format: process.env.UNIT_TEST ? 'umd': 'iife',
         name: process.env.UNIT_TEST ? name : '_' + name,
         banner: process.env.UNIT_TEST ? '' : 'if (typeof(' +name +') === "undefined") {',

@@ -6,6 +6,7 @@ DIST_DIR ?= $(ROOT_DIR)/../dist
 ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/../build
 COMMON_DIR = $(ROOT_DIR)/../common
+LIBS_BUILD_DIR ?= $(BUILD_DIR)/../libraries/javascript/build
 APP_DIR ?= $(ROOT_DIR)
 
 include $(COMMON_DIR)/Makefile
@@ -39,11 +40,18 @@ build:
 	sed 's/@@VERSION@@/$(APP_VERSION)/g' $(APP_DIR)/manifest.yml > $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/manifest.yml
 	cp $(APP_DIR)/README.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 	cp $(APP_DIR)/get_modules_sql_from_stage.py $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
+	cp $(BUILD_DIR)/SOURCE_REVIEW.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
+	mkdir -p $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)
+	cp $(LIBS_BUILD_DIR)/*.js.map $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/
 
 
 deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
-	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
+# PUT cannot upload directories and does not recurse, so this glob deliberately
+# matches files only (every package file has an extension) and the source maps
+# sub-directory is uploaded by the statement below.
+	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/*.* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
+	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/* @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR) overwrite=true auto_compress=false;"
 
 	result=$$(CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-utils.js) && \
 	if [ $${result} -eq 0 ]; then \
