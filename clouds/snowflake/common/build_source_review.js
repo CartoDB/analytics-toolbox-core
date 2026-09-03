@@ -80,38 +80,40 @@ if (errors.length) {
 }
 
 // The document, derived entirely from this build and aimed at whoever reviews the package
-const lines = [];
-lines.push('# Source review');
-lines.push('');
-lines.push('The JavaScript inlined in `modules.sql` is minified. Every library it inlines ships');
-lines.push('with its source map in `' + sourceMapsDir + '/`, and each map includes `sourcesContent`, so the');
-lines.push('original un-minified source can be recovered from the map on its own, with no other');
-lines.push('file needed.');
-lines.push('');
-lines.push('Snowflake JavaScript UDFs cannot import code: a function body has to be entirely');
-lines.push('self-contained inside its `CREATE FUNCTION` statement. Each library is therefore');
-lines.push('bundled and inlined into every function that uses it, which is why one map can cover');
-lines.push('several functions. Every inlined copy ends with a `//# sourceMappingURL=` comment');
-lines.push('naming its map, so each occurrence in `modules.sql` points at its own source.');
-lines.push('');
-lines.push('## Reading a source map');
-lines.push('');
-lines.push('A `.map` file is JSON. Two fields carry the original code:');
-lines.push('');
-lines.push('- `sources` — the path of each original file that went into the bundle');
-lines.push('- `sourcesContent` — the full text of each of those files, at the same index');
-lines.push('');
-lines.push('So `sourcesContent[i]` is the complete, un-minified source of `sources[i]`. Browser');
-lines.push('developer tools also load these maps directly and will display the original files.');
-lines.push('');
-lines.push('## Which source map covers which function');
-lines.push('');
-lines.push('| Function | Source map |');
-lines.push('| --- | --- |');
-functions.sort((a, b) => a.name.localeCompare(b.name)).forEach(f => {
-    const maps = f.libraries.sort().map(l => `\`${sourceMapsDir}/${l}.js.map\``).join(', ');
-    lines.push(`| \`${f.name}\` | ${maps} |`);
-});
-lines.push('');
-fs.writeFileSync(path.join(outputDir, 'SOURCE_REVIEW.md'), lines.join('\n'));
+const functionRows = functions
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(f => `| \`${f.name}\` | ${f.libraries.sort().map(l => `\`${sourceMapsDir}/${l}.js.map\``).join(', ')} |`)
+    .join('\n');
+
+const document = `# Source review
+
+The JavaScript inlined in \`modules.sql\` is minified. Every library it inlines ships
+with its source map in \`${sourceMapsDir}/\`, and each map includes \`sourcesContent\`, so
+the original un-minified source can be recovered from the map on its own, with no
+other file needed.
+
+Snowflake JavaScript UDFs cannot import code: a function body has to be entirely
+self-contained inside its \`CREATE FUNCTION\` statement. Each library is therefore
+bundled and inlined into every function that uses it, which is why one map can cover
+several functions. Every inlined copy ends with a \`//# sourceMappingURL=\` comment
+naming its map, so each occurrence in \`modules.sql\` points at its own source.
+
+## Reading a source map
+
+A \`.map\` file is JSON. Two fields carry the original code:
+
+- \`sources\` — the path of each original file that went into the bundle
+- \`sourcesContent\` — the full text of each of those files, at the same index
+
+So \`sourcesContent[i]\` is the complete, un-minified source of \`sources[i]\`. Browser
+developer tools also load these maps directly and will display the original files.
+
+## Which source map covers which function
+
+| Function | Source map |
+| --- | --- |
+${functionRows}
+`;
+
+fs.writeFileSync(path.join(outputDir, 'SOURCE_REVIEW.md'), document);
 console.log(`Write ${outputDir}/SOURCE_REVIEW.md (${libraryNames.length} libraries, ${functions.length} functions)`);
