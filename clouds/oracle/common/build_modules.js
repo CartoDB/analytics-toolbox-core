@@ -210,10 +210,10 @@ function apply_replacements (text) {
             );
             process.exit(1);
         }
-        text = text.replace(
-            new RegExp(library, 'g'),
-            fs.readFileSync(file).toString()
-        );
+        // A replacer function, so $&, $` and $' inside a bundle are inserted
+        // literally instead of being expanded as replacement patterns.
+        const libraryContent = fs.readFileSync(file).toString();
+        text = text.replace(new RegExp(library, 'g'), () => libraryContent);
     }
     const replacements = process.env.REPLACEMENTS.split(' ');
     for (const replacement of replacements) {
