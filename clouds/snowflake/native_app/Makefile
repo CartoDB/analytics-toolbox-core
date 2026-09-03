@@ -27,7 +27,7 @@ endif
 
 .SILENT:
 
-.PHONY: help build deploy-app-package deploy-app drop-app-package drop-app
+.PHONY: help build check-package-sourcemaps deploy-app-package deploy-app drop-app-package drop-app
 
 help:
 	echo "Available targets: help build deploy-app-package deploy-app drop-app-package drop-app"
@@ -43,7 +43,15 @@ build:
 	cp $(BUILD_DIR)/SOURCE_REVIEW.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 	mkdir -p $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)
 	cp $(LIBS_BUILD_DIR)/*.js.map $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/
+	$(MAKE) check-package-sourcemaps
 
+
+# A wrong prefix or a half-applied rename still builds, so check the references resolve
+check-package-sourcemaps:
+	set -e; pkg=$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME); \
+	for map in `grep -o '//# sourceMappingURL=[^ ]*' $$pkg/modules.sql | sed 's|.*=||' | sort -u`; do \
+		test -f $$pkg/$$map || { echo "ERROR: modules.sql references $$map, which is not in the package"; exit 1; }; \
+	done
 
 deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
