@@ -6,7 +6,6 @@ DIST_DIR ?= $(ROOT_DIR)/dist
 BUILD_DIR ?= $(ROOT_DIR)/build
 ESLINTRC_DIR ?= $(ROOT_DIR)/../..
 COMMON_DIR = $(ROOT_DIR)/common
-LIBS_BUILD_DIR ?= libraries/javascript/build
 PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/version)
 PACKAGE_NAME ?= carto-analytics-toolbox-core-snowflake-$(PACKAGE_VERSION)
 
@@ -93,7 +92,7 @@ build-native-app-setup-script:
 # Point each bundle's sourceMappingURL at the package sub-directory, before they are inlined
 prefix-library-sourcemap-urls:
 	echo "Prefixing library sourceMappingURL comments with $(APP_SOURCE_MAPS_DIR)/..."
-	set -e; for f in $(LIBS_BUILD_DIR)/*.js; do \
+	set -e; for f in libraries/javascript/build/*.js; do \
 		sed -i.bak 's|//# sourceMappingURL=|//# sourceMappingURL=$(APP_SOURCE_MAPS_DIR)/|' $$f; \
 		rm -f $$f.bak; \
 	done
