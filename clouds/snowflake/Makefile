@@ -84,10 +84,10 @@ build-native-app-setup-script:
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build SF_SCHEMA=@@SF_SCHEMA@@
 	cp modules/build/modules.sql $(BUILD_DIR)
-	$(MAKE) -C modules build-native-app-setup-script
-	cp modules/build/setup_script.sql $(BUILD_DIR)
 	$(MAKE) -C modules build-source-review
 	cp modules/build/SOURCE_REVIEW.md $(BUILD_DIR)
+	$(MAKE) -C modules build-native-app-setup-script
+	cp modules/build/setup_script.sql $(BUILD_DIR)
 
 # The app package keeps the source maps in a sub-directory, so the
 # sourceMappingURL comment rollup wrote next to each bundle needs the same

@@ -17,6 +17,8 @@ const crypto = require('crypto');
 const { execSync } = require('child_process');
 const argv = require('minimist')(process.argv.slice(2));
 
+const sha256 = contents => crypto.createHash('sha256').update(contents).digest('hex');
+
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
@@ -85,8 +87,8 @@ const entries = Object.keys(libraries).sort().map(library => {
         library,
         functions: [... new Set(libraries[library])].sort(),
         bundleSize: bundle.length,
-        bundleSha256: crypto.createHash('sha256').update(bundle).digest('hex'),
         mapSize: fs.statSync(mapPath).size,
+        mapSha256: sha256(fs.readFileSync(mapPath)),
         sources: (map.sources || []).length
     };
 });
@@ -137,8 +139,13 @@ if (versions) {
     lines.push(`- bundler: \`${versions}\``);
 }
 lines.push('- command: `make deploy-native-app-package production=1`');
-lines.push('- The build is deterministic: rebuilding from this commit reproduces the bundles');
-lines.push('  byte-for-byte, so the SHA-256 values below can be verified independently.');
+lines.push('- The build is deterministic: rebuilding from this commit reproduces `modules.sql`');
+lines.push('  and the source maps byte-for-byte, so every SHA-256 here can be verified');
+lines.push('  independently.');
+lines.push('');
+lines.push('Inlined bundle sizes are the sizes as built. A bundle can differ by a few bytes once');
+lines.push('inlined, because the build substitutes its own `@@...@@` placeholders (the package');
+lines.push('version, for instance) across `modules.sql` after the libraries are inlined.');
 lines.push('');
 lines.push(`## Libraries (${entries.length})`);
 lines.push('');
@@ -146,7 +153,8 @@ entries.forEach(e => {
     lines.push(`### ${e.library}`);
     lines.push('');
     lines.push(`- source map: \`${sourceMapsDir}/${e.library}.js.map\` (${e.mapSize.toLocaleString('en-US')} bytes, ${e.sources} original sources)`);
-    lines.push(`- inlined bundle: ${e.bundleSize.toLocaleString('en-US')} bytes, sha256 \`${e.bundleSha256}\``);
+    lines.push(`- source map sha256: \`${e.mapSha256}\``);
+    lines.push(`- inlined bundle: ${e.bundleSize.toLocaleString('en-US')} bytes as built`);
     lines.push(`- inlined into ${e.functions.length} function(s): ${e.functions.map(f => `\`${f}\``).join(', ')}`);
     lines.push('');
 });
@@ -164,6 +172,11 @@ lines.push('');
 lines.push(`- ${entries.length} libraries inlined into ${functions.length} functions`);
 lines.push(`- ${totalEmbedded.toLocaleString('en-US')} bytes of minified JavaScript embedded in \`modules.sql\``);
 lines.push(`- ${entries.reduce((total, e) => total + e.mapSize, 0).toLocaleString('en-US')} bytes of source maps`);
+const modulesSqlPath = path.join(outputDir, 'modules.sql');
+if (fs.existsSync(modulesSqlPath)) {
+    const modulesSql = fs.readFileSync(modulesSqlPath);
+    lines.push(`- \`modules.sql\`: ${modulesSql.length.toLocaleString('en-US')} bytes, sha256 \`${sha256(modulesSql)}\``);
+}
 
 fs.writeFileSync(path.join(outputDir, 'SOURCE_REVIEW.md'), lines.join('\n'));
 console.log(`Write ${outputDir}/SOURCE_REVIEW.md (${entries.length} libraries, ${functions.length} functions)`);
