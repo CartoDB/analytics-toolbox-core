@@ -32,11 +32,7 @@ export default {
         file: process.env.OUTPUT,
         sourcemap: Boolean(process.env.SOURCEMAP),
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-            // Source paths default to being relative to the map, which is
-            // meaningless once the map ships in its own package sub-directory
-            // (and leaks the build machine's layout when building out of tree).
-            // Re-root them at the repository directory instead, so a reviewer
-            // reading the map sees where each source actually lives.
+            // Re-root sources at the repo directory: the defaults are relative to the map and leak the build layout
             const absolutePath = path.resolve(path.dirname(sourcemapPath), relativeSourcePath);
             const marker = `${path.sep}clouds${path.sep}`;
             const index = absolutePath.lastIndexOf(marker);

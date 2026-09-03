@@ -89,9 +89,7 @@ build-native-app-setup-script:
 	$(MAKE) -C modules build-native-app-setup-script
 	cp modules/build/setup_script.sql $(BUILD_DIR)
 
-# The app package keeps the source maps in a sub-directory, so the
-# sourceMappingURL comment rollup wrote next to each bundle needs the same
-# prefix before the bundles are inlined into modules.sql.
+# Point each bundle's sourceMappingURL at the package sub-directory, before they are inlined
 prefix-library-sourcemap-urls:
 	echo "Prefixing library sourceMappingURL comments with $(APP_SOURCE_MAPS_DIR)/..."
 	for f in libraries/javascript/build/*.js; do \

@@ -2,8 +2,7 @@
 
 PYTHON3_VERSION = 3
 
-# Sub-directory of the native app package holding the JavaScript source maps and
-# the source review index (see build_source_review.js).
+# Source maps directory in the app package: the sed prefix, the copy, the PUT and the index must agree
 APP_SOURCE_MAPS_DIR ?= source_review
 
 VENV3_DIR ?= $(COMMON_DIR)/../venv3

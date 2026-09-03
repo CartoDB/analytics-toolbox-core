@@ -47,9 +47,7 @@ build:
 
 deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
-# PUT cannot upload directories and does not recurse, so this glob deliberately
-# matches files only (every package file has an extension) and the source maps
-# sub-directory is uploaded by the statement below.
+# PUT cannot upload directories, so this glob takes files only and the next statement the maps
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/*.* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/* @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR) overwrite=true auto_compress=false;"
 

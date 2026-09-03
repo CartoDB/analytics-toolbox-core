@@ -1,13 +1,7 @@
 #!/usr/bin/env node
 
-// Build the source review index for the native app package and verify that
-// every JavaScript library inlined into modules.sql ships a source map.
-//
-// Snowflake's Native App security scan requires all app code to be
-// un-obfuscated. Minified JavaScript is allowed only when the package includes
-// a corresponding source map that recovers the un-minified code, so this script
-// both documents the correspondence for the reviewer and fails the build when a
-// map is missing.
+// Build the source review index for the native app package
+// and check every inlined library ships a usable source map
 
 // ./build_source_review.js modules --output=build --libs_build_dir=../libraries/javascript/build
 
@@ -20,8 +14,7 @@ const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const sourceMapsDir = argv.source_maps_dir || 'source_review';
 
-// Extract the functions, keeping the placeholders unresolved so the libraries
-// each function inlines can be identified (build_modules.js resolves them).
+// Extract the functions, keeping the placeholders unresolved to identify the libraries inlined
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
@@ -54,9 +47,7 @@ functions.forEach(f => {
     });
 });
 
-// Check that every library inlined into the SQL ships a source map the
-// un-minified code can actually be recovered from. A missing or unusable map is
-// a build failure: the package would be rejected by the security scan.
+// A missing or unusable map is a build failure: the package would be rejected by the security scan
 const errors = [];
 const libraryNames = Object.keys(libraries).sort();
 libraryNames.forEach(library => {
@@ -88,9 +79,7 @@ if (errors.length) {
     process.exit(1);
 }
 
-// The document. Everything in it is derived from this build: no content is
-// maintained by hand, and it is aimed at whoever reviews the package, so it
-// carries only what is needed to get from minified code to its source.
+// The document, derived entirely from this build and aimed at whoever reviews the package
 const lines = [];
 lines.push('# Source review');
 lines.push('');
