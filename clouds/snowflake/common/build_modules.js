@@ -166,7 +166,9 @@ function apply_replacements (text) {
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryContent = fs.readFileSync(libraryPath).toString();
-            text = text.replace(new RegExp(library, 'g'), libraryContent);
+            // A replacer function, so $&, $` and $' inside a bundle are inserted
+            // literally instead of being expanded as replacement patterns.
+            text = text.replace(new RegExp(library, 'g'), () => libraryContent);
         }
         else {
             console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
