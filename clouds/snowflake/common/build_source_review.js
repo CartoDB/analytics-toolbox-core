@@ -13,7 +13,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 const argv = require('minimist')(process.argv.slice(2));
 
 const inputDirs = argv._[0] && argv._[0].split(',');
@@ -92,14 +91,6 @@ if (errors.length) {
 // The document. Everything in it is derived from this build: no content is
 // maintained by hand, and it is aimed at whoever reviews the package, so it
 // carries only what is needed to get from minified code to its source.
-function currentCommit () {
-    try {
-        return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
-    } catch (e) {
-        return null;  // not a git checkout, e.g. building from a package
-    }
-}
-
 const lines = [];
 lines.push('# Source review');
 lines.push('');
@@ -133,10 +124,5 @@ functions.sort((a, b) => a.name.localeCompare(b.name)).forEach(f => {
     lines.push(`| \`${f.name}\` | ${maps} |`);
 });
 lines.push('');
-const commit = currentCommit();
-if (commit) {
-    lines.push(`Built from commit \`${commit}\`.`);
-}
-
 fs.writeFileSync(path.join(outputDir, 'SOURCE_REVIEW.md'), lines.join('\n'));
 console.log(`Write ${outputDir}/SOURCE_REVIEW.md (${libraryNames.length} libraries, ${functions.length} functions)`);
