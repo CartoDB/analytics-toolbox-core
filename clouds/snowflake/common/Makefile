@@ -2,7 +2,7 @@
 
 PYTHON3_VERSION = 3
 
-# Source maps directory in the app package: the sed prefix, the copy, the PUT and the index must agree
+# The sed prefix, the copy, the PUT and the index must all agree on this
 APP_SOURCE_MAPS_DIR ?= sourcemaps
 
 VENV3_DIR ?= $(COMMON_DIR)/../venv3

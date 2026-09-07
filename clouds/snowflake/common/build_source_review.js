@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-// Build the source review index for the native app package
-// and check every inlined library ships a usable source map
+// Build the source review index and check every inlined library ships a usable source map
 
 // ./build_source_review.js modules --output=build --libs_build_dir=../libraries/javascript/build --source_maps_dir=sourcemaps
 
@@ -31,8 +30,7 @@ for (let inputDir of inputDirs) {
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    // Strip SQL comments as build_modules.js and list_libraries.js do, so a
-                    // commented-out placeholder is not recorded as an inlined library
+                    // Strip comments as build_modules.js does: a commented-out placeholder is not inlined
                     const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
                     const libraries = [... new Set(content.match(/@@SF_LIBRARY_[A-Z0-9_]+@@/g) || [])]
                         .map(l => l.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase());
@@ -45,7 +43,6 @@ for (let inputDir of inputDirs) {
     });
 }
 
-// Invert into library -> functions
 const libraries = {};
 functions.forEach(f => {
     f.libraries.forEach(library => {
@@ -75,13 +72,10 @@ libraryNames.forEach(library => {
     try {
         map = JSON.parse(fs.readFileSync(mapPath).toString());
     } catch (e) {
-        // Report it rather than dying with a raw parse error, so the build failure names the file
         errors.push(`source map "${library}.js.map" is not valid JSON: ${e.message}`);
         return;
     }
-    // Every original must be recoverable from the map alone, which is what the index promises
-    // the reviewer. A non-empty sourcesContent is not enough: a map with no sources at all, or
-    // with null entries, recovers nothing while still satisfying a presence check.
+    // The index promises every original is recoverable from the map alone, so presence is not enough
     const sources = map.sources || [];
     const contents = map.sourcesContent || [];
     const missing = sources.filter((_, i) => typeof contents[i] !== 'string' || contents[i] === '');
@@ -103,7 +97,6 @@ if (errors.length) {
     process.exit(1);
 }
 
-// The document, derived entirely from this build and aimed at whoever reviews the package
 const functionRows = functions
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(f => `| \`${f.name}\` | ${f.libraries.sort().map(l => `\`${sourceMapsDir}/${l}.js.map\``).join(', ')} |`)

@@ -89,7 +89,7 @@ build-native-app-setup-script:
 	$(MAKE) -C modules build-source-review
 	cp modules/build/SOURCE_REVIEW.md $(BUILD_DIR)
 
-# Point each bundle's sourceMappingURL at the package sub-directory, before they are inlined
+# Must run before the bundles are inlined into modules.sql
 prefix-library-sourcemap-urls:
 	echo "Prefixing library sourceMappingURL comments with $(APP_SOURCE_MAPS_DIR)/..."
 	set -e; for f in libraries/javascript/build/*.js; do \

@@ -46,7 +46,6 @@ build:
 	$(MAKE) check-package-sourcemaps
 
 
-# A wrong prefix or a half-applied rename still builds, so check the references resolve
 check-package-sourcemaps:
 	set -e; pkg=$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME); \
 	maps=`grep -o '//# sourceMappingURL=[^ ]*' $$pkg/modules.sql | sed 's|.*=||' | sort -u`; \
@@ -57,10 +56,9 @@ check-package-sourcemaps:
 
 deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
-# PUT overwrites but never deletes, and non-production builds share one stage prefix, so a
-# renamed or dropped library would leave an orphan map to be snapshotted into the next patch
+# PUT never deletes and non-production builds share one stage prefix, so drop stale maps first
 	$(COMMON_DIR)/run-query.js "REMOVE @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR);"
-# PUT cannot upload directories, so this glob takes files only and the next statement the maps
+# *.* takes files only: PUT cannot upload the maps directory, so it goes in the next statement
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/*.* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/* @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR) overwrite=true auto_compress=false;"
 
