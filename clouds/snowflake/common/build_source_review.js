@@ -3,7 +3,7 @@
 // Build the source review index for the native app package
 // and check every inlined library ships a usable source map
 
-// ./build_source_review.js modules --output=build --libs_build_dir=../libraries/javascript/build
+// ./build_source_review.js modules --output=build --libs_build_dir=../libraries/javascript/build --source_maps_dir=sourcemaps
 
 const fs = require('fs');
 const path = require('path');
@@ -12,7 +12,12 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
-const sourceMapsDir = argv.source_maps_dir || 'sourcemaps';  // keep in sync with APP_SOURCE_MAPS_DIR
+const sourceMapsDir = argv.source_maps_dir;  // no default: APP_SOURCE_MAPS_DIR is the only source of truth
+
+if (!sourceMapsDir) {
+    console.log('ERROR: --source_maps_dir is required and must match APP_SOURCE_MAPS_DIR');
+    process.exit(1);
+}
 
 // Extract the functions, keeping the placeholders unresolved to identify the libraries inlined
 const functions = [];
