@@ -66,13 +66,23 @@ libraryNames.forEach(library => {
         errors.push(`library "${library}" has no source map at ${mapPath}`);
         return;
     }
-    const map = JSON.parse(fs.readFileSync(mapPath).toString());
+    let map;
+    try {
+        map = JSON.parse(fs.readFileSync(mapPath).toString());
+    } catch (e) {
+        // Report it rather than dying with a raw parse error, so the build failure names the file
+        errors.push(`source map "${library}.js.map" is not valid JSON: ${e.message}`);
+        return;
+    }
     // Every original must be recoverable from the map alone, which is what the index promises
-    // the reviewer: a non-empty sourcesContent is not enough if any entry is null or empty.
+    // the reviewer. A non-empty sourcesContent is not enough: a map with no sources at all, or
+    // with null entries, recovers nothing while still satisfying a presence check.
     const sources = map.sources || [];
     const contents = map.sourcesContent || [];
     const missing = sources.filter((_, i) => typeof contents[i] !== 'string' || contents[i] === '');
-    if (contents.length !== sources.length) {
+    if (!sources.length) {
+        errors.push(`source map "${library}.js.map" lists no sources, so no original can be recovered from it`);
+    } else if (contents.length !== sources.length) {
         errors.push(`source map "${library}.js.map" has ${contents.length} sourcesContent entries for ${sources.length} sources`);
     } else if (missing.length) {
         errors.push(`source map "${library}.js.map" is missing the content of ${missing.length} of ${sources.length} sources, starting with "${missing[0]}"`);
