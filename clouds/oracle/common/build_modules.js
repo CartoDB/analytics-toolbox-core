@@ -195,6 +195,19 @@ let content = output.map(f => f.content).join('\n');
 
 // Inline @@ORA_LIBRARY_<NAME>@@ → libraries/javascript/build/<name>.js, then
 // apply env-var @@VAR@@ replacements.
+// Guards against a future revert to a string replacement, where $& and $$ would expand
+function insert_literally (text, placeholder, content) {
+    const pattern = new RegExp(placeholder, 'g');
+    const count = (text.match(pattern) || []).length;
+    const expected = text.length + count * (content.length - placeholder.length);
+    const result = text.replace(pattern, () => content);
+    if (result.length !== expected) {
+        console.log(`ERROR: "${placeholder}" was not inserted literally`);
+        process.exit(1);
+    }
+    return result;
+}
+
 function apply_replacements (text) {
     const libraryDir = path.resolve(
         __dirname, '..', 'libraries', 'javascript', 'build'
@@ -210,15 +223,14 @@ function apply_replacements (text) {
             );
             process.exit(1);
         }
-        // A replacer function, so $&, $` and $' in a bundle are inserted literally
         const libraryContent = fs.readFileSync(file).toString();
-        text = text.replace(new RegExp(library, 'g'), () => libraryContent);
+        text = insert_literally(text, library, libraryContent);
     }
     const replacements = process.env.REPLACEMENTS.split(' ');
     for (const replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
-            text = text.replace(pattern, process.env[replacement]);
+            text = text.replace(pattern, () => process.env[replacement]);
         }
     }
     return text;

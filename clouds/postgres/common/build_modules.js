@@ -181,15 +181,27 @@ let content = anonymousBlockWrapping(postgisInstalledCheck)
 // Replace environment variables
 content += output.map(f => anonymousBlockWrapping(extensionFunctionWrapping(f.content, f.module))).join('\n');
 
+// Guards against a future revert to a string replacement, where $& and $$ would expand
+function insert_literally (text, placeholder, content) {
+    const pattern = new RegExp(placeholder, 'g');
+    const count = (text.match(pattern) || []).length;
+    const expected = text.length + count * (content.length - placeholder.length);
+    const result = text.replace(pattern, () => content);
+    if (result.length !== expected) {
+        console.log(`ERROR: "${placeholder}" was not inserted literally`);
+        process.exit(1);
+    }
+    return result;
+}
+
 function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_.*@@', 'g')))];
+    const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_[A-Z0-9_]+@@', 'g')))];
     for (let library of libraries) {
         const libraryName = library.replace('@@PG_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryContent = fs.readFileSync(libraryPath).toString();
-            // A replacer function, so $&, $` and $' in a bundle are inserted literally
-            text = text.replace(new RegExp(library, 'g'), () => libraryContent);
+            text = insert_literally(text, library, libraryContent);
         }
         else {
             console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
@@ -200,7 +212,7 @@ function apply_replacements (text) {
     for (let replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
-            text = text.replace(pattern, process.env[replacement]);
+            text = text.replace(pattern, () => process.env[replacement]);
         }
     }
     return text;

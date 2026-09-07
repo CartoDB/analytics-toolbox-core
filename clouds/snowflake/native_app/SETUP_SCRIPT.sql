@@ -35,7 +35,7 @@ AS $$
         ]
 
         for (const [variable, value] of replacements) {
-          modulesSql = modulesSql.replaceAll(variable, value);
+          modulesSql = modulesSql.replaceAll(variable, () => value);
         }
 
         snowflake.execute({ sqlText: modulesSql });

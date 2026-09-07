@@ -9,7 +9,6 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const outputDir = argv.output || 'build';
-const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
 const nativeAppDir = argv.native_app_dir || '../native_app';
 
 // Replace environment variables
@@ -22,25 +21,17 @@ if (argv.production) {
 let content = fs.readFileSync(path.resolve(nativeAppDir, 'SETUP_SCRIPT.sql')).toString();
 
 function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@SF_LIBRARY_.*@@', 'g')))];
-    for (let library of libraries) {
-        const libraryName = library.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
-        const libraryPath = path.join(libsBuildDir, libraryName);
-        if (fs.existsSync(libraryPath)) {
-            const libraryContent = fs.readFileSync(libraryPath).toString();
-            // A replacer function, so $&, $` and $' in a bundle are inserted literally
-            text = text.replace(new RegExp(library, 'g'), () => libraryContent);
-        }
-        else {
-            console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
-            process.exit(1);
-        }
+    // The setup script does not inline libraries: modules.sql is read from the stage at install time
+    const libraries = text.match(new RegExp('@@SF_LIBRARY_[A-Z0-9_]+@@', 'g'));
+    if (libraries) {
+        console.log(`ERROR: the setup script cannot inline libraries, found ${libraries.join(', ')}`);
+        process.exit(1);
     }
     const replacements = process.env.REPLACEMENTS.split(' ');
     for (let replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
-            text = text.replace(pattern, process.env[replacement]);
+            text = text.replace(pattern, () => process.env[replacement]);
         }
     }
     return text;
