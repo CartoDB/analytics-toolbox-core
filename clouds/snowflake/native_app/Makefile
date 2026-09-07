@@ -58,7 +58,7 @@ deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
 # PUT never deletes and non-production builds share one stage prefix, so drop stale maps first
 	$(COMMON_DIR)/run-query.js "REMOVE @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR);"
-# *.* takes files only: PUT cannot upload the maps directory, so it goes in the next statement
+# *.* takes files only: PUT cannot upload a directory
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/*.* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
 	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/* @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR) overwrite=true auto_compress=false;"
 

@@ -11,14 +11,14 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
-const sourceMapsDir = argv.source_maps_dir;  // no default: APP_SOURCE_MAPS_DIR is the only source of truth
+const sourceMapsDir = argv.source_maps_dir;
 
 if (!sourceMapsDir) {
     console.log('ERROR: --source_maps_dir is required and must match APP_SOURCE_MAPS_DIR');
     process.exit(1);
 }
 
-// Extract the functions, keeping the placeholders unresolved to identify the libraries inlined
+// Extract functions and the libraries they inline
 const functions = [];
 for (let inputDir of inputDirs) {
     const sqldir = path.join(inputDir, 'sql');
@@ -30,7 +30,7 @@ for (let inputDir of inputDirs) {
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    // Strip comments as build_modules.js does: a commented-out placeholder is not inlined
+                    // Strip comments as build_modules.js does, or a commented-out placeholder counts
                     const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
                     const libraries = [... new Set(content.match(/@@SF_LIBRARY_[A-Z0-9_]+@@/g) || [])]
                         .map(l => l.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase());
@@ -51,7 +51,7 @@ functions.forEach(f => {
     });
 });
 
-// A missing or unusable map is a build failure: the package would be rejected by the security scan
+// Check the source maps
 const errors = [];
 const libraryNames = Object.keys(libraries).sort();
 libraryNames.forEach(library => {
@@ -76,7 +76,6 @@ libraryNames.forEach(library => {
         errors.push(`source map "${library}.js.map" is not valid JSON: ${e.message}`);
         return;
     }
-    // The index promises every original is recoverable from the map alone, so presence is not enough
     const sources = map.sources || [];
     const contents = map.sourcesContent || [];
     const missing = sources.filter((_, i) => typeof contents[i] !== 'string' || contents[i] === '');
