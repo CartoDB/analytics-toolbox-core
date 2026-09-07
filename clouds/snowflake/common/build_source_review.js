@@ -12,7 +12,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const inputDirs = argv._[0] && argv._[0].split(',');
 const outputDir = argv.output || 'build';
 const libsBuildDir = argv.libs_build_dir || '../libraries/javascript/build';
-const sourceMapsDir = argv.source_maps_dir || 'source_review';
+const sourceMapsDir = argv.source_maps_dir || 'sourcemaps';  // keep in sync with APP_SOURCE_MAPS_DIR
 
 // Extract the functions, keeping the placeholders unresolved to identify the libraries inlined
 const functions = [];
@@ -26,7 +26,9 @@ for (let inputDir of inputDirs) {
             files.forEach(file => {
                 if (file.endsWith('.sql')) {
                     const name = path.parse(file).name;
-                    const content = fs.readFileSync(path.join(moduledir, file)).toString();
+                    // Strip SQL comments as build_modules.js and list_libraries.js do, so a
+                    // commented-out placeholder is not recorded as an inlined library
+                    const content = fs.readFileSync(path.join(moduledir, file)).toString().replace(/--.*\n/g, '');
                     const libraries = [... new Set(content.match(/@@SF_LIBRARY_[A-Z0-9_]+@@/g) || [])]
                         .map(l => l.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase());
                     if (libraries.length && !functions.some(f => f.name === name)) {
@@ -65,10 +67,17 @@ libraryNames.forEach(library => {
         return;
     }
     const map = JSON.parse(fs.readFileSync(mapPath).toString());
-    if (!map.sourcesContent || !map.sourcesContent.length) {
-        errors.push(`source map "${library}.js.map" has no sourcesContent, so the un-minified code cannot be recovered from it`);
+    // Every original must be recoverable from the map alone, which is what the index promises
+    // the reviewer: a non-empty sourcesContent is not enough if any entry is null or empty.
+    const sources = map.sources || [];
+    const contents = map.sourcesContent || [];
+    const missing = sources.filter((_, i) => typeof contents[i] !== 'string' || contents[i] === '');
+    if (contents.length !== sources.length) {
+        errors.push(`source map "${library}.js.map" has ${contents.length} sourcesContent entries for ${sources.length} sources`);
+    } else if (missing.length) {
+        errors.push(`source map "${library}.js.map" is missing the content of ${missing.length} of ${sources.length} sources, starting with "${missing[0]}"`);
     }
-    const leaked = (map.sources || []).filter(s => path.isAbsolute(s) || s.startsWith('..'));
+    const leaked = sources.filter(s => path.isAbsolute(s) || s.startsWith('..'));
     if (leaked.length) {
         errors.push(`source map "${library}.js.map" leaks build paths (${leaked[0]}): check sourcemapPathTransform`);
     }

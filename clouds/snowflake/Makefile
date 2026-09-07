@@ -93,7 +93,7 @@ build-native-app-setup-script:
 prefix-library-sourcemap-urls:
 	echo "Prefixing library sourceMappingURL comments with $(APP_SOURCE_MAPS_DIR)/..."
 	set -e; for f in libraries/javascript/build/*.js; do \
-		sed -i.bak 's|//# sourceMappingURL=|//# sourceMappingURL=$(APP_SOURCE_MAPS_DIR)/|' $$f; \
+		sed -i.bak 's|//# sourceMappingURL=\($(APP_SOURCE_MAPS_DIR)/\)*|//# sourceMappingURL=$(APP_SOURCE_MAPS_DIR)/|' $$f; \
 		rm -f $$f.bak; \
 	done
 

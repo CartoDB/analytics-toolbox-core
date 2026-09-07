@@ -30,7 +30,7 @@ export default {
     input,
     output: {
         file: process.env.OUTPUT,
-        sourcemap: Boolean(process.env.SOURCEMAP),
+        sourcemap: process.env.SOURCEMAP === '1',
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
             // Re-root sources at the repo directory: the defaults are relative to the map and leak the build layout
             const absolutePath = path.resolve(path.dirname(sourcemapPath), relativeSourcePath);

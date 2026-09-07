@@ -67,6 +67,15 @@ CALL CARTO.CARTO.INSTALL('CARTO_ANALYTICS_TOOLBOX', 'CARTO.CARTO');
 
 If your Analytics Toolbox doesn't get updated properly please try to drop the app, get it back from Snowflake Marketplace and follow the Step 1.
 
+### Source code and source maps
+
+The JavaScript in `modules.sql` is minified. This package ships a source map for every library it
+inlines, under `sourcemaps/`, each including `sourcesContent` so the original un-minified source can
+be recovered from the map alone. Every inlined bundle ends with a `//# sourceMappingURL=` comment
+naming its map.
+
+`SOURCE_REVIEW.md` at the package root lists which map covers which function.
+
 ### Usage Examples
 
 Please refer to CARTO's [SQL reference](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference) to find the full list of available functions and procedures as well as examples.

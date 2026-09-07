@@ -88,6 +88,7 @@ build-share: $(NODE_MODULES_DEV)
 
 build-source-review: $(NODE_MODULES_DEV)
 	echo "Building source review..."
+	mkdir -p $(BUILD_DIR)
 	$(COMMON_DIR)/build_source_review.js $(MODULES_DIRS) \
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) \
 		--source_maps_dir=$(APP_SOURCE_MAPS_DIR)
