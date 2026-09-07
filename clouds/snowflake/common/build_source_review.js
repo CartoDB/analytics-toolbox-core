@@ -62,7 +62,8 @@ libraryNames.forEach(library => {
         return;
     }
     if (!fs.readFileSync(bundlePath).toString().includes('//# sourceMappingURL=')) {
-        errors.push(`bundle "${library}.js" has no sourceMappingURL comment: enable "sourcemap" in the rollup config`);
+        errors.push(`bundle "${library}.js" has no sourceMappingURL comment: build the libraries with "sourcemap=1"`);
+        return;
     }
     if (!fs.existsSync(mapPath)) {
         errors.push(`library "${library}" has no source map at ${mapPath}`);
