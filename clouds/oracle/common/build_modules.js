@@ -212,7 +212,7 @@ function apply_replacements (text) {
     const libraryDir = path.resolve(
         __dirname, '..', 'libraries', 'javascript', 'build'
     );
-    const libraries = [...new Set(text.match(/@@ORA_LIBRARY_[A-Z0-9_]+@@/g) || [])];
+    const libraries = [...new Set(text.match(/@@ORA_LIBRARY_[^@]+@@/g) || [])];
     for (const library of libraries) {
         const libName = library.replace('@@ORA_LIBRARY_', '').replace('@@', '');
         const file = path.join(libraryDir, libName.toLowerCase() + '.js');
