@@ -52,6 +52,10 @@ check-package-sourcemaps:
 	test -n "$$maps" || { echo "ERROR: modules.sql references no source map at all"; exit 1; }; \
 	for map in $$maps; do \
 		test -f $$pkg/$$map || { echo "ERROR: modules.sql references $$map, which is not in the package"; exit 1; }; \
+	done; \
+	for f in $$pkg/$(APP_SOURCE_MAPS_DIR)/*.js.map; do \
+		rel=$(APP_SOURCE_MAPS_DIR)/`basename $$f`; \
+		echo "$$maps" | grep -qx "$$rel" || { echo "ERROR: $$rel ships in the package but nothing references it"; exit 1; }; \
 	done
 
 deploy-app-package:
