@@ -100,7 +100,7 @@ build-native-app-setup-script: $(NODE_MODULES_DEV)
 	SF_APP_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
 	REPLACEMENTS=$(NATIVE_APP_REPLACEMENTS) \
 	$(COMMON_DIR)/build_native_app_setup_script.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) \
+		--output=$(BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) \
 		--production=$(production) --dropfirst=1
 
 deploy: check build
