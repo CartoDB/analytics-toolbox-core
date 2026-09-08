@@ -182,7 +182,7 @@ function insert_literally (text, placeholder, content) {
 }
 
 function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@SF_LIBRARY_[A-Z0-9_]+@@', 'g')))];
+    const libraries = [... new Set(text.match(new RegExp('@@SF_LIBRARY_[^@]+@@', 'g')))];
     for (let library of libraries) {
         const libraryName = library.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
         const libraryPath = path.join(libsBuildDir, libraryName);

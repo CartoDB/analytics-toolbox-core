@@ -195,7 +195,7 @@ function insert_literally (text, placeholder, content) {
 }
 
 function apply_replacements (text) {
-    const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_[A-Z0-9_]+@@', 'g')))];
+    const libraries = [... new Set(text.match(new RegExp('@@PG_LIBRARY_[^@]+@@', 'g')))];
     for (let library of libraries) {
         const libraryName = library.replace('@@PG_LIBRARY_', '').replace('@@', '').toLowerCase() + '.js';
         const libraryPath = path.join(libsBuildDir, libraryName);

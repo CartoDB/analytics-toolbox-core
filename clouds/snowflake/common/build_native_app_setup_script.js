@@ -22,7 +22,7 @@ let content = fs.readFileSync(path.resolve(nativeAppDir, 'SETUP_SCRIPT.sql')).to
 
 function apply_replacements (text) {
     // The setup script does not inline libraries: modules.sql is read from the stage at install time
-    const libraries = text.match(new RegExp('@@SF_LIBRARY_[A-Z0-9_]+@@', 'g'));
+    const libraries = text.match(new RegExp('@@SF_LIBRARY_[^@]+@@', 'g'));
     if (libraries) {
         console.log(`ERROR: the setup script cannot inline libraries, found ${libraries.join(', ')}`);
         process.exit(1);
