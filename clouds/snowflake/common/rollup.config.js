@@ -30,6 +30,18 @@ export default {
     input,
     output: {
         file: process.env.OUTPUT,
+        sourcemap: process.env.SOURCEMAP === '1',
+        sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+            // Re-root sources: the defaults leak the build layout
+            const absolutePath = path.resolve(path.dirname(sourcemapPath), relativeSourcePath);
+            const marker = `${path.sep}clouds${path.sep}`;
+            const index = absolutePath.lastIndexOf(marker);
+            if (index === -1) {
+                return relativeSourcePath;
+            }
+            const root = absolutePath.slice(0, index).split(path.sep).pop();
+            return [root, ...absolutePath.slice(index + 1).split(path.sep)].join('/');
+        },
         format: process.env.UNIT_TEST ? 'umd': 'iife',
         name: process.env.UNIT_TEST ? name : '_' + name,
         banner: process.env.UNIT_TEST ? '' : 'if (typeof(' +name +') === "undefined") {',
