@@ -151,6 +151,6 @@ jobs:
       - name: Publish package to storage
         run: |
           cd clouds/databricks
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-databricks-latest.zip
-          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/ --content-type=application/zip
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-databricks-latest.zip --content-type=application/zip
+          gcloud storage cp dist/*.json ${{ env.PACKAGE_BUCKET }}/ --content-type=application/json

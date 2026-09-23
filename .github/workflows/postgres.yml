@@ -143,6 +143,6 @@ jobs:
       - name: Publish package
         run: |
           cd clouds/postgres
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-postgres-latest.zip
-          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/ --content-type=application/zip
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-postgres-latest.zip --content-type=application/zip
+          gcloud storage cp dist/*.json ${{ env.PACKAGE_BUCKET }}/ --content-type=application/json
