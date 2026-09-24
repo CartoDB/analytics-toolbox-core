@@ -42,8 +42,8 @@ jobs:
       - name: Auth google
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/1086647180948/locations/global/workloadIdentityPools/github-actions-pool/providers/github-analytics-toolbox
-          service_account: carto-at-gh-actions@cartodb-on-gcp-terraform-ci-cd.iam.gserviceaccount.com
+          workload_identity_provider: ${{ secrets.CARTO_AT_GH_ACTIONS_WIF_PROVIDER }}
+          service_account: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT }}
       - name: Retrieve secrets
         id: get-gcp-secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
@@ -124,8 +124,8 @@ jobs:
         if: matrix.use_rsa_key
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/1086647180948/locations/global/workloadIdentityPools/github-actions-pool/providers/github-analytics-toolbox
-          service_account: carto-at-gh-actions@cartodb-on-gcp-terraform-ci-cd.iam.gserviceaccount.com
+          workload_identity_provider: ${{ secrets.CARTO_AT_GH_ACTIONS_WIF_PROVIDER }}
+          service_account: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT }}
       - name: Retrieve RSA secrets (CI only)
         if: matrix.use_rsa_key
         id: get-gcp-secrets
