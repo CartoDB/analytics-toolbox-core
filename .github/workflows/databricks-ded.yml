@@ -48,19 +48,21 @@ jobs:
           secrets: |-
             databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CD }}
             databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CD }}
-      - name: Export Databricks credentials
-        run: |
-          echo "DB_CLIENT_ID=${{ steps.secrets.outputs.databricks-client-id }}" >> $GITHUB_ENV
-          echo "DB_CLIENT_SECRET=${{ steps.secrets.outputs.databricks-client-secret }}" >> $GITHUB_ENV
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: |
           cd clouds/databricks
           make deploy
       - name: Run remove
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: |
           cd clouds/databricks
           make remove

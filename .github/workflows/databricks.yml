@@ -55,18 +55,23 @@ jobs:
           secrets: |-
             databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CI }}
             databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CI }}
-      - name: Export Databricks credentials
-        run: |
-          echo "DB_CLIENT_ID=${{ steps.secrets.outputs.databricks-client-id }}" >> $GITHUB_ENV
-          echo "DB_CLIENT_SECRET=${{ steps.secrets.outputs.databricks-client-secret }}" >> $GITHUB_ENV
       - name: Lint code
         run: make lint cloud=databricks
       - name: Deploy modules
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make deploy cloud=databricks diff="$GIT_DIFF"
       - name: Run tests
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make test cloud=databricks diff="$GIT_DIFF"
       - name: Cleanup resources
         if: always()
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make remove cloud=databricks
 
   deploy-internal:
@@ -104,11 +109,10 @@ jobs:
           secrets: |-
             databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CD }}
             databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CD }}
-      - name: Export Databricks credentials
-        run: |
-          echo "DB_CLIENT_ID=${{ steps.secrets.outputs.databricks-client-id }}" >> $GITHUB_ENV
-          echo "DB_CLIENT_SECRET=${{ steps.secrets.outputs.databricks-client-secret }}" >> $GITHUB_ENV
       - name: Deploy modules
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make deploy cloud=databricks diff="$GIT_DIFF" production=1
 
   publish:
