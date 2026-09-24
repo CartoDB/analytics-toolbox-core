@@ -48,17 +48,10 @@ jobs:
           secrets: |-
             databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CD }}
             databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CD }}
-      - name: Get Databricks OAuth token
+      - name: Export Databricks credentials
         run: |
-          RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=client_credentials" \
-            -d "client_id=${{ steps.secrets.outputs.databricks-client-id }}" \
-            -d "client_secret=${{ steps.secrets.outputs.databricks-client-secret }}" \
-            -d "scope=all-apis")
-          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
-          echo "::add-mask::$TOKEN"
-          echo "DB_TOKEN=$TOKEN" >> $GITHUB_ENV
+          echo "DB_CLIENT_ID=${{ steps.secrets.outputs.databricks-client-id }}" >> $GITHUB_ENV
+          echo "DB_CLIENT_SECRET=${{ steps.secrets.outputs.databricks-client-secret }}" >> $GITHUB_ENV
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
