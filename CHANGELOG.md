@@ -14,6 +14,7 @@ All notable commits to this project will be documented in this file.
 - chore(deps): bump sqlparse from 0.5.4 to 0.6.0 (#642, #643, #644)
 - refactor: migrate gsutil to gcloud storage (#651)
 - chore(ci): migrate GitHub Actions auth to WIF (#641)
+- chore(sf|ci): migrate the Snowflake CD jobs to key-pair auth (#654)
 
 ## 2026-08-24
 
