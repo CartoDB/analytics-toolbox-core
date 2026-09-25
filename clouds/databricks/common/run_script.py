@@ -6,6 +6,8 @@ from tqdm import trange
 from sqlparse import split
 from databricks import sql
 
+from db_token import get_access_token
+
 function = ''
 
 
@@ -26,7 +28,7 @@ def run_queries(queries):
     with sql.connect(
         server_hostname=os.getenv('DB_HOST_NAME'),
         http_path=os.getenv('DB_HTTP_PATH'),
-        access_token=os.getenv('DB_TOKEN'),
+        access_token=get_access_token(),
     ) as conn:
         with conn.cursor() as cursor:
             for i in trange(len(queries), dynamic_ncols=True, leave=True, position=0):

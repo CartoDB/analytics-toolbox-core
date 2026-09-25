@@ -1,6 +1,10 @@
 # Makefile common for Snowflake
 
 PYTHON3_VERSION = 3
+
+# The sed prefix, the copy, the PUT and the index must all agree on this
+APP_SOURCE_MAPS_DIR ?= sourcemaps
+
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules

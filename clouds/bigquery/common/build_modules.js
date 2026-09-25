@@ -171,7 +171,7 @@ const outputSeparator = argv.production ? '\n' : internalSeparator;
 let content = output.map(f => f.content).join(internalSeparator);
 
 function apply_replacements (text) {
-    const libraries = [... new Set(content.match(new RegExp('@@BQ_LIBRARY_[^@]*?_BUCKET@@', 'g')))];
+    const libraries = [... new Set(text.match(new RegExp('@@BQ_LIBRARY_[^@]*?_BUCKET@@', 'g')))];
     for (let library of libraries) {
         let libraryName = library.replace('@@BQ_LIBRARY_', '').replace('_BUCKET@@', '').toLowerCase();
         if (makelib == libraryName) {
@@ -181,7 +181,7 @@ function apply_replacements (text) {
         const libraryPath = path.join(libsBuildDir, libraryName);
         if (fs.existsSync(libraryPath)) {
             const libraryBucketPath = libraryBucket + '_' + libraryName;
-            text = text.replace(new RegExp(library, 'g'), libraryBucketPath);
+            text = text.replace(new RegExp(library, 'g'), () => libraryBucketPath);
         }
         else {
             console.log(`Warning: library "${libraryName}" does not exist. Run "make build-libraries" with the same filters.`);
@@ -192,7 +192,7 @@ function apply_replacements (text) {
     for (let replacement of replacements) {
         if (replacement) {
             const pattern = new RegExp(`@@${replacement}@@`, 'g');
-            text = text.replace(pattern, process.env[replacement]);
+            text = text.replace(pattern, () => process.env[replacement]);
         }
     }
     text = text.replace(/@@SKIP_DEP@@/g, '');

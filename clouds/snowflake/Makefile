@@ -13,7 +13,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint lint-fix build deploy test benchmark remove clean create-package deploy-native-app-package deploy-native-app
+.PHONY: help lint lint-fix build deploy test benchmark remove clean create-package prefix-library-sourcemap-urls deploy-native-app-package deploy-native-app
 
 help:
 	echo "Available targets: lint build deploy test remove clean create-package deploy-native-app-package deploy-native-app"
@@ -79,12 +79,22 @@ build-modules:
 
 build-native-app-setup-script:
 	rm -rf $(BUILD_DIR)
-	$(MAKE) build-libraries
+	$(MAKE) build-libraries sourcemap=1
+	$(MAKE) prefix-library-sourcemap-urls
 	mkdir -p $(BUILD_DIR)
 	$(MAKE) -C modules build SF_SCHEMA=@@SF_SCHEMA@@
 	cp modules/build/modules.sql $(BUILD_DIR)
 	$(MAKE) -C modules build-native-app-setup-script
 	cp modules/build/setup_script.sql $(BUILD_DIR)
+	$(MAKE) -C modules build-source-review
+	cp modules/build/SOURCE_REVIEW.md $(BUILD_DIR)
+
+prefix-library-sourcemap-urls:
+	echo "Prefixing library sourceMappingURL comments with $(APP_SOURCE_MAPS_DIR)/..."
+	set -e; for f in libraries/javascript/build/*.js; do \
+		sed -i.bak 's|//# sourceMappingURL=\($(APP_SOURCE_MAPS_DIR)/\)*|//# sourceMappingURL=$(APP_SOURCE_MAPS_DIR)/|' $$f; \
+		rm -f $$f.bak; \
+	done
 
 deploy:
 	$(MAKE) build-libraries

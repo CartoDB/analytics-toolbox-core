@@ -5,7 +5,7 @@ pep8-naming==0.12.1
 brunette==0.2.0
 pytest==6.2.4
 redshift-connector==2.1.14
-sqlparse==0.5.4
+sqlparse==0.6.0
 wheel==0.38.1
 tqdm==4.64.0
 sqlfluff==4.2.2

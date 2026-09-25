@@ -226,5 +226,5 @@ jobs:
           make create-package cloud=redshift production=1
       - name: Publish package
         run: |
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/carto-at-redshift-*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-redshift-latest.zip
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/ --content-type=application/zip
+          gcloud storage cp dist/carto-at-redshift-*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-redshift-latest.zip --content-type=application/zip

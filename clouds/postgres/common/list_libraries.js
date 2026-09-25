@@ -129,7 +129,7 @@ function add (f, include) {
 functions.forEach(f => add(f));
 
 const content = output.map(f => f.content).join('\n');
-const libraries = [... new Set(content.match(new RegExp('@@PG_LIBRARY_.*@@', 'g')))]
+const libraries = [... new Set(content.match(new RegExp('@@PG_LIBRARY_[^@]+@@', 'g')))]
     .map(l => l.replace('@@PG_LIBRARY_', '').replace('@@', '').toLowerCase());
 
 process.stdout.write(libraries.join(' '));
