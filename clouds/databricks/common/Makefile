@@ -35,7 +35,12 @@ ifndef DB_HTTP_PATH
 	$(error DB_HTTP_PATH is undefined)
 endif
 ifndef DB_TOKEN
-	$(error DB_TOKEN is undefined)
+ifndef DB_CLIENT_ID
+	$(error either DB_TOKEN or DB_CLIENT_ID and DB_CLIENT_SECRET are undefined)
+endif
+ifndef DB_CLIENT_SECRET
+	$(error either DB_TOKEN or DB_CLIENT_ID and DB_CLIENT_SECRET are undefined)
+endif
 endif
 
 venv3:

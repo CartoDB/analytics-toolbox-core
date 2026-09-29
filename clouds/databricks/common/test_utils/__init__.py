@@ -1,12 +1,14 @@
 import os
 from databricks import sql
 
+from db_token import get_access_token
+
 
 def run_query(query):
     with sql.connect(
         server_hostname=os.getenv('DB_HOST_NAME'),
         http_path=os.getenv('DB_HTTP_PATH'),
-        access_token=os.getenv('DB_TOKEN'),
+        access_token=get_access_token(),
         _disable_pandas=True,
     ) as conn:
         with conn.cursor() as cursor:

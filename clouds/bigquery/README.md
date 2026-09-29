@@ -11,7 +11,7 @@ Make sure you have installed the following tools:
 - `node`: <https://www.npmjs.com/> (v14.18)
 - `yarn`: <https://yarnpkg.com/> (v1.22)
 - `bq`: <https://cloud.google.com/bigquery/docs/bq-command-line-tool>
-- `gsutil`: <https://cloud.google.com/storage/docs/gsutil> (v5.5)
+- `gcloud storage`: <https://cloud.google.com/sdk/gcloud/reference/storage>
 
 ## Environment variables
 

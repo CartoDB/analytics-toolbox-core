@@ -22,7 +22,7 @@ function apply_replacements (text) {
         for (let replacement of replacements) {
             if (replacement) {
                 const pattern = new RegExp(`@@${replacement}@@`, 'g');
-                text = text.replace(pattern, process.env[replacement]);
+                text = text.replace(pattern, () => process.env[replacement]);
             }
         }
     }

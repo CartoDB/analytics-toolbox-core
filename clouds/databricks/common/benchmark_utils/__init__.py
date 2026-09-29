@@ -8,6 +8,8 @@ from string import Template
 
 from databricks import sql as dbsql
 
+from db_token import get_access_token
+
 __all__ = ['benchmark', 'bench', 'config_for']
 
 # Connection-establishment time would otherwise be charged to whichever
@@ -32,7 +34,7 @@ def _get_bench_conn():
         _BENCH_CONN = dbsql.connect(
             server_hostname=os.environ['DB_HOST_NAME'],
             http_path=os.environ['DB_HTTP_PATH'],
-            access_token=os.environ['DB_TOKEN'],
+            access_token=get_access_token(),
             _disable_pandas=True,
         )
         atexit.register(_close_bench_conn)

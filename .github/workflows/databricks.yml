@@ -23,6 +23,9 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: 20
     env:
       DB_PREFIX: ci_${{ github.sha }}_${{ github.run_id }}_${{ github.run_attempt }}_
@@ -43,7 +46,8 @@ jobs:
       - name: Authenticate with Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+          workload_identity_provider: ${{ secrets.CARTO_AT_GH_ACTIONS_WIF_PROVIDER }}
+          service_account: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT }}
       - name: Get Databricks secrets
         id: secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
@@ -51,31 +55,32 @@ jobs:
           secrets: |-
             databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CI }}
             databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CI }}
-      - name: Get Databricks OAuth token
-        run: |
-          RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=client_credentials" \
-            -d "client_id=${{ steps.secrets.outputs.databricks-client-id }}" \
-            -d "client_secret=${{ steps.secrets.outputs.databricks-client-secret }}" \
-            -d "scope=all-apis")
-          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
-          echo "::add-mask::$TOKEN"
-          echo "DB_TOKEN=$TOKEN" >> $GITHUB_ENV
       - name: Lint code
         run: make lint cloud=databricks
       - name: Deploy modules
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make deploy cloud=databricks diff="$GIT_DIFF"
       - name: Run tests
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make test cloud=databricks diff="$GIT_DIFF"
       - name: Cleanup resources
         if: always()
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make remove cloud=databricks
 
   deploy-internal:
     if: github.ref_name == 'main'
     needs: test
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: 10
     env:
       DB_HOST_NAME: ${{ secrets.DB_HOST_NAME_CD }}
@@ -95,7 +100,8 @@ jobs:
       - name: Authenticate with Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT_KEY }}
+          workload_identity_provider: ${{ secrets.CARTO_AT_GH_ACTIONS_WIF_PROVIDER }}
+          service_account: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT }}
       - name: Get Databricks secrets
         id: secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
@@ -103,18 +109,10 @@ jobs:
           secrets: |-
             databricks-client-id:${{ secrets.DB_CLIENT_ID_NAME_CD }}
             databricks-client-secret:${{ secrets.DB_CLIENT_SECRET_NAME_CD }}
-      - name: Get Databricks OAuth token
-        run: |
-          RESPONSE=$(curl -s -X POST https://$DB_HOST_NAME/oidc/v1/token \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=client_credentials" \
-            -d "client_id=${{ steps.secrets.outputs.databricks-client-id }}" \
-            -d "client_secret=${{ steps.secrets.outputs.databricks-client-secret }}" \
-            -d "scope=all-apis")
-          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
-          echo "::add-mask::$TOKEN"
-          echo "DB_TOKEN=$TOKEN" >> $GITHUB_ENV
       - name: Deploy modules
+        env:
+          DB_CLIENT_ID: ${{ steps.secrets.outputs.databricks-client-id }}
+          DB_CLIENT_SECRET: ${{ steps.secrets.outputs.databricks-client-secret }}
         run: make deploy cloud=databricks diff="$GIT_DIFF" production=1
 
   publish:
@@ -151,6 +149,6 @@ jobs:
       - name: Publish package to storage
         run: |
           cd clouds/databricks
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/
-          gsutil -h "Content-Type:application/zip" -m cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-databricks-latest.zip
-          gsutil -h "Content-Type:application/json" -m cp dist/*.json ${{ env.PACKAGE_BUCKET }}/
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/ --content-type=application/zip
+          gcloud storage cp dist/*.zip ${{ env.PACKAGE_BUCKET }}/carto-analytics-toolbox-core-databricks-latest.zip --content-type=application/zip
+          gcloud storage cp dist/*.json ${{ env.PACKAGE_BUCKET }}/ --content-type=application/json

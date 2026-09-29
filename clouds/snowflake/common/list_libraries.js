@@ -130,7 +130,7 @@ function add (f, include) {
 functions.forEach(f => add(f));
 
 const content = output.map(f => f.content).join('\n');
-const libraries = [... new Set(content.match(new RegExp('@@SF_LIBRARY_.*@@', 'g')))]
+const libraries = [... new Set(content.match(new RegExp('@@SF_LIBRARY_[^@]+@@', 'g')))]
     .map(l => l.replace('@@SF_LIBRARY_', '').replace('@@', '').toLowerCase());
 
 process.stdout.write(libraries.join(' '));

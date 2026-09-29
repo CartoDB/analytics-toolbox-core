@@ -34,7 +34,7 @@ include $(COMMON_DIR)/Makefile
 
 .SILENT:
 
-.PHONY: help lint lint-fix build build-share build-native-app-setup-script deploy deploy-share test test-fast test-slow benchmark remove remove-share clean
+.PHONY: help lint lint-fix build build-share build-source-review build-native-app-setup-script deploy deploy-share test test-fast test-slow benchmark remove remove-share clean
 
 help:
 	echo "Available targets: lint build deploy test benchmark remove clean"
@@ -86,6 +86,13 @@ build-share: $(NODE_MODULES_DEV)
 		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --diff="$(diff)" \
 		--modules=$(modules) --functions=$(functions) --production=$(production) --nodeps=$(nodeps) --dropfirst=$(dropfirst)
 
+build-source-review: $(NODE_MODULES_DEV)
+	echo "Building source review..."
+	mkdir -p $(BUILD_DIR)
+	$(COMMON_DIR)/build_source_review.js $(MODULES_DIRS) \
+		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) \
+		--source_maps_dir=$(APP_SOURCE_MAPS_DIR)
+
 build-native-app-setup-script: $(NODE_MODULES_DEV)
 	echo "Building native app setup script..."
 	rm -rf $(BUILD_DIR)
@@ -93,7 +100,7 @@ build-native-app-setup-script: $(NODE_MODULES_DEV)
 	SF_APP_SCHEMA=$(SF_UNQUALIFIED_SCHEMA) APP_ROLE=app_public \
 	REPLACEMENTS=$(NATIVE_APP_REPLACEMENTS) \
 	$(COMMON_DIR)/build_native_app_setup_script.js $(MODULES_DIRS) \
-		--output=$(BUILD_DIR) --libs_build_dir=$(LIBS_BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) \
+		--output=$(BUILD_DIR) --native_app_dir=$(NATIVE_APP_DIR) \
 		--production=$(production) --dropfirst=1
 
 deploy: check build

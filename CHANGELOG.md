@@ -4,6 +4,18 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2026-09-24
+
+- chore(sf): remove the broken h3_fromlonglat JS library entry (#647)
+- chore(sf): connect lazily in the Snowflake test harness (#648)
+- chore(sf): ship JavaScript source maps in the native app package (#649)
+- fix(sf,pg,ora,bq): insert every replacement literally when building SQL (#650)
+- fix(db): renew the Databricks token instead of minting it once per job (#652)
+- chore(deps): bump sqlparse from 0.5.4 to 0.6.0 (#642, #643, #644)
+- refactor: migrate gsutil to gcloud storage (#651)
+- chore(ci): migrate GitHub Actions auth to WIF (#641)
+- chore(sf|ci): migrate the Snowflake CD jobs to key-pair auth (#654)
+
 ## 2026-08-24
 
 - chore(bq,sf,rs,pg,ora): pin actions/setup-node to SHA across all workflows (#628)

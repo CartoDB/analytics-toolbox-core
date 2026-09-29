@@ -7,6 +7,7 @@ ENV_DIR ?= $(ROOT_DIR)/..
 BUILD_DIR ?= $(ROOT_DIR)/../build
 COMMON_DIR = $(ROOT_DIR)/../common
 APP_DIR ?= $(ROOT_DIR)
+LIBS_BUILD_DIR ?= $(APP_DIR)/../libraries/javascript/build
 
 include $(COMMON_DIR)/Makefile
 
@@ -26,7 +27,7 @@ endif
 
 .SILENT:
 
-.PHONY: help build deploy-app-package deploy-app drop-app-package drop-app
+.PHONY: help build check-package-sourcemaps deploy-app-package deploy-app drop-app-package drop-app
 
 help:
 	echo "Available targets: help build deploy-app-package deploy-app drop-app-package drop-app"
@@ -39,11 +40,31 @@ build:
 	sed 's/@@VERSION@@/$(APP_VERSION)/g' $(APP_DIR)/manifest.yml > $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/manifest.yml
 	cp $(APP_DIR)/README.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
 	cp $(APP_DIR)/get_modules_sql_from_stage.py $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
+	cp $(BUILD_DIR)/SOURCE_REVIEW.md $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/
+	mkdir -p $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)
+	cp $(LIBS_BUILD_DIR)/*.js.map $(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/
+	$(MAKE) check-package-sourcemaps
 
+
+check-package-sourcemaps:
+	set -e; pkg=$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME); \
+	maps=`grep -o '//# sourceMappingURL=[^ ]*' $$pkg/modules.sql | sed 's|.*=||' | sort -u`; \
+	test -n "$$maps" || { echo "ERROR: modules.sql references no source map at all"; exit 1; }; \
+	for map in $$maps; do \
+		test -f $$pkg/$$map || { echo "ERROR: modules.sql references $$map, which is not in the package"; exit 1; }; \
+	done; \
+	for f in $$pkg/$(APP_SOURCE_MAPS_DIR)/*.js.map; do \
+		rel=$(APP_SOURCE_MAPS_DIR)/`basename $$f`; \
+		echo "$$maps" | grep -qx "$$rel" || { echo "ERROR: $$rel ships in the package but nothing references it"; exit 1; }; \
+	done
 
 deploy-app-package:
 	$(COMMON_DIR)/run-query.js "CREATE STAGE IF NOT EXISTS $(APP_STAGE_NAME);"
-	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
+# PUT never deletes and non-production builds share one stage prefix, so drop stale maps first
+	$(COMMON_DIR)/run-query.js "REMOVE @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR);"
+# *.* takes files only: PUT cannot upload a directory
+	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/*.* @$(APP_STAGE_LOCATION) overwrite=true auto_compress=false;"
+	$(COMMON_DIR)/run-query.js "PUT file://$(DIST_DIR)/$(APP_PACKAGE_DIST_NAME)/$(APP_SOURCE_MAPS_DIR)/* @$(APP_STAGE_LOCATION)/$(APP_SOURCE_MAPS_DIR) overwrite=true auto_compress=false;"
 
 	result=$$(CHECK_APP_PACKAGE_EXISTENCE=1 APP_PACKAGE_NAME=$(APP_PACKAGE_NAME) $(COMMON_DIR)/native-app-utils.js) && \
 	if [ $${result} -eq 0 ]; then \

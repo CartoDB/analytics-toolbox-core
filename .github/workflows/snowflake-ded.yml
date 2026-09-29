@@ -15,16 +15,31 @@ jobs:
       (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake')) ||
       (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'dedicated_snowflake'))
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
     timeout-minutes: 20
     env:
       SF_ACCOUNT: ${{ secrets.SF_ACCOUNT_CD }}
       SF_DATABASE: ${{ secrets.SF_DATABASE_CD }}
       SF_USER: ${{ secrets.SF_USER_CD }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD_CD }}
       SF_ROLE: ${{ secrets.SF_ROLE_CD }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Auth google
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.CARTO_AT_GH_ACTIONS_WIF_PROVIDER }}
+          service_account: ${{ secrets.CARTO_AT_GH_ACTIONS_SERVICE_ACCOUNT }}
+      - name: Retrieve RSA secrets
+        id: get-gcp-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            SF_RSA_KEY:${{ secrets.SF_RSA_KEY_NAME_CD }}
+            SF_RSA_KEY_PASSWORD:${{ secrets.SF_RSA_KEY_PASSWORD_NAME_CD }}
       - name: Set SF_PREFIX
         run: echo "SF_PREFIX=dedicated_core_${{ github.event.pull_request.number }}_" >> $GITHUB_ENV
       - name: Setup node
@@ -34,12 +49,18 @@ jobs:
       - name: Run deploy
         id: deploy
         if: github.event.action == 'synchronize' || github.event.action == 'labeled'
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make deploy
       - name: Run remove
         id: remove
         if: github.event.action == 'unlabeled' || github.event.action == 'closed'
+        env:
+          SF_RSA_KEY: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY }}
+          SF_RSA_KEY_PASSWORD: ${{ steps.get-gcp-secrets.outputs.SF_RSA_KEY_PASSWORD }}
         run: |
           cd clouds/snowflake
           make remove drop-schema=1

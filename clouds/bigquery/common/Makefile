@@ -3,7 +3,7 @@
 PYTHON3_VERSION = 3
 VENV3_DIR ?= $(COMMON_DIR)/../venv3
 VENV3_BIN = $(VENV3_DIR)/bin
-GSUTIL = gsutil
+GSUTIL = gcloud storage
 NODE_MODULES_DEV = $(COMMON_DIR)/node_modules
 BQ = bq --location=$(BQ_REGION) --project_id=$(BQ_PROJECT)
 BQ_DATASET_DEFAULT = carto
