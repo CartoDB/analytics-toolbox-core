@@ -14,12 +14,13 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
 
     -- Loop through all functions and procedures in the schema
-    -- Note: Includes INTERNAL_DROP_FUNCTIONS itself (will be dropped during loop)
+    -- INTERNAL_DROP_FUNCTIONS is left out: a procedure cannot drop itself while it runs
     FOR rec IN (
         SELECT object_name, object_type
         FROM all_objects
         WHERE owner = '@@ORA_SCHEMA@@'
           AND object_type IN ('FUNCTION', 'PROCEDURE')
+          AND object_name != 'INTERNAL_DROP_FUNCTIONS'
           -- Future: Uncomment the following line to only drop CARTO-prefixed objects
           -- AND object_name LIKE 'CARTO_%'
         ORDER BY
@@ -60,4 +61,7 @@ END INTERNAL_DROP_FUNCTIONS;
 BEGIN
     @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS;
 END;
+/
+
+DROP PROCEDURE @@ORA_SCHEMA@@.INTERNAL_DROP_FUNCTIONS
 /
