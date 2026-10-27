@@ -4,6 +4,10 @@ CARTO Analytics Toolbox Core for Oracle.
 
 All notable commits to this project will be documented in this file.
 
+## [1.2.1] - 2026-10-27
+
+- fix: grant EXECUTE on the toolbox types in GRANT_ACCESS and stop INTERNAL_DROP_FUNCTIONS dropping itself (#656)
+
 ## [1.2.0] - 2026-06-25
 
 - feat(h3,quadbin): add H3/QUADBIN_POLYFILL_TABLE procedures (#621)
