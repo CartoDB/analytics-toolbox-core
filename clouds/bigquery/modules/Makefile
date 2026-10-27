@@ -19,8 +19,8 @@ export BQ_VERSION_FUNCTION ?= VERSION_CORE
 export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
 # BigQuery allows 10 concurrent queries with remote functions per project, and
 # a test can hold a script and its child query, so keep the tests in flight low
-TEST_MAX_WORKERS ?= 2
-TEST_MAX_CONCURRENCY ?= 2
+TEST_MAX_WORKERS ?= 3
+TEST_MAX_CONCURRENCY ?= 4
 
 ifeq ($(testall),1)
 BAIL=
