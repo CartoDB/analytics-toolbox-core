@@ -17,6 +17,10 @@ BQ_DEPLOY_DATASET = $(BQ_PREFIX)$(BQ_DATASET_DEFAULT)
 MODULES_DIRS ?= $(ROOT_DIR)
 export BQ_VERSION_FUNCTION ?= VERSION_CORE
 export BQ_PACKAGE_VERSION ?= $(shell cat $(ROOT_DIR)/../version)
+# BigQuery allows 10 concurrent queries with remote functions per project, and
+# a test can hold a script and its child query, so keep the tests in flight low
+TEST_MAX_WORKERS ?= 2
+TEST_MAX_CONCURRENCY ?= 2
 
 ifeq ($(testall),1)
 BAIL=
@@ -101,7 +105,7 @@ test: check $(NODE_MODULES_DEV)
 		if [ ! -z "$$TESTS" ]; then \
 			GOOGLE_APPLICATION_CREDENTIALS=$(GOOGLE_APPLICATION_CREDENTIALS) \
 			PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-			jest --testTimeout=300000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$TESTS \
+			jest --testTimeout=300000 $(BAIL) --verbose --slowTestThreshold=20 --maxWorkers=$(TEST_MAX_WORKERS) --maxConcurrency=$(TEST_MAX_CONCURRENCY) $$TESTS \
 			     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
 			OLD_TEST=$(TEST_DIR)/$$m/old-test; \
 			if [ -d $$OLD_TEST ]; then \
