@@ -7,6 +7,7 @@ All notable commits to this project will be documented in this file.
 ## 2026-10-27
 
 - fix(ora): grant EXECUTE on the toolbox types in GRANT_ACCESS and stop INTERNAL_DROP_FUNCTIONS dropping itself (#656)
+- chore(bq): retry the remote-function rate limit error in the test helper
 
 ## 2026-09-24
 
