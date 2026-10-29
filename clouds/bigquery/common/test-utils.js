@@ -9,11 +9,29 @@ const BQ_DATASET = process.env.BQ_DATASET;
 
 const client = new BigQuery({ projectId: `${BQ_PROJECT}` });
 
+// BigQuery intermittently rejects remote-function calls made inside scripts with this
+// error even when nothing else runs in the project. Re-running the same statement is
+// safe: the resumable procedures pick up from their partial tables.
+const REMOTE_FUNCTION_RATE_LIMIT = /too many concurrent queries with remote functions/;
+const RETRY_DELAYS_MS = [5000, 10000, 20000, 30000];
+
 async function runQuery (query, options) {
     options = Object.assign({}, { timeoutMs : 120000 }, options);
     query = replaceBQPrefix(query);
-    const [rows] = await client.query(query, options);
-    return rows;
+    for (let attempt = 0; ; attempt++) {
+        try {
+            const [rows] = await client.query(query, options);
+            return rows;
+        } catch (error) {
+            if (!REMOTE_FUNCTION_RATE_LIMIT.test(error.message) || attempt >= RETRY_DELAYS_MS.length) {
+                throw error;
+            }
+            // Jitter keeps parallel Jest workers from retrying in lockstep
+            const delay = Math.round(RETRY_DELAYS_MS[attempt] * (0.5 + Math.random()));
+            console.warn(`Remote-function rate limit, retrying in ${delay} ms (retry ${attempt + 1}/${RETRY_DELAYS_MS.length})`);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+    }
 }
 
 function replaceBQPrefix (text) {
