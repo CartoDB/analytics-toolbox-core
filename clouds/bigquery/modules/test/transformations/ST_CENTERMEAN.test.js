@@ -6,9 +6,9 @@ test('ST_CENTERMEAN should work', async () => {
     \`@@BQ_DATASET@@.ST_CENTERMEAN\`(ST_GEOGFROMTEXT("POLYGON ((-120 30, -90 40, 20 40, -45 -20, -120 30))")) as centerMean3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].centerMean1.value).toEqual('POINT(4.83329772949219 45.7606148501706)');
-    expect(rows[0].centerMean2.value).toEqual('POINT(25.3890912155939 29.7916831655627)');
-    expect(rows[0].centerMean3.value).toEqual('POINT(-47.9686961224971 29.5918778893822)');
+    expect(rows[0].centerMean1.value).toEqualTextCloseTo('POINT(4.83329772949219 45.7606148501706)');
+    expect(rows[0].centerMean2.value).toEqualTextCloseTo('POINT(25.3890912155939 29.7916831655627)');
+    expect(rows[0].centerMean3.value).toEqualTextCloseTo('POINT(-47.9686961224971 29.5918778893822)');
 });
 
 test('ST_CENTERMEAN should return NULL if any NULL mandatory argument', async () => {

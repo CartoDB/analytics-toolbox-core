@@ -120,6 +120,28 @@ function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
     return list;
 }
 
+// Expected values for floating-point results that can drift in the last digits between
+// releases: every number becomes expect.closeTo within `significant` significant digits, so a
+// change in any earlier digit still fails. Integers stay exact beyond 1e9 (ids, counts).
+function closeToDeep (value, significant = 10) {
+    if (typeof value === 'number') {
+        if (!Number.isFinite(value) || Math.abs(value) > 1e9) {
+            return value;
+        }
+        const magnitude = value === 0 ? 0 : Math.floor(Math.log10(Math.abs(value)));
+        return expect.closeTo(value, significant - 1 - magnitude);
+    }
+    if (Array.isArray(value)) {
+        return value.map(item => closeToDeep(item, significant));
+    }
+    if (value && Object.getPrototypeOf(value) === Object.prototype) {
+        return Object.fromEntries(
+            Object.entries(value).map(([key, item]) => [key, closeToDeep(item, significant)])
+        );
+    }
+    return value;
+}
+
 function normSql (txt) {
     return txt.replace(/\s+/g,' ').replace(/\s?,\s?/g, ',').replace(/\( /g, '(').replace(/ \)/g, ')').trim();
 }
@@ -136,5 +158,6 @@ module.exports = {
     cancelJob,
     sortByKey,
     sortByKeyAndRound,
+    closeToDeep,
     normSql
 };

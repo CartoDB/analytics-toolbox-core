@@ -38,21 +38,6 @@ expect.extend({
         };
     },
 
-    // Every expected row must match a received row: numbers within tolerance, everything else equal
-    toContainRowsCloseTo (received, expectedRows, precision = 10) {
-        const missing = expectedRows.filter(
-            expectedRow => !received.some(row => isClose(row, expectedRow, precision))
-        );
-        const pass = missing.length === 0;
-        return {
-            pass,
-            message: () => pass
-                ? 'expected the rows not to contain the expected rows'
-                : `${missing.length} of ${expectedRows.length} expected rows were not found. ` +
-                    `First missing: ${this.utils.printExpected(missing[0])}`
-        };
-    },
-
     // Strings that embed numbers (WKT, GeoJSON): the text around the numbers must be equal,
     // the numbers themselves are compared within tolerance
     toEqualTextCloseTo (received, expected, precision = 10) {

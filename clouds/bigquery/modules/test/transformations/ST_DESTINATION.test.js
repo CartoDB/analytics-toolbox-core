@@ -6,9 +6,9 @@ test('ST_DESTINATION should work', async () => {
     \`@@BQ_DATASET@@.ST_DESTINATION\`(ST_GEOGPOINT(-43.7625, -20), 150, -20, "miles") as destination3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].destination1.value).toEqual('POINT(0.0899320363724538 5.50674676307584e-18)');
-    expect(rows[0].destination2.value).toEqual('POINT(-3.66146785439614 40.4484882583202)');
-    expect(rows[0].destination3.value).toEqual('POINT(-44.5428812187219 -17.958278944262)');
+    expect(rows[0].destination1.value).toEqualTextCloseTo('POINT(0.0899320363724538 5.50674676307584e-18)');
+    expect(rows[0].destination2.value).toEqualTextCloseTo('POINT(-3.66146785439614 40.4484882583202)');
+    expect(rows[0].destination3.value).toEqualTextCloseTo('POINT(-44.5428812187219 -17.958278944262)');
 });
 
 test('ST_DESTINATION should return NULL if any NULL mandatory argument', async () => {

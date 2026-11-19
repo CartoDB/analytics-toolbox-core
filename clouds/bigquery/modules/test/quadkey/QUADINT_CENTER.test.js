@@ -14,17 +14,17 @@ test('QUADINT_CENTER should work', async () => {
     expect(rows.length).toEqual(13);
     expect(JSON.stringify(rows[0].boundary.value)).toEqual('"POINT(0 0)"');
     expect(JSON.stringify(rows[1].boundary.value)).toEqual('"POINT(-90 45)"');
-    expect(JSON.stringify(rows[2].boundary.value)).toEqual('"POINT(-135 79.1713346408195)"');
+    expect(JSON.stringify(rows[2].boundary.value)).toEqualTextCloseTo('"POINT(-135 79.1713346408195)"');
     expect(JSON.stringify(rows[3].boundary.value)).toEqual('"POINT(90 45)"');
-    expect(JSON.stringify(rows[4].boundary.value)).toEqual('"POINT(-45 79.1713346408195)"');
+    expect(JSON.stringify(rows[4].boundary.value)).toEqualTextCloseTo('"POINT(-45 79.1713346408195)"');
     expect(JSON.stringify(rows[5].boundary.value)).toEqual('"POINT(-90 -45)"');
     expect(JSON.stringify(rows[6].boundary.value)).toEqual('"POINT(90 -45)"');
-    expect(JSON.stringify(rows[7].boundary.value)).toEqual('"POINT(-135 40.9798980696201)"');
-    expect(JSON.stringify(rows[8].boundary.value)).toEqual('"POINT(-135 -40.9798980696201)"');
-    expect(JSON.stringify(rows[9].boundary.value)).toEqual('"POINT(-135 -79.1713346408195)"');
-    expect(JSON.stringify(rows[10].boundary.value)).toEqual('"POINT(-44.82421875 44.964797930331)"');
-    expect(JSON.stringify(rows[11].boundary.value)).toEqual('"POINT(-44.9993133544922 45.0002525507932)"');
-    expect(JSON.stringify(rows[12].boundary.value)).toEqual('"POINT(-44.999994635582 44.9999984058533)"');
+    expect(JSON.stringify(rows[7].boundary.value)).toEqualTextCloseTo('"POINT(-135 40.9798980696201)"');
+    expect(JSON.stringify(rows[8].boundary.value)).toEqualTextCloseTo('"POINT(-135 -40.9798980696201)"');
+    expect(JSON.stringify(rows[9].boundary.value)).toEqualTextCloseTo('"POINT(-135 -79.1713346408195)"');
+    expect(JSON.stringify(rows[10].boundary.value)).toEqualTextCloseTo('"POINT(-44.82421875 44.964797930331)"');
+    expect(JSON.stringify(rows[11].boundary.value)).toEqualTextCloseTo('"POINT(-44.9993133544922 45.0002525507932)"');
+    expect(JSON.stringify(rows[12].boundary.value)).toEqualTextCloseTo('"POINT(-44.999994635582 44.9999984058533)"');
 });
 
 test('QUADINT_CENTER should fail with NULL argument', async () => {

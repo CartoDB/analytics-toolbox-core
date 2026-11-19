@@ -6,9 +6,9 @@ test('ST_CENTEROFMASS should work', async () => {
     \`@@BQ_DATASET@@.ST_CENTEROFMASS\`(ST_GEOGFROMTEXT("POLYGON ((-120 30, -90 40, 20 40, -45 -20, -120 30))")) as centerOfMass3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(rows[0].centerOfMass1.value).toEqual('POINT(4.8407289651371 45.7558120999642)');
-    expect(rows[0].centerOfMass2.value).toEqual('POINT(25.1730977433239 27.2789529273059)');
-    expect(rows[0].centerOfMass3.value).toEqual('POINT(-47.8556239494899 25.6704051126407)');
+    expect(rows[0].centerOfMass1.value).toEqualTextCloseTo('POINT(4.8407289651371 45.7558120999642)');
+    expect(rows[0].centerOfMass2.value).toEqualTextCloseTo('POINT(25.1730977433239 27.2789529273059)');
+    expect(rows[0].centerOfMass3.value).toEqualTextCloseTo('POINT(-47.8556239494899 25.6704051126407)');
 });
 
 test('ST_CENTEROFMASS should return NULL if any NULL mandatory argument', async () => {
