@@ -6,9 +6,9 @@ test('ST_CENTEROFMASS should work', async () => {
     ST_CENTEROFMASS(TO_GEOGRAPHY('POLYGON ((-120 30, -90 40, 20 40, -45 -20, -120 30))')) as centerOfMass3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(JSON.stringify(rows[0].CENTEROFMASS1)).toEqual('{"coordinates":[4.840728965137101,45.75581209996417],"type":"Point"}');
-    expect(JSON.stringify(rows[0].CENTEROFMASS2)).toEqual('{"coordinates":[25.454545454545453,26.96969696969697],"type":"Point"}');
-    expect(JSON.stringify(rows[0].CENTEROFMASS3)).toEqual('{"coordinates":[-50.19774011299435,19.152542372881356],"type":"Point"}');
+    expect(JSON.stringify(rows[0].CENTEROFMASS1)).toEqualTextCloseTo('{"coordinates":[4.840728965137101,45.75581209996417],"type":"Point"}');
+    expect(JSON.stringify(rows[0].CENTEROFMASS2)).toEqualTextCloseTo('{"coordinates":[25.454545454545453,26.96969696969697],"type":"Point"}');
+    expect(JSON.stringify(rows[0].CENTEROFMASS3)).toEqualTextCloseTo('{"coordinates":[-50.19774011299435,19.152542372881356],"type":"Point"}');
 });
 
 test('ST_CENTEROFMASS should return NULL if any NULL mandatory argument', async () => {

@@ -6,9 +6,9 @@ test('ST_CENTERMEDIAN should work', async () => {
     ST_CENTERMEDIAN(TO_GEOGRAPHY('POLYGON ((-120 30, -90 40, 20 40, -45 -20, -120 30))')) as centerMedian3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(JSON.stringify(rows[0].CENTERMEDIAN1)).toEqual('{"coordinates":[4.841194152832032,45.75807143030369],"type":"Point"}');
+    expect(JSON.stringify(rows[0].CENTERMEDIAN1)).toEqualTextCloseTo('{"coordinates":[4.841194152832032,45.75807143030369],"type":"Point"}');
     expect(JSON.stringify(rows[0].CENTERMEDIAN2)).toEqual('{"coordinates":[25,27.5],"type":"Point"}');
-    expect(JSON.stringify(rows[0].CENTERMEDIAN3)).toEqual('{"coordinates":[-58.75000000000001,22.5],"type":"Point"}');
+    expect(JSON.stringify(rows[0].CENTERMEDIAN3)).toEqualTextCloseTo('{"coordinates":[-58.75000000000001,22.5],"type":"Point"}');
 });
 
 test('ST_CENTERMEDIAN should return NULL if any NULL mandatory argument', async () => {

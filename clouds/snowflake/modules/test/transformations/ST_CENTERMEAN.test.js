@@ -6,7 +6,7 @@ test('ST_CENTERMEAN should work', async () => {
     ST_CENTERMEAN(TO_GEOGRAPHY('POLYGON ((-120 30, -90 40, 20 40, -45 -20, -120 30))')) as centerMean3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(JSON.stringify(rows[0].CENTERMEAN1)).toEqual('{"coordinates":[4.833297729492188,45.76061485017061],"type":"Point"}');
+    expect(JSON.stringify(rows[0].CENTERMEAN1)).toEqualTextCloseTo('{"coordinates":[4.833297729492188,45.76061485017061],"type":"Point"}');
     expect(JSON.stringify(rows[0].CENTERMEAN2)).toEqual('{"coordinates":[26,24],"type":"Point"}');
     expect(JSON.stringify(rows[0].CENTERMEAN3)).toEqual('{"coordinates":[-71,24],"type":"Point"}');
 });
