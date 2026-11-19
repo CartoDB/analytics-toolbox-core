@@ -108,16 +108,70 @@ function sortByKey (list, key) {
     return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
 }
 
-function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
-    list = list.sort((a, b) => (a[orderKey] > b[orderKey]) ? 1 : -1);
-    for (let row of list) {
-        for (let roundKey of roundedKeys) {
-            if (row[roundKey]) {
-                row[roundKey] = row[roundKey].toPrecision(precision);
-            }
-        }
+// Floating-point results can drift in the last digits between releases. approx(expected) returns
+// `expected` with every number, and every number inside a string (WKT, GeoJSON), replaced by a
+// matcher that accepts the value within `significantDigits` significant digits. A change in any
+// earlier digit still fails. Numbers beyond 1e9 (ids) and strings without a decimal stay exact.
+// Use it as the expected value of the standard matchers:
+//   expect(rows).toEqual(approx(fixture))
+//   expect(rows).toEqual(expect.arrayContaining(approx(fixture)))
+const NUMBER = /-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?/g;
+
+function magnitude (number) {
+    return number === 0 ? 0 : Math.floor(Math.log10(Math.abs(number)));
+}
+
+function tolerance (expected, significantDigits) {
+    return Math.pow(10, magnitude(expected) - (significantDigits - 1)) / 2;
+}
+
+class ApproxText {
+    constructor (expected, significantDigits) {
+        this.$$typeof = Symbol.for('jest.asymmetricMatcher');
+        this.expected = expected;
+        this.significantDigits = significantDigits;
+        this.template = expected.replace(NUMBER, '#');
+        this.numbers = expected.match(NUMBER).map(Number);
     }
-    return list;
+
+    asymmetricMatch (received) {
+        if (typeof received !== 'string' || received.replace(NUMBER, '#') !== this.template) {
+            return false;
+        }
+        const numbers = received.match(NUMBER).map(Number);
+        return numbers.every(
+            (number, i) => Math.abs(number - this.numbers[i]) < tolerance(this.numbers[i], this.significantDigits)
+        );
+    }
+
+    toString () {
+        return 'ApproxText';
+    }
+
+    toAsymmetricMatcher () {
+        return `ApproxText ${JSON.stringify(this.expected)}`;
+    }
+}
+
+function approx (expected, significantDigits = 10) {
+    if (typeof expected === 'number') {
+        if (!Number.isFinite(expected) || Math.abs(expected) > 1e9) {
+            return expected;
+        }
+        return expect.closeTo(expected, significantDigits - 1 - magnitude(expected));
+    }
+    if (typeof expected === 'string') {
+        return /\d\.\d/.test(expected) ? new ApproxText(expected, significantDigits) : expected;
+    }
+    if (Array.isArray(expected)) {
+        return expected.map(item => approx(item, significantDigits));
+    }
+    if (expected && Object.getPrototypeOf(expected) === Object.prototype) {
+        return Object.fromEntries(
+            Object.entries(expected).map(([key, item]) => [key, approx(item, significantDigits)])
+        );
+    }
+    return expected;
 }
 
 function normSql (txt) {
@@ -135,6 +189,6 @@ module.exports = {
     writeNDJSONFixture,
     cancelJob,
     sortByKey,
-    sortByKeyAndRound,
+    approx,
     normSql
 };
