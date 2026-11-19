@@ -1,4 +1,4 @@
-const { closeToDeep, runQuery } = require('../../../common/test-utils');
+const { approx, runQuery } = require('../../../common/test-utils');
 
 test('QUADINT_BBOX should work', async () => {
     const query = `
@@ -6,7 +6,7 @@ test('QUADINT_BBOX should work', async () => {
         FROM UNNEST([162, 12070922, 791040491538, 12960460429066265]) as quadint
     `;
     const rows = await runQuery(query);
-    expect(rows.map(r => r.bbox)).toEqual(closeToDeep([
+    expect(rows.map(r => r.bbox)).toEqual(approx([
         [-90, 0, 0, 66.51326044311186],
         [-45, 44.84029065139799, -44.6484375, 45.089035564831015],
         [-45, 44.999767019181284, -44.998626708984375, 45.000738078290674],

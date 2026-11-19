@@ -1,4 +1,4 @@
-const { closeToDeep, runQuery } = require('../../../common/test-utils');
+const { approx, runQuery } = require('../../../common/test-utils');
 
 test('ST_MINKOWSKIDISTANCE should work', async () => {
     const query = `
@@ -11,7 +11,7 @@ test('ST_MINKOWSKIDISTANCE should work', async () => {
     expect(rows.length).toEqual(1);
     expect(rows[0].MINKOWSKIDISTANCE1).toEqual([[0,1],[1,0]]);
     expect(rows[0].MINKOWSKIDISTANCE2).toEqual([[0,0.01],[0.01,0]]);
-    expect(rows[0].MINKOWSKIDISTANCE3).toEqual(closeToDeep([[0,0.07071067811865475],[0.07071067811865475,0]]));
+    expect(rows[0].MINKOWSKIDISTANCE3).toEqual(approx([[0,0.07071067811865475],[0.07071067811865475,0]]));
     expect(rows[0].MINKOWSKIDISTANCE4).toEqual([[0,0.05],[0.05,0]]);
 });
 

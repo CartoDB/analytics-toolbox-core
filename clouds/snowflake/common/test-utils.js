@@ -105,38 +105,70 @@ function sortByKey (list, key) {
     return list.sort((a, b) => (a[key] > b[key]) ? 1 : -1);
 }
 
-function sortByKeyAndRound (list, orderKey, roundedKeys, precision=10) {
-    list = list.sort((a, b) => (a[orderKey] > b[orderKey]) ? 1 : -1);
-    for (let row of list) {
-        for (let roundKey of roundedKeys) {
-            if (row[roundKey]) {
-                row[roundKey] = row[roundKey].toPrecision(precision);
-            }
-        }
-    }
-    return list;
+// Floating-point results can drift in the last digits between releases. approx(expected) returns
+// `expected` with every number, and every number inside a string (WKT, GeoJSON), replaced by a
+// matcher that accepts the value within `significantDigits` significant digits. A change in any
+// earlier digit still fails. Numbers beyond 1e9 (ids) and strings without a decimal stay exact.
+// Use it as the expected value of the standard matchers:
+//   expect(rows).toEqual(approx(fixture))
+//   expect(rows).toEqual(expect.arrayContaining(approx(fixture)))
+const NUMBER = /-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?/g;
+
+function magnitude (number) {
+    return number === 0 ? 0 : Math.floor(Math.log10(Math.abs(number)));
 }
 
-// Expected values for floating-point results that can drift in the last digits between
-// releases: every number becomes expect.closeTo within `significant` significant digits, so a
-// change in any earlier digit still fails. Integers stay exact beyond 1e9 (ids, counts).
-function closeToDeep (value, significant = 10) {
-    if (typeof value === 'number') {
-        if (!Number.isFinite(value) || Math.abs(value) > 1e9) {
-            return value;
+function tolerance (expected, significantDigits) {
+    return Math.pow(10, magnitude(expected) - (significantDigits - 1)) / 2;
+}
+
+class ApproxText {
+    constructor (expected, significantDigits) {
+        this.$$typeof = Symbol.for('jest.asymmetricMatcher');
+        this.expected = expected;
+        this.significantDigits = significantDigits;
+        this.template = expected.replace(NUMBER, '#');
+        this.numbers = expected.match(NUMBER).map(Number);
+    }
+
+    asymmetricMatch (received) {
+        if (typeof received !== 'string' || received.replace(NUMBER, '#') !== this.template) {
+            return false;
         }
-        const magnitude = value === 0 ? 0 : Math.floor(Math.log10(Math.abs(value)));
-        return expect.closeTo(value, significant - 1 - magnitude);
-    }
-    if (Array.isArray(value)) {
-        return value.map(item => closeToDeep(item, significant));
-    }
-    if (value && Object.getPrototypeOf(value) === Object.prototype) {
-        return Object.fromEntries(
-            Object.entries(value).map(([key, item]) => [key, closeToDeep(item, significant)])
+        const numbers = received.match(NUMBER).map(Number);
+        return numbers.every(
+            (number, i) => Math.abs(number - this.numbers[i]) < tolerance(this.numbers[i], this.significantDigits)
         );
     }
-    return value;
+
+    toString () {
+        return 'ApproxText';
+    }
+
+    toAsymmetricMatcher () {
+        return `ApproxText ${JSON.stringify(this.expected)}`;
+    }
+}
+
+function approx (expected, significantDigits = 10) {
+    if (typeof expected === 'number') {
+        if (!Number.isFinite(expected) || Math.abs(expected) > 1e9) {
+            return expected;
+        }
+        return expect.closeTo(expected, significantDigits - 1 - magnitude(expected));
+    }
+    if (typeof expected === 'string') {
+        return /\d\.\d/.test(expected) ? new ApproxText(expected, significantDigits) : expected;
+    }
+    if (Array.isArray(expected)) {
+        return expected.map(item => approx(item, significantDigits));
+    }
+    if (expected && Object.getPrototypeOf(expected) === Object.prototype) {
+        return Object.fromEntries(
+            Object.entries(expected).map(([key, item]) => [key, approx(item, significantDigits)])
+        );
+    }
+    return expected;
 }
 
 async function existsTable (table) {
@@ -191,8 +223,7 @@ module.exports = {
     deleteTable,
     deleteView,
     sortByKey,
-    sortByKeyAndRound,
-    closeToDeep,
+    approx,
     existsTable,
     readJSONFixture,
     writeJSONFixture,

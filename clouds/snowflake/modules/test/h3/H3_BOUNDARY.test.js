@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../common/test-utils');
+const { approx, runQuery } = require('../../../common/test-utils');
 
 test('Returns NULL with invalid parameters', async () => {
     const query = `
@@ -38,9 +38,9 @@ test('Returns the expected geography', async () => {
 
     const rows = await runQuery(query);
     expect(rows.length).toEqual(5);
-    expect(rows[0].EXPECTED).toBeCloseTo(rows[0].BOUNDS);
-    expect(rows[1].EXPECTED).toBeCloseTo(rows[1].BOUNDS);
-    expect(rows[2].EXPECTED).toBeCloseTo(rows[2].BOUNDS);
-    expect(rows[3].EXPECTED).toBeCloseTo(rows[3].BOUNDS);
-    expect(rows[4].EXPECTED).toBeCloseTo(rows[4].BOUNDS);
+    expect(rows[0].EXPECTED).toEqual(approx(rows[0].BOUNDS));
+    expect(rows[1].EXPECTED).toEqual(approx(rows[1].BOUNDS));
+    expect(rows[2].EXPECTED).toEqual(approx(rows[2].BOUNDS));
+    expect(rows[3].EXPECTED).toEqual(approx(rows[3].BOUNDS));
+    expect(rows[4].EXPECTED).toEqual(approx(rows[4].BOUNDS));
 });

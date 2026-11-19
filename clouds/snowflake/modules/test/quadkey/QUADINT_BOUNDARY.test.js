@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../common/test-utils');
+const { approx, runQuery } = require('../../../common/test-utils');
 
 test('QUADINT_BOUNDARY should work', async () => {
     const query = `
@@ -12,12 +12,12 @@ test('QUADINT_BOUNDARY should work', async () => {
     
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(JSON.stringify(rows[0]['GEOG1'])).toEqualTextCloseTo('{"coordinates":[[[-180,85.0511287798066],[-180,-85.0511287798066],[180,-85.0511287798066],[180,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}');
-    expect(JSON.stringify(rows[0]['GEOG2'])).toEqualTextCloseTo('{"coordinates":[[[-180,85.0511287798066],[-180,0],[0,0],[0,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}');
-    expect(JSON.stringify(rows[0]['GEOG3'])).toEqualTextCloseTo('{"coordinates":[[[-180,85.0511287798066],[-180,66.51326044311186],[-90,66.51326044311186],[-90,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}');
-    expect(JSON.stringify(rows[0]['GEOG4'])).toEqualTextCloseTo('{"coordinates":[[[-45,45.08903556483103],[-45,44.840290651397986],[-44.6484375,44.840290651397986],[-44.6484375,45.08903556483103],[-45,45.08903556483103]]],"type":"Polygon"}');
-    expect(JSON.stringify(rows[0]['GEOG5'])).toEqualTextCloseTo('{"coordinates":[[[-45,45.00073807829068],[-45,44.99976701918129],[-44.998626708984375,44.99976701918129],[-44.998626708984375,45.00073807829068],[-45,45.00073807829068]]],"type":"Polygon"}');
-    expect(JSON.stringify(rows[0]['GEOG6'])).toEqualTextCloseTo('{"coordinates":[[[-45,45.00000219906962],[-45,44.999994612636684],[-44.99998927116394,44.999994612636684],[-44.99998927116394,45.00000219906962],[-45,45.00000219906962]]],"type":"Polygon"}');
+    expect(JSON.stringify(rows[0]['GEOG1'])).toEqual(approx('{"coordinates":[[[-180,85.0511287798066],[-180,-85.0511287798066],[180,-85.0511287798066],[180,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}'));
+    expect(JSON.stringify(rows[0]['GEOG2'])).toEqual(approx('{"coordinates":[[[-180,85.0511287798066],[-180,0],[0,0],[0,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}'));
+    expect(JSON.stringify(rows[0]['GEOG3'])).toEqual(approx('{"coordinates":[[[-180,85.0511287798066],[-180,66.51326044311186],[-90,66.51326044311186],[-90,85.0511287798066],[-180,85.0511287798066]]],"type":"Polygon"}'));
+    expect(JSON.stringify(rows[0]['GEOG4'])).toEqual(approx('{"coordinates":[[[-45,45.08903556483103],[-45,44.840290651397986],[-44.6484375,44.840290651397986],[-44.6484375,45.08903556483103],[-45,45.08903556483103]]],"type":"Polygon"}'));
+    expect(JSON.stringify(rows[0]['GEOG5'])).toEqual(approx('{"coordinates":[[[-45,45.00073807829068],[-45,44.99976701918129],[-44.998626708984375,44.99976701918129],[-44.998626708984375,45.00073807829068],[-45,45.00073807829068]]],"type":"Polygon"}'));
+    expect(JSON.stringify(rows[0]['GEOG6'])).toEqual(approx('{"coordinates":[[[-45,45.00000219906962],[-45,44.999994612636684],[-44.99998927116394,44.999994612636684],[-44.99998927116394,45.00000219906962],[-45,45.00000219906962]]],"type":"Polygon"}'));
 });
 
 test('QUADINT_BOUNDARY should fail with NULL argument', async () => {

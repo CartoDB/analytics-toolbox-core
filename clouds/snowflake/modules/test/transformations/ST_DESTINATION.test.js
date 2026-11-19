@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../common/test-utils');
+const { approx, runQuery } = require('../../../common/test-utils');
 
 test('ST_DESTINATION should work', async () => {
     const query = `SELECT ST_DESTINATION(ST_POINT(0, 0), 10, 90, 'kilometers') as destination1,
@@ -6,9 +6,9 @@ test('ST_DESTINATION should work', async () => {
     ST_DESTINATION(ST_POINT(-43.7625, -20), 150, -20, 'miles') as destination3`;
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
-    expect(JSON.stringify(rows[0].DESTINATION1)).toEqualTextCloseTo('{"coordinates":[0.08993203637245381,5.506746763075836e-18],"type":"Point"}');
-    expect(JSON.stringify(rows[0].DESTINATION2)).toEqualTextCloseTo('{"coordinates":[-3.6614678543961365,40.44848825832016],"type":"Point"}');
-    expect(JSON.stringify(rows[0].DESTINATION3)).toEqualTextCloseTo('{"coordinates":[-44.54288121872185,-17.958278944262005],"type":"Point"}');
+    expect(JSON.stringify(rows[0].DESTINATION1)).toEqual(approx('{"coordinates":[0.08993203637245381,5.506746763075836e-18],"type":"Point"}'));
+    expect(JSON.stringify(rows[0].DESTINATION2)).toEqual(approx('{"coordinates":[-3.6614678543961365,40.44848825832016],"type":"Point"}'));
+    expect(JSON.stringify(rows[0].DESTINATION3)).toEqual(approx('{"coordinates":[-44.54288121872185,-17.958278944262005],"type":"Point"}'));
 });
 
 test('ST_DESTINATION should return NULL if any NULL mandatory argument', async () => {
