@@ -26,6 +26,8 @@ function isClose (received, expected, precision) {
     return Object.is(received, expected) || received === expected;
 }
 
+const NUMBER = /-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?/g;
+
 expect.extend({
     toBeCloseTo (received, expected, precision = 10) {
         const pass = isClose(received, expected, precision);
@@ -48,6 +50,21 @@ expect.extend({
                 ? 'expected the rows not to contain the expected rows'
                 : `${missing.length} of ${expectedRows.length} expected rows were not found. ` +
                     `First missing: ${this.utils.printExpected(missing[0])}`
+        };
+    },
+
+    // Strings that embed numbers (WKT, GeoJSON): the text around the numbers must be equal,
+    // the numbers themselves are compared within tolerance
+    toEqualTextCloseTo (received, expected, precision = 10) {
+        const skeleton = text => text.replace(NUMBER, '#');
+        const numbers = text => (text.match(NUMBER) || []).map(Number);
+        const pass = typeof received === 'string' && typeof expected === 'string' &&
+            skeleton(received) === skeleton(expected) &&
+            isClose(numbers(received), numbers(expected), precision);
+        return {
+            pass,
+            message: () => `expected ${this.utils.printReceived(received)} ` +
+                `${pass ? 'not ' : ''}to equal ${this.utils.printExpected(expected)} within tolerance`
         };
     }
 });
