@@ -132,8 +132,7 @@ test-fast: check $(NODE_MODULES_DEV)
 			FAST_TESTS=`echo "$$TEST_FILES" | grep -Ev "$(SLOW_NAMING_REGEX)" | tr '\n' ' '`; \
 			if [ ! -z "$$FAST_TESTS" ]; then \
 				PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-				jest --testTimeout=50000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$FAST_TESTS $$FLAGS \
-				     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
+				jest --testTimeout=50000 $(BAIL) --verbose --slowTestThreshold=20 --maxConcurrency=10 $$FAST_TESTS $$FLAGS || exit 1; \
 			fi; \
 		fi; \
 	done;
@@ -147,8 +146,7 @@ test-slow: check $(NODE_MODULES_DEV)
 			SLOW_TESTS=`echo "$$TEST_FILES" | grep -E "$(SLOW_NAMING_REGEX)" | tr '\n' ' '`; \
 			if [ ! -z "$$SLOW_TESTS" ]; then \
 				PATH="$(NODE_MODULES_DEV)/.bin/:$(PATH)" \
-				jest --runInBand --testTimeout=150000 $(BAIL) --verbose --slowTestThreshold=20 $$SLOW_TESTS $$FLAGS \
-				     --setupFilesAfterEnv "$(COMMON_DIR)/test-extend.js" || exit 1; \
+				jest --runInBand --testTimeout=150000 $(BAIL) --verbose --slowTestThreshold=20 $$SLOW_TESTS $$FLAGS || exit 1; \
 			fi; \
 		fi; \
 	done;
