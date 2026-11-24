@@ -4,6 +4,12 @@ CARTO Analytics Toolbox Core.
 
 All notable commits to this project will be documented in this file.
 
+## 2026-11-23
+
+- fix(ora): pass the wallet password in the thin-mode connect (#660)
+- chore(ora|ci): use a dedicated CD secret with an admin user (#661)
+- test(bq,sf|test-utils): compare floating-point results with one approx helper (#662)
+
 ## 2026-10-27
 
 - fix(ora): grant EXECUTE on the toolbox types in GRANT_ACCESS and stop INTERNAL_DROP_FUNCTIONS dropping itself (#656)
