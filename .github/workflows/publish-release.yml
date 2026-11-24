@@ -11,6 +11,9 @@ jobs:
   release:
     name: Publish new release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     outputs:
       change_bq: ${{ steps.changes.outputs.bigquery }}
       change_db: ${{ steps.changes.outputs.databricks }}
@@ -23,8 +26,6 @@ jobs:
       (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
       - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
@@ -93,7 +94,6 @@ jobs:
           name: ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
-          token: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
           body: ${{ env.RELEASE_BODY }}
       - name: Create PR to main branch
         uses: repo-sync/pull-request@v2
@@ -107,7 +107,7 @@ jobs:
       - name: Merge PR if possible
         continue-on-error: true
         env:
-          GITHUB_TOKEN: ${{ secrets.CARTOFANTE_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr merge ${{ steps.pull_request.outputs.pr_number }} --merge
 
