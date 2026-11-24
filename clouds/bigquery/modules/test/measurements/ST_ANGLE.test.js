@@ -1,4 +1,4 @@
-const { runQuery } = require('../../../common/test-utils');
+const { approx, runQuery } = require('../../../common/test-utils');
 
 test('ST_ANGLE should work', async () => {
     const query = `
@@ -9,7 +9,7 @@ test('ST_ANGLE should work', async () => {
     const rows = await runQuery(query);
     expect(rows.length).toEqual(1);
     expect(rows[0].angle1).toEqual(90);
-    expect(rows[0].angle2).toEqual(180.64835137913326);
+    expect(rows[0].angle2).toEqual(approx(180.64835137913326));
     expect(rows[0].angle3).toEqual(180);
 });
 

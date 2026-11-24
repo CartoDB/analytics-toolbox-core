@@ -94,5 +94,14 @@ def get_connection():
     except Exception:
         pass  # Already initialized
 
-    connection = oracledb.connect(user=user, password=password, dsn=conn_string)
+    # Thin mode needs the wallet location and password explicitly to load
+    # the (encrypted) ewallet.pem; thick mode ignores these parameters.
+    connection = oracledb.connect(
+        user=user,
+        password=password,
+        dsn=conn_string,
+        config_dir=wallet_dir,
+        wallet_location=wallet_dir,
+        wallet_password=wallet_password,
+    )
     return connection, wallet_dir
